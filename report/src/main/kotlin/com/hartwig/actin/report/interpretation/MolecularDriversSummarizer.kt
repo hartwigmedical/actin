@@ -1,87 +1,70 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
+import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 
 class MolecularDriversSummarizer private constructor(
     private val drivers: Drivers,
     private val interpretedCohortsSummarizer: InterpretedCohortsSummarizer
 ) {
 
-    fun keyVariants(): List<String> {
+    fun keyVariantEvents(): List<String> {
         val highDriverVariants = drivers.variants.filter(::isReportableHighDriver)
         val variantsAssociatedWithDrugResistance = drivers.variants.filter { it.isReportable && it.isAssociatedWithDrugResistance == true }
-        return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { formatEvent(it.event, it.sourceEvent) }.sorted()
+        return (highDriverVariants + variantsAssociatedWithDrugResistance).toSet().map { it.eventDisplay() }.distinct().sorted()
     }
 
-    fun otherVariants(): List<String> {
-        return drivers.variants.asSequence().filter { it.isReportable }.map { formatEvent(it.event, it.sourceEvent) }
-            .filterNot { it in keyVariants() }.toSet().sorted().toList()
-    }
+    fun otherVariantEvents(): List<String> =
+        keyVariantEvents().toSet().let { keyVariants ->
+            drivers.variants.filter { it.isReportable }.map { it.eventDisplay() }.filterNot(keyVariants::contains).distinct().sorted()
+        }
+
+    fun keyAmplifiedGeneEvents(): List<String> =
+        drivers.copyNumbers
+            .asSequence()
+            .filter { copyNumber -> copyNumber.canonicalImpact.type.isGain || copyNumber.otherImpacts.any { it.type.isGain } }
+            .filter(::isReportableHighDriver)
+            .map { it.eventDisplay() }
+            .distinct()
+            .sorted()
+            .toList()
+
+    fun keyDeletedGeneEvents(): List<String> =
+        drivers.copyNumbers
+            .asSequence()
+            .filter { copyNumber -> copyNumber.canonicalImpact.type.isDeletion || copyNumber.otherImpacts.any { it.type.isDeletion } }
+            .filter(::isReportableHighDriver)
+            .map { it.eventDisplay() }
+            .distinct()
+            .sorted()
+            .toList()
+
+    fun keyHomozygouslyDisruptedGenes(): List<String> =
+        drivers.homozygousDisruptions.filter(::isReportableHighDriver).map(GeneAlteration::gene).distinct().sorted()
+
+    fun keyFusionEvents(): List<String> = drivers.fusions.keyEvents()
+
+    fun keyVirusEvents(): List<String> = drivers.viruses.keyEvents()
 
     fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
         val nonDisruptionDrivers = listOf(
-            drivers.variants.map { it.copy(event = formatEvent(it.event, it.sourceEvent)) },
+            drivers.variants,
             drivers.copyNumbers,
             drivers.fusions,
             drivers.homozygousDisruptions,
             drivers.viruses
         ).flatten().filterNot(::isReportableHighDriver)
-        return (nonDisruptionDrivers + drivers.disruptions.toList())
-            .filter(interpretedCohortsSummarizer::driverIsActionable)
+        return (nonDisruptionDrivers + drivers.disruptions)
+            .filter(interpretedCohortsSummarizer::driverIsActionable).distinct().sortedBy { it.eventDisplay() }
     }
 
-    fun keyAmplifiedGenes(): List<String> {
-        return drivers.copyNumbers
-            .asSequence()
-            .filter { copyNumber -> copyNumber.canonicalImpact.type.isGain || copyNumber.otherImpacts.any { it.type.isGain } }
-            .filter(::isReportableHighDriver)
-            .map { it.gene + annotateCopyNumber(it.canonicalImpact.minCopies, it.canonicalImpact.maxCopies, it.canonicalImpact.type) }
-            .distinct()
-            .toList()
-    }
+    private fun isReportableHighDriver(driver: Driver): Boolean =
+        driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
 
-    fun keyDeletedGenes(): List<String> {
-        return drivers.copyNumbers
-            .asSequence()
-            .filter { copyNumber -> copyNumber.canonicalImpact.type.isDeletion || copyNumber.otherImpacts.any { it.type.isDeletion } }
-            .filter(::isReportableHighDriver)
-            .map { it.gene + if (it.canonicalImpact.type == CopyNumberType.NONE) " (alt transcript)" else "" }
-            .distinct()
-            .toList()
-    }
-
-    fun keyHomozygouslyDisruptedGenes(): List<String> {
-        return drivers.homozygousDisruptions.filter(::isReportableHighDriver).map(GeneAlteration::gene).distinct()
-    }
-
-    fun keyFusionEvents(): List<String> {
-        return drivers.fusions.filter(::isReportableHighDriver).map(Fusion::event).distinct()
-    }
-
-    fun keyVirusEvents(): List<String> {
-        return drivers.viruses
-            .filter(::isReportableHighDriver)
-            .map { it -> it.event + (it.integrations?.let { " ($it int. detected)" } ?: "") }
-            .distinct()
-    }
-
-    private fun isReportableHighDriver(driver: Driver): Boolean {
-        return driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
-    }
-
-    private fun annotateCopyNumber(minCopies: Int?, maxCopies: Int?, impactType: CopyNumberType): String {
-        return when (impactType) {
-            CopyNumberType.FULL_GAIN -> minCopies?.let { " $minCopies copies" } ?: ""
-            CopyNumberType.PARTIAL_GAIN -> maxCopies?.let { " $maxCopies copies (partial)" } ?: " (partial)"
-            CopyNumberType.NONE -> " (alt transcript)"
-            else -> ""
-        }
-    }
+    private fun List<Driver>.keyEvents() = filter(::isReportableHighDriver).map { it.eventDisplay() }.distinct().sorted()
 
     companion object {
         fun fromMolecularDriversAndEvaluatedCohorts(
@@ -97,7 +80,7 @@ class MolecularDriversSummarizer private constructor(
         fun filterDriversByDriverLikelihood(drivers: Drivers, useHighDrivers: Boolean): Drivers {
             return with(drivers) {
                 Drivers(
-                    variants = variants.matchingLikelihood(useHighDrivers).map { it.copy(event = formatEvent(it.event, it.sourceEvent)) },
+                    variants = variants.matchingLikelihood(useHighDrivers),
                     copyNumbers = copyNumbers.matchingLikelihood(useHighDrivers),
                     homozygousDisruptions = homozygousDisruptions.matchingLikelihood(useHighDrivers),
                     disruptions = disruptions.matchingLikelihood(useHighDrivers),
@@ -105,10 +88,6 @@ class MolecularDriversSummarizer private constructor(
                     viruses = viruses.matchingLikelihood(useHighDrivers)
                 )
             }
-        }
-
-        private fun formatEvent(event: String, sourceEvent: String): String {
-            return if (event == sourceEvent) event else "$event (also known as $sourceEvent)"
         }
     }
 }

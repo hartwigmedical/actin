@@ -65,6 +65,7 @@ class HasMolecularDriverEventInNsclc(
             result = if (mustWarn) EvaluationResult.WARN else evaluation.result,
             passMessages = writePassMessage(evaluation.passMessagesStrings(), mustWarn, message),
             warnMessages = writeWarnMessage(evaluation.passMessagesStrings(), evaluation.warnMessagesStrings(), mustWarn, message),
+            undeterminedMessages = writeUndeterminedMessage(evaluation.undeterminedMessagesStrings()),
             failMessages = writeFailMessage(evaluation.failMessagesStrings()),
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
@@ -81,6 +82,24 @@ class HasMolecularDriverEventInNsclc(
             mustWarn && passInput.isNotEmpty() -> setOf(StaticMessage("Potential $message (but undetermined if applicable)"))
 
             warnInput.isNotEmpty() -> setOf(StaticMessage("Potential $message"))
+
+            else -> emptySet()
+        }
+    }
+
+    private fun writeUndeterminedMessage(undeterminedInput: Set<String>): Set<StaticMessage> {
+        val undeterminedGenes = undeterminedInput.filter { it.contains(UNDETERMINED_NOT_TESTED_STRING) }
+            .flatMap { msg -> ALL_GENES.filter { gene -> msg.contains(gene, ignoreCase = true) } }
+            .toSet()
+
+        return when {
+            undeterminedInput.any { it in setOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE) } -> {
+                setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (molecular data missing)"))
+            }
+
+            undeterminedGenes.isNotEmpty() -> {
+                setOf(StaticMessage("Presence of NSCLC driver event(s) undetermined (${Format.concat(undeterminedGenes)} not tested)"))
+            }
 
             else -> emptySet()
         }

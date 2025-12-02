@@ -8,9 +8,11 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -34,13 +36,14 @@ import java.time.LocalDate
 
 private val MIN_DATE = LocalDate.of(2020, 6, 6)
 private val OSIMERTINIB = treatment("OSIMERTINIB", true)
+private val PEMBROLIZUMAB = treatment("PEMBROLIZUMAB", true)
 
 class IsEligibleForOnLabelTreatmentTest {
 
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val standardOfCareEvaluatorFactory =
         mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
-    private val targetTreatment = treatment("PEMBROLIZUMAB", true)
+    private val targetTreatment = treatment("TREATMENT", true)
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function =
         IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE)
@@ -51,7 +54,15 @@ class IsEligibleForOnLabelTreatmentTest {
             doidModel,
             MIN_DATE
         )
+    private val functionEvaluatingPembrolizumab = IsEligibleForOnLabelTreatment(
+        PEMBROLIZUMAB,
+        standardOfCareEvaluatorFactory,
+        doidModel,
+        MIN_DATE
+    )
+
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, "left")
+    private val nsclcTumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
 
     @Test
     fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion`() {
@@ -67,7 +78,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                 isCancerAssociatedVariant = true
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -82,7 +93,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 20),
                 driverLikelihood = DriverLikelihood.HIGH
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -96,7 +107,7 @@ class IsEligibleForOnLabelTreatmentTest {
                     stopReason = StopReason.PROGRESSIVE_DISEASE
                 )
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -111,7 +122,7 @@ class IsEligibleForOnLabelTreatmentTest {
                     stopMonth = MIN_DATE.monthValue + 3
                 )
             )
-        ).copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
+        ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
     }
 
@@ -128,7 +139,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 driverLikelihood = DriverLikelihood.HIGH
             )
         ).copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            tumor = nsclcTumor,
             oncologicalHistory = listOf(
                 treatmentHistoryEntry(
                     treatments = setOf(
@@ -145,6 +156,51 @@ class IsEligibleForOnLabelTreatmentTest {
     }
 
     @Test
+    fun `Should pass for treatment naive NSCLC patient eligible for on label treatment pembrolizumab with PD-L1 TPS above 50 and no driver events in EGFR and ALK`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = nsclcTumor,
+            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreValue = 55.0, scoreValueUnit = "%")),
+            oncologicalHistory = emptyList()
+        )
+        assertEvaluation(EvaluationResult.PASS, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for treatment naive NSCLC patient not eligible for on label treatment pembrolizumab based on EGFR driver`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = "EGFR",
+                event = "EGFR L858R",
+                isCancerAssociatedVariant = true,
+                isReportable = true,
+                driverLikelihood = DriverLikelihood.HIGH
+            )
+        ).copy(tumor = nsclcTumor, oncologicalHistory = emptyList())
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should return undetermined for treatment naive NSCLC patient with uncertain eligibility for on label treatment pembrolizumab based on PD-L1 TPS status below 50 and no EGFR or ALK driver`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = nsclcTumor,
+            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreValue = 30.0, scoreValueUnit = "%")),
+            oncologicalHistory = emptyList()
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
+    fun `Should return undetermined for non treatment naive NSCLC patient with uncertain eligibility for on label treatment pembrolizumab`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record =
+            withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true))))).copy(tumor = nsclcTumor)
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))
+    }
+
+    @Test
     fun `Should return undetermined for colorectal cancer patient eligible for on label treatment pembrolizumab`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList())
         val treatmentCandidate = TreatmentCandidate(
@@ -156,7 +212,7 @@ class IsEligibleForOnLabelTreatmentTest {
         every {
             standardOfCareEvaluator.standardOfCareEvaluatedTreatments(colorectalCancerPatient)
         } returns StandardOfCareEvaluation(expectedSocTreatments)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(colorectalCancerPatient))
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(colorectalCancerPatient))
     }
 
     @Test

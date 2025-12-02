@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
@@ -177,7 +178,7 @@ object WgsSummaryGeneratorFunctions {
                 }
             }
             listOf(
-                Text(driver.event).addStyle(Styles.tableHighlightStyle()),
+                Text(driver.eventDisplay()).addStyle(Styles.tableHighlightStyle()),
                 Text(warning).addStyle(Styles.tableNoticeStyle()),
                 Text(", ").addStyle(Styles.tableHighlightStyle()),
             )
@@ -207,13 +208,13 @@ object WgsSummaryGeneratorFunctions {
         val keyToValueMap = mapOf(
             "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
             "HR status" to characteristicsGenerator.createHRStatusString(),
-            "Driver mutations" to formatList(summarizer.keyVariants()),
-            "Other mutations" to formatList(summarizer.otherVariants()),
-            "Amplified genes" to formatList(summarizer.keyAmplifiedGenes()),
-            "Deleted genes" to formatList(summarizer.keyDeletedGenes()),
+            "Driver mutations" to formatList(summarizer.keyVariantEvents()),
+            "Other mutations" to formatList(summarizer.otherVariantEvents()),
+            "Amplified genes" to formatList(summarizer.keyAmplifiedGeneEvents()),
+            "Deleted genes" to formatList(summarizer.keyDeletedGeneEvents()),
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
             "Gene fusions" to formatList(summarizer.keyFusionEvents()),
-            "Virus" to formatList(summarizer.keyVirusEvents()),
+            "Driver virus" to formatList(summarizer.keyVirusEvents()),
         )
         return orderedKeys.mapNotNull { key -> keyToValueMap[key]?.let { value -> key to value } }
     }
@@ -229,7 +230,7 @@ object WgsSummaryGeneratorFunctions {
                     "Deleted genes",
                     "Homozygously disrupted genes",
                     "Gene fusions",
-                    "Virus"
+                    "Driver virus"
                 )
             }
 
@@ -243,7 +244,7 @@ object WgsSummaryGeneratorFunctions {
                     "Deleted genes",
                     "Homozygously disrupted genes",
                     "Gene fusions",
-                    "Virus",
+                    "Driver virus",
                 )
             }
         }

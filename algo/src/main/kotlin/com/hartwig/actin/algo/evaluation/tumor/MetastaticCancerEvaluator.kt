@@ -17,17 +17,20 @@ object MetastaticCancerEvaluator {
     val STAGE_II_POTENTIALLY_METASTATIC_CANCER_DOIDS = setOf(DoidConstants.BRAIN_CANCER_DOID, DoidConstants.HEAD_AND_NECK_CANCER_DOID)
 
     fun isMetastatic(record: PatientRecord, doidModel: DoidModel): MetastaticCancerEvaluation {
+        val potentiallyStageIIMetastaticCancer = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
+            doidModel,
+            record.tumor.doids,
+            STAGE_II_POTENTIALLY_METASTATIC_CANCER_DOIDS
+        )
+
         return record.tumor.stage?.let {
             when {
-                TumorEvaluationFunctions.isStageMatch(it, setOf(TumorStage.III, TumorStage.IV)) -> MetastaticCancerEvaluation.METASTATIC
+                TumorEvaluationFunctions.isStageMatch(it, setOf(TumorStage.IV)) -> MetastaticCancerEvaluation.METASTATIC
 
-                TumorEvaluationFunctions.isStageMatch(it, setOf(TumorStage.II)) && DoidEvaluationFunctions.isOfAtLeastOneDoidType(
-                    doidModel,
-                    record.tumor.doids,
-                    STAGE_II_POTENTIALLY_METASTATIC_CANCER_DOIDS
-                ) -> {
-                    MetastaticCancerEvaluation.UNDETERMINED
-                }
+                TumorEvaluationFunctions.isStageMatch(it, setOf(TumorStage.III)) || (TumorEvaluationFunctions.isStageMatch(
+                    it,
+                    setOf(TumorStage.II)
+                ) && potentiallyStageIIMetastaticCancer) -> MetastaticCancerEvaluation.UNDETERMINED
 
                 else -> MetastaticCancerEvaluation.NON_METASTATIC
             }

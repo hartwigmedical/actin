@@ -26,35 +26,36 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         }
     }
 
-    private fun convertSequencedAmplifiedGene(sequencedAmplifiedGene: SequencedAmplification): CopyNumber {
-        val canonicalTranscript = canonicalTranscriptIdForGene(sequencedAmplifiedGene.gene)
-        val isCanonicalTranscript = canonicalTranscript == sequencedAmplifiedGene.transcript || sequencedAmplifiedGene.transcript == null
-        val transcriptId = sequencedAmplifiedGene.transcript ?: run {
-            logger.warn("No transcript provided for panel amplification in gene ${sequencedAmplifiedGene.gene}, using canonical transcript")
+    private fun convertSequencedAmplifiedGene(sequencedAmplification: SequencedAmplification): CopyNumber {
+        val canonicalTranscript = canonicalTranscriptIdForGene(sequencedAmplification.gene)
+        val isCanonicalTranscript = canonicalTranscript == sequencedAmplification.transcript || sequencedAmplification.transcript == null
+        val transcriptId = sequencedAmplification.transcript ?: run {
+            logger.warn("No transcript provided for panel amplification in gene ${sequencedAmplification.gene}, using canonical transcript")
             canonicalTranscript
         }
         val canonicalImpact = TranscriptCopyNumberImpact(
             transcriptId = canonicalTranscript,
-            type = resolveCanonicalAmpType(isCanonicalTranscript, sequencedAmplifiedGene.isPartial),
-            minCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null,
-            maxCopies = if (isCanonicalTranscript) sequencedAmplifiedGene.copies else null
+            type = resolveCanonicalAmpType(isCanonicalTranscript, sequencedAmplification.isPartial),
+            minCopies = if (isCanonicalTranscript) sequencedAmplification.copies else null,
+            maxCopies = if (isCanonicalTranscript) sequencedAmplification.copies else null
         )
         val otherImpacts = if (isCanonicalTranscript) emptySet() else setOf(
             TranscriptCopyNumberImpact(
                 transcriptId = transcriptId,
-                type = if (sequencedAmplifiedGene.isPartial == true) CopyNumberType.PARTIAL_GAIN else CopyNumberType.FULL_GAIN,
-                minCopies = sequencedAmplifiedGene.copies,
-                maxCopies = sequencedAmplifiedGene.copies
+                type = if (sequencedAmplification.isPartial == true) CopyNumberType.PARTIAL_GAIN else CopyNumberType.FULL_GAIN,
+                minCopies = sequencedAmplification.copies,
+                maxCopies = sequencedAmplification.copies
             )
         )
+        val gene = sequencedAmplification.gene
 
         return CopyNumber(
-            gene = sequencedAmplifiedGene.gene,
+            gene = gene,
             geneRole = GeneRole.UNKNOWN,
             proteinEffect = ProteinEffect.UNKNOWN,
             isAssociatedWithDrugResistance = null,
             isReportable = true,
-            event = "${sequencedAmplifiedGene.gene} amp",
+            event = if (sequencedAmplification.isPartial == true) "$gene partial amp" else "$gene amp",
             driverLikelihood = DriverLikelihood.HIGH,
             evidence = ExtractionUtil.noEvidence(),
             canonicalImpact = canonicalImpact,

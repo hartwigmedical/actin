@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
@@ -60,13 +59,11 @@ class EligibleTrialGenerator(
             includeCohortConfig = false,
             includeSites = true
         )
-        if (footNote != null) {
-            val note = Cells.createSpanningSubNote(footNote, table).apply {
-                if (useSmallerSize) setFontSize(Styles.SMALL_FONT_SIZE)
-            }
-            table.addCell(note)
-        }
         return table
+    }
+
+    override fun footnote(): String? {
+        return footNote
     }
 
     override fun cohortSize(): Int {
@@ -134,17 +131,14 @@ class EligibleTrialGenerator(
             val title = "$trialDescriptionString that are open and potentially eligible $cohortsFromTrialsString"
 
             val footNote = listOfNotNull(
-                "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
-                    .takeIf { relevantNationalExternalTrials.isNotEmpty() },
+                "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font.".takeIf { relevantNationalExternalTrials.isNotEmpty() },
                 ("${
                     TrialFormatFunctions.formatCountWithLabel(
                         relevantNationalExternalTrialsFilteredCount,
                         "trial"
                     )
-                } $FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE")
-                    .takeIf { relevantNationalExternalTrialsFilteredCount > 0 }).joinToString(
-                "\n"
-            )
+                } $FILTERED_NATIONAL_EXTERNAL_TRIALS_FOOT_NOTE").takeIf { relevantNationalExternalTrialsFilteredCount > 0 }).joinToString("\n")
+                .ifEmpty { null }
 
             return EligibleTrialGenerator(
                 cohorts = openAndEligibleLocalCohorts,
@@ -197,6 +191,7 @@ class EligibleTrialGenerator(
                     .takeIf { externalTrialsFilteredCount > 0 && !isNational }).joinToString(
                 "\n"
             )
+                .ifEmpty { null }
 
             return EligibleTrialGenerator(
                 cohorts = emptyList(),
