@@ -22,8 +22,7 @@ object TestTreatmentMatchFactory {
             referenceDateIsLive = true,
             trialMatches = emptyList(),
             standardOfCareMatches = null,
-            personalizedTreatmentSummary = null,
-            maxMolecularTestAge = null
+            personalizedTreatmentSummary = null
         )
     }
 

@@ -9,10 +9,9 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import java.time.LocalDate
 
-class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.FUSION, "Fusion in"), maxTestAge = maxTestAge) {
+class HasFusionInGene(override val gene: String) :
+    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.FUSION, "Fusion in")) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()

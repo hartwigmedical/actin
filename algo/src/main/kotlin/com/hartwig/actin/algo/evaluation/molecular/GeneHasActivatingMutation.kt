@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import java.time.LocalDate
 
 enum class ActivationWarningType(val description: String? = null) {
     ASSOCIATED_WITH_RESISTANCE(
@@ -43,11 +42,9 @@ private const val CLONAL_CUTOFF = 0.5
 class GeneHasActivatingMutation(
     override val gene: String,
     private val codonsToIgnore: List<String>?,
-    maxTestAge: LocalDate? = null,
     private val inKinaseDomain: Boolean = false,
 ) : MolecularEvaluationFunction(
-    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in"),
-    maxTestAge = maxTestAge
+    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in")
 ) {
     override fun evaluate(test: MolecularTest): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh

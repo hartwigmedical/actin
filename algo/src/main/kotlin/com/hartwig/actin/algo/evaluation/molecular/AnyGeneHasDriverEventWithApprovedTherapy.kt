@@ -12,7 +12,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
-import java.time.LocalDate
 
 private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(
     DoidConstants.RECTUM_NEUROENDOCRINE_NEOPLASM_DOID,
@@ -23,9 +22,8 @@ private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(
 class AnyGeneHasDriverEventWithApprovedTherapy(
     private val genes: Set<String>?,
     val doidModel: DoidModel,
-    private val evaluationFunctionFactory: EvaluationFunctionFactory,
-    private val maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+    private val evaluationFunctionFactory: EvaluationFunctionFactory
+) : MolecularEvaluationFunction() {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
@@ -40,7 +38,6 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
                 val evaluation = HasMolecularDriverEventInNsclc(
                     genesToInclude = genes?.toSet(),
                     genesToExclude = emptySet(),
-                    maxTestAge = maxTestAge,
                     warnForMatchesOutsideGenesToInclude = false,
                     withAvailableSoc = true
                 ).evaluate(record)

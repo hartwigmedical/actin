@@ -19,7 +19,6 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.time.Period
 import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
@@ -45,7 +44,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val configuration = AlgoConfiguration.create(config.overridesYaml)
         LOGGER.info(" Loaded algo config: $configuration")
 
-        val maxMolecularTestAge = configuration.maxMolecularTestAgeInDays?.let { referenceDateProvider.date().minus(Period.ofDays(it)) }
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = inputData.doidModel,
@@ -54,8 +52,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,
-            algoConfiguration = configuration,
-            maxMolecularTestAge = maxMolecularTestAge
+            algoConfiguration = configuration
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
@@ -70,7 +67,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             )
 
         val treatmentMatcher =
-            TreatmentMatcher.create(resources, inputData.trials, evidenceEntries, resistanceEvidenceMatcher, maxMolecularTestAge)
+            TreatmentMatcher.create(resources, inputData.trials, evidenceEntries, resistanceEvidenceMatcher)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         LOGGER.info("Printing treatment match")

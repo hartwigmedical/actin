@@ -29,8 +29,5 @@ abstract class RuleMapper(val resources: RuleMappingResources) {
         return resources.atcTree
     }
 
-    protected fun maxMolecularTestAge() =
-        resources.maxMolecularTestAge
-
     abstract fun createMappings(): Map<EligibilityRule, FunctionCreator>
 }

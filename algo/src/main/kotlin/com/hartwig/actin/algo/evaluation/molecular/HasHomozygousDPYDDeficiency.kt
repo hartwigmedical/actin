@@ -5,9 +5,8 @@ import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunct
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
-import java.time.LocalDate
 
-class HasHomozygousDPYDDeficiency(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge, true) {
+class HasHomozygousDPYDDeficiency: MolecularEvaluationFunction(true) {
 
     override fun noMolecularTestEvaluation(): Evaluation {
         return EvaluationFactory.undetermined(

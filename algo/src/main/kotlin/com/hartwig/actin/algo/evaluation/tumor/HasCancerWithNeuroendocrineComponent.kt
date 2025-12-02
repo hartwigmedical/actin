@@ -6,9 +6,8 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIs
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
-import java.time.LocalDate
 
-class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, private val maxTestAge: LocalDate? = null) :
+class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -40,7 +39,7 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, pri
 
     private fun hasNeuroendocrineMolecularProfile(record: PatientRecord): Pair<Boolean, List<String>> {
         val genes = listOf("TP53", "PTEN", "RB1")
-        val inactivatedGenes = genes.filter { geneIsInactivatedForPatient(it, record, maxTestAge) }
+        val inactivatedGenes = genes.filter { geneIsInactivatedForPatient(it, record) }
         return Pair(inactivatedGenes.size >= 2, inactivatedGenes)
     }
 }

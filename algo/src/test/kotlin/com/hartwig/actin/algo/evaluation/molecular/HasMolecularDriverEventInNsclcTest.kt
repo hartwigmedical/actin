@@ -338,14 +338,12 @@ class HasMolecularDriverEventInNsclcTest {
     private fun createFunction(
         genesToInclude: Set<String>?,
         genesToExclude: Set<String>,
-        maxTestAge: LocalDate? = null,
         warnForMatchesOutsideGenesToInclude: Boolean = false,
         withAvailableSOC: Boolean = false
     ): HasMolecularDriverEventInNsclc {
         return HasMolecularDriverEventInNsclc(
             genesToInclude,
             genesToExclude,
-            maxTestAge,
             warnForMatchesOutsideGenesToInclude,
             withAvailableSOC
         )

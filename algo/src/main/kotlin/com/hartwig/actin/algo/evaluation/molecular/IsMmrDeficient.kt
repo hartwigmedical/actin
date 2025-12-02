@@ -14,14 +14,14 @@ import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
-class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+class IsMmrDeficient: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestEvaluation = IhcTestEvaluation.create("MMR", record.ihcTests)
         val isMmrDeficientIhcResult = isMmrDeficientIhc(ihcTestEvaluation)
         val isMmrProficientIhcResult = isMmrProficientIhc(ihcTestEvaluation)
 
-        val molecularTestFilter = MolecularTestFilter(maxTestAge, false)
+        val molecularTestFilter = MolecularTestFilter(false)
         val molecularHistory = MolecularHistory(molecularTestFilter.apply(record.molecularTests))
         val test = findRelevantTest(molecularHistory)
 
