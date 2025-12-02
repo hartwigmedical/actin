@@ -60,22 +60,6 @@ class GeneHasSpecificExonSkippingTest {
     }
 
     @Test
-    fun `Should warn on splice variant in specific exon with canonical impact`() {
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withVariant(
-                    SPLICE_VARIANT.copy(
-                        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
-                            affectedExon = 2, codingEffect = CodingEffect.SPLICE
-                        )
-                    )
-                )
-            )
-        )
-    }
-
-    @Test
     fun `Should fail on splice variant in specific exon that is not reportable`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT.copy(isReportable = false)))

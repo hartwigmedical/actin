@@ -18,6 +18,9 @@ import java.time.LocalDate
 
 val EXAMPLE_DATE: LocalDate = LocalDate.of(1900, 1, 1)
 
+const val NO_SUFFICIENT_QUALITY_MESSAGE = "No molecular results of sufficient quality"
+const val INSUFFICIENT_MOLECULAR_DATA_MESSAGE = "Insufficient molecular data"
+
 abstract class MolecularEvaluationFunction(
     maxTestAge: LocalDate? = null,
     useInsufficientQualityRecords: Boolean = false,
@@ -34,7 +37,7 @@ abstract class MolecularEvaluationFunction(
 
         return if (recentMolecularTests.isEmpty() && relevantIhcTests.isNullOrEmpty()) {
             noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
-                "No molecular results of sufficient quality",
+                NO_SUFFICIENT_QUALITY_MESSAGE,
                 isMissingMolecularResultForEvaluation = true
             )
         } else {
@@ -56,7 +59,7 @@ abstract class MolecularEvaluationFunction(
             } else {
                 onlyIhcEvaluation
                     ?: noMolecularTestEvaluation()
-                    ?: EvaluationFactory.undetermined("Insufficient molecular data", isMissingMolecularResultForEvaluation = true)
+                    ?: EvaluationFactory.undetermined(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, isMissingMolecularResultForEvaluation = true)
             }
         }
     }
