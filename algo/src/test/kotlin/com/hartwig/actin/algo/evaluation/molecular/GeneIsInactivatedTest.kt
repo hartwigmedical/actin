@@ -79,32 +79,6 @@ class GeneIsInactivatedTest {
     }
 
     @Test
-    fun `Should pass with matching IHC event for both functions`() {
-        assertBothFunctionsForIhc(EvaluationResult.PASS, MolecularTestFactory.withIhcTests(matchingIhcResult))
-    }
-
-    @Test
-    fun `Should warn with potentially eligible IHC event for both functions`() {
-        assertBothFunctionsForIhc(
-            EvaluationResult.WARN,
-            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(scoreText = "possible loss"))
-        )
-    }
-
-    @Test
-    fun `Should fail with potentially eligible IHC event for both functions if correct result but on wrong gene`() {
-        assertBothFunctionsForIhc(
-            EvaluationResult.FAIL,
-            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE))
-        )
-    }
-
-    @Test
-    fun `Should fail with matching IHC event for both functions if gene is not considered for IHC`() {
-        assertBothFunctions(EvaluationResult.FAIL, MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)))
-    }
-
-    @Test
     fun `Should pass with matching TSG homozygous disruption for both functions`() {
         assertBothFunctions(EvaluationResult.PASS, MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption))
     }
@@ -195,6 +169,49 @@ class GeneIsInactivatedTest {
             EvaluationResult.WARN,
             MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.NO_EFFECT))
         )
+    }
+
+    @Test
+    fun `Should pass with matching IHC event if looking for inactivation`() {
+        val result = GeneIsInactivated(
+            gene = IHC_EVALUABLE_GENE,
+            onlyDeletions = false
+        ).evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
+
+        assertMolecularEvaluation(EvaluationResult.PASS, result)
+        assertThat(result.passMessagesStrings()).containsExactly("MSH2 inactivation (MSH2 loss by IHC)")
+    }
+
+    @Test
+    fun `Should warn with matching IHC event if looking for only deletions`() {
+        val result = GeneIsInactivated(
+            gene = IHC_EVALUABLE_GENE,
+            onlyDeletions = true
+        ).evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
+
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessagesStrings()).containsExactly("MSH2 loss by IHC may indicate MSH2 gene deletion")
+    }
+
+    @Test
+    fun `Should warn with potentially eligible IHC event for both functions`() {
+        assertBothFunctionsForIhc(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(scoreText = "possible loss"))
+        )
+    }
+
+    @Test
+    fun `Should fail with potentially eligible IHC event for both functions if correct result but on wrong gene`() {
+        assertBothFunctionsForIhc(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE))
+        )
+    }
+
+    @Test
+    fun `Should fail with matching IHC event for both functions if gene is not considered for IHC`() {
+        assertBothFunctions(EvaluationResult.FAIL, MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)))
     }
 
     @Test
@@ -402,7 +419,6 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should warn with multiple low driver variants with unknown phase groups and inactivating effects`() {
         val variant1 = variantWithPhaseGroups(null)
-        // Add copy number to make distinct:
         val variant2 = variant1.copy(variantCopyNumber = 1.0)
 
         assertMolecularEvaluation(
