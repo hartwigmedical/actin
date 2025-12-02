@@ -13,9 +13,14 @@ class HasMetastaticCancerTest {
     private val function = HasMetastaticCancer(doidModel)
 
     @Test
-    fun `Should pass for stage III or IV`() {
-        assertEvaluation(EvaluationResult.PASS, evaluateFunction(TumorStage.III))
+    fun `Should pass for stage IV`() {
         assertEvaluation(EvaluationResult.PASS, evaluateFunction(TumorStage.IV))
+    }
+
+
+    @Test
+    fun `Should be undetermined for stage III`() {
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(TumorStage.III))
     }
 
     @Test

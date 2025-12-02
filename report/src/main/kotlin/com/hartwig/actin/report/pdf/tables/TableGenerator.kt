@@ -9,4 +9,6 @@ interface TableGenerator {
     fun forceKeepTogether(): Boolean
     
     fun contents(): Table
+
+    fun footnote(): String? = null
 }

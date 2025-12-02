@@ -9,6 +9,9 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import java.time.LocalDate
 
+const val NO_SUFFICIENT_QUALITY_MESSAGE = "No molecular results of sufficient quality"
+const val INSUFFICIENT_MOLECULAR_DATA_MESSAGE = "Insufficient molecular data"
+
 abstract class MolecularEvaluationFunction(
     maxTestAge: LocalDate? = null,
     useInsufficientQualityRecords: Boolean = false,
@@ -23,7 +26,7 @@ abstract class MolecularEvaluationFunction(
 
         return if (recentMolecularTests.isEmpty()) {
             noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
-                "No molecular results of sufficient quality",
+                NO_SUFFICIENT_QUALITY_MESSAGE,
                 isMissingMolecularResultForEvaluation = true
             )
         } else {
@@ -41,7 +44,7 @@ abstract class MolecularEvaluationFunction(
             }
 
             return noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
-                "Insufficient molecular data",
+                INSUFFICIENT_MOLECULAR_DATA_MESSAGE,
                 isMissingMolecularResultForEvaluation = true
             )
         }
