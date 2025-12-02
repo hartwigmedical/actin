@@ -5,6 +5,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import java.util.function.Predicate
 
+const val UNDETERMINED_NOT_TESTED_STRING = "undetermined (not tested for"
+
 private fun List<String>.joinWithConjunction(conjunction: String): String = when (size) {
     0 -> ""
     1 -> plural(this[0])
@@ -76,6 +78,6 @@ data class TargetCoverageMessage(private val messagePrefix: String?, private val
 
     override fun toString(): String {
         return "${if (messagePrefix != null) "$messagePrefix " else ""}gene${if (genes.size > 1) "s" else ""} " +
-                "${Format.concat(genes)} undetermined (not tested for ${targetString})"
+                "${Format.concat(genes)} $UNDETERMINED_NOT_TESTED_STRING ${targetString})"
     }
 }

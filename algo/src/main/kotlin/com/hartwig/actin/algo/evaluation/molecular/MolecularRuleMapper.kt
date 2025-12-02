@@ -163,13 +163,13 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasMolecularEventInNSCLCWithAvailableSocAnyLineCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
+        return {
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE,
                 emptySet(),
                 maxMolecularTestAge(),
-                false,
-                true
+                warnForMatchesOutsideGenesToInclude = false,
+                withAvailableSoc = true
             )
         }
     }
@@ -181,20 +181,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE - genes,
                 emptySet(),
                 maxMolecularTestAge(),
-                false,
-                true
+                warnForMatchesOutsideGenesToInclude = false,
+                withAvailableSoc = true
             )
         }
     }
 
     private fun hasMolecularEventInNSCLCWithAvailableSocFirstLineCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
+        return {
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE,
                 emptySet(),
                 maxMolecularTestAge(),
-                false,
-                true
+                warnForMatchesOutsideGenesToInclude = false,
+                withAvailableSoc = true
             )
         }
     }
@@ -206,8 +206,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE - genes,
                 emptySet(),
                 maxMolecularTestAge(),
-                false,
-                true
+                warnForMatchesOutsideGenesToInclude = false,
+                withAvailableSoc = true
             )
         }
     }
