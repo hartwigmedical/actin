@@ -21,8 +21,8 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
     ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val exonSkippingFusions = findExonSkippingFusions(test)
-        val exonSkippingFusionEvents = exonSkippingFusions.map(Fusion::event).toSet()
+        val exonSkippingFusionEvents = findExonSkippingFusions(test)
+            .map(Fusion::event).toSet()
         val exonSplicingVariants = findExonSplicingVariants(test, true)
         val potentialExonSplicingVariants = findExonSplicingVariants(test, false)
         val exonSplicingVariantEvents = exonSplicingVariants.map(Variant::event).toSet()
@@ -33,19 +33,27 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
                 .toSet()
 
         return when {
-            exonSkippingFusions.isNotEmpty() && exonSplicingVariants.isEmpty() -> {
+            exonSkippingFusionEvents.isNotEmpty() && exonSplicingVariants.isEmpty() && potentialExonSplicingVariantEvents.isEmpty() -> {
                 EvaluationFactory.pass(
                     "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)}",
                     inclusionEvents = exonSkippingFusionEvents
                 )
             }
 
-            exonSkippingFusions.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)} " +
-                            "together with additional potentially exon $exonToSkip skipping variant(s) (${concat(exonSplicingVariantEvents)})",
-                    inclusionEvents = exonSkippingFusionEvents + exonSplicingVariantEvents
-                )
+            exonSkippingFusionEvents.isNotEmpty() -> {
+                if (confirmedExonSkippingEvents.isNotEmpty()) {
+                    EvaluationFactory.pass(
+                        "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)} " +
+                                "together with confirmed additional exon $exonToSkip skipping variant(s) (${concat(confirmedExonSkippingEvents)})",
+                        inclusionEvents = exonSkippingFusionEvents + confirmedExonSkippingEvents
+                    )
+                } else {
+                    EvaluationFactory.warn(
+                        "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)} " +
+                                "together with potential additional exon $exonToSkip skipping variant(s) (${concat(exonSplicingVariantEvents)})",
+                        inclusionEvents = exonSkippingFusionEvents + exonSplicingVariantEvents
+                    )
+                }
             }
 
             confirmedExonSkippingEvents.isNotEmpty() -> {
