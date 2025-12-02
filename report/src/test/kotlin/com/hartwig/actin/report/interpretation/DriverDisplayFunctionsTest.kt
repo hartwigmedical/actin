@@ -10,7 +10,16 @@ import org.junit.Test
 class DriverDisplayFunctionsTest {
 
     @Test
-    fun `Should format variant event correctly`() {
+    fun `Should format variant event correctly when equal to source event`() {
+        val variant = TestMolecularFactory.createMinimalVariant().copy(
+            event = "BRAF V600E",
+            sourceEvent = "BRAF V600E"
+        )
+        Assertions.assertThat(variant.eventDisplay()).isEqualTo("BRAF V600E")
+    }
+
+    @Test
+    fun `Should format variant event correctly when differing from source event`() {
         val variant = TestMolecularFactory.createMinimalVariant().copy(
             event = "BRAF V600E",
             sourceEvent = "BRAF V500E"
