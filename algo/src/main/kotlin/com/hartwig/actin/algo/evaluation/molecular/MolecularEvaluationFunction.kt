@@ -16,7 +16,7 @@ import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
-val EXAMPLE_DATE = LocalDate.of(1900,1,1)
+val EXAMPLE_DATE: LocalDate = LocalDate.of(1900, 1, 1)
 
 abstract class MolecularEvaluationFunction(
     maxTestAge: LocalDate? = null,
@@ -29,9 +29,8 @@ abstract class MolecularEvaluationFunction(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val recentMolecularTests = molecularTestFilter.apply(record.molecularTests)
-        val relevantIhcTests = if (gene in GeneConstants.IHC_EVALUABLE_GENES) {
-            gene?.let { IhcTestEvaluation.create(item = GeneConstants.returnProteinForGene(it), ihcTests = record.ihcTests).filteredTests }
-        } else null
+        val relevantIhcTests = gene.takeIf { it in GeneConstants.IHC_EVALUABLE_GENES }
+            ?.let { IhcTestEvaluation.create(item = GeneConstants.returnProteinForGene(it), ihcTests = record.ihcTests).filteredTests }
 
         return if (recentMolecularTests.isEmpty() && relevantIhcTests.isNullOrEmpty()) {
             noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
@@ -39,14 +38,8 @@ abstract class MolecularEvaluationFunction(
                 isMissingMolecularResultForEvaluation = true
             )
         } else {
-            if (relevantIhcTests.isNullOrEmpty() && gene?.let { g ->
-                    recentMolecularTests.any { t ->
-                        t.testsGene(
-                            g,
-                            targetCoveragePredicate
-                        )
-                    }
-                } == false)
+            val geneIsNotTested = gene?.let { g -> recentMolecularTests.none { t -> t.testsGene(g, targetCoveragePredicate) } } == true
+            if (geneIsNotTested && relevantIhcTests.isNullOrEmpty())
                 return Evaluation(
                     recoverable = false,
                     result = EvaluationResult.UNDETERMINED,
@@ -58,15 +51,12 @@ abstract class MolecularEvaluationFunction(
                 recentMolecularTests.mapNotNull { evaluate(it, record.ihcTests)?.let { eval -> MolecularEvaluation(it, eval) } }
             val onlyIhcEvaluation = evaluate(createEmptyMolecularTest(), record.ihcTests)
 
-            return when {
-                testEvaluation.isNotEmpty() -> MolecularEvaluation.combine(testEvaluation, evaluationPrecedence())
-                onlyIhcEvaluation != null -> onlyIhcEvaluation
-                else -> {
-                    noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
-                        "Insufficient molecular data",
-                        isMissingMolecularResultForEvaluation = true
-                    )
-                }
+            return if (testEvaluation.isNotEmpty()) {
+                MolecularEvaluation.combine(testEvaluation, evaluationPrecedence())
+            } else {
+                onlyIhcEvaluation
+                    ?: noMolecularTestEvaluation()
+                    ?: EvaluationFactory.undetermined("Insufficient molecular data", isMissingMolecularResultForEvaluation = true)
             }
         }
     }

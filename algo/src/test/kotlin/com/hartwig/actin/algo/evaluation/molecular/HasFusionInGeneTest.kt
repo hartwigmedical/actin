@@ -164,14 +164,14 @@ class HasFusionInGeneTest {
             scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first(),
             impliesPotentialIndeterminateStatus = true
         )
-        //val result = ihcFunction.evaluate(MolecularTestFactory.withIhcTests(test))
+        val result = ihcFunction.evaluate(MolecularTestFactory.withIhcTests(test))
         val resultOnlyIhcTests = ihcFunction.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(test)))
 
-        //assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
         assertMolecularEvaluation(EvaluationResult.WARN, resultOnlyIhcTests)
 
         val message = "ALK IHC result(s) are indeterminate - undetermined if this may indicate ALK fusion"
-        //assertThat(result.warnMessagesStrings()).containsExactly(message)
+        assertThat(result.warnMessagesStrings()).containsExactly(message)
         assertThat(resultOnlyIhcTests.warnMessagesStrings()).containsExactly(message)
     }
 

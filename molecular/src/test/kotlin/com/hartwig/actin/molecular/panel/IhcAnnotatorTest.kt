@@ -7,14 +7,13 @@ import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
-import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
+private const val TESTED_GENE = "gene"
+
 private val TEST_DATE = LocalDate.of(2023, 1, 1)
-private val FUSION_TESTED_GENE = GeneConstants.IHC_FUSION_EVALUABLE_GENES.first()
-private val MUTATION_OR_DELETED_TESTED_GENE = GeneConstants.IHC_LOSS_EVALUABLE_GENES.first()
 
 class IhcAnnotatorTest {
 
@@ -42,19 +41,15 @@ class IhcAnnotatorTest {
 
     @Test
     fun `Should annotate IHC extraction with fusion tested genes`() {
-        val ihcExtraction = IhcExtraction(
-            TEST_DATE,
-            fusionTestedGenes = setOf(FUSION_TESTED_GENE),
-            mutationAndDeletionTestedGenes = emptySet(),
-        )
-
+        val ihcExtraction =
+            IhcExtraction(date = TEST_DATE, fusionTestedGenes = setOf(TESTED_GENE), mutationAndDeletionTestedGenes = emptySet())
         val result = ihcAnnotator.annotate(ihcExtraction)
 
         assertThat(result).isEqualTo(
             baseMolecularTest.copy(
                 targetSpecification = PanelTargetSpecification(
                     mapOf(
-                        FUSION_TESTED_GENE to listOf(
+                        TESTED_GENE to listOf(
                             MolecularTestTarget.FUSION
                         )
                     )
@@ -65,19 +60,39 @@ class IhcAnnotatorTest {
 
     @Test
     fun `Should annotate IHC extraction with mutation and deletion tested genes`() {
-        val ihcExtraction = IhcExtraction(
-            date = TEST_DATE,
-            fusionTestedGenes = emptySet(),
-            mutationAndDeletionTestedGenes = setOf(MUTATION_OR_DELETED_TESTED_GENE),
-        )
-
+        val ihcExtraction =
+            IhcExtraction(date = TEST_DATE, fusionTestedGenes = emptySet(), mutationAndDeletionTestedGenes = setOf(TESTED_GENE))
         val result = ihcAnnotator.annotate(ihcExtraction)
 
         assertThat(result).isEqualTo(
             baseMolecularTest.copy(
                 targetSpecification = PanelTargetSpecification(
                     mapOf(
-                        MUTATION_OR_DELETED_TESTED_GENE to listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION)
+                        TESTED_GENE to listOf(
+                            MolecularTestTarget.MUTATION,
+                            MolecularTestTarget.DELETION
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should annotate IHC extraction with fusion, mutation and deletion tested genes if tested for both`() {
+        val ihcExtraction =
+            IhcExtraction(date = TEST_DATE, fusionTestedGenes = setOf(TESTED_GENE), mutationAndDeletionTestedGenes = setOf(TESTED_GENE))
+        val result = ihcAnnotator.annotate(ihcExtraction)
+
+        assertThat(result).isEqualTo(
+            baseMolecularTest.copy(
+                targetSpecification = PanelTargetSpecification(
+                    mapOf(
+                        TESTED_GENE to listOf(
+                            MolecularTestTarget.FUSION,
+                            MolecularTestTarget.MUTATION,
+                            MolecularTestTarget.DELETION
+                        )
                     )
                 )
             )

@@ -13,13 +13,11 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 class IhcAnnotator() : MolecularAnnotator<IhcExtraction> {
 
     override fun annotate(input: IhcExtraction): MolecularTest {
-        val geneTargetMap = (input.fusionTestedGenes).associateWith { listOf(MolecularTestTarget.FUSION) } +
-                input.mutationAndDeletionTestedGenes.associateWith {
-                    listOf(
-                        MolecularTestTarget.MUTATION,
-                        MolecularTestTarget.DELETION
-                    )
-                }
+        val fusionTargetList = input.fusionTestedGenes.map { gene -> gene to setOf(MolecularTestTarget.FUSION) }
+        val mutationAndDeletionTargetList =
+            input.mutationAndDeletionTestedGenes.map { gene -> gene to setOf(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION) }
+        val combinedGeneTargetMap = (fusionTargetList + mutationAndDeletionTargetList).flatMap { (gene, target) -> target.map { gene to it } }
+            .groupBy({ it.first }, { it.second }).mapValues { it.value }
 
         return MolecularTest(
             date = input.date,
@@ -27,7 +25,7 @@ class IhcAnnotator() : MolecularAnnotator<IhcExtraction> {
             reportHash = null,
             experimentType = ExperimentType.IHC,
             testTypeDisplay = ExperimentType.IHC.display(),
-            targetSpecification = PanelTargetSpecification(geneTargetMap),
+            targetSpecification = PanelTargetSpecification(combinedGeneTargetMap),
             refGenomeVersion = RefGenomeVersion.V37,
             containsTumorCells = true,
             hasSufficientPurity = true,

@@ -51,14 +51,12 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
             }
         }
 
-        val ihcEventsThatQualify: MutableSet<String> = mutableSetOf()
-        val ihcEventsThatAreIndeterminate: MutableSet<String> = mutableSetOf()
-
         val ihcTestEvaluation = if (gene in GeneConstants.IHC_FUSION_EVALUABLE_GENES) IhcTestEvaluation.create(gene, ihcTests) else null
-        if (ihcTestEvaluation?.hasCertainExactPositiveResultsForItem() == true) {
-            ihcEventsThatQualify.add("$gene positive by IHC")
-        } else if (ihcTestEvaluation?.hasPossiblePositiveResultsForItem() == true) {
-            ihcEventsThatAreIndeterminate.add("$gene result indeterminate by IHC")
+
+        val (ihcEventsThatQualify, ihcEventsThatAreIndeterminate) = when {
+            ihcTestEvaluation?.hasCertainExactPositiveResultsForItem() == true -> setOf("$gene positive by IHC") to emptySet()
+            ihcTestEvaluation?.hasPossiblePositiveResultsForItem() == true -> emptySet<String>() to setOf("$gene result indeterminate by IHC")
+            else -> emptySet<String>() to emptySet()
         }
 
         val anyWarns = listOf(
