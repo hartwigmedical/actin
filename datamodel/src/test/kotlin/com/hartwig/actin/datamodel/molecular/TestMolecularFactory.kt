@@ -525,7 +525,8 @@ object TestMolecularFactory {
                     geneRole = GeneRole.ONCO,
                     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
                     isAssociatedWithDrugResistance = true,
-                ), Variant(
+                ),
+                Variant(
                     chromosome = "7",
                     position = 100000,
                     ref = "T",
@@ -603,7 +604,8 @@ object TestMolecularFactory {
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null
-                ), CopyNumber(
+                ),
+                CopyNumber(
                     isReportable = true,
                     event = "EGFR amp",
                     driverLikelihood = DriverLikelihood.HIGH,
@@ -646,7 +648,8 @@ object TestMolecularFactory {
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null
-                ), CopyNumber(
+                ),
+                CopyNumber(
                     isReportable = false,
                     event = "RET copy nr",
                     driverLikelihood = null,
@@ -671,7 +674,8 @@ object TestMolecularFactory {
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null
-                ), CopyNumber(
+                ),
+                CopyNumber(
                     isReportable = true,
                     event = "DFGFRF1 del",
                     driverLikelihood = DriverLikelihood.HIGH,
@@ -696,7 +700,8 @@ object TestMolecularFactory {
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null
-                ), CopyNumber(
+                ),
+                CopyNumber(
                     isReportable = true,
                     event = "PIK3CA partial amp",
                     driverLikelihood = DriverLikelihood.HIGH,
@@ -711,7 +716,8 @@ object TestMolecularFactory {
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null
-                ), CopyNumber(
+                ),
+                CopyNumber(
                     isReportable = false,
                     event = "UNREP copy number",
                     driverLikelihood = DriverLikelihood.MEDIUM,
@@ -775,7 +781,8 @@ object TestMolecularFactory {
                     event = "HPV positive",
                     driverLikelihood = DriverLikelihood.LOW,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                ), Virus(
+                ),
+                Virus(
                     name = "Epstein-Barr virus",
                     type = VirusType.EBV,
                     integrations = 4,
@@ -784,7 +791,8 @@ object TestMolecularFactory {
                     event = "EBV positive",
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                ), Virus(
+                ),
+                Virus(
                     name = "Other virus",
                     type = VirusType.OTHER,
                     integrations = 4,

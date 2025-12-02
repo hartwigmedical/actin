@@ -45,9 +45,9 @@ class MolecularDriversSummarizer private constructor(
     fun keyHomozygouslyDisruptedGenes(): List<String> =
         drivers.homozygousDisruptions.filter(::isReportableHighDriver).map(GeneAlteration::gene).distinct().sorted()
 
-    fun keyFusionEvents(): List<String> = drivers.fusions.keyEvents().distinct().sorted()
+    fun keyFusionEvents(): List<String> = drivers.fusions.keyEvents()
 
-    fun keyVirusEvents(): List<String> = drivers.viruses.keyEvents().distinct().sorted()
+    fun keyVirusEvents(): List<String> = drivers.viruses.keyEvents()
 
     fun actionableEventsThatAreNotKeyDrivers(): List<Driver> {
         val nonDisruptionDrivers = listOf(
@@ -64,7 +64,7 @@ class MolecularDriversSummarizer private constructor(
     private fun isReportableHighDriver(driver: Driver): Boolean =
         driver.driverLikelihood == DriverLikelihood.HIGH && driver.isReportable
 
-    private fun List<Driver>.keyEvents() = filter(::isReportableHighDriver).map { it.eventDisplay() }.distinct()
+    private fun List<Driver>.keyEvents() = filter(::isReportableHighDriver).map { it.eventDisplay() }.distinct().sorted()
 
     companion object {
         fun fromMolecularDriversAndEvaluatedCohorts(
