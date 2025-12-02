@@ -12,12 +12,17 @@ class MetastaticCancerEvaluatorTest {
     private val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
 
     @Test
-    fun `Should return METASTATIC for stage III or IV`() {
-        listOf(TumorStage.III, TumorStage.IV).forEach { stage ->
-            assertThat(MetastaticCancerEvaluator.isMetastatic(TumorTestFactory.withTumorStage(stage), doidModel)).isEqualTo(
-                    MetastaticCancerEvaluation.METASTATIC
-                )
-        }
+    fun `Should return METASTATIC for stage IV`() {
+        assertThat(MetastaticCancerEvaluator.isMetastatic(TumorTestFactory.withTumorStage(TumorStage.IV), doidModel)).isEqualTo(
+            MetastaticCancerEvaluation.METASTATIC
+        )
+    }
+
+    @Test
+    fun `Should return UNDETERMINED for tumor stage III`() {
+        assertThat(MetastaticCancerEvaluator.isMetastatic(TumorTestFactory.withTumorStage(TumorStage.III), doidModel)).isEqualTo(
+            MetastaticCancerEvaluation.UNDETERMINED
+        )
     }
 
     @Test
