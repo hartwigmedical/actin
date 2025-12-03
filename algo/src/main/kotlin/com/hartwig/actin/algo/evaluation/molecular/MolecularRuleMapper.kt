@@ -123,7 +123,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             AnyGeneHasDriverEventWithApprovedTherapy(
                 null,
                 doidModel(),
-                EvaluationFunctionFactory.create(resources),)
+                EvaluationFunctionFactory.create(resources),
+
+            )
         }
     }
 
@@ -133,7 +135,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             AnyGeneHasDriverEventWithApprovedTherapy(
                 input.geneNames,
                 doidModel(),
-                EvaluationFunctionFactory.create(resources),)
+                EvaluationFunctionFactory.create(resources),
+
+            )
         }
     }
 
@@ -218,7 +222,10 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneIsInactivatedCreator(onlyDeletions: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsInactivated(gene = functionInputResolver().createOneGeneInput(function).geneName, onlyDeletions = onlyDeletions)
+            GeneIsInactivated(
+                gene = functionInputResolver().createOneGeneInput(function).geneName,
+                onlyDeletions = onlyDeletions
+            )
         }
     }
 

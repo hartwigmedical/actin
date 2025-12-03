@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
+import com.hartwig.actin.molecular.util.GeneConstants
 
 private const val PLOIDY_AMPLIFICATION_FACTOR = 3.0
 private const val ASSUMED_PLOIDY = 2.0
@@ -81,7 +84,7 @@ private enum class AmplificationEvaluation {
 class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?) :
     MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, "Amplification of")) {
 
-    override fun evaluate(test: MolecularTest): Evaluation {
+    override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>> =
             test.drivers.copyNumbers.filter { copyNumber -> copyNumber.gene == gene }
                 .groupBy({ copyNumber ->
@@ -96,6 +99,14 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
         val eligibleAmplification = evaluatedCopyNumbers[AmplificationEvaluation.ELIGIBLE_FULL_AMP]
         val fullAmplificationWithUnknownCopyNumber = evaluatedCopyNumbers[AmplificationEvaluation.FULL_AMP_WITH_UNKNOWN_COPY_NUMBER]
         val requestedCopiesMessage = requestedMinCopyNumber?.let { " with >= $requestedMinCopyNumber copies" } ?: ""
+
+        val ihcTestEvaluation =
+            if (gene in GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.keys) IhcTestEvaluation.create(
+                GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.getValue(
+                    gene
+                ), ihcTests
+            ) else null
+        val hasPositiveIhcEvaluation = ihcTestEvaluation?.hasCertainBroadPositiveResultsForItem() == true
 
         return when {
             eligibleAmplification != null -> {
@@ -121,7 +132,7 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
                 }
             }
 
-            else -> evaluatePotentialOtherWarns(evaluatedCopyNumbers, test.evidenceSource, requestedCopiesMessage)
+            else -> evaluatePotentialOtherWarns(evaluatedCopyNumbers, test.evidenceSource, requestedCopiesMessage, hasPositiveIhcEvaluation)
                 ?: EvaluationFactory.fail("No amplification of $gene$requestedCopiesMessage")
         }
     }
@@ -129,7 +140,8 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
     private fun evaluatePotentialOtherWarns(
         evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>>,
         evidenceSource: String,
-        requestedCopiesMessage: String
+        requestedCopiesMessage: String,
+        hasPositiveIhcEvaluation: Boolean
     ): Evaluation? {
         val eventGroupsWithMessages = listOf(
             EventsWithMessages(
@@ -162,6 +174,16 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
             ),
         )
 
-        return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(eventGroupsWithMessages)
+        val finalEventGroupsWithMessages = if (hasPositiveIhcEvaluation) eventGroupsWithMessages +
+                EventsWithMessages(
+                    setOf("Possible $gene amp"),
+                    "$gene may be amplified$requestedCopiesMessage - based on positive ${
+                        GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.getValue(
+                            gene
+                        )
+                    } IHC result"
+                ) else eventGroupsWithMessages
+
+        return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(finalEventGroupsWithMessages)
     }
 }

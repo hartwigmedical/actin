@@ -1229,6 +1229,5 @@
     }
   ],
   "standardOfCareMatches": null,
-  "personalizedTreatmentSummary": null,
-  "maxMolecularTestAge": null
+  "personalizedTreatmentSummary": null
 }

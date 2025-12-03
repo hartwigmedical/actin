@@ -52,6 +52,10 @@ internal object MolecularTestFactory {
         return basePatient.copy(ihcTests = ihcTests.toList())
     }
 
+    fun withOnlyIhcTests(ihcTests: List<IhcTest>): PatientRecord {
+        return TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(ihcTests = ihcTests.toList())
+    }
+
     fun withIhcTests(vararg ihcTests: IhcTest): PatientRecord {
         return withIhcTests(ihcTests.toList())
     }

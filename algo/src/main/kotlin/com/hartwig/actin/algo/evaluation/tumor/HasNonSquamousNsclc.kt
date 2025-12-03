@@ -35,7 +35,7 @@ class HasNonSquamousNsclc(private val doidModel: DoidModel) : EvaluationFunction
         return when {
             isSquamousNsclc -> EvaluationFactory.fail("Has no non-squamous NSCLC")
 
-            isNonSquamousNsclc && ihcTestEvaluation.hasCertainPositiveResultsForItem() -> {
+            isNonSquamousNsclc && ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() -> {
                 EvaluationFactory.warn("Has non-squamous NSCLC but also positive SCC transformation results")
             }
 
