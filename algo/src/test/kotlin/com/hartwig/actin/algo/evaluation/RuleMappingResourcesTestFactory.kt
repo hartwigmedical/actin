@@ -30,8 +30,7 @@ object RuleMappingResourcesTestFactory {
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,
-            algoConfiguration = AlgoConfiguration(),
-            maxMolecularTestAge = null
+            algoConfiguration = AlgoConfiguration()
         )
     }
 }

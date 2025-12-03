@@ -30,8 +30,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
-private val MAX_AGE = LocalDate.of(2023, 12, 10)
-
 class TreatmentMatcherTest {
 
     private val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
@@ -66,8 +64,7 @@ class TreatmentMatcherTest {
         trials = trials,
         referenceDateProvider = CurrentDateProvider(),
         evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-        treatmentEfficacyPredictionPath = null,
-        maxMolecularTestAge = MAX_AGE
+        treatmentEfficacyPredictionPath = null
     )
 
     private val expectedTreatmentMatch = TreatmentMatch(
@@ -76,8 +73,7 @@ class TreatmentMatcherTest {
         referenceDateIsLive = true,
         trialMatches = trialMatches,
         standardOfCareMatches = null,
-        personalizedTreatmentSummary = null,
-        maxMolecularTestAge = MAX_AGE
+        personalizedTreatmentSummary = null
     )
 
     @Test
@@ -118,8 +114,7 @@ class TreatmentMatcherTest {
             trials = trials,
             referenceDateProvider = CurrentDateProvider(),
             evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-            treatmentEfficacyPredictionPath = null,
-            maxMolecularTestAge = MAX_AGE
+            treatmentEfficacyPredictionPath = null
         )
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
 

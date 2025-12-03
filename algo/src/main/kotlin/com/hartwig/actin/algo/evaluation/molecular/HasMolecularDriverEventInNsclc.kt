@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
-import java.time.LocalDate
 
 private val ACTIVATING_MUTATION_LIST = listOf("EGFR", "ERBB2")
 private val PROTEIN_IMPACT_LIST = listOf("BRAF" to "V600E", "KRAS" to "G12C")
@@ -19,10 +18,9 @@ private val ALL_GENES =
 class HasMolecularDriverEventInNsclc(
     private val genesToInclude: Set<String>?,
     private val genesToExclude: Set<String>,
-    private val maxTestAge: LocalDate? = null,
     private val warnForMatchesOutsideGenesToInclude: Boolean,
     private val withAvailableSoc: Boolean,
-) : MolecularEvaluationFunction(maxTestAge) {
+) : MolecularEvaluationFunction() {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (warnForMatchesOutsideGenesToInclude && genesToInclude != null) {
@@ -44,10 +42,10 @@ class HasMolecularDriverEventInNsclc(
 
     private fun createEvaluationFunctions(genesToInclude: Set<String>?, genesToIgnore: Set<String>): List<EvaluationFunction> =
         listOf(
-            ACTIVATING_MUTATION_LIST.map { it to GeneHasActivatingMutation(it, null, maxTestAge) },
-            PROTEIN_IMPACT_LIST.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, setOf(impact), maxTestAge) },
-            FUSION_LIST.map { it to HasFusionInGene(it, maxTestAge) },
-            EXON_SKIPPING_LIST.map { (gene, exon) -> gene to GeneHasSpecificExonSkipping(gene, exon, maxTestAge) }
+            ACTIVATING_MUTATION_LIST.map { it to GeneHasActivatingMutation(it, null) },
+            PROTEIN_IMPACT_LIST.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, setOf(impact)) },
+            FUSION_LIST.map { it to HasFusionInGene(it) },
+            EXON_SKIPPING_LIST.map { (gene, exon) -> gene to GeneHasSpecificExonSkipping(gene, exon) }
         ).flatten().filter { (gene, _) ->
             genesToInclude?.contains(gene) ?: !genesToIgnore.contains(gene)
         }.map { it.second }

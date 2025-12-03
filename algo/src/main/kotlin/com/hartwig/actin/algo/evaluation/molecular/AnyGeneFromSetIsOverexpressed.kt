@@ -6,15 +6,13 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import java.time.LocalDate
 
 class AnyGeneFromSetIsOverexpressed(
-    maxTestAge: LocalDate? = null,
     private val genes: Set<String>,
-    private val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { gene, maxAge -> GeneIsAmplified(gene, null, maxAge) }
-) : MolecularEvaluationFunction(maxTestAge) {
+    private val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { gene -> GeneIsAmplified(gene, null) }
+) : MolecularEvaluationFunction() {
 
-    private val genesToAmplification: Map<String, GeneIsAmplified> = genes.associateWith { geneIsAmplifiedCreator(it, maxTestAge) }
+    private val genesToAmplification: Map<String, GeneIsAmplified> = genes.associateWith { geneIsAmplifiedCreator(it) }
 
     override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val amplifiedGenes = genesToAmplification.filter { (_, geneIsAmplified) ->

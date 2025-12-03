@@ -8,16 +8,14 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import java.time.LocalDate
 
-class GeneHasSpecificExonSkipping(override val gene: String, private val exonToSkip: Int, maxTestAge: LocalDate? = null) :
+class GeneHasSpecificExonSkipping(override val gene: String, private val exonToSkip: Int) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = or(
             MolecularTestTarget.MUTATION,
             MolecularTestTarget.FUSION,
             messagePrefix = "Skipped exon $exonToSkip in"
-        ),
-        maxTestAge = maxTestAge
+        )
     ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {

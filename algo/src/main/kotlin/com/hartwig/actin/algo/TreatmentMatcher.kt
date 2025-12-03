@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.personalization.serialization.PersonalizedTreatmentSummaryJson
-import java.time.LocalDate
 
 class TreatmentMatcher(
     private val trialMatcher: TrialMatcher,
@@ -19,8 +18,7 @@ class TreatmentMatcher(
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
-    private val treatmentEfficacyPredictionPath: String? = null,
-    private val maxMolecularTestAge: LocalDate?
+    private val treatmentEfficacyPredictionPath: String? = null
 ) {
 
     fun run(patient: PatientRecord): TreatmentMatch {
@@ -44,8 +42,7 @@ class TreatmentMatcher(
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
-            personalizedTreatmentSummary = personalizedTreatmentSummary,
-            maxMolecularTestAge = maxMolecularTestAge
+            personalizedTreatmentSummary = personalizedTreatmentSummary
         )
     }
 
@@ -54,8 +51,7 @@ class TreatmentMatcher(
             resources: RuleMappingResources,
             trials: List<Trial>,
             efficacyEvidence: List<EfficacyEntry>,
-            resistanceEvidenceMatcher: ResistanceEvidenceMatcher,
-            maxMolecularTestAge: LocalDate?
+            resistanceEvidenceMatcher: ResistanceEvidenceMatcher
         ): TreatmentMatcher {
             return TreatmentMatcher(
                 trialMatcher = TrialMatcher.create(resources),
@@ -63,8 +59,7 @@ class TreatmentMatcher(
                 trials = trials,
                 referenceDateProvider = resources.referenceDateProvider,
                 evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
-                treatmentEfficacyPredictionPath = resources.treatmentEfficacyPredictionJson,
-                maxMolecularTestAge = maxMolecularTestAge
+                treatmentEfficacyPredictionPath = resources.treatmentEfficacyPredictionJson
             )
         }
     }

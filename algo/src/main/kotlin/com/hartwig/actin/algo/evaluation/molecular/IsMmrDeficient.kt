@@ -10,11 +10,10 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import com.hartwig.actin.datamodel.molecular.driver.GeneAlteration
-import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
-class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+class IsMmrDeficient: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val mmrIhcTestEvaluation = IhcTestEvaluation.create("MMR", record.ihcTests)
@@ -25,9 +24,7 @@ class IsMmrDeficient(private val maxTestAge: LocalDate? = null) : EvaluationFunc
             GeneConstants.MMR_GENES.intersect(GeneConstants.IHC_LOSS_EVALUABLE_GENES).map { gene -> IhcTestEvaluation.create(gene, record.ihcTests) }
         val hasMmrDeficiencyGeneLoss = mmrGeneIhcTestEvaluations.any { it.hasCertainLossResultsForItem() }
 
-        val molecularTestFilter = MolecularTestFilter(maxTestAge, false)
-        val molecularHistory = MolecularHistory(molecularTestFilter.apply(record.molecularTests))
-        val test = findRelevantTest(molecularHistory)
+        val test = findRelevantTest(MolecularHistory(record.molecularTests))
 
         val drivers = test?.drivers
         val msiVariants = drivers?.variants?.filter { variant -> variant.gene in GeneConstants.MMR_GENES && variant.isReportable }

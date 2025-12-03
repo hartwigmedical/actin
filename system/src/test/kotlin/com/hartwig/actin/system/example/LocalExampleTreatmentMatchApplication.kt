@@ -28,7 +28,6 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.File
-import java.time.Period
 import kotlin.system.exitProcess
 
 private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
@@ -52,8 +51,7 @@ class LocalExampleTreatmentMatchApplication {
                 resources = resources,
                 trials = trials,
                 efficacyEvidence = emptyList(),
-                resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher(),
-                maxMolecularTestAge = null
+                resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher()
             )
             .run(patient)
 
@@ -106,10 +104,7 @@ class LocalExampleTreatmentMatchApplication {
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,
-            algoConfiguration = algoConfiguration,
-            maxMolecularTestAge = algoConfiguration.maxMolecularTestAgeInDays?.let {
-                referenceDateProvider.date().minus(Period.ofDays(it))
-            }
+            algoConfiguration = algoConfiguration
         )
     }
 

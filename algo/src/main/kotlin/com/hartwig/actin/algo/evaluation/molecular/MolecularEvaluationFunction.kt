@@ -12,7 +12,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
-import com.hartwig.actin.molecular.filter.MolecularTestFilter
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
@@ -22,16 +21,14 @@ const val NO_SUFFICIENT_QUALITY_MESSAGE = "No molecular results of sufficient qu
 const val INSUFFICIENT_MOLECULAR_DATA_MESSAGE = "Insufficient molecular data"
 
 abstract class MolecularEvaluationFunction(
-    maxTestAge: LocalDate? = null,
-    useInsufficientQualityRecords: Boolean = false,
+    private val useInsufficientQualityRecords: Boolean = false,
     open val gene: String? = null,
     val targetCoveragePredicate: TargetCoveragePredicate = any(),
 ) : EvaluationFunction {
 
-    private val molecularTestFilter = MolecularTestFilter(maxTestAge, useInsufficientQualityRecords)
-
     override fun evaluate(record: PatientRecord): Evaluation {
-        val recentMolecularTests = molecularTestFilter.apply(record.molecularTests)
+        val tests = record.molecularTests
+        val recentMolecularTests = if (useInsufficientQualityRecords) tests else tests.filter { it.hasSufficientQuality }
         val relevantIhcTests = gene.takeIf { it in GeneConstants.IHC_EVALUABLE_GENES }
             ?.let { IhcTestEvaluation.create(item = GeneConstants.returnProteinForGene(it), ihcTests = record.ihcTests).filteredTests }
 

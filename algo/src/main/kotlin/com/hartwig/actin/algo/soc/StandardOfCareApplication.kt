@@ -63,8 +63,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,
-            algoConfiguration = configuration,
-            maxMolecularTestAge = null
+            algoConfiguration = configuration
         )
         val standardOfCareEvaluator = StandardOfCareEvaluatorFactory(resources).create()
 

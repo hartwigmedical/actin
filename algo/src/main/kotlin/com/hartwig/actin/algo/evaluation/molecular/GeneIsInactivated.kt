@@ -12,9 +12,8 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.GeneConstants
-import java.time.LocalDate
 
-class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null, private val onlyDeletions: Boolean) :
+class GeneIsInactivated(override val gene: String, private val onlyDeletions: Boolean) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = if (onlyDeletions) {
             specific(
@@ -23,7 +22,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
             )
         } else {
             or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION, messagePrefix = "Inactivation of")
-        }, maxTestAge = maxTestAge
+        }
     ) {
 
     override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {

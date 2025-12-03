@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.GeneConstants
-import java.time.LocalDate
 
 private const val PLOIDY_AMPLIFICATION_FACTOR = 3.0
 private const val ASSUMED_PLOIDY = 2.0
@@ -33,7 +32,7 @@ private enum class AmplificationEvaluation {
         fun fromCopyNumber(
             copyNumber: CopyNumber,
             requestedMinCopyNumber: Int?,
-            ploidy: Double,
+            ploidy: Double
         ): AmplificationEvaluation {
             val thresholdNotRequestedOrMinCopiesKnownAndMeetingThreshold =
                 requestedMinCopyNumber == null || copyNumber.canonicalImpact.minCopies?.let { it >= requestedMinCopyNumber } == true
@@ -82,11 +81,8 @@ private enum class AmplificationEvaluation {
     }
 }
 
-class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(
-        targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, "Amplification of"),
-        maxTestAge = maxTestAge
-    ) {
+class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?) :
+    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, "Amplification of")) {
 
     override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>> =

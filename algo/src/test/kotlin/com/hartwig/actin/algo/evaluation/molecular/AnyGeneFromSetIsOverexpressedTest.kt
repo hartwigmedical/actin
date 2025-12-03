@@ -10,7 +10,6 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
-import java.time.LocalDate
 
 class AnyGeneFromSetIsOverexpressedTest {
     
@@ -26,7 +25,7 @@ class AnyGeneFromSetIsOverexpressedTest {
 
     @Test
     fun `Should warn when amplification`() {
-        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { gene, _ ->
+        val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { gene ->
             when (gene) {
                 "geneA" -> alwaysPassGeneAmplificationEvaluation
                 "geneB" -> alwaysFailGeneAmplificationEvaluation
@@ -42,7 +41,7 @@ class AnyGeneFromSetIsOverexpressedTest {
 
     @Test
     fun `Should evaluate to undetermined when no amplification`() {
-        val geneIsAmplifiedCreator: (String, LocalDate?) -> GeneIsAmplified = { _, _ -> alwaysFailGeneAmplificationEvaluation }
+        val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { _ -> alwaysFailGeneAmplificationEvaluation }
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
@@ -50,11 +49,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()
     }
 
-    private fun createFunctionWithEvaluations(geneIsAmplified: (String, LocalDate?) -> GeneIsAmplified): AnyGeneFromSetIsOverexpressed {
-        return AnyGeneFromSetIsOverexpressed(
-            LocalDate.of(2024, 11, 6),
-            setOf("geneA", "geneB", "geneC"),
-            geneIsAmplified
-        )
+    private fun createFunctionWithEvaluations(geneIsAmplified: (String) -> GeneIsAmplified): AnyGeneFromSetIsOverexpressed {
+        return AnyGeneFromSetIsOverexpressed(setOf("geneA", "geneB", "geneC"), geneIsAmplified)
     }
 }
