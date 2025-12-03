@@ -59,7 +59,8 @@ GRCh37 or HG19).
 ## ACTIN molecular datamodel
 
 A single molecular history represents all molecular testing done for a patient. This includes WGS results, large targeted panels, archer,
-small panel results and IHC tests. The history is modeled as a list of molecular tests.
+small panel results and IHC tests. The history is modeled as a list of molecular tests. 
+Of note, only specific IHC test results are ever converted into molecular tests, and only with "tested genes" (i.e. no drivers).
 
 ### Molecular test
 
