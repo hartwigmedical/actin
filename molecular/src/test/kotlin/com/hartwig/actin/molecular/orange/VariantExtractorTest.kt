@@ -113,7 +113,7 @@ class VariantExtractorTest {
         assertThat(variant.isCancerAssociatedVariant).isFalse
         assertThat(variant.clonalLikelihood).isEqualTo(0.7, Offset.offset(EPSILON))
         assertThat(variant.phaseGroups).isEqualTo(setOf(1))
-        assertThat(variant.exonSkippingIsConfirmed).isNull()
+        assertThat(variant.exonSkippingIsConfirmed).isFalse
 
         val canonical = variant.canonicalImpact
         assertThat(canonical.transcriptId).isEqualTo("ENST-canonical")

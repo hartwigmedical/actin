@@ -139,7 +139,7 @@ In addition to the (gene) driver fields, the following data is captured for vari
 | isBiallelic               | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
 | clonalLikelihood          | 1, 2          | Likelihood that the variant exists in every tumor cell (hence: is clonal)                           |
 | phaseGroups               | 0.98          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
-| exonSkippingIsConfirmed   | true          | Confirms this variant causes exon skipping (otherwise left null)                                    |
+| exonSkippingIsConfirmed   | true          | Confirms this variant causes exon skipping, otherwise false                                         |
 | isCancerAssociatedVariant | true          | Indicates whether this specific variant is a known cancer-associated variant                        |
 
 The following data is captured as impact of a variant on a specific transcript:

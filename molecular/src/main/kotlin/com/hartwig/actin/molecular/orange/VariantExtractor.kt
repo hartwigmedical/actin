@@ -75,7 +75,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                     isBiallelic = variant.biallelic(),
                     clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                     phaseGroups = variant.localPhaseSets()?.toSet(),
-                    exonSkippingIsConfirmed = null,
+                    exonSkippingIsConfirmed = false,
                     isCancerAssociatedVariant = variant.hotspot() == HotspotType.HOTSPOT,
                     isReportable = variant.reported(),
                     event = event,
