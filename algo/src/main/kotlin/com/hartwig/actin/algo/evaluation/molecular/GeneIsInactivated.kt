@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
@@ -24,8 +26,8 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         }, maxTestAge = maxTestAge
     ) {
 
-    override fun evaluate(test: MolecularTest): Evaluation {
-        val inactivationEventsThatQualify: MutableSet<String> = mutableSetOf()
+    override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
+        val inactivationEvents: MutableSet<String> = mutableSetOf()
         val inactivationEventsThatAreUnreportable: MutableSet<String> = mutableSetOf()
         val inactivationEventsNoTSG: MutableSet<String> = mutableSetOf()
         val inactivationEventsGainOfFunction: MutableSet<String> = mutableSetOf()
@@ -59,7 +61,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                 } else if (isNoEffect) {
                     inactivationEventsNoEffect.add(geneAlterationDriver.event)
                 } else {
-                    inactivationEventsThatQualify.add(geneAlterationDriver.event)
+                    inactivationEvents.add(geneAlterationDriver.event)
                 }
             }
 
@@ -69,6 +71,14 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
         val inactivationHighDriverUnknownBiallelicVariants: MutableSet<String> = mutableSetOf()
         val eventsThatMayBeTransPhased: MutableList<String> = mutableListOf()
         val evaluatedPhaseGroups: MutableSet<Int?> = mutableSetOf()
+
+        val ihcTestEvaluation =
+            if (gene in GeneConstants.IHC_LOSS_EVALUABLE_GENES) IhcTestEvaluation.create(gene, ihcTests) else null
+        val (ihcLossEvents, ihcEventsThatAreIndeterminate) = when {
+            ihcTestEvaluation?.hasCertainLossResultsForItem() == true -> setOf("$gene loss by IHC") to emptySet()
+            ihcTestEvaluation?.hasPossibleLossResultsForItem() == true -> emptySet<String>() to setOf("$gene potential loss by IHC")
+            else -> emptySet<String>() to emptySet()
+        }
 
         if (!onlyDeletions) {
             val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
@@ -104,7 +114,7 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
                             } else if (isNoEffect) {
                                 inactivationEventsNoEffect.add(variant.event)
                             } else {
-                                inactivationEventsThatQualify.add(variant.event)
+                                inactivationEvents.add(variant.event)
                             }
                         } else if ((hasHighMutationalLoad == null || !hasHighMutationalLoad) && variant.isBiallelic == true) {
                             reportableNonDriverBiallelicVariantsOther.add(variant.event)
@@ -131,14 +141,17 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
 
         val messageSubject = if (onlyDeletions) "deletion" else "inactivation"
 
-        if (inactivationEventsThatQualify.isNotEmpty()) {
+        if (inactivationEvents.isNotEmpty() || (ihcLossEvents.isNotEmpty() && !onlyDeletions)) {
+            val inclusionEvents = inactivationEvents + ihcLossEvents
             return EvaluationFactory.pass(
-                "$gene $messageSubject (${concat(inactivationEventsThatQualify)})",
-                inclusionEvents = inactivationEventsThatQualify
+                "$gene $messageSubject (${concat(inclusionEvents)})",
+                inclusionEvents = inclusionEvents
             )
         }
 
         val potentialWarnEvaluation = evaluatePotentialWarns(
+            ihcLossEvents,
+            ihcEventsThatAreIndeterminate,
             inactivationEventsThatAreUnreportable,
             inactivationEventsNoTSG,
             inactivationEventsGainOfFunction,
@@ -157,6 +170,8 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
     }
 
     private fun evaluatePotentialWarns(
+        ihcLossEvents: Set<String>,
+        ihcEventsThatAreIndeterminate: Set<String>,
         inactivationEventsThatAreUnreportable: Set<String>,
         inactivationEventsNoTSG: Set<String>,
         inactivationEventsGainOfFunction: Set<String>,
@@ -173,6 +188,14 @@ class GeneIsInactivated(override val gene: String, maxTestAge: LocalDate? = null
 
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOfNotNull(
+                EventsWithMessages(
+                    ihcLossEvents,
+                    "${concat(ihcLossEvents)} may indicate $gene gene $messageSubject"
+                ),
+                EventsWithMessages(
+                    ihcEventsThatAreIndeterminate,
+                    "${concat(ihcEventsThatAreIndeterminate)} may indicate $messageSubject but unclear how to interpret IHC result"
+                ),
                 EventsWithMessages(
                     inactivationEventsThatAreUnreportable,
                     "$messageSubjectCapitalized event(s) ${concat(inactivationEventsThatAreUnreportable)} for $gene but event(s) not reportable"

@@ -103,7 +103,7 @@ class MolecularEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should only evaluate tests under max age when specified`() {
+    fun `Should only evaluate tests under max age (and the empty test with example date) when specified`() {
         val evaluatedTests = mutableSetOf<MolecularTest>()
         val function = object : MolecularEvaluationFunction(MAX_AGE, false) {
             override fun evaluate(test: MolecularTest): Evaluation {
@@ -115,7 +115,7 @@ class MolecularEvaluationFunctionTest {
         val oldTest = MAX_AGE.minusDays(1)
         val patient = withPanelTest(newTest, oldTest)
         function.evaluate(patient)
-        assertThat(evaluatedTests.map { it.date }).containsOnly(newTest)
+        assertThat(evaluatedTests.map { it.date }).containsExactly(newTest, EXAMPLE_DATE)
     }
 
     private fun withPanelTest(vararg testDates: LocalDate = arrayOf(MAX_AGE.plusYears(1))) =

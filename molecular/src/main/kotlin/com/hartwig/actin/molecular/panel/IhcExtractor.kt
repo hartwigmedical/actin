@@ -2,8 +2,7 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.molecular.MolecularExtractor
-
-private val IHC_FUSION_GENES = setOf("ALK", "ROS1")
+import com.hartwig.actin.molecular.util.GeneConstants
 
 class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
 
@@ -12,15 +11,17 @@ class IhcExtractor : MolecularExtractor<IhcTest, IhcExtraction> {
             .map { (date, tests) ->
                 IhcExtraction(
                     date,
-                    ihcFusionGenes(tests, "positive"),
-                    ihcFusionGenes(tests, "negative")
+                    extractTestedGenes(tests, GeneConstants.IHC_FUSION_EVALUABLE_GENES),
+                    extractTestedGenes(tests, GeneConstants.IHC_LOSS_EVALUABLE_GENES),
                 )
             }
-            .filter { it.fusionPositiveGenes.isNotEmpty() || it.fusionNegativeGenes.isNotEmpty() }
+            .filter {
+                it.fusionTestedGenes.isNotEmpty() || it.mutationAndDeletionTestedGenes.isNotEmpty()
+            }
     }
 
-    private fun ihcFusionGenes(ihcTests: List<IhcTest>, scoreText: String): Set<String> {
-        return ihcTests.filter { it.item in IHC_FUSION_GENES && it.scoreText?.lowercase() == scoreText && !it.impliesPotentialIndeterminateStatus }
+    private fun extractTestedGenes(ihcTests: List<IhcTest>, ihcResults: Set<String>): Set<String> {
+        return ihcTests.filter { it.item in ihcResults && !it.impliesPotentialIndeterminateStatus}
             .map { it.item }
             .toSet()
     }
