@@ -124,7 +124,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 null,
                 doidModel(),
                 EvaluationFunctionFactory.create(resources),
-
             )
         }
     }
@@ -136,7 +135,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 input.geneNames,
                 doidModel(),
                 EvaluationFunctionFactory.create(resources),
-
             )
         }
     }

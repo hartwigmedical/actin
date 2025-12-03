@@ -16,7 +16,6 @@ import java.time.LocalDate
 
 private const val OVERRIDE_MESSAGE = "Override message"
 private const val FAIL_MESSAGE = "Fail message"
-private val MAX_AGE = LocalDate.of(2023, 9, 6)
 
 class MolecularEvaluationFunctionTest {
 
@@ -102,25 +101,7 @@ class MolecularEvaluationFunctionTest {
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 
-    @Test
-    fun `Should only evaluate tests under max age (and the empty test with example date) when specified`() {
-        val evaluatedTests = mutableSetOf<MolecularTest>()
-        val function = object : MolecularEvaluationFunction(MAX_AGE, false) {
-            override fun evaluate(test: MolecularTest): Evaluation {
-                evaluatedTests.add(test)
-                return EvaluationFactory.fail(FAIL_MESSAGE)
-            }
-        }
-        val newTest = MAX_AGE.plusDays(1)
-        val oldTest = MAX_AGE.minusDays(1)
-        val patient = withPanelTest(newTest, oldTest)
-        function.evaluate(patient)
-        assertThat(evaluatedTests.map { it.date }).containsExactly(newTest, EXAMPLE_DATE)
-    }
-
-    private fun withPanelTest(vararg testDates: LocalDate = arrayOf(MAX_AGE.plusYears(1))) =
-        TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            .copy(molecularTests = testDates.map { emptyPanel(it) })
+    private fun withPanelTest() = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(molecularTests = listOf(emptyPanel()))
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)
