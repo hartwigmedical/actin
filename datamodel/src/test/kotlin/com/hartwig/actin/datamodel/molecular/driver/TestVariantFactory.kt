@@ -18,6 +18,7 @@ object TestVariantFactory {
             isBiallelic = null,
             clonalLikelihood = null,
             phaseGroups = null,
+            exonSkippingIsConfirmed = false,
             isCancerAssociatedVariant = false,
             sourceEvent = "",
             isReportable = false,

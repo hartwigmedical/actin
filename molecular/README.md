@@ -140,6 +140,7 @@ In addition to the (gene) driver fields, the following data is captured for vari
 | isBiallelic               | false         | Indicates whether all alleles in the tumor are affected by this variant or not                      |
 | clonalLikelihood          | 1, 2          | Likelihood that the variant exists in every tumor cell (hence: is clonal)                           |
 | phaseGroups               | 0.98          | The phasing groups this variant belongs to. Variants that are phased share at least one phase group |
+| exonSkippingIsConfirmed   | true          | Confirms this variant causes exon skipping, otherwise false                                         |
 | isCancerAssociatedVariant | true          | Indicates whether this specific variant is a known cancer-associated variant                        |
 
 The following data is captured as impact of a variant on a specific transcript:
@@ -373,8 +374,8 @@ Notes on driver extraction:
 - For DUP disruptions that affect genes that are homozygously disrupted, the junction copy number is subtracted from the undisrupted copy
   number.
 - Generally all floating point numbers are rounded to 3 digits when ingesting data into ACTIN:
-  - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
-  - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
+    - variants: `variantCopyNumber`, `totalCopyNumber`, `clonalLikelihood`
+    - disruptions: `junctionCopyNumber`, `undisruptedCopyNumber`
 - The extraction will produce an exception if an event is reported on a gene that is not part of the list of known genes.
 
 The HLA entries are extracted from LILAC as follows:
@@ -429,7 +430,7 @@ For fusions, a fusion type and subsequent driver likelihood are determined based
 
 Every molecular test (regardless of ORANGE or non-ORANGE) is interpreted and annotated with treatment evidence and external trials.
 
-### Annotation of driver events and characteristics with SERVE evidence 
+### Annotation of driver events and characteristics with SERVE evidence
 
 Every (potential) driver and characteristic is annotated with evidence from SERVE. In practice all treatment evidence and external trials
 come from `CKB`. The evidence annotations occur in the following order:
@@ -466,20 +467,20 @@ database. In addition, every fusion is annotated with `proteinEffect` and `isAss
 The annotation finds the best matching entry from SERVE's known event database as follows:
 
 - For variants, the following order is followed:
-  - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
-  - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
-  - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
-  - Else, fall back to gene matching.
+    - Is there a hotspot match for the specific variant? If yes, use hotspot annotation.
+    - Is there a codon match for the specific variant's mutation type? If yes, use codon annotation.
+    - Is there an exon match for the specific variant's mutation type? If yes, use exon annotation.
+    - Else, fall back to gene matching.
 - For copy numbers:
-  - Is there a copy number specific match? If yes, use copy number specific annotation.
-  - Else, fall back to gene matching.
+    - Is there a copy number specific match? If yes, use copy number specific annotation.
+    - Else, fall back to gene matching.
 - For homozygous disruptions:
-  - Is there copy number deletion specific match? If yes, use copy number deletion annotation.
-  - Else, fall back to gene matching.
+    - Is there copy number deletion specific match? If yes, use copy number deletion annotation.
+    - Else, fall back to gene matching.
 - For disruptions, a gene match is performed.
 - For fusions:
-  - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
-  - Else, fall back to known fusion match ignoring specific exon ranges.
+    - Is there a known fusion with an exon range that matches the specific fusion? If yes, use fusion annotation.
+    - Else, fall back to known fusion match ignoring specific exon ranges.
 
 Do note that gene matching only ever populates the `geneRole` field. Any gene-level annotation assumes that the `proteinEffect` is unknown.
 
