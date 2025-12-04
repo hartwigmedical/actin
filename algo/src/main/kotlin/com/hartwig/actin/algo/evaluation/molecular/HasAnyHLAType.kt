@@ -6,13 +6,10 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
-import java.time.LocalDate
 
 class HasAnyHLAType(
-    private val hlaAllelesToFind: Set<String>,
-    maxTestAge: LocalDate? = null,
-    private val matchOnHlaGroup: Boolean = false
-) : MolecularEvaluationFunction(maxTestAge, true) {
+    private val hlaAllelesToFind: Set<String>, private val matchOnHlaGroup: Boolean = false
+) : MolecularEvaluationFunction(true) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val molecular = MolecularHistory(listOf(test)).latestOrangeMolecularRecord() ?: return EvaluationFactory.undetermined(

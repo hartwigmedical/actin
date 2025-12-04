@@ -1,20 +1,22 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatFusions
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import java.time.LocalDate
+import com.hartwig.actin.molecular.util.GeneConstants
 
-class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.FUSION, "Fusion in"), maxTestAge = maxTestAge) {
+class HasFusionInGene(override val gene: String) :
+    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.FUSION, "Fusion in")) {
 
-    override fun evaluate(test: MolecularTest): Evaluation {
+    override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
         val fusionsWithNoEffect: MutableSet<String> = mutableSetOf()
         val fusionsWithNoHighDriverLikelihood: MutableSet<String> = mutableSetOf()
@@ -48,10 +50,20 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
             }
         }
 
+        val ihcTestEvaluation = if (gene in GeneConstants.IHC_FUSION_EVALUABLE_GENES) IhcTestEvaluation.create(gene, ihcTests) else null
+
+        val (ihcEventsThatQualify, ihcEventsThatAreIndeterminate) = when {
+            ihcTestEvaluation?.hasCertainExactPositiveResultsForItem() == true -> setOf("$gene positive by IHC") to emptySet()
+            ihcTestEvaluation?.hasPossiblePositiveResultsForItem() == true -> emptySet<String>() to setOf("$gene result indeterminate by IHC")
+            else -> emptySet<String>() to emptySet()
+        }
+
         val anyWarns = listOf(
             fusionsWithNoEffect,
             fusionsWithNoHighDriverLikelihood,
-            unreportableFusionsWithGainOfFunction
+            unreportableFusionsWithGainOfFunction,
+            ihcEventsThatQualify,
+            ihcEventsThatAreIndeterminate
         ).any { it.isNotEmpty() }
 
         return when {
@@ -60,15 +72,19 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
             }
 
             matchingFusions.isNotEmpty() -> {
-                val eventWarningDescriptions = concat(listOf(
-                    fusionsWithNoEffect.map { event -> "$event: Fusion having no protein effect" },
-                    fusionsWithNoHighDriverLikelihood.map { event -> "$event: Fusion having no high driver likelihood" },
-                    unreportableFusionsWithGainOfFunction.map { event -> "$event: Fusion having gain-of-function evidence but not considered reportable" }
-                ).flatten())
+                val eventWarningDescriptions = concat(
+                    listOf(
+                        fusionsWithNoEffect.map { event -> "$event: Fusion having no protein effect" },
+                        fusionsWithNoHighDriverLikelihood.map { event -> "$event: Fusion having no high driver likelihood" },
+                        unreportableFusionsWithGainOfFunction.map { event -> "$event: Fusion having gain-of-function evidence but not considered reportable" },
+                        ihcEventsThatQualify.map { finding -> "$finding: may indicate a fusion" },
+                        ihcEventsThatAreIndeterminate.map { finding -> "$finding: undetermined if this may indicate a fusion" },
+                    ).flatten()
+                )
 
                 EvaluationFactory.warn(
                     "Fusion(s) ${concatFusions(matchingFusions)} in $gene together with other fusion events(s): " + eventWarningDescriptions,
-                    inclusionEvents = matchingFusions + fusionsWithNoEffect + fusionsWithNoHighDriverLikelihood + unreportableFusionsWithGainOfFunction
+                    inclusionEvents = matchingFusions + fusionsWithNoEffect + fusionsWithNoHighDriverLikelihood + unreportableFusionsWithGainOfFunction + ihcEventsThatQualify + ihcEventsThatAreIndeterminate
                 )
             }
 
@@ -77,6 +93,8 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
                     fusionsWithNoEffect,
                     fusionsWithNoHighDriverLikelihood,
                     unreportableFusionsWithGainOfFunction,
+                    ihcEventsThatQualify,
+                    ihcEventsThatAreIndeterminate,
                     evidenceSource
                 )
 
@@ -89,6 +107,8 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
         fusionsWithNoEffect: Set<String>,
         fusionsWithNoHighDriverLikelihood: Set<String>,
         unreportableFusionsWithGainOfFunction: Set<String>,
+        ihcEventsThatQualify: Set<String>,
+        ihcEventsThatAreIndeterminate: Set<String>,
         evidenceSource: String
     ): Evaluation? {
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
@@ -106,6 +126,14 @@ class HasFusionInGene(override val gene: String, maxTestAge: LocalDate? = null) 
                     unreportableFusionsWithGainOfFunction,
                     "Unreportable fusion(s) ${concatFusions(unreportableFusionsWithGainOfFunction)} in $gene"
                             + " however annotated with having gain-of-function evidence in $evidenceSource"
+                ),
+                EventsWithMessages(
+                    ihcEventsThatQualify,
+                    "$gene IHC result(s) may indicate $gene fusion"
+                ),
+                EventsWithMessages(
+                    ihcEventsThatAreIndeterminate,
+                    "$gene IHC result(s) are indeterminate - undetermined if this may indicate $gene fusion"
                 )
             )
         )

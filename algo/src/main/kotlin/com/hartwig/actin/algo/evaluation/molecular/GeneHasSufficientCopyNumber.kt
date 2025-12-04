@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
-import java.time.LocalDate
 
 private const val ASSUMED_AMP_MIN_COPY_NR = 6
 
@@ -54,14 +53,13 @@ private enum class CopyNumberEvaluation {
     }
 }
 
-class GeneHasSufficientCopyNumber(override val gene: String, private val requestedMinCopyNumber: Int, maxTestAge: LocalDate? = null) :
+class GeneHasSufficientCopyNumber(override val gene: String, private val requestedMinCopyNumber: Int) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = or(
             MolecularTestTarget.AMPLIFICATION,
             MolecularTestTarget.MUTATION,
             messagePrefix = "Sufficient copy number in"
-        ),
-        maxTestAge = maxTestAge
+        )
     ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {

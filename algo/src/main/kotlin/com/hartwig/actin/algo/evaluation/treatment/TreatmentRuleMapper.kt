@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
-import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
@@ -163,13 +163,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
             val minDate = referenceDate.minusWeeks(26)
-            IsEligibleForOnLabelTreatment(
-                treatmentName,
-                StandardOfCareEvaluatorFactory(resources),
-                doidModel(),
-                minDate,
-                maxMolecularTestAge()
-            )
+            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate)
         }
     }
 

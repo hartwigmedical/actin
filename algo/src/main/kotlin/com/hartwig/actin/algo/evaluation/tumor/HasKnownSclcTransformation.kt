@@ -8,9 +8,8 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
-import java.time.LocalDate
 
-class HasKnownSclcTransformation(private val doidModel: DoidModel, private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)
@@ -27,10 +26,10 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val m
         val ihcTestEvaluations =
             listOf("SCLC transformation", "small cell transformation").map { IhcTestEvaluation.create(it, record.ihcTests) }
 
-        val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, maxTestAge) }
+        val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record) }
 
         return when {
-            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainPositiveResultsForItem) -> {
+            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
                 EvaluationFactory.pass("Has SCLC transformation", inclusionEvents = setOf("small cell transformation"))
             }
 

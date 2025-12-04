@@ -10,16 +10,14 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
-import java.time.LocalDate
 
 class GeneHasVariantInExonRangeOfType(
-    override val gene: String, private val minExon: Int, private val maxExon: Int, private val requiredVariantType: VariantTypeInput?,
-    maxTestAge: LocalDate? = null
+    override val gene: String, private val minExon: Int, private val maxExon: Int, private val requiredVariantType: VariantTypeInput?
 ) : MolecularEvaluationFunction(
     targetCoveragePredicate = atLeast(
         MolecularTestTarget.MUTATION,
         messagePrefix = "Mutation in ${rangeText(minExon, maxExon)}${generateRequiredVariantTypeMessage(requiredVariantType)} in"
-    ), maxTestAge = maxTestAge
+    )
 ) {
 
     private enum class VariantClassification {

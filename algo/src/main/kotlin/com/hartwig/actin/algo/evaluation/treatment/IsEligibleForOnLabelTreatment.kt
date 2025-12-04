@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.And
-import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.Not
+import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasActivatingMutation
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantInExonRangeOfType
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantWithProteinImpact
@@ -28,8 +28,7 @@ class IsEligibleForOnLabelTreatment(
     private val treatment: Treatment,
     private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory,
     private val doidModel: DoidModel,
-    private val minTreatmentDate: LocalDate,
-    maxTestAge: LocalDate? = null,
+    private val minTreatmentDate: LocalDate
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -101,13 +100,13 @@ class IsEligibleForOnLabelTreatment(
             listOf(
                 And(
                     listOf(
-                        GeneHasActivatingMutation("EGFR", null, maxTestAge),
-                        Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT, maxTestAge))
+                        GeneHasActivatingMutation("EGFR", null),
+                        Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT))
                     )
                 ),
                 And(
                     listOf(
-                        GeneHasVariantWithProteinImpact("EGFR", setOf("T790M"), maxTestAge),
+                        GeneHasVariantWithProteinImpact("EGFR", setOf("T790M")),
                         HasHadSomeTreatmentsWithCategoryOfTypes(
                             TreatmentCategory.TARGETED_THERAPY,
                             setOf(DrugType.TYROSINE_KINASE_INHIBITOR_GEN_1, DrugType.TYROSINE_KINASE_INHIBITOR_GEN_2),
@@ -117,19 +116,15 @@ class IsEligibleForOnLabelTreatment(
                 )
             )
         ),
-        "Pembrolizumab" to PembrolizumabEvaluationFunction(doidModel, maxTestAge)
+        "Pembrolizumab" to PembrolizumabEvaluationFunction(doidModel)
     )
 
-    private class PembrolizumabEvaluationFunction(
-        private val doidModel: DoidModel,
-        private val maxTestAge: LocalDate?
-    ) : EvaluationFunction {
+    private class PembrolizumabEvaluationFunction(private val doidModel: DoidModel) : EvaluationFunction {
         override fun evaluate(record: PatientRecord): Evaluation {
             val isTreatmentNaive = HasHadLimitedSystemicTreatments(0).evaluate(record).result.isPassOrNotEvaluated()
             val egfrOrAlkDriverEvaluationResult = HasMolecularDriverEventInNsclc(
                 setOf("EGFR", "ALK"),
                 emptySet(),
-                maxTestAge,
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = false
             ).evaluate(record).result

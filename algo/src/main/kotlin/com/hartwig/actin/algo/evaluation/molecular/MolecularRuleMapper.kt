@@ -38,7 +38,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
                     hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC to
-                    { HasMolecularDriverEventInNsclc(null, emptySet(), maxMolecularTestAge(), false, false) },
+                    { HasMolecularDriverEventInNsclc(null, emptySet(), false, false) },
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_ANY_GENES_X to
                     hasMolecularDriverEventInNSCLCInSpecificGenesCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_AT_LEAST_GENES_X to
@@ -72,7 +72,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
             EligibilityRule.MMR_DEFICIENT to { IsMmrDeficient() },
-            EligibilityRule.HRD_SIGNATURE to { IsHomologousRecombinationDeficient(maxMolecularTestAge()) },
+            EligibilityRule.HRD_SIGNATURE to { IsHomologousRecombinationDeficient() },
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(),
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(),
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
@@ -81,8 +81,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_ANY_HLA_TYPE_X to hasAnyHLATypeCreator(),
             EligibilityRule.HAS_HLA_GROUP_X to hasSpecificHLAGroupCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
-            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(maxMolecularTestAge()) },
-            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(maxMolecularTestAge()) },
+            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency() },
+            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency() },
             EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus() },
             EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
@@ -124,7 +124,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 null,
                 doidModel(),
                 EvaluationFunctionFactory.create(resources),
-                maxMolecularTestAge()
             )
         }
     }
@@ -136,7 +135,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 input.geneNames,
                 doidModel(),
                 EvaluationFunctionFactory.create(resources),
-                maxMolecularTestAge()
             )
         }
     }
@@ -144,21 +142,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularDriverEventInNSCLCInSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), maxMolecularTestAge(), false, false)
+            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), false, false)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInAtLeastSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), maxMolecularTestAge(), true, false)
+            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), true, false)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNsclc(null, genes.geneNames, maxMolecularTestAge(), false, false)
+            HasMolecularDriverEventInNsclc(null, genes.geneNames, false, false)
         }
     }
 
@@ -167,7 +165,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE,
                 emptySet(),
-                maxMolecularTestAge(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true
             )
@@ -180,7 +177,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE - genes,
                 emptySet(),
-                maxMolecularTestAge(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true
             )
@@ -192,7 +188,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE,
                 emptySet(),
-                maxMolecularTestAge(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true
             )
@@ -205,7 +200,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE - genes,
                 emptySet(),
-                maxMolecularTestAge(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true
             )
@@ -217,8 +211,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val gene = functionInputResolver().createOneGeneInput(function).geneName
             Or(
                 listOf(
-                    GeneHasActivatingMutation(gene, codonsToIgnore = null, maxMolecularTestAge()),
-                    GeneIsAmplified(gene, null, maxMolecularTestAge())
+                    GeneHasActivatingMutation(gene, codonsToIgnore = null),
+                    GeneIsAmplified(gene, null)
                 )
             )
         }
@@ -228,7 +222,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             GeneIsInactivated(
                 gene = functionInputResolver().createOneGeneInput(function).geneName,
-                maxTestAge = maxMolecularTestAge(),
                 onlyDeletions = onlyDeletions
             )
         }
@@ -237,122 +230,122 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun anyGeneHasActivatingMutationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null, maxMolecularTestAge()) })
+            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null) })
         }
     }
 
     private fun geneHasActivatingMutationIgnoringSomeCodonsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons, maxMolecularTestAge())
+            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons)
         }
     }
 
     private fun anyGeneHasActivatingMutationInKinaseDomainCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function)
-            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null, maxMolecularTestAge(), inKinaseDomain = true) })
+            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null, inKinaseDomain = true) })
         }
     }
 
     private fun geneHasVariantWithAnyProteinImpactsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyProteinImpactsInput(function)
-            GeneHasVariantWithProteinImpact(input.geneName, input.proteinImpacts, maxMolecularTestAge())
+            GeneHasVariantWithProteinImpact(input.geneName, input.proteinImpacts)
         }
     }
 
     private fun geneHasVariantInAnyCodonsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasVariantInCodon(input.geneName, input.codons, maxMolecularTestAge())
+            GeneHasVariantInCodon(input.geneName, input.codons)
         }
     }
 
     private fun geneHasVariantInExonCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (gene, exon) = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasVariantInExonRangeOfType(gene, exon, exon, null, maxMolecularTestAge())
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, null)
         }
     }
 
     private fun geneHasVariantInExonRangeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (gene, minExon, maxExon) = functionInputResolver().createOneGeneTwoIntegersInput(function)
-            GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null, maxMolecularTestAge())
+            GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null)
         }
     }
 
     private fun geneHasVariantInExonOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (gene, exon, variantType) = functionInputResolver().createOneGeneOneIntegerOneVariantTypeInput(function)
-            GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType, maxMolecularTestAge())
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType)
         }
     }
 
     private fun geneHasUTR3LossCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneHasUTR3Loss(functionInputResolver().createOneGeneInput(function).geneName, maxMolecularTestAge())
+            GeneHasUTR3Loss(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsAmplified(functionInputResolver().createOneGeneInput(function).geneName, null, maxMolecularTestAge())
+            GeneIsAmplified(functionInputResolver().createOneGeneInput(function).geneName, null)
         }
     }
 
     private fun geneIsAmplifiedMinCopiesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneIsAmplified(input.geneName, input.integer, maxMolecularTestAge())
+            GeneIsAmplified(input.geneName, input.integer)
         }
     }
 
     private fun geneHasSufficientCopyNumber(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasSufficientCopyNumber(input.geneName, input.integer, maxMolecularTestAge())
+            GeneHasSufficientCopyNumber(input.geneName, input.integer)
         }
     }
 
     private fun hasFusionInGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasFusionInGene(functionInputResolver().createOneGeneInput(function).geneName, maxMolecularTestAge())
+            HasFusionInGene(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
     private fun geneIsWildTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsWildType(functionInputResolver().createOneGeneInput(function).geneName, maxMolecularTestAge())
+            GeneIsWildType(functionInputResolver().createOneGeneInput(function).geneName)
         }
     }
 
     private fun geneHasSpecificExonSkippingCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasSpecificExonSkipping(input.geneName, input.integer, maxMolecularTestAge())
+            GeneHasSpecificExonSkipping(input.geneName, input.integer)
         }
     }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minTumorMutationalBurden = functionInputResolver().createOneDoubleInput(function)
-            HasSufficientTumorMutationalBurden(minTumorMutationalBurden, maxMolecularTestAge())
+            HasSufficientTumorMutationalBurden(minTumorMutationalBurden)
         }
     }
 
     private fun hasSufficientTumorMutationalLoadCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function)
-            HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null, maxMolecularTestAge())
+            HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null)
         }
     }
 
     private fun hasCertainTumorMutationalLoadCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createTwoIntegersInput(function)
-            HasTumorMutationalLoadWithinRange(input.integer1, input.integer2, maxMolecularTestAge())
+            HasTumorMutationalLoadWithinRange(input.integer1, input.integer2)
         }
     }
 
@@ -373,14 +366,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasUGT1A1HaplotypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val haplotypeToFind = functionInputResolver().createOneHaplotypeInput(function)
-            HasUGT1A1Haplotype(haplotypeToFind.haplotype, maxMolecularTestAge())
+            HasUGT1A1Haplotype(haplotypeToFind.haplotype)
         }
     }
 
     private fun anyGeneFromSetIsOverExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = functionInputResolver().createManyGenesInput(function).geneNames
-            AnyGeneFromSetIsOverexpressed(maxMolecularTestAge(), genes)
+            AnyGeneFromSetIsOverexpressed(genes)
         }
     }
 
@@ -437,7 +430,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasPositiveHER2ExpressionByIhcCreator(): FunctionCreator {
-        return { HasPositiveHER2ExpressionByIhc(maxMolecularTestAge()) }
+        return { HasPositiveHER2ExpressionByIhc() }
     }
 
     private fun proteinHasLimitedExpressionByIhcCreator(): FunctionCreator {
@@ -491,8 +484,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return {
             Or(
                 listOf(
-                    GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_PROTEIN_IMPACTS, maxMolecularTestAge()),
-                    GeneHasVariantInCodon("EGFR", EGFR_PACC_CODON_VARIANTS, maxMolecularTestAge())
+                    GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_PROTEIN_IMPACTS),
+                    GeneHasVariantInCodon("EGFR", EGFR_PACC_CODON_VARIANTS)
                 )
             )
         }
@@ -515,14 +508,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
+            IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames)
         }
     }
 
     private fun isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind.geneNames, maxMolecularTestAge())
+            IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind.geneNames)
         }
     }
 }
