@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.PDFollowingTreatmentEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.calendar.DateComparison.minWeeksBetweenDates
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
@@ -52,7 +53,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             )
         }
             .toSet()
-        
+
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS in treatmentEvaluations -> {
                 if (minCycles == null && minWeeks == null) {
@@ -104,38 +105,5 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 
     private fun treatment(): String {
         return "${Format.concatItemsWithOr(types)} ${category.display()} treatment"
-    }
-
-    private enum class PDFollowingTreatmentEvaluation {
-        HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS,
-        HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES,
-        HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS,
-        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS,
-        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES,
-        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS,
-        HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
-        HAS_HAD_TREATMENT,
-        NO_MATCH;
-
-        companion object {
-            fun create(
-                hadTreatment: Boolean?,
-                hadTrial: Boolean,
-                hadPD: Boolean? = false,
-                hadCyclesOrWeeks: Boolean = false,
-                hadUnclearCycles: Boolean = false,
-                hadUnclearWeeks: Boolean = false
-            ) = when {
-                hadTreatment == true && hadPD == true && hadCyclesOrWeeks -> HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS
-                hadTreatment == true && hadPD == true && hadUnclearCycles -> HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES
-                hadTreatment == true && hadPD == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS
-                hadTreatment == true && hadPD == null && hadUnclearCycles -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES
-                hadTreatment == true && hadPD == null && hadUnclearWeeks -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS
-                hadTreatment == true && hadPD == null -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS
-                hadTreatment == null || hadTrial -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
-                hadTreatment -> HAS_HAD_TREATMENT
-                else -> NO_MATCH
-            }
-        }
     }
 }
