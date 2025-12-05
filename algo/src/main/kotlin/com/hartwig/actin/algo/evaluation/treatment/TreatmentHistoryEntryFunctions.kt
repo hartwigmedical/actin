@@ -174,37 +174,4 @@ object TreatmentHistoryEntryFunctions {
             )
         )
     }
-
-    enum class PDFollowingTreatmentEvaluation {
-        HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS,
-        HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES,
-        HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS,
-        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS,
-        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES,
-        HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS,
-        HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
-        HAS_HAD_TREATMENT,
-        NO_MATCH;
-
-        companion object {
-            fun create(
-                hadTreatment: Boolean?,
-                hadTrial: Boolean,
-                hadPD: Boolean? = false,
-                hadCyclesOrWeeks: Boolean = false,
-                hadUnclearCycles: Boolean = false,
-                hadUnclearWeeks: Boolean = false
-            ) = when {
-                hadTreatment == true && hadPD == true && hadCyclesOrWeeks -> HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS
-                hadTreatment == true && hadPD == true && hadUnclearCycles -> HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES
-                hadTreatment == true && hadPD == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS
-                hadTreatment == true && hadPD == null && hadUnclearCycles -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES
-                hadTreatment == true && hadPD == null && hadUnclearWeeks -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS
-                hadTreatment == true && hadPD == null -> HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS
-                hadTreatment == null || hadTrial -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
-                hadTreatment -> HAS_HAD_TREATMENT
-                else -> NO_MATCH
-            }
-        }
-    }
 }

@@ -8,8 +8,9 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
-class HasHadFirstLineTreatmentNameWithoutPdAndWithCycles(private val treatmentName: String, private val minCycles: Int) :
-    EvaluationFunction {
+class HasHadFirstLineTreatmentNameWithoutPdAndWithCycles(
+    private val treatmentName: String, private val minCycles: Int
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val systemic = record.oncologicalHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
