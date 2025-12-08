@@ -36,7 +36,10 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
             experimentType = determineExperimentType(record.experimentType()),
             testTypeDisplay = null,
             targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
-                panelSpecifications.panelTargetSpecification(SequencingTest(ONCO_PANEL), TestVersion(LocalDate.of(2024, 12, 9)))
+                panelSpecifications.panelTargetSpecification(
+                    SequencingTest(ONCO_PANEL),
+                    TestVersion(LocalDate.of(2024, 12, 9))
+                )
             } else null,
             refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
             containsTumorCells = containsTumorCells(record),
