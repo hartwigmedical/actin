@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.orange
 
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -36,10 +36,7 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
             experimentType = determineExperimentType(record.experimentType()),
             testTypeDisplay = null,
             targetSpecification = if (record.experimentType() == OrangeExperimentType.TARGETED) {
-                panelSpecifications.panelTargetSpecification(
-                    PanelTestSpecification(ONCO_PANEL, TestVersion(LocalDate.of(2024, 12, 9))),
-                    null
-                )
+                panelSpecifications.panelTargetSpecification(SequencingTest(ONCO_PANEL), TestVersion(LocalDate.of(2024, 12, 9)))
             } else null,
             refGenomeVersion = determineRefGenomeVersion(record.refGenomeVersion()),
             containsTumorCells = containsTumorCells(record),

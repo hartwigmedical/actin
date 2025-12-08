@@ -40,32 +40,41 @@ class PanelSpecificationsTest {
     }
 
     @Test
-    fun `Should resolve a panels specification from the set of all specification by name and negative results`() {
+    fun `Should resolve a panels specification from the set of all specification by name and results`() {
         val panelSpec = PanelTestSpecification("panel", TestVersion(null))
         val negativeResults =
             setOf(
                 SequencedNegativeResult(GENE, MolecularTestTarget.FUSION),
                 SequencedNegativeResult(GENE, MolecularTestTarget.MUTATION)
             )
+        val amplifications = setOf(SequencedAmplification(GENE))
 
         val specification = PanelSpecifications(
             geneFilter = geneFilter,
             mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
-        ).panelTargetSpecification(panelSpec, negativeResults)
-        assertThat(specification.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION) }).isTrue()
+        ).panelTargetSpecification(
+            SequencingTest("panel", negativeResults = negativeResults, amplifications = amplifications),
+            TestVersion(null)
+        )
+        assertThat(specification.testsGene(GENE) {
+            it == listOf(
+                MolecularTestTarget.MUTATION, MolecularTestTarget.AMPLIFICATION, MolecularTestTarget.FUSION
+            )
+        }).isTrue()
     }
 
     @Test
     fun `Should throw illegal state exception when a panel name is not found`() {
         assertThatThrownBy {
             val specifications = PanelSpecifications(geneFilter, emptyMap())
-            specifications.panelTargetSpecification(PanelTestSpecification("panel"), null)
+            specifications.panelTargetSpecification(SequencingTest("panel"), TestVersion(null))
         }.isInstanceOfAny(IllegalStateException::class.java)
     }
 
     @Test
-    fun `Should throw illegal state when negative results contain unknown genes`() {
+    fun `Should throw illegal state when results contain unknown genes`() {
         val panelSpec = PanelTestSpecification("panel", TestVersion(null))
+        val negativeResults = setOf(SequencedNegativeResult("unknown", MolecularTestTarget.MUTATION))
         val specifications = PanelSpecifications(
             geneFilter,
             mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
@@ -73,8 +82,7 @@ class PanelSpecificationsTest {
 
         assertThatThrownBy {
             specifications.panelTargetSpecification(
-                panelSpec,
-                setOf(SequencedNegativeResult("unknown", MolecularTestTarget.MUTATION))
+                SequencingTest("panel", negativeResults = negativeResults), TestVersion(null)
             )
         }.isInstanceOf(IllegalStateException::class.java)
     }

@@ -1,9 +1,11 @@
 package com.hartwig.actin.molecular.panel
 
-import com.hartwig.actin.datamodel.clinical.SequencedNegativeResult
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
+import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.GeneFilter
 
 class PanelSpecifications(
@@ -20,32 +22,31 @@ class PanelSpecifications(
         get() = molecularTargetsPerTest.keys
 
     fun panelTargetSpecification(
-        testSpec: PanelTestSpecification,
-        negativeResults: Set<SequencedNegativeResult>?
+        input: SequencingTest,
+        testVersion: TestVersion
     ): PanelTargetSpecification {
+        val testSpec = PanelTestSpecification(input.test, testVersion)
+        val derivedMap = PanelSpecificationFunctions.derivedGeneTargetMap(input)
 
-        checkForUnknownGenesInNegativeResults(negativeResults, testSpec)
+        checkForUnknownGenes(derivedMap.keys, testSpec)
 
         val baseTargets = molecularTargetsPerTest[testSpec]
             ?: throw IllegalStateException(
                 "${logPanelName(testSpec)} is not found in panel specifications. Check curation and map to one " +
                         "of [${molecularTargetsPerTest.keys.joinToString()}] or add this panel to the specification TSV."
             )
-        val negativeTargets =
-            (negativeResults?.groupBy(keySelector = { it.gene }, valueTransform = { it.molecularTestTarget }) ?: emptyMap())
-        val mergedTargets = (baseTargets.keys + negativeTargets.keys)
+        val mergedTargets = (baseTargets.keys + derivedMap.keys)
             .associateWith { gene ->
-                ((baseTargets[gene] ?: emptyList()) + (negativeTargets[gene] ?: emptyList())).distinct()
+                ((baseTargets[gene] ?: emptyList()) + (derivedMap[gene] ?: emptyList())).distinct()
             }
         return PanelTargetSpecification(mergedTargets, testSpec.testVersion)
     }
 
-    private fun checkForUnknownGenesInNegativeResults(
-        negativeResults: Set<SequencedNegativeResult>?,
+    private fun checkForUnknownGenes(
+        results: Set<String>,
         testSpec: PanelTestSpecification
     ) {
-        negativeResults?.map(SequencedNegativeResult::gene)?.toSet()
-            ?.filterNot(geneFilter::include).takeIf { it?.isNotEmpty() == true }
+        results.filterNot(geneFilter::include).takeIf { it.isNotEmpty() }
             ?.let { unknownGenes ->
                 throw IllegalStateException(
                     "${logPanelName(testSpec)} has negative results associated containing " +
