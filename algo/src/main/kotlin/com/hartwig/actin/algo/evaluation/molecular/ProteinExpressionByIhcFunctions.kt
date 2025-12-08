@@ -29,7 +29,7 @@ class ProteinExpressionByIhcFunctions(
         }.toSet()
 
         val hasPositiveOrNegativeResult =
-            ihcTestEvaluation.hasCertainPositiveResultsForItem() || ihcTestEvaluation.hasCertainNegativeResultsForItem()
+            ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() || ihcTestEvaluation.hasCertainNegativeResultsForItem()
 
         val comparisonText = when (comparisonType) {
             IhcExpressionComparisonType.LIMITED -> "at most"

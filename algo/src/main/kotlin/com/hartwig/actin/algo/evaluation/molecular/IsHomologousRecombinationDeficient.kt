@@ -4,11 +4,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
-import java.time.LocalDate
+import com.hartwig.actin.molecular.util.GeneConstants
 
-class IsHomologousRecombinationDeficient(maxTestAge: LocalDate? = null) : MolecularEvaluationFunction(maxTestAge) {
+class IsHomologousRecombinationDeficient: MolecularEvaluationFunction() {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()

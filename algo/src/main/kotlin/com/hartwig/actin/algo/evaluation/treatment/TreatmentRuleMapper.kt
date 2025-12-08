@@ -163,13 +163,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
             val minDate = referenceDate.minusWeeks(26)
-            IsEligibleForOnLabelTreatment(
-                treatmentName,
-                StandardOfCareEvaluatorFactory(resources),
-                doidModel(),
-                minDate,
-                maxMolecularTestAge()
-            )
+            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate)
         }
     }
 

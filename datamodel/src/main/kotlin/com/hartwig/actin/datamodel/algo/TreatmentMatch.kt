@@ -8,7 +8,6 @@ data class TreatmentMatch(
     val referenceDateIsLive: Boolean,
     val trialMatches: List<TrialMatch>,
     val standardOfCareMatches: List<AnnotatedTreatmentMatch>?,
-    val personalizedTreatmentSummary: PersonalizedTreatmentSummary?,
-    val maxMolecularTestAge: LocalDate? = null
+    val personalizedTreatmentSummary: PersonalizedTreatmentSummary?
 )
 

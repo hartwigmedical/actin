@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -11,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
+import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -18,6 +20,8 @@ private const val REQUIRED_COPY_NR = 5
 private const val PASSING_COPY_NR = REQUIRED_COPY_NR + 2
 private const val NON_PASSING_COPY_NR = REQUIRED_COPY_NR - 2
 private const val GENE = "gene A"
+
+private val IHC_EVALUABLE_GENE = GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.keys.first()
 
 class GeneIsAmplifiedTest {
 
@@ -57,6 +61,8 @@ class GeneIsAmplifiedTest {
     )
     private val ampOnCanonicalTranscriptWithoutCopies = eligibleAmp.copy(canonicalImpact = impactAmpWithUnknownCopyNr)
     private val ampButInsufficientCopies = eligibleAmp.copy(canonicalImpact = impactAmpWithInsufficientCopyNr)
+    private val matchingIhcResult =
+        IhcTest(item = GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.getValue(IHC_EVALUABLE_GENE), scoreText = "Positive")
     private val ineligibleNoneCopyNumber = eligibleAmp.copy(canonicalImpact = impactNoneWithLowCopyNr)
 
     private val functionWithMinCopies = GeneIsAmplified(GENE, REQUIRED_COPY_NR)
@@ -117,7 +123,7 @@ class GeneIsAmplifiedTest {
             EvaluationResult.WARN,
             MolecularTestFactory.withCopyNumber(
                 eligibleAmp.copy(
-                    eligibleImpact.copy(
+                    canonicalImpact = eligibleImpact.copy(
                         type = CopyNumberType.PARTIAL_GAIN,
                         minCopies = NON_PASSING_COPY_NR,
                     )
@@ -133,7 +139,7 @@ class GeneIsAmplifiedTest {
             functionWithMinCopies.evaluate(
                 MolecularTestFactory.withCopyNumber(
                     eligibleAmp.copy(
-                        eligibleImpact.copy(
+                        canonicalImpact = eligibleImpact.copy(
                             type = CopyNumberType.PARTIAL_GAIN,
                             minCopies = NON_PASSING_COPY_NR,
                             maxCopies = NON_PASSING_COPY_NR
@@ -275,6 +281,38 @@ class GeneIsAmplifiedTest {
     }
 
     @Test
+    fun `Should warn with matching IHC event for both functions`() {
+        assertBothFunctionsForIhc(EvaluationResult.WARN, MolecularTestFactory.withIhcTests(matchingIhcResult))
+    }
+
+    @Test
+    fun `Should warn with appropriate message when matching IHC event`() {
+        val functionIhcEvaluable = GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR)
+        val result = functionIhcEvaluable.evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
+        val resultWithOnlyIhc = functionIhcEvaluable.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(matchingIhcResult)))
+
+        assertThat(result.result).isEqualTo(EvaluationResult.WARN)
+        assertThat(resultWithOnlyIhc.result).isEqualTo(EvaluationResult.WARN)
+
+        val message = "ERBB2 may be amplified with >= 5 copies - based on positive HER2 IHC result"
+        assertThat(result.warnMessagesStrings()).containsExactly(message)
+        assertThat(resultWithOnlyIhc.warnMessagesStrings()).containsExactly(message)
+    }
+
+    @Test
+    fun `Should fail if gene is not allowed to be evaluated by IHC`() {
+        assertBothFunctions(EvaluationResult.FAIL, MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)))
+    }
+
+    @Test
+    fun `Should fail with potentially eligible IHC event for both functions if correct result but on wrong gene`() {
+        assertBothFunctionsForIhc(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE))
+        )
+    }
+
+    @Test
     fun `Should fail if not an amp if copies are null and copies not requested`() {
         assertBothFunctions(
             EvaluationResult.FAIL,
@@ -305,5 +343,10 @@ class GeneIsAmplifiedTest {
     private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {
         assertMolecularEvaluation(result, functionWithMinCopies.evaluate(record))
         assertMolecularEvaluation(result, functionWithNoMinCopies.evaluate(record))
+    }
+
+    private fun assertBothFunctionsForIhc(result: EvaluationResult, record: PatientRecord) {
+        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR).evaluate(record))
+        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, null).evaluate(record))
     }
 }

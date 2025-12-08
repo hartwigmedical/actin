@@ -4,13 +4,11 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
-import java.time.LocalDate
 
 class HasTumorMutationalLoadWithinRange(
     private val minTumorMutationalLoad: Int,
-    private val maxTumorMutationalLoad: Int?,
-    maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+    private val maxTumorMutationalLoad: Int?
+) : MolecularEvaluationFunction() {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val tumorMutationalLoad = test.characteristics.tumorMutationalLoad?.score

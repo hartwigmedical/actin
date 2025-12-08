@@ -8,13 +8,12 @@ import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunction
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import java.time.LocalDate
 
-class HasPositiveHER2ExpressionByIhc(private val maxTestAge: LocalDate? = null) : EvaluationFunction {
+class HasPositiveHER2ExpressionByIhc: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestEvaluation = IhcTestEvaluation.create("HER2", record.ihcTests)
-        val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record, maxTestAge)
+        val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record)
         val her2TestResults = ihcTestEvaluation.filteredTests.map(::classifyHer2Test).toSet()
 
         val warnInclusionEvent = setOf("Potential IHC HER2 positive")

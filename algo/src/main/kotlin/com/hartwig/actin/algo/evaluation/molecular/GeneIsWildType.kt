@@ -12,10 +12,9 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import java.time.LocalDate
 
-class GeneIsWildType(override val gene: String, maxTestAge: LocalDate? = null) :
-    MolecularEvaluationFunction(targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, "Wildtype of"), maxTestAge = maxTestAge) {
+class GeneIsWildType(override val gene: String) :
+    MolecularEvaluationFunction(targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, "Wildtype of")) {
 
     override fun evaluationPrecedence() = ::evaluationPrecedenceFunction
 

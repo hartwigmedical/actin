@@ -12,14 +12,10 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
-import java.time.LocalDate
 
 class HasBreastCancerWithPositiveReceptorOfType(
-    private val doidModel: DoidModel,
-    private val receptorType: ReceptorType,
-    private val maxTestAge: LocalDate? = null
-) :
-    EvaluationFunction {
+    private val doidModel: DoidModel, private val receptorType: ReceptorType
+): EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
@@ -40,7 +36,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             else -> null
         }
         val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
-        val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record, maxTestAge)
+        val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record)
 
         return when {
             tumorDoids.isNullOrEmpty() -> {

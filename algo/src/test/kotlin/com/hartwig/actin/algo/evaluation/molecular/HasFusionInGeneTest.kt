@@ -1,21 +1,27 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
+import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
+private val MATCHING_GENE_IHC = GeneConstants.IHC_FUSION_EVALUABLE_GENES.first()
 
 class HasFusionInGeneTest {
-    
+
     val function = HasFusionInGene(MATCHING_GENE)
+    val ihcFunction = HasFusionInGene(MATCHING_GENE_IHC)
 
     private val matchingFusion = TestFusionFactory.createMinimal().copy(
         geneStart = MATCHING_GENE,
@@ -120,6 +126,67 @@ class HasFusionInGeneTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should warn with matching IHC result`() {
+        val result = ihcFunction.evaluate(
+            MolecularTestFactory.withIhcTests(
+                IhcTest(
+                    MATCHING_GENE_IHC,
+                    scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first()
+                )
+            )
+        )
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessagesStrings()).containsExactly("ALK IHC result(s) may indicate ALK fusion")
+    }
+
+    @Test
+    fun `Should fail with positive IHC result but gene cannot be evaluated by IHC`() {
+        val result = function.evaluate(
+            MolecularTestFactory.withIhcTests(
+                IhcTest(
+                    MATCHING_GENE,
+                    scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first()
+                )
+            )
+        )
+
+        assertMolecularEvaluation(EvaluationResult.FAIL, result)
+        assertThat(result.failMessagesStrings()).containsExactly("No fusion in gene A")
+    }
+
+    @Test
+    fun `Should warn with indeterminate IHC result`() {
+        val test = IhcTest(
+            MATCHING_GENE_IHC,
+            scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first(),
+            impliesPotentialIndeterminateStatus = true
+        )
+        val result = ihcFunction.evaluate(MolecularTestFactory.withIhcTests(test))
+        val resultOnlyIhcTests = ihcFunction.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(test)))
+
+        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertMolecularEvaluation(EvaluationResult.WARN, resultOnlyIhcTests)
+
+        val message = "ALK IHC result(s) are indeterminate - undetermined if this may indicate ALK fusion"
+        assertThat(result.warnMessagesStrings()).containsExactly(message)
+        assertThat(resultOnlyIhcTests.warnMessagesStrings()).containsExactly(message)
+    }
+
+    @Test
+    fun `Should fail with negative IHC result`() {
+        val test = IhcTest(MATCHING_GENE_IHC, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
+        val result = ihcFunction.evaluate(MolecularTestFactory.withIhcTests(test))
+        val resultOnlyIhcTests = ihcFunction.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(test)))
+
+        assertMolecularEvaluation(EvaluationResult.FAIL, result)
+        assertMolecularEvaluation(EvaluationResult.FAIL, resultOnlyIhcTests)
+
+        val message = "No fusion in $MATCHING_GENE_IHC"
+        assertThat(result.failMessagesStrings()).containsExactly(message)
+        assertThat(resultOnlyIhcTests.failMessagesStrings()).containsExactly(message)
     }
 
     @Test

@@ -175,6 +175,5 @@
       ]
     }
   ],
-  "survivalPredictionsPerTreatment": null,
-  "maxMolecularTestAge": null
+  "survivalPredictionsPerTreatment": null
 }

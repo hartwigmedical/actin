@@ -4,11 +4,10 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import java.time.LocalDate
 
 class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(
-    private val genesToFind: Set<String>, maxTestAge: LocalDate? = null
-) : MolecularEvaluationFunction(maxTestAge) {
+    private val genesToFind: Set<String>
+) : MolecularEvaluationFunction() {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val isHRD = test.characteristics.homologousRecombination?.isDeficient
