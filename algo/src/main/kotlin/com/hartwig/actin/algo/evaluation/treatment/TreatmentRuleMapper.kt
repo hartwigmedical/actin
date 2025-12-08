@@ -300,7 +300,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
-            HasHadFirstLineTreatmentNameWithoutPdAndWithCycles(input.treatment.name, minCycles = input.integer)
+            HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(input.treatment, minCycles = input.integer)
         }
     }
 

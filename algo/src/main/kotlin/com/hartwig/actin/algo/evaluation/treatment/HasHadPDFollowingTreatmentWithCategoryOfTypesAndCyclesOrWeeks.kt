@@ -106,7 +106,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
         return "${Format.concatItemsWithOr(types)} ${category.display()} treatment"
     }
 
-    enum class PDFollowingTreatmentEvaluation {
+    private enum class PDFollowingTreatmentEvaluation {
         HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS,
         HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES,
         HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS,

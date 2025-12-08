@@ -11,19 +11,20 @@ import org.junit.Test
 
 private const val MIN_CYCLES = 3
 private const val RECENT_YEAR = 2024
+private val MATCHING_TREATMENT = treatment("matching", true)
+private val MATCHING_HISTORY_ENTRY = treatmentHistoryEntry(
+    setOf(MATCHING_TREATMENT),
+    startYear = RECENT_YEAR,
+    stopReason = StopReason.TOXICITY,
+    numCycles = MIN_CYCLES
+)
+private val MATCHING_HISTORY_DETAILS = TreatmentHistoryDetails(stopReason = StopReason.TOXICITY, cycles = MIN_CYCLES)
 
-class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
+private val NON_MATCHING_HISTORY_ENTRY = treatmentHistoryEntry(setOf(treatment("wrong", true)))
 
-    private val matchingTreatment = treatment("matching", true)
-    private val matchingHistoryEntry = treatmentHistoryEntry(
-        setOf(matchingTreatment),
-        startYear = RECENT_YEAR,
-        stopReason = StopReason.TOXICITY,
-        numCycles = MIN_CYCLES
-    )
+class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
 
-    private val nonMatchingHistoryEntry = treatmentHistoryEntry(setOf(treatment("wrong", true)))
-    private val function = HasHadFirstLineTreatmentNameWithoutPdAndWithCycles(matchingTreatment.name, MIN_CYCLES)
+    private val function = HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(MATCHING_TREATMENT, MIN_CYCLES)
 
     @Test
     fun `Should fail for empty treatments`() {
@@ -32,7 +33,7 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
 
     @Test
     fun `Should fail when patient has not received correct treatment`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(nonMatchingHistoryEntry))))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(NON_MATCHING_HISTORY_ENTRY))))
     }
 
     @Test
@@ -40,7 +41,7 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
-                withTreatmentHistory(listOf(nonMatchingHistoryEntry.copy(startYear = RECENT_YEAR.minus(1)), matchingHistoryEntry))
+                withTreatmentHistory(listOf(NON_MATCHING_HISTORY_ENTRY.copy(startYear = RECENT_YEAR.minus(1)), MATCHING_HISTORY_ENTRY))
             )
         )
     }
@@ -52,7 +53,7 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
             function.evaluate(
                 withTreatmentHistory(
                     listOf(
-                        matchingHistoryEntry.copy(
+                        MATCHING_HISTORY_ENTRY.copy(
                             treatmentHistoryDetails = TreatmentHistoryDetails(
                                 stopReason = StopReason.PROGRESSIVE_DISEASE
                             )
@@ -69,7 +70,7 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 withTreatmentHistory(
-                    listOf(matchingHistoryEntry.copy(treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES - 1)))
+                    listOf(MATCHING_HISTORY_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES - 1)))
                 )
             )
         )
@@ -77,14 +78,20 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
 
     @Test
     fun `Should pass when correct treatment is first line without PD and with sufficient cycles`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(matchingHistoryEntry))))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(MATCHING_HISTORY_ENTRY))))
     }
 
     @Test
     fun `Should pass when treatment has unknown dates but is only treatment and meets PD and cycles criteria`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withTreatmentHistory(listOf(matchingHistoryEntry.copy(startYear = null))))
+            function.evaluate(
+                withTreatmentHistory(
+                    listOf(
+                        MATCHING_HISTORY_ENTRY.copy(startYear = null, treatmentHistoryDetails = MATCHING_HISTORY_DETAILS)
+                    )
+                )
+            )
         )
     }
 
@@ -94,7 +101,10 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 withTreatmentHistory(
-                    listOf(nonMatchingHistoryEntry.copy(startYear = RECENT_YEAR), matchingHistoryEntry.copy(startYear = null))
+                    listOf(
+                        NON_MATCHING_HISTORY_ENTRY.copy(startYear = RECENT_YEAR),
+                        MATCHING_HISTORY_ENTRY.copy(startYear = null, treatmentHistoryDetails = MATCHING_HISTORY_DETAILS)
+                    )
                 )
             )
         )
@@ -106,7 +116,11 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 withTreatmentHistory(
-                    listOf(matchingHistoryEntry.copy(treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = null)))
+                    listOf(
+                        MATCHING_HISTORY_ENTRY.copy(
+                            treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = null, cycles = MIN_CYCLES)
+                        )
+                    )
                 )
             )
         )
@@ -118,7 +132,11 @@ class HasHadFirstLineTreatmentNameWithoutPdAndWithCyclesTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 withTreatmentHistory(
-                    listOf(matchingHistoryEntry.copy(treatmentHistoryDetails = TreatmentHistoryDetails(cycles = null)))
+                    listOf(
+                        MATCHING_HISTORY_ENTRY.copy(
+                            treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = StopReason.TOXICITY, cycles = null)
+                        )
+                    )
                 )
             )
         )
