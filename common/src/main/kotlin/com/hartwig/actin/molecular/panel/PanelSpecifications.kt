@@ -7,11 +7,15 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.GeneFilter
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 
 class PanelSpecifications(
     private val geneFilter: GeneFilter,
     panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>
 ) {
+
+    private val logger: Logger = LogManager.getLogger(PanelSpecifications::class.java)
 
     private val molecularTargetsPerTest: Map<PanelTestSpecification, Map<String, List<MolecularTestTarget>>> =
         panelSpecifications.mapValues { (_, geneSpecs) ->
@@ -39,6 +43,14 @@ class PanelSpecifications(
             .associateWith { gene ->
                 ((baseTargets[gene] ?: emptyList()) + (derivedMap[gene] ?: emptyList())).distinct()
             }
+
+        if (mergedTargets != baseTargets) {
+            logger.warn(
+                "${logPanelName(testSpec)} has results associated containing molecular test target(s) for gene(s) not found in the panel specifications; " +
+                        " these molecular test target(s) for gene(s) are used during evaluation"
+            )
+        }
+
         return PanelTargetSpecification(mergedTargets, testSpec.testVersion)
     }
 
@@ -49,7 +61,7 @@ class PanelSpecifications(
         results.filterNot(geneFilter::include).takeIf { it.isNotEmpty() }
             ?.let { unknownGenes ->
                 throw IllegalStateException(
-                    "${logPanelName(testSpec)} has negative results associated containing " +
+                    "${logPanelName(testSpec)} has results associated containing " +
                             "gene(s) not present in SERVE known genes: ${unknownGenes.joinToString()}." +
                             "Correct this in the feed UI before continuing."
                 )
