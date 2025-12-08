@@ -46,8 +46,8 @@ class PanelSpecifications(
 
         if (mergedTargets != baseTargets) {
             logger.warn(
-                "${logPanelName(testSpec)} has results associated containing molecular test target(s) for gene(s) not found in the panel specifications; " +
-                        " these molecular test target(s) for gene(s) are used during evaluation"
+                "${logPanelName(testSpec)} has results associated containing molecular test target(s) for gene(s) not found in the panel " +
+                        "specifications; these molecular test target(s) for gene(s) are used during evaluation"
             )
         }
 
