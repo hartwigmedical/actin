@@ -1,17 +1,8 @@
 package com.hartwig.actin.molecular.paver
 
-import com.hartwig.actin.tools.validation.VCFWriterFactory
 import com.hartwig.hmftools.common.utils.config.ConfigBuilder
 import com.hartwig.hmftools.pave.PaveApplication
 import com.hartwig.hmftools.pave.PaveConfig
-import htsjdk.samtools.reference.IndexedFastaSequenceFile
-import htsjdk.tribble.AbstractFeatureReader
-import htsjdk.variant.variantcontext.Allele
-import htsjdk.variant.variantcontext.VariantContext
-import htsjdk.variant.variantcontext.VariantContextBuilder
-import htsjdk.variant.vcf.VCFCodec
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import java.io.File
 import java.nio.file.Paths
 
@@ -23,8 +14,6 @@ class Paver(
     private val tempDir: String
 ) {
 
-    private val logger: Logger = LogManager.getLogger(Paver::class.java)
-
     fun run(queries: List<PaveQuery>): List<PaveResponse> {
         val configBuilder = ConfigBuilder("Pave")
         PaveConfig.addConfig(configBuilder)
@@ -33,7 +22,7 @@ class Paver(
         val paveVcfQueryFile = paveVcfQueryFilename(runId)
         val paveVcfResponseFile = paveVcfResponseFilename(runId)
 
-        PaveVcf.writePaveInputVcf(paveVcfQueryFile, queries, refGenomeFasta)
+        PaveVcf.write(paveVcfQueryFile, queries, refGenomeFasta)
 
         configBuilder.checkAndParseCommandLine(
             arrayOf(
@@ -49,7 +38,7 @@ class Paver(
         val paveApplication = PaveApplication(configBuilder)
         paveApplication.run()
 
-        val response = PaveVcf.loadPaveOutputVcf(paveVcfResponseFile)
+        val response = PaveVcf.read(paveVcfResponseFile)
 
         File(paveVcfQueryFile).delete()
         File(indexForVcf(paveVcfQueryFile)).delete()

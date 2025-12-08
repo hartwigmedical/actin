@@ -7,15 +7,14 @@ import htsjdk.variant.variantcontext.Allele
 import htsjdk.variant.variantcontext.VariantContext
 import htsjdk.variant.variantcontext.VariantContextBuilder
 import htsjdk.variant.vcf.VCFCodec
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+
 import java.io.File
 
-object PaveVcf {
-    private val logger: Logger = LogManager.getLogger(Paver::class.java)
+private const val LOCAL_PHASE_SET_FIELD = "LPS"
 
-    fun writePaveInputVcf(vcfFile: String, queries: List<PaveQuery>, refGenomeFasta: String) {
-        logger.debug("Writing {} variants to {}", queries.size, vcfFile)
+object PaveVcf {
+
+    fun write(vcfFile: String, queries: List<PaveQuery>, refGenomeFasta: String) {
         val refSequence = IndexedFastaSequenceFile(File(refGenomeFasta))
         val writer = VCFWriterFactory.openIndexedVCFWriter(vcfFile, refSequence)
 
@@ -25,21 +24,24 @@ object PaveVcf {
 
         for (query in sortedQueries) {
             val alleles = listOf(Allele.create(query.ref, true), Allele.create(query.alt, false))
-            val variant = VariantContextBuilder().noGenotypes()
+            val variant = VariantContextBuilder()
+                .noGenotypes()
                 .source("TransVar")
                 .chr(query.chromosome)
                 .start(query.position.toLong())
                 .id(query.id)
                 .alleles(alleles)
                 .computeEndFromAlleles(alleles, query.position)
+                .apply { query.localPhaseSet?.let { attribute(LOCAL_PHASE_SET_FIELD, it) } }
                 .make()
+
             writer.add(variant)
         }
 
         writer.close()
     }
 
-     fun loadPaveOutputVcf(paveVcfFile: String): List<PaveResponse> {
+     fun read(paveVcfFile: String): List<PaveResponse> {
         val reader = AbstractFeatureReader.getFeatureReader(paveVcfFile, VCFCodec(), false)
 
         val response = mutableListOf<PaveResponse>()
