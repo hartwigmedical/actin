@@ -1,7 +1,7 @@
 package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.testutil.ResourceLocator
@@ -17,12 +17,12 @@ class PanelGeneSpecificationsFileTest {
             ResourceLocator.resourceOnClasspath("panel_specifications/panel_specifications.tsv"),
             AlwaysValidFilter()
         )
-        val oncoPanel = geneList.panelTargetSpecification(PanelTestSpecification("oncopanel", TestVersion(LocalDate.of(2022, 1, 1))), null)
+        val oncoPanel = geneList.panelTargetSpecification(SequencingTest("oncopanel"), TestVersion(LocalDate.of(2022, 1, 1)))
         Assertions.assertThat(oncoPanel.testsGene("ABCB1") { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
         Assertions.assertThat(oncoPanel.testsGene("EGFR") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
         Assertions.assertThat(oncoPanel.testsGene("ALK") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
         Assertions.assertThat(oncoPanel.testsGene("ABCB1") { it == listOf(MolecularTestTarget.FUSION) }).isFalse()
-        val archer = geneList.panelTargetSpecification(PanelTestSpecification("archer"), null)
+        val archer = geneList.panelTargetSpecification(SequencingTest("archer"), TestVersion(null))
         Assertions.assertThat(archer.testsGene("ALK") { it == MolecularTestTarget.entries }).isTrue()
         Assertions.assertThat(archer.testsGene("ROS1") { it == listOf(MolecularTestTarget.MUTATION, MolecularTestTarget.FUSION) }).isTrue()
         Assertions.assertThat(archer.testsGene("ABCB1") { it == MolecularTestTarget.entries }).isFalse()
@@ -35,7 +35,7 @@ class PanelGeneSpecificationsFileTest {
             AlwaysValidFilter()
         )
         val (oldOncoPanel, newOncoPanel) = listOf(LocalDate.of(2022, 1, 1), LocalDate.of(2023, 1, 1)).map {
-            geneList.panelTargetSpecification(PanelTestSpecification("oncopanel", TestVersion(it)), null)
+            geneList.panelTargetSpecification(SequencingTest("oncopanel"), TestVersion(it))
         }
         Assertions.assertThat(oldOncoPanel.testsGene("ABCB1") { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
         Assertions.assertThat(oldOncoPanel.testsGene("EGFR") { it == listOf(MolecularTestTarget.MUTATION) }).isFalse()
