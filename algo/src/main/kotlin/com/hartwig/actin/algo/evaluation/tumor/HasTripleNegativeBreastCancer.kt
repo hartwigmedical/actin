@@ -4,6 +4,9 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.TestResult
+import com.hartwig.actin.algo.evaluation.tumor.BreastCancerReceptorFunctions.NEGATIVE_DOID_MOLECULAR_COMBINATION
+import com.hartwig.actin.algo.evaluation.tumor.BreastCancerReceptorFunctions.POSITIVE_DOID_MOLECULAR_COMBINATION
+import com.hartwig.actin.algo.evaluation.tumor.BreastCancerReceptorFunctions.summarizeTests
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.ReceptorType
@@ -20,11 +23,10 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
         val tripleNegativeReceptors = setOf(ReceptorType.ER, ReceptorType.PR, ReceptorType.HER2)
         val statusPerReceptor = tripleNegativeReceptors.map { receptor ->
             val targetMolecularTests = record.ihcTests.filter { it.item == receptor.display() }
-            val ihcTestSummary = BreastCancerReceptorFunctions.summarizeTests(targetMolecularTests, receptor)
-            val targetReceptorPositiveInDoids =
-                expandedDoidSet.contains(BreastCancerReceptorFunctions.POSITIVE_DOID_MOLECULAR_COMBINATION[receptor])
+            val ihcTestSummary = summarizeTests(targetMolecularTests, receptor)
+            val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptor])
             val targetReceptorNegativeInDoids =
-                expandedDoidSet.contains(BreastCancerReceptorFunctions.NEGATIVE_DOID_MOLECULAR_COMBINATION[receptor]) || isTripleNegativeBreastCancer
+                expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptor]) || isTripleNegativeBreastCancer
             val positiveArguments = TestResult.POSITIVE in ihcTestSummary || targetReceptorPositiveInDoids
             val negativeArguments = TestResult.NEGATIVE in ihcTestSummary || targetReceptorNegativeInDoids
             when {
