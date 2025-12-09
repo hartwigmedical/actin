@@ -26,18 +26,18 @@ class PanelSpecifications(
 
     fun panelTargetSpecification(input: SequencingTest, testVersion: TestVersion): PanelTargetSpecification {
         val testSpec = PanelTestSpecification(input.test, testVersion)
-        val derivedTargetsMap = PanelSpecificationFunctions.derivedGeneTargetMap(input)
+        val derivedTargets = PanelSpecificationFunctions.derivedGeneTargetMap(input)
 
-        checkForUnknownGenes(derivedTargetsMap.keys, testSpec)
+        checkForUnknownGenes(derivedTargets.keys, testSpec)
 
         val baseTargets = molecularTargetsPerTest[testSpec]
             ?: throw IllegalStateException(
                 "${logPanelName(testSpec)} is not found in panel specifications. Check curation and map to one " +
                         "of [${molecularTargetsPerTest.keys.joinToString()}] or add this panel to the specification TSV."
             )
-        val mergedTargets = (baseTargets.keys + derivedTargetsMap.keys)
+        val mergedTargets = (baseTargets.keys + derivedTargets.keys)
             .associateWith { gene ->
-                ((baseTargets[gene] ?: emptyList()) + (derivedTargetsMap[gene] ?: emptyList())).distinct()
+                ((baseTargets[gene] ?: emptyList()) + (derivedTargets[gene] ?: emptyList())).distinct()
             }
 
         if (mergedTargets != baseTargets) {
