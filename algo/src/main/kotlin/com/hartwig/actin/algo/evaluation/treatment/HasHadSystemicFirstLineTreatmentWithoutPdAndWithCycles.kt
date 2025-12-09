@@ -20,13 +20,17 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
         val treatmentToFindWithUnknownStartDate = treatmentsWithoutStartDate.filter { it.containsTreatment(treatmentNameToFind) }
         val hasOnlyHadTargetTreatment = systemic.isNotEmpty() && systemic.all { it.containsTreatment(treatmentNameToFind) }
         val targetTreatment = systemic.firstOrNull { it.containsTreatment(treatmentNameToFind) }
+        val isFirstLine = if (treatmentToFindWithUnknownStartDate.isNotEmpty() && !hasOnlyHadTargetTreatment) {
+            null
+        } else {
+            hasOnlyHadTargetTreatment || firstTreatment?.containsTreatment(treatmentNameToFind) == true
+        }
 
         val evaluation = TreatmentEvaluation.create(
             hadUnclearFirstLineTrialTreatment = firstTreatment?.let { TrialFunctions.treatmentMayMatchAsTrial(it, treatment.categories()) }
                 ?: false,
-            unclearTreatmentLine = treatmentToFindWithUnknownStartDate.isNotEmpty() && !hasOnlyHadTargetTreatment,
-            isFirstLine = firstTreatment?.containsTreatment(treatmentNameToFind) == true || hasOnlyHadTargetTreatment,
-            pdStatus = targetTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) },
+            isFirstLine = isFirstLine,
+            hasPd = targetTreatment?.let { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) },
             hasMinCycles = targetTreatment?.treatmentHistoryDetails?.cycles?.let { it >= minCycles }
         )
 
@@ -73,15 +77,14 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
         companion object {
             fun create(
                 hadUnclearFirstLineTrialTreatment: Boolean,
-                unclearTreatmentLine: Boolean,
-                isFirstLine: Boolean,
-                pdStatus: Boolean?,
+                isFirstLine: Boolean?,
+                hasPd: Boolean?,
                 hasMinCycles: Boolean?
             ) = when {
                 hadUnclearFirstLineTrialTreatment -> HAS_HAD_UNCLEAR_TRIAL_TREATMENT
-                (!isFirstLine && !unclearTreatmentLine) || pdStatus == true || hasMinCycles == false -> DOES_NOT_MEET_CRITERIA
-                unclearTreatmentLine -> UNDETERMINED_IF_FIRST_LINE
-                pdStatus == null -> UNDETERMINED_PD_STATUS
+                isFirstLine == false || hasPd == true || hasMinCycles == false -> DOES_NOT_MEET_CRITERIA
+                isFirstLine == null -> UNDETERMINED_IF_FIRST_LINE
+                hasPd == null -> UNDETERMINED_PD_STATUS
                 hasMinCycles == null -> UNDETERMINED_CYCLES
                 else -> FIRST_LINE_AND_MEETS_PD_AND_CYCLES
             }
