@@ -22,11 +22,13 @@ class HasBreastCancerWithPositiveReceptorOfType(
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
         val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
         val targetMolecularTests = record.ihcTests.filter { it.item == receptorType.display() }
-        val targetReceptorPositiveInDoids = expandedDoidSet.contains(POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
-        val targetReceptorNegativeInDoids = expandedDoidSet.contains(NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
+        val targetReceptorPositiveInDoids =
+            expandedDoidSet.contains(BreastCancerReceptorFunctions.POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
+        val targetReceptorNegativeInDoids =
+            expandedDoidSet.contains(BreastCancerReceptorFunctions.NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
                 || expandedDoidSet.contains(DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
 
-        val testSummary = summarizeTests(targetMolecularTests)
+        val testSummary = BreastCancerReceptorFunctions.summarizeTests(targetMolecularTests, receptorType)
         val positiveArguments = TestResult.POSITIVE in testSummary || targetReceptorPositiveInDoids
         val negativeArguments = TestResult.NEGATIVE in testSummary || targetReceptorNegativeInDoids
 
@@ -87,26 +89,5 @@ class HasBreastCancerWithPositiveReceptorOfType(
                 EvaluationFactory.fail("No ${receptorType.display()}-positive breast cancer")
             }
         }
-    }
-
-    private fun summarizeTests(targetIhcTests: List<IhcTest>): Set<TestResult> {
-        val classifier = when (receptorType) {
-            ReceptorType.ER, ReceptorType.PR -> ::classifyPrOrErTest
-            ReceptorType.HER2 -> ::classifyHer2Test
-        }
-        return targetIhcTests.map(classifier).toSet()
-    }
-
-    companion object {
-        private val POSITIVE_DOID_MOLECULAR_COMBINATION = mapOf(
-            ReceptorType.ER to DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID,
-            ReceptorType.PR to DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID,
-            ReceptorType.HER2 to DoidConstants.HER2_POSITIVE_BREAST_CANCER_DOID
-        )
-        private val NEGATIVE_DOID_MOLECULAR_COMBINATION = mapOf(
-            ReceptorType.ER to DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID,
-            ReceptorType.PR to DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID,
-            ReceptorType.HER2 to DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID
-        )
     }
 }
