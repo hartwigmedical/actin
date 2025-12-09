@@ -22,7 +22,6 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
         val targetTreatment = systemic.firstOrNull { it.containsTreatment(treatmentNameToFind) }
 
         val evaluation = TreatmentEvaluation.create(
-            hadTreatment = systemic.any { it.containsTreatment(treatmentNameToFind) },
             hadUnclearFirstLineTrialTreatment = firstTreatment?.let { TrialFunctions.treatmentMayMatchAsTrial(it, treatment.categories()) }
                 ?: false,
             unclearTreatmentLine = treatmentToFindWithUnknownStartDate.isNotEmpty() && !hasOnlyHadTargetTreatment,
@@ -73,17 +72,14 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
 
         companion object {
             fun create(
-                hadTreatment: Boolean,
                 hadUnclearFirstLineTrialTreatment: Boolean,
                 unclearTreatmentLine: Boolean,
                 isFirstLine: Boolean,
                 pdStatus: Boolean?,
                 hasMinCycles: Boolean?
             ) = when {
-                !hadTreatment && hadUnclearFirstLineTrialTreatment -> HAS_HAD_UNCLEAR_TRIAL_TREATMENT
-                !hadTreatment || (!isFirstLine && !unclearTreatmentLine) || pdStatus == true || hasMinCycles == false -> {
-                    DOES_NOT_MEET_CRITERIA
-                }
+                hadUnclearFirstLineTrialTreatment -> HAS_HAD_UNCLEAR_TRIAL_TREATMENT
+                (!isFirstLine && !unclearTreatmentLine) || pdStatus == true || hasMinCycles == false -> DOES_NOT_MEET_CRITERIA
                 unclearTreatmentLine -> UNDETERMINED_IF_FIRST_LINE
                 pdStatus == null -> UNDETERMINED_PD_STATUS
                 hasMinCycles == null -> UNDETERMINED_CYCLES
