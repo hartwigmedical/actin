@@ -12,17 +12,19 @@ import com.hartwig.actin.doid.DoidModel
 class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tripleNegativeReceptors = setOf(ReceptorType.ER, ReceptorType.PR, ReceptorType.HER2)
         val tumorDoids = record.tumor.doids
         val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
+        val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
+        val isTripleNegativeBreastCancer = expandedDoidSet.contains(DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
 
-        val anyIndicationForPositiveReceptor = tripleNegativeReceptors.map { receptor ->
-            val targetMolecularTests = record.ihcTests.filter { it.item in receptor.display() }
+        val tripleNegativeReceptors = setOf(ReceptorType.ER, ReceptorType.PR, ReceptorType.HER2)
+        val statusPerReceptor = tripleNegativeReceptors.map { receptor ->
+            val targetMolecularTests = record.ihcTests.filter { it.item == receptor.display() }
             val ihcTestSummary = BreastCancerReceptorFunctions.summarizeTests(targetMolecularTests, receptor)
             val targetReceptorPositiveInDoids =
                 expandedDoidSet.contains(BreastCancerReceptorFunctions.POSITIVE_DOID_MOLECULAR_COMBINATION[receptor])
             val targetReceptorNegativeInDoids =
-                expandedDoidSet.contains(BreastCancerReceptorFunctions.NEGATIVE_DOID_MOLECULAR_COMBINATION[receptor])
+                expandedDoidSet.contains(BreastCancerReceptorFunctions.NEGATIVE_DOID_MOLECULAR_COMBINATION[receptor]) || isTripleNegativeBreastCancer
             val positiveArguments = TestResult.POSITIVE in ihcTestSummary || targetReceptorPositiveInDoids
             val negativeArguments = TestResult.NEGATIVE in ihcTestSummary || targetReceptorNegativeInDoids
             when {
@@ -37,13 +39,13 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
                 EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (tumor doids missing)")
             }
 
-            expandedDoidSet.contains(DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID) -> EvaluationFactory.pass("Has triple negative breast cancer")
+            !isBreastCancer -> EvaluationFactory.fail("Has no triple negative breast cancer")
 
-            anyIndicationForPositiveReceptor.contains(true) -> EvaluationFactory.fail("Has no triple negative breast cancer")
+            statusPerReceptor.all { it == false } -> EvaluationFactory.pass("Has triple negative breast cancer")
 
-            anyIndicationForPositiveReceptor.contains(null) -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer")
+            statusPerReceptor.contains(true) -> EvaluationFactory.fail("Has no triple negative breast cancer")
 
-            else -> EvaluationFactory.fail("Has no triple negative breast cancer")
+            else -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer")
         }
     }
 }
