@@ -72,7 +72,7 @@ class PanelSpecificationsTest {
     }
 
     @Test
-    fun `Should throw illegal state when results contain unknown genes`() {
+    fun `Should throw illegal state exception when results contain unknown genes`() {
         val panelSpec = PanelTestSpecification("panel", TestVersion(null))
         val negativeResults = setOf(SequencedNegativeResult("unknown", MolecularTestTarget.MUTATION))
         val specifications = PanelSpecifications(
