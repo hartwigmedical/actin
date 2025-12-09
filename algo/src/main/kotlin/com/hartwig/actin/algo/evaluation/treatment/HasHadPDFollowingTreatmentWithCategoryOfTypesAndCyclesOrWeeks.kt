@@ -52,7 +52,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             )
         }
             .toSet()
-        
+
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS in treatmentEvaluations -> {
                 if (minCycles == null && minWeeks == null) {
