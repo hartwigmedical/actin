@@ -5,13 +5,15 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import org.junit.Test
 
 private const val MIN_CYCLES = 3
 private const val RECENT_YEAR = 2024
-private val MATCHING_TREATMENT = treatment("matching", true)
+private val MATCHING_CATEGORY = setOf(TreatmentCategory.IMMUNOTHERAPY)
+private val MATCHING_TREATMENT = treatment("matching", true, MATCHING_CATEGORY)
 private val MATCHING_HISTORY_ENTRY = treatmentHistoryEntry(
     setOf(MATCHING_TREATMENT),
     startYear = RECENT_YEAR,
@@ -89,6 +91,24 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                 withTreatmentHistory(
                     listOf(
                         MATCHING_HISTORY_ENTRY.copy(startYear = null, treatmentHistoryDetails = MATCHING_HISTORY_DETAILS)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should be undetermined first line treatment is unknown trial treatment`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                withTreatmentHistory(
+                    listOf(
+                        treatmentHistoryEntry(
+                            setOf(treatment("trial", true, MATCHING_CATEGORY)),
+                            isTrial = true,
+                            startYear = RECENT_YEAR
+                        )
                     )
                 )
             )
