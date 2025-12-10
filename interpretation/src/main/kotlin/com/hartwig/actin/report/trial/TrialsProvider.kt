@@ -1,11 +1,14 @@
 package com.hartwig.actin.report.trial
 
+import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
+import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.ActionableAndEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
@@ -38,6 +41,7 @@ class TrialsProvider(
     private val nonEvaluableCohorts: List<InterpretedCohort>,
     private val internalTrialIds: Set<String>,
     private val patientIsYoungAdult: Boolean,
+    private val isLungCancer: Boolean,
     private val countryOfReference: Country,
     private val retainOriginalExternalTrials: Boolean
 ) {
@@ -58,17 +62,18 @@ class TrialsProvider(
     }
 
     fun externalTrialsUnfiltered(): ExternalTrials {
-        return externalTrials(setOf(), listOf(), false)
+        return externalTrials(setOf(), listOf(), patientIsYoungAdult = false, isLungCancer = false)
     }
 
     fun externalTrials(): ExternalTrials {
-        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult)
+        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult, isLungCancer)
     }
 
     private fun externalTrials(
         internalTrialIds: Set<String>,
         internalEvaluatedCohorts: List<InterpretedCohort>,
-        patientIsYoungAdult: Boolean
+        patientIsYoungAdult: Boolean,
+        isLungCancer: Boolean
     ): ExternalTrials {
         val eligibleExternalTrials = externalTrials.filterInternalTrials(internalTrialIds)
 
@@ -84,7 +89,7 @@ class TrialsProvider(
         return ExternalTrials(
             hideOverlappingTrials(
                 nationalTrials,
-                filteredNationalTrials,
+                if (isLungCancer) emptySet() else filteredNationalTrials,
                 retainOriginalExternalTrials
             ),
             hideOverlappingTrials(
@@ -102,7 +107,11 @@ class TrialsProvider(
     ): MolecularFilteredExternalTrials {
         return MolecularFilteredExternalTrials(
             original,
-            if (retainOriginalTrials) original else filtered
+            when {
+                retainOriginalTrials -> original
+
+                else -> filtered
+            }
         )
     }
 
@@ -111,6 +120,7 @@ class TrialsProvider(
             patientRecord: PatientRecord,
             treatmentMatch: TreatmentMatch,
             countryOfReference: Country,
+            doidModel: DoidModel,
             retainOriginalExternalTrials: Boolean,
             filterOnSoCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
@@ -120,6 +130,7 @@ class TrialsProvider(
                 treatmentMatch.trialMatches,
                 countryOfReference,
                 (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF,
+                DoidEvaluationFunctions.isOfDoidType(doidModel, patientRecord.tumor.doids, DoidConstants.LUNG_CANCER_DOID),
                 retainOriginalExternalTrials,
                 filterOnSoCExhaustionAndTumorType,
                 filter
@@ -131,6 +142,7 @@ class TrialsProvider(
             trialMatches: List<TrialMatch>,
             countryOfReference: Country,
             patientIsYoungAdult: Boolean,
+            isLungCancer: Boolean,
             retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
@@ -147,6 +159,7 @@ class TrialsProvider(
                 nonEvaluableCohorts,
                 internalTrialIds,
                 patientIsYoungAdult,
+                isLungCancer,
                 countryOfReference,
                 retainOriginalExternalTrials
             )
