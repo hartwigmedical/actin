@@ -228,9 +228,13 @@ fun Set<ActionableWithExternalTrial>.filterDutchTrials(
     dutchExternalTrialsToExclude: ExternalTrialTumorType,
     isLungCancer: Boolean
 ): Set<ActionableWithExternalTrial> {
-    return if (dutchExternalTrialsToExclude == ExternalTrialTumorType.LUNG) {
-        this.filter { !(Country.NETHERLANDS in it.trial.countries.map { c -> c.country } && isLungCancer) }.toSet()
-    } else this
+    return when (dutchExternalTrialsToExclude) {
+        ExternalTrialTumorType.LUNG -> {
+            this.filter { !(Country.NETHERLANDS in it.trial.countries.map { c -> c.country } && isLungCancer) }.toSet()
+        }
+
+        ExternalTrialTumorType.NONE -> this
+    }
 }
 
 private fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ActionableWithExternalTrial> {
