@@ -84,6 +84,7 @@ class SummaryChapterTest {
             report.treatmentMatch,
             configuration.countryOfReference,
             TestDoidModelFactory.createMinimalTestDoidModel(),
+            configuration.dutchExternalTrialsToExclude,
             configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
             configuration.filterOnSOCExhaustionAndTumorType,
         )
