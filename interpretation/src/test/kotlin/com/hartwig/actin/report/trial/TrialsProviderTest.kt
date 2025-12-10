@@ -91,7 +91,7 @@ class TrialsProviderTest {
     }
 
     @Test
-    fun `Should not filter international trials if tumor type is lung cancer`() {
+    fun `Should not filter non-Dutch trials if tumor type is lung cancer`() {
         val trialsProvider = trialsProvider(setOf(BELGIUM_TMB), retainOriginalExternalTrials = false, isLungCancer = true)
         val externalTrials = trialsProvider.externalTrials()
         assertThat(externalTrials.internationalTrials.filtered).containsExactly(BELGIUM_TMB)
