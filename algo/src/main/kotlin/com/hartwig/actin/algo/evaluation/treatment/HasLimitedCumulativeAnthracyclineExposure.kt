@@ -63,8 +63,8 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
         )
         val PRIOR_PRIMARY_SUSPICIOUS_TREATMENTS: Set<String> = setOf("chemotherapy", "anthracycline")
 
-        private fun hasSuspiciousTreatmentHistory(priorPrimaryTreatmentHistory: String): Boolean {
-            return priorPrimaryTreatmentHistory.isEmpty() ||
+        private fun hasSuspiciousTreatmentHistory(priorPrimaryTreatmentHistory: String?): Boolean {
+            return priorPrimaryTreatmentHistory.isNullOrEmpty() ||
                     stringCaseInsensitivelyMatchesQueryCollection(priorPrimaryTreatmentHistory, PRIOR_PRIMARY_SUSPICIOUS_TREATMENTS)
         }
     }
