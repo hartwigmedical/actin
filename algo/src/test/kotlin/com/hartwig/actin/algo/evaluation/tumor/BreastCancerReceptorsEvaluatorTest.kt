@@ -36,22 +36,22 @@ class BreastCancerReceptorsEvaluatorTest {
 
     @Test
     fun `Should return true if only positive arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.receptorIsPositive(positiveArguments = true, negativeArguments = false)).isTrue()
+        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = true, negativeArguments = false)).isTrue()
     }
 
     @Test
     fun `Should return false if only negative arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.receptorIsPositive(positiveArguments = false, negativeArguments = true)).isFalse()
+        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = false, negativeArguments = true)).isFalse()
     }
 
     @Test
     fun `Should return null if both positive and negative arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.receptorIsPositive(positiveArguments = true, negativeArguments = true)).isNull()
+        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = true, negativeArguments = true)).isNull()
     }
 
     @Test
     fun `Should return null if no positive or negative arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.receptorIsPositive(positiveArguments = false, negativeArguments = false)).isNull()
+        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = false, negativeArguments = false)).isNull()
     }
 
     @Test

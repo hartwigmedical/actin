@@ -23,7 +23,7 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
             val ihcTestSummary = breastCancerReceptorsEvaluator.summarizeTests(targetMolecularTests, receptor)
             val positiveArguments = breastCancerReceptorsEvaluator.positiveArguments(ihcTestSummary, tumorDoids!!, receptor)
             val negativeArguments = breastCancerReceptorsEvaluator.negativeArguments(ihcTestSummary, tumorDoids, receptor)
-            breastCancerReceptorsEvaluator.receptorIsPositive(positiveArguments, negativeArguments)
+            breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments, negativeArguments)
         }
 
         val erbb2Amplified = geneIsAmplifiedForPatient("ERBB2", record)

@@ -33,7 +33,7 @@ class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
         return targetIhcTests.map(classifier).toSet()
     }
 
-    fun receptorIsPositive(positiveArguments: Boolean, negativeArguments: Boolean): Boolean? {
+    fun resultIsPositive(positiveArguments: Boolean, negativeArguments: Boolean): Boolean? {
         return when {
             positiveArguments && !negativeArguments -> true
             negativeArguments && !positiveArguments -> false

@@ -24,7 +24,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
         val testSummary = breastCancerReceptorsEvaluator.summarizeTests(targetMolecularTests, receptorType)
         val positiveArguments = breastCancerReceptorsEvaluator.positiveArguments(testSummary, tumorDoids!!, receptorType)
         val negativeArguments = breastCancerReceptorsEvaluator.negativeArguments(testSummary, tumorDoids, receptorType)
-        val targetReceptorIsPositive = breastCancerReceptorsEvaluator.receptorIsPositive(positiveArguments, negativeArguments)
+        val targetReceptorIsPositive = breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments, negativeArguments)
 
         val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
         val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record)
