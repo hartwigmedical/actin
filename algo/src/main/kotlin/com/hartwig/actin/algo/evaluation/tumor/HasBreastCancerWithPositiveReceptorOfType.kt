@@ -1,15 +1,11 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.TestResult
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.classifyHer2Test
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.classifyPrOrErTest
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 
@@ -19,33 +15,22 @@ class HasBreastCancerWithPositiveReceptorOfType(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
-        val expandedDoidSet = DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids)
-        val isBreastCancer = DoidConstants.BREAST_CANCER_DOID in expandedDoidSet
-        val targetMolecularTests = record.ihcTests.filter { it.item == receptorType.display() }
-        val targetReceptorPositiveInDoids =
-            expandedDoidSet.contains(BreastCancerReceptorFunctions.POSITIVE_DOID_MOLECULAR_COMBINATION[receptorType])
-        val targetReceptorNegativeInDoids =
-            expandedDoidSet.contains(BreastCancerReceptorFunctions.NEGATIVE_DOID_MOLECULAR_COMBINATION[receptorType])
-                || expandedDoidSet.contains(DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
-
-        val testSummary = BreastCancerReceptorFunctions.summarizeTests(targetMolecularTests, receptorType)
-        val positiveArguments = TestResult.POSITIVE in testSummary || targetReceptorPositiveInDoids
-        val negativeArguments = TestResult.NEGATIVE in testSummary || targetReceptorNegativeInDoids
-
-        val targetReceptorIsPositive = when {
-            positiveArguments && !negativeArguments -> true
-            negativeArguments && !positiveArguments -> false
-            else -> null
+        if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
+            return EvaluationFactory.undetermined("Undetermined if $receptorType positive breast cancer (tumor doids missing)")
         }
+
+        val breastCancerReceptorsEvaluator = BreastCancerReceptorsEvaluator(doidModel)
+        val targetMolecularTests = record.ihcTests.filter { it.item == receptorType.display() }
+        val testSummary = breastCancerReceptorsEvaluator.summarizeTests(targetMolecularTests, receptorType)
+        val positiveArguments = breastCancerReceptorsEvaluator.positiveArguments(testSummary, tumorDoids!!, receptorType)
+        val negativeArguments = breastCancerReceptorsEvaluator.negativeArguments(testSummary, tumorDoids, receptorType)
+        val targetReceptorIsPositive = breastCancerReceptorsEvaluator.receptorIsPositive(positiveArguments, negativeArguments)
+
         val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
         val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record)
 
         return when {
-            tumorDoids.isNullOrEmpty() -> {
-                EvaluationFactory.undetermined("Undetermined if $receptorType positive breast cancer (tumor doids missing)")
-            }
-
-            !isBreastCancer -> EvaluationFactory.fail("No breast cancer")
+            !breastCancerReceptorsEvaluator.isBreastCancer(tumorDoids) -> EvaluationFactory.fail("No breast cancer")
 
             targetMolecularTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> {
                 return if (targetHer2AndErbb2Amplified) {
