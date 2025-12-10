@@ -81,15 +81,16 @@ class TrialsProvider(
 
         val filteredNationalTrials =
             nationalTrials.filterExclusivelyInChildrensHospitalsInReferenceCountry(patientIsYoungAdult, countryOfReference)
+                .filterDutchTrials(isLungCancer)
 
         val filteredInternationalTrials =
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
-                .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials)
+                .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials).filterDutchTrials(isLungCancer)
 
         return ExternalTrials(
             hideOverlappingTrials(
                 nationalTrials,
-                if (isLungCancer) emptySet() else filteredNationalTrials,
+                filteredNationalTrials,
                 retainOriginalExternalTrials
             ),
             hideOverlappingTrials(
@@ -222,6 +223,9 @@ fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInRefe
         !allHospitalsAreChildrensInReferenceCountry || patientIsYoungAdult
     }.toSet()
 }
+
+fun Set<ActionableWithExternalTrial>.filterDutchTrials(isLungCancer: Boolean) =
+    this.filter { !(Country.NETHERLANDS in it.trial.countries.map { c -> c.country } && isLungCancer) }.toSet()
 
 private fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ActionableWithExternalTrial> {
     return filter {
