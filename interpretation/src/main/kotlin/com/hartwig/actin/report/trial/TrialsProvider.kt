@@ -106,14 +106,7 @@ class TrialsProvider(
         filtered: Set<ActionableWithExternalTrial>,
         retainOriginalTrials: Boolean
     ): MolecularFilteredExternalTrials {
-        return MolecularFilteredExternalTrials(
-            original,
-            when {
-                retainOriginalTrials -> original
-
-                else -> filtered
-            }
-        )
+        return MolecularFilteredExternalTrials(original, filtered.takeIf { !retainOriginalTrials } ?: original)
     }
 
     companion object {
