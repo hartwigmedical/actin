@@ -34,6 +34,11 @@ enum class TrialMatchingChapterType {
     DETAILED_ALL_TRIALS
 }
 
+enum class ExternalTrialTumorType {
+    LUNG,
+    NONE
+}
+
 data class ReportConfiguration(
     val patientDetailsType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val clinicalSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
@@ -46,7 +51,8 @@ data class ReportConfiguration(
     val trialMatchingChapterType: TrialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS,
-    val hospitalOfReference: String? = null
+    val hospitalOfReference: String? = null,
+    val dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE
 ) {
 
     companion object {

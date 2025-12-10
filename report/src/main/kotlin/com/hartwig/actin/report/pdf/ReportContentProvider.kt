@@ -19,6 +19,7 @@ class ReportContentProvider(private val report: Report, private val configuratio
         treatmentMatch = report.treatmentMatch,
         countryOfReference = configuration.countryOfReference,
         doidModel = doidModel,
+        dutchExternalTrialsToExclude = configuration.dutchExternalTrialsToExclude,
         retainOriginalExternalTrials = configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
         filterOnSoCExhaustionAndTumorType = configuration.filterOnSOCExhaustionAndTumorType
     )

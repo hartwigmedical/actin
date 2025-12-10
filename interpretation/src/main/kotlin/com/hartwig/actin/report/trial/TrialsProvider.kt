@@ -2,6 +2,7 @@ package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
+import com.hartwig.actin.configuration.ExternalTrialTumorType
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
@@ -42,6 +43,7 @@ class TrialsProvider(
     private val internalTrialIds: Set<String>,
     private val patientIsYoungAdult: Boolean,
     private val isLungCancer: Boolean,
+    private val dutchExternalTrialsToExclude: ExternalTrialTumorType,
     private val countryOfReference: Country,
     private val retainOriginalExternalTrials: Boolean
 ) {
@@ -81,11 +83,12 @@ class TrialsProvider(
 
         val filteredNationalTrials =
             nationalTrials.filterExclusivelyInChildrensHospitalsInReferenceCountry(patientIsYoungAdult, countryOfReference)
-                .filterDutchTrials(isLungCancer)
+                .filterDutchTrials(dutchExternalTrialsToExclude, isLungCancer)
 
         val filteredInternationalTrials =
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
-                .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials).filterDutchTrials(isLungCancer)
+                .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials)
+                .filterDutchTrials(dutchExternalTrialsToExclude, isLungCancer)
 
         return ExternalTrials(
             hideOverlappingTrials(
@@ -115,6 +118,7 @@ class TrialsProvider(
             treatmentMatch: TreatmentMatch,
             countryOfReference: Country,
             doidModel: DoidModel,
+            dutchExternalTrialsToExclude: ExternalTrialTumorType,
             retainOriginalExternalTrials: Boolean,
             filterOnSoCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
@@ -125,6 +129,7 @@ class TrialsProvider(
                 countryOfReference,
                 (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF,
                 DoidEvaluationFunctions.isOfDoidType(doidModel, patientRecord.tumor.doids, DoidConstants.LUNG_CANCER_DOID),
+                dutchExternalTrialsToExclude,
                 retainOriginalExternalTrials,
                 filterOnSoCExhaustionAndTumorType,
                 filter
@@ -137,6 +142,7 @@ class TrialsProvider(
             countryOfReference: Country,
             patientIsYoungAdult: Boolean,
             isLungCancer: Boolean,
+            dutchExternalTrialsToExclude: ExternalTrialTumorType,
             retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
@@ -154,6 +160,7 @@ class TrialsProvider(
                 internalTrialIds,
                 patientIsYoungAdult,
                 isLungCancer,
+                dutchExternalTrialsToExclude,
                 countryOfReference,
                 retainOriginalExternalTrials
             )
@@ -217,8 +224,14 @@ fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInRefe
     }.toSet()
 }
 
-fun Set<ActionableWithExternalTrial>.filterDutchTrials(isLungCancer: Boolean) =
-    this.filter { !(Country.NETHERLANDS in it.trial.countries.map { c -> c.country } && isLungCancer) }.toSet()
+fun Set<ActionableWithExternalTrial>.filterDutchTrials(
+    dutchExternalTrialsToExclude: ExternalTrialTumorType,
+    isLungCancer: Boolean
+): Set<ActionableWithExternalTrial> {
+    return if (dutchExternalTrialsToExclude == ExternalTrialTumorType.LUNG) {
+        this.filter { !(Country.NETHERLANDS in it.trial.countries.map { c -> c.country } && isLungCancer) }.toSet()
+    } else this
+}
 
 private fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ActionableWithExternalTrial> {
     return filter {
