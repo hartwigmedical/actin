@@ -18,27 +18,29 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
 
         val breastCancerReceptorsEvaluator = BreastCancerReceptorsEvaluator(doidModel)
         val receptorsToConsider = listOf(ReceptorType.ER, ReceptorType.PR, ReceptorType.HER2)
-        val statusPerReceptor = receptorsToConsider.associateWith { receptor ->
-            val targetMolecularTests = record.ihcTests.filter { it.item == receptor.display() }
-            val ihcTestSummary = breastCancerReceptorsEvaluator.summarizeTests(targetMolecularTests, receptor)
-            val positiveArguments = breastCancerReceptorsEvaluator.positiveArguments(ihcTestSummary, tumorDoids!!, receptor)
-            val negativeArguments = breastCancerReceptorsEvaluator.negativeArguments(ihcTestSummary, tumorDoids, receptor)
-            breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments, negativeArguments)
+        val evaluationPerReceptor = receptorsToConsider.associateWith { receptor ->
+            breastCancerReceptorsEvaluator.evaluate(tumorDoids!!, record.ihcTests, receptor)
         }
 
         val erbb2Amplified = geneIsAmplifiedForPatient("ERBB2", record)
-        val prAndErNotPositive = (statusPerReceptor[ReceptorType.ER] != true) && (statusPerReceptor[ReceptorType.PR] != true)
+        val prAndErNotPositive =
+            (evaluationPerReceptor[ReceptorType.ER] != BreastCancerReceptorEvaluation.POSITIVE) && (evaluationPerReceptor[ReceptorType.PR] != BreastCancerReceptorEvaluation.POSITIVE)
+        val hasNoTripleNegativeBreastCancer =
+            evaluationPerReceptor.values.contains(BreastCancerReceptorEvaluation.NOT_BREAST_CANCER) || evaluationPerReceptor.values.contains(
+                BreastCancerReceptorEvaluation.POSITIVE
+            )
+        val allReceptorsNegative = evaluationPerReceptor.values.all { it == BreastCancerReceptorEvaluation.NEGATIVE }
 
         return when {
-            !breastCancerReceptorsEvaluator.isBreastCancer(tumorDoids!!) || statusPerReceptor.values.contains(true) -> EvaluationFactory.fail(
-                "Has no triple negative breast cancer"
+            hasNoTripleNegativeBreastCancer -> EvaluationFactory.fail("Has no triple negative breast cancer")
+
+            allReceptorsNegative && erbb2Amplified -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
+
+            allReceptorsNegative -> EvaluationFactory.pass("Has triple negative breast cancer")
+
+            prAndErNotPositive && erbb2Amplified && evaluationPerReceptor[ReceptorType.HER2] != BreastCancerReceptorEvaluation.NEGATIVE -> EvaluationFactory.undetermined(
+                "Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so potentially not triple negative)"
             )
-
-            statusPerReceptor.values.all { it == false } && erbb2Amplified -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
-
-            statusPerReceptor.values.all { it == false } -> EvaluationFactory.pass("Has triple negative breast cancer")
-
-            prAndErNotPositive && erbb2Amplified && statusPerReceptor[ReceptorType.HER2] == null -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so potentially not triple negative)")
 
             else -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer")
         }

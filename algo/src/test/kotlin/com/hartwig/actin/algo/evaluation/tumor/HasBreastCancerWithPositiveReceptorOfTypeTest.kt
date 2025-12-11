@@ -205,7 +205,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertThat(
             evaluation.undeterminedMessagesStrings()
         ).containsExactly(
-            "No HER2-positive breast cancer but HER2-score is2+ hence FISH may be useful"
+            "No HER2-positive breast cancer but HER2-score is 2+ hence FISH may be useful"
         )
     }
 

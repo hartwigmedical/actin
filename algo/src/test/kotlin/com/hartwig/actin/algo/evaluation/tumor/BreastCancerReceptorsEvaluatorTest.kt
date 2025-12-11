@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -14,131 +13,123 @@ class BreastCancerReceptorsEvaluatorTest {
     val breastCancerReceptorsEvaluator = BreastCancerReceptorsEvaluator(doidModel)
 
     @Test
-    fun `Should return true for breast cancer`() {
-        assertThat(breastCancerReceptorsEvaluator.isBreastCancer(setOf(DoidConstants.BREAST_CANCER_DOID))).isTrue()
-    }
-
-    @Test
-    fun `Should return false for colorectal cancer`() {
-        assertThat(breastCancerReceptorsEvaluator.isBreastCancer(setOf(DoidConstants.COLORECTAL_CANCER_DOID))).isFalse()
-    }
-
-    @Test
-    fun `Should correctly summarize ER tests`() {
-        val ihcTests = listOf(
-            IhcTest(item = "ER", scoreText = "POSITIVE"),
-            IhcTest(item = "ER", scoreValue = 20.0, scoreValueUnit = "%"),
-            IhcTest(item = "HER2", scoreText = "NEGATIVE")
+    fun `Should return NOT_BREAST_CANCER for colorectal cancer`() {
+        assertThat(
+            breastCancerReceptorsEvaluator.evaluate(
+                setOf(DoidConstants.COLORECTAL_CANCER_DOID),
+                emptyList(),
+                ReceptorType.ER
+            )
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.NOT_BREAST_CANCER
         )
-        val summary = breastCancerReceptorsEvaluator.summarizeTests(ihcTests, ReceptorType.ER)
-        assertThat(summary).contains(IhcTestClassificationFunctions.TestResult.NEGATIVE, IhcTestClassificationFunctions.TestResult.POSITIVE)
     }
 
     @Test
-    fun `Should return true if only positive arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = true, negativeArguments = false)).isTrue()
-    }
-
-    @Test
-    fun `Should return false if only negative arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = false, negativeArguments = true)).isFalse()
-    }
-
-    @Test
-    fun `Should return null if both positive and negative arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = true, negativeArguments = true)).isNull()
-    }
-
-    @Test
-    fun `Should return null if no positive or negative arguments`() {
-        assertThat(breastCancerReceptorsEvaluator.resultIsPositive(positiveArguments = false, negativeArguments = false)).isNull()
-    }
-
-    @Test
-    fun `Should return true when ER positive based on positive test result`() {
+    fun `Should return POSITIVE when evaluating ER for a breast cancer patient with positive ER IHC result`() {
         assertThat(
-            breastCancerReceptorsEvaluator.positiveArguments(
-                setOf(IhcTestClassificationFunctions.TestResult.POSITIVE),
+            breastCancerReceptorsEvaluator.evaluate(
                 setOf(DoidConstants.BREAST_CANCER_DOID),
+                listOf(IhcTest("ER", scoreText = "positive")),
                 ReceptorType.ER
             )
-        ).isTrue()
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.POSITIVE
+        )
     }
 
     @Test
-    fun `Should return true when ER positive based on doid`() {
+    fun `Should return POSITIVE when evaluating ER for a patient with estrogen positive breast cancer DOID`() {
         assertThat(
-            breastCancerReceptorsEvaluator.positiveArguments(
-                emptySet(),
-                setOf(DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID),
-                ReceptorType.ER
+            breastCancerReceptorsEvaluator.evaluate(
+                setOf(
+                    DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID,
+                    DoidConstants.BREAST_CANCER_DOID
+                ), emptyList(), ReceptorType.ER
             )
-        ).isTrue()
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.POSITIVE
+        )
     }
 
     @Test
-    fun `Should return false when ER negative based on test result`() {
+    fun `Should return NEGATIVE when evaluating ER for a breast cancer patient with negative ER IHC result`() {
         assertThat(
-            breastCancerReceptorsEvaluator.positiveArguments(
-                setOf(IhcTestClassificationFunctions.TestResult.NEGATIVE),
+            breastCancerReceptorsEvaluator.evaluate(
                 setOf(DoidConstants.BREAST_CANCER_DOID),
+                listOf(IhcTest("ER", scoreText = "negative")),
                 ReceptorType.ER
             )
-        ).isFalse()
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.NEGATIVE
+        )
     }
 
     @Test
-    fun `Should return false when ER negative based on doid`() {
+    fun `Should return NEGATIVE when evaluating ER for a patient with estrogen negative breast cancer DOID`() {
         assertThat(
-            breastCancerReceptorsEvaluator.positiveArguments(
-                emptySet(),
-                setOf(DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID),
-                ReceptorType.ER
+            breastCancerReceptorsEvaluator.evaluate(
+                setOf(
+                    DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID,
+                    DoidConstants.BREAST_CANCER_DOID
+                ), emptyList(), ReceptorType.ER
             )
-        ).isFalse()
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.NEGATIVE
+        )
     }
 
     @Test
-    fun `Should return false when ER positive based on positive test result`() {
+    fun `Should return NEGATIVE for a patient with triple negative breast cancer DOID`() {
         assertThat(
-            breastCancerReceptorsEvaluator.negativeArguments(
-                setOf(IhcTestClassificationFunctions.TestResult.POSITIVE),
+            breastCancerReceptorsEvaluator.evaluate(
+                setOf(
+                    DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID,
+                    DoidConstants.BREAST_CANCER_DOID
+                ), emptyList(), ReceptorType.ER
+            )
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.NEGATIVE
+        )
+    }
+
+    @Test
+    fun `Should return BORDERLINE when evaluating HER2 for a breast cancer patient with 2+ HER2 result`() {
+        assertThat(
+            breastCancerReceptorsEvaluator.evaluate(
                 setOf(DoidConstants.BREAST_CANCER_DOID),
-                ReceptorType.ER
+                listOf(IhcTest("HER2", scoreValue = 2.0, scoreValueUnit = "+")),
+                ReceptorType.HER2
             )
-        ).isFalse()
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.BORDERLINE
+        )
     }
 
     @Test
-    fun `Should return false when ER positive based on doid`() {
+    fun `Should return DATA_MISSING for breast cancer with no IHC result`() {
         assertThat(
-            breastCancerReceptorsEvaluator.negativeArguments(
-                emptySet(),
-                setOf(DoidConstants.ESTROGEN_POSITIVE_BREAST_CANCER_DOID),
-                ReceptorType.ER
-            )
-        ).isFalse()
-    }
-
-    @Test
-    fun `Should return true when ER negative based on test result`() {
-        assertThat(
-            breastCancerReceptorsEvaluator.negativeArguments(
-                setOf(IhcTestClassificationFunctions.TestResult.NEGATIVE),
+            breastCancerReceptorsEvaluator.evaluate(
                 setOf(DoidConstants.BREAST_CANCER_DOID),
-                ReceptorType.ER
+                emptyList(),
+                ReceptorType.HER2
             )
-        ).isTrue()
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.DATA_MISSING
+        )
     }
 
     @Test
-    fun `Should return true when ER negative based on doid`() {
+    fun `Should return INCONSISTENT_DATA when evaluating HER2 for a breast cancer patient with HER2 positive breast cancer DOID but negative IHC HER2 result`() {
         assertThat(
-            breastCancerReceptorsEvaluator.negativeArguments(
-                emptySet(),
-                setOf(DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID),
-                ReceptorType.ER
+            breastCancerReceptorsEvaluator.evaluate(
+                setOf(
+                    DoidConstants.HER2_POSITIVE_BREAST_CANCER_DOID,
+                    DoidConstants.BREAST_CANCER_DOID
+                ), listOf(IhcTest("HER2", scoreText = "negative")), ReceptorType.HER2
             )
-        ).isTrue()
+        ).isEqualTo(
+            BreastCancerReceptorEvaluation.INCONSISTENT_DATA
+        )
     }
 }

@@ -20,12 +20,39 @@ private val NEGATIVE_DOID_MOLECULAR_COMBINATION = mapOf(
     ReceptorType.HER2 to DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID
 )
 
+enum class BreastCancerReceptorEvaluation {
+    NOT_BREAST_CANCER,
+    POSITIVE,
+    NEGATIVE,
+    BORDERLINE,
+    DATA_MISSING,
+    INCONSISTENT_DATA
+}
+
 class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
 
-    fun isBreastCancer(tumorDoids: Set<String>) =
+    fun evaluate(tumorDoids: Set<String>, ihcTests: List<IhcTest>, receptorType: ReceptorType): BreastCancerReceptorEvaluation {
+        val targetIhcTests = ihcTests.filter { it.item == receptorType.display() }
+        val testSummary = summarizeTests(targetIhcTests, receptorType)
+        val positiveArguments = positiveArguments(testSummary, tumorDoids, receptorType)
+        val negativeArguments = negativeArguments(testSummary, tumorDoids, receptorType)
+        val targetReceptorIsPositive = resultIsPositive(positiveArguments, negativeArguments)
+        val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
+
+        return when {
+            !isBreastCancer(tumorDoids) -> BreastCancerReceptorEvaluation.NOT_BREAST_CANCER
+            targetReceptorIsPositive == true -> BreastCancerReceptorEvaluation.POSITIVE
+            targetIhcTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> BreastCancerReceptorEvaluation.DATA_MISSING
+            targetReceptorIsPositive == null && !specificArgumentsForStatusDeterminationMissing -> BreastCancerReceptorEvaluation.INCONSISTENT_DATA
+            targetReceptorIsPositive != false && TestResult.BORDERLINE in testSummary -> BreastCancerReceptorEvaluation.BORDERLINE
+            else -> BreastCancerReceptorEvaluation.NEGATIVE
+        }
+    }
+
+    private fun isBreastCancer(tumorDoids: Set<String>) =
         DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.BREAST_CANCER_DOID)
 
-    fun summarizeTests(targetIhcTests: List<IhcTest>, receptorType: ReceptorType): Set<TestResult> {
+    private fun summarizeTests(targetIhcTests: List<IhcTest>, receptorType: ReceptorType): Set<TestResult> {
         val classifier = when (receptorType) {
             ReceptorType.ER, ReceptorType.PR -> ::classifyPrOrErTest
             ReceptorType.HER2 -> ::classifyHer2Test
@@ -33,7 +60,7 @@ class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
         return targetIhcTests.map(classifier).toSet()
     }
 
-    fun resultIsPositive(positiveArguments: Boolean, negativeArguments: Boolean): Boolean? {
+    private fun resultIsPositive(positiveArguments: Boolean, negativeArguments: Boolean): Boolean? {
         return when {
             positiveArguments && !negativeArguments -> true
             negativeArguments && !positiveArguments -> false
@@ -41,12 +68,12 @@ class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
         }
     }
 
-    fun positiveArguments(testSummary: Set<TestResult>, tumorDoids: Set<String>, receptor: ReceptorType): Boolean {
+    private fun positiveArguments(testSummary: Set<TestResult>, tumorDoids: Set<String>, receptor: ReceptorType): Boolean {
         val targetReceptorPositiveInDoids = receptorPositiveInDoids(tumorDoids, receptor)
         return TestResult.POSITIVE in testSummary || targetReceptorPositiveInDoids
     }
 
-    fun negativeArguments(testSummary: Set<TestResult>, tumorDoids: Set<String>, receptor: ReceptorType): Boolean {
+    private fun negativeArguments(testSummary: Set<TestResult>, tumorDoids: Set<String>, receptor: ReceptorType): Boolean {
         val targetReceptorNegativeInDoids = receptorNegativeInDoids(tumorDoids, receptor)
         return TestResult.NEGATIVE in testSummary || targetReceptorNegativeInDoids
     }
