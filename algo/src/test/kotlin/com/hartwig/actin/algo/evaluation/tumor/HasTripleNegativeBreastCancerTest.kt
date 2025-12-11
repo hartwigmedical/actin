@@ -27,71 +27,48 @@ class HasTripleNegativeBreastCancerTest {
 
     @Test
     fun `Should pass if tumor doid is triple negative breast cancer`() {
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(
-                TumorTestFactory.withDoids(
-                    setOf(
-                        DoidConstants.BREAST_CANCER_DOID,
-                        DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID
-                    )
-                )
-            )
-        )
+        val patient = TumorTestFactory.withDoids(setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
     }
 
     @Test
     fun `Should pass if all breast cancer target receptors are negative with data source prior molecular tests`() {
-        assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(
-                TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(createIhcTest("PR", "Negative"), createIhcTest("ER", "Negative"), createIhcTest("HER2", "Negative")),
-                    setOf(DoidConstants.BREAST_CANCER_DOID)
-                )
-            )
+        val patient = TumorTestFactory.withIhcTestsAndDoids(
+            listOf(
+                createIhcTest("PR", "Negative"),
+                createIhcTest("ER", "Negative"),
+                createIhcTest("HER2", "Negative")
+            ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
     }
 
     @Test
     fun `Should pass if all breast cancer target receptors are negative with data source scoreValue from prior molecular tests`() {
-        assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(
-                TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(
-                        createIhcTest(item = "PR", scoreValue = 0.0, scoreValueUnit = "%"),
-                        createIhcTest(item = "HER2", scoreValue = 1.0, scoreValueUnit = "+"),
-                        createIhcTest(item = "ER", scoreValue = 0.0, scoreValueUnit = "%")
-                    ),
-                    setOf(DoidConstants.BREAST_CANCER_DOID)
-                )
-            )
+        val patient = TumorTestFactory.withIhcTestsAndDoids(
+            listOf(
+                createIhcTest(item = "PR", scoreValue = 0.0, scoreValueUnit = "%"),
+                createIhcTest(item = "HER2", scoreValue = 1.0, scoreValueUnit = "+"),
+                createIhcTest(item = "ER", scoreValue = 0.0, scoreValueUnit = "%")
+            ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
     }
 
     @Test
     fun `Should fail if if at least one of HER2 or PR or ER is positive`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(createIhcTest("HER2", "Positive")),
-                    setOf(DoidConstants.BREAST_CANCER_DOID)
-                )
-            )
-        )
+        val patient =
+            TumorTestFactory.withIhcTestsAndDoids(listOf(createIhcTest("HER2", "Positive")), setOf(DoidConstants.BREAST_CANCER_DOID))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient))
     }
 
     @Test
     fun `Should fail if HER2 molecular test result is positive with data source scoreValue`() {
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(createIhcTest("HER2", scoreValue = 3.0, scoreValueUnit = "+")),
-                    setOf(DoidConstants.BREAST_CANCER_DOID)
-                )
-            )
+        val patient = TumorTestFactory.withIhcTestsAndDoids(
+            listOf(createIhcTest("HER2", scoreValue = 3.0, scoreValueUnit = "+")),
+            setOf(DoidConstants.BREAST_CANCER_DOID)
         )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient))
     }
 
     @Test
@@ -184,7 +161,7 @@ class HasTripleNegativeBreastCancerTest {
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so probably not triple negative)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so potentially not triple negative)")
     }
 
     private fun createIhcTest(
