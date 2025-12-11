@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.SpecificGenesFilter
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
@@ -61,6 +62,21 @@ class PanelSpecificationsTest {
                 MolecularTestTarget.MUTATION, MolecularTestTarget.AMPLIFICATION, MolecularTestTarget.FUSION
             )
         }).isTrue()
+    }
+
+    @Test
+    fun `Should resolve a panel specification regardless of whether the test was older than the last test version`() {
+        val versionDate = LocalDate.of(2025, 12, 1)
+        val panelSpec = PanelTestSpecification("panel", TestVersion(versionDate))
+
+        val specification = PanelSpecifications(
+            geneFilter = geneFilter,
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
+        ).panelTargetSpecification(
+            SequencingTest("panel"),
+            TestVersion(versionDate, true)
+        )
+        assertThat(specification.testsGene(GENE) { true }).isTrue()
     }
 
     @Test
