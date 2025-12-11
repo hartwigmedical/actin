@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
+import com.hartwig.actin.molecular.panel.DEFAULT_VARIANT_DECOMPOSITION
 import com.hartwig.actin.molecular.panel.IhcAnnotator
 import com.hartwig.actin.molecular.panel.IhcExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
@@ -116,7 +117,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
         val paveLite = PaveLite(inputData.ensemblDataCache, false)
 
-        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
+        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite, DEFAULT_VARIANT_DECOMPOSITION )
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()

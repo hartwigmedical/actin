@@ -1,7 +1,6 @@
-package com.hartwig.actin.molecular.paver
+package com.hartwig.actin.molecular.panel
 
-import org.assertj.core.api.Assertions.assertThat
-import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.io.StringReader
 
@@ -17,7 +16,7 @@ class PaveVariantDecompositionTest {
 
         val parsed = PaveVariantDecomposition.read(StringReader(tsv))
 
-        assertThat(parsed).containsExactly(
+        Assertions.assertThat(parsed).containsExactly(
             VariantDecomposition("p.variant1", listOf("c.variant1a", "c.variant1b")),
             VariantDecomposition("p.variant2", listOf("c.variant2a", "c.variant2b"))
         )
@@ -33,7 +32,7 @@ class PaveVariantDecompositionTest {
 
         val decompositions = PaveVariantDecomposition.read(StringReader(tsv))
 
-        assertThatThrownBy { VariantDecompositionIndex(decompositions) }
+        Assertions.assertThatThrownBy { VariantDecompositionIndex(decompositions) }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("p.variant1")
     }

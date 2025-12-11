@@ -12,102 +12,20 @@ import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
 import com.hartwig.actin.molecular.paver.PaveCodingEffect
 import com.hartwig.actin.molecular.paver.PaveImpact
-import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
-import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
 import com.hartwig.actin.tools.pave.PaveLite
-import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
+
 
 private val NONSENSE_OR_FRAMESHIFT_EFFECTS =
     setOf(PaveVariantEffect.FRAMESHIFT, PaveVariantEffect.START_LOST, PaveVariantEffect.STOP_GAINED, PaveVariantEffect.STOP_LOST)
 private val SPLICE_EFFECTS = setOf(PaveVariantEffect.SPLICE_ACCEPTOR, PaveVariantEffect.SPLICE_DONOR)
 
-fun eventString(paveResponse: PaveResponse): String {
-    return formatVariantImpact(
-        paveResponse.impact.hgvsProteinImpact,
-        paveResponse.impact.hgvsCodingImpact,
-        paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
-        paveResponse.impact.canonicalEffects.contains(PaveVariantEffect.UPSTREAM_GENE),
-        paveResponse.impact.canonicalEffects.joinToString("&") { it.toString() }
-    )
-}
-
-class PanelVariantAnnotator(
-    private val variantResolver: VariantAnnotator,
-    private val paver: Paver,
-    private val paveLite: PaveLite,
-    private val decompositions: VariantDecompositionIndex
-) {
-
-    fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
-        val variantExtractions = indexVariantExtractionsToUniqueIds(sequencedVariants)
-        val transvarVariants = resolveVariants(variantExtractions)
-        val paveAnnotations = annotateWithPave(transvarVariants)
-
-        return createVariants(transvarVariants, paveAnnotations, variantExtractions)
-    }
-
-    private fun indexVariantExtractionsToUniqueIds(variants: Collection<SequencedVariant>): Map<String, SequencedVariant> {
-        return variants.withIndex().associate { it.index.toString() to it.value }
-    }
-
-    private fun resolveVariants(variantExtractions: Map<String, SequencedVariant>): Map<String, TransvarVariant> {
-        return variantExtractions.mapValues { (_, value) -> transvarAnnotation(value) }.mapNotNull { it.key to it.value }.toMap()
-    }
-
-    private fun transvarAnnotation(sequencedVariant: SequencedVariant): TransvarVariant {
-        val externalVariantAnnotation =
-            variantResolver.resolve(
-                sequencedVariant.gene,
-                sequencedVariant.transcript,
-                sequencedVariant.hgvsCodingOrProteinImpact()
-            )
-
-        return externalVariantAnnotation
-            ?: throw IllegalStateException("Unable to resolve variant '$sequencedVariant' in variant annotator.")
-    }
-
-    private fun annotateWithPave(transvarVariants: Map<String, TransvarVariant>): Map<String, PaveResponse> {
-        if (transvarVariants.isEmpty()) {
-            return emptyMap()
-        }
-
-        val paveQueries = transvarVariants.map { (id, annotation) ->
-            PaveQuery(
-                id = id,
-                chromosome = annotation.chromosome(),
-                position = annotation.position(),
-                ref = annotation.ref(),
-                alt = annotation.alt()
-            )
-        }
-
-        val paveResponses = paver.run(paveQueries).associateBy { it.id }
-        if (transvarVariants.keys != paveResponses.keys) {
-            throw IllegalStateException("Pave did not return a response for all queries")
-        }
-
-        return paveResponses
-    }
-
-    private fun createVariants(
-        transvarVariants: Map<String, TransvarVariant>,
-        paveAnnotations: Map<String, PaveResponse>,
-        variantExtractions: Map<String, SequencedVariant>
-    ): List<Variant> {
-        return transvarVariants.map { (id, transvarAnnotation) ->
-            val sequencedVariant = variantExtractions[id]!!
-            val paveResponse = paveAnnotations[id]!!
-
-            createVariant(sequencedVariant, transvarAnnotation, paveResponse)
-        }
-    }
-
-    private fun createVariant(
+class PanelAnnotatorVariantFactory(private val paveLite: PaveLite) {
+    fun createVariant(
         variant: SequencedVariant,
         transvarAnnotation: TransvarVariant,
         paveResponse: PaveResponse
@@ -137,85 +55,6 @@ class PanelVariantAnnotator(
         proteinEffect = ProteinEffect.UNKNOWN,
         isAssociatedWithDrugResistance = null
     )
-
-    private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
-        val paveLiteAnnotation = paveLite.run(
-            paveImpact.gene,
-            paveImpact.canonicalTranscript,
-            transvarVariant.position()
-        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
-
-        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
-            shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveImpact.canonicalEffects.toSet(), paveImpact.gene)
-
-        return TranscriptVariantImpact(
-            transcriptId = paveImpact.canonicalTranscript,
-            hgvsCodingImpact = paveImpact.hgvsCodingImpact,
-            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
-            affectedCodon = paveLiteAnnotation.affectedCodon(),
-            affectedExon = paveLiteAnnotation.affectedExon(),
-            inSpliceRegion = paveImpact.spliceRegion,
-            effects = paveImpact.canonicalEffects.map { variantEffect(it) }.toSet(),
-            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(paveImpact.canonicalCodingEffect),
-        )
-    }
-
-    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptVariantImpact> {
-        return paveResponse.transcriptImpacts
-            .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.canonicalTranscript }
-            .map { transcriptImpact(it, transvarVariant) }
-            .toSet()
-    }
-
-    private fun transcriptImpact(
-        paveTranscriptImpact: PaveTranscriptImpact,
-        transvarVariant: TransvarVariant
-    ): TranscriptVariantImpact {
-        val paveLiteAnnotation = paveLite.run(
-            paveTranscriptImpact.gene,
-            paveTranscriptImpact.transcript,
-            transvarVariant.position()
-        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
-
-        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
-            shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveTranscriptImpact.effects.toSet(), paveTranscriptImpact.gene)
-
-        return TranscriptVariantImpact(
-            transcriptId = paveTranscriptImpact.transcript,
-            hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
-            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(
-                paveTranscriptImpact.hgvsProteinImpact
-            ),
-            affectedCodon = paveLiteAnnotation.affectedCodon(),
-            affectedExon = paveLiteAnnotation.affectedExon(),
-            inSpliceRegion = paveTranscriptImpact.spliceRegion,
-            effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
-            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(
-                paveTranscriptImpact.effects
-                    .map(PaveCodingEffect::fromPaveVariantEffect)
-                    .let(PaveCodingEffect::worstCodingEffect)
-            )
-        )
-    }
-
-    private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PaveVariantEffect>, gene: String): Boolean =
-        gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
-
-    private fun variantType(transvarVariant: TransvarVariant): VariantType {
-        val ref = transvarVariant.ref()
-        val alt = transvarVariant.alt()
-        return if (ref.length == alt.length) {
-            if (ref.length == 1) {
-                VariantType.SNV
-            } else {
-                VariantType.MNV
-            }
-        } else if (ref.length > alt.length) {
-            VariantType.DELETE
-        } else {
-            VariantType.INSERT
-        }
-    }
 
     private fun sourceEvent(variant: SequencedVariant, paveResponse: PaveResponse, transvarAnnotation: TransvarVariant): String {
         val transcriptImpacts = paveResponse.transcriptImpacts
@@ -250,6 +89,86 @@ class PanelVariantAnnotator(
             )
         }"
     }
+
+    private fun variantType(transvarVariant: TransvarVariant): VariantType {
+        val ref = transvarVariant.ref()
+        val alt = transvarVariant.alt()
+        return if (ref.length == alt.length) {
+            if (ref.length == 1) {
+                VariantType.SNV
+            } else {
+                VariantType.MNV
+            }
+        } else if (ref.length > alt.length) {
+            VariantType.DELETE
+        } else {
+            VariantType.INSERT
+        }
+    }
+
+    private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
+        val paveLiteAnnotation = paveLite.run(
+            paveImpact.gene,
+            paveImpact.canonicalTranscript,
+            transvarVariant.position()
+        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
+
+        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
+            shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveImpact.canonicalEffects.toSet(), paveImpact.gene)
+
+        return TranscriptVariantImpact(
+            transcriptId = paveImpact.canonicalTranscript,
+            hgvsCodingImpact = paveImpact.hgvsCodingImpact,
+            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
+            affectedCodon = paveLiteAnnotation.affectedCodon(),
+            affectedExon = paveLiteAnnotation.affectedExon(),
+            inSpliceRegion = paveImpact.spliceRegion,
+            effects = paveImpact.canonicalEffects.map { variantEffect(it) }.toSet(),
+            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(paveImpact.canonicalCodingEffect),
+        )
+    }
+
+    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptVariantImpact> {
+        return paveResponse.transcriptImpacts
+            .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.canonicalTranscript }
+            .map { transcriptImpact(it, transvarVariant) }
+            .toSet()
+    }
+
+
+    private fun transcriptImpact(
+        paveTranscriptImpact: PaveTranscriptImpact,
+        transvarVariant: TransvarVariant
+    ): TranscriptVariantImpact {
+        val paveLiteAnnotation = paveLite.run(
+            paveTranscriptImpact.gene,
+            paveTranscriptImpact.transcript,
+            transvarVariant.position()
+        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
+
+        val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
+            shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveTranscriptImpact.effects.toSet(), paveTranscriptImpact.gene)
+
+        return TranscriptVariantImpact(
+            transcriptId = paveTranscriptImpact.transcript,
+            hgvsCodingImpact = paveTranscriptImpact.hgvsCodingImpact,
+            hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(
+                paveTranscriptImpact.hgvsProteinImpact
+            ),
+            affectedCodon = paveLiteAnnotation.affectedCodon(),
+            affectedExon = paveLiteAnnotation.affectedExon(),
+            inSpliceRegion = paveTranscriptImpact.spliceRegion,
+            effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
+            codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(
+                paveTranscriptImpact.effects
+                    .map(PaveCodingEffect::fromPaveVariantEffect)
+                    .let(PaveCodingEffect::worstCodingEffect)
+            )
+        )
+    }
+
+    private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PaveVariantEffect>, gene: String): Boolean =
+        gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
 
     private fun codingEffect(paveCodingEffect: PaveCodingEffect): CodingEffect {
         return when (paveCodingEffect) {

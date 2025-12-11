@@ -41,14 +41,19 @@ object PaveVcf {
         writer.close()
     }
 
-     fun read(paveVcfFile: String): List<PaveResponse> {
+    fun read(paveVcfFile: String): List<PaveResponse> {
         val reader = AbstractFeatureReader.getFeatureReader(paveVcfFile, VCFCodec(), false)
 
         val response = mutableListOf<PaveResponse>()
         for (variant in reader) {
             val paveImpact = extractPaveImpact(variant)
             val paveTranscriptImpact = extractPaveTranscriptImpact(variant)
-            response.add(PaveResponse(variant.id, paveImpact, paveTranscriptImpact))
+            val localPhaseSet = if (variant.hasAttribute(LOCAL_PHASE_SET_FIELD)) {
+                variant.getAttributeAsInt(LOCAL_PHASE_SET_FIELD, -1).takeIf { it >= 0 }
+            } else {
+                null
+            }
+            response.add(PaveResponse(variant.id, paveImpact, paveTranscriptImpact, localPhaseSet))
         }
 
         return response

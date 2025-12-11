@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.paver
+package com.hartwig.actin.molecular.panel
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
@@ -6,6 +6,11 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import java.io.File
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.io.Reader
+
+// TODO for dev, move to resource and load properly
+val DEFAULT_VARIANT_DECOMPOSITION = VariantDecompositionIndex(
+    PaveVariantDecomposition.readFromFile("/tmp/variant_decomposition.tsv")
+)
 
 data class VariantDecomposition(
     val proteinHgvs: String,

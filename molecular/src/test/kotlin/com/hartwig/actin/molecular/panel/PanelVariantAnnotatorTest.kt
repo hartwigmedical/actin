@@ -85,7 +85,7 @@ class PanelVariantAnnotatorTest {
         every { run(any<List<PaveQuery>>()) } returns emptyList()
         every { run(listOf(PAVE_QUERY)) } returns listOf(PAVE_ANNOTATION)
     }
-    private val annotator = PanelVariantAnnotator(transvarAnnotator, paver, paveLite)
+    private val annotator = PanelVariantAnnotator(transvarAnnotator, paver, paveLite, DEFAULT_VARIANT_DECOMPOSITION)
 
     @Test
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
