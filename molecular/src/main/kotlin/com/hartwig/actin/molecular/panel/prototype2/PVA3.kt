@@ -93,9 +93,7 @@ class PVA3(
                         isExpanded = false,
                         gene = variant.gene,
                         transcript = variant.transcript,
-                        hgvs = variant.hgvsCodingImpact
-                            ?: variant.hgvsProteinImpact
-                            ?: throw IllegalStateException("Variant missing HGVS coding or protein impact")
+                        hgvs = variant.hgvsCodingOrProteinImpact()
                     )
                 )
             }
