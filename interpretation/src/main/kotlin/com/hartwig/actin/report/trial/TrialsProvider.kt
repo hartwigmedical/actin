@@ -57,6 +57,10 @@ class TrialsProvider(
         return filterCohortsOpenAndEligible(evaluableCohorts.filter { !it.ignore && it.hasSlotsAvailable })
     }
 
+    fun externalTrialsForPhase(isLatePhase: Boolean?): ExternalTrials {
+        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult, isLatePhase)
+    }
+
     fun externalTrialsUnfiltered(): ExternalTrials {
         return externalTrials(setOf(), listOf(), false)
     }
@@ -68,9 +72,12 @@ class TrialsProvider(
     private fun externalTrials(
         internalTrialIds: Set<String>,
         internalEvaluatedCohorts: List<InterpretedCohort>,
-        patientIsYoungAdult: Boolean
+        patientIsYoungAdult: Boolean,
+        isLatePhase: Boolean? = null
     ): ExternalTrials {
-        val eligibleExternalTrials = externalTrials.filterInternalTrials(internalTrialIds)
+        val eligibleExternalTrials = if (isLatePhase != null) {
+            externalTrials.filterInternalTrials(internalTrialIds).filterPhase(isLatePhase)
+        } else externalTrials.filterInternalTrials(internalTrialIds)
 
         val (nationalTrials, internationalTrials) = partitionByCountry(eligibleExternalTrials, countryOfReference)
 
@@ -177,6 +184,10 @@ class TrialsProvider(
             return a.toSet() to b.toSet()
         }
     }
+}
+
+fun Set<ActionableWithExternalTrial>.filterPhase(isLatePhase: Boolean): Set<ActionableWithExternalTrial> {
+    return this.filter { it.trial.phase.isLatePhase == isLatePhase }.toSet()
 }
 
 fun Set<ActionableWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<String>): Set<ActionableWithExternalTrial> {

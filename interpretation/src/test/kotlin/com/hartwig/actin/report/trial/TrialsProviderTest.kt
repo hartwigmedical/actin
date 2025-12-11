@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
+import com.hartwig.actin.datamodel.molecular.evidence.Phase
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -222,6 +223,20 @@ class TrialsProviderTest {
         assertThat(externalTrials.internationalTrials.original).containsExactly(country2Trial2, country2Trial3, country2Trial4)
         assertThat(externalTrials.nationalTrials.filtered).containsExactly(country1Trial2)
         assertThat(externalTrials.internationalTrials.filtered).containsExactly(country2Trial4)
+    }
+
+    @Test
+    fun `Should filter external trials based on phase`() {
+        val country1Trial1 = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(nctId = "1", phase = Phase.PHASE_I))
+        val country1Trial2 =
+            EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(nctId = "1", phase = Phase.PHASE_III))
+
+        val externalTrialsSet: Set<ActionableWithExternalTrial> = setOf(country1Trial1, country1Trial2)
+        val trialsProvider =
+            TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), emptySet(), false, Country.NETHERLANDS, true)
+        val externalTrials = trialsProvider.externalTrialsForPhase(true)
+
+        assertThat(externalTrials.internationalTrials.original.first()).isEqualTo(country1Trial2)
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)

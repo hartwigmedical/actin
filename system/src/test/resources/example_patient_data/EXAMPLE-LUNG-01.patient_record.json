@@ -374,6 +374,7 @@
                 {
                   "nctId": "NCT00000006",
                   "title": "EGFR-L858R-TRIAL",
+                  "phase": "UNKNOWN",
                   "treatments": [],
                   "molecularMatches": [
                     {
@@ -417,6 +418,7 @@
                 {
                   "nctId": "NCT00000007",
                   "title": "EGFR-BE",
+                  "phase": "UNKNOWN",
                   "treatments": [],
                   "molecularMatches": [
                     {
@@ -519,6 +521,7 @@
                 {
                   "nctId": "NCT00000008",
                   "title": "EGFR-C797S-TRIAL",
+                  "phase": "PHASE_III",
                   "treatments": [],
                   "molecularMatches": [
                     {
@@ -641,6 +644,7 @@
                 {
                   "nctId": "NCT00000009",
                   "title": "KRAS-G12C-TRIAL-DE",
+                  "phase": "UNKNOWN",
                   "treatments": [],
                   "molecularMatches": [
                     {

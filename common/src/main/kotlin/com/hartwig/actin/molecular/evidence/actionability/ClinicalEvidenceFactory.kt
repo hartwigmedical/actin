@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
+import com.hartwig.actin.datamodel.molecular.evidence.Phase
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
@@ -130,6 +131,7 @@ class ClinicalEvidenceFactory(
             nctId = trial.nctId(),
             title = trial.title(),
             acronym = trial.acronym(),
+            phase = Phase.valueOf(trial.phase().toString()),
             genderMatch = matchGender(genderCriterium, patientGender),
             treatments = trial.therapyNames(),
             countries = countries,
