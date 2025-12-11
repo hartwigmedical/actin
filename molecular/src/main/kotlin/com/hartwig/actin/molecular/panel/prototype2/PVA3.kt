@@ -13,30 +13,13 @@ import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
 data class VariantIndex(val id: Int, val sequencedVariantId: Int)
 
-data class IdentifiedSequencedVariant(val sequencedVariantId: Int, val sequencedVariant: SequencedVariant)
-
-data class TransvarQuery(
+data class AnnotatableVariant(
     val variantIndex: VariantIndex,
-    val isExpanded: Boolean,
-    val gene: String,
-    val transcript: String?,
-    val hgvs: String
-)
-
-data class TransvarResponse(
-    val variantIndex: VariantIndex,
-    val isExpanded: Boolean,
-    val transvarVariant: TransvarVariant,
-    val gene: String,
-    val transcript: String?,
-    val hgvs: String
-)
-
-data class AnnotatedVariant(
-    val variantIndex: VariantIndex,
-    val isExpanded: Boolean,
-    val transvarVariant: TransvarVariant,
-    val paveResponse: PaveResponse
+    val sequencedVariant: SequencedVariant,
+    val queryHgvs: String,
+    val phaseGroupKey: Int?, // grouping key for decomposed variants; null for direct
+    val transvarVariant: TransvarVariant? = null,
+    val paveResponse: PaveResponse? = null,
 )
 
 class PVA3(
@@ -49,119 +32,100 @@ class PVA3(
     private val variantFactory = PanelAnnotatorVariantFactory(paveLite)
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
-        val identifiedSequencedVariants = sequencedVariants.mapIndexed { index, sequencedVariant ->
-            IdentifiedSequencedVariant(sequencedVariantId = index, sequencedVariant = sequencedVariant)
-        }
+        val expanded = applyDecompositions(sequencedVariants.toList())
+        val withTransvar = annotateWithTransvar(expanded)
+        val withPave = annotateWithPave(withTransvar)
+        val dedupedAnnotated = deduplicateAnnotated(withPave)
 
-        val transvarQueries = applyDecompositions(identifiedSequencedVariants)
-        val transvarResponses = annotateWithTransvar(transvarQueries)
-        val paveResponses = annotateWithPave(transvarResponses)
-        val annotated = transvarResponses.zip(paveResponses) { tr, pr ->
-            AnnotatedVariant(
-                variantIndex = tr.variantIndex,
-                isExpanded = tr.isExpanded,
-                transvarVariant = tr.transvarVariant,
-                paveResponse = pr
-            )
-        }
-        val dedupedAnnotated = deduplicateAnnotated(annotated)
-
-        return createVariants(dedupedAnnotated, identifiedSequencedVariants)
+        return createVariants(dedupedAnnotated)
     }
 
-    fun applyDecompositions(identifiedSequencedVariants: List<IdentifiedSequencedVariant>): List<TransvarQuery> {
-        val expanded = identifiedSequencedVariants.flatMap { identified ->
-            val variant = identified.sequencedVariant
+    fun applyDecompositions(sequencedVariants: List<SequencedVariant>): List<AnnotatableVariant> {
+        val expanded = sequencedVariants.withIndex().flatMap { (sequencedVariantId, variant) ->
             val decomposedHgvsList =
                 variant.hgvsCodingImpact?.let { decompositions.lookup(it) }?.decomposedCodingHgvs
                     ?: variant.hgvsProteinImpact?.let { decompositions.lookup(it) }?.decomposedCodingHgvs
 
             if (decomposedHgvsList != null) {
                 decomposedHgvsList.map { decomposedHgvs ->
-                    TransvarQuery(
-                        variantIndex = VariantIndex(-1, identified.sequencedVariantId), // placeholder, set below
-                        isExpanded = true,
-                        gene = variant.gene,
-                        transcript = variant.transcript,
-                        hgvs = decomposedHgvs
+                    AnnotatableVariant(
+                        variantIndex = VariantIndex(-1, sequencedVariantId), // placeholder, set below
+                        sequencedVariant = variant,
+                        queryHgvs = decomposedHgvs,
+                        phaseGroupKey = sequencedVariantId
                     )
                 }
             } else {
                 listOf(
-                    TransvarQuery(
-                        variantIndex = VariantIndex(-1, identified.sequencedVariantId), // placeholder, set below
-                        isExpanded = false,
-                        gene = variant.gene,
-                        transcript = variant.transcript,
-                        hgvs = variant.hgvsCodingOrProteinImpact()
+                    AnnotatableVariant(
+                        variantIndex = VariantIndex(-1, sequencedVariantId), // placeholder, set below
+                        sequencedVariant = variant,
+                        queryHgvs = variant.hgvsCodingOrProteinImpact(),
+                        phaseGroupKey = null
                     )
                 )
             }
         }
 
-        return expanded.mapIndexed { idx, query ->
-            query.copy(variantIndex = VariantIndex(idx, query.variantIndex.sequencedVariantId))
+        return expanded.mapIndexed { idx, variant ->
+            variant.copy(variantIndex = VariantIndex(idx, variant.variantIndex.sequencedVariantId))
         }
     }
 
-    fun annotateWithTransvar(transvarQueries: List<TransvarQuery>): List<TransvarResponse> {
-        return transvarQueries.map { transvarQuery ->
-            val transvar = variantResolver.resolve(transvarQuery.gene, transvarQuery.transcript, transvarQuery.hgvs)
-                ?: throw IllegalStateException("Unable to resolve variant '${transvarQuery.hgvs}' for gene '${transvarQuery.gene}'")
+    fun annotateWithTransvar(annotatable: List<AnnotatableVariant>): List<AnnotatableVariant> {
+        return annotatable.map { variant ->
+            val transvar = variantResolver.resolve(variant.sequencedVariant.gene, variant.sequencedVariant.transcript, variant.queryHgvs)
+                ?: throw IllegalStateException("Unable to resolve variant '${variant.queryHgvs}' for gene '${variant.sequencedVariant.gene}'")
 
-            TransvarResponse(
-                variantIndex = transvarQuery.variantIndex,
-                isExpanded = transvarQuery.isExpanded,
-                transvarVariant = transvar,
-                gene = transvarQuery.gene,
-                transcript = transvarQuery.transcript,
-                hgvs = transvarQuery.hgvs
-            )
+            variant.copy(transvarVariant = transvar)
         }
     }
 
     fun annotateWithPave(
-        transvarResponses: List<TransvarResponse>
-    ): List<PaveResponse> {
+        transvarResponses: List<AnnotatableVariant>
+    ): List<AnnotatableVariant> {
         if (transvarResponses.isEmpty()) {
             return emptyList()
         }
 
-        val localPhaseSets =
-            transvarResponses.filter { it.isExpanded }.map { it.variantIndex.sequencedVariantId }.distinct()
-                .withIndex()
-                .associate { (idx, sequencedId) -> sequencedId to idx + 1 }
-
         val queries = transvarResponses.map { response ->
+            val transvarVariant = response.transvarVariant
+                ?: throw IllegalStateException("Missing Transvar annotation for id ${response.variantIndex.id}")
+
             PaveQuery(
                 id = response.variantIndex.id.toString(),
-                chromosome = response.transvarVariant.chromosome(),
-                position = response.transvarVariant.position(),
-                ref = response.transvarVariant.ref(),
-                alt = response.transvarVariant.alt(),
-                localPhaseSet = if (response.isExpanded) localPhaseSets[response.variantIndex.sequencedVariantId] else null
+                chromosome = transvarVariant.chromosome(),
+                position = transvarVariant.position(),
+                ref = transvarVariant.ref(),
+                alt = transvarVariant.alt(),
+                localPhaseSet = response.phaseGroupKey
             )
         }
         val responses = paver.run(queries)
         val responsesById = responses.associateBy { it.id }
         require(responsesById.keys == queries.map { it.id }.toSet()) { "PAVE did not return responses for all queries" }
 
-        return queries.map { query ->
-            responsesById[query.id] ?: throw IllegalStateException("Missing PAVE response for query ${query.id}")
+        return transvarResponses.map { variant ->
+            val paveResponse =
+                responsesById[variant.variantIndex.id.toString()]
+                    ?: throw IllegalStateException("Missing PAVE response for query ${variant.variantIndex.id}")
+
+            variant.copy(paveResponse = paveResponse)
         }
     }
 
-    fun deduplicateAnnotated(annotated: List<AnnotatedVariant>): List<AnnotatedVariant> {
-        val (expanded, direct) = annotated.partition { it.isExpanded }
+    fun deduplicateAnnotated(annotated: List<AnnotatableVariant>): List<AnnotatableVariant> {
+        val (expanded, direct) = annotated.partition { it.phaseGroupKey != null }
 
-        val groupedByPhase: Map<Int?, List<AnnotatedVariant>> = expanded.groupBy { it.paveResponse.localPhaseSet }
+        val groupedByPhase: Map<Int?, List<AnnotatableVariant>> =
+            expanded.groupBy { it.paveResponse?.localPhaseSet }
         val dedupedExpanded = groupedByPhase.entries.flatMap { entry ->
             val phaseSet = entry.key
             val variants = entry.value
             if (phaseSet == null) {
                 variants
             } else {
-                val proteinImpacts = variants.map { it.paveResponse.impact.hgvsProteinImpact }.toSet()
+                val proteinImpacts = variants.mapNotNull { it.paveResponse?.impact?.hgvsProteinImpact }.toSet()
                 require(proteinImpacts.size <= 1) {
                     "Mismatched protein impacts within phase set $phaseSet: $proteinImpacts"
                 }
@@ -173,23 +137,21 @@ class PVA3(
     }
 
     private fun createVariants(
-        dedupedAnnotated: List<AnnotatedVariant>,
-        identifiedSequencedVariants: List<IdentifiedSequencedVariant>
+        dedupedAnnotated: List<AnnotatableVariant>
     ): List<Variant> {
-        val sequencedById = identifiedSequencedVariants.associateBy { it.sequencedVariantId }
-
         return dedupedAnnotated.map { annotatedVariant ->
-            val sequencedVariant = sequencedById[annotatedVariant.variantIndex.sequencedVariantId]
-                ?: throw IllegalStateException("Missing sequenced variant for id ${annotatedVariant.variantIndex.sequencedVariantId}")
+            val transvar = annotatedVariant.transvarVariant
+                ?: throw IllegalStateException("Missing Transvar annotation for id ${annotatedVariant.variantIndex.id}")
+            val paveResponse = annotatedVariant.paveResponse
+                ?: throw IllegalStateException("Missing PAVE response for id ${annotatedVariant.variantIndex.id}")
 
             val baseVariant = variantFactory.createVariant(
-                sequencedVariant.sequencedVariant,
-                annotatedVariant.transvarVariant,
-                annotatedVariant.paveResponse
+                annotatedVariant.sequencedVariant,
+                transvar,
+                paveResponse
             )
 
-            annotatedVariant.paveResponse.localPhaseSet?.let { phase -> baseVariant.copy(phaseGroups = setOf(phase)) }
-                ?: baseVariant
+            paveResponse.localPhaseSet?.let { phase -> baseVariant.copy(phaseGroups = setOf(phase)) } ?: baseVariant
         }
     }
 }
