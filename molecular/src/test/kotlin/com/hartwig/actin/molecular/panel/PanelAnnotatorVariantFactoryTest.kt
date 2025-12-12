@@ -26,6 +26,9 @@ private const val OTHER_GENE_ID = "other_gene_id"
 private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
+private const val REFSEQ_TRANSCRIPT = "refseq_transcript"
+private const val EXON = "1"
+private const val CODON = "1"
 
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
@@ -57,7 +60,10 @@ private val PAVE_ANNOTATION = PaveResponse(
             effects = listOf(PaveVariantEffect.MISSENSE),
             spliceRegion = false,
             hgvsCodingImpact = HGVS_CODING,
-            hgvsProteinImpact = HGVS_PROTEIN_3LETTER
+            hgvsProteinImpact = HGVS_PROTEIN_3LETTER,
+            refSeqId = REFSEQ_TRANSCRIPT,
+            exon = EXON,
+            codon = CODON
         )
     )
 )
@@ -101,7 +107,7 @@ class PanelAnnotatorVariantFactoryTest {
     @Test
     fun `Should annotate variants with affected exon and codon`() {
         every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns
-            ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(2).build()
+                ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(2).build()
 
         val annotated = factory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
         assertThat(annotated.canonicalImpact.affectedExon).isEqualTo(1)
@@ -381,7 +387,10 @@ class PanelAnnotatorVariantFactoryTest {
         transcript: String = OTHER_TRANSCRIPT,
         effects: List<PaveVariantEffect> = emptyList(),
         hgvsCodingImpact: String = HGVS_CODING,
-        hgvsProteinImpact: String = HGVS_PROTEIN_1LETTER
+        hgvsProteinImpact: String = HGVS_PROTEIN_1LETTER,
+        refSeqId: String = REFSEQ_TRANSCRIPT,
+        exon: String = EXON,
+        codon: String = CODON
     ): PaveTranscriptImpact = PaveTranscriptImpact(
         geneId = geneId,
         gene = gene,
@@ -389,7 +398,10 @@ class PanelAnnotatorVariantFactoryTest {
         effects = effects,
         spliceRegion = false,
         hgvsCodingImpact = hgvsCodingImpact,
-        hgvsProteinImpact = hgvsProteinImpact
+        hgvsProteinImpact = hgvsProteinImpact,
+        refSeqId = refSeqId,
+        exon = exon,
+        codon = codon
     )
 
     private fun transcriptVariantImpact(effects: Set<VariantEffect>, codingEffect: CodingEffect): TranscriptVariantImpact =

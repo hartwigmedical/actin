@@ -26,12 +26,13 @@ class Paver(
 
         configBuilder.checkAndParseCommandLine(
             arrayOf(
-                "-vcf_file", paveVcfQueryFile,
+                "-input_vcf", paveVcfQueryFile,
                 "-ensembl_data_dir", ensemblDataDir,
                 "-ref_genome", refGenomeFasta,
                 "-ref_genome_version", refGenomeVersion.display(),
                 "-driver_gene_panel", driverGenePanel,
-                "-output_dir", tempDir,
+                "-sample", "sample_id",
+                "-output_vcf", paveVcfResponseFile,
             )
         )
 
@@ -98,7 +99,7 @@ fun parsePaveTranscriptImpact(impacts: List<String>?): List<PaveTranscriptImpact
 
     return impacts.map { it.split("|") }
         .map {
-            if (it.size != 7) {
+            if (it.size != 10) {
                 throw RuntimeException("Unexpected number of parts in PAVE_TI field: ${it.size}")
             }
 
@@ -109,7 +110,10 @@ fun parsePaveTranscriptImpact(impacts: List<String>?): List<PaveTranscriptImpact
                 effects = interpretVariantEffects(it[3]),
                 spliceRegion = interpretSpliceRegion(it[4]),
                 hgvsCodingImpact = it[5],
-                hgvsProteinImpact = it[6]
+                hgvsProteinImpact = it[6],
+                refSeqId = it[7],
+                exon = it[8],
+                codon = it[9],
             )
         }
 }
