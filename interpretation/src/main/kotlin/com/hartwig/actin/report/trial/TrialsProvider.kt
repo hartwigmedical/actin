@@ -188,13 +188,12 @@ class TrialsProvider(
     }
 }
 
-fun Set<ActionableWithExternalTrial>.filterPhase(externalPhaseFilter: ExternalPhaseFilter): Set<ActionableWithExternalTrial> {
-    return when (externalPhaseFilter) {
+fun Set<ActionableWithExternalTrial>.filterPhase(externalPhaseFilter: ExternalPhaseFilter): Set<ActionableWithExternalTrial> =
+    when (externalPhaseFilter) {
         ExternalPhaseFilter.EXTERNAL_ALL_PHASES -> this
-        ExternalPhaseFilter.EXTERNAL_LATE_PHASE -> this.filter { it.trial.phase.isLatePhase }.toSet()
-        ExternalPhaseFilter.EXTERNAL_EARLY_PHASE -> this.filter { !it.trial.phase.isLatePhase }.toSet()
+        ExternalPhaseFilter.EXTERNAL_LATE_PHASE -> filter { it.trial.phase.isLatePhase }.toSet()
+        ExternalPhaseFilter.EXTERNAL_EARLY_PHASE -> filter { !it.trial.phase.isLatePhase }.toSet()
     }
-}
 
 fun Set<ActionableWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<String>): Set<ActionableWithExternalTrial> {
     return this.filter { it.trial.nctId !in internalTrialIds }.toSet()
