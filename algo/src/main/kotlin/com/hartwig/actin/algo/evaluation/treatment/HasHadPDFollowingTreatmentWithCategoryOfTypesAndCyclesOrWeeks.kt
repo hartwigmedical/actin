@@ -53,18 +53,9 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
         }
             .toSet()
 
-        val minCyclesMessageSuffix = " and at least $minCycles cycles"
-        val minWeeksMessageSuffix = " for at least $minWeeks weeks"
-
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS in treatmentEvaluations -> {
-                if (minCycles == null && minWeeks == null) {
-                    pass(hasTreatmentMessage())
-                } else if (minCycles != null) {
-                    pass(hasTreatmentMessage(minCyclesMessageSuffix))
-                } else {
-                    pass(hasTreatmentMessage(minWeeksMessageSuffix))
-                }
+                pass(hasTreatmentMessage(suffix()))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
@@ -91,15 +82,9 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 undetermined("Undetermined if patient received ${treatment()}}")
             }
 
-            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                if (minCycles == null && minWeeks == null) fail(hasNoPDAfterMessage())
-                else if (minCycles != null) fail(hasNoPDAfterMessage(minCyclesMessageSuffix))
-                else fail(hasNoPDAfterMessage(minWeeksMessageSuffix))
-            }
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> fail(hasNoPDAfterMessage(suffix()))
 
-            minCycles == null && minWeeks == null -> fail(hasNoTreatmentMessage())
-            minCycles != null -> fail(hasNoTreatmentMessage(minCyclesMessageSuffix))
-            else -> fail(hasNoTreatmentMessage(minWeeksMessageSuffix))
+            else -> fail(hasNoTreatmentMessage(suffix()))
         }
     }
 
@@ -113,6 +98,12 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
 
     private fun hasNoTreatmentMessage(suffix: String = ""): String {
         return "No ${treatment()} with PD$suffix"
+    }
+
+    private fun suffix(): String = when {
+        minCycles == null && minWeeks == null -> ""
+        minCycles != null -> " and at least $minCycles cycles"
+        else -> " for at least $minWeeks weeks"
     }
 
     private fun treatment(): String {
