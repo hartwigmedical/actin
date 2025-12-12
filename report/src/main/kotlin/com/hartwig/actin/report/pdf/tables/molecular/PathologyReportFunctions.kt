@@ -87,10 +87,10 @@ object PathologyReportFunctions {
         ihcTests: List<IhcTest>,
         pathologyReports: List<PathologyReport>?
     ): Map<PathologyReport?, MolecularTestGroup> {
-        val reportKeys = pathologyReports.orEmpty().flatMap { listOfNotNull(it.date.toString(), it.reportHash) }.toSet()
-        val orangeResultsByKey = orangeMolecularRecords.groupBy { findReportKey(reportKeys, it.date) }
-        val molecularTestsByKey = molecularTests.groupBy { findReportKey(reportKeys, it.date, it.reportHash) }
-        val ihcTestsByKey = ihcTests.groupBy { findReportKey(reportKeys, it.measureDate, it.reportHash) }
+        val reportKeys = pathologyReports.orEmpty().mapNotNull { it.reportHash }.toSet()
+        val orangeResultsByKey = orangeMolecularRecords.groupBy { findReportKey(reportKeys) }
+        val molecularTestsByKey = molecularTests.groupBy { findReportKey(reportKeys, it.reportHash) }
+        val ihcTestsByKey = ihcTests.groupBy { findReportKey(reportKeys, it.reportHash) }
 
         val matchedReports: Map<PathologyReport, MolecularTestGroup> =
             pathologyReports.orEmpty().groupBy { it.date }.entries.flatMap { (date, reports) ->
@@ -122,8 +122,7 @@ object PathologyReportFunctions {
             .toMap(LinkedHashMap())
     }
 
-    private fun findReportKey(reportKeys: Set<String>, date: LocalDate?, reportHash: String? = null): String? =
-        listOfNotNull(reportHash, date.toString()).find(reportKeys::contains)
+    private fun findReportKey(reportKeys: Set<String>, reportHash: String? = null): String? = reportHash?.takeIf { reportKeys.contains(it) }
 
     private fun resultsForKeys(
         orangeResultsByKey: Map<String?, List<MolecularTest>>,
