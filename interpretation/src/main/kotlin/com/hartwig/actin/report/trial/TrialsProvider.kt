@@ -1,11 +1,14 @@
 package com.hartwig.actin.report.trial
 
+import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
+import com.hartwig.actin.configuration.ExternalTrialTumorType
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
+import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.ActionableAndEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
@@ -38,6 +41,7 @@ class TrialsProvider(
     private val nonEvaluableCohorts: List<InterpretedCohort>,
     private val internalTrialIds: Set<String>,
     private val patientIsYoungAdult: Boolean,
+    val effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
     private val countryOfReference: Country,
     private val retainOriginalExternalTrials: Boolean
 ) {
@@ -58,17 +62,28 @@ class TrialsProvider(
     }
 
     fun externalTrialsUnfiltered(): ExternalTrials {
-        return externalTrials(setOf(), listOf(), false)
+        return externalTrials(
+            emptySet(),
+            emptyList(),
+            patientIsYoungAdult = false,
+            effectiveDutchExternalTrialExclusion = ExternalTrialTumorType.NONE
+        )
     }
 
     fun externalTrials(): ExternalTrials {
-        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult)
+        return externalTrials(
+            internalTrialIds,
+            eligibleCohortsWithSlotsAvailableAndNotIgnore(),
+            patientIsYoungAdult,
+            effectiveDutchExternalTrialExclusion
+        )
     }
 
     private fun externalTrials(
         internalTrialIds: Set<String>,
         internalEvaluatedCohorts: List<InterpretedCohort>,
-        patientIsYoungAdult: Boolean
+        patientIsYoungAdult: Boolean,
+        effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
     ): ExternalTrials {
         val eligibleExternalTrials = externalTrials.filterInternalTrials(internalTrialIds)
 
@@ -76,10 +91,12 @@ class TrialsProvider(
 
         val filteredNationalTrials =
             nationalTrials.filterExclusivelyInChildrensHospitalsInReferenceCountry(patientIsYoungAdult, countryOfReference)
+                .filterDutchTrials(effectiveDutchExternalTrialExclusion)
 
         val filteredInternationalTrials =
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
                 .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials)
+                .filterDutchTrials(effectiveDutchExternalTrialExclusion)
 
         return ExternalTrials(
             hideOverlappingTrials(
@@ -100,10 +117,7 @@ class TrialsProvider(
         filtered: Set<ActionableWithExternalTrial>,
         retainOriginalTrials: Boolean
     ): MolecularFilteredExternalTrials {
-        return MolecularFilteredExternalTrials(
-            original,
-            if (retainOriginalTrials) original else filtered
-        )
+        return MolecularFilteredExternalTrials(original, if (retainOriginalTrials) original else filtered)
     }
 
     companion object {
@@ -111,15 +125,23 @@ class TrialsProvider(
             patientRecord: PatientRecord,
             treatmentMatch: TreatmentMatch,
             countryOfReference: Country,
+            doidModel: DoidModel,
+            dutchExternalTrialsToExclude: ExternalTrialTumorType,
             retainOriginalExternalTrials: Boolean,
             filterOnSoCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
+            val patientMatchesExclusionType = dutchExternalTrialsToExclude.tumorDoid
+                ?.let { DoidEvaluationFunctions.isOfDoidType(doidModel, patientRecord.tumor.doids, it) } == true
+            val effectiveDutchExternalTrialExclusion =
+                if (patientMatchesExclusionType) dutchExternalTrialsToExclude else ExternalTrialTumorType.NONE
+
             return create(
                 patientRecord,
                 treatmentMatch.trialMatches,
                 countryOfReference,
                 (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF,
+                effectiveDutchExternalTrialExclusion,
                 retainOriginalExternalTrials,
                 filterOnSoCExhaustionAndTumorType,
                 filter
@@ -131,6 +153,7 @@ class TrialsProvider(
             trialMatches: List<TrialMatch>,
             countryOfReference: Country,
             patientIsYoungAdult: Boolean,
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
             retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
@@ -147,6 +170,7 @@ class TrialsProvider(
                 nonEvaluableCohorts,
                 internalTrialIds,
                 patientIsYoungAdult,
+                effectiveDutchExternalTrialExclusion,
                 countryOfReference,
                 retainOriginalExternalTrials
             )
@@ -208,6 +232,15 @@ fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInRefe
             hospitalsForCountry(ewt.trial, countryOfReference).all { it.isChildrensHospital == true }
         !allHospitalsAreChildrensInReferenceCountry || patientIsYoungAdult
     }.toSet()
+}
+
+private fun Set<ActionableWithExternalTrial>.filterDutchTrials(
+    effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
+): Set<ActionableWithExternalTrial> {
+    return when (effectiveDutchExternalTrialExclusion) {
+        ExternalTrialTumorType.LUNG -> this.filterNot { Country.NETHERLANDS in it.trial.countries.map { c -> c.country } }.toSet()
+        else -> this
+    }
 }
 
 private fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ActionableWithExternalTrial> {

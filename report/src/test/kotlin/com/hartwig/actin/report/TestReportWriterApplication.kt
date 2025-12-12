@@ -10,11 +10,12 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import java.io.File
 import org.apache.logging.log4j.LogManager
+import java.io.File
 
 private val WORK_DIRECTORY = System.getProperty("user.dir")
 
@@ -59,5 +60,5 @@ fun main() {
         hospitalOfReference = null
     )
 
-    writer.write(report, configuration = reportConfiguration, addExtendedSuffix = false)
+    writer.write(report, configuration = reportConfiguration, TestDoidModelFactory.createMinimalTestDoidModel(), addExtendedSuffix = false)
 }

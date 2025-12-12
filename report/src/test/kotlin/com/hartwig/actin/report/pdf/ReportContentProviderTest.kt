@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.trial.TrialSource
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
@@ -19,10 +20,11 @@ class ReportContentProviderTest {
 
     private val proper = TestReportFactory.createProperTestReport()
     private val configuration = ReportConfiguration()
+    private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
 
     @Test
     fun `Should include molecular chapter and omit efficacy chapters by default`() {
-        val chapters = ReportContentProvider(proper, configuration).provideChapters()
+        val chapters = ReportContentProvider(proper, configuration, doidModel).provideChapters()
         assertThat(chapters.map { it::class }).containsExactly(
             SummaryChapter::class,
             MolecularDetailsChapter::class,
@@ -30,11 +32,12 @@ class ReportContentProviderTest {
             TrialMatchingDetailsChapter::class,
         )
     }
-    
+
     @Test
     fun `Should match total cohort size between summary and trial matching details`() {
         val report = TestReportFactory.createExhaustiveTestReport()
-        val summaryChapter = ReportContentProvider(report, configuration).provideChapters().filterIsInstance<SummaryChapter>().first()
+        val summaryChapter =
+            ReportContentProvider(report, configuration, doidModel).provideChapters().filterIsInstance<SummaryChapter>().first()
         val eligibleTrialGenerators = summaryChapter.createSummaryGenerators().filterIsInstance<EligibleTrialGenerator>()
 
         assertThat(eligibleTrialGenerators).hasSize(4)
@@ -50,7 +53,8 @@ class ReportContentProviderTest {
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch1, trialMatch2))
         )
 
-        val summaryChapter = ReportContentProvider(report, configuration).provideChapters().filterIsInstance<SummaryChapter>().first()
+        val summaryChapter =
+            ReportContentProvider(report, configuration, doidModel).provideChapters().filterIsInstance<SummaryChapter>().first()
         val eligibleTrialGenerators = summaryChapter.createSummaryGenerators().filterIsInstance<EligibleTrialGenerator>()
 
         assertThat(eligibleTrialGenerators).hasSize(3)
@@ -69,6 +73,6 @@ class ReportContentProviderTest {
     }
 
     private fun chapters(report: Report): List<ReportChapter> {
-        return ReportContentProvider(report, configuration).provideChapters()
+        return ReportContentProvider(report, configuration, doidModel).provideChapters()
     }
 }

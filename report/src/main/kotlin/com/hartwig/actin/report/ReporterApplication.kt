@@ -3,6 +3,9 @@ package com.hartwig.actin.report
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.doid.DoidModelFactory
+import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import org.apache.commons.cli.DefaultParser
@@ -14,7 +17,7 @@ import org.apache.logging.log4j.Logger
 import java.time.LocalDate
 import kotlin.system.exitProcess
 
-class ReporterApplication(private val config: ReporterConfig) {
+class ReporterApplication(private val config: ReporterConfig, private val doidModel: DoidModel) {
 
     fun run() {
         LOGGER.info("Running {} v{}", APPLICATION, VERSION)
@@ -34,7 +37,7 @@ class ReporterApplication(private val config: ReporterConfig) {
 
         val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
-        writer.write(report, configuration, config.enableExtendedMode)
+        writer.write(report, configuration, doidModel, config.enableExtendedMode)
         LOGGER.info("Done!")
     }
 
@@ -56,6 +59,5 @@ fun main(args: Array<String>) {
         HelpFormatter().printHelp(ReporterApplication.APPLICATION, options)
         exitProcess(1)
     }
-
-    ReporterApplication(config).run()
+    ReporterApplication(config, DoidModelFactory.createFromDoidEntry(DoidJson.readDoidOwlEntry(config.doidJson))).run()
 }
