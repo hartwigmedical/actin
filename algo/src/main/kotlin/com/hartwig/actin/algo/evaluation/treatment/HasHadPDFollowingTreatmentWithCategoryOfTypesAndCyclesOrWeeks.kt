@@ -53,14 +53,17 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
         }
             .toSet()
 
+        val minCyclesMessageSuffix = " and at least $minCycles cycles"
+        val minWeeksMessageSuffix = " for at least $minWeeks weeks"
+
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS in treatmentEvaluations -> {
                 if (minCycles == null && minWeeks == null) {
                     pass(hasTreatmentMessage())
                 } else if (minCycles != null) {
-                    pass(hasTreatmentMessage(" and at least $minCycles cycles"))
+                    pass(hasTreatmentMessage(minCyclesMessageSuffix))
                 } else {
-                    pass(hasTreatmentMessage(" for at least $minWeeks weeks"))
+                    pass(hasTreatmentMessage(minWeeksMessageSuffix))
                 }
             }
 
@@ -89,17 +92,27 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                fail("No PD after " + category.display())
+                if (minCycles == null && minWeeks == null) fail(hasNoPDAfterMessage())
+                else if (minCycles != null) fail(hasNoPDAfterMessage(minCyclesMessageSuffix))
+                else fail(hasNoPDAfterMessage(minWeeksMessageSuffix))
             }
 
-            else -> {
-                fail("No ${treatment()} with PD")
-            }
+            minCycles == null && minWeeks == null -> fail(hasNoTreatmentMessage())
+            minCycles != null -> fail(hasNoTreatmentMessage(minCyclesMessageSuffix))
+            else -> fail(hasNoTreatmentMessage(minWeeksMessageSuffix))
         }
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
         return "Has had ${treatment()} with PD$suffix"
+    }
+
+    private fun hasNoPDAfterMessage(suffix: String = ""): String {
+        return "No PD after ${category.display()}$suffix"
+    }
+
+    private fun hasNoTreatmentMessage(suffix: String = ""): String {
+        return "No ${treatment()} with PD$suffix"
     }
 
     private fun treatment(): String {
