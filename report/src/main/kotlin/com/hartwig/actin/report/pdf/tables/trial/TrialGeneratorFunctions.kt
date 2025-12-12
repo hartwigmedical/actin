@@ -51,7 +51,7 @@ object TrialGeneratorFunctions {
         }
 
         externalTrials.forEach { trial ->
-            val trialLabelText = trial.title.takeIf { it.length < 20 } ?: trial.nctId // hier phase toevoegen
+            val trialLabelText = (trial.title.takeIf { it.length < 20 } ?: trial.nctId) + (trial.phase.text?.let { "\n ($it)" } ?: "")
             val contentFunction = when {
                 useSmallerSize -> Cells::createContentSmallItalic
                 else -> Cells::createContentMediumItalic

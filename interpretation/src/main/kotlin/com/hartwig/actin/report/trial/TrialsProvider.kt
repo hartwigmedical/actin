@@ -12,6 +12,10 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 
 const val YOUNG_ADULT_CUT_OFF = 40
 
+enum class ExternalPhaseFilter {
+    EXTERNAL_LATE_PHASE, EXTERNAL_EARLY_PHASE, EXTERNAL_ALL_PHASES
+}
+
 data class ActionableWithExternalTrial(val actionable: Actionable, val trial: ExternalTrial)
 
 class MolecularFilteredExternalTrials(val original: Set<ActionableWithExternalTrial>, val filtered: Set<ActionableWithExternalTrial>) {
@@ -57,12 +61,12 @@ class TrialsProvider(
         return filterCohortsOpenAndEligible(evaluableCohorts.filter { !it.ignore && it.hasSlotsAvailable })
     }
 
-    fun externalTrialsForPhase(isLatePhase: Boolean?): ExternalTrials {
-        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult, isLatePhase)
-    }
-
     fun externalTrialsUnfiltered(): ExternalTrials {
         return externalTrials(setOf(), listOf(), false)
+    }
+
+    fun externalTrialsFilteredOnPhase(externalPhaseFilter: ExternalPhaseFilter): ExternalTrials {
+        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult, externalPhaseFilter)
     }
 
     fun externalTrials(): ExternalTrials {
@@ -73,11 +77,9 @@ class TrialsProvider(
         internalTrialIds: Set<String>,
         internalEvaluatedCohorts: List<InterpretedCohort>,
         patientIsYoungAdult: Boolean,
-        isLatePhase: Boolean? = null
+        externalPhaseFilter: ExternalPhaseFilter = ExternalPhaseFilter.EXTERNAL_ALL_PHASES
     ): ExternalTrials {
-        val eligibleExternalTrials = if (isLatePhase != null) {
-            externalTrials.filterInternalTrials(internalTrialIds).filterPhase(isLatePhase)
-        } else externalTrials.filterInternalTrials(internalTrialIds)
+        val eligibleExternalTrials = externalTrials.filterInternalTrials(internalTrialIds).filterPhase(externalPhaseFilter)
 
         val (nationalTrials, internationalTrials) = partitionByCountry(eligibleExternalTrials, countryOfReference)
 
@@ -186,8 +188,12 @@ class TrialsProvider(
     }
 }
 
-fun Set<ActionableWithExternalTrial>.filterPhase(isLatePhase: Boolean): Set<ActionableWithExternalTrial> {
-    return this.filter { it.trial.phase.isLatePhase == isLatePhase }.toSet()
+fun Set<ActionableWithExternalTrial>.filterPhase(externalPhaseFilter: ExternalPhaseFilter): Set<ActionableWithExternalTrial> {
+    return when (externalPhaseFilter) {
+        ExternalPhaseFilter.EXTERNAL_ALL_PHASES -> this
+        ExternalPhaseFilter.EXTERNAL_LATE_PHASE -> this.filter { it.trial.phase.isLatePhase }.toSet()
+        ExternalPhaseFilter.EXTERNAL_EARLY_PHASE -> this.filter { !it.trial.phase.isLatePhase }.toSet()
+    }
 }
 
 fun Set<ActionableWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<String>): Set<ActionableWithExternalTrial> {

@@ -608,7 +608,7 @@
                 {
                   "nctId": "NCT00000009",
                   "title": "KRAS-G12D-TRIAL",
-                  "phase": "UNKNOWN",
+                  "phase": "PHASE_I",
                   "treatments": [],
                   "molecularMatches": [
                     {

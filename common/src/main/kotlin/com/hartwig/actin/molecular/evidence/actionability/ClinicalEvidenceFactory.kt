@@ -131,7 +131,7 @@ class ClinicalEvidenceFactory(
             nctId = trial.nctId(),
             title = trial.title(),
             acronym = trial.acronym(),
-            phase = Phase.valueOf(trial.phase().toString()),
+            phase = Phase.valueOf(trial.phase().name),
             genderMatch = matchGender(genderCriterium, patientGender),
             treatments = trial.therapyNames(),
             countries = countries,

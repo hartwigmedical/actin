@@ -227,16 +227,46 @@ class TrialsProviderTest {
 
     @Test
     fun `Should filter external trials based on phase`() {
-        val country1Trial1 = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(nctId = "1", phase = Phase.PHASE_I))
-        val country1Trial2 =
-            EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(nctId = "1", phase = Phase.PHASE_III))
+        val trial1 = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
+            trial = BASE_EXTERNAL_TRIAL.copy(
+                countries = countrySet(NETHERLANDS),
+                nctId = "1",
+                phase = Phase.PHASE_I
+            )
+        )
+        val trial2 = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
+            trial = BASE_EXTERNAL_TRIAL.copy(
+                countries = countrySet(NETHERLANDS),
+                nctId = "2",
+                phase = Phase.PHASE_II
+            )
+        )
+        val trial3 = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
+            trial = BASE_EXTERNAL_TRIAL.copy(
+                countries = countrySet(BELGIUM),
+                nctId = "3",
+                phase = Phase.PHASE_I
+            )
+        )
+        val trial4 = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
+            trial = BASE_EXTERNAL_TRIAL.copy(
+                countries = countrySet(BELGIUM),
+                nctId = "4",
+                phase = Phase.PHASE_II
+            )
+        )
 
-        val externalTrialsSet: Set<ActionableWithExternalTrial> = setOf(country1Trial1, country1Trial2)
+        val externalTrialsSet: Set<ActionableWithExternalTrial> = setOf(trial1, trial2, trial3, trial4)
         val trialsProvider =
-            TrialsProvider(externalTrialsSet, EVALUABLE_COHORTS, listOf(), emptySet(), false, Country.NETHERLANDS, true)
-        val externalTrials = trialsProvider.externalTrialsForPhase(true)
+            TrialsProvider(externalTrialsSet, emptyList(), listOf(), emptySet(), false, Country.NETHERLANDS, true)
 
-        assertThat(externalTrials.internationalTrials.original.first()).isEqualTo(country1Trial2)
+        val earlyPhaseTrials = trialsProvider.externalTrialsFilteredOnPhase(ExternalPhaseFilter.EXTERNAL_EARLY_PHASE)
+        assertThat(earlyPhaseTrials.nationalTrials.original).containsExactly(trial1)
+        assertThat(earlyPhaseTrials.internationalTrials.original).containsExactly(trial3)
+
+        val latePhaseTrials = trialsProvider.externalTrialsFilteredOnPhase(ExternalPhaseFilter.EXTERNAL_LATE_PHASE)
+        assertThat(latePhaseTrials.nationalTrials.original).containsExactly(trial2)
+        assertThat(latePhaseTrials.internationalTrials.original).containsExactly(trial4)
     }
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)
