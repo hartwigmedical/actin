@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
@@ -30,10 +31,37 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     @Test
+    fun `Should select right fail messages when wrong category with PD`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTreatment("test", TreatmentCategory.RADIOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
+        )
+        val result1 = function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        val result2 = function(minWeeks = 10).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        val result3 = function(minCycles = 10).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+
+        assertThat(result1.failMessagesStrings()).containsExactly("No HER2 antibody targeted therapy treatment with PD")
+        assertThat(result2.failMessagesStrings()).containsExactly("No HER2 antibody targeted therapy treatment with PD for at least 10 weeks")
+        assertThat(result3.failMessagesStrings()).containsExactly("No HER2 antibody targeted therapy treatment with PD and at least 10 cycles")
+    }
+
+    @Test
     fun `Should fail for right category and type but no PD`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.TOXICITY, bestResponse = TreatmentResponse.MIXED)
         assertEvaluation(EvaluationResult.FAIL, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun `Should select right fail messages when right category and type but not PD`() {
+        val treatmentHistoryEntry =
+            treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.TOXICITY, bestResponse = TreatmentResponse.MIXED)
+        val result1 = function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        val result2 = function(minWeeks = 10).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        val result3 = function(minCycles = 10).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+
+        assertThat(result1.failMessagesStrings()).containsExactly("No PD after targeted therapy")
+        assertThat(result2.failMessagesStrings()).containsExactly("No PD after targeted therapy for at least 10 weeks")
+        assertThat(result3.failMessagesStrings()).containsExactly("No PD after targeted therapy and at least 10 cycles")
     }
 
     @Test
