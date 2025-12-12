@@ -26,16 +26,6 @@ private val NONSENSE_OR_FRAMESHIFT_EFFECTS =
     setOf(PaveVariantEffect.FRAMESHIFT, PaveVariantEffect.START_LOST, PaveVariantEffect.STOP_GAINED, PaveVariantEffect.STOP_LOST)
 private val SPLICE_EFFECTS = setOf(PaveVariantEffect.SPLICE_ACCEPTOR, PaveVariantEffect.SPLICE_DONOR)
 
-fun eventString(paveResponse: PaveResponse): String {
-    return formatVariantImpact(
-        paveResponse.impact.hgvsProteinImpact,
-        paveResponse.impact.hgvsCodingImpact,
-        paveResponse.impact.canonicalCodingEffect == PaveCodingEffect.SPLICE,
-        paveResponse.impact.canonicalEffects.contains(PaveVariantEffect.UPSTREAM_GENE),
-        paveResponse.impact.canonicalEffects.joinToString("&") { it.toString() }
-    )
-}
-
 class PanelVariantAnnotator(
     private val variantResolver: VariantAnnotator,
     private val paver: Paver,
