@@ -192,7 +192,7 @@ fun Set<ActionableWithExternalTrial>.filterPhase(externalPhaseFilter: ExternalPh
     when (externalPhaseFilter) {
         ExternalPhaseFilter.EXTERNAL_ALL_PHASES -> this
         ExternalPhaseFilter.EXTERNAL_LATE_PHASE -> filter { it.trial.phase.isLatePhase }.toSet()
-        ExternalPhaseFilter.EXTERNAL_EARLY_PHASE -> filter { !it.trial.phase.isLatePhase }.toSet()
+        ExternalPhaseFilter.EXTERNAL_EARLY_PHASE -> filterNot { it.trial.phase.isLatePhase }.toSet()
     }
 
 fun Set<ActionableWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<String>): Set<ActionableWithExternalTrial> {
