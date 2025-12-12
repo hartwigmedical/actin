@@ -150,12 +150,8 @@ class EligibleTrialGeneratorTest {
             cohorts = emptyList(),
             externalTrials = ExternalTrials(
                 MolecularFilteredExternalTrials(
-                    setOf(
-                        ActionableWithExternalTrial(
-                            TestVariantFactory.createMinimal().copy(),
-                            TestExternalTrialFactory.create()
-                        )
-                    ), emptySet()
+                    setOf(ActionableWithExternalTrial(TestVariantFactory.createMinimal().copy(), TestExternalTrialFactory.create())),
+                    emptySet()
                 ),
                 MolecularFilteredExternalTrials(emptySet(), emptySet())
             ),
