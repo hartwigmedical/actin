@@ -78,39 +78,36 @@ class TrialsProviderTest {
     }
 
     @Test
-    fun `Should filter all trials running in the Netherlands if config is set to exclude lung and tumor type is lung cancer`() {
-        listOf(Country.NETHERLANDS, Country.BELGIUM).forEach { country ->
-            val trialsProvider = trialsProvider(
-                setOf(NETHERLANDS_ROS1, BELGIUM_TMB),
-                false,
-                ExternalTrialTumorType.LUNG,
-                country
-            )
-            val externalTrials = trialsProvider.externalTrials()
-            assertThat(externalTrials.nationalTrials.filtered).isEmpty()
-        }
+    fun `Should filter all trials running in the Netherlands if effectiveDutchExternalTrialExclusion is type lung`() {
+        val trials = setOf(NETHERLANDS_ROS1, BELGIUM_TMB)
+
+        val referenceCountryNetherlands = trialsProvider(trials, false, ExternalTrialTumorType.LUNG, Country.NETHERLANDS)
+        val externalTrials1 = referenceCountryNetherlands.externalTrials()
+        assertThat(externalTrials1.nationalTrials.filtered).isEmpty()
+
+        val referenceCountryBelgium = trialsProvider(trials, false, ExternalTrialTumorType.LUNG, Country.BELGIUM)
+        val externalTrials2 = referenceCountryBelgium.externalTrials()
+        assertThat(externalTrials2.internationalTrials.filtered).isEmpty()
     }
 
     @Test
-    fun `Should not filter non-Dutch trials if tumor type is lung cancer`() {
-        val trialsProvider = trialsProvider(
-            setOf(BELGIUM_TMB),
-            false,
-            ExternalTrialTumorType.LUNG,
-        )
+    fun `Should not filter non-Dutch trials if effectiveDutchExternalTrialExclusion is type lung`() {
+        val trialsProvider = trialsProvider(setOf(BELGIUM_TMB), false, ExternalTrialTumorType.LUNG)
         val externalTrials = trialsProvider.externalTrials()
         assertThat(externalTrials.internationalTrials.filtered).containsExactly(BELGIUM_TMB)
     }
 
     @Test
-    fun `Should not filter Dutch lung trials if config is set to not exclude any tumor types`() {
-        val trialsProvider = trialsProvider(
-            setOf(BELGIUM_TMB),
-            false,
-            ExternalTrialTumorType.NONE
-        )
-        val externalTrials = trialsProvider.externalTrials()
-        assertThat(externalTrials.internationalTrials.filtered).containsExactly(BELGIUM_TMB)
+    fun `Should not filter trials running in the Netherlands if effectiveDutchExternalTrialExclusion is type none`() {
+        val trials = setOf(NETHERLANDS_ROS1, BELGIUM_TMB)
+
+        val referenceCountryNetherlands = trialsProvider(trials, false, ExternalTrialTumorType.NONE, Country.NETHERLANDS)
+        val externalTrials1 = referenceCountryNetherlands.externalTrials()
+        assertThat(externalTrials1.nationalTrials.filtered).containsExactly(NETHERLANDS_ROS1)
+
+        val referenceCountryBelgium = trialsProvider(trials, false, ExternalTrialTumorType.NONE, Country.BELGIUM)
+        val externalTrials2 = referenceCountryBelgium.externalTrials()
+        assertThat(externalTrials2.internationalTrials.filtered).containsExactly(NETHERLANDS_ROS1)
     }
 
     @Test
@@ -248,7 +245,7 @@ class TrialsProviderTest {
     private fun trialsProvider(
         externalTrialsSet: Set<ActionableWithExternalTrial>,
         retainOriginalExternalTrials: Boolean,
-        dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE,
+        effectiveDutchExternalTrialExclusion: ExternalTrialTumorType = ExternalTrialTumorType.NONE,
         country: Country = Country.NETHERLANDS
     ): TrialsProvider {
         return TrialsProvider(
@@ -257,7 +254,7 @@ class TrialsProviderTest {
             emptyList(),
             INTERNAL_TRIAL_IDS,
             false,
-            dutchExternalTrialsToExclude,
+            effectiveDutchExternalTrialExclusion,
             country,
             retainOriginalExternalTrials
         )
