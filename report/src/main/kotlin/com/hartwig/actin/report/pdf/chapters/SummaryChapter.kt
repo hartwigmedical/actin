@@ -20,7 +20,7 @@ import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.ExternalTrials
-import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
+import com.hartwig.actin.report.trial.ExternalPhaseFilter
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -160,7 +160,7 @@ class SummaryChapter(
         val nationalOpenAndEligibleLatePhaseCohortsGenerator =
             EligibleTrialGenerator.localAndNationalExternalOpenAndEligibleCohorts(
                 cohorts = cohorts,
-                externalTrials = MolecularFilteredExternalTrials(emptySet(), emptySet()).let { ExternalTrials(it, it) },
+                externalTrials = trialsProvider.externalTrialsFilteredOnPhase(ExternalPhaseFilter.EXTERNAL_LATE_PHASE),
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
                 localTrialsType = LocalTrialsType.LOCAL_LATE_PHASE
@@ -169,7 +169,7 @@ class SummaryChapter(
         val nationalOpenAndEligibleEarlyPhaseCohortsGenerator =
             EligibleTrialGenerator.localAndNationalExternalOpenAndEligibleCohorts(
                 cohorts = cohorts,
-                externalTrials = externalTrials,
+                externalTrials = trialsProvider.externalTrialsFilteredOnPhase(ExternalPhaseFilter.EXTERNAL_EARLY_PHASE),
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
                 localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE

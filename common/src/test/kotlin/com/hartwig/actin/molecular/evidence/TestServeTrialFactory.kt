@@ -11,6 +11,7 @@ import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.Country
 import com.hartwig.serve.datamodel.trial.ImmutableActionableTrial
+import com.hartwig.serve.datamodel.trial.Phase
 
 object TestServeTrialFactory {
 
@@ -109,6 +110,7 @@ object TestServeTrialFactory {
         nctId: String = "NCT00000001",
         title: String = "",
         acronym: String? = null,
+        phase: Phase? = Phase.UNKNOWN,
         countries: Set<Country> = emptySet(),
         indications: Set<Indication> = emptySet(),
         anyMolecularCriteria: Set<MolecularCriterium> = emptySet(),
@@ -119,6 +121,7 @@ object TestServeTrialFactory {
             .nctId(nctId)
             .title(title)
             .acronym(acronym)
+            .phase(phase)
             .countries(countries)
             .therapyNames(emptySet())
             .genderCriterium(null)

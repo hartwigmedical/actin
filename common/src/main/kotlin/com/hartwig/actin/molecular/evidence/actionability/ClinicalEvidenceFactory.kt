@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
+import com.hartwig.actin.datamodel.molecular.evidence.Phase
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
@@ -21,6 +22,7 @@ import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.GenderCriterium
 import com.hartwig.serve.datamodel.trial.Hospital as ServeHospital
+import com.hartwig.serve.datamodel.trial.Phase as ServePhase
 
 class ClinicalEvidenceFactory(
     private val cancerTypeResolver: CancerTypeApplicabilityResolver,
@@ -130,6 +132,7 @@ class ClinicalEvidenceFactory(
             nctId = trial.nctId(),
             title = trial.title(),
             acronym = trial.acronym(),
+            phase = convertPhase(trial.phase()),
             genderMatch = matchGender(genderCriterium, patientGender),
             treatments = trial.therapyNames(),
             countries = countries,
@@ -137,6 +140,19 @@ class ClinicalEvidenceFactory(
             applicableCancerTypes = applicableCancerTypes,
             url = url,
         )
+    }
+
+    private fun convertPhase(servePhase: ServePhase): Phase {
+        return when (servePhase) {
+            ServePhase.EXPANDED_ACCESS -> Phase.EXPANDED_ACCESS
+            ServePhase.PHASE_0 -> Phase.PHASE_0
+            ServePhase.PHASE_I -> Phase.PHASE_I
+            ServePhase.PHASE_IB_II -> Phase.PHASE_IB_II
+            ServePhase.PHASE_II -> Phase.PHASE_II
+            ServePhase.PHASE_III -> Phase.PHASE_III
+            ServePhase.FDA_APPROVED -> Phase.FDA_APPROVED
+            ServePhase.UNKNOWN -> Phase.UNKNOWN
+        }
     }
 
     private fun convertHospital(serveHospital: ServeHospital): Hospital {
