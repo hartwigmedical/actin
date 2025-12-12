@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.trial
 
-import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.configuration.ExternalTrialTumorType
 import com.hartwig.actin.datamodel.PatientRecord
@@ -42,8 +41,7 @@ class TrialsProvider(
     private val nonEvaluableCohorts: List<InterpretedCohort>,
     private val internalTrialIds: Set<String>,
     private val patientIsYoungAdult: Boolean,
-    private val isLungCancer: Boolean,
-    private val dutchExternalTrialsToExclude: ExternalTrialTumorType,
+    private val effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
     private val countryOfReference: Country,
     private val retainOriginalExternalTrials: Boolean
 ) {
@@ -64,18 +62,28 @@ class TrialsProvider(
     }
 
     fun externalTrialsUnfiltered(): ExternalTrials {
-        return externalTrials(setOf(), listOf(), patientIsYoungAdult = false, isLungCancer = false)
+        return externalTrials(
+            emptySet(),
+            emptyList(),
+            patientIsYoungAdult = false,
+            effectiveDutchExternalTrialExclusion = ExternalTrialTumorType.NONE
+        )
     }
 
     fun externalTrials(): ExternalTrials {
-        return externalTrials(internalTrialIds, eligibleCohortsWithSlotsAvailableAndNotIgnore(), patientIsYoungAdult, isLungCancer)
+        return externalTrials(
+            internalTrialIds,
+            eligibleCohortsWithSlotsAvailableAndNotIgnore(),
+            patientIsYoungAdult,
+            effectiveDutchExternalTrialExclusion
+        )
     }
 
     private fun externalTrials(
         internalTrialIds: Set<String>,
         internalEvaluatedCohorts: List<InterpretedCohort>,
         patientIsYoungAdult: Boolean,
-        isLungCancer: Boolean
+        effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
     ): ExternalTrials {
         val eligibleExternalTrials = externalTrials.filterInternalTrials(internalTrialIds)
 
@@ -83,12 +91,12 @@ class TrialsProvider(
 
         val filteredNationalTrials =
             nationalTrials.filterExclusivelyInChildrensHospitalsInReferenceCountry(patientIsYoungAdult, countryOfReference)
-                .filterDutchTrials(dutchExternalTrialsToExclude, isLungCancer)
+                .filterDutchTrials(effectiveDutchExternalTrialExclusion)
 
         val filteredInternationalTrials =
             internationalTrials.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(internalEvaluatedCohorts)
                 .filterMolecularCriteriaAlreadyPresentInTrials(filteredNationalTrials)
-                .filterDutchTrials(dutchExternalTrialsToExclude, isLungCancer)
+                .filterDutchTrials(effectiveDutchExternalTrialExclusion)
 
         return ExternalTrials(
             hideOverlappingTrials(
@@ -109,7 +117,7 @@ class TrialsProvider(
         filtered: Set<ActionableWithExternalTrial>,
         retainOriginalTrials: Boolean
     ): MolecularFilteredExternalTrials {
-        return MolecularFilteredExternalTrials(original, filtered.takeIf { !retainOriginalTrials } ?: original)
+        return MolecularFilteredExternalTrials(original, if (retainOriginalTrials) original else filtered)
     }
 
     companion object {
@@ -123,13 +131,17 @@ class TrialsProvider(
             filterOnSoCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
+            val patientMatchesExclusionType = dutchExternalTrialsToExclude.tumorDoid
+                ?.let { DoidEvaluationFunctions.isOfDoidType(doidModel, patientRecord.tumor.doids, it) } == true
+            val effectiveDutchExternalTrialExclusion =
+                if (patientMatchesExclusionType) dutchExternalTrialsToExclude else ExternalTrialTumorType.NONE
+
             return create(
                 patientRecord,
                 treatmentMatch.trialMatches,
                 countryOfReference,
                 (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF,
-                DoidEvaluationFunctions.isOfDoidType(doidModel, patientRecord.tumor.doids, DoidConstants.LUNG_CANCER_DOID),
-                dutchExternalTrialsToExclude,
+                effectiveDutchExternalTrialExclusion,
                 retainOriginalExternalTrials,
                 filterOnSoCExhaustionAndTumorType,
                 filter
@@ -141,8 +153,7 @@ class TrialsProvider(
             trialMatches: List<TrialMatch>,
             countryOfReference: Country,
             patientIsYoungAdult: Boolean,
-            isLungCancer: Boolean,
-            dutchExternalTrialsToExclude: ExternalTrialTumorType,
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
             retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
@@ -159,8 +170,7 @@ class TrialsProvider(
                 nonEvaluableCohorts,
                 internalTrialIds,
                 patientIsYoungAdult,
-                isLungCancer,
-                dutchExternalTrialsToExclude,
+                effectiveDutchExternalTrialExclusion,
                 countryOfReference,
                 retainOriginalExternalTrials
             )
@@ -224,16 +234,12 @@ fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInRefe
     }.toSet()
 }
 
-fun Set<ActionableWithExternalTrial>.filterDutchTrials(
-    dutchExternalTrialsToExclude: ExternalTrialTumorType,
-    isLungCancer: Boolean
+private fun Set<ActionableWithExternalTrial>.filterDutchTrials(
+    effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
 ): Set<ActionableWithExternalTrial> {
-    return when (dutchExternalTrialsToExclude) {
-        ExternalTrialTumorType.LUNG -> {
-            this.filter { !(Country.NETHERLANDS in it.trial.countries.map { c -> c.country } && isLungCancer) }.toSet()
-        }
-
-        ExternalTrialTumorType.NONE -> this
+    return when (effectiveDutchExternalTrialExclusion) {
+        ExternalTrialTumorType.LUNG -> this.filterNot { Country.NETHERLANDS in it.trial.countries.map { c -> c.country } }.toSet()
+        else -> this
     }
 }
 

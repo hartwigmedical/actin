@@ -1,5 +1,6 @@
 package com.hartwig.actin.configuration
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 
 enum class ReportContentType {
@@ -34,9 +35,9 @@ enum class TrialMatchingChapterType {
     DETAILED_ALL_TRIALS
 }
 
-enum class ExternalTrialTumorType {
-    LUNG,
-    NONE
+enum class ExternalTrialTumorType(val tumorDoid: String?) {
+    LUNG(DoidConstants.LUNG_CANCER_DOID),
+    NONE(null);
 }
 
 data class ReportConfiguration(

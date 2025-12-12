@@ -82,10 +82,9 @@ class TrialsProviderTest {
         listOf(Country.NETHERLANDS, Country.BELGIUM).forEach { country ->
             val trialsProvider = trialsProvider(
                 setOf(NETHERLANDS_ROS1, BELGIUM_TMB),
-                retainOriginalExternalTrials = false,
-                isLungCancer = true,
-                dutchExternalTrialsToExclude = ExternalTrialTumorType.LUNG,
-                country = country
+                false,
+                ExternalTrialTumorType.LUNG,
+                country
             )
             val externalTrials = trialsProvider.externalTrials()
             assertThat(externalTrials.nationalTrials.filtered).isEmpty()
@@ -96,9 +95,8 @@ class TrialsProviderTest {
     fun `Should not filter non-Dutch trials if tumor type is lung cancer`() {
         val trialsProvider = trialsProvider(
             setOf(BELGIUM_TMB),
-            retainOriginalExternalTrials = false,
-            isLungCancer = true,
-            dutchExternalTrialsToExclude = ExternalTrialTumorType.LUNG,
+            false,
+            ExternalTrialTumorType.LUNG,
         )
         val externalTrials = trialsProvider.externalTrials()
         assertThat(externalTrials.internationalTrials.filtered).containsExactly(BELGIUM_TMB)
@@ -108,9 +106,8 @@ class TrialsProviderTest {
     fun `Should not filter Dutch lung trials if config is set to not exclude any tumor types`() {
         val trialsProvider = trialsProvider(
             setOf(BELGIUM_TMB),
-            retainOriginalExternalTrials = false,
-            isLungCancer = true,
-            dutchExternalTrialsToExclude = ExternalTrialTumorType.NONE
+            false,
+            ExternalTrialTumorType.NONE
         )
         val externalTrials = trialsProvider.externalTrials()
         assertThat(externalTrials.internationalTrials.filtered).containsExactly(BELGIUM_TMB)
@@ -251,7 +248,6 @@ class TrialsProviderTest {
     private fun trialsProvider(
         externalTrialsSet: Set<ActionableWithExternalTrial>,
         retainOriginalExternalTrials: Boolean,
-        isLungCancer: Boolean = false,
         dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE,
         country: Country = Country.NETHERLANDS
     ): TrialsProvider {
@@ -261,8 +257,7 @@ class TrialsProviderTest {
             emptyList(),
             INTERNAL_TRIAL_IDS,
             false,
-            isLungCancer,
-            dutchExternalTrialsToExclude = dutchExternalTrialsToExclude,
+            dutchExternalTrialsToExclude,
             country,
             retainOriginalExternalTrials
         )
