@@ -41,7 +41,7 @@ class TrialsProvider(
     private val nonEvaluableCohorts: List<InterpretedCohort>,
     private val internalTrialIds: Set<String>,
     private val patientIsYoungAdult: Boolean,
-    private val effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
+    val effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
     private val countryOfReference: Country,
     private val retainOriginalExternalTrials: Boolean
 ) {
