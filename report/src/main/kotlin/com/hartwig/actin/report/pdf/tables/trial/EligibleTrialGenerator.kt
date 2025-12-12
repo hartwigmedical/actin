@@ -138,14 +138,12 @@ class EligibleTrialGenerator(
             val title = "$trialDescriptionString that are open and potentially eligible $cohortsFromTrialsString"
 
             val footNote = if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG) {
-                listOfNotNull(
-                    relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_NATIONAL_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
-                    }
-                ).joinToString("\n").ifEmpty { null }
+                relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
+                    "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_NATIONAL_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
+                }
             } else {
                 listOfNotNull(
-                    "Trials matched only on molecular event and tumor type (without clinical eligibility data) are displayed in smaller, italicized text."
+                    "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { relevantNationalExternalTrials.isNotEmpty() },
                     relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
                         "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_NATIONAL_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE"

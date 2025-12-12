@@ -36,6 +36,8 @@ private val NETHERLANDS_ROS1 =
     ROS1_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(countries = setOf(NETHERLANDS), nctId = NCT_04))
 private val BELGIUM_TMB =
     TMB_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(countries = setOf(BELGIUM), nctId = NCT_02))
+private val GERMAN_ROS1 = ROS1_ACTIONABLE_WITH_EXTERNAL_TRIAL
+    .copy(trial = BASE_EXTERNAL_TRIAL.copy(countries = setOf(CountryDetails(Country.GERMANY, emptyMap())), nctId = NCT_02))
 
 private val INTERNAL_TRIAL_IDS = setOf(NCT_01, NCT_03)
 private val EVALUABLE_COHORTS = listOf(
@@ -79,7 +81,7 @@ class TrialsProviderTest {
 
     @Test
     fun `Should filter all trials running in the Netherlands if effectiveDutchExternalTrialExclusion is type lung`() {
-        val trials = setOf(NETHERLANDS_ROS1, BELGIUM_TMB)
+        val trials = setOf(NETHERLANDS_ROS1, BELGIUM_TMB, GERMAN_ROS1)
 
         val referenceCountryNetherlands = trialsProvider(trials, false, ExternalTrialTumorType.LUNG, Country.NETHERLANDS)
         val externalTrials1 = referenceCountryNetherlands.externalTrials()
@@ -87,7 +89,7 @@ class TrialsProviderTest {
 
         val referenceCountryBelgium = trialsProvider(trials, false, ExternalTrialTumorType.LUNG, Country.BELGIUM)
         val externalTrials2 = referenceCountryBelgium.externalTrials()
-        assertThat(externalTrials2.internationalTrials.filtered).isEmpty()
+        assertThat(externalTrials2.internationalTrials.filtered).containsOnly(GERMAN_ROS1)
     }
 
     @Test

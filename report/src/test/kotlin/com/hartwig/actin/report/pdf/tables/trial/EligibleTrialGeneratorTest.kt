@@ -134,31 +134,35 @@ class EligibleTrialGeneratorTest {
     }
 
     @Test
-    fun `Should show specific footnote if filtering is applied based on lung tumor type, or standard footnote otherwise`() {
-        listOf(
-            ExternalTrialTumorType.LUNG to "1 trial ${EligibleTrialGenerator.FILTERED_NATIONAL_EXTERNAL_TRIALS_LUNG_FOOT_NOTE}",
-            ExternalTrialTumorType.NONE to "1 trial ${EligibleTrialGenerator.FILTERED_NATIONAL_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE}"
-        ).forEach { (exclusion, expectedFootnote) ->
-            val result = EligibleTrialGenerator.localAndNationalExternalOpenAndEligibleCohorts(
-                cohorts = emptyList(),
-                externalTrials = ExternalTrials(
-                    MolecularFilteredExternalTrials(
-                        setOf(
-                            ActionableWithExternalTrial(
-                                TestVariantFactory.createMinimal().copy(),
-                                TestExternalTrialFactory.create()
-                            )
-                        ), emptySet()
-                    ),
-                    MolecularFilteredExternalTrials(emptySet(), emptySet())
-                ),
-                requestingSource = TrialSource.EXAMPLE,
-                countryOfReference = Country.NETHERLANDS,
-                localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE,
-                effectiveDutchExternalTrialExclusion = exclusion
-            )
-            assertThat(result.footnote()).isEqualTo(expectedFootnote)
+    fun `Should show specific footnote if filtering is applied based on lung tumor type`() {
+        assertThat(localAndNationalGenerator(ExternalTrialTumorType.LUNG).footnote())
+            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_NATIONAL_EXTERNAL_TRIALS_LUNG_FOOT_NOTE}")
+    }
 
-        }
+    @Test
+    fun `Should show standard footnote if filtering based on lung tumor type is not applied`() {
+        assertThat(localAndNationalGenerator(ExternalTrialTumorType.NONE).footnote())
+            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_NATIONAL_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE}")
+    }
+
+    private fun localAndNationalGenerator(effectiveExternalTrialExclusion: ExternalTrialTumorType): TrialTableGenerator {
+        return EligibleTrialGenerator.localAndNationalExternalOpenAndEligibleCohorts(
+            cohorts = emptyList(),
+            externalTrials = ExternalTrials(
+                MolecularFilteredExternalTrials(
+                    setOf(
+                        ActionableWithExternalTrial(
+                            TestVariantFactory.createMinimal().copy(),
+                            TestExternalTrialFactory.create()
+                        )
+                    ), emptySet()
+                ),
+                MolecularFilteredExternalTrials(emptySet(), emptySet())
+            ),
+            requestingSource = TrialSource.EXAMPLE,
+            countryOfReference = Country.NETHERLANDS,
+            localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE,
+            effectiveDutchExternalTrialExclusion = effectiveExternalTrialExclusion
+        )
     }
 }
