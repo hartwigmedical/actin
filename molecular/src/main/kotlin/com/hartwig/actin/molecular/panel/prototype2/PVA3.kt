@@ -11,6 +11,7 @@ import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
+private const val UNASSIGNED_QUERY_ID = -1
 
 data class AnnotatableVariant(
     val queryId: Int,
@@ -48,7 +49,7 @@ class PVA3(
             if (decomposedHgvsList != null) {
                 decomposedHgvsList.map { decomposedHgvs ->
                     AnnotatableVariant(
-                        queryId = -1, // placeholder, set below
+                        queryId = UNASSIGNED_QUERY_ID,
                         sequencedVariant = variant,
                         queryHgvs = decomposedHgvs,
                         localPhaseSet = sequencedVariantId
@@ -57,7 +58,7 @@ class PVA3(
             } else {
                 listOf(
                     AnnotatableVariant(
-                        queryId = -1, // placeholder, set below
+                        queryId = UNASSIGNED_QUERY_ID,
                         sequencedVariant = variant,
                         queryHgvs = variant.hgvsCodingOrProteinImpact(),
                         localPhaseSet = null
