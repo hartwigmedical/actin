@@ -41,6 +41,7 @@ enum class EligibilityRule(val input: FunctionInput?, val ihcProtein: String? = 
     HAS_HIGH_GRADE_CANCER(FunctionInput.NONE),
     HAS_KNOWN_SCLC_TRANSFORMATION(FunctionInput.NONE),
     HAS_NON_SQUAMOUS_NSCLC(FunctionInput.NONE),
+    HAS_TRIPLE_NEGATIVE_BREAST_CANCER(FunctionInput.NONE),
     HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE(FunctionInput.ONE_RECEPTOR_TYPE),
     HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT(FunctionInput.NONE),
     HAS_OVARIAN_BORDERLINE_TUMOR(FunctionInput.NONE),
