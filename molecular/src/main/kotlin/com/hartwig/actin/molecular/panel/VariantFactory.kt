@@ -123,8 +123,8 @@ object VariantFactory {
             transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
             hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
-            affectedCodon = canonicalTranscriptImpact.codon.toIntOrNull(),
-            affectedExon = canonicalTranscriptImpact.exon.toIntOrNull(),
+            affectedCodon = canonicalTranscriptImpact.codon,
+            affectedExon = canonicalTranscriptImpact.exon,
             inSpliceRegion = paveImpact.spliceRegion,
             effects = paveImpact.canonicalEffects.map { variantEffect(it) }.toSet(),
             codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(paveImpact.canonicalCodingEffect),
@@ -150,8 +150,8 @@ object VariantFactory {
             hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(
                 paveTranscriptImpact.hgvsProteinImpact
             ),
-            affectedCodon = paveTranscriptImpact.codon.toIntOrNull(),
-            affectedExon = paveTranscriptImpact.exon.toIntOrNull(),
+            affectedCodon = paveTranscriptImpact.codon,
+            affectedExon = paveTranscriptImpact.exon,
             inSpliceRegion = paveTranscriptImpact.spliceRegion,
             effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
             codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(

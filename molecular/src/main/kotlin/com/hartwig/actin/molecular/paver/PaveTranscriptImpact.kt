@@ -9,6 +9,6 @@ data class PaveTranscriptImpact(
     val hgvsCodingImpact: String,
     val hgvsProteinImpact: String,
     val refSeqId: String,
-    val exon: String,
-    val codon: String,
+    val exon: Int?,
+    val codon: Int?,
 )

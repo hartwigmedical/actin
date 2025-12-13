@@ -112,8 +112,8 @@ fun parsePaveTranscriptImpact(impacts: List<String>?): List<PaveTranscriptImpact
                 hgvsCodingImpact = it[5],
                 hgvsProteinImpact = it[6],
                 refSeqId = it[7],
-                exon = it[8],
-                codon = it[9],
+                exon = it[8].toIntOrNull(),
+                codon = it[9].toIntOrNull(),
             )
         }
 }

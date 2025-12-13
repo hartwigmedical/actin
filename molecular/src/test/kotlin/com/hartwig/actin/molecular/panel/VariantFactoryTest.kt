@@ -27,8 +27,8 @@ private const val OTHER_GENE_TRANSCRIPT = "other_gene_transcript"
 private const val HGVS_PROTEIN_3LETTER = "p.Met1Leu"
 private const val HGVS_PROTEIN_1LETTER = "p.M1L"
 private const val REFSEQ_TRANSCRIPT = "refseq_transcript"
-private const val EXON = "1"
-private const val CODON = "2"
+private const val EXON = 1
+private const val CODON = 2
 
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
 
@@ -388,8 +388,8 @@ class VariantFactoryTest {
         hgvsCodingImpact: String = HGVS_CODING,
         hgvsProteinImpact: String = HGVS_PROTEIN_1LETTER,
         refSeqId: String = REFSEQ_TRANSCRIPT,
-        exon: String = EXON,
-        codon: String = CODON
+        exon: Int? = EXON,
+        codon: Int? = CODON
     ): PaveTranscriptImpact = PaveTranscriptImpact(
         geneId = geneId,
         gene = gene,

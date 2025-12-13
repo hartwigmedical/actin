@@ -65,8 +65,8 @@ class PaverTest {
                     hgvsCodingImpact = "c.6A>C",
                     hgvsProteinImpact = "p.Lys2Asn",
                     refSeqId = "",
-                    exon = "1",
-                    codon = "2")
+                    exon = 1,
+                    codon = 2)
                 )
             )
         )
@@ -96,8 +96,8 @@ class PaverTest {
                     hgvsCodingImpact = "c.18A>G",
                     hgvsProteinImpact = "p.?",
                     refSeqId = "",
-                    exon = "1",
-                    codon = "6")
+                    exon = 1,
+                    codon = 6)
                 )
             )
         )
@@ -163,8 +163,8 @@ class PaverTest {
                 hgvsCodingImpact = "c.coding",
                 hgvsProteinImpact = "p.protein",
                 refSeqId = "refseq_transcript",
-                exon = "1",
-                codon = "1",
+                exon = 1,
+                codon = 1,
             )
         ))
     }
