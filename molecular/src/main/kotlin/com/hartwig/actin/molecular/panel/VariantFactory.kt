@@ -33,7 +33,7 @@ fun eventString(paveResponse: PaveResponse): String {
     )
 }
 
-object PanelAnnotatorVariantFactory {
+object VariantFactory {
     fun createVariant(
         variant: SequencedVariant,
         transvarAnnotation: TransvarVariant,

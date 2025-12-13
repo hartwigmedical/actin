@@ -68,7 +68,7 @@ private val PAVE_ANNOTATION = PaveResponse(
     )
 )
 
-class PanelAnnotatorVariantFactoryTest {
+class VariantFactoryTest {
 
     private val paveLite = mockk<PaveLite> {
         every { run(any(), any(), POSITION) } returns PAVE_LITE_ANNOTATION
@@ -77,7 +77,7 @@ class PanelAnnotatorVariantFactoryTest {
 
     @Test
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
-        val annotated = PanelAnnotatorVariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
+        val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
         assertThat(annotated.chromosome).isEqualTo(CHROMOSOME)
         assertThat(annotated.position).isEqualTo(POSITION)
         assertThat(annotated.ref).isEqualTo(REF)
@@ -98,7 +98,7 @@ class PanelAnnotatorVariantFactoryTest {
     @Test
     fun `Should annotate with vaf and isBiallelic if known`() {
         val annotated =
-            PanelAnnotatorVariantFactory.createVariant(ARCHER_VARIANT.copy(variantAlleleFrequency = 0.5, isBiallelic = true), TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
+            VariantFactory.createVariant(ARCHER_VARIANT.copy(variantAlleleFrequency = 0.5, isBiallelic = true), TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
         assertThat(annotated.variantAlleleFrequency).isEqualTo(0.5)
         assertThat(annotated.isBiallelic).isTrue()
     }
@@ -108,7 +108,7 @@ class PanelAnnotatorVariantFactoryTest {
         every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns
                 ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(2).build()
 
-        val annotated = PanelAnnotatorVariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
+        val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
         assertThat(annotated.canonicalImpact.affectedExon).isEqualTo(1)
         assertThat(annotated.canonicalImpact.affectedCodon).isEqualTo(2)
     }
@@ -116,7 +116,7 @@ class PanelAnnotatorVariantFactoryTest {
     @Test
     fun `Should propagate confirmed exon skipping flag`() {
         val annotated =
-            PanelAnnotatorVariantFactory.createVariant(ARCHER_VARIANT.copy(exonSkippingIsConfirmed = true), TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
+            VariantFactory.createVariant(ARCHER_VARIANT.copy(exonSkippingIsConfirmed = true), TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
         assertThat(annotated.exonSkippingIsConfirmed).isTrue()
     }
 
@@ -128,7 +128,7 @@ class PanelAnnotatorVariantFactoryTest {
             )
         )
 
-        val transcriptImpact = PanelAnnotatorVariantFactory.otherImpacts(complexPaveAnnotation)
+        val transcriptImpact = VariantFactory.otherImpacts(complexPaveAnnotation)
         assertThat(transcriptImpact).isEqualTo(emptySet<TranscriptVariantImpact>())
     }
 
@@ -138,7 +138,7 @@ class PanelAnnotatorVariantFactoryTest {
 
         every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
 
-        val transcriptImpact = PanelAnnotatorVariantFactory.otherImpacts(complexPaveAnnotation)
+        val transcriptImpact = VariantFactory.otherImpacts(complexPaveAnnotation)
         assertThat(transcriptImpact).containsExactly(transcriptVariantImpact(emptySet(), CodingEffect.NONE))
     }
 
@@ -154,7 +154,7 @@ class PanelAnnotatorVariantFactoryTest {
 
         every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
 
-        val transcriptImpact = PanelAnnotatorVariantFactory.otherImpacts(complexPaveAnnotation)
+        val transcriptImpact = VariantFactory.otherImpacts(complexPaveAnnotation)
         assertThat(transcriptImpact).containsExactly(
             transcriptVariantImpact(setOf(VariantEffect.OTHER, VariantEffect.MISSENSE, VariantEffect.INTRONIC), CodingEffect.MISSENSE)
         )
@@ -162,7 +162,7 @@ class PanelAnnotatorVariantFactoryTest {
 
     @Test
     fun `Should describe variant event using protein HGVS`() {
-        val annotated = PanelAnnotatorVariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
+        val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
         assertThat(annotated.event).isEqualTo("$GENE ${HGVS_PROTEIN_1LETTER.removePrefix("p.")}")
     }
 
@@ -172,7 +172,7 @@ class PanelAnnotatorVariantFactoryTest {
             impact = PAVE_ANNOTATION.impact.copy(hgvsProteinImpact = "p.?")
         )
 
-        val annotated = PanelAnnotatorVariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, noProteinImpact)
+        val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, noProteinImpact)
         assertThat(annotated.event).isEqualTo("$GENE $HGVS_CODING")
     }
 
@@ -200,7 +200,7 @@ class PanelAnnotatorVariantFactoryTest {
             transcriptImpacts = transcriptImpacts,
         )
 
-        val annotated = PanelAnnotatorVariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
+        val annotated = VariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
         assertThat(annotated.sourceEvent).isEqualTo("$GENE c.10T>A splice")
     }
 
@@ -227,7 +227,7 @@ class PanelAnnotatorVariantFactoryTest {
             transcriptImpacts = transcriptImpacts,
         )
 
-        val annotated = PanelAnnotatorVariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
+        val annotated = VariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
         assertThat(annotated.sourceEvent).isEqualTo("$GENE c.10T>A splice")
     }
 
@@ -254,7 +254,7 @@ class PanelAnnotatorVariantFactoryTest {
             transcriptImpacts = transcriptImpacts,
         )
 
-        val annotated = PanelAnnotatorVariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
+        val annotated = VariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
         assertThat(annotated.sourceEvent).isEqualTo("$GENE c.9T>A splice")
     }
 
@@ -276,7 +276,7 @@ class PanelAnnotatorVariantFactoryTest {
             transcriptImpacts = transcriptImpacts,
         )
 
-        val annotated = PanelAnnotatorVariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
+        val annotated = VariantFactory.createVariant(sequencedVariant, TRANSCRIPT_ANNOTATION, paveResponse)
         assertThat(annotated.sourceEvent).isEqualTo("$GENE c.10T>A splice")
     }
 
@@ -287,12 +287,12 @@ class PanelAnnotatorVariantFactoryTest {
         val transcriptImpacts = listOf(paveTranscriptImpact(transcript = TRANSCRIPT))
 
         val response1 = spliceOverNonsenseFrameshiftResponse(sequencedVariant1, transcriptImpacts, canonicalTranscript = TRANSCRIPT)
-        val annotated1 = PanelAnnotatorVariantFactory.createVariant(sequencedVariant1, TRANSCRIPT_ANNOTATION, response1)
+        val annotated1 = VariantFactory.createVariant(sequencedVariant1, TRANSCRIPT_ANNOTATION, response1)
         assertThat(annotated1.canonicalImpact.hgvsProteinImpact).isEqualTo("p.500fs")
         assertThat(annotated1.canonicalImpact.codingEffect).isEqualTo(CodingEffect.NONSENSE_OR_FRAMESHIFT)
 
         val response2 = spliceOverNonsenseFrameshiftResponse(sequencedVariant2, transcriptImpacts, canonicalTranscript = TRANSCRIPT)
-        val annotated2 = PanelAnnotatorVariantFactory.createVariant(sequencedVariant2, TRANSCRIPT_ANNOTATION, response2)
+        val annotated2 = VariantFactory.createVariant(sequencedVariant2, TRANSCRIPT_ANNOTATION, response2)
         assertThat(annotated2.canonicalImpact.hgvsProteinImpact).isEqualTo("p.?")
         assertThat(annotated2.canonicalImpact.codingEffect).isEqualTo(CodingEffect.SPLICE)
     }

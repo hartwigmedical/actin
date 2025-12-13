@@ -2,8 +2,8 @@ package com.hartwig.actin.molecular.panel.prototype2
 
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.molecular.panel.PanelAnnotatorVariantFactory
 import com.hartwig.actin.molecular.panel.VariantDecompositionIndex
+import com.hartwig.actin.molecular.panel.VariantFactory
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
@@ -141,7 +141,7 @@ class PVA3(
             val paveResponse = annotatedVariant.paveResponse
                 ?: throw IllegalStateException("Missing PAVE response for id ${annotatedVariant.queryId}")
 
-            val baseVariant = PanelAnnotatorVariantFactory.createVariant(
+            val baseVariant = VariantFactory.createVariant(
                 annotatedVariant.sequencedVariant,
                 transvar,
                 paveResponse
