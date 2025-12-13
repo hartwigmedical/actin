@@ -7,7 +7,6 @@ import com.hartwig.actin.molecular.panel.VariantDecompositionIndex
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
@@ -25,11 +24,8 @@ data class AnnotatableVariant(
 class PVA3(
     private val variantResolver: VariantAnnotator,
     private val paver: Paver,
-    private val paveLite: PaveLite,
     private val decompositions: VariantDecompositionIndex
 ) {
-
-    private val variantFactory = PanelAnnotatorVariantFactory(paveLite)
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
         val expanded = applyDecompositions(sequencedVariants.toList())
@@ -145,7 +141,7 @@ class PVA3(
             val paveResponse = annotatedVariant.paveResponse
                 ?: throw IllegalStateException("Missing PAVE response for id ${annotatedVariant.queryId}")
 
-            val baseVariant = variantFactory.createVariant(
+            val baseVariant = PanelAnnotatorVariantFactory.createVariant(
                 annotatedVariant.sequencedVariant,
                 transvar,
                 paveResponse

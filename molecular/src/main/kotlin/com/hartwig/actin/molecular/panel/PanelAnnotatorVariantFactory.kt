@@ -16,7 +16,6 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
-import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
 
@@ -34,7 +33,7 @@ fun eventString(paveResponse: PaveResponse): String {
     )
 }
 
-class PanelAnnotatorVariantFactory(private val paveLite: PaveLite) {
+object PanelAnnotatorVariantFactory {
     fun createVariant(
         variant: SequencedVariant,
         transvarAnnotation: TransvarVariant,
@@ -46,8 +45,8 @@ class PanelAnnotatorVariantFactory(private val paveLite: PaveLite) {
         alt = transvarAnnotation.alt(),
         type = variantType(transvarAnnotation),
         variantAlleleFrequency = variant.variantAlleleFrequency,
-        canonicalImpact = canonicalImpact(paveResponse.impact, transvarAnnotation),
-        otherImpacts = otherImpacts(paveResponse, transvarAnnotation),
+        canonicalImpact = canonicalImpact(paveResponse.impact, paveResponse.transcriptImpacts.first { it.transcript == paveResponse.impact.canonicalTranscript }),
+        otherImpacts = otherImpacts(paveResponse),
         variantCopyNumber = null,
         totalCopyNumber = null,
         isBiallelic = variant.isBiallelic,
@@ -87,7 +86,7 @@ class PanelAnnotatorVariantFactory(private val paveLite: PaveLite) {
                 }
             }?.firstOrNull() ?: transcriptImpacts.first { it.transcript == paveResponse.impact.canonicalTranscript }
 
-        val selectedTranscriptImpact = transcriptImpact(selectedTranscript, transvarAnnotation)
+        val selectedTranscriptImpact = transcriptImpact(selectedTranscript)
 
         return "${variant.gene} ${
             formatVariantImpact(
@@ -116,13 +115,7 @@ class PanelAnnotatorVariantFactory(private val paveLite: PaveLite) {
         }
     }
 
-    private fun canonicalImpact(paveImpact: PaveImpact, transvarVariant: TransvarVariant): TranscriptVariantImpact {
-        val paveLiteAnnotation = paveLite.run(
-            paveImpact.gene,
-            paveImpact.canonicalTranscript,
-            transvarVariant.position()
-        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
-
+    private fun canonicalImpact(paveImpact: PaveImpact, canonicalTranscriptImpact: PaveTranscriptImpact): TranscriptVariantImpact {
         val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
             shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveImpact.canonicalEffects.toSet(), paveImpact.gene)
 
@@ -130,31 +123,23 @@ class PanelAnnotatorVariantFactory(private val paveLite: PaveLite) {
             transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
             hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
-            affectedCodon = paveLiteAnnotation.affectedCodon(),
-            affectedExon = paveLiteAnnotation.affectedExon(),
+            affectedCodon = canonicalTranscriptImpact.codon.toIntOrNull(),
+            affectedExon = canonicalTranscriptImpact.exon.toIntOrNull(),
             inSpliceRegion = paveImpact.spliceRegion,
             effects = paveImpact.canonicalEffects.map { variantEffect(it) }.toSet(),
             codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(paveImpact.canonicalCodingEffect),
         )
     }
 
-    fun otherImpacts(paveResponse: PaveResponse, transvarVariant: TransvarVariant): Set<TranscriptVariantImpact> {
+    fun otherImpacts(paveResponse: PaveResponse): Set<TranscriptVariantImpact> {
         return paveResponse.transcriptImpacts
             .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.canonicalTranscript }
-            .map { transcriptImpact(it, transvarVariant) }
+            .map { transcriptImpact(it) }
             .toSet()
     }
 
 
-    private fun transcriptImpact(
-        paveTranscriptImpact: PaveTranscriptImpact,
-        transvarVariant: TransvarVariant
-    ): TranscriptVariantImpact {
-        val paveLiteAnnotation = paveLite.run(
-            paveTranscriptImpact.gene,
-            paveTranscriptImpact.transcript,
-            transvarVariant.position()
-        ) ?: throw IllegalStateException("PaveLite did not return a response for $transvarVariant")
+    private fun transcriptImpact(paveTranscriptImpact: PaveTranscriptImpact): TranscriptVariantImpact {
 
         val shouldAnnotateAsSpliceOverNonsenseOrFrameshift =
             shouldAnnotateAsSpliceOverNonsenseOrFrameshift(paveTranscriptImpact.effects.toSet(), paveTranscriptImpact.gene)
@@ -165,8 +150,8 @@ class PanelAnnotatorVariantFactory(private val paveLite: PaveLite) {
             hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(
                 paveTranscriptImpact.hgvsProteinImpact
             ),
-            affectedCodon = paveLiteAnnotation.affectedCodon(),
-            affectedExon = paveLiteAnnotation.affectedExon(),
+            affectedCodon = paveTranscriptImpact.codon.toIntOrNull(),
+            affectedExon = paveTranscriptImpact.exon.toIntOrNull(),
             inSpliceRegion = paveTranscriptImpact.spliceRegion,
             effects = paveTranscriptImpact.effects.map { variantEffect(it) }.toSet(),
             codingEffect = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) CodingEffect.SPLICE else codingEffect(

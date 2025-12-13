@@ -3,9 +3,9 @@ package com.hartwig.actin.molecular.panel
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.molecular.panel.prototype2.PVA3
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
-import com.hartwig.actin.molecular.panel.prototype2.PVA3
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
@@ -16,7 +16,6 @@ import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.lang.IllegalArgumentException
 import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
@@ -62,7 +61,7 @@ class TestPanelVariantAnnotatorApplication(private val config: TestPanelVariantA
                 )
             )
         )
-        val annotator = PVA3(variantAnnotator, paver, paveLite, decompositions)
+        val annotator = PVA3(variantAnnotator, paver, decompositions)
 
         val sequencedVariants = buildSequencedVariants(
             config.gene,
