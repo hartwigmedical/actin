@@ -533,7 +533,6 @@
                 {
                   "nctId": "NCT00000026",
                   "title": "TP53-TRIAL",
-                  "phase": "UNKNOWN",
                   "treatments": [],
                   "countries": [
                     {
@@ -617,7 +616,6 @@
                 {
                   "nctId": "NCT00000036",
                   "title": "SMARCA4-TRIAL",
-                  "phase": "UNKNOWN",
                   "treatments": [],
                   "countries": [
                     {

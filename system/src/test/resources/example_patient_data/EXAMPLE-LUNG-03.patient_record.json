@@ -485,7 +485,7 @@
                 {
                   "nctId": "NCT00000006",
                   "title": "EGFR-L858R-TRIAL",
-                  "phase": "UNKNOWN",
+                  "phase": null,
                   "treatments": [],
                   "countries": [
                     {
@@ -598,7 +598,7 @@
                 {
                   "nctId": "NCT00000007",
                   "title": "EGFR-C797S-TRIAL",
-                  "phase": "UNKNOWN",
+                  "phase": null,
                   "treatments": [],
                   "countries": [
                     {

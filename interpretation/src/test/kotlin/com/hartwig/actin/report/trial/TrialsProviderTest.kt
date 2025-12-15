@@ -4,8 +4,8 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.molecular.evidence.Phase
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -231,28 +231,28 @@ class TrialsProviderTest {
             trial = BASE_EXTERNAL_TRIAL.copy(
                 countries = countrySet(NETHERLANDS),
                 nctId = "1",
-                phase = Phase.PHASE_I
+                phase = TrialPhase.PHASE_1
             )
         )
         val nationalLatePhase = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
             trial = BASE_EXTERNAL_TRIAL.copy(
                 countries = countrySet(NETHERLANDS),
                 nctId = "2",
-                phase = Phase.PHASE_II
+                phase = TrialPhase.PHASE_2
             )
         )
         val internationalEarlyPhase = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
             trial = BASE_EXTERNAL_TRIAL.copy(
                 countries = countrySet(BELGIUM),
                 nctId = "3",
-                phase = Phase.PHASE_I
+                phase = TrialPhase.PHASE_1
             )
         )
         val internationalLatePhase = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
             trial = BASE_EXTERNAL_TRIAL.copy(
                 countries = countrySet(BELGIUM),
                 nctId = "4",
-                phase = Phase.PHASE_II
+                phase = TrialPhase.PHASE_2
             )
         )
 

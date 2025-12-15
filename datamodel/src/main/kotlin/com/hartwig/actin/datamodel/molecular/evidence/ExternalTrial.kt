@@ -1,10 +1,12 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import com.hartwig.actin.datamodel.trial.TrialPhase
+
 data class ExternalTrial(
     val nctId: String,
     val title: String,
     val acronym: String?,
-    val phase: Phase,
+    val phase: TrialPhase?,
     val genderMatch: Boolean?,
     val treatments: Set<String>,
     val countries: Set<CountryDetails>,

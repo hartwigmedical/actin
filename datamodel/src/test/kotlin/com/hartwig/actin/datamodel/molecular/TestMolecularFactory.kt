@@ -34,7 +34,6 @@ import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.molecular.evidence.Phase
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
@@ -44,6 +43,7 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import java.time.LocalDate
 
 object TestMolecularFactory {
@@ -307,7 +307,7 @@ object TestMolecularFactory {
             setOf(
                 TestExternalTrialFactory.create(
                     nctId = "NCT00000020",
-                    phase = Phase.PHASE_IB_II,
+                    phase = TrialPhase.PHASE_1_2,
                     title = "A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
                             "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
                             "for Participants With Advanced Solid Tumor (acronym)",
@@ -318,7 +318,7 @@ object TestMolecularFactory {
                     url = "https://clinicaltrials.gov/study/NCT00000020"
                 ), TestExternalTrialFactory.create(
                     nctId = "NCT00000021",
-                    phase = Phase.PHASE_IB_II,
+                    phase = TrialPhase.PHASE_1_2,
                     title = "Another A Phase 1/2 Randomized Study to Evaluate the Safety and Efficacy of treatment X Plus treatment Y in " +
                             "Combination With Investigational Agents Versus treatment X Plus treatment Y, as First-Line Treatment " +
                             "for Participants With Advanced Solid Tumor (acronym)",
@@ -573,7 +573,7 @@ object TestMolecularFactory {
                         setOf(
                             TestExternalTrialFactory.create(
                                 nctId = "NCT00000003",
-                                phase = Phase.PHASE_I,
+                                phase = TrialPhase.PHASE_1,
                                 title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
                                 countries = setOf(
                                     CountryDetails(
@@ -618,7 +618,7 @@ object TestMolecularFactory {
                         setOf(
                             TestExternalTrialFactory.create(
                                 nctId = "NCT00000099",
-                                phase = Phase.PHASE_I,
+                                phase = TrialPhase.PHASE_1,
                                 title = "A Phase 1 Study of XYXYXY, a T-Cell-Redirecting Agent Targeting Z, for Advanced Prostate Cancer",
                                 countries = setOf(
                                     CountryDetails(

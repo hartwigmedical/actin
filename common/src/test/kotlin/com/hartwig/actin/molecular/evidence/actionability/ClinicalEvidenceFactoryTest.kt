@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevel
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.EvidenceType
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
-import com.hartwig.actin.datamodel.molecular.evidence.Phase
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestEvidenceDirectionFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
@@ -254,7 +253,6 @@ class ClinicalEvidenceFactoryTest {
                 nctId = "NCT00000001",
                 title = "test trial",
                 acronym = "test trial acronym",
-                phase = Phase.UNKNOWN,
                 countries = setOf(
                     CountryDetails(
                         country = Country.NETHERLANDS,

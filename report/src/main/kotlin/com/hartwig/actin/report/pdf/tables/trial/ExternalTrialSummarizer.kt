@@ -2,14 +2,14 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
-import com.hartwig.actin.datamodel.molecular.evidence.Phase
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import java.util.*
 
 data class ExternalTrialSummary(
     val nctId: String,
     val title: String,
-    val phase: Phase,
+    val phase: TrialPhase?,
     val countries: SortedSet<CountryDetails>,
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,

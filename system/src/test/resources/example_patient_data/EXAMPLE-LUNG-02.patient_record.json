@@ -485,7 +485,7 @@
                   "nctId": "NCT00000016",
                   "title": "PIK3CA-TRIAL",
                   "acronym": null,
-                  "phase": "UNKNOWN",
+                  "phase": null,
                   "treatments": [],
                   "countries": [
                     {

@@ -13,8 +13,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.EvidenceLevelDetails
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.MolecularMatchDetails
-import com.hartwig.actin.datamodel.molecular.evidence.Phase
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.serve.datamodel.common.Indication
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.Treatment
@@ -142,16 +142,16 @@ class ClinicalEvidenceFactory(
         )
     }
 
-    private fun convertPhase(servePhase: ServePhase): Phase {
+    private fun convertPhase(servePhase: ServePhase): TrialPhase? {
         return when (servePhase) {
-            ServePhase.EXPANDED_ACCESS -> Phase.EXPANDED_ACCESS
-            ServePhase.PHASE_0 -> Phase.PHASE_0
-            ServePhase.PHASE_I -> Phase.PHASE_I
-            ServePhase.PHASE_IB_II -> Phase.PHASE_IB_II
-            ServePhase.PHASE_II -> Phase.PHASE_II
-            ServePhase.PHASE_III -> Phase.PHASE_III
-            ServePhase.FDA_APPROVED -> Phase.FDA_APPROVED
-            ServePhase.UNKNOWN -> Phase.UNKNOWN
+            ServePhase.EXPANDED_ACCESS -> TrialPhase.COMPASSIONATE_USE
+            ServePhase.PHASE_0 -> null
+            ServePhase.PHASE_I -> TrialPhase.PHASE_1
+            ServePhase.PHASE_IB_II -> TrialPhase.PHASE_1_2
+            ServePhase.PHASE_II -> TrialPhase.PHASE_2
+            ServePhase.PHASE_III -> TrialPhase.PHASE_3
+            ServePhase.FDA_APPROVED -> TrialPhase.PHASE_4
+            ServePhase.UNKNOWN -> null
         }
     }
 
