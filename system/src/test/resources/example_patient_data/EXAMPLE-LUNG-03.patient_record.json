@@ -792,32 +792,68 @@
           {
             "name": "A*01:01",
             "tumorCopyNumber": 1.0,
-            "hasSomaticMutations": false
+            "hasSomaticMutations": false,
+            "isReportable": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            },
+            "event": "A*01:01"
           },
           {
             "name": "A*02:01",
             "tumorCopyNumber": 0,
-            "hasSomaticMutations": false
+            "hasSomaticMutations": false,
+            "isReportable": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            },
+            "event": "A*02:01"
           },
           {
             "name": "B*01:01",
             "tumorCopyNumber": 1.0,
-            "hasSomaticMutations": false
+            "hasSomaticMutations": false,
+            "isReportable": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            },
+            "event": "B*01:01"
           },
           {
             "name": "B*02:01",
             "tumorCopyNumber": 1.3,
-            "hasSomaticMutations": false
+            "hasSomaticMutations": false,
+            "isReportable": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            },
+            "event": "B*02:01"
           },
           {
             "name": "C*01:01",
             "tumorCopyNumber": 1.0,
-            "hasSomaticMutations": false
+            "hasSomaticMutations": false,
+            "isReportable": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            },
+            "event": "C*01:01"
           },
           {
             "name": "C*02:01",
             "tumorCopyNumber": 1.3,
-            "hasSomaticMutations": false
+            "hasSomaticMutations": false,
+            "isReportable": true,
+            "evidence": {
+              "treatmentEvidence": [],
+              "eligibleTrials": []
+            },
+            "event": "C*02:01"
           }
         ]
       },

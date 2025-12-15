@@ -3,12 +3,12 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.driver.TestHlaAlleleFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val CORRECT_HLA_GROUP = "A*02"
-private val CORRECT_HLA = HlaAllele(name = "$CORRECT_HLA_GROUP:01", tumorCopyNumber = 1.0, hasSomaticMutations = false)
+private val CORRECT_HLA = TestHlaAlleleFactory.createMinimal().copy(name = "$CORRECT_HLA_GROUP:01", event = "$CORRECT_HLA_GROUP:01")
 
 class HasAnyHLATypeTest {
 

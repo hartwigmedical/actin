@@ -1,6 +1,7 @@
 package com.hartwig.actin.molecular.orange
 
 import com.hartwig.actin.molecular.util.FormatFunctions
+import com.hartwig.hmftools.datamodel.hla.LilacAllele
 import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxHomozygousDisruption
@@ -75,5 +76,9 @@ object DriverEventFactory {
             }
         }
         return "$label positive"
+    }
+
+    fun immunologyEvent(hla: LilacAllele): String {
+        return hla.allele()
     }
 }

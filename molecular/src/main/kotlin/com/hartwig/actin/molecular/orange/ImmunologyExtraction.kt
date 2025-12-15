@@ -1,7 +1,8 @@
 package com.hartwig.actin.molecular.orange
 
-import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.driver.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.hla.LilacAllele
 import com.hartwig.hmftools.datamodel.hla.LilacRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
@@ -26,7 +27,11 @@ object ImmunologyExtraction {
             HlaAllele(
                 name = allele.allele(),
                 tumorCopyNumber = allele.tumorCopyNumber(),
-                hasSomaticMutations = hasSomaticVariants
+                hasSomaticMutations = hasSomaticVariants,
+                isReportable = true,
+                driverLikelihood = null,
+                evidence = ExtractionUtil.noEvidence(),
+                event = DriverEventFactory.immunologyEvent(allele)
             )
         }.toSet()
     }

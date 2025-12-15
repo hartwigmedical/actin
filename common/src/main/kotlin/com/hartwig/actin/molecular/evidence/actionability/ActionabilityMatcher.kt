@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.molecular.evidence.matching.GeneMatching
+import com.hartwig.actin.molecular.evidence.matching.ImmunologyMatching
 import com.hartwig.actin.molecular.evidence.matching.HotspotMatching
 import com.hartwig.actin.molecular.evidence.matching.RangeMatching
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
@@ -16,6 +17,7 @@ import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ActionableHotspot
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
+import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.apache.logging.log4j.LogManager
@@ -229,6 +231,21 @@ class ActionabilityMatcher(
         return successWhenNotEmpty(matches)
     }
 
+    private fun matchHlas(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
+        val hlaMatches = criterium.hla()
+            .map { hla -> matchHla(molecularTest, hla) }
+
+        return ActionabilityMatchResult.combine(hlaMatches)
+    }
+
+    private fun matchHla(molecularTest: MolecularTest, hla: ActionableHLA): ActionabilityMatchResult {
+        val matches = molecularTest.immunology?.hlaAlleles?.filter { hlaAllele ->
+            ImmunologyMatching.isMatch(hla, hlaAllele)
+        } ?: emptyList()
+
+        return successWhenNotEmpty(matches)
+    }
+
     private fun matchCharacteristics(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
         val characteristicMatches = criterium.characteristics()
             .map { characteristic -> matchCharacteristic(molecularTest, characteristic) }
@@ -293,15 +310,6 @@ class ActionabilityMatcher(
                     ActionabilityMatchResult.Failure
                 }
             }
-        }
-    }
-
-    private fun matchHlas(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        return if (criterium.hla().isEmpty()) {
-            ActionabilityMatchResult.Success()
-        } else {
-            logger.warn("Evidence contains HLA but matching in ACTIN not supported")
-            ActionabilityMatchResult.Failure
         }
     }
 
