@@ -389,6 +389,22 @@ class ActionabilityMatcherTest {
     }
 
     @Test
+    fun `Should match hla`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val hlaAlelle = TestHlaAlleleFactory.createMinimal()
+            .copy(name = "A*02:01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(hlaAlleles = setOf(hlaAlelle)))
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(1)
+        assertThat(matches[hlaAlelle]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
     fun `Should match multiple evidences and trials to same hotspot`() {
         val molecularCriterium = ImmutableMolecularCriterium.builder().addAllHotspots(listOf(brafActionableHotspot)).build()
         val evidence1 = TestServeEvidenceFactory.create(
@@ -895,22 +911,6 @@ class ActionabilityMatcherTest {
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).isEmpty()
-    }
-
-    @Test
-    fun `Should match hla`() {
-        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
-        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
-        val matcher = matcherFactory(listOf(evidence), listOf(trial))
-
-        val hlaAlelle = TestHlaAlleleFactory.createMinimal()
-            .copy(name = "A*02:01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
-        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
-            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(hlaAlleles = setOf(hlaAlelle)))
-
-        val matches = matcher.match(molecularTest)
-        assertThat(matches).hasSize(1)
-        assertThat(matches[hlaAlelle]).isEqualTo(actionabilityMatch(evidence, trial))
     }
 
     @Test

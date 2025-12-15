@@ -79,6 +79,6 @@ object DriverEventFactory {
     }
 
     fun immunologyEvent(hla: LilacAllele): String {
-        return "HLA-" + hla.allele()
+        return "HLA-${hla.allele()}"
     }
 }

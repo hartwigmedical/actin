@@ -73,7 +73,7 @@ class DriverEventFactoryTest {
 
     @Test
     fun `Should generate event for hla`() {
-        assertThat(DriverEventFactory.immunologyEvent(TestLilacFactory.builder().allele("A:02*01").build())).isEqualTo("HLA-A:02*01")
+        assertThat(DriverEventFactory.immunologyEvent(TestLilacFactory.builder().allele("A*02:01").build())).isEqualTo("HLA-A*02:01")
     }
 
     private fun variant(gene: String, hgvsProteinImpact: String): PurpleVariant {

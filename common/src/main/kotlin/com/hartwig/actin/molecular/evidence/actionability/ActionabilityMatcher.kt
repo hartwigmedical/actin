@@ -232,16 +232,14 @@ class ActionabilityMatcher(
     }
 
     private fun matchHlas(molecularTest: MolecularTest, criterium: MolecularCriterium): ActionabilityMatchResult {
-        val hlaMatches = criterium.hla()
-            .map { hla -> matchHla(molecularTest, hla) }
+        val hlaMatches = criterium.hla().map { hla -> matchHla(molecularTest, hla) }
 
         return ActionabilityMatchResult.combine(hlaMatches)
     }
 
     private fun matchHla(molecularTest: MolecularTest, hla: ActionableHLA): ActionabilityMatchResult {
-        val matches = molecularTest.immunology?.hlaAlleles?.filter { hlaAllele ->
-            ImmunologyMatching.isMatch(hla, hlaAllele)
-        } ?: emptyList()
+        val matches =
+            molecularTest.immunology?.hlaAlleles?.filter { hlaAllele -> ImmunologyMatching.isMatch(hla, hlaAllele) } ?: emptyList()
 
         return successWhenNotEmpty(matches)
     }

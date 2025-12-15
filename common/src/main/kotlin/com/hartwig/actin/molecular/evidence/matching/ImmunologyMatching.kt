@@ -7,7 +7,8 @@ object ImmunologyMatching {
 
     fun isMatch(actionableHla: ActionableHLA, hlaAllele: HlaAllele): Boolean {
         val regex = Regex(pattern = """^(?<gene>[A-Z]+)\*(?<alleleGroup>\d{2}):(?<hlaProtein>\d{2})$""")
-        val match = regex.matchEntire(hlaAllele.name) ?: throw IllegalStateException("No valid HLA input ${hlaAllele.name}")
+        val match = regex.matchEntire(hlaAllele.name)
+            ?: throw IllegalStateException("Can't extract HLA gene, alleleGroup and hlaProtein from ${hlaAllele.name}")
         val gene = match.groups["gene"]!!.value
         val alleleGroup = match.groups["alleleGroup"]!!.value
         val hlaProtein = match.groups["hlaProtein"]!!.value

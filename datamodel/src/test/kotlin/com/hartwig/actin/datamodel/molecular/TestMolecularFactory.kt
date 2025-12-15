@@ -467,7 +467,7 @@ object TestMolecularFactory {
                     tumorCopyNumber = 1.2,
                     hasSomaticMutations = false,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
-                    event = "A*02:01",
+                    event = "HLA-A*02:01",
                 )
             ),
         )
