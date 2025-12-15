@@ -1,5 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.evidence
 
+import com.hartwig.actin.datamodel.trial.TrialPhase
+
 object TestExternalTrialFactory {
 
     fun createTestTrial(): ExternalTrial {
@@ -18,6 +20,7 @@ object TestExternalTrialFactory {
         nctId: String = "",
         title: String = "",
         acronym: String? = null,
+        phase: TrialPhase? = null,
         treatments: Set<String> = emptySet(),
         countries: Set<CountryDetails> = emptySet(),
         molecularMatches: Set<MolecularMatchDetails> = emptySet(),
@@ -28,6 +31,7 @@ object TestExternalTrialFactory {
             nctId = nctId,
             title = title,
             acronym = acronym,
+            phase = phase,
             genderMatch = null,
             treatments = treatments,
             countries = countries,
