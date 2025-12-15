@@ -127,6 +127,31 @@ class OrTest {
     }
 
     @Test
+    fun `Should not retain warn when pass evaluation`() {
+        val pass = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.PASS,
+                recoverable = true,
+                passMessages = setOf(StaticMessage("pass 1")),
+                inclusionMolecularEvents = setOf("inclusion event pass")
+            )
+        }
+        val warn = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.WARN,
+                recoverable = true,
+                warnMessages = setOf(StaticMessage("warn 1")),
+                inclusionMolecularEvents = setOf("inclusion event warn")
+            )
+        }
+        val result: Evaluation = Or(listOf(pass, warn)).evaluate(TEST_PATIENT)
+        assertEvaluation(EvaluationResult.PASS, result)
+        assertThat(result.inclusionMolecularEvents).hasSize(1)
+        assertThat(result.inclusionMolecularEvents).containsOnly("inclusion event pass")
+
+    }
+
+    @Test
     fun `Should only retain recoverable fail message if evaluation result is FAIL`() {
         val function1 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = true, index = 1)
         val function2 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = false, index = 2)

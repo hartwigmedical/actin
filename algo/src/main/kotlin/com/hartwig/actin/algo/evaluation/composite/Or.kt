@@ -21,11 +21,15 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
                 EvaluationResult.WARN
             } else bestResult
 
-        val additionalEvaluations = listOf(EvaluationResult.PASS, EvaluationResult.WARN, EvaluationResult.UNDETERMINED)
-            .flatMap { result ->
+        val additionalEvaluations = if (finalResult != EvaluationResult.PASS) {
+            listOf(
+                EvaluationResult.WARN,
+                EvaluationResult.UNDETERMINED
+            ).flatMap { result ->
                 evaluationsByResult[result]?.filter { it.exclusionMolecularEvents.isNotEmpty() || it.inclusionMolecularEvents.isNotEmpty() }
                     ?: emptyList()
             }
+        } else emptyList()
 
         val evaluations = evaluationsByResult[finalResult]!! + additionalEvaluations
         val recoverable = evaluations.any(Evaluation::recoverable)
