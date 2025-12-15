@@ -1,7 +1,6 @@
-package com.hartwig.actin.datamodel.molecular.driver
+package com.hartwig.actin.datamodel.molecular.immunology
 
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
-import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 
 object TestHlaAlleleFactory {
 

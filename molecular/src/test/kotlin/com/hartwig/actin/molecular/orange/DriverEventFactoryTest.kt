@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.orange
 
+import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
 import com.hartwig.actin.molecular.orange.datamodel.virus.TestVirusInterpreterFactory
@@ -68,6 +69,11 @@ class DriverEventFactoryTest {
         assertThat(DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.HPV))).isEqualTo("HPV (Papilloma) positive")
         assertThat(DriverEventFactory.virusEvent(virus("Papilloma", VirusInterpretation.EBV))).isEqualTo("EBV positive")
         assertThat(DriverEventFactory.virusEvent(virus("Papilloma", null))).isEqualTo("Papilloma positive")
+    }
+
+    @Test
+    fun `Should generate event for hla`() {
+        assertThat(DriverEventFactory.immunologyEvent(TestLilacFactory.builder().allele("A:02*01").build())).isEqualTo("HLA-A:02*01")
     }
 
     private fun variant(gene: String, hgvsProteinImpact: String): PurpleVariant {
