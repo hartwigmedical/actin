@@ -35,6 +35,7 @@ object TreatmentDatabaseFactory {
         return TreatmentDatabase(drugsByName, treatmentsByName)
     }
 
+    @Suppress("unused")
     fun writeToPath(treatmentDbPath: String, treatmentDatabase: TreatmentDatabase) {
         val drugsByName = treatmentDatabase.getDrugsByName()
         writeFilesInFolder(treatmentDbPath, DRUG_FOLDER, drugsByName, ClinicalGsonSerializer.create())
