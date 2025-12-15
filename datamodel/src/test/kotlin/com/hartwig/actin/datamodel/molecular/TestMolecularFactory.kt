@@ -36,7 +36,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
-import com.hartwig.actin.datamodel.molecular.driver.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
@@ -466,8 +466,6 @@ object TestMolecularFactory {
                     name = "A*02:01",
                     tumorCopyNumber = 1.2,
                     hasSomaticMutations = false,
-                    isReportable = true,
-                    driverLikelihood = null,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),
                     event = "A*02:01",
                 )

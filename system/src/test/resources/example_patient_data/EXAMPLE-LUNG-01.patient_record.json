@@ -794,7 +794,6 @@
             "name": "A*01:01",
             "tumorCopyNumber": 1.0,
             "hasSomaticMutations": false,
-            "isReportable": true,
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
@@ -805,7 +804,6 @@
             "name": "A*02:01",
             "tumorCopyNumber": 0,
             "hasSomaticMutations": false,
-            "isReportable": true,
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
@@ -816,7 +814,6 @@
             "name": "B*01:01",
             "tumorCopyNumber": 1.0,
             "hasSomaticMutations": false,
-            "isReportable": true,
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
@@ -827,7 +824,6 @@
             "name": "B*02:01",
             "tumorCopyNumber": 1.3,
             "hasSomaticMutations": false,
-            "isReportable": true,
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
@@ -838,7 +834,6 @@
             "name": "C*01:01",
             "tumorCopyNumber": 1.0,
             "hasSomaticMutations": false,
-            "isReportable": true,
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []
@@ -849,7 +844,6 @@
             "name": "C*02:01",
             "tumorCopyNumber": 1.3,
             "hasSomaticMutations": false,
-            "isReportable": true,
             "evidence": {
               "treatmentEvidence": [],
               "eligibleTrials": []

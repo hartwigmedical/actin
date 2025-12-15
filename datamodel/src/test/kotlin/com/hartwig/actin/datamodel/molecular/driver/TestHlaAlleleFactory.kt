@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.molecular.driver
 
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 
 object TestHlaAlleleFactory {
 
@@ -9,8 +10,6 @@ object TestHlaAlleleFactory {
             name = "",
             tumorCopyNumber = 1.0,
             hasSomaticMutations = false,
-            isReportable = true,
-            driverLikelihood = null,
             evidence = TestClinicalEvidenceFactory.createEmpty(),
             event = ""
         )

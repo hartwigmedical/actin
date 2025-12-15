@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.driver.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 
 class HasAnyHLAType(
     private val hlaAllelesToFind: Set<String>, private val matchOnHlaGroup: Boolean = false

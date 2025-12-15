@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.evidence.matching
 
-import com.hartwig.actin.datamodel.molecular.driver.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
 
 object ImmunologyMatching {
