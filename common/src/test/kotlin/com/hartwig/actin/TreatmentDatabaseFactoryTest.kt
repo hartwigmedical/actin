@@ -37,9 +37,9 @@ class TreatmentDatabaseFactoryTest {
         val drugTreatment = TreatmentTestFactory.drugTreatment("Test name", TreatmentCategory.RADIOTHERAPY)
         val drugsByName = drugTreatment.drugs.associateBy { it.name }
         val db = TreatmentDatabase(drugsByName, listOf(drugTreatment).associateBy { it.name },)
-        writeToPath("/Users/deniskumar/hmf/repos/actin/common/src/test/resources/clinical/saved_treatment_db", db)
+        writeToPath(resourceOnClasspath("clinical/saved_treatment_db"), db)
 
-        val treatmentDatabase = createFromPath("/Users/deniskumar/hmf/repos/actin/common/src/test/resources/clinical/saved_treatment_db")
+        val treatmentDatabase = createFromPath(resourceOnClasspath("clinical/saved_treatment_db"))
         assertThat(treatmentDatabase).isNotNull()
         assertThat(treatmentDatabase.findTreatmentByName("Test name")).isNotNull()
         assertThat(treatmentDatabase.findTreatmentByName("Test name")).isNotNull()
