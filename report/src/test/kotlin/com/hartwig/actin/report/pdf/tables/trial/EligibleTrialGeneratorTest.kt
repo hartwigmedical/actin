@@ -136,13 +136,13 @@ class EligibleTrialGeneratorTest {
     @Test
     fun `Should show specific footnote if filtering is applied based on lung tumor type`() {
         assertThat(localAndNationalGenerator(ExternalTrialTumorType.LUNG).footnote())
-            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_NATIONAL_EXTERNAL_TRIALS_LUNG_FOOT_NOTE}")
+            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE}")
     }
 
     @Test
     fun `Should show standard footnote if filtering based on lung tumor type is not applied`() {
         assertThat(localAndNationalGenerator(ExternalTrialTumorType.NONE).footnote())
-            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_NATIONAL_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE}")
+            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE}")
     }
 
     private fun localAndNationalGenerator(effectiveExternalTrialExclusion: ExternalTrialTumorType): TrialTableGenerator {

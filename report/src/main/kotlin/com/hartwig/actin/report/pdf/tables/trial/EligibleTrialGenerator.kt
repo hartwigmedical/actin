@@ -73,10 +73,10 @@ class EligibleTrialGenerator(
 
     companion object {
         const val FILTERED_TRIALS_SUFFIX = "See Other Trial Matching Results for filtered matches."
-        const val FILTERED_NATIONAL_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE =
+        const val FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE =
             "filtered because trial is running exclusively in children's hospital. $FILTERED_TRIALS_SUFFIX"
-        const val FILTERED_NATIONAL_EXTERNAL_TRIALS_LUNG_FOOT_NOTE =
-            "filtered because trials evaluated without clinical data aren't used in lung cancer trial matching. $FILTERED_TRIALS_SUFFIX"
+        const val FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE =
+            "filtered because Dutch trials evaluated without clinical data aren't shown in lung cancer trial matching. $FILTERED_TRIALS_SUFFIX"
 
         fun localAndNationalExternalOpenAndEligibleCohorts(
             cohorts: List<InterpretedCohort>,
@@ -103,7 +103,8 @@ class EligibleTrialGenerator(
         fun externalOpenAndEligibleCohorts(
             externalTrials: ExternalTrials,
             requestingSource: TrialSource?,
-            isNational: Boolean
+            isNational: Boolean,
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
         ): TrialTableGenerator {
             val (includedTrials, excludedTrials) = if (isNational) {
                 externalTrials.nationalTrials.filtered to externalTrials.excludedNationalTrials()
@@ -117,7 +118,8 @@ class EligibleTrialGenerator(
                 externalTrials = relevantExternalTrials,
                 externalTrialsFilteredCount = relevantExternalTrialsFilteredCount,
                 requestingSource = requestingSource,
-                isNational = isNational
+                isNational = isNational,
+                effectiveDutchExternalTrialExclusion = effectiveDutchExternalTrialExclusion
             )
         }
 
@@ -139,14 +141,19 @@ class EligibleTrialGenerator(
 
             val footNote = if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG) {
                 relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                    "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_NATIONAL_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
+                    "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
                 }
             } else {
                 listOfNotNull(
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { relevantNationalExternalTrials.isNotEmpty() },
                     relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_NATIONAL_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE"
+                        "${
+                            TrialFormatFunctions.formatCountWithLabel(
+                                count,
+                                "trial"
+                            )
+                        } $FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE"
                     }
                 ).joinToString("\n").ifEmpty { null }
             }
@@ -177,32 +184,34 @@ class EligibleTrialGenerator(
             externalTrials: Set<ExternalTrialSummary>,
             externalTrialsFilteredCount: Int,
             requestingSource: TrialSource?,
-            isNational: Boolean
+            isNational: Boolean,
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
         ): TrialTableGenerator {
             val cohortsFromTrialsString = TrialFormatFunctions.generateCohortsFromTrialsString(externalTrials.size, externalTrials.size)
             val nationalString = if (isNational) "National" else "International"
             val title = "$nationalString trials that are open and potentially eligible $cohortsFromTrialsString"
 
-            val footNote = listOfNotNull(
-                "Trials in this table are matched solely on molecular event and tumor type (clinical data excluded)."
-                    .takeIf { externalTrials.isNotEmpty() },
-                ("${
-                    TrialFormatFunctions.formatCountWithLabel(
-                        externalTrialsFilteredCount,
-                        "trial"
-                    )
-                } $FILTERED_NATIONAL_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE")
-                    .takeIf { externalTrialsFilteredCount > 0 && isNational },
-                ("${
-                    TrialFormatFunctions.formatCountWithLabel(
-                        externalTrialsFilteredCount,
-                        "trial"
-                    )
-                } filtered due to trials recruiting nationally for the same molecular target. See Other Trial Matching Results for filtered matches.")
-                    .takeIf { externalTrialsFilteredCount > 0 && !isNational }).joinToString(
-                "\n"
-            )
-                .ifEmpty { null }
+            val footNote =
+                if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG) {
+                    externalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
+                        "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
+                    }
+                } else {
+                    listOfNotNull(
+                        "Trials in this table are matched solely on molecular event and tumor type (clinical data excluded)."
+                            .takeIf { externalTrials.isNotEmpty() },
+
+                        externalTrialsFilteredCount.takeIf { it > 0 && isNational }?.let { count ->
+                            "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} " +
+                                    FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE
+                        },
+
+                        externalTrialsFilteredCount.takeIf { it > 0 && !isNational }?.let { count ->
+                            "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} filtered due to trials recruiting " +
+                                    "nationally for the same molecular target. See Other Trial Matching Results for filtered matches."
+                        }
+                    ).joinToString("\n").ifEmpty { null }
+                }
 
             return EligibleTrialGenerator(
                 cohorts = emptyList(),

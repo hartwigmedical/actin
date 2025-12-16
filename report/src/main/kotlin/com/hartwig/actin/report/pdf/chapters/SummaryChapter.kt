@@ -184,7 +184,12 @@ class SummaryChapter(
                 requestingSource
             )
 
-        val internationalTrialsGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(externalTrials, requestingSource, false)
+        val internationalTrialsGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(
+            externalTrials,
+            requestingSource,
+            false,
+            trialsProvider.effectiveDutchExternalTrialExclusion
+        )
 
         return listOfNotNull(
             nationalOpenAndEligibleLatePhaseCohortsGenerator,
