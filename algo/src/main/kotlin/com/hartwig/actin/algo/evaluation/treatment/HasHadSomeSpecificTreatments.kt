@@ -23,17 +23,14 @@ class HasHadSomeSpecificTreatments(private val treatments: List<Treatment>, priv
 
         return when {
             matchTreatments.size >= minTreatmentLines -> {
-
-                EvaluationFactory.pass("Has received ${matchTreatments.size} prior line(s) of $treatmentListing ")
+                EvaluationFactory.pass("Has received ${matchTreatments.size} prior line(s) of $treatmentListing")
             }
 
             matchTreatments.size + trialMatchCount >= minTreatmentLines -> {
                 EvaluationFactory.undetermined("Undetermined if received $minTreatmentLines prior line(s) of $treatmentListing")
             }
 
-            else -> {
-                EvaluationFactory.fail("Has not received $minTreatmentLines prior line(s) of $treatmentListing")
-            }
+            else -> EvaluationFactory.fail("Has not received $minTreatmentLines prior line(s) of $treatmentListing")
         }
     }
 }

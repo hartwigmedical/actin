@@ -74,11 +74,11 @@ class HasFusionInGene(override val gene: String) :
             matchingFusions.isNotEmpty() -> {
                 val eventWarningDescriptions = concat(
                     listOf(
-                        fusionsWithNoEffect.map { event -> "$event: Fusion having no protein effect" },
-                        fusionsWithNoHighDriverLikelihood.map { event -> "$event: Fusion having no high driver likelihood" },
-                        unreportableFusionsWithGainOfFunction.map { event -> "$event: Fusion having gain-of-function evidence but not considered reportable" },
-                        ihcEventsThatQualify.map { finding -> "$finding: may indicate a fusion" },
-                        ihcEventsThatAreIndeterminate.map { finding -> "$finding: undetermined if this may indicate a fusion" },
+                        fusionsWithNoEffect.map { event -> "$event (no protein effect)" },
+                        fusionsWithNoHighDriverLikelihood.map { event -> "$event (no high driver likelihood)" },
+                        unreportableFusionsWithGainOfFunction.map { event -> "$event (gain-of-function evidence but not considered reportable)" },
+                        ihcEventsThatQualify.map { finding -> "$finding (may indicate a fusion)" },
+                        ihcEventsThatAreIndeterminate.map { finding -> "$finding (undetermined if this may indicate a fusion)" },
                     ).flatten()
                 )
 

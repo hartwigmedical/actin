@@ -127,6 +127,54 @@ class OrTest {
     }
 
     @Test
+    fun `Should not retain warn inclusion events when evaluation result is PASS`() {
+        val pass = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.PASS,
+                recoverable = true,
+                passMessages = setOf(StaticMessage("pass 1")),
+                inclusionMolecularEvents = setOf("inclusion event pass")
+            )
+        }
+        val warn = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.WARN,
+                recoverable = true,
+                warnMessages = setOf(StaticMessage("warn 1")),
+                inclusionMolecularEvents = setOf("inclusion event warn")
+            )
+        }
+        val result: Evaluation = Or(listOf(pass, warn)).evaluate(TEST_PATIENT)
+        assertEvaluation(EvaluationResult.PASS, result)
+        assertThat(result.inclusionMolecularEvents).hasSize(1)
+        assertThat(result.inclusionMolecularEvents).containsOnly("inclusion event pass")
+    }
+
+    @Test
+    fun `Should retain warn inclusion events when evaluation result is UNDETERMINED`() {
+        val undetermined = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.UNDETERMINED,
+                recoverable = true,
+                undeterminedMessages = setOf(StaticMessage("undetermined 1")),
+                inclusionMolecularEvents = setOf("inclusion event undetermined")
+            )
+        }
+        val warn = CompositeTestFactory.evaluationFunction {
+            Evaluation(
+                result = EvaluationResult.WARN,
+                recoverable = true,
+                warnMessages = setOf(StaticMessage("warn 1")),
+                inclusionMolecularEvents = setOf("inclusion event warn")
+            )
+        }
+        val result: Evaluation = Or(listOf(undetermined, warn)).evaluate(TEST_PATIENT)
+        assertThat(result.inclusionMolecularEvents).hasSize(2)
+        assertThat(result.inclusionMolecularEvents).contains("inclusion event undetermined")
+        assertThat(result.inclusionMolecularEvents).contains("inclusion event warn")
+    }
+
+    @Test
     fun `Should only retain recoverable fail message if evaluation result is FAIL`() {
         val function1 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = true, index = 1)
         val function2 = CompositeTestFactory.create(EvaluationResult.FAIL, recoverable = false, index = 2)

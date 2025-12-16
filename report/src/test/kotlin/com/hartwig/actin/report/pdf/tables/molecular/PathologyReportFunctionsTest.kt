@@ -66,58 +66,33 @@ class PathologyReportFunctionsTest {
     }
 
     @Test
-    fun `Should group test results by report hash if match available or date otherwise`() {
+    fun `Should group test results by report hash if match available`() {
         val pathologyReport1 = pathologyReport(1, date1)
         val pathologyReport2 = pathologyReport(2, date2)
         val pathologyReport3 = pathologyReport(3, date2)
 
-        val wholeGenomeTest1 = minimalWholeGenomeTest.copy(date = date1)
-        val panelTest1 = minimalPanelTest.copy(date = date1)
-        val panelTest2 = minimalPanelTest.copy(date = date2, reportHash = "hash2")
-        val panelTest3 = minimalPanelTest.copy(date = date2, reportHash = "hash3")
-        val ihcTest1 = ihcTest(measureDate = date1, reportHash = "unknown")
-        val ihcTest2 = ihcTest(reportHash = "hash1")
-        val ihcTest3 = ihcTest(measureDate = date2, reportHash = "hash2")
-        val ihcTest4 = ihcTest(reportHash = "hash3")
+        val wholeGenomeTest1 = minimalWholeGenomeTest.copy(reportHash = "hash1")
+        val panelTest1 = minimalPanelTest.copy(reportHash = "hash1")
+        val panelTest2 = minimalPanelTest.copy(reportHash = "hash2")
+        val panelTest3 = minimalPanelTest.copy(reportHash = "hash3")
+        val ihcTest1 = ihcTest(reportHash = "hash1")
+        val ihcTest2 = ihcTest(reportHash = "hash2")
+        val ihcTest3 = ihcTest(reportHash = "hash3")
 
         val result = PathologyReportFunctions.groupTestsByPathologyReport(
             orangeMolecularRecords = listOf(wholeGenomeTest1),
             molecularTests = listOf(panelTest1, panelTest2, panelTest3),
-            ihcTests = listOf(ihcTest1, ihcTest2, ihcTest3, ihcTest4),
+            ihcTests = listOf(ihcTest1, ihcTest2, ihcTest3),
             pathologyReports = listOf(pathologyReport1, pathologyReport2, pathologyReport3)
         )
 
         assertThat(result[pathologyReport1])
-            .isEqualTo(MolecularTestGroup(listOf(wholeGenomeTest1), listOf(panelTest1), listOf(ihcTest1, ihcTest2)))
+            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest1), listOf(ihcTest1)))
         assertThat(result[pathologyReport2])
-            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest2), listOf(ihcTest3)))
+            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest2), listOf(ihcTest2)))
         assertThat(result[pathologyReport3])
-            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest3), listOf(ihcTest4)))
-    }
-
-    @Test
-    fun `Should only show date matches for the first report with same date`() {
-        val pathologyReport1 = pathologyReport(1, date1)
-        val pathologyReport2 = pathologyReport(2, date1)
-
-        val wholeGenomeTest1 = minimalWholeGenomeTest.copy(date = date1)
-        val panelTest1 = minimalPanelTest.copy(date = date1)
-        val panelTest2 = minimalPanelTest.copy(date = date1, reportHash = "hash2")
-        val ihcTest1 = ihcTest(measureDate = date1)
-        val ihcTest2 = ihcTest(reportHash = "hash1")
-        val ihcTest3 = ihcTest(measureDate = date1, reportHash = "hash2")
-
-        val result = PathologyReportFunctions.groupTestsByPathologyReport(
-            orangeMolecularRecords = listOf(wholeGenomeTest1),
-            molecularTests = listOf(panelTest1, panelTest2),
-            ihcTests = listOf(ihcTest1, ihcTest2, ihcTest3),
-            pathologyReports = listOf(pathologyReport1, pathologyReport2)
-        )
-
-        assertThat(result[pathologyReport1])
-            .isEqualTo(MolecularTestGroup(listOf(wholeGenomeTest1), listOf(panelTest1), listOf(ihcTest1, ihcTest2)))
-        assertThat(result[pathologyReport2])
-            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest2), listOf(ihcTest3)))
+            .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest3), listOf(ihcTest3)))
+        assertThat(result[null]).isEqualTo(MolecularTestGroup(listOf(wholeGenomeTest1), emptyList(), emptyList()))
     }
 
     @Test

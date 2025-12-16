@@ -2,12 +2,14 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import java.util.*
 
 data class ExternalTrialSummary(
     val nctId: String,
     val title: String,
+    val phase: TrialPhase?,
     val countries: SortedSet<CountryDetails>,
     val actinMolecularEvents: SortedSet<String>,
     val sourceMolecularEvents: SortedSet<String>,
@@ -24,6 +26,7 @@ object ExternalTrialSummarizer {
             ExternalTrialSummary(
                 nctId = entry.key,
                 title = trial.title(),
+                phase = trial.phase,
                 countries = countries.toSortedSet(Comparator.comparing { c -> c.country }),
                 actinMolecularEvents = entry.value.map { ewt -> ewt.actionable.event }.toSortedSet(),
                 sourceMolecularEvents = entry.value.flatMap { ewt -> ewt.trial.molecularMatches.map { it.sourceEvent } }.toSortedSet(),

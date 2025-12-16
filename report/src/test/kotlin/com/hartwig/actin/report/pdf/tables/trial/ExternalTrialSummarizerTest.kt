@@ -87,6 +87,7 @@ class ExternalTrialSummarizerTest {
         return ExternalTrialSummary(
             nctId = externalTrial.nctId,
             title = externalTrial.title(),
+            phase = externalTrial.phase,
             countries = countries,
             actinMolecularEvents = actinMolecularEvents,
             sourceMolecularEvents = externalTrial.molecularMatches.map { it.sourceEvent }.toSortedSet(),

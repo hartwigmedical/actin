@@ -22,6 +22,7 @@ import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.GenderCriterium
+import com.hartwig.serve.datamodel.trial.Phase as ServePhase
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -226,6 +227,7 @@ class ClinicalEvidenceFactoryTest {
             nctId = "NCT00000001",
             title = "test trial",
             acronym = "test trial acronym",
+            phase = ServePhase.UNKNOWN,
             countries = setOf(country),
             indications = setOf(matchingIndication1, matchingIndication2),
             urls = setOf("invalid url", "https://clinicaltrials.gov/study/NCT00000001")
