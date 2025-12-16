@@ -397,11 +397,26 @@ class ActionabilityMatcherTest {
         val hlaAlelle = TestHlaAlleleFactory.createMinimal()
             .copy(name = "A*02:01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
-            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(hlaAlleles = setOf(hlaAlelle)))
+            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = true, hlaAlleles = setOf(hlaAlelle)))
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
         assertThat(matches[hlaAlelle]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should not match hla when isReliable is false`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val hlaAlelle = TestHlaAlleleFactory.createMinimal()
+            .copy(name = "A*02:01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = false, hlaAlleles = setOf(hlaAlelle)))
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(0)
     }
 
     @Test
