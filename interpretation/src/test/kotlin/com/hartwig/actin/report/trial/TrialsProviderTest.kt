@@ -267,8 +267,16 @@ class TrialsProviderTest {
 
         val externalTrialsSet: Set<ActionableWithExternalTrial> =
             setOf(nationalEarlyPhase, nationalLatePhase, internationalEarlyPhase, internationalLatePhase)
-        val trialsProvider =
-            TrialsProvider(externalTrialsSet, emptyList(), listOf(), emptySet(), false, Country.NETHERLANDS, true)
+        val trialsProvider = TrialsProvider(
+            externalTrialsSet,
+            emptyList(),
+            listOf(),
+            emptySet(),
+            false,
+            ExternalTrialTumorType.NONE,
+            Country.NETHERLANDS,
+            true
+        )
 
         val earlyPhaseTrials = trialsProvider.externalTrialsFilteredOnPhase(ExternalPhaseFilter.EXTERNAL_EARLY_PHASE)
         assertThat(earlyPhaseTrials.nationalTrials.original).containsExactly(nationalEarlyPhase)
