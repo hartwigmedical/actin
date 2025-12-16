@@ -15,48 +15,35 @@ class HasMtapDeletion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val mtapTested =
-            record.molecularTests.any { test -> test.targetSpecification?.testsGene(MTAP) { it == listOf(MolecularTestTarget.DELETION) } == true }
+            record.molecularTests.any { test -> test.targetSpecification?.testsGene(MTAP) { it.contains(MolecularTestTarget.DELETION) } == true }
                     || IhcTestEvaluation.create(MTAP, record.ihcTests).filteredTests.isNotEmpty()
 
         return when {
             mtapTested -> {
-                val mtapDeletion = GeneIsInactivated(MTAP, onlyDeletions = true).evaluate(record)
-                val mtapIhcLoss = ProteinIsLostByIhc(MTAP).evaluate(record)
-                val mtapInactivation = GeneIsInactivated(MTAP, onlyDeletions = false).evaluate(record)
-
-                when {
-                    isPassOrWarn(mtapIhcLoss) -> mtapIhcLoss
-
-                    isPassOrWarn(mtapDeletion) -> mtapDeletion
-
-                    isPassOrWarn(mtapInactivation) -> {
-                        mtapInactivation.copy(
+                ProteinIsLostByIhc(MTAP).evaluate(record).takeIfPassOrWarn()
+                    ?: GeneIsInactivated(MTAP, onlyDeletions = true).evaluate(record).takeIfPassOrWarn()
+                    ?: GeneIsInactivated(MTAP, onlyDeletions = false).evaluate(record).takeIfPassOrWarn()?.let { e ->
+                        e.copy(
                             result = EvaluationResult.WARN,
                             passMessages = emptySet(),
-                            warnMessages = mtapInactivation.passMessages.ifEmpty { mtapInactivation.warnMessages }
+                            warnMessages = e.passMessages.ifEmpty { e.warnMessages }
                         )
                     }
-
-                    else -> EvaluationFactory.fail("No $MTAP deletion")
-                }
+                    ?: EvaluationFactory.fail("No $MTAP deletion")
             }
 
-            else -> {
-                val indirectEvaluation = GeneIsInactivated(CDKN2A, onlyDeletions = true).evaluate(record)
-                when {
-                    isPassOrWarn(indirectEvaluation) -> {
-                        EvaluationFactory.warn(
-                            "$MTAP deletion not tested but $CDKN2A deletion detected (highly correlated)",
-                            setOf("Potential MTAP deletion"),
-                            isMissingMolecularResultForEvaluation = true
-                        )
-                    }
-
-                    else -> EvaluationFactory.undetermined("$MTAP deletion not tested", isMissingMolecularResultForEvaluation = true)
-                }
+            isPassOrWarn(GeneIsInactivated(CDKN2A, onlyDeletions = true).evaluate(record)) -> {
+                EvaluationFactory.warn(
+                    "$MTAP deletion not tested but $CDKN2A deletion detected (highly correlated)",
+                    setOf("Potential $MTAP deletion"),
+                    isMissingMolecularResultForEvaluation = true
+                )
             }
+
+            else -> EvaluationFactory.undetermined("$MTAP deletion not tested", isMissingMolecularResultForEvaluation = true)
         }
     }
 
-    private fun isPassOrWarn(evaluation: Evaluation) = evaluation.result in setOf(EvaluationResult.PASS, EvaluationResult.WARN)
+    private fun isPassOrWarn(evaluation: Evaluation)= evaluation.result in setOf(EvaluationResult.PASS, EvaluationResult.WARN)
+    private fun Evaluation.takeIfPassOrWarn() = this.takeIf(::isPassOrWarn)
 }
