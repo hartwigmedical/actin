@@ -1157,8 +1157,9 @@ class ActionabilityMatcherTest {
     }
 
     private fun evidenceWithDrugClass(
-        name: String, drugClass: String, molecularCriterium: MolecularCriterium =
-            TestServeMolecularFactory.createHotspotCriterium()
+        name: String,
+        drugClass: String,
+        molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium()
     ): EfficacyEvidence {
         val base = TestServeEvidenceFactory.create(treatment = name, molecularCriterium = molecularCriterium)
         val treatment = ImmutableTreatment.builder()
