@@ -39,10 +39,10 @@ object ClinicalRecordJson {
     }
 
     fun toJson(record: ClinicalRecord): String {
-        return ClinicalGsonSerializer.create().toJson(record)
+        return ClinicalRecordMapper.create().toJson(record)
     }
 
     fun fromJson(json: String): ClinicalRecord {
-        return ClinicalGsonSerializer.create().fromJson(json, ClinicalRecord::class.java)
+        return ClinicalRecordMapper.create().fromJson(json, ClinicalRecord::class.java)
     }
 }

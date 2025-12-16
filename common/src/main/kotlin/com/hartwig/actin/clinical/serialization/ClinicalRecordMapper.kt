@@ -20,7 +20,7 @@ import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.StrictEnumDeserializer
 import java.lang.reflect.Type
 
-object ClinicalGsonSerializer {
+object ClinicalRecordMapper {
 
     fun create(): Gson {
         return gsonBuilder().create()
