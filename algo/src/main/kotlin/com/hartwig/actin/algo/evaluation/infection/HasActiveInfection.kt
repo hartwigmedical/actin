@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.infection
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.PatientRecord
@@ -40,7 +41,7 @@ class HasActiveInfection(
 
             infectionComorbidity.fullMatches.isNotEmpty() -> {
                 EvaluationFactory.warn("Has infection(s) in history - unknown if active " +
-                        "(${infectionComorbidity.fullMatches.joinToString { it.display() }})")
+                        "(${concatItemsWithAnd(infectionComorbidity.fullMatches)})")
             }
 
             infectionStatus == null -> {
