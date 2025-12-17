@@ -148,12 +148,7 @@ class EligibleTrialGenerator(
                     "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
                         .takeIf { relevantNationalExternalTrials.isNotEmpty() },
                     relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        "${
-                            TrialFormatFunctions.formatCountWithLabel(
-                                count,
-                                "trial"
-                            )
-                        } $FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE"
+                        "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE"
                     }
                 ).joinToString("\n").ifEmpty { null }
             }

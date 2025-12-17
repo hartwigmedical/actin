@@ -12,7 +12,6 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.ActionableAndEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
-import com.hartwig.actin.report.trial.ExternalPhaseFilter
 
 const val YOUNG_ADULT_CUT_OFF = 40
 
@@ -141,8 +140,8 @@ class TrialsProvider(
             filterOnSoCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
-            val patientMatchesExclusionType = dutchExternalTrialsToExclude.tumorDoid
-                ?.let { DoidEvaluationFunctions.isOfDoidType(doidModel, patientRecord.tumor.doids, it) } == true
+            val patientMatchesExclusionType = dutchExternalTrialsToExclude.tumorDoids
+                ?.any { DoidEvaluationFunctions.isOfDoidType(doidModel, patientRecord.tumor.doids, it) } == true
             val effectiveDutchExternalTrialExclusion =
                 if (patientMatchesExclusionType) dutchExternalTrialsToExclude else ExternalTrialTumorType.NONE
 

@@ -35,8 +35,8 @@ enum class TrialMatchingChapterType {
     DETAILED_ALL_TRIALS
 }
 
-enum class ExternalTrialTumorType(val tumorDoid: String?) {
-    LUNG(DoidConstants.LUNG_CANCER_DOID),
+enum class ExternalTrialTumorType(val tumorDoids: Set<String>?) {
+    LUNG(setOf(DoidConstants.LUNG_CANCER_DOID, DoidConstants.PLEURAL_MESOTHELIOMA_DOID)),
     NONE(null);
 }
 
