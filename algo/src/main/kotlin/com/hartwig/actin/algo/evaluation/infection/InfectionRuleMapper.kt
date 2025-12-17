@@ -29,7 +29,7 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasActiveInfectionCreator(): FunctionCreator {
-        return { HasActiveInfection(atcTree(), referenceDateProvider().date()) }
+        return { HasActiveInfection(atcTree(), referenceDateProvider().date(), icdModel()) }
     }
 
     private fun hasSpecificInfectionCreator(icdCodes: Set<IcdCode>, term: String): FunctionCreator {

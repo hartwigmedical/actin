@@ -244,6 +244,8 @@ object IcdConstants {
     const val MYELOPATHY = "8B42"
     const val TRAUMATIC_SPINAL_CORD_COMPRESSION = "ND51.2"
     const val OTHER_SPECIFIED_SPINAL_CORD_DISORDERS_EXCLUDING_TRAUMA = "8B4Y"
+    const val UNSPECIFIED_INFECTION_CODE = "1H0Z" // Used in actin-clinical as default ICD code for infections - evaluated via chapter code
+    const val INFECTIOUS_DISEASES_CHAPTER_CODE = "01"
 
     val DRUG_ALLERGY_SET = setOf(
         ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK,

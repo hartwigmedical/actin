@@ -1,23 +1,32 @@
 package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.datamodel.IcdNode
 import org.junit.Test
 import java.time.LocalDate
 
 class HasActiveInfectionTest {
 
-    private val referenceDate = LocalDate.of(2024, 6, 12)
-    private val function = HasActiveInfection(
-        AtcTestFactory.createProperAtcTree(),
-        referenceDate
+    private val icdModel = IcdModel.create(
+        listOf(
+            IcdNode(IcdConstants.UNSPECIFIED_INFECTION_CODE, listOf(IcdConstants.INFECTIOUS_DISEASES_CHAPTER_CODE), "Infection"),
+            IcdNode(IcdConstants.INFECTIOUS_DISEASES_CHAPTER_CODE, emptyList(), "Infectious diseases chapter")
+        )
     )
+    private val conditionWithTargetCode =
+        ComorbidityTestFactory.otherCondition(name = "some infection", icdMainCode = IcdConstants.UNSPECIFIED_INFECTION_CODE)
+    private val referenceDate = LocalDate.of(2024, 6, 12)
+    private val function = HasActiveInfection(AtcTestFactory.createProperAtcTree(), referenceDate, icdModel)
     private val systemicAntimicrobialAtc = "J01"
 
     @Test
@@ -42,6 +51,11 @@ class HasActiveInfectionTest {
         assertEvaluation(
             EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(false, systemicAntimicrobialAtc, referenceDate.minusDays(1)))
         )
+    }
+
+    @Test
+    fun `Should warn if patient has comorbidity which is a child of of ICD chapter infectious diseases`(){
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode)))
     }
 
     @Test

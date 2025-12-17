@@ -3,15 +3,20 @@ package com.hartwig.actin.algo.evaluation.infection
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
+import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.medication.MedicationCategories
 import java.time.LocalDate
 
-class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate: LocalDate) : EvaluationFunction {
+class HasActiveInfection(
+    private val atcTree: AtcTree, private val referenceDate: LocalDate, private val icdModel: IcdModel
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val medicationSelector = MedicationSelector(MedicationStatusInterpreterOnEvaluationDate(referenceDate, null))
@@ -20,18 +25,25 @@ class HasActiveInfection(private val atcTree: AtcTree, private val referenceDate
             medicationSelector.isActive(it) && (it.allLevels() intersect antimicrobialsAtcLevels).isNotEmpty()
         } == true
 
-        val infection = record.clinicalStatus.infectionStatus
+        val infectionStatus = record.clinicalStatus.infectionStatus
+        val infectionComorbidity =
+            icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, setOf(IcdCode(IcdConstants.INFECTIOUS_DISEASES_CHAPTER_CODE)))
 
         return when {
-            infection?.hasActiveInfection == true -> {
-                EvaluationFactory.recoverablePass("Has active infection (${description(infection)})")
+            infectionStatus?.hasActiveInfection == true -> {
+                EvaluationFactory.recoverablePass("Has active infection (${description(infectionStatus)})")
             }
 
             currentlyUsesAntimicrobials -> {
                 EvaluationFactory.warn("Possible active infection (antimicrobials usage)")
             }
 
-            infection == null -> {
+            infectionComorbidity.fullMatches.isNotEmpty() -> {
+                EvaluationFactory.warn("Has infection(s) in history - unknown if active " +
+                        "(${infectionComorbidity.fullMatches.joinToString { it.display() }})")
+            }
+
+            infectionStatus == null -> {
                 EvaluationFactory.recoverableUndetermined("Infection status data is missing")
             }
 
