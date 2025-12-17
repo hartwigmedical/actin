@@ -10,6 +10,7 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
+import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import io.mockk.every
@@ -201,6 +202,72 @@ class PVA3Test {
         assertThat(queries).hasSize(2)
         assertThat(queries.map { it.localPhaseSet }.toSet()).containsExactly(0)
         assertThat(queries.map { it.position }.toSet()).containsExactlyInAnyOrder(2, 3)
+    }
+
+    @Test
+    fun `Should normalize phased effects after selecting representative phased response`() {
+        val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
+        val decompositions = VariantDecompositionIndex(
+            listOf(
+                VariantDecomposition(
+                    proteinHgvs = "c.2A>T",
+                    decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
+                )
+            )
+        )
+
+        every { variantResolver.resolve(any(), any(), any()) } answers {
+            val hgvs = thirdArg<String>()
+            when (hgvs) {
+                "c.2A>G" -> transvarVariant(chromosome = "7", position = 2, ref = "A", alt = "G")
+                "c.3_4delinsA" -> transvarVariant(chromosome = "7", position = 3, ref = "AT", alt = "A")
+                else -> null
+            }
+        }
+
+        every { paver.run(any<List<PaveQuery>>()) } answers {
+            val queries = firstArg<List<PaveQuery>>()
+            queries.map { query ->
+                val impact = PaveImpact(
+                    gene = "GENE",
+                    canonicalTranscript = "TX",
+                    canonicalEffects = listOf(PaveVariantEffect.PHASED_INFRAME_DELETION),
+                    canonicalCodingEffect = PaveCodingEffect.MISSENSE,
+                    spliceRegion = false,
+                    hgvsCodingImpact = "c.mock",
+                    hgvsProteinImpact = "p.M1L",
+                    otherReportableEffects = null,
+                    worstCodingEffect = PaveCodingEffect.MISSENSE,
+                    genesAffected = 1
+                )
+                val transcriptImpact = PaveTranscriptImpact(
+                    geneId = "gene_id",
+                    gene = "GENE",
+                    transcript = "TX",
+                    effects = listOf(PaveVariantEffect.PHASED_INFRAME_DELETION),
+                    spliceRegion = false,
+                    hgvsCodingImpact = "c.mock",
+                    hgvsProteinImpact = "p.M1L",
+                    refSeqId = "refseq",
+                    exon = 1,
+                    codon = 1,
+                )
+                PaveResponse(
+                    id = query.id,
+                    impact = impact,
+                    transcriptImpacts = listOf(transcriptImpact),
+                    localPhaseSet = query.localPhaseSet
+                )
+            }
+        }
+
+        val annotator = PVA3(variantResolver, paver, decompositions)
+
+        val result = annotator.annotate(setOf(decomposedVariant))
+
+        assertThat(result).hasSize(1)
+        assertThat(result.single().canonicalImpact.effects).contains(VariantEffect.INFRAME_DELETION)
+        assertThat(result.single().canonicalImpact.effects).doesNotContain(VariantEffect.PHASED_INFRAME_DELETION)
     }
 
     @Test

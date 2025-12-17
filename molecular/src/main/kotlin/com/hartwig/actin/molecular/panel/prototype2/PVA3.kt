@@ -6,6 +6,7 @@ import com.hartwig.actin.molecular.panel.VariantDecompositionIndex
 import com.hartwig.actin.molecular.panel.VariantFactory
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
+import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
@@ -32,8 +33,9 @@ class PVA3(
         val withTransvar = annotateWithTransvar(expanded)
         val withPave = annotateWithPave(withTransvar)
         val dedupedAnnotated = deduplicateAnnotated(withPave)
+        val normalized = normalizePhasedEffects(dedupedAnnotated)
 
-        return createVariants(dedupedAnnotated)
+        return createVariants(normalized)
     }
 
     private fun sortSequencedVariantsForDeterminism(variants: Set<SequencedVariant>): List<SequencedVariant> {
@@ -170,6 +172,40 @@ class PVA3(
         }
 
         return direct + dedupedExpanded
+    }
+
+    private fun normalizePhasedEffects(annotated: List<AnnotatableVariant>): List<AnnotatableVariant> {
+        return annotated.map { variant ->
+            val paveResponse = variant.paveResponse
+            if (variant.localPhaseSet == null || paveResponse == null) {
+                variant
+            } else {
+                val normalizedImpact = paveResponse.impact.copy(
+                    canonicalEffects = paveResponse.impact.canonicalEffects.map(::toNonPhasedEffect)
+                )
+                val normalizedTranscriptImpacts = paveResponse.transcriptImpacts.map { transcriptImpact ->
+                    transcriptImpact.copy(
+                        effects = transcriptImpact.effects.map(::toNonPhasedEffect)
+                    )
+                }
+                variant.copy(
+                    paveResponse = paveResponse.copy(
+                        impact = normalizedImpact,
+                        transcriptImpacts = normalizedTranscriptImpacts,
+                    )
+                )
+            }
+        }
+    }
+
+    private fun toNonPhasedEffect(effect: PaveVariantEffect): PaveVariantEffect {
+        return when (effect) {
+            PaveVariantEffect.PHASED_MISSENSE -> PaveVariantEffect.MISSENSE
+            PaveVariantEffect.PHASED_INFRAME_INSERTION -> PaveVariantEffect.INFRAME_INSERTION
+            PaveVariantEffect.PHASED_INFRAME_DELETION -> PaveVariantEffect.INFRAME_DELETION
+            PaveVariantEffect.PHASED_SYNONYMOUS -> PaveVariantEffect.SYNONYMOUS
+            else -> effect
+        }
     }
 
     private fun createVariants(
