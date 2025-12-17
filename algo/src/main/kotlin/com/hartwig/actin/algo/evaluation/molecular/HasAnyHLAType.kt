@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 
@@ -12,12 +11,11 @@ class HasAnyHLAType(
 ) : MolecularEvaluationFunction(true) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
-        val molecular = MolecularHistory(listOf(test)).latestOrangeMolecularRecord() ?: return EvaluationFactory.undetermined(
+        val immunology = test.immunology ?: return EvaluationFactory.undetermined(
             "HLA type not tested",
             isMissingMolecularResultForEvaluation = true
         )
         
-        val immunology = molecular.immunology!!
         if (!immunology.isReliable) {
             return EvaluationFactory.undetermined("HLA typing unreliable", isMissingMolecularResultForEvaluation = true)
         }
@@ -28,8 +26,10 @@ class HasAnyHLAType(
             { allele -> hlaAllelesToFind.contains(allele.name) }
         }
 
+        val matchingHlaAlleles = immunology.hlaAlleles.filter(isMatch)
+
         if (!test.hasSufficientQuality) {
-            val matchedHlaAlleles = immunology.hlaAlleles.filter(isMatch).map { it.name }
+            val matchedHlaAlleles = matchingHlaAlleles.map { it.name }
             return when {
                 matchedHlaAlleles.isNotEmpty() -> {
                     EvaluationFactory.warn(
@@ -45,35 +45,46 @@ class HasAnyHLAType(
             }
         }
 
-        val matchingHlaAlleles = immunology.hlaAlleles.filter(isMatch)
-
-        val (matchingAllelesUnmodifiedInTumor, matchingAllelesModifiedInTumor) = matchingHlaAlleles
-            .partition { hlaAllele ->
-                val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber >= 0.5
-                val alleleHasSomaticMutations = hlaAllele.hasSomaticMutations
-                alleleIsPresentInTumor && !alleleHasSomaticMutations
-            }
+        if (matchingHlaAlleles.isEmpty()) {
+            return EvaluationFactory.fail("Does not have HLA type ${Format.concatLowercaseWithCommaAndOr(hlaAllelesToFind)}")
+        }
 
         val matchingHlaAlellesString = Format.concatLowercaseWithCommaAndAnd(matchingHlaAlleles.map { it.name })
+        val inclusionEvents = matchingHlaAlleles.map { "HLA-${it.name}" }.toSet()
 
-        return when {
-            matchingAllelesUnmodifiedInTumor.isNotEmpty() -> {
-                EvaluationFactory.pass(
-                    "Has HLA type $matchingHlaAlellesString (allele present without somatic variants in tumor)",
-                    inclusionEvents = matchingHlaAlleles.map { "HLA-${it.name}" }.toSet()
-                )
-            }
-
-            matchingAllelesModifiedInTumor.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Has required HLA type $matchingHlaAlellesString but somatic mutation present in this allele in tumor",
-                    inclusionEvents = matchingHlaAlleles.map { "HLA-${it.name}" }.toSet()
-                )
-            }
-
-            else -> {
-                EvaluationFactory.fail("Does not have HLA type ${Format.concatLowercaseWithCommaAndOr(hlaAllelesToFind)}")
-            }
+        val matchingAllelesUnmodifiedInTumor = matchingHlaAlleles.filter { hlaAllele ->
+            val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber?.let { it >= 0.5 } == true
+            val alleleHasSomaticMutations = hlaAllele.hasSomaticMutations
+            alleleIsPresentInTumor && alleleHasSomaticMutations == false
         }
+
+        if (matchingAllelesUnmodifiedInTumor.isNotEmpty()) {
+            return EvaluationFactory.pass(
+                "Has HLA type $matchingHlaAlellesString (allele present without somatic variants in tumor)",
+                inclusionEvents = inclusionEvents
+            )
+        }
+
+        val hasSomaticMutationInMatchingAllele = matchingHlaAlleles.any { it.hasSomaticMutations == true }
+        val hasLowTumorCopyNumberInMatchingAllele = matchingHlaAlleles.any { it.tumorCopyNumber?.let { cn -> cn < 0.5 } == true }
+
+        if (hasSomaticMutationInMatchingAllele) {
+            return EvaluationFactory.warn(
+                "Has required HLA type $matchingHlaAlellesString but somatic mutation present in this allele in tumor",
+                inclusionEvents = inclusionEvents
+            )
+        }
+
+        if (hasLowTumorCopyNumberInMatchingAllele) {
+            return EvaluationFactory.warn(
+                "Has required HLA type $matchingHlaAlellesString but allele has low copy number in tumor",
+                inclusionEvents = inclusionEvents
+            )
+        }
+
+        return EvaluationFactory.pass(
+            "Has HLA type $matchingHlaAlellesString",
+            inclusionEvents = inclusionEvents
+        )
     }
 }

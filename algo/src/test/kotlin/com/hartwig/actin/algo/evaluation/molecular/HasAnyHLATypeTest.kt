@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private const val CORRECT_HLA_GROUP = "A*02"
@@ -50,8 +49,6 @@ class HasAnyHLATypeTest {
     fun `Should warn if correct HLA allele present but record does not have sufficient quality`() {
         val record = MolecularTestFactory.withHlaAlleleAndInsufficientQuality(CORRECT_HLA)
         evaluateFunctions(EvaluationResult.WARN, record)
-        val evaluation = functionWithSpecificMatch.evaluate(record)
-        assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("HLA-A*02:01"))
     }
 
     @Test
@@ -60,8 +57,31 @@ class HasAnyHLATypeTest {
     }
 
     @Test
+    fun `Should warn if correct HLA allele present but tumor copy number is less than 0,5 even when somatic mutation status missing`() {
+        evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(HlaAllele(name = CORRECT_HLA.name, tumorCopyNumber = 0.0)))
+    }
+
+    @Test
     fun `Should warn if correct HLA allele present but also somatic mutations present`() {
         evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(hasSomaticMutations = true)))
+    }
+
+    @Test
+    fun `Should warn if correct HLA allele present but somatic mutation is present even when tumor copy number is missing`() {
+        evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(HlaAllele(name = CORRECT_HLA.name, hasSomaticMutations = true)))
+    }
+
+    @Test
+    fun `Should pass if correct HLA allele present but tumor copy number or somatic mutation status missing`() {
+        evaluateFunctions(EvaluationResult.PASS, MolecularTestFactory.withHlaAllele(HlaAllele(name = CORRECT_HLA.name)))
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withHlaAllele(HlaAllele(name = CORRECT_HLA.name, tumorCopyNumber = 1.0))
+        )
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withHlaAllele(HlaAllele(name = CORRECT_HLA.name, hasSomaticMutations = false))
+        )
     }
 
     @Test

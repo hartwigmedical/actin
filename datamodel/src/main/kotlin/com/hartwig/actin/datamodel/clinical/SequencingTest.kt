@@ -1,6 +1,7 @@
 package com.hartwig.actin.datamodel.clinical
 
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import java.time.LocalDate
@@ -60,6 +61,7 @@ data class SequencingTest(
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
     val isHomologousRecombinationDeficient: Boolean? = null,
+    val hlaAlleles: Set<HlaAllele> = emptySet(),
     val knownSpecifications: Boolean = false,
     val reportHash: String? = null
 )

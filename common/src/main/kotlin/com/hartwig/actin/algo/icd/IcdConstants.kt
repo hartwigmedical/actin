@@ -49,6 +49,7 @@ object IcdConstants {
     const val CERTAIN_LOWER_RESPIRATORY_TRACT_DISEASES_BLOCK = "BlockL1-CA2"
     const val CERTAIN_DISEASES_OF_RESPIRATORY_SYSTEM_CODE = "CB40"
     const val LUNG_INFECTIONS_BLOCK = "BlockL1-CA4"
+    const val UNSPECIFIED_INFECTION_CODE = "1H0Z"
     const val LUNG_ABSCESS_CODE = "CA43"
     const val LUNG_DISEASES_DUE_TO_EXTERNAL_AGENTS_BLOCK = "BlockL1-CA6"
     const val PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK = "BlockL2-CA7"
@@ -483,4 +484,3 @@ object IcdConstants {
         HIV_BLOCK
     )
 }
-

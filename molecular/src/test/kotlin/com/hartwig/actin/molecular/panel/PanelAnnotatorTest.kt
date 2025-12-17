@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.filter.SpecificGenesFilter
 import io.mockk.every
@@ -68,6 +69,12 @@ class PanelAnnotatorTest {
         )
 
     @Test
+    fun `Should not set immunology when no HLA alleles provided`() {
+        val annotatedPanel = annotator.annotate(createTestSequencingTest())
+        assertThat(annotatedPanel.immunology).isNull()
+    }
+
+    @Test
     fun `Should annotate test with panel specifications`() {
         val annotatedPanel = annotator.annotate(createTestSequencingTest())
         assertThat(annotatedPanel.testsGene(GENE) { it == listOf(MolecularTestTarget.MUTATION) }).isTrue()
@@ -113,6 +120,16 @@ class PanelAnnotatorTest {
 
         val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(viruses = setOf(PANEL_VIRUS)))
         assertThat(annotatedPanel.drivers.viruses).isEqualTo(listOf(expected))
+    }
+
+    @Test
+    fun `Should map HLA alleles to immunology`() {
+        val hlaAllele = HlaAllele(name = "A*02:01")
+        val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(hlaAlleles = setOf(hlaAllele)))
+
+        assertThat(annotatedPanel.immunology).isNotNull
+        assertThat(annotatedPanel.immunology!!.isReliable).isTrue
+        assertThat(annotatedPanel.immunology!!.hlaAlleles).containsExactly(hlaAllele)
     }
 
     private fun createTestSequencingTest(): SequencingTest {

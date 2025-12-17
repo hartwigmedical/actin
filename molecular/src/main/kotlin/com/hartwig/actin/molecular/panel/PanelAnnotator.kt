@@ -10,6 +10,8 @@ import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStabi
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
@@ -48,6 +50,8 @@ class PanelAnnotator(
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
         val annotatedViruses = panelVirusAnnotator.annotate(input.viruses)
+
+        val immunology = panelImmunology(input.hlaAlleles)
 
         return MolecularTest(
             date = input.date,
@@ -100,10 +104,14 @@ class PanelAnnotator(
                 },
                 tumorMutationalLoad = null
             ),
-            immunology = null,
+            immunology = immunology,
             pharmaco = emptySet(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()
         )
     }
+}
+
+internal fun panelImmunology(hlaAlleles: Set<HlaAllele>): MolecularImmunology? {
+    return hlaAlleles.takeIf { it.isNotEmpty() }?.let { MolecularImmunology(isReliable = true, hlaAlleles = it) }
 }

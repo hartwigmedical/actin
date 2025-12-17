@@ -42,11 +42,13 @@ class ImmunologyExtractionTest {
         assertThat(immunology.hlaAlleles).hasSize(2)
 
         val hlaAllele1 = findByName(immunology.hlaAlleles, "allele 1")
-        assertThat(hlaAllele1.tumorCopyNumber).isEqualTo(1.2, Offset.offset(EPSILON))
+        assertThat(hlaAllele1.tumorCopyNumber).isNotNull
+        assertThat(hlaAllele1.tumorCopyNumber!!).isEqualTo(1.2, Offset.offset(EPSILON))
         assertThat(hlaAllele1.hasSomaticMutations).isTrue
 
         val hlaAllele2 = findByName(immunology.hlaAlleles, "allele 2")
-        assertThat(hlaAllele2.tumorCopyNumber).isEqualTo(1.3, Offset.offset(EPSILON))
+        assertThat(hlaAllele2.tumorCopyNumber).isNotNull
+        assertThat(hlaAllele2.tumorCopyNumber!!).isEqualTo(1.3, Offset.offset(EPSILON))
         assertThat(hlaAllele2.hasSomaticMutations).isFalse
     }
 

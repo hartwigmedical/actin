@@ -559,6 +559,10 @@ class MolecularDAO(private val context: DSLContext) {
 
     private fun writeImmunology(sampleId: String, immunology: MolecularImmunology) {
         for (hlaAllele in immunology.hlaAlleles) {
+            val tumorCopyNumber = requireNotNull(hlaAllele.tumorCopyNumber) { "tumorCopyNumber missing for HLA allele ${hlaAllele.name}" }
+            val hasSomaticMutations =
+                requireNotNull(hlaAllele.hasSomaticMutations) { "hasSomaticMutations missing for HLA allele ${hlaAllele.name}" }
+
             context.insertInto(
                 Tables.HLAALLELE,
                 Tables.HLAALLELE.SAMPLEID,
@@ -571,8 +575,8 @@ class MolecularDAO(private val context: DSLContext) {
                     sampleId,
                     immunology.isReliable,
                     hlaAllele.name,
-                    hlaAllele.tumorCopyNumber,
-                    hlaAllele.hasSomaticMutations
+                    tumorCopyNumber,
+                    hasSomaticMutations
                 )
                 .execute()
         }

@@ -2,8 +2,8 @@ package com.hartwig.actin.datamodel.molecular.immunology
 
 data class HlaAllele(
     val name: String,
-    val tumorCopyNumber: Double,
-    val hasSomaticMutations: Boolean
+    val tumorCopyNumber: Double? = null,
+    val hasSomaticMutations: Boolean? = null
 ) : Comparable<HlaAllele> {
 
     override fun compareTo(other: HlaAllele): Int {
