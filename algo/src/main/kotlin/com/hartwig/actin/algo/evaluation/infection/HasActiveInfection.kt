@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -27,8 +28,10 @@ class HasActiveInfection(
         } == true
 
         val infectionStatus = record.clinicalStatus.infectionStatus
+        val recentComorbidities =
+            record.comorbidities.filter { DateComparison.isAfterDate(referenceDate.minusMonths(6), it.year, it.month) != false }
         val infectionComorbidity =
-            icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, setOf(IcdCode(IcdConstants.INFECTIOUS_DISEASES_CHAPTER_CODE)))
+            icdModel.findInstancesMatchingAnyIcdCode(recentComorbidities, setOf(IcdCode(IcdConstants.INFECTIOUS_DISEASES_CHAPTER_CODE)))
 
         return when {
             infectionStatus?.hasActiveInfection == true -> {
@@ -40,8 +43,10 @@ class HasActiveInfection(
             }
 
             infectionComorbidity.fullMatches.isNotEmpty() -> {
-                EvaluationFactory.warn("Has infection(s) in history - unknown if active " +
-                        "(${concatItemsWithAnd(infectionComorbidity.fullMatches)})")
+                EvaluationFactory.warn(
+                    "Has infection(s) in history - unknown if active " +
+                            "(${concatItemsWithAnd(infectionComorbidity.fullMatches)})"
+                )
             }
 
             infectionStatus == null -> {
