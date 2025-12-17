@@ -53,6 +53,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     hasMolecularEventInNSCLCWithAvailableSocFirstLineCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE_EXCLUDING_GENES_X to
                     hasMolecularEventInNSCLCWithAvailableSocFirstLineExcludingSomeGenesCreator(),
+            EligibilityRule.HAS_DELETION_OF_MTAP to { HasMtapDeletion() },
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(onlyDeletions = false),
             EligibilityRule.DELETION_OF_GENE_X to geneIsInactivatedCreator(onlyDeletions = true),
