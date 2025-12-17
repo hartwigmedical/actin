@@ -28,12 +28,22 @@ class PVA3(
 ) {
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
-        val expanded = applyDecompositions(sequencedVariants.toList())
+        val expanded = applyDecompositions(sortSequencedVariantsForDeterminism(sequencedVariants))
         val withTransvar = annotateWithTransvar(expanded)
         val withPave = annotateWithPave(withTransvar)
         val dedupedAnnotated = deduplicateAnnotated(withPave)
 
         return createVariants(dedupedAnnotated)
+    }
+
+    private fun sortSequencedVariantsForDeterminism(variants: Set<SequencedVariant>): List<SequencedVariant> {
+        val comparator =
+            compareBy<SequencedVariant> { it.gene }
+                .thenBy { it.transcript.orEmpty() }
+                .thenBy { it.hgvsCodingImpact.orEmpty() }
+                .thenBy { it.hgvsProteinImpact.orEmpty() }
+
+        return variants.sortedWith(comparator)
     }
 
     fun applyDecompositions(sequencedVariants: List<SequencedVariant>): List<AnnotatableVariant> {
@@ -97,9 +107,7 @@ class PVA3(
                 localPhaseSet = response.localPhaseSet
             )
         }
-        val responses = paver.run(queries)
-        val responsesById = responses.associateBy { it.id }
-        require(responsesById.keys == queries.map { it.id }.toSet()) { "PAVE did not return responses for all queries" }
+        val responsesById = validatePaveResponses(queries, paver.run(queries))
 
         return transvarResponses.map { variant ->
             val paveResponse =
@@ -108,6 +116,33 @@ class PVA3(
 
             variant.copy(paveResponse = paveResponse)
         }
+    }
+
+    private fun validatePaveResponses(
+        queries: List<PaveQuery>,
+        responses: List<PaveResponse>,
+    ): Map<String, PaveResponse> {
+        val responsesById = responses.associateBy { it.id }
+        val expectedIds = queries.map { it.id }.toSet()
+
+        if (responsesById.size != responses.size) {
+            val duplicates = responses
+                .groupBy { it.id }
+                .filter { (_, values) -> values.size > 1 }
+                .keys
+                .sorted()
+            throw IllegalStateException("PAVE returned duplicate responses for ids: ${duplicates.joinToString(", ")}")
+        }
+
+        if (responsesById.keys != expectedIds) {
+            val missing = (expectedIds - responsesById.keys).sorted()
+            val extra = (responsesById.keys - expectedIds).sorted()
+            throw IllegalStateException(
+                "PAVE returned unexpected set of response ids; missing=${missing.joinToString(", ")}, extra=${extra.joinToString(", ")}"
+            )
+        }
+
+        return responsesById
     }
 
     fun deduplicateAnnotated(annotated: List<AnnotatableVariant>): List<AnnotatableVariant> {
@@ -121,7 +156,12 @@ class PVA3(
             if (phaseSet == null) {
                 variants
             } else {
-                val proteinImpacts = variants.mapNotNull { it.paveResponse?.impact?.hgvsProteinImpact }.toSet()
+                val proteinImpactsRaw = variants.map { it.paveResponse?.impact?.hgvsProteinImpact }
+                if (proteinImpactsRaw.any { it.isNullOrBlank() }) {
+                    throw IllegalStateException("Missing protein impact within phase set $phaseSet")
+                }
+
+                val proteinImpacts = proteinImpactsRaw.filterNotNull().toSet()
                 require(proteinImpacts.size <= 1) {
                     "Mismatched protein impacts within phase set $phaseSet: $proteinImpacts"
                 }
