@@ -37,9 +37,9 @@ object TreatmentDatabaseFactory {
 
     @Suppress("unused")
     fun writeToPath(treatmentDbPath: String, treatmentDatabase: TreatmentDatabase) {
-        val drugsByName = treatmentDatabase.getDrugsByName()
+        val drugsByName = treatmentDatabase.drugsByName
         writeFilesInFolder(treatmentDbPath, DRUG_FOLDER, drugsByName, ClinicalRecordMapper.create())
-        writeFilesInFolder(treatmentDbPath, TREATMENT_FOLDER, treatmentDatabase.getTreatmentsByName(), ClinicalRecordMapper.createWithDrugMap(drugsByName))
+        writeFilesInFolder(treatmentDbPath, TREATMENT_FOLDER, treatmentDatabase.treatmentsByName, ClinicalRecordMapper.createWithDrugMap(drugsByName))
     }
 
     private inline fun <reified T> writeFilesInFolder(treatmentDbPath: String, folderName: String, content: Map<String, T>, serializer: Gson) {

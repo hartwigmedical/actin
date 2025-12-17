@@ -9,6 +9,9 @@ import java.nio.file.NoSuchFileException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import java.nio.file.Files
+import kotlin.io.path.createDirectories
+import kotlin.io.path.pathString
 
 class TreatmentDatabaseFactoryTest {
 
@@ -34,14 +37,19 @@ class TreatmentDatabaseFactoryTest {
 
     @Test
     fun `Should save database to directory`() {
-        val drugTreatment = TreatmentTestFactory.drugTreatment("Test name", TreatmentCategory.RADIOTHERAPY)
-        val drugsByName = drugTreatment.drugs.associateBy { it.name }
-        val db = TreatmentDatabase(drugsByName, listOf(drugTreatment).associateBy { it.name },)
-        writeToPath(resourceOnClasspath("clinical/saved_treatment_db"), db)
+        val tempDir = Files.createTempDirectory("saved_treatment_db").apply {
+            resolve("drugs").createDirectories()
+            resolve("treatments").createDirectories()
+        }
 
-        val treatmentDatabase = createFromPath(resourceOnClasspath("clinical/saved_treatment_db"))
+        val drugTreatment = TreatmentTestFactory.drugTreatment("Test", TreatmentCategory.CHEMOTHERAPY)
+        val drugsByName = drugTreatment.drugs.associateBy { it.name }
+        val db = TreatmentDatabase(drugsByName, listOf(drugTreatment).associateBy { it.name })
+        writeToPath(tempDir.pathString, db)
+
+        val treatmentDatabase = createFromPath(tempDir.pathString)
         assertThat(treatmentDatabase).isNotNull()
-        assertThat(treatmentDatabase.findTreatmentByName("Test name")).isNotNull()
-        assertThat(treatmentDatabase.findTreatmentByName("Test name")).isNotNull()
+        assertThat(treatmentDatabase.findTreatmentByName("Test")).isNotNull()
+        assertThat(treatmentDatabase.findDrugByName("Test")).isNotNull()
     }
 }
