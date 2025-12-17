@@ -14,8 +14,8 @@ import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.soc.EligibleStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
-import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.LocalTrialsType
+import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
@@ -163,7 +163,8 @@ class SummaryChapter(
                 externalTrials = trialsProvider.externalTrialsFilteredOnPhase(ExternalPhaseFilter.EXTERNAL_LATE_PHASE),
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
-                localTrialsType = LocalTrialsType.LOCAL_LATE_PHASE
+                localTrialsType = LocalTrialsType.LOCAL_LATE_PHASE,
+                effectiveDutchExternalTrialExclusion = trialsProvider.effectiveDutchExternalTrialExclusion
             )
 
         val nationalOpenAndEligibleEarlyPhaseCohortsGenerator =
@@ -172,7 +173,8 @@ class SummaryChapter(
                 externalTrials = trialsProvider.externalTrialsFilteredOnPhase(ExternalPhaseFilter.EXTERNAL_EARLY_PHASE),
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
-                localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE
+                localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE,
+                effectiveDutchExternalTrialExclusion = trialsProvider.effectiveDutchExternalTrialExclusion
             )
 
         val localOpenAndEligibleCohortsWithMissingMolecularResultForEvaluationGenerator =
@@ -182,7 +184,12 @@ class SummaryChapter(
                 requestingSource
             )
 
-        val internationalTrialsGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(externalTrials, requestingSource, false)
+        val internationalTrialsGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(
+            externalTrials,
+            requestingSource,
+            false,
+            trialsProvider.effectiveDutchExternalTrialExclusion
+        )
 
         return listOfNotNull(
             nationalOpenAndEligibleLatePhaseCohortsGenerator,

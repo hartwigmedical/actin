@@ -9,6 +9,7 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import com.hartwig.actin.testutil.ResourceLocator
@@ -126,8 +127,18 @@ object ExampleFunctions {
         val report = ReportFactory.create(reportDate, patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
-        writer.write(report = report, configuration = configuration, addExtendedSuffix = false)
-        writer.write(report = report, configuration = ReportConfiguration.extended(), addExtendedSuffix = true)
+        writer.write(
+            report = report,
+            configuration = configuration,
+            TestDoidModelFactory.createMinimalTestDoidModel(),
+            addExtendedSuffix = false
+        )
+        writer.write(
+            report = report,
+            configuration = ReportConfiguration.extended(),
+            TestDoidModelFactory.createMinimalTestDoidModel(),
+            addExtendedSuffix = true
+        )
 
         LOGGER.info("Done!")
     }
