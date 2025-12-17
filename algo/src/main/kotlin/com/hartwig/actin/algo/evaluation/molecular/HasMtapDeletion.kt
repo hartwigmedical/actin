@@ -22,11 +22,11 @@ class HasMtapDeletion : EvaluationFunction {
             mtapTested -> {
                 ProteinIsLostByIhc(MTAP).evaluate(record).takeIfPassOrWarn()
                     ?: GeneIsInactivated(MTAP, onlyDeletions = true).evaluate(record).takeIfPassOrWarn()
-                    ?: GeneIsInactivated(MTAP, onlyDeletions = false).evaluate(record).takeIfPassOrWarn()?.let { e ->
-                        e.copy(
+                    ?: GeneIsInactivated(MTAP, onlyDeletions = false).evaluate(record).takeIfPassOrWarn()?.let { evaluation ->
+                        evaluation.copy(
                             result = EvaluationResult.WARN,
                             passMessages = emptySet(),
-                            warnMessages = e.passMessages.ifEmpty { e.warnMessages }
+                            warnMessages = evaluation.passMessages.ifEmpty { evaluation.warnMessages }
                         )
                     }
                     ?: EvaluationFactory.fail("No $MTAP deletion")
@@ -44,6 +44,7 @@ class HasMtapDeletion : EvaluationFunction {
         }
     }
 
-    private fun isPassOrWarn(evaluation: Evaluation)= evaluation.result in setOf(EvaluationResult.PASS, EvaluationResult.WARN)
+    private fun isPassOrWarn(evaluation: Evaluation) = evaluation.result in setOf(EvaluationResult.PASS, EvaluationResult.WARN)
+
     private fun Evaluation.takeIfPassOrWarn() = this.takeIf(::isPassOrWarn)
 }
