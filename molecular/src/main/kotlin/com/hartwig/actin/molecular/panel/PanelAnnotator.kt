@@ -17,9 +17,11 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.util.ExtractionUtil
+import com.hartwig.actin.datamodel.clinical.SequencedHlaAllele
 import java.time.LocalDate
 
 private const val TMB_HIGH_CUTOFF = 10.0
+private val HLA_REGEX = Regex(pattern = """^(?:HLA-)?(?<gene>[A-Z0-9]+)\*(?<alleleGroup>\d{2,}):(?<hlaProtein>\d{2,})$""")
 
 class PanelAnnotator(
     private val registrationDate: LocalDate,
@@ -112,6 +114,26 @@ class PanelAnnotator(
     }
 }
 
-internal fun panelImmunology(hlaAlleles: Set<HlaAllele>): MolecularImmunology? {
-    return hlaAlleles.takeIf { it.isNotEmpty() }?.let { MolecularImmunology(isReliable = true, hlaAlleles = it) }
+internal fun panelImmunology(hlaAlleles: Set<SequencedHlaAllele>): MolecularImmunology? {
+    val extractedAlleles = hlaAlleles.map { allele -> toMolecularHlaAllele(allele) }.toSet()
+    return extractedAlleles.takeIf { it.isNotEmpty() }?.let { MolecularImmunology(isReliable = true, hlaAlleles = it) }
+}
+
+private fun toMolecularHlaAllele(hlaAllele: SequencedHlaAllele): HlaAllele {
+    val match = HLA_REGEX.matchEntire(hlaAllele.name)
+        ?: throw IllegalArgumentException("Can't extract HLA gene, alleleGroup and hlaProtein from '${hlaAllele.name}' (example: A*02:01)")
+    val gene = match.groups["gene"]!!.value
+    val alleleGroup = match.groups["alleleGroup"]!!.value
+    val hlaProtein = match.groups["hlaProtein"]!!.value
+    val normalizedAllele = hlaAllele.name.removePrefix("HLA-")
+
+    return HlaAllele(
+        gene = "HLA-$gene",
+        alleleGroup = alleleGroup,
+        hlaProtein = hlaProtein,
+        tumorCopyNumber = hlaAllele.tumorCopyNumber,
+        hasSomaticMutations = hlaAllele.hasSomaticMutations,
+        evidence = ExtractionUtil.noEvidence(),
+        event = "HLA-$normalizedAllele"
+    )
 }

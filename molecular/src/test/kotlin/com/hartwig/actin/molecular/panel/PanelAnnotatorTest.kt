@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedAmplification
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
+import com.hartwig.actin.datamodel.clinical.SequencedHlaAllele
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.clinical.SequencedVirus
@@ -12,9 +13,10 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
-import com.hartwig.actin.datamodel.molecular.immunology.TestHlaAlleleFactory
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.filter.SpecificGenesFilter
+import com.hartwig.actin.molecular.util.ExtractionUtil
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -124,19 +126,26 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should map HLA alleles to immunology`() {
-        val hlaAllele = TestHlaAlleleFactory.createMinimal().copy(
+        val hlaAllele = SequencedHlaAllele(
+            name = "A*02:01",
+            tumorCopyNumber = null,
+            hasSomaticMutations = false
+        )
+        val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(hlaAlleles = setOf(hlaAllele)))
+
+        val expectedMolecularHlaAllele = HlaAllele(
             gene = "HLA-A",
             alleleGroup = "02",
             hlaProtein = "01",
             tumorCopyNumber = null,
             hasSomaticMutations = false,
+            evidence = ExtractionUtil.noEvidence(),
             event = "HLA-A*02:01"
         )
-        val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(hlaAlleles = setOf(hlaAllele)))
 
-        assertThat(annotatedPanel.immunology).isNotNull
+        assertThat(annotatedPanel.immunology).isNotNull()
         assertThat(annotatedPanel.immunology!!.isReliable).isTrue
-        assertThat(annotatedPanel.immunology!!.hlaAlleles).containsExactly(hlaAllele)
+        assertThat(annotatedPanel.immunology!!.hlaAlleles).containsExactly(expectedMolecularHlaAllele)
     }
 
     private fun createTestSequencingTest(): SequencingTest {
