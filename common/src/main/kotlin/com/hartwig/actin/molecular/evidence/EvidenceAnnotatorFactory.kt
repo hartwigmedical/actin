@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
@@ -19,8 +20,8 @@ object EvidenceAnnotatorFactory {
         tumorDoids: Set<String>,
         patientGender: Gender?
     ): EvidenceAnnotator {
-        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
-            input.copy(drivers = drivers, characteristics = molecularCharacteristics)
+        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics, immunology ->
+            input.copy(drivers = drivers, characteristics = molecularCharacteristics, immunology = immunology)
         }
     }
 
@@ -30,8 +31,8 @@ object EvidenceAnnotatorFactory {
         tumorDoids: Set<String>,
         patientGender: Gender?
     ): EvidenceAnnotator {
-        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics ->
-            input.copy(drivers = drivers, characteristics = molecularCharacteristics)
+        return create(serveRecord, doidEntry, tumorDoids, patientGender) { input, drivers, molecularCharacteristics, immunology ->
+            input.copy(drivers = drivers, characteristics = molecularCharacteristics, immunology = immunology)
         }
     }
 
@@ -40,7 +41,7 @@ object EvidenceAnnotatorFactory {
         doidEntry: DoidEntry,
         tumorDoids: Set<String>,
         patientGender: Gender?,
-        annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics) -> MolecularTest
+        annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics, MolecularImmunology?) -> MolecularTest
     ): EvidenceAnnotator {
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
         val cancerTypeResolver = CancerTypeApplicabilityResolver.create(doidModel, tumorDoids)
