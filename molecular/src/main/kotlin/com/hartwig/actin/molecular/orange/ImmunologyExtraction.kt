@@ -10,6 +10,7 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 object ImmunologyExtraction {
 
     const val LILAC_QC_PASS: String = "PASS"
+    private val HLA_REGEX = Regex(pattern = """^(?<gene>[A-Z]+)\*(?<alleleGroup>\d{2}):(?<hlaProtein>\d{2})$""")
 
     fun extract(record: OrangeRecord): MolecularImmunology {
         val lilac = record.lilac()
@@ -24,8 +25,17 @@ object ImmunologyExtraction {
         return alleles.map { allele ->
             val hasSomaticVariants = allele.somaticMissense() > 0 || allele.somaticNonsenseOrFrameshift() > 0 ||
                     allele.somaticSplice() > 0 || allele.somaticInframeIndel() > 0
+
+            val match = HLA_REGEX.matchEntire(allele.allele())
+                ?: throw IllegalStateException("Can't extract HLA gene, alleleGroup and hlaProtein from ${allele.allele()}")
+            val gene = match.groups["gene"]!!.value
+            val alleleGroup = match.groups["alleleGroup"]!!.value
+            val hlaProtein = match.groups["hlaProtein"]!!.value
+
             HlaAllele(
-                name = allele.allele(),
+                gene = "HLA-$gene",
+                alleleGroup = alleleGroup,
+                hlaProtein = hlaProtein,
                 tumorCopyNumber = allele.tumorCopyNumber(),
                 hasSomaticMutations = hasSomaticVariants,
                 evidence = ExtractionUtil.noEvidence(),

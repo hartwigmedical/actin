@@ -791,7 +791,9 @@
         "isReliable": true,
         "hlaAlleles": [
           {
-            "name": "A*01:01",
+            "gene": "HLA-A",
+            "alleleGroup": "01",
+            "hlaProtein": "01",
             "tumorCopyNumber": 1.0,
             "hasSomaticMutations": false,
             "evidence": {
@@ -801,7 +803,9 @@
             "event": "HLA-A*01:01"
           },
           {
-            "name": "A*02:01",
+            "gene": "HLA-A",
+            "alleleGroup": "02",
+            "hlaProtein": "01",
             "tumorCopyNumber": 0,
             "hasSomaticMutations": false,
             "evidence": {
@@ -811,7 +815,9 @@
             "event": "HLA-A*02:01"
           },
           {
-            "name": "B*01:01",
+            "gene": "HLA-B",
+            "alleleGroup": "01",
+            "hlaProtein": "01",
             "tumorCopyNumber": 1.0,
             "hasSomaticMutations": false,
             "evidence": {
@@ -821,7 +827,9 @@
             "event": "HLA-B*01:01"
           },
           {
-            "name": "B*02:01",
+            "gene": "HLA-B",
+            "alleleGroup": "02",
+            "hlaProtein": "01",
             "tumorCopyNumber": 1.3,
             "hasSomaticMutations": false,
             "evidence": {
@@ -831,7 +839,9 @@
             "event": "HLA-B*02:01"
           },
           {
-            "name": "C*01:01",
+            "gene": "HLA-C",
+            "alleleGroup": "01",
+            "hlaProtein": "01",
             "tumorCopyNumber": 1.0,
             "hasSomaticMutations": false,
             "evidence": {
@@ -841,7 +851,9 @@
             "event": "HLA-C*01:01"
           },
           {
-            "name": "C*02:01",
+            "gene": "HLA-C",
+            "alleleGroup": "02",
+            "hlaProtein": "01",
             "tumorCopyNumber": 1.3,
             "hasSomaticMutations": false,
             "evidence": {

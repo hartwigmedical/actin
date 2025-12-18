@@ -463,7 +463,9 @@ object TestMolecularFactory {
             isReliable = true,
             hlaAlleles = setOf(
                 HlaAllele(
-                    name = "A*02:01",
+                    gene = "HLA-A",
+                    alleleGroup = "02",
+                    hlaProtein = "01",
                     tumorCopyNumber = 1.2,
                     hasSomaticMutations = false,
                     evidence = TestClinicalEvidenceFactory.createExhaustive(),

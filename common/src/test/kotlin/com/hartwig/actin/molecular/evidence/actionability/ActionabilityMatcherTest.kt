@@ -395,7 +395,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val hlaAlelle = TestHlaAlleleFactory.createMinimal()
-            .copy(name = "A*02:01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
+            .copy(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = true, hlaAlleles = setOf(hlaAlelle)))
 
@@ -411,7 +411,7 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val hlaAlelle = TestHlaAlleleFactory.createMinimal()
-            .copy(name = "A*02:01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
+            .copy(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = false, hlaAlleles = setOf(hlaAlelle)))
 

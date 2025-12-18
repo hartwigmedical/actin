@@ -6,7 +6,9 @@ object TestHlaAlleleFactory {
 
     fun createMinimal(): HlaAllele {
         return HlaAllele(
-            name = "",
+            gene = "",
+            alleleGroup = "",
+            hlaProtein = "",
             tumorCopyNumber = 1.0,
             hasSomaticMutations = false,
             evidence = TestClinicalEvidenceFactory.createEmpty(),

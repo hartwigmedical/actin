@@ -4,7 +4,9 @@ import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 
 data class HlaAllele(
-    val name: String,
+    val gene: String,
+    val alleleGroup: String,
+    val hlaProtein: String,
     val tumorCopyNumber: Double,
     val hasSomaticMutations: Boolean,
     override val evidence: ClinicalEvidence,
@@ -12,6 +14,9 @@ data class HlaAllele(
 ) : Actionable, Comparable<HlaAllele> {
 
     override fun compareTo(other: HlaAllele): Int {
-        return name.compareTo(other.name)
+        return Comparator.comparing(HlaAllele::gene)
+            .thenComparing(HlaAllele::alleleGroup)
+            .thenComparing(HlaAllele::hlaProtein)
+            .compare(this, other)
     }
 }
