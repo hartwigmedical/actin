@@ -20,6 +20,7 @@ import com.hartwig.actin.molecular.panel.PanelAnnotator
 import com.hartwig.actin.molecular.panel.PanelCopyNumberAnnotator
 import com.hartwig.actin.molecular.panel.PanelDriverAttributeAnnotator
 import com.hartwig.actin.molecular.panel.PanelFusionAnnotator
+import com.hartwig.actin.molecular.panel.PanelImmunologyAnnotator
 import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.molecular.panel.PanelVariantAnnotator
 import com.hartwig.actin.molecular.panel.PanelVirusAnnotator
@@ -173,6 +174,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
                 panelFusionAnnotator,
                 panelCopyNumberAnnotator,
                 panelVirusAnnotator,
+                PanelImmunologyAnnotator(),
                 panelDriverAttributeAnnotator,
                 panelSpecifications
             ),
