@@ -39,10 +39,10 @@ object ClinicalRecordJson {
     }
 
     fun toJson(record: ClinicalRecord): String {
-        return ClinicalRecordMapper.create().toJson(record)
+        return ClinicalRecordJsonMapper.create().toJson(record)
     }
 
     fun fromJson(json: String): ClinicalRecord {
-        return ClinicalRecordMapper.create().fromJson(json, ClinicalRecord::class.java)
+        return ClinicalRecordJsonMapper.create().fromJson(json, ClinicalRecord::class.java)
     }
 }

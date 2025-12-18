@@ -1,7 +1,7 @@
 package com.hartwig.actin
 
 import com.google.gson.Gson
-import com.hartwig.actin.clinical.serialization.ClinicalRecordMapper
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJsonMapper
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import org.apache.logging.log4j.LogManager
@@ -16,11 +16,11 @@ object TreatmentDatabaseFactory {
     private val LOGGER = LogManager.getLogger(TreatmentDatabaseFactory::class.java)
 
     fun createFromPath(treatmentDbPath: String): TreatmentDatabase {
-        val drugsByName = readFilesInFolder<Drug>(treatmentDbPath, DRUG_FOLDER, ClinicalRecordMapper.create())
+        val drugsByName = readFilesInFolder<Drug>(treatmentDbPath, DRUG_FOLDER, ClinicalRecordJsonMapper.create())
             .associateBy { it.name.lowercase() }
 
         val treatmentsByName =
-            readFilesInFolder<Treatment>(treatmentDbPath, TREATMENT_FOLDER, ClinicalRecordMapper.createWithDrugMap(drugsByName))
+            readFilesInFolder<Treatment>(treatmentDbPath, TREATMENT_FOLDER, ClinicalRecordJsonMapper.createWithDrugMap(drugsByName))
                 .flatMap { treatment ->
                     (treatment.synonyms + treatment.name).map { it.replace(" ", "_").lowercase() to treatment }
                 }.toMap()
@@ -38,8 +38,8 @@ object TreatmentDatabaseFactory {
     @Suppress("unused")
     fun writeToPath(treatmentDbPath: String, treatmentDatabase: TreatmentDatabase) {
         val drugsByName = treatmentDatabase.drugsByName
-        writeFilesInFolder(treatmentDbPath, DRUG_FOLDER, drugsByName, ClinicalRecordMapper.create())
-        writeFilesInFolder(treatmentDbPath, TREATMENT_FOLDER, treatmentDatabase.treatmentsByName, ClinicalRecordMapper.createWithDrugMap(drugsByName))
+        writeFilesInFolder(treatmentDbPath, DRUG_FOLDER, drugsByName, ClinicalRecordJsonMapper.create())
+        writeFilesInFolder(treatmentDbPath, TREATMENT_FOLDER, treatmentDatabase.treatmentsByName, ClinicalRecordJsonMapper.createWithDrugMap(drugsByName))
     }
 
     private inline fun <reified T> writeFilesInFolder(treatmentDbPath: String, folderName: String, content: Map<String, T>, serializer: Gson) {
