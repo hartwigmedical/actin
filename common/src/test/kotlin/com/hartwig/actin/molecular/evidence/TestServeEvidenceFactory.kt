@@ -51,6 +51,16 @@ object TestServeEvidenceFactory {
         return create(molecularCriterium = TestServeMolecularFactory.createCharacteristicCriterium(type = type))
     }
 
+    fun createEvidenceForHla(gene: String, alleleGroup: String, hlaProtein: String): EfficacyEvidence {
+        return create(
+            molecularCriterium = TestServeMolecularFactory.createHlaCriterium(
+                gene = gene,
+                alleleGroup = alleleGroup,
+                hlaProtein = hlaProtein
+            )
+        )
+    }
+
     fun create(
         source: Knowledgebase = ActionabilityConstants.EVIDENCE_SOURCE,
         treatment: String = "treatment",

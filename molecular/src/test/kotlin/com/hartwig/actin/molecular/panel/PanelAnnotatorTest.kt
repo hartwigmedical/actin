@@ -12,14 +12,14 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
-import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.TestHlaAlleleFactory
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.filter.SpecificGenesFilter
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
+import java.time.LocalDate
 
 private const val OTHER_GENE = "other_gene"
 private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HGVS_CODING)
@@ -124,7 +124,14 @@ class PanelAnnotatorTest {
 
     @Test
     fun `Should map HLA alleles to immunology`() {
-        val hlaAllele = HlaAllele(name = "A*02:01")
+        val hlaAllele = TestHlaAlleleFactory.createMinimal().copy(
+            gene = "HLA-A",
+            alleleGroup = "02",
+            hlaProtein = "01",
+            tumorCopyNumber = null,
+            hasSomaticMutations = false,
+            event = "HLA-A*02:01"
+        )
         val annotatedPanel = annotator.annotate(createTestSequencingTest().copy(hlaAlleles = setOf(hlaAllele)))
 
         assertThat(annotatedPanel.immunology).isNotNull

@@ -15,27 +15,30 @@ class HasAnyHLAType(
             "HLA type not tested",
             isMissingMolecularResultForEvaluation = true
         )
-        
+
         if (!immunology.isReliable) {
             return EvaluationFactory.undetermined("HLA typing unreliable", isMissingMolecularResultForEvaluation = true)
         }
 
-        val isMatch: (HlaAllele) -> Boolean = if (matchOnHlaGroup) {
-            { allele -> hlaAllelesToFind.any { group -> allele.name.startsWith(group) } }
-        } else {
-            { allele -> hlaAllelesToFind.contains(allele.name) }
+        val isMatch: (HlaAllele) -> Boolean = { allele ->
+            val alleleToMatch = "${allele.gene.removePrefix("HLA-")}*${allele.alleleGroup}:${allele.hlaProtein}"
+            if (matchOnHlaGroup) {
+                hlaAllelesToFind.any { group -> alleleToMatch.startsWith(group) }
+            } else {
+                hlaAllelesToFind.contains(alleleToMatch)
+            }
         }
 
         val matchingHlaAlleles = immunology.hlaAlleles.filter(isMatch)
 
         if (!test.hasSufficientQuality) {
-            val matchedHlaAlleles = matchingHlaAlleles.map { it.name }
+            val matchedHlaAlleles = matchingHlaAlleles.map { it.event }.toSet()
             return when {
                 matchedHlaAlleles.isNotEmpty() -> {
                     EvaluationFactory.warn(
                         "Has required HLA type ${Format.concatLowercaseWithCommaAndAnd(matchedHlaAlleles)} however undetermined " +
                                 "whether allele is present in tumor",
-                        inclusionEvents = matchedHlaAlleles.map { "HLA-${it}" }.toSet()
+                        inclusionEvents = matchedHlaAlleles
                     )
                 }
 
@@ -49,8 +52,8 @@ class HasAnyHLAType(
             return EvaluationFactory.fail("Does not have HLA type ${Format.concatLowercaseWithCommaAndOr(hlaAllelesToFind)}")
         }
 
-        val matchingHlaAlellesString = Format.concatLowercaseWithCommaAndAnd(matchingHlaAlleles.map { it.name })
-        val inclusionEvents = matchingHlaAlleles.map { "HLA-${it.name}" }.toSet()
+        val matchingHlaAlellesString = Format.concatLowercaseWithCommaAndAnd(matchingHlaAlleles.map { it.event })
+        val inclusionEvents = matchingHlaAlleles.map { it.event }.toSet()
 
         val matchingAllelesUnmodifiedInTumor = matchingHlaAlleles.filter { hlaAllele ->
             val alleleIsPresentInTumor = hlaAllele.tumorCopyNumber?.let { it >= 0.5 } == true

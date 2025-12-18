@@ -464,7 +464,17 @@ object TestMolecularFactory {
     private fun createProperTestImmunology(): MolecularImmunology {
         return MolecularImmunology(
             isReliable = true,
-            hlaAlleles = setOf(HlaAllele(name = "A*02:01", tumorCopyNumber = 1.2, hasSomaticMutations = false)),
+            hlaAlleles = setOf(
+                HlaAllele(
+                    gene = "HLA-A",
+                    alleleGroup = "02",
+                    hlaProtein = "01",
+                    tumorCopyNumber = 1.2,
+                    hasSomaticMutations = false,
+                    evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                    event = "HLA-A*02:01",
+                )
+            ),
         )
     }
 

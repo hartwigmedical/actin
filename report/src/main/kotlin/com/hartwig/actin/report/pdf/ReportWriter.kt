@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.chapters.ReportChapter
 import com.hartwig.actin.report.pdf.util.Constants
@@ -24,7 +25,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
     private val logger = LogManager.getLogger(ReportWriter::class.java)
 
     @Synchronized
-    fun write(report: Report, configuration: ReportConfiguration, addExtendedSuffix: Boolean) {
+    fun write(report: Report, configuration: ReportConfiguration, doidModel: DoidModel, addExtendedSuffix: Boolean) {
         logger.info("Building report for patient ${report.patientId} with configuration $configuration")
 
         logger.debug("Extended suffix enabled: $addExtendedSuffix")
@@ -32,7 +33,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         logger.debug("Initializing output styles")
         Styles.initialize()
 
-        val chapters = ReportContentProvider(report, configuration).provideChapters()
+        val chapters = ReportContentProvider(report, configuration, doidModel).provideChapters()
         writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, report.reportDate, addExtendedSuffix)
     }
 

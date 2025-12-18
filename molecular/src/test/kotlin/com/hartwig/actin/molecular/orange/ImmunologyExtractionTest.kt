@@ -8,6 +8,7 @@ import com.hartwig.hmftools.datamodel.hla.LilacAllele
 import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.assertj.core.data.Offset
 import org.junit.Test
 
@@ -18,7 +19,7 @@ class ImmunologyExtractionTest {
     @Test
     fun `Should extract immunology`() {
         val allele1 = TestLilacFactory.builder()
-            .allele("allele 1")
+            .allele("A*02:01")
             .tumorCopyNumber(1.2)
             .somaticMissense(1.0)
             .somaticInframeIndel(1.0)
@@ -27,7 +28,7 @@ class ImmunologyExtractionTest {
             .build()
 
         val allele2 = TestLilacFactory.builder()
-            .allele("allele 2")
+            .allele("B*01:01")
             .tumorCopyNumber(1.3)
             .somaticMissense(0.0)
             .somaticInframeIndel(0.0)
@@ -41,20 +42,24 @@ class ImmunologyExtractionTest {
         assertThat(immunology.isReliable).isTrue
         assertThat(immunology.hlaAlleles).hasSize(2)
 
-        val hlaAllele1 = findByName(immunology.hlaAlleles, "allele 1")
-        assertThat(hlaAllele1.tumorCopyNumber).isNotNull
-        assertThat(hlaAllele1.tumorCopyNumber!!).isEqualTo(1.2, Offset.offset(EPSILON))
+        val hlaAllele1 = findByName(immunology.hlaAlleles, "HLA-A", "02", "01")
+        assertThat(hlaAllele1.tumorCopyNumber).isEqualTo(1.2, Offset.offset(EPSILON))
         assertThat(hlaAllele1.hasSomaticMutations).isTrue
 
-        val hlaAllele2 = findByName(immunology.hlaAlleles, "allele 2")
-        assertThat(hlaAllele2.tumorCopyNumber).isNotNull
-        assertThat(hlaAllele2.tumorCopyNumber!!).isEqualTo(1.3, Offset.offset(EPSILON))
+        val hlaAllele2 = findByName(immunology.hlaAlleles, "HLA-B", "01", "01")
+        assertThat(hlaAllele2.tumorCopyNumber).isEqualTo(1.3, Offset.offset(EPSILON))
         assertThat(hlaAllele2.hasSomaticMutations).isFalse
     }
 
-    private fun findByName(hlaAlleles: Set<HlaAllele>, nameToFind: String): HlaAllele {
-        return hlaAlleles.find { it.name == nameToFind }
-            ?: throw IllegalStateException("Could not find hla allele with name: $nameToFind")
+    @Test
+    fun `Should throw exception on incorrect hla allele format`() {
+        val orange = withLilacData(TestLilacFactory.builder().allele("A^02_01").build())
+        assertThatIllegalStateException().isThrownBy { ImmunologyExtraction.extract(orange) }
+    }
+
+    private fun findByName(hlaAlleles: Set<HlaAllele>, gene: String, alleleGroup: String, hlaProtein: String): HlaAllele {
+        return hlaAlleles.find { it.gene == gene && it.alleleGroup == alleleGroup && it.hlaProtein == hlaProtein }
+            ?: throw IllegalStateException("Could not find hla allele: ${gene}*${alleleGroup}:$hlaProtein")
     }
 
     private fun withLilacData(vararg alleles: LilacAllele): OrangeRecord {
