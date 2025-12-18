@@ -6,6 +6,9 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonParseException
+import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSerializationContext
+import com.google.gson.JsonSerializer
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -17,7 +20,7 @@ import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.StrictEnumDeserializer
 import java.lang.reflect.Type
 
-object ClinicalGsonDeserializer {
+object ClinicalRecordJsonMapper {
 
     fun create(): Gson {
         return gsonBuilder().create()
@@ -37,11 +40,15 @@ object ClinicalGsonDeserializer {
             .registerTypeAdapter(TreatmentCategory::class.java, StrictEnumDeserializer(TreatmentCategory::class.java))
     }
 
-    private class DrugNameAdapter(private val drugsByName: Map<String, Drug>) : JsonDeserializer<Drug> {
+    private class DrugNameAdapter(private val drugsByName: Map<String, Drug>) : JsonDeserializer<Drug>, JsonSerializer<Drug> {
 
         override fun deserialize(json: JsonElement, type: Type, context: JsonDeserializationContext): Drug {
             return drugsByName[json.asString.lowercase()]
                 ?: throw JsonParseException("Failed to resolve: $json")
+        }
+
+        override fun serialize(drug: Drug, type: Type, context: JsonSerializationContext): JsonElement {
+            return JsonPrimitive(drug.name)
         }
     }
 }
