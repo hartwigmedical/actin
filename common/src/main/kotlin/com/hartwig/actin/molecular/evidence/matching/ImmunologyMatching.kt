@@ -5,9 +5,10 @@ import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
 
 object ImmunologyMatching {
 
+    private val HLA_REGEX = Regex(pattern = """^(?<gene>[A-Z]+)\*(?<alleleGroup>\d{2}):(?<hlaProtein>\d{2})$""")
+
     fun isMatch(actionableHla: ActionableHLA, hlaAllele: HlaAllele): Boolean {
-        val regex = Regex(pattern = """^(?<gene>[A-Z]+)\*(?<alleleGroup>\d{2}):(?<hlaProtein>\d{2})$""")
-        val match = regex.matchEntire(hlaAllele.name)
+        val match = HLA_REGEX.matchEntire(hlaAllele.name)
             ?: throw IllegalStateException("Can't extract HLA gene, alleleGroup and hlaProtein from ${hlaAllele.name}")
         val gene = match.groups["gene"]!!.value
         val alleleGroup = match.groups["alleleGroup"]!!.value

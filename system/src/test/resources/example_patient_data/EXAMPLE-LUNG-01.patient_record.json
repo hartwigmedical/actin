@@ -798,7 +798,7 @@
               "treatmentEvidence": [],
               "eligibleTrials": []
             },
-            "event": "A*01:01"
+            "event": "HLA-A*01:01"
           },
           {
             "name": "A*02:01",
@@ -808,7 +808,7 @@
               "treatmentEvidence": [],
               "eligibleTrials": []
             },
-            "event": "A*02:01"
+            "event": "HLA-A*02:01"
           },
           {
             "name": "B*01:01",
@@ -818,7 +818,7 @@
               "treatmentEvidence": [],
               "eligibleTrials": []
             },
-            "event": "B*01:01"
+            "event": "HLA-B*01:01"
           },
           {
             "name": "B*02:01",
@@ -828,7 +828,7 @@
               "treatmentEvidence": [],
               "eligibleTrials": []
             },
-            "event": "B*02:01"
+            "event": "HLA-B*02:01"
           },
           {
             "name": "C*01:01",
@@ -838,7 +838,7 @@
               "treatmentEvidence": [],
               "eligibleTrials": []
             },
-            "event": "C*01:01"
+            "event": "HLA-C*01:01"
           },
           {
             "name": "C*02:01",
@@ -848,7 +848,7 @@
               "treatmentEvidence": [],
               "eligibleTrials": []
             },
-            "event": "C*02:01"
+            "event": "HLA-C*02:01"
           }
         ]
       },
