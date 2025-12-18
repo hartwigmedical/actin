@@ -23,11 +23,11 @@ class HasAnyHLAType(
         }
 
         val isMatch: (HlaAllele) -> Boolean = { allele ->
-            val alleleToFind = "${allele.gene.removePrefix("HLA-")}*${allele.alleleGroup}:${allele.hlaProtein}"
+            val alleleToMatch = "${allele.gene.removePrefix("HLA-")}*${allele.alleleGroup}:${allele.hlaProtein}"
             if (matchOnHlaGroup) {
-                hlaAllelesToFind.any { group -> alleleToFind.startsWith(group) }
+                hlaAllelesToFind.any { group -> alleleToMatch.startsWith(group) }
             } else {
-                hlaAllelesToFind.contains(alleleToFind)
+                hlaAllelesToFind.contains(alleleToMatch)
             }
         }
 
