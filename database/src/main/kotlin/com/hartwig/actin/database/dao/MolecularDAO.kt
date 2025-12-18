@@ -563,14 +563,18 @@ class MolecularDAO(private val context: DSLContext) {
                 Tables.HLAALLELE,
                 Tables.HLAALLELE.SAMPLEID,
                 Tables.HLAALLELE.ISRELIABLE,
-                Tables.HLAALLELE.NAME,
+                Tables.HLAALLELE.GENE,
+                Tables.HLAALLELE.ALLELEGROUP,
+                Tables.HLAALLELE.HLAPROTEIN,
                 Tables.HLAALLELE.TUMORCOPYNUMBER,
                 Tables.HLAALLELE.HASSOMATICMUTATIONS
             )
                 .values(
                     sampleId,
                     immunology.isReliable,
-                    hlaAllele.name,
+                    hlaAllele.gene,
+                    hlaAllele.alleleGroup,
+                    hlaAllele.hlaProtein,
                     hlaAllele.tumorCopyNumber,
                     hlaAllele.hasSomaticMutations
                 )
