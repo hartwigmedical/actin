@@ -1,51 +1,88 @@
 package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
+import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
+import com.hartwig.actin.icd.IcdModel
+import com.hartwig.actin.icd.datamodel.IcdNode
 import org.junit.Test
 import java.time.LocalDate
 
 class HasActiveInfectionTest {
 
-    private val referenceDate = LocalDate.of(2024, 6, 12)
-    private val function = HasActiveInfection(
-        AtcTestFactory.createProperAtcTree(),
-        referenceDate
+    private val icdModel = IcdModel.create(
+        listOf(
+            IcdNode(IcdConstants.UNSPECIFIED_INFECTION_CODE, listOf(IcdConstants.INFECTIOUS_DISEASES_CHAPTER_CODE), "Infection"),
+            IcdNode(IcdConstants.INFECTIOUS_DISEASES_CHAPTER_CODE, emptyList(), "Infectious diseases chapter")
+        )
     )
+    private val referenceDate = LocalDate.of(2024, 6, 12)
+    private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(
+        name = "some infection",
+        year = referenceDate.year,
+        month = referenceDate.monthValue,
+        icdMainCode = IcdConstants.UNSPECIFIED_INFECTION_CODE
+    )
+    private val function = HasActiveInfection(AtcTestFactory.createProperAtcTree(), referenceDate, icdModel)
     private val systemicAntimicrobialAtc = "J01"
 
     @Test
-    fun `Should pass if patient has active infection`(){
+    fun `Should pass if patient has active infection`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)))
     }
 
     @Test
-    fun `Should fail if patient has known infection status and does not have an active infection`(){
+    fun `Should fail if patient has known infection status and does not have an active infection`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)))
     }
 
     @Test
-    fun `Should warn if infection status unknown but patient uses antimicrobials`(){
+    fun `Should warn if infection status unknown but patient uses antimicrobials`() {
         assertEvaluation(
             EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(null, systemicAntimicrobialAtc, referenceDate.minusDays(1)))
         )
     }
 
     @Test
-    fun `Should warn if infection status set to false but patient uses antimicrobials`(){
+    fun `Should warn if infection status set to false but patient uses antimicrobials`() {
         assertEvaluation(
             EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(false, systemicAntimicrobialAtc, referenceDate.minusDays(1)))
         )
     }
 
     @Test
-    fun `Should evaluate to undetermined if infection status is unknown and patient does not use any antimicrobials`(){
+    fun `Should warn if patient has recent comorbidity which is a child of of ICD chapter infectious diseases`() {
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode)))
+    }
+
+    @Test
+    fun `Should warn if patient has comorbidity with unknown date which is a child of of ICD chapter infectious diseases`() {
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = null)))
+        )
+    }
+
+    @Test
+    fun `Should fail if patient has infection status false and matching comorbidity is too old`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = referenceDate.year - 1))
+                    .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(false, null)))
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if infection status is unknown and patient does not use any antimicrobials`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)))
     }
 
