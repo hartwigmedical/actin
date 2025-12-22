@@ -529,8 +529,8 @@ CREATE TABLE `hlaAllele`
     `gene` varchar(50) NOT NULL,
     `alleleGroup` varchar(50) NOT NULL,
     `hlaProtein` varchar(50) NOT NULL,
-    `tumorCopyNumber` double precision NOT NULL,
-    `hasSomaticMutations` BOOLEAN NOT NULL,
+    `tumorCopyNumber` double precision,
+    `hasSomaticMutations` BOOLEAN,
     PRIMARY KEY (`id`)
 );
 
