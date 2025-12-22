@@ -9,7 +9,6 @@
     <name>Hartwig ACTIN</name>
 
     <modules>
-        <module>datamodel</module>
         <module>common</module>
         <module>molecular</module>
         <module>algo</module>
