@@ -25,6 +25,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
 
+        <actin-datamodel.version>1.0.0</actin-datamodel.version>
         <serve.version>8.6.0</serve.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.1.0</actin-transvar.version>
@@ -159,11 +160,6 @@
         <dependencies>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
-                <artifactId>datamodel</artifactId>
-                <version>local-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig.actin</groupId>
                 <artifactId>common</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
@@ -193,6 +189,11 @@
                 <version>local-SNAPSHOT</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>datamodel</artifactId>
+                <version>${actin-datamodel.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.hartwig.serve</groupId>
                 <artifactId>datamodel</artifactId>
