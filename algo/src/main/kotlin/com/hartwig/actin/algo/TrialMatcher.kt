@@ -65,7 +65,7 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
 
     private fun warnIfPreviouslyParticipatedInSameTrial(trial: Trial): Eligibility {
         val hasParticipatedInSameTrial = EligibilityFunction(
-            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X, listOf(trial.identification.acronym)
+            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X, listOf(trial.identification.acronym)
         )
         return Eligibility(
             references = setOf(),
