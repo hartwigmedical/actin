@@ -25,6 +25,7 @@ class PanelAnnotator(
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
     private val panelVirusAnnotator: PanelVirusAnnotator,
+    private val panelImmunologyAnnotator: PanelImmunologyAnnotator,
     private val panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<SequencingTest> {
@@ -48,6 +49,7 @@ class PanelAnnotator(
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
         val annotatedViruses = panelVirusAnnotator.annotate(input.viruses)
+        val annotatedImmunology = panelImmunologyAnnotator.annotate(input.hlaAlleles)
 
         return MolecularTest(
             date = input.date,
@@ -100,7 +102,7 @@ class PanelAnnotator(
                 },
                 tumorMutationalLoad = null
             ),
-            immunology = null,
+            immunology = annotatedImmunology,
             pharmaco = emptySet(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()

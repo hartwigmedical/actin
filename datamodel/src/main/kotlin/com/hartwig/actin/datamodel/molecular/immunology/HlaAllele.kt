@@ -7,8 +7,8 @@ data class HlaAllele(
     val gene: String,
     val alleleGroup: String,
     val hlaProtein: String,
-    val tumorCopyNumber: Double,
-    val hasSomaticMutations: Boolean,
+    val tumorCopyNumber: Double?,
+    val hasSomaticMutations: Boolean?,
     override val evidence: ClinicalEvidence,
     override val event: String
 ) : Actionable, Comparable<HlaAllele> {

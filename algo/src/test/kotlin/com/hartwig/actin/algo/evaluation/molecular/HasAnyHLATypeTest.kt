@@ -62,8 +62,34 @@ class HasAnyHLATypeTest {
     }
 
     @Test
+    fun `Should warn if correct HLA allele present but tumor copy number is less than 0,5 even when somatic mutation status missing`() {
+        evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(tumorCopyNumber = 0.0, hasSomaticMutations = null)))
+    }
+
+    @Test
     fun `Should warn if correct HLA allele present but also somatic mutations present`() {
         evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(hasSomaticMutations = true)))
+    }
+
+    @Test
+    fun `Should warn if correct HLA allele present but somatic mutation is present even when tumor copy number is missing`() {
+        evaluateFunctions(EvaluationResult.WARN, MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(tumorCopyNumber = null, hasSomaticMutations = true)))
+    }
+
+    @Test
+    fun `Should pass if correct HLA allele present but tumor copy number or somatic mutation status or both are missing`() {
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(tumorCopyNumber = 1.0, hasSomaticMutations = null))
+        )
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(tumorCopyNumber = null, hasSomaticMutations = false))
+        )
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withHlaAllele(CORRECT_HLA.copy(tumorCopyNumber = null, hasSomaticMutations = null))
+        )
     }
 
     @Test

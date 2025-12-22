@@ -47,6 +47,12 @@ data class SequencedVirus(val type: VirusType, val isLowRisk: Boolean = false)
 
 data class SequencedNegativeResult(val gene: String, val molecularTestTarget: MolecularTestTarget)
 
+data class SequencedHlaAllele(
+    val name: String,
+    val tumorCopyNumber: Double? = null,
+    val hasSomaticMutations: Boolean? = null
+)
+
 data class SequencingTest(
     val test: String,
     val date: LocalDate? = null,
@@ -60,6 +66,7 @@ data class SequencingTest(
     val tumorMutationalBurden: Double? = null,
     val isMicrosatelliteUnstable: Boolean? = null,
     val isHomologousRecombinationDeficient: Boolean? = null,
+    val hlaAlleles: Set<SequencedHlaAllele> = emptySet(),
     val knownSpecifications: Boolean = false,
     val reportHash: String? = null
 )
