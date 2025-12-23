@@ -12,8 +12,7 @@ More details on the following modules are available from the links below:
 
 | Module                 | Description                                                                                |
 |------------------------|--------------------------------------------------------------------------------------------|
-| [Molecular](molecular) | Interpretation of molecular tests and ingestion into ACTIN.                                |
-| [Trial](trial)         | Conversion of trial configuration to ACTIN-readable trial database.                        |
+| [Molecular](molecular) | Interpretation of molecular tests and ingestion into ACTIN.                                | |
 | [Algo](algo)           | Matching all data from a patient to available treatment options.                           |
 | [Database](database)   | Capture of all ACTIN data in a database.                                                   |
 | [Report](report)       | Create a patient-centric PDF report with available treatment options.                      |
