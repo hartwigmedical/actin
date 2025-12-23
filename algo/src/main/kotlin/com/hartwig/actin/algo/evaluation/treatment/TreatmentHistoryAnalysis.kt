@@ -24,9 +24,9 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
 
     companion object {
         fun create(record: PatientRecord, ignoreCurativeNeoAdjuvantOrAdjuvant: Boolean = false): TreatmentHistoryAnalysis {
-            val intents = setOf(Intent.CURATIVE, Intent.NEOADJUVANT, Intent.ADJUVANT)
+            val intentsToIgnore = setOf(Intent.CURATIVE, Intent.NEOADJUVANT, Intent.ADJUVANT)
             val filteredRecord = if (ignoreCurativeNeoAdjuvantOrAdjuvant) {
-                record.copy(oncologicalHistory = record.oncologicalHistory.filter { it.intents?.intersect(intents).isNullOrEmpty() })
+                record.copy(oncologicalHistory = record.oncologicalHistory.filter { it.intents?.intersect(intentsToIgnore).isNullOrEmpty() })
             } else record
 
             val platinumCombinations = filteredRecord.oncologicalHistory.asSequence()
