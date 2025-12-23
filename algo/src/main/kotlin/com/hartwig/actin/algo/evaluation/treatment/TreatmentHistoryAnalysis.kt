@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 
 class TreatmentHistoryAnalysis(private val record: PatientRecord, private val platinumCombinations: Set<Int>) {
 
@@ -22,14 +23,21 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
         record.oncologicalHistory.any { it.treatments.map(Treatment::name).containsAll(treatmentNames) }
 
     companion object {
-        fun create(record: PatientRecord): TreatmentHistoryAnalysis {
-            val platinumCombinations = record.oncologicalHistory.asSequence()
+        fun create(record: PatientRecord, ignoreCurativeNeoAdjuvantOrAdjuvant: Boolean = false): TreatmentHistoryAnalysis {
+            val filteredRecord = if (ignoreCurativeNeoAdjuvantOrAdjuvant) {
+                record.copy(oncologicalHistory = record.oncologicalHistory.filter {
+                    it.intents?.intersect(setOf(Intent.CURATIVE, Intent.ADJUVANT, Intent.NEOADJUVANT))?.isEmpty() == true
+                })
+            } else record
+
+            val platinumCombinations = filteredRecord.oncologicalHistory.asSequence()
                 .flatMap { it.allTreatments() }
                 .filterIsInstance<DrugTreatment>()
                 .filter { treatment -> treatment.drugs.any { it.drugTypes.contains(DrugType.PLATINUM_COMPOUND) } }
                 .map { it.drugs.count { drug -> drug.category == TreatmentCategory.CHEMOTHERAPY } }
                 .toSet()
-            return TreatmentHistoryAnalysis(record, platinumCombinations)
+
+            return TreatmentHistoryAnalysis(filteredRecord, platinumCombinations)
         }
     }
 }
