@@ -78,6 +78,15 @@ The following composite functions are available:
 Some rules require 1 ("X") or more ("X" and "Y") additional configuration parameter(s) that can be set to match the requirements of each
 trial.
 
+#### Adding new rules
+
+Rules are currently maintained within the [ACTIN Datamodel](https://github.com/hartwigmedical/actin-datamodel).  Adding a new rule involves the following steps:
+- Add the rule to `EligibilityRule` enum.
+- Release ACTIN datamodel either as a beta for testing, or new release, via normal tagging process.
+- Bump datamodel dependency in both the pom.xml in this repository and in the [ACTIN Trial](https://github.com/hartwigmedical/actin-trial) repository. 
+
+This is a temporary setup and soon will be modified in favour of an approach where datamodel and trial does not have to be modified. 
+
 The following criterion algorithms ('rules') are available:
 
 ##### Rules related to general characteristics / statements
