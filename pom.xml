@@ -368,7 +368,7 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>datamodel</artifactId>
-                <version>local-SNAPSHOT</version>
+                <version>${actin-datamodel.version}</version>
                 <scope>test</scope>
                 <type>test-jar</type>
             </dependency>
