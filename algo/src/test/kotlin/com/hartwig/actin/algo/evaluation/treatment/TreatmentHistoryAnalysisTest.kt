@@ -48,13 +48,14 @@ class TreatmentHistoryAnalysisTest {
     private val undefinedChemo = TreatmentTestFactory.drugTreatment("CHEMOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
 
     @Test
-    fun `Should exclude curative, neoadjuvant and adjuvant entries when flag is set to ignore these`() {
+    fun `Should return false if treatment history only contains curative, neoadjuvant and adjuvant entries and flag to ignore is set to true`() {
         val history = listOf(Intent.CURATIVE, Intent.ADJUVANT, Intent.NEOADJUVANT).map { intent ->
             TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet), intents = setOf(intent))
         }
         val analysis =
             TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistory(history), ignoreCurativeNeoAdjuvantOrAdjuvant = true)
         assertThat(analysis.receivedPlatinumDoublet()).isFalse()
+        assertThat(analysis.receivedPlatinumTripletOrAbove()).isFalse()
     }
 
     @Test
