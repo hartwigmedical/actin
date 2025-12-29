@@ -48,6 +48,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to hasHadLimitedSystemicTreatmentsCreator(),
+            EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES_EXCLUDING_ADJUVANT_OR_NEOADJUVANT_WITH_PROGRESSION_AFTER_MORE_THAN_Y_MONTHS to hasHadSomeSystemicTreatmentsExcludingAdjuvantWithPdAfterMonthsCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_EXCLUDING_ADJUVANT_OR_NEOADJUVANT_WITH_PROGRESSION_AFTER_MORE_THAN_Y_MONTHS to hasHadLimitedSystemicTreatmentsExcludingAdjuvantWithPdAfterMonthsCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT to hasHadAnyCancerTreatmentCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_X to hasHadAnyCancerTreatmentIgnoringCategoriesCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X_OF_TYPES_Y_WITHIN_Z_MONTHS to hasHadAnyCancerTreatmentIgnoringTypesWithinMonthsCreator(),
@@ -221,6 +223,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val maxSystemicTreatments = functionInputResolver().createOneIntegerInput(function)
             HasHadLimitedSystemicTreatments(maxSystemicTreatments)
+        }
+    }
+
+    private fun hasHadSomeSystemicTreatmentsExcludingAdjuvantWithPdAfterMonthsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (minSystemicTreatments, monthsUntilPd) = functionInputResolver().createTwoIntegersInput(function)
+            HasHadSomeSystemicTreatmentsExcludingAdjuvantWithPdAfterMonths(minSystemicTreatments, monthsUntilPd, referenceDate)
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsExcludingAdjuvantWithPdAfterMonthsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (maxSystemicTreatments, monthsUntilPd) = functionInputResolver().createTwoIntegersInput(function)
+            HasHadLimitedSystemicTreatmentsExcludingAdjuvantWithPdAfterMonths(maxSystemicTreatments, monthsUntilPd, referenceDate)
         }
     }
 
