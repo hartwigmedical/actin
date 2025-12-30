@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
@@ -12,21 +13,29 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val referenceDate: LocalDate) : EvaluationFunction {
+class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val referenceDate: LocalDate, private val metastaticOnly: Boolean) :
+    EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val priorSystemicTreatments = priorTreatments.filter { it.treatments.any(Treatment::isSystemic) }
-        val (curativeTreatments, nonCurativeTreatments) = priorSystemicTreatments.partition { it.intents?.contains(Intent.CURATIVE) == true }
-        val (recentNonCurativeTreatments, nonRecentNonCurativeTreatments) = partitionRecentTreatments(nonCurativeTreatments, false)
-        val (recentNonCurativeTreatmentsIncludingUnknown, _) = partitionRecentTreatments(nonCurativeTreatments, true)
-        val nonCurativeTreatmentsWithUnknownStopDate = nonCurativeTreatments.filter { it.stopYear() == null }
+        val wrongIntents = if (metastaticOnly) Intent.curativeAdjuvantNeoadjuvantSet() else setOf(Intent.CURATIVE)
+        val (wrongIntentTreatments, potentiallyCorrectIntentTreatments) =
+            priorSystemicTreatments.partition { it.intents?.any { intent -> wrongIntents.contains(intent) } == true }
+        val (recentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) =
+            partitionRecentTreatments(potentiallyCorrectIntentTreatments, false)
+        val (recentPotentiallyCorrectIntentTreatmentsIncludingUnknown, _) =
+            partitionRecentTreatments(potentiallyCorrectIntentTreatments, true)
+        val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = potentiallyCorrectIntentTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
+        val messageEnding = if (metastaticOnly) "metastatic setting" else "metastatic or advanced setting"
 
         return when {
-            curativeTreatments.isNotEmpty() && nonCurativeTreatments.isEmpty() -> {
+            wrongIntentTreatments.isNotEmpty() && potentiallyCorrectIntentTreatments.isEmpty() -> {
                 EvaluationFactory.fail(
                     createMessage(
-                        "Has only had prior systemic treatment with curative intent - thus presumably not in metastatic or advanced setting",
+                        "Has only had prior systemic treatment with ${
+                            Format.concatItemsWithAnd(wrongIntentTreatments.mapNotNull { it.intents }.toSet().flatten())
+                        } intent - thus presumably not in $messageEnding",
                         priorSystemicTreatments
                     )
                 )
@@ -35,7 +44,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             palliativeIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had prior systemic treatment in metastatic or advanced setting",
+                        "Has had prior systemic treatment in $messageEnding",
                         palliativeIntentTreatments
                     )
                 )
@@ -44,7 +53,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             recentNonCurativeTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had recent systemic treatment - presumably in metastatic or advanced setting",
+                        "Has had recent systemic treatment - presumably in $messageEnding",
                         recentNonCurativeTreatments
                     )
                 )
@@ -54,7 +63,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 EvaluationFactory.pass(
                     createMessage(
                         "Has had more than one systemic lines with unknown or non-curative intent " +
-                                "- presumably at least one in metastatic or advanced setting",
+                                "- presumably at least one in $messageEnding",
                         nonCurativeTreatments
                     )
                 )
@@ -67,7 +76,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 EvaluationFactory.pass(
                     createMessage(
                         "Has had a systemic line with unknown or non-curative intent not followed by radiotherapy or surgery " +
-                                "- thus presumably in metastatic or advanced setting",
+                                "- thus presumably in $messageEnding",
                         recentNonCurativeTreatmentsIncludingUnknown
                     )
                 )
@@ -76,7 +85,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
             nonCurativeTreatmentsWithUnknownStopDate.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
-                        "Has had prior systemic treatment but undetermined if in metastatic or advanced setting",
+                        "Has had prior systemic treatment but undetermined if in $messageEnding",
                         nonCurativeTreatmentsWithUnknownStopDate
                     )
                 )
