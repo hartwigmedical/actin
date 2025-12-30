@@ -3,19 +3,53 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import org.junit.Test
 import java.time.LocalDate
 
 class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineTest {
 
     private val referenceDate = LocalDate.of(2025, 12, 1)
+    private val nonRecentDate = referenceDate.minusYears(5)
     private val maxMonthsBeforeNext = 12
     private val function = HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
-        minSystemicTreatments = 1,
+        minSystemicTreatments = 2,
         maxMonthsBeforeNextLine = maxMonthsBeforeNext,
         referenceDate = referenceDate
     )
     private val systemicTreatment = TreatmentTestFactory.treatment("Systemic Treatment", isSystemic = true)
+    private val nonRecentPalliativeSystemic =
+        TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(systemicTreatment),
+            intents = setOf(Intent.PALLIATIVE),
+            startYear = nonRecentDate.year,
+            startMonth = nonRecentDate.monthValue
+        )
+    private val recentPalliativeSystemic = nonRecentPalliativeSystemic.copy(
+        treatments = setOf(TreatmentTestFactory.treatment("Other", isSystemic = true)),
+        startYear = referenceDate.year,
+        startMonth = referenceDate.monthValue
+    )
+    private val nonRecentCurativeNeoadjuvantAdjuvantTreatments = listOf(
+        TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(TreatmentTestFactory.treatment("cur", true)),
+            intents = setOf(Intent.CURATIVE),
+            startYear = nonRecentDate.year,
+            startMonth = nonRecentDate.monthValue
+        ),
+        TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(TreatmentTestFactory.treatment("adj", true)),
+            intents = setOf(Intent.ADJUVANT),
+            startYear = nonRecentDate.minusYears(2).year,
+            startMonth = nonRecentDate.minusYears(2).monthValue
+        ),
+        TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(TreatmentTestFactory.treatment("neo", true)),
+            intents = setOf(Intent.NEOADJUVANT),
+            startYear = nonRecentDate.minusYears(4).year,
+            startMonth = nonRecentDate.minusYears(4).monthValue
+        )
+    )
 
     @Test
     fun `Should fail when treatment history is empty`() {
@@ -28,7 +62,25 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
             EvaluationResult.FAIL,
             function.evaluate(
                 TreatmentTestFactory.withTreatmentHistoryEntry(
-                    TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(TreatmentTestFactory.treatment("", false)))
+                    TreatmentTestFactory.treatmentHistoryEntry(
+                        treatments = setOf(TreatmentTestFactory.treatment("", false)),
+                        intents = setOf(Intent.PALLIATIVE)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail when threshold is not met`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TreatmentTestFactory.withTreatmentHistoryEntry(
+                    TreatmentTestFactory.treatmentHistoryEntry(
+                        treatments = setOf(TreatmentTestFactory.treatment("", false)),
+                        intents = setOf(Intent.PALLIATIVE)
+                    )
                 )
             )
         )
@@ -39,9 +91,7 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TreatmentTestFactory.withTreatmentHistoryEntry(
-                    TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(systemicTreatment))
-                )
+                TreatmentTestFactory.withTreatmentHistory(listOf(nonRecentPalliativeSystemic, recentPalliativeSystemic))
             )
         )
     }
@@ -51,12 +101,11 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                TreatmentTestFactory.withTreatmentHistoryEntry(
-                    TreatmentTestFactory.treatmentHistoryEntry(
-                        treatments = setOf(
-                            systemicTreatment,
-                            TreatmentTestFactory.treatment("", true)
-                        )
+                TreatmentTestFactory.withTreatmentHistory(
+                    listOf(
+                        nonRecentPalliativeSystemic,
+                        recentPalliativeSystemic,
+                        nonRecentPalliativeSystemic.copy(treatments = setOf(TreatmentTestFactory.treatment("Another", isSystemic = true)))
                     )
                 )
             )
@@ -64,54 +113,37 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
     }
 
     @Test
-    fun `Should exclude curative and (neo)adjuvant treatments started too long before next line`() {
-//        val adjuvantTreatment = TreatmentTestFactory.treatmentHistoryEntry(
-//            treatments = setOf(TreatmentTestFactory.treatment("Adjuvant", true)),
-//            intents = setOf(Intent.ADJUVANT),
-//            startYear = 2023,
-//            startMonth = 10
-//        )
-//        val systemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(
-//            treatments = setOf(systemicTreatment),
-//            startYear = 2025,
-//            startMonth = 1
-//        )
-//        val treatments = listOf(adjuvantTreatment, systemicTreatment)
-//        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+    fun `Should fail when history contains more lines than threshold but only curative and (neo)adjuvant treatments started too long before next line`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(nonRecentCurativeNeoadjuvantAdjuvantTreatments))
+        )
     }
 
     @Test
-    fun `Should exclude curative and (neo)adjuvant treatments started too long before reference date if no next line present`() {
-//        val adjuvantTreatment = TreatmentTestFactory.treatmentHistoryEntry(
-//            treatments = setOf(TreatmentTestFactory.treatment("Adjuvant", true)),
-//            intents = setOf(Intent.ADJUVANT),
-//            startYear = 2023,
-//            startMonth = 10
-//        )
-//        val systemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(
-//            treatments = setOf(systemicTreatment),
-//            startYear = 2025,
-//            startMonth = 1
-//        )
-//        val treatments = listOf(adjuvantTreatment, systemicTreatment)
-//        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+    fun `Should fail when history contains one palliative line and others are curative and (neo)adjuvant treatments started too long before next line`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TreatmentTestFactory.withTreatmentHistory(
+                    listOf(recentPalliativeSystemic) + nonRecentCurativeNeoadjuvantAdjuvantTreatments
+                )
+            )
+        )
     }
 
     @Test
     fun `Should include curative and (neo)adjuvant treatments when started within max months before next line`() {
-//        val adjuvantTreatment = TreatmentTestFactory.treatmentHistoryEntry(
-//            treatments = setOf(TreatmentTestFactory.treatment("Adjuvant", true)),
-//            intents = setOf(Intent.ADJUVANT),
-//            startYear = 2024,
-//            startMonth = 12
-//        )
-//        val systemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(
-//            treatments = setOf(systemicTreatment),
-//            startYear = 2025,
-//            startMonth = 1
-//        )
-//        val treatments = listOf(adjuvantTreatment, systemicTreatment)
-//        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        listOf(Intent.CURATIVE, Intent.NEOADJUVANT, Intent.ADJUVANT).forEach { intent ->
+            val firstTreatment = TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(TreatmentTestFactory.treatment(intent.name, true)),
+                intents = setOf(intent),
+                startYear = referenceDate.year,
+                startMonth = referenceDate.monthValue - 8
+            )
+            val treatments = listOf(firstTreatment, recentPalliativeSystemic)
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
     }
 
     @Test
@@ -130,4 +162,6 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
 //        val treatments = listOf(adjuvantTreatment, systemicTreatment)
 //        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
     }
+
+    //TODO()// ADD TESTS FOR UNKNOWN DATES SCENARIOS
 }
