@@ -28,6 +28,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
         val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = potentiallyCorrectIntentTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
         val messageEnding = if (metastaticOnly) "metastatic setting" else "metastatic or advanced setting"
+        val wrongIntentMessage = if (metastaticOnly) "non (neo)adjuvant/curative intent" else "non-curative intent"
 
         return when {
             wrongIntentTreatments.isNotEmpty() && potentiallyCorrectIntentTreatments.isEmpty() -> {
@@ -43,64 +44,61 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
 
             palliativeIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    createMessage(
-                        "Has had prior systemic treatment in $messageEnding",
-                        palliativeIntentTreatments
-                    )
+                    createMessage("Has had prior systemic treatment in $messageEnding", palliativeIntentTreatments)
                 )
             }
 
-            recentNonCurativeTreatments.isNotEmpty() -> {
+            recentPotentiallyCorrectIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     createMessage(
                         "Has had recent systemic treatment - presumably in $messageEnding",
-                        recentNonCurativeTreatments
+                        recentPotentiallyCorrectIntentTreatments
                     )
                 )
             }
 
-            nonCurativeTreatments.size > 1 -> {
+            potentiallyCorrectIntentTreatments.size > 1 -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had more than one systemic lines with unknown or non-curative intent " +
+                        "Has had more than one systemic lines with unknown or $wrongIntentMessage" +
                                 "- presumably at least one in $messageEnding",
-                        nonCurativeTreatments
+                        potentiallyCorrectIntentTreatments
                     )
                 )
             }
 
-            recentNonCurativeTreatmentsIncludingUnknown.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
+            recentPotentiallyCorrectIntentTreatmentsIncludingUnknown.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
                 priorTreatments,
-                recentNonCurativeTreatmentsIncludingUnknown.first()
+                recentPotentiallyCorrectIntentTreatmentsIncludingUnknown.first()
             ) -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had a systemic line with unknown or non-curative intent not followed by radiotherapy or surgery " +
+                        "Has had a systemic line with unknown or $wrongIntentMessage not followed by radiotherapy or surgery " +
                                 "- thus presumably in $messageEnding",
-                        recentNonCurativeTreatmentsIncludingUnknown
+                        recentPotentiallyCorrectIntentTreatmentsIncludingUnknown
                     )
                 )
             }
 
-            nonCurativeTreatmentsWithUnknownStopDate.isNotEmpty() -> {
+            potentiallyCorrectIntentTreatmentsWithUnknownStopDate.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
                         "Has had prior systemic treatment but undetermined if in $messageEnding",
-                        nonCurativeTreatmentsWithUnknownStopDate
+                        potentiallyCorrectIntentTreatmentsWithUnknownStopDate
                     )
                 )
             }
 
-            nonRecentNonCurativeTreatments.isNotEmpty() -> {
+            nonRecentPotentiallyCorrectIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
-                        "Has had prior systemic treatment >6 months ago but undetermined if in metastatic or advanced setting",
-                        nonRecentNonCurativeTreatments
+                        "Has had prior systemic treatment >6 months ago but undetermined if in $messageEnding",
+                        nonRecentPotentiallyCorrectIntentTreatments
                     )
                 )
             }
 
-            else -> EvaluationFactory.fail("No prior systemic treatment in metastatic or advanced setting")
+            else -> EvaluationFactory.fail("No prior systemic treatment in $messageEnding")
         }
     }
 
