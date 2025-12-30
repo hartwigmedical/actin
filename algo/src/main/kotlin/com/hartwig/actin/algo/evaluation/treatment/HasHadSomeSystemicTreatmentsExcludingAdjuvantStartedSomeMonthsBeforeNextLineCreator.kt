@@ -1,0 +1,89 @@
+package com.hartwig.actin.algo.evaluation.treatment
+
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.treatmentHistoryEntryIsSystemic
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+
+class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
+    private val minSystemicTreatments: Int,
+    private val maxMonthsBeforeNextLine: Int,
+    private val referenceDate: LocalDate
+) : EvaluationFunction {
+
+    override fun evaluate(record: PatientRecord): Evaluation {
+
+        val curativeNeoAdjuvantOrAdjuvant = setOf(Intent.CURATIVE, Intent.NEOADJUVANT, Intent.ADJUVANT)
+        val systemic = record.oncologicalHistory.filter(::treatmentHistoryEntryIsSystemic)
+        val filteredHistory = systemic.filter { entry ->
+            val passOnIntent = entry.intents?.intersect(curativeNeoAdjuvantOrAdjuvant).isNullOrEmpty()
+            val passOnDate = entry.startedWithinMaxMonthsBeforeNextLine(systemic, maxMonthsBeforeNextLine)
+            passOnIntent || passOnDate != false
+        }
+        val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(filteredHistory)
+        val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(filteredHistory)
+
+        return when {
+            minSystemicCount >= minSystemicTreatments -> {
+                EvaluationFactory.pass("Received at least $minSystemicTreatments systemic treatments")
+            }
+
+            maxSystemicCount >= minSystemicTreatments -> {
+                EvaluationFactory.undetermined("Undetermined if received at least $minSystemicTreatments systemic treatments")
+            }
+
+            else -> {
+                EvaluationFactory.fail("Has not received at least $minSystemicTreatments systemic treatments")
+            }
+        }
+    }
+
+    private fun TreatmentHistoryEntry.startedWithinMaxMonthsBeforeNextLine(
+        history: List<TreatmentHistoryEntry>,
+        maxMonthsBeforeNextLine: Int
+    ): Boolean? {
+
+        val sortedHistory = history.sortedWith(TreatmentHistoryEntryStartDateComparator())
+        val nextLine = sortedHistory.getOrNull(sortedHistory.indexOf(this) + 1)
+
+        return when {
+            this.startYear == null -> null
+
+            nextLine != null && nextLine.startYear == null -> null
+
+            else -> {
+                val (referenceMinDate, referenceMaxDate) =
+                    if (nextLine == null) {
+                        referenceDate to referenceDate
+                    } else {
+                        dateRange(nextLine.startYear!!, nextLine.startMonth)
+                    }
+
+                val (entryStartMinDate, entryStartMaxDate) = dateRange(this.startYear!!, this.startMonth)
+                val minMonthsBetween = ChronoUnit.MONTHS.between(entryStartMaxDate, referenceMinDate)
+                val maxMonthsBetween = ChronoUnit.MONTHS.between(entryStartMinDate, referenceMaxDate)
+
+                when {
+                    minMonthsBetween > maxMonthsBeforeNextLine -> false
+                    maxMonthsBetween <= maxMonthsBeforeNextLine -> true
+                    else -> null
+                }
+            }
+        }
+    }
+
+    private fun dateRange(year: Int, month: Int?): Pair<LocalDate, LocalDate> {
+        return when {
+            month == null -> LocalDate.of(year, 1, 1) to LocalDate.of(year, 12, 31)
+            else -> {
+                val date = LocalDate.of(year, month, 1)
+                date to date
+            }
+        }
+    }
+}

@@ -6,9 +6,9 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
 
-class HasHadSomeSystemicTreatmentsExcludingAdjuvantWithPdAfterMonths(
-    private val minSystemicTreatments: Int,
-    private val monthsUntilPd: Int,
+class HasHadLimitedSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
+    private val maxSystemicTreatments: Int,
+    private val maxMonthsBeforeNextLine: Int,
     private val referenceDate: LocalDate
 ) : EvaluationFunction {
 
@@ -16,16 +16,16 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantWithPdAfterMonths(
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(record.oncologicalHistory)
         val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.oncologicalHistory)
         return when {
-            minSystemicCount >= minSystemicTreatments -> {
-                EvaluationFactory.pass("Received at least $minSystemicTreatments systemic treatments")
+            maxSystemicCount <= maxSystemicTreatments -> {
+                EvaluationFactory.pass("Has received at most $maxSystemicTreatments systemic treatments")
             }
 
-            maxSystemicCount >= minSystemicTreatments -> {
-                EvaluationFactory.undetermined("Undetermined if received at least $minSystemicTreatments systemic treatments")
+            minSystemicCount <= maxSystemicTreatments -> {
+                EvaluationFactory.undetermined("Undetermined if received more than $maxSystemicTreatments systemic treatments")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received at least $minSystemicTreatments systemic treatments")
+                EvaluationFactory.fail("Has received more than $maxSystemicTreatments systemic treatments")
             }
         }
     }
