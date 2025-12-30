@@ -19,10 +19,12 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val curativeNeoAdjuvantOrAdjuvant = setOf(Intent.CURATIVE, Intent.NEOADJUVANT, Intent.ADJUVANT)
-        val systemic = record.oncologicalHistory.filter(::treatmentHistoryEntryIsSystemic)
-        val filteredHistory = systemic.filter { entry ->
+        val sortedSystemicHistory =
+            record.oncologicalHistory.filter(::treatmentHistoryEntryIsSystemic).sortedWith(TreatmentHistoryEntryStartDateComparator())
+        val filteredHistory = sortedSystemicHistory.filterIndexed { index, entry ->
+            val nextLine = sortedSystemicHistory.getOrNull(index + 1)
             val passOnIntent = entry.intents?.intersect(curativeNeoAdjuvantOrAdjuvant).isNullOrEmpty()
-            val passOnDate = entry.startedWithinMaxMonthsBeforeNextLine(systemic, maxMonthsBeforeNextLine)
+            val passOnDate = entry.startedWithinMaxMonthsBeforeNextLine(nextLine, maxMonthsBeforeNextLine)
             passOnIntent || passOnDate != false
         }
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(filteredHistory)
@@ -44,13 +46,9 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
     }
 
     private fun TreatmentHistoryEntry.startedWithinMaxMonthsBeforeNextLine(
-        history: List<TreatmentHistoryEntry>,
+        nextLine: TreatmentHistoryEntry?,
         maxMonthsBeforeNextLine: Int
     ): Boolean? {
-
-        val sortedHistory = history.sortedWith(TreatmentHistoryEntryStartDateComparator())
-        val nextLine = sortedHistory.getOrNull(sortedHistory.indexOf(this) + 1)
-
         return when {
             this.startYear == null -> null
 
