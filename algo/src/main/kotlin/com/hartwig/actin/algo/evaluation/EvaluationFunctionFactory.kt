@@ -41,7 +41,7 @@ class EvaluationFunctionFactory(
     }
 
     private fun createMultipleCompositeParameters(function: EligibilityFunction): List<EvaluationFunction> {
-        return IntRange(0, function.parameters.size).map { function.param<FunctionParameter>(it).value }.map(::create)
+        return (0 until function.parameters.size).map { function.param<FunctionParameter>(it).value }.map(::create)
     }
 
     companion object {

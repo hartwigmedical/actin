@@ -12,7 +12,10 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.StringParameter
 import com.hartwig.actin.datamodel.trial.TestTrialFactory
+import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.trial.input.ruleAsEnum
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -35,7 +38,7 @@ data class CombinableMessage(val combineKey: String, val message: String) : Eval
 
 class TrialMatcherTest {
     private val patient = TestPatientFactory.createProperTestPatientRecord()
-    private val trial = TestTrialFactory.createProperTestTrial()
+    private val trial = TestTrialFactory.createProperTestTrial().withTypedAgeParameter()
     private val matcher = TrialMatcher(createTestEvaluationFunctionFactory())
 
     @Test
@@ -141,4 +144,20 @@ class TrialMatcherTest {
                 ?: throw IllegalStateException("Cannot find cohort with id '$cohortIdToFind'")
         }
     }
+}
+
+private fun Trial.withTypedAgeParameter(): Trial {
+    val updatedEligibility = generalEligibility.map { eligibility ->
+        if (eligibility.function.ruleAsEnum() == EligibilityRule.IS_AT_LEAST_X_YEARS_OLD) {
+            val updatedFunction = when (val param = eligibility.function.parameters.firstOrNull()) {
+                is IntegerParameter -> eligibility.function
+                is StringParameter -> eligibility.function.copy(parameters = listOf(IntegerParameter(param.value.toInt())))
+                else -> eligibility.function
+            }
+            eligibility.copy(function = updatedFunction)
+        } else {
+            eligibility
+        }
+    }
+    return copy(generalEligibility = updatedEligibility)
 }

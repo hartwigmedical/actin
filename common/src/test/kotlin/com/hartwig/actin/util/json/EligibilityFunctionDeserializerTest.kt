@@ -2,6 +2,7 @@ package com.hartwig.actin.util.json
 
 import com.google.gson.GsonBuilder
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -12,7 +13,9 @@ class EligibilityFunctionDeserializerTest {
     fun `Should deserialize eligibility function without modification`() {
         val function = EligibilityFunction(
             rule = EligibilityRule.NOT.name, parameters = listOf(
-                EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
+                FunctionParameter(
+                    EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
+                )
             )
         )
         val gson = GsonBuilder().registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer()).create()

@@ -1,6 +1,8 @@
 package com.hartwig.actin.trial.sort
 
+import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -13,38 +15,46 @@ class EligibilityFunctionComparatorTest {
             EligibilityFunction(rule = "IS_AT_LEAST_X_YEARS_OLD", parameters = emptyList()),
             EligibilityFunction(
                 rule = "NOT",
-                parameters = listOf(EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList()))
+                parameters = listOf(
+                    FunctionParameter(EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList()))
+                )
             ),
             EligibilityFunction(
                 rule = "NOT",
-                parameters = listOf(EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList()))
-            ),
-            EligibilityFunction(
-                rule = "AND",
                 parameters = listOf(
-                    EligibilityFunction(
-                        rule = "NOT",
-                        parameters = listOf(
-                            EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList())
-                        )
-                    ),
-                    EligibilityFunction(rule = "HAS_ACTIVE_INFECTION", parameters = emptyList())
+                    FunctionParameter(EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList()))
                 )
             ),
             EligibilityFunction(
                 rule = "AND",
                 parameters = listOf(
-                    EligibilityFunction(
-                        rule = "NOT",
-                        parameters = listOf(
-                            EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList())
+                    FunctionParameter(
+                        EligibilityFunction(
+                            rule = "NOT",
+                            parameters = listOf(
+                                FunctionParameter(EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList()))
+                            )
                         )
                     ),
-                    EligibilityFunction(rule = "HAS_ACTIVE_INFECTION", parameters = emptyList())
+                    FunctionParameter(EligibilityFunction(rule = "HAS_ACTIVE_INFECTION", parameters = emptyList()))
                 )
             ),
-            EligibilityFunction(rule = "HAS_INR_ULN_OF_AT_MOST_X", parameters = listOf("5")),
-            EligibilityFunction(rule = "HAS_INR_ULN_OF_AT_MOST_X", parameters = listOf("6"))
+            EligibilityFunction(
+                rule = "AND",
+                parameters = listOf(
+                    FunctionParameter(
+                        EligibilityFunction(
+                            rule = "NOT",
+                            parameters = listOf(
+                                FunctionParameter(EligibilityFunction(rule = "HAS_EXHAUSTED_SOC_TREATMENTS", parameters = emptyList()))
+                            )
+                        )
+                    ),
+                    FunctionParameter(EligibilityFunction(rule = "HAS_ACTIVE_INFECTION", parameters = emptyList()))
+                )
+            ),
+            EligibilityFunction(rule = "HAS_INR_ULN_OF_AT_MOST_X", parameters = listOf(DoubleParameter(5.0))),
+            EligibilityFunction(rule = "HAS_INR_ULN_OF_AT_MOST_X", parameters = listOf(DoubleParameter(6.0)))
         ).sortedWith(EligibilityFunctionComparator())
 
         listOf(

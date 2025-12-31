@@ -28,7 +28,10 @@
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
               "parameters": [
-                "18"
+                {
+                  "type": "INTEGER",
+                  "value": "18"
+                }
               ]
             }
           },
@@ -57,12 +60,18 @@
               "rule": "OR",
               "parameters": [
                 {
-                  "rule": "HAS_LOCALLY_ADVANCED_CANCER",
-                  "parameters": []
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                    "parameters": []
+                  }
                 },
                 {
-                  "rule": "HAS_METASTATIC_CANCER",
-                  "parameters": []
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_METASTATIC_CANCER",
+                    "parameters": []
+                  }
                 }
               ]
             }
@@ -91,8 +100,14 @@
             "function": {
               "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
               "parameters": [
-                "3",
-                "5"
+                {
+                  "type": "DOUBLE",
+                  "value": "3"
+                },
+                {
+                  "type": "DOUBLE",
+                  "value": "5"
+                }
               ]
             }
           },
@@ -120,8 +135,14 @@
             "function": {
               "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
               "parameters": [
-                "KRAS",
-                "G12D"
+                {
+                  "type": "GENE",
+                  "value": "KRAS"
+                },
+                {
+                  "type": "MANY_PROTEIN_IMPACTS",
+                  "value": "G12D"
+                }
               ]
             }
           },
@@ -151,7 +172,10 @@
             "function": {
               "rule": "PD_L1_SCORE_TPS_OF_AT_LEAST_X",
               "parameters": [
-                "50"
+                {
+                  "type": "DOUBLE",
+                  "value": "50"
+                }
               ]
             }
           },
@@ -180,10 +204,16 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
-                  "parameters": [
-                    "KAYRAS"
-                  ]
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
+                    "parameters": [
+                      {
+                        "type": "STRING",
+                        "value": "KAYRAS"
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -227,7 +257,10 @@
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
                   "parameters": [
-                    "Lung non-small cell carcinoma"
+                    {
+                      "type": "MANY_DOID_TERMS",
+                      "value": "Lung non-small cell carcinoma"
+                    }
                   ]
                 }
               },
@@ -270,7 +303,10 @@
                 "function": {
                   "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
                   "parameters": [
-                    "Colorectal cancer"
+                    {
+                      "type": "MANY_DOID_TERMS",
+                      "value": "Colorectal cancer"
+                    }
                   ]
                 }
               },
@@ -318,7 +354,10 @@
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
               "parameters": [
-                "18"
+                {
+                  "type": "INTEGER",
+                  "value": "18"
+                }
               ]
             }
           },
@@ -347,21 +386,33 @@
               "rule": "AND",
               "parameters": [
                 {
-                  "rule": "OR",
-                  "parameters": [
-                    {
-                      "rule": "HAS_LOCALLY_ADVANCED_CANCER",
-                      "parameters": []
-                    },
-                    {
-                      "rule": "HAS_METASTATIC_CANCER",
-                      "parameters": []
-                    }
-                  ]
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "OR",
+                    "parameters": [
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                          "parameters": []
+                        }
+                      },
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_METASTATIC_CANCER",
+                          "parameters": []
+                        }
+                      }
+                    ]
+                  }
                 },
                 {
-                  "rule": "HAS_SOLID_PRIMARY_TUMOR",
-                  "parameters": []
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_SOLID_PRIMARY_TUMOR",
+                    "parameters": []
+                  }
                 }
               ]
             }
@@ -394,13 +445,19 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "NOT",
-                  "parameters": [
-                    {
-                      "rule": "HAS_EXHAUSTED_SOC_TREATMENTS",
-                      "parameters": []
-                    }
-                  ]
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "NOT",
+                    "parameters": [
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_EXHAUSTED_SOC_TREATMENTS",
+                          "parameters": []
+                        }
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -430,8 +487,11 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
-                  "parameters": []
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
+                    "parameters": []
+                  }
                 }
               ]
             }
@@ -460,7 +520,10 @@
             "function": {
               "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
               "parameters": [
-                "6"
+                {
+                  "type": "DOUBLE",
+                  "value": "6"
+                }
               ]
             }
           },
@@ -488,7 +551,10 @@
             "function": {
               "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
               "parameters": [
-                "1.5"
+                {
+                  "type": "DOUBLE",
+                  "value": "1.5"
+                }
               ]
             }
           },
@@ -515,10 +581,16 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
-                  "parameters": [
-                    "IEMOEN"
-                  ]
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
+                    "parameters": [
+                      {
+                        "type": "STRING",
+                        "value": "IEMOEN"
+                      }
+                    ]
+                  }
                 }
               ]
             }
@@ -619,22 +691,40 @@
             "rule": "NOT",
             "parameters": [
               {
-                "rule": "OR",
-                "parameters": [
-                  {
-                    "rule": "HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS",
-                    "parameters": [
-                      "FOLFIRI",
-                      "26"
-                    ]
-                  },
-                  {
-                    "rule": "HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT",
-                    "parameters": [
-                      "FOLFIRI"
-                    ]
-                  }
-                ]
+                "type": "FUNCTION",
+                "value": {
+                  "rule": "OR",
+                  "parameters": [
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS",
+                        "parameters": [
+                          {
+                            "type": "STRING",
+                            "value": "FOLFIRI"
+                          },
+                          {
+                            "type": "INTEGER",
+                            "value": "26"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT",
+                        "parameters": [
+                          {
+                            "type": "STRING",
+                            "value": "FOLFIRI"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -642,29 +732,50 @@
             "rule": "NOT",
             "parameters": [
               {
-                "rule": "OR",
-                "parameters": [
-                  {
-                    "rule": "HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS",
-                    "parameters": [
-                      "IRINOTECAN",
-                      "26"
-                    ]
-                  },
-                  {
-                    "rule": "HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X",
-                    "parameters": [
-                      "IRINOTECAN"
-                    ]
-                  }
-                ]
+                "type": "FUNCTION",
+                "value": {
+                  "rule": "OR",
+                  "parameters": [
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS",
+                        "parameters": [
+                          {
+                            "type": "MANY_STRINGS",
+                            "value": "IRINOTECAN"
+                          },
+                          {
+                            "type": "INTEGER",
+                            "value": "26"
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X",
+                        "parameters": [
+                          {
+                            "type": "MANY_STRINGS",
+                            "value": "IRINOTECAN"
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
               }
             ]
           },
           {
             "rule": "IS_ELIGIBLE_FOR_TREATMENT_LINES_X",
             "parameters": [
-              "1"
+              {
+                "type": "MANY_INTEGERS",
+                "value": "1"
+              }
             ]
           }
         ],
@@ -673,10 +784,16 @@
             "rule": "NOT",
             "parameters": [
               {
-                "rule": "HAS_HAD_TREATMENT_NAME_X",
-                "parameters": [
-                  "FOLFIRI"
-                ]
+                "type": "FUNCTION",
+                "value": {
+                  "rule": "HAS_HAD_TREATMENT_NAME_X",
+                  "parameters": [
+                    {
+                      "type": "STRING",
+                      "value": "FOLFIRI"
+                    }
+                  ]
+                }
               }
             ]
           },
@@ -684,10 +801,16 @@
             "rule": "NOT",
             "parameters": [
               {
-                "rule": "HAS_HAD_TREATMENT_WITH_ANY_DRUG_X",
-                "parameters": [
-                  "IRINOTECAN"
-                ]
+                "type": "FUNCTION",
+                "value": {
+                  "rule": "HAS_HAD_TREATMENT_WITH_ANY_DRUG_X",
+                  "parameters": [
+                    {
+                      "type": "MANY_STRINGS",
+                      "value": "IRINOTECAN"
+                    }
+                  ]
+                }
               }
             ]
           }
@@ -948,7 +1071,7 @@
                               "value": 0.75,
                               "type": "Hazard ratio",
                               "confidenceInterval": {
-                                "lowerLimit": 0.60,
+                                "lowerLimit": 0.6,
                                 "upperLimit": 0.95
                               },
                               "pValue": "0.011"
@@ -971,7 +1094,7 @@
                               "value": 0.99,
                               "type": "Hazard ratio",
                               "confidenceInterval": {
-                                "lowerLimit": 0.80,
+                                "lowerLimit": 0.8,
                                 "upperLimit": 1.25
                               },
                               "pValue": "1"

@@ -7,6 +7,9 @@ import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.datamodel.trial.GeneParameter
+import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
@@ -126,13 +129,18 @@ object TestTreatmentMatchFactory {
         return mapOf(
             Eligibility(
                 references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.name, parameters = emptyList())
+                function = EligibilityFunction(
+                    rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.name,
+                    parameters = listOf(IntegerParameter(18))
+                )
             ) to unrecoverable(EvaluationResult.PASS, "Patient is at least 18 years old", null),
             Eligibility(
                 references = setOf("I-02"),
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT.name, parameters = listOf(
-                        EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
+                        FunctionParameter(
+                            EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
+                        )
                     )
                 )
             ) to unrecoverable(EvaluationResult.PASS, "No known brain metastases present"),
@@ -193,7 +201,10 @@ object TestTreatmentMatchFactory {
         return mapOf(
             Eligibility(
                 references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.AMPLIFICATION_OF_GENE_X.name, parameters = listOf("EGFR"))
+                function = EligibilityFunction(
+                    rule = EligibilityRule.AMPLIFICATION_OF_GENE_X.name,
+                    parameters = listOf(GeneParameter("EGFR"))
+                )
             ) to unrecoverable(EvaluationResult.PASS, "EGFR amp", "EGFR amp")
         )
     }
@@ -204,7 +215,9 @@ object TestTreatmentMatchFactory {
                 references = setOf("E-01"),
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT.name,
-                    parameters = listOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES.name)),
+                    parameters = listOf(
+                        FunctionParameter(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES.name))
+                    ),
                 )
             ) to unrecoverable(EvaluationResult.FAIL, "Has active CNS metastases", null)
         )
@@ -260,7 +273,10 @@ object TestTreatmentMatchFactory {
         return mapOf(
             Eligibility(
                 references = setOf("I-01"),
-                function = EligibilityFunction(rule = EligibilityRule.INACTIVATION_OF_GENE_X.name, parameters = listOf("FGFR1"))
+                function = EligibilityFunction(
+                    rule = EligibilityRule.INACTIVATION_OF_GENE_X.name,
+                    parameters = listOf(GeneParameter("FGFR1"))
+                )
             ) to unrecoverable(
                 EvaluationResult.UNDETERMINED,
                 "FGFR1 not tested for inactivation",

@@ -17,6 +17,7 @@ object FunctionInput {
     val ONE_TREATMENT_CATEGORY_MANY_TYPES = listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
     val TWO_TREATMENT_CATEGORIES_MANY_TYPES = listOf(
         Parameter.Type.TREATMENT_CATEGORY,
+        Parameter.Type.MANY_TREATMENT_TYPES,
         Parameter.Type.TREATMENT_CATEGORY,
         Parameter.Type.MANY_TREATMENT_TYPES
     )

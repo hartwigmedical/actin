@@ -3,6 +3,11 @@ package com.hartwig.actin.algo.soc.datamodel
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.datamodel.trial.GeneParameter
+import com.hartwig.actin.datamodel.trial.ManyGenesParameter
+import com.hartwig.actin.datamodel.trial.ManyProteinImpactsParameter
+import com.hartwig.actin.datamodel.trial.TreatmentParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
@@ -26,7 +31,10 @@ class DecisionTreeNodeTest {
     fun `Should add inclusion criteria to treatment candidates from decision nodes`() {
         val candidatesIfTrue = listOf(treatmentCandidate("treatment1"), treatmentCandidate("treatment2"))
         val candidatesIfFalse = listOf(treatmentCandidate("treatment3"), treatmentCandidate("treatment4"))
-        val decision = EligibilityFunction(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y.name, listOf("BRAF", "V600E"))
+        val decision = EligibilityFunction(
+            EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y.name,
+            listOf(GeneParameter("BRAF"), ManyProteinImpactsParameter(setOf("V600E")))
+        )
         val tree: DecisionTreeNode = DecisionTree(decision, DecisionTreeLeaf(candidatesIfTrue), DecisionTreeLeaf(candidatesIfFalse))
         assertThat(tree.treatmentCandidates()).containsExactlyInAnyOrder(
             treatmentCandidate("treatment1", setOf(decision)),
@@ -38,8 +46,14 @@ class DecisionTreeNodeTest {
 
     @Test
     fun `Should combine inclusion criteria from multiple decision node levels`() {
-        val brafV600EMut = EligibilityFunction(EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y.name, listOf("BRAF", "V600E"))
-        val krasMut = EligibilityFunction(EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X.name, listOf("KRAS"))
+        val brafV600EMut = EligibilityFunction(
+            EligibilityRule.MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y.name,
+            listOf(GeneParameter("BRAF"), ManyProteinImpactsParameter(setOf("V600E")))
+        )
+        val krasMut = EligibilityFunction(
+            EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X.name,
+            listOf(ManyGenesParameter(setOf("KRAS")))
+        )
         val brafV600ECandidates = listOf(treatmentCandidate("treatment1"), treatmentCandidate("treatment2"))
         val brafV600EWtKrasMutCandidates = listOf(treatmentCandidate("treatment3"), treatmentCandidate("treatment4"))
         val brafV600EWtKrasWtCandidates = listOf(treatmentCandidate("treatment5"), treatmentCandidate("treatment6"))
@@ -63,12 +77,19 @@ class DecisionTreeNodeTest {
         )
     }
 
-    private fun not(function: EligibilityFunction) = EligibilityFunction(EligibilityRule.NOT.name, listOf(function))
-
-    private fun treatmentCandidate(name: String, additionalCriteria: Set<EligibilityFunction> = emptySet()) = TreatmentCandidate(
-        treatment = TreatmentTestFactory.treatment(name, true),
-        optional = false,
-        eligibilityFunctions = setOf(EligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X.name, listOf(name)))
-                + additionalCriteria
+    private fun not(function: EligibilityFunction) = EligibilityFunction(
+        EligibilityRule.NOT.name,
+        listOf(FunctionParameter(function))
     )
+
+    private fun treatmentCandidate(name: String, additionalCriteria: Set<EligibilityFunction> = emptySet()): TreatmentCandidate {
+        val treatment = TreatmentTestFactory.treatment(name, true)
+        return TreatmentCandidate(
+            treatment = treatment,
+            optional = false,
+            eligibilityFunctions = setOf(
+                EligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X.name, listOf(TreatmentParameter(treatment)))
+            ) + additionalCriteria
+        )
+    }
 }
