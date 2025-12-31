@@ -8,10 +8,7 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
-import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.trial.input.FunctionInputResolver
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -33,14 +30,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val referenceDateProvider = ReferenceDateProviderFactory.create(inputData.patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
 
-        // We assume we never check validity of a gene inside algo.
-        val molecularInputChecker = MolecularInputChecker.createAnyGeneValid()
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val functionInputResolver =
-            FunctionInputResolver(
-                inputData.doidModel, inputData.icdModel, molecularInputChecker,
-                treatmentDatabase, MedicationCategories.create(inputData.atcTree)
-            )
         val configuration = AlgoConfiguration.create(config.overridesYaml)
         LOGGER.info(" Loaded algo config: $configuration")
 
@@ -48,7 +38,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             referenceDateProvider = referenceDateProvider,
             doidModel = inputData.doidModel,
             icdModel = inputData.icdModel,
-            functionInputResolver = functionInputResolver,
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,

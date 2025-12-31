@@ -5,6 +5,12 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
+import com.hartwig.actin.datamodel.trial.ManyIntegersParameter
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.TreatmentParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 
 const val BEVACIZUMAB = "BEVACIZUMAB"
@@ -33,7 +39,7 @@ const val OXALIPLATIN = "OXALIPLATIN"
 const val PANITUMUMAB = "PANITUMUMAB"
 const val PEMBROLIZUMAB = "PEMBROLIZUMAB"
 const val TRIFLURIDINE_TIPIRACIL_BEVACIZUMAB = "TRIFLURIDINE+TIPIRACIL+BEVACIZUMAB"
-private const val RECENT_TREATMENT_THRESHOLD_WEEKS = "26"
+private const val RECENT_TREATMENT_THRESHOLD_WEEKS = 26
 
 private val drugExclusionExceptions = setOf(FLUOROURACIL, CAPECITABINE, FOLINIC_ACID)
 private val antiEgfrDrugs = setOf(CETUXIMAB, PANITUMUMAB)
@@ -121,15 +127,26 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     private fun eligibleIfDrugsNotInRecentHistoryOrWithPD(drugNames: Iterable<String>): EligibilityFunction {
-        val drugParameter = drugNames.joinToString(";")
+        val drugParameter = manyDrugsParameter(drugNames)
         return eligibilityFunction(
             EligibilityRule.NOT,
-            eligibilityFunction(
-                EligibilityRule.OR,
+            FunctionParameter(
                 eligibilityFunction(
-                    EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS, drugParameter, RECENT_TREATMENT_THRESHOLD_WEEKS
-                ),
-                eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X, drugParameter),
+                    EligibilityRule.OR,
+                    FunctionParameter(
+                        eligibilityFunction(
+                            EligibilityRule.HAS_RECEIVED_DRUGS_X_CANCER_THERAPY_WITHIN_Y_WEEKS,
+                            drugParameter,
+                            IntegerParameter(RECENT_TREATMENT_THRESHOLD_WEEKS)
+                        )
+                    ),
+                    FunctionParameter(
+                        eligibilityFunction(
+                            EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X,
+                            drugParameter
+                        )
+                    )
+                )
             )
         )
     }
@@ -137,19 +154,36 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
     private fun eligibleIfDrugsNotInHistory(drugNames: Iterable<String>): EligibilityFunction {
         return eligibilityFunction(
             EligibilityRule.NOT,
-            eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X, drugNames.joinToString(";"))
+            FunctionParameter(
+                eligibilityFunction(
+                    EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X,
+                    manyDrugsParameter(drugNames)
+                )
+            )
         )
     }
 
     private fun eligibleIfTreatmentNotInRecentHistoryOrWithPD(treatmentName: String): EligibilityFunction {
+        val treatmentParameter = treatmentParameter(treatmentName)
         return eligibilityFunction(
             EligibilityRule.NOT,
-            eligibilityFunction(
-                EligibilityRule.OR,
+            FunctionParameter(
                 eligibilityFunction(
-                    EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS, treatmentName, RECENT_TREATMENT_THRESHOLD_WEEKS
-                ),
-                eligibilityFunction(EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT, treatmentName)
+                    EligibilityRule.OR,
+                    FunctionParameter(
+                        eligibilityFunction(
+                            EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS,
+                            treatmentParameter,
+                            IntegerParameter(RECENT_TREATMENT_THRESHOLD_WEEKS)
+                        )
+                    ),
+                    FunctionParameter(
+                        eligibilityFunction(
+                            EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT,
+                            treatmentParameter
+                        )
+                    )
+                )
             )
         )
     }
@@ -157,15 +191,28 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
     private fun eligibleIfTreatmentNotInHistory(treatmentName: String): EligibilityFunction {
         return eligibilityFunction(
             EligibilityRule.NOT,
-            eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, treatmentName)
+            FunctionParameter(eligibilityFunction(EligibilityRule.HAS_HAD_TREATMENT_NAME_X, treatmentParameter(treatmentName)))
         )
     }
 
     private fun eligibleForTreatmentLines(lines: Set<Int>): EligibilityFunction {
-        return eligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X, lines.joinToString(";"))
+        return eligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_TREATMENT_LINES_X, ManyIntegersParameter(lines.toList()))
     }
 
-    private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Any): EligibilityFunction {
-        return EligibilityFunction(rule = rule.name, parameters = listOf(*parameters))
+    private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Parameter<*>): EligibilityFunction {
+        return EligibilityFunction(rule = rule.name, parameters = parameters.toList())
+    }
+
+    private fun treatmentParameter(treatmentName: String): TreatmentParameter {
+        val treatment = treatmentDatabase.findTreatmentByName(treatmentName)
+            ?: throw IllegalArgumentException("Unknown treatment name: $treatmentName")
+        return TreatmentParameter(treatment)
+    }
+
+    private fun manyDrugsParameter(drugNames: Iterable<String>): ManyDrugsParameter {
+        val drugs = drugNames.map { drugName ->
+            treatmentDatabase.findDrugByName(drugName) ?: throw IllegalArgumentException("Unknown drug name: $drugName")
+        }.toSet()
+        return ManyDrugsParameter(drugs)
     }
 }
