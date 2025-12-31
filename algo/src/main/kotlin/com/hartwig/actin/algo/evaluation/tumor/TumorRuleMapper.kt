@@ -5,8 +5,17 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.trial.BodyLocationParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyDoidTermsParameter
+import com.hartwig.actin.datamodel.trial.ManyTnmTParameter
+import com.hartwig.actin.datamodel.trial.ManyTumorStagesParameter
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.ReceptorTypeParameter
+import com.hartwig.actin.datamodel.trial.TumorTypeParameter
 import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
 class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -102,7 +111,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasPrimaryTumorBelongsToDoidTermsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = functionInputResolver().createManyDoidTermsInput(function)
+            val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
             val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
             PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, null)
         }
@@ -110,7 +119,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = functionInputResolver().createManyDoidTermsInput(function)
+            val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
             val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
             PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, "distal")
         }
@@ -118,14 +127,14 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasCancerOfUnknownPrimaryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val categoryOfCUP = functionInputResolver().createOneTumorTypeInput(function)
-            HasCancerOfUnknownPrimary(doidModel(), categoryOfCUP)
+            val tumorType = function.param<TumorTypeParameter>(0).value
+            HasCancerOfUnknownPrimary(doidModel(), TumorTypeInput.fromString(tumorType))
         }
     }
 
     private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val receptorType = functionInputResolver().createOneReceptorTypeInput(function)
+            val receptorType = function.param<ReceptorTypeParameter>(0).value
             HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
         }
     }
@@ -192,14 +201,14 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasAnyTumorStageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val stagesToMatch = functionInputResolver().createManyTumorStagesInput(function)
+            val stagesToMatch = function.param<ManyTumorStagesParameter>(0).value
             DerivedTumorStageEvaluationFunction(HasTumorStage(stagesToMatch), "tumor stage(s) ${stagesToMatch.joinToString { " or " }}")
         }
     }
 
     private fun hasSpecificTnmTScoreCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val scores = functionInputResolver().createManyTnmTInput(function)
+            val scores = function.param<ManyTnmTParameter>(0).value
             HasTnmTScore(scores)
         }
     }
@@ -230,8 +239,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasMinimumLesionsInSpecificBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerOneBodyLocationInput(function)
-            HasMinimumLesionsInSpecificBodyLocation(input.integer, input.bodyLocation)
+            function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.BODY_LOCATION)
+            val minLesions = function.param<IntegerParameter>(0).value
+            val bodyLocation = function.param<BodyLocationParameter>(1).value
+            HasMinimumLesionsInSpecificBodyLocation(minLesions, bodyLocation)
         }
     }
 
@@ -257,7 +268,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasLimitedDistantMetastasesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxDistantMetastases = functionInputResolver().createOneIntegerInput(function)
+            val maxDistantMetastases = function.param<IntegerParameter>(0).value
             HasLimitedDistantMetastases(maxDistantMetastases)
         }
     }
@@ -348,7 +359,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasMinimumSitesWithLesions(functionInputResolver().createOneIntegerInput(function))
+            HasMinimumSitesWithLesions(function.param<IntegerParameter>(0).value)
         }
     }
 

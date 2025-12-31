@@ -3,7 +3,10 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import java.time.LocalDate
 
@@ -25,49 +28,51 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
 
     private fun hasSufficientBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minMedianBloodPressure = functionInputResolver().createOneIntegerInput(function)
+            val minMedianBloodPressure = function.param<IntegerParameter>(0).value
             HasSufficientBloodPressure(category, minMedianBloodPressure, minimumDateForVitalFunction())
         }
     }
 
     private fun hasLimitedBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxMedianBloodPressure = functionInputResolver().createOneIntegerInput(function)
+            val maxMedianBloodPressure = function.param<IntegerParameter>(0).value
             HasLimitedBloodPressure(category, maxMedianBloodPressure, minimumDateForVitalFunction())
         }
     }
 
     private fun hasSufficientPulseOximetryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minMedianPulseOximetry = functionInputResolver().createOneDoubleInput(function)
+            val minMedianPulseOximetry = function.param<DoubleParameter>(0).value
             HasSufficientPulseOximetry(minMedianPulseOximetry, minimumDateForVitalFunction())
         }
     }
 
     private fun hasRestingHeartRateWithinBoundsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createTwoDoublesInput(function)
-            HasRestingHeartRateWithinBounds(input.double1, input.double2, minimumDateForVitalFunction())
+            function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
+            val minHeartRate = function.param<DoubleParameter>(0).value
+            val maxHeartRate = function.param<DoubleParameter>(1).value
+            HasRestingHeartRateWithinBounds(minHeartRate, maxHeartRate, minimumDateForVitalFunction())
         }
     }
 
     private fun hasSufficientBodyWeightCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minBodyWeight = functionInputResolver().createOneDoubleInput(function)
+            val minBodyWeight = function.param<DoubleParameter>(0).value
             HasSufficientBodyWeight(minBodyWeight, minimumDateForBodyWeight())
         }
     }
 
     private fun hasLimitedBodyWeightCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxBodyWeight = functionInputResolver().createOneDoubleInput(function)
+            val maxBodyWeight = function.param<DoubleParameter>(0).value
             HasLimitedBodyWeight(maxBodyWeight, minimumDateForBodyWeight())
         }
     }
 
     private fun hasBMIUpToLimitCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maximumBMI = functionInputResolver().createOneIntegerInput(function)
+            val maximumBMI = function.param<IntegerParameter>(0).value
             HasBMIUpToLimit(maximumBMI, minimumDateForBodyWeight())
         }
     }

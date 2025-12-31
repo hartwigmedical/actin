@@ -10,7 +10,9 @@ import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.trial.input.EligibilityRule
 
 class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -58,19 +60,21 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientLVEFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasSufficientLVEF(functionInputResolver().createOneDoubleInput(function))
+            HasSufficientLVEF(function.param<DoubleParameter>(0).value)
         }
     }
 
     private fun hasLimitedQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasLimitedQtcf(functionInputResolver().createOneDoubleInput(function))
+            EcgMeasureEvaluationFunctions.hasLimitedQtcf(function.param<DoubleParameter>(0).value)
         }
     }
 
     private fun hasLimitedQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (femaleQTCF, maleQTCF) = functionInputResolver().createTwoDoublesInput(function)
+            function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
+            val femaleQTCF = function.param<DoubleParameter>(0).value
+            val maleQTCF = function.param<DoubleParameter>(1).value
             Or(
                 listOf(
                     HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf),
@@ -82,13 +86,15 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasSufficientQtcf(functionInputResolver().createOneDoubleInput(function))
+            EcgMeasureEvaluationFunctions.hasSufficientQtcf(function.param<DoubleParameter>(0).value)
         }
     }
 
     private fun hasSufficientQTCFWithGenderCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (femaleQTCF, maleQTCF) = functionInputResolver().createTwoDoublesInput(function)
+            function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
+            val femaleQTCF = function.param<DoubleParameter>(0).value
+            val maleQTCF = function.param<DoubleParameter>(1).value
             Or(
                 listOf(
                     HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf),
@@ -100,7 +106,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientJTcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasSufficientJTc(functionInputResolver().createOneDoubleInput(function))
+            EcgMeasureEvaluationFunctions.hasSufficientJTc(function.param<DoubleParameter>(0).value)
         }
     }
 

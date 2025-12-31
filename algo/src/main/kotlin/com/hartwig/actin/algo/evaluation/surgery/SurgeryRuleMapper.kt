@@ -4,6 +4,8 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyBodyLocationsParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 
 class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -27,7 +29,7 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasHadSurgeryInPastWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val evaluationDate = referenceDateProvider().date()
-            val maxAgeWeeks = functionInputResolver().createOneIntegerInput(function)
+            val maxAgeWeeks = function.param<IntegerParameter>(0).value
             val minDate = evaluationDate.minusWeeks(maxAgeWeeks.toLong()).plusWeeks(2)
             HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
         }
@@ -36,7 +38,7 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun hasHadSurgeryInPastMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val evaluationDate = referenceDateProvider().date()
-            val maxAgeMonths = functionInputResolver().createOneIntegerInput(function)
+            val maxAgeMonths = function.param<IntegerParameter>(0).value
             val minDate = evaluationDate.minusMonths(maxAgeMonths.toLong())
             HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
         }
@@ -53,7 +55,7 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasHadOncologicalSurgeryInSpecificBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val bodyLocations = functionInputResolver().createManyBodyLocationsInput(function)
+            val bodyLocations = function.param<ManyBodyLocationsParameter>(0).value
             HasHadOncologicalSurgeryInSpecificBodyLocation(bodyLocations)
         }
     }

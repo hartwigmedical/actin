@@ -9,7 +9,7 @@ object EligibilityFunctionDisplay {
     fun format(function: EligibilityFunction): String {
         return function.ruleAsEnum().toString() + when {
             CompositeRules.isComposite(function.ruleAsEnum()) -> {
-                "(${function.parameters.joinToString(", ") { format(it as EligibilityFunction) }})"
+                "(${function.parameters.joinToString(", ") { format(it.value as EligibilityFunction) }})"
             }
 
             function.parameters.isNotEmpty() -> {

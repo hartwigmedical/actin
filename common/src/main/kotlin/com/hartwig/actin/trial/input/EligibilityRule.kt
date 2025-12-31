@@ -1,6 +1,9 @@
 package com.hartwig.actin.trial.input
 
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Parameter
+
+fun EligibilityFunction.ruleAsEnum() = EligibilityRule.valueOf(this.rule)
 
 enum class EligibilityRule(val input: List<Parameter.Type>) {
 

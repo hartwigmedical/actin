@@ -6,6 +6,8 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.datamodel.trial.Parameter
 import java.lang.reflect.Type
 
 class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction> {
@@ -21,15 +23,16 @@ class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction> {
         )
     }
 
-    private fun toParameters(parameterArray: JsonArray): List<Any> {
+    private fun toParameters(parameterArray: JsonArray): List<Parameter<*>> {
         return parameterArray.mapNotNull { element ->
+            val type = Parameter.Type.valueOf(element.asJsonObject.get("type").asString)
             when {
                 element.isJsonObject -> {
-                    toEligibilityFunction(element.asJsonObject)
+                    FunctionParameter(toEligibilityFunction(element.asJsonObject))
                 }
 
                 element.isJsonPrimitive -> {
-                    element.asJsonPrimitive.asString
+                    type.create(element.asJsonPrimitive.asString)
                 }
 
                 else -> null

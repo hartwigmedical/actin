@@ -10,6 +10,11 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEv
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
+import com.hartwig.actin.datamodel.trial.ManyMedicationCategoriesParameter
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.StringParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
 
@@ -39,15 +44,19 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasRecentlyReceivedCancerTherapyOfNamesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyDrugsOneIntegerInput(function)
-            createReceivedCancerTherapyOfNameFunction(input.drugs, input.integer)
+            function.expectTypes(Parameter.Type.MANY_DRUGS, Parameter.Type.INTEGER)
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            val minWeeks = function.param<IntegerParameter>(1).value
+            createReceivedCancerTherapyOfNameFunction(drugs, minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedCancerTherapyOfNamesHalfLifeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyDrugsTwoIntegersInput(function)
-            createReceivedCancerTherapyOfNameFunction(input.drugs, input.integer)
+            function.expectTypes(Parameter.Type.MANY_DRUGS, Parameter.Type.INTEGER, Parameter.Type.INTEGER)
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            val minWeeks = function.param<IntegerParameter>(1).value
+            createReceivedCancerTherapyOfNameFunction(drugs, minWeeks)
         }
     }
 
@@ -58,14 +67,22 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasRecentlyReceivedCancerTherapyOfCategoriesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (mappedCategories, minWeeks) = functionInputResolver().createManyMedicationCategoriesOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.MANY_MEDICATION_CATEGORIES, Parameter.Type.INTEGER)
+            val mappedCategories = mapMedicationCategories(function.param<ManyMedicationCategoriesParameter>(0).value)
+            val minWeeks = function.param<IntegerParameter>(1).value
             createReceivedCancerTherapyOfCategoryFunction(mappedCategories, minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedCancerTherapyOfCategoriesHalfLifeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (mappedCategories, minWeeks, _) = functionInputResolver().createManyMedicationCategoriesTwoIntegersInput(function)
+            function.expectTypes(
+                Parameter.Type.MANY_MEDICATION_CATEGORIES,
+                Parameter.Type.INTEGER,
+                Parameter.Type.INTEGER
+            )
+            val mappedCategories = mapMedicationCategories(function.param<ManyMedicationCategoriesParameter>(0).value)
+            val minWeeks = function.param<IntegerParameter>(1).value
             createReceivedCancerTherapyOfCategoryFunction(mappedCategories, minWeeks)
         }
     }
@@ -79,47 +96,51 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasRecentlyReceivedTrialMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.toLong())
+            val minWeeks = function.param<IntegerParameter>(0).value
+            val maxStopDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
             HasRecentlyReceivedTrialMedication(selector, maxStopDate)
         }
     }
 
     private fun hasRecentlyReceivedTrialMedicationHalfLifeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createTwoIntegersInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer1.toLong())
+            function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.INTEGER)
+            val minWeeks = function.param<IntegerParameter>(0).value
+            val maxStopDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
             HasRecentlyReceivedTrialMedication(selector, maxStopDate)
         }
     }
 
     private fun hasRecentlyReceivedRadiotherapyCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.toLong().minus(2))
+            val minWeeks = function.param<IntegerParameter>(0).value
+            val maxStopDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong().minus(2))
             HasRecentlyReceivedRadiotherapy(maxStopDate.year, maxStopDate.monthValue, null)
         }
     }
 
     private fun hasRecentlyReceivedRadiotherapyToSomeBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong().minus(2))
-            HasRecentlyReceivedRadiotherapy(maxStopDate.year, maxStopDate.monthValue, input.string)
+            function.expectTypes(Parameter.Type.STRING, Parameter.Type.INTEGER)
+            val bodyLocation = function.param<StringParameter>(0).value
+            val minWeeks = function.param<IntegerParameter>(1).value
+            val maxStopDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong().minus(2))
+            HasRecentlyReceivedRadiotherapy(maxStopDate.year, maxStopDate.monthValue, bodyLocation)
         }
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minWeeks = functionInputResolver().createOneIntegerInput(function)
+            val minWeeks = function.param<IntegerParameter>(0).value
             createReceivedAnyCancerTherapyFunction(minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyWithHalfLifeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createTwoIntegersInput(function)
-            createReceivedAnyCancerTherapyFunction(input.integer1)
+            function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.INTEGER)
+            val minWeeks = function.param<IntegerParameter>(0).value
+            createReceivedAnyCancerTherapyFunction(minWeeks)
         }
     }
 
@@ -130,21 +151,31 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (mappedCategories, minWeeks) = functionInputResolver().createManyMedicationCategoriesOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.MANY_MEDICATION_CATEGORIES, Parameter.Type.INTEGER)
+            val mappedCategories = mapMedicationCategories(function.param<ManyMedicationCategoriesParameter>(0).value)
+            val minWeeks = function.param<IntegerParameter>(1).value
             createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, emptySet(), minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeDrugsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (drugs, minWeeks) = functionInputResolver().createManyDrugsOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.MANY_DRUGS, Parameter.Type.INTEGER)
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            val minWeeks = function.param<IntegerParameter>(1).value
             createReceivedAnyCancerTherapyButSomeFunction(emptyMap(), drugs, minWeeks)
         }
     }
 
     private fun hasRecentlyReceivedAnyCancerTherapyButSomeWithHalfLifeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (mappedCategories, minWeeks, _) = functionInputResolver().createManyMedicationCategoriesTwoIntegersInput(function)
+            function.expectTypes(
+                Parameter.Type.MANY_MEDICATION_CATEGORIES,
+                Parameter.Type.INTEGER,
+                Parameter.Type.INTEGER
+            )
+            val mappedCategories = mapMedicationCategories(function.param<ManyMedicationCategoriesParameter>(0).value)
+            val minWeeks = function.param<IntegerParameter>(1).value
             createReceivedAnyCancerTherapyButSomeFunction(mappedCategories, emptySet(), minWeeks)
         }
     }
@@ -162,5 +193,22 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             interpreter,
             minDate
         )
+    }
+
+    private fun mapMedicationCategories(categoryNames: List<String>): Map<String, Set<AtcLevel>> {
+        return categoryNames.associate { category -> toMedicationCategoryMap(category) }
+    }
+
+    private fun toMedicationCategoryMap(category: String): Pair<String, Set<AtcLevel>> {
+        throwExceptionIfAtcCategoryNotMapped(category)
+        return categories.resolveCategoryName(category) to categories.resolve(category)
+    }
+
+    private fun throwExceptionIfAtcCategoryNotMapped(category: String) {
+        val hasMapping = MedicationCategories.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.containsKey(category)
+            || MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.containsKey(category)
+        if (MedicationCategories.ANTI_CANCER_ATC_CODES.any { category.startsWith(it) } && !hasMapping) {
+            throw IllegalStateException("No treatment category or drug type mapping for ATC code $category")
+        }
     }
 }

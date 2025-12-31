@@ -5,6 +5,11 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IcdTitleParameter
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyIcdTitlesParameter
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.StringParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 
 class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -37,14 +42,15 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
 
     private fun hasIntoleranceWithSpecificNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
+            val termToFind = function.param<StringParameter>(0).value
             HasIntoleranceWithSpecificName(termToFind)
         }
     }
 
     private fun hasIntoleranceWithSpecificIcdTitleCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasIntoleranceWithSpecificIcdTitle(icdModel(), functionInputResolver().createOneIcdTitleInput(function))
+            val icdTitle = function.param<IcdTitleParameter>(0).value
+            HasIntoleranceWithSpecificIcdTitle(icdModel(), icdTitle)
         }
     }
 
@@ -66,28 +72,34 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
 
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minGrade = functionInputResolver().createOneIntegerInput(function)
+            val minGrade = function.param<IntegerParameter>(0).value
             createHasToxicityWithGrade(minGrade)
         }
     }
 
     private fun hasToxicityWithGradeAndNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (minGrade, icdTitles) = functionInputResolver().createOneIntegerManyIcdTitlesInput(function)
+            function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.MANY_ICD_TITLES)
+            val minGrade = function.param<IntegerParameter>(0).value
+            val icdTitles = function.param<ManyIcdTitlesParameter>(1).value
             createHasToxicityWithGrade(minGrade, icdTitles)
         }
     }
 
     private fun hasToxicityWithGradeIgnoringNamesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (minGrade, toxicitiesToIgnore) = functionInputResolver().createOneIntegerManyIcdTitlesInput(function)
+            function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.MANY_ICD_TITLES)
+            val minGrade = function.param<IntegerParameter>(0).value
+            val toxicitiesToIgnore = function.param<ManyIcdTitlesParameter>(1).value
             createHasToxicityWithGrade(minGrade, null, toxicitiesToIgnore)
         }
     }
 
     private fun hadToxicityWithGradeDuringPreviousTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (grade, name) = functionInputResolver().createOneStringOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.STRING, Parameter.Type.INTEGER)
+            val name = function.param<StringParameter>(0).value
+            val grade = function.param<IntegerParameter>(1).value
             HadToxicityWithGradeDuringPreviousTreatment(name, grade)
         }
     }

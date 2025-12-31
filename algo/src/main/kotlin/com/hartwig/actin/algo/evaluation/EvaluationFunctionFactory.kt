@@ -5,19 +5,16 @@ import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.composite.WarnIf
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
 import com.hartwig.actin.trial.input.EligibilityRule
-import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.input.ruleAsEnum
 
 class EvaluationFunctionFactory(
     private val functionCreatorMap: Map<EligibilityRule, FunctionCreator>,
-    private val functionInputResolver: FunctionInputResolver
 ) {
 
     fun create(function: EligibilityFunction): EvaluationFunction {
-        val hasValidInputs: Boolean? = functionInputResolver.hasValidInputs(function)
-        check(hasValidInputs ?: false) { "No valid inputs defined for $function" }
         return if (CompositeRules.isComposite(function.ruleAsEnum())) {
             createCompositeFunction(function)
         } else {
@@ -40,16 +37,16 @@ class EvaluationFunctionFactory(
     }
 
     private fun createSingleCompositeParameter(function: EligibilityFunction): EvaluationFunction {
-        return create(FunctionInputResolver.createOneCompositeParameter(function))
+        return create(function.param<FunctionParameter>(0).value)
     }
 
     private fun createMultipleCompositeParameters(function: EligibilityFunction): List<EvaluationFunction> {
-        return FunctionInputResolver.createAtLeastTwoCompositeParameters(function).map(::create)
+        return IntRange(0, function.parameters.size).map { function.param<FunctionParameter>(it).value }.map(::create)
     }
 
     companion object {
         fun create(resources: RuleMappingResources): EvaluationFunctionFactory {
-            return EvaluationFunctionFactory(FunctionCreatorFactory.create(resources), resources.functionInputResolver)
+            return EvaluationFunctionFactory(FunctionCreatorFactory.create(resources))
         }
     }
 }

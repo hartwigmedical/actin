@@ -3,7 +3,11 @@ package com.hartwig.actin.algo.evaluation.priortumor
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.datamodel.trial.DoidTermParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyDoidTermsParameter
+import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.trial.input.EligibilityRule
 
 class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -30,21 +34,21 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
 
     private fun hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermsToIgnore = functionInputResolver().createManyDoidTermsInput(function)
+            val doidTermsToIgnore = function.param<ManyDoidTermsParameter>(0).value
             HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate = null)
         }
     }
 
     private fun hasHistoryOfSecondMalignancyWithDoidTermCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = functionInputResolver().createOneDoidTermInput(function)
+            val doidTermToMatch = function.param<DoidTermParameter>(0).value
             HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!)
         }
     }
 
     private fun hasHistoryOfSecondMalignancyWithinYearsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxYears = functionInputResolver().createOneIntegerInput(function)
+            val maxYears = function.param<IntegerParameter>(0).value
             val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
             HasHistoryOfSecondMalignancyWithinYears(minDate)
         }
@@ -52,7 +56,9 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
 
     private fun hasHistoryOfSecondMalignancyWithinYearsIgnoringSomeDoidTermsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (maxYears, doidTermsToIgnore) = functionInputResolver().createOneIntegerManyDoidTermsInput(function)
+            function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.MANY_DOID_TERMS)
+            val maxYears = function.param<IntegerParameter>(0).value
+            val doidTermsToIgnore = function.param<ManyDoidTermsParameter>(1).value
             val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
             HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate)
         }

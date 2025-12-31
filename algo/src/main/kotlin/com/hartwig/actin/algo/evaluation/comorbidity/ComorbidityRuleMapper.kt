@@ -8,8 +8,14 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.trial.IcdTitleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyIcdTitlesParameter
+import com.hartwig.actin.datamodel.trial.NyhaClassParameter
+import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import com.hartwig.actin.medication.MedicationCategories
 
 class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -215,7 +221,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         diseaseDescription: String
     ): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxMonthsAgo = functionInputResolver().createOneIntegerInput(function)
+            val maxMonthsAgo = function.param<IntegerParameter>(0).value
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
             HasHadOtherConditionWithIcdCodeFromSetRecently(
                 icdModel(),
@@ -229,14 +235,15 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasHadOtherConditionMatchingSpecificIcdTitleRecentlyCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneIcdTitleOneIntegerInput(function)
-            val targetIcdCode = icdModel().resolveCodeForTitle(input.icdTitle)!!
-            val maxMonthsAgo = input.integer
+            function.expectTypes(Parameter.Type.ICD_TITLE, Parameter.Type.INTEGER)
+            val icdTitle = function.param<IcdTitleParameter>(0).value
+            val maxMonthsAgo = function.param<IntegerParameter>(1).value
+            val targetIcdCode = icdModel().resolveCodeForTitle(icdTitle)!!
             val minDate = referenceDateProvider().date().minusMonths(maxMonthsAgo.toLong() - 1)
             HasHadOtherConditionWithIcdCodeFromSetRecently(
                 icdModel(),
                 setOf(targetIcdCode),
-                input.icdTitle,
+                icdTitle,
                 minDate,
                 maxMonthsAgo
             )
@@ -245,8 +252,8 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasHistoryOfCongestiveHeartFailureWithNYHACreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneNyhaClassInput(function)
-            HasHistoryOfCongestiveHeartFailureWithNYHA(input, icdModel())
+            val nyhaClass = NyhaClass.valueOf(function.param<NyhaClassParameter>(0).value)
+            HasHistoryOfCongestiveHeartFailureWithNYHA(nyhaClass, icdModel())
         }
     }
 
@@ -260,7 +267,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasHadOrganTransplantWithinYearsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxYearsAgo = functionInputResolver().createOneIntegerInput(function)
+            val maxYearsAgo = function.param<IntegerParameter>(0).value
             val minYear = referenceDateProvider().year() - maxYearsAgo
             HasHadOrganTransplant(icdModel(), minYear)
         }
@@ -296,7 +303,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
 
     private fun hasHadComorbiditiesWithIcdCodeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val targetIcdTitles = functionInputResolver().createManyIcdTitlesInput(function)
+            val targetIcdTitles = function.param<ManyIcdTitlesParameter>(0).value
             val targetIcdCodes = targetIcdTitles.map { icdModel().resolveCodeForTitle(it)!! }.toSet()
             HasHadComorbidityWithIcdCode(
                 icdModel(),

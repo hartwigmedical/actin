@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.medication.AtcTree
 
@@ -26,7 +27,7 @@ class BloodTransfusionRuleMapper(resources: RuleMappingResources) : RuleMapper(r
 
     private fun hasHadRecentBloodTransfusion(product: TransfusionProduct): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxAgeWeeks = functionInputResolver().createOneIntegerInput(function)
+            val maxAgeWeeks = function.param<IntegerParameter>(0).value
             val minDate = referenceDateProvider().date().minusWeeks(maxAgeWeeks.toLong())
             HasHadRecentBloodTransfusion(product, minDate)
         }
