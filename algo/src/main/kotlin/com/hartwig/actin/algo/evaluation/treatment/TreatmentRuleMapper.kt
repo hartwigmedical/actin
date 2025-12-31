@@ -229,7 +229,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (minSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
-            HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
+            HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLine(
                 minSystemicTreatments,
                 maxMonthsBeforeNextLine,
                 referenceDate
@@ -240,7 +240,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadLimitedSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (maxSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
-            HasHadLimitedSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
+            HasHadLimitedSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLine(
                 maxSystemicTreatments,
                 maxMonthsBeforeNextLine,
                 referenceDate

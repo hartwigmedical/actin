@@ -6,11 +6,12 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.tre
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
-class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
+class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLine(
     private val minSystemicTreatments: Int,
     private val maxMonthsBeforeNextLine: Int,
     private val referenceDate: LocalDate
@@ -24,8 +25,9 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
         val filteredHistory = sortedSystemicHistory.filterIndexed { index, entry ->
             val nextLine = sortedSystemicHistory.getOrNull(index + 1)
             val passOnIntent = entry.intents?.intersect(curativeNeoAdjuvantOrAdjuvant).isNullOrEmpty()
+            val passOnStopReason = entry.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY
             val passOnDate = entry.startedWithinMaxMonthsBeforeNextLine(nextLine, maxMonthsBeforeNextLine)
-            passOnIntent || passOnDate != false
+            passOnIntent || passOnStopReason || passOnDate != TreatmentTiming.OUTSIDE
         }
         val minSystemicCount = SystemicTreatmentAnalyser.minSystemicTreatments(filteredHistory)
         val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(filteredHistory)
@@ -48,11 +50,11 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
     private fun TreatmentHistoryEntry.startedWithinMaxMonthsBeforeNextLine(
         nextLine: TreatmentHistoryEntry?,
         maxMonthsBeforeNextLine: Int
-    ): Boolean? {
+    ): TreatmentTiming {
         return when {
-            this.startYear == null -> null
+            this.startYear == null -> TreatmentTiming.UNKNOWN
 
-            nextLine != null && nextLine.startYear == null -> null
+            nextLine != null && nextLine.startYear == null -> TreatmentTiming.UNKNOWN
 
             else -> {
                 val (referenceMinDate, referenceMaxDate) =
@@ -62,14 +64,15 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
                         dateRange(nextLine.startYear!!, nextLine.startMonth)
                     }
 
+                //TODO() add 6 months margin to entry start date since we are checking start dates instead of stop dates (duration of adjuvant line is considered 6 months)
                 val (entryStartMinDate, entryStartMaxDate) = dateRange(this.startYear!!, this.startMonth)
                 val minMonthsBetween = ChronoUnit.MONTHS.between(entryStartMaxDate, referenceMinDate)
                 val maxMonthsBetween = ChronoUnit.MONTHS.between(entryStartMinDate, referenceMaxDate)
 
                 when {
-                    minMonthsBetween > maxMonthsBeforeNextLine -> false
-                    maxMonthsBetween <= maxMonthsBeforeNextLine -> true
-                    else -> null
+                    minMonthsBetween > maxMonthsBeforeNextLine -> TreatmentTiming.OUTSIDE
+                    maxMonthsBetween <= maxMonthsBeforeNextLine -> TreatmentTiming.WITHIN
+                    else -> TreatmentTiming.UNKNOWN
                 }
             }
         }
@@ -83,5 +86,12 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
                 date to date
             }
         }
+    }
+
+    private enum class TreatmentTiming {
+        WITHIN,
+        OUTSIDE,
+        AMBIGUOUS,
+        UNKNOWN;
     }
 }

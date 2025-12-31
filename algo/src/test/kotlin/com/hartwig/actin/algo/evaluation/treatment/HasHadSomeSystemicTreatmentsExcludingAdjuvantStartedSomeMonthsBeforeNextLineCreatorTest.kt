@@ -12,7 +12,7 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
     private val referenceDate = LocalDate.of(2025, 12, 1)
     private val nonRecentDate = referenceDate.minusYears(5)
     private val maxMonthsBeforeNext = 12
-    private val function = HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
+    private val function = HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLine(
         minSystemicTreatments = 2,
         maxMonthsBeforeNextLine = maxMonthsBeforeNext,
         referenceDate = referenceDate
@@ -164,4 +164,6 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLi
     }
 
     //TODO()// ADD TESTS FOR UNKNOWN DATES SCENARIOS
+    //TODO()// ADD TESTS FOR TOXICITY STOP REASON SCENARIOS
+    //TODO()// ADD TESTS FOR AMBIGUOUS SCENARIOS (IN 6 MONTHS MARGIN)
 }

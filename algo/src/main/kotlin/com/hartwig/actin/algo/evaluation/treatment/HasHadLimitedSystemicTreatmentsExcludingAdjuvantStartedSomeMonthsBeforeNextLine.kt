@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
 
-class HasHadLimitedSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLineCreator(
+class HasHadLimitedSystemicTreatmentsExcludingAdjuvantStartedSomeMonthsBeforeNextLine(
     private val maxSystemicTreatments: Int,
     private val maxMonthsBeforeNextLine: Int,
     private val referenceDate: LocalDate
