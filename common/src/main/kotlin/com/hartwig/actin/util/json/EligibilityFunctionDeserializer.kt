@@ -6,7 +6,6 @@ import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
 import java.lang.reflect.Type
 
 class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction> {
@@ -17,7 +16,7 @@ class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction> {
 
     private fun toEligibilityFunction(function: JsonObject): EligibilityFunction {
         return EligibilityFunction(
-            rule = EligibilityRule.valueOf(function.get("rule").asString),
+            rule = function.get("ruleName").asString,
             parameters = toParameters(function.getAsJsonArray("parameters"))
         )
     }

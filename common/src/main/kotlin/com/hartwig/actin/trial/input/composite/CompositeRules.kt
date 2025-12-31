@@ -1,6 +1,6 @@
 package com.hartwig.actin.trial.input.composite
 
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 
 object CompositeRules {
 

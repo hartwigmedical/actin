@@ -75,6 +75,8 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.util.Locale
 
+fun EligibilityFunction.ruleAsEnum() = EligibilityRule.valueOf(rule)
+
 class FunctionInputResolver(
     private val doidModel: DoidModel,
     private val icdModel: IcdModel,
@@ -84,12 +86,12 @@ class FunctionInputResolver(
 ) {
 
     fun hasValidInputs(function: EligibilityFunction): Boolean? {
-        return if (CompositeRules.isComposite(function.rule)) hasValidCompositeInputs(function) else hasValidSingleInputs(function)
+        return if (CompositeRules.isComposite(function.ruleAsEnum())) hasValidCompositeInputs(function) else hasValidSingleInputs(function)
     }
 
     private fun hasValidSingleInputs(function: EligibilityFunction): Boolean? {
         try {
-            when (function.rule.input) {
+            when (function.ruleAsEnum().input) {
                 FunctionInput.NONE -> {
                     return function.parameters.isEmpty()
                 }
@@ -435,7 +437,7 @@ class FunctionInputResolver(
                 }
 
                 else -> {
-                    LOGGER.warn("Rule '{}' not defined in parameter type map!", function.rule)
+                    LOGGER.warn("Rule '{}' not defined in parameter type map!", function.ruleAsEnum())
                     return null
                 }
             }
@@ -1056,7 +1058,7 @@ class FunctionInputResolver(
 
         private fun hasValidCompositeInputs(function: EligibilityFunction): Boolean {
             return try {
-                when (CompositeRules.inputsForCompositeRule(function.rule)) {
+                when (CompositeRules.inputsForCompositeRule(function.ruleAsEnum())) {
                     CompositeInput.AT_LEAST_2 -> {
                         createAtLeastTwoCompositeParameters(function)
                     }
@@ -1080,7 +1082,7 @@ class FunctionInputResolver(
         fun createAtLeastTwoCompositeParameters(function: EligibilityFunction): List<EligibilityFunction> {
             if (function.parameters.size < 2) {
                 throw IllegalArgumentException(
-                    "Not enough parameters passed into '${function.rule}': ${function.parameters.size}"
+                    "Not enough parameters passed into '${function.ruleAsEnum()}': ${function.parameters.size}"
                 )
             }
             return function.parameters.map { it as EligibilityFunction }
@@ -1098,15 +1100,15 @@ class FunctionInputResolver(
         }
 
         private fun assertParamType(function: EligibilityFunction, requestedInput: FunctionInput) {
-            if (requestedInput != function.rule.input) {
-                throw IllegalStateException("Incorrect type of inputs requested for '${function.rule}': $requestedInput")
+            if (requestedInput != function.ruleAsEnum().input) {
+                throw IllegalStateException("Incorrect type of inputs requested for '${function.ruleAsEnum()}': $requestedInput")
             }
         }
 
         private fun assertParamCount(function: EligibilityFunction, expectedCount: Int) {
             if (function.parameters.size != expectedCount) {
                 throw IllegalArgumentException(
-                    "Invalid number of inputs passed to '${function.rule}': ${function.parameters.size}"
+                    "Invalid number of inputs passed to '${function.ruleAsEnum()}': ${function.parameters.size}"
                 )
             }
         }

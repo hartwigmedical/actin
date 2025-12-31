@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 
 const val BEVACIZUMAB = "BEVACIZUMAB"
 const val CAPECITABINE = "CAPECITABINE"
@@ -166,6 +166,6 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
     }
 
     private fun eligibilityFunction(rule: EligibilityRule, vararg parameters: Any): EligibilityFunction {
-        return EligibilityFunction(rule = rule, parameters = listOf(*parameters))
+        return EligibilityFunction(rule = rule.name, parameters = listOf(*parameters))
     }
 }

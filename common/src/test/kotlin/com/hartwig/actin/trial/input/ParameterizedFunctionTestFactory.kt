@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.FunctionInput
 import com.hartwig.actin.trial.input.composite.CompositeInput
 import com.hartwig.actin.trial.input.composite.CompositeRules
@@ -18,7 +17,7 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
     private val arbitraryRule: EligibilityRule = firstNonComposite()
 
     fun create(rule: EligibilityRule): EligibilityFunction {
-        return EligibilityFunction(rule, createTestParameters(rule))
+        return EligibilityFunction(rule.name, createTestParameters(rule))
     }
 
     private fun createTestParameters(rule: EligibilityRule): List<Any> {

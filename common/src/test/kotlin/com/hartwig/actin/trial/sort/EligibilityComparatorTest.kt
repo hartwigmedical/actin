@@ -2,7 +2,7 @@ package com.hartwig.actin.trial.sort
 
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -33,7 +33,7 @@ class EligibilityComparatorTest {
 
     private fun createWithoutReferences(): Eligibility {
         return Eligibility(
-            function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD, parameters = emptyList()),
+            function = EligibilityFunction(rule = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD.name, parameters = emptyList()),
             references = emptySet()
         )
     }

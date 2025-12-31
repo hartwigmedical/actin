@@ -12,8 +12,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.Trial
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.sort.EligibilityComparator
 
 fun Evaluation.combineMessages(): Evaluation {
@@ -65,11 +65,11 @@ class TrialMatcher(private val evaluationFunctionFactory: EvaluationFunctionFact
 
     private fun warnIfPreviouslyParticipatedInSameTrial(trial: Trial): Eligibility {
         val hasParticipatedInSameTrial = EligibilityFunction(
-            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X, listOf(trial.identification.acronym)
+            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X.name, listOf(trial.identification.acronym)
         )
         return Eligibility(
             references = setOf(),
-            function = EligibilityFunction(EligibilityRule.WARN_IF, listOf(hasParticipatedInSameTrial))
+            function = EligibilityFunction(EligibilityRule.WARN_IF.name, listOf(hasParticipatedInSameTrial))
         )
     }
 

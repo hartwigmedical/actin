@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.medication.AtcTree

@@ -3,10 +3,11 @@ package com.hartwig.actin.trial.serialization
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.datamodel.trial.TestTrialFactory
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.trial.input.ruleAsEnum
 import com.hartwig.actin.trial.serialization.TrialJson.fromJson
 import com.hartwig.actin.trial.serialization.TrialJson.readFromDir
 import com.hartwig.actin.trial.serialization.TrialJson.toJson
@@ -116,12 +117,12 @@ class TrialJsonTest {
     }
 
     private fun findBaseFunction(eligibility: List<Eligibility>, rule: EligibilityRule): EligibilityFunction {
-        return eligibility.find { entry -> entry.function.rule == rule }?.function
+        return eligibility.find { entry -> entry.function.ruleAsEnum() == rule }?.function
             ?: throw IllegalStateException("Could not find base eligibility function with rule: $rule")
     }
 
     private fun findSubFunction(functions: List<Any>, rule: EligibilityRule): EligibilityFunction {
-        return functions.map { it as EligibilityFunction }.find { it.rule == rule }
+        return functions.map { it as EligibilityFunction }.find { it.ruleAsEnum() == rule }
             ?: throw IllegalStateException("Could not find sub function with rule: $rule")
     }
 }
