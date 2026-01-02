@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo
 
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
@@ -8,7 +10,10 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
+import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
+import com.hartwig.pipeline.trial.TrialIngestion
+import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -16,7 +21,6 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
@@ -29,6 +33,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(inputData.patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
+
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val configuration = AlgoConfiguration.create(config.overridesYaml)
@@ -55,8 +60,21 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
             )
 
+        val trialsOrErrors = inputData.trials?.right() ?: TrialIngestion(EligibilityFactory()).ingest(
+            ObjectMapper().readValue(
+                config.trialConfigJson ?: error("One of trial config or trial database must be specified."),
+                object : TypeReference<List<TrialConfig>>() {}),
+        )
+
+        val trials = when (trialsOrErrors) {
+            is Either.Right -> trialsOrErrors.value
+            is Either.Left -> throw IllegalArgumentException(
+                "Failed to ingest trials. Unmappable trials found: ${trialsOrErrors.value.joinToString { it.trialId }}"
+            )
+        }
+
         val treatmentMatcher =
-            TreatmentMatcher.create(resources, inputData.trials, evidenceEntries, resistanceEvidenceMatcher)
+            TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         LOGGER.info("Printing treatment match")

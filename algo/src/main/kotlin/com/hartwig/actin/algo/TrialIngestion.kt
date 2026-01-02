@@ -29,7 +29,7 @@ data class TrialAndEligibilityRules(val trial: Trial, val rules: List<String>)
 
 class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
-    fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, Pair<List<Trial>, List<String>>> {
+    fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, List<Trial>> {
         val trialsAndUnmappableTrials = config.map { trialState ->
             val (trialErrors, criteria) = trialState.inclusionCriterion.map {
                 toEligibility(
@@ -93,7 +93,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
             return errors.left()
         }
 
-        return with(trialWrappers) { map { it.trial } to flatMap { it.rules }.distinct() }.right()
+        return with(trialWrappers) { map { it.trial } }.right()
     }
 
     private fun toEligibility(inclusionCriterion: InclusionCriterionConfig) =

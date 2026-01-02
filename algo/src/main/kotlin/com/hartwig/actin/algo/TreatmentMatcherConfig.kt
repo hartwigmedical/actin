@@ -12,7 +12,8 @@ import org.apache.logging.log4j.core.config.Configurator
 
 data class TreatmentMatcherConfig(
     val patientRecordJson: String,
-    val trialDatabaseDirectory: String,
+    val trialDatabaseDirectory: String?,
+    val trialConfigJson: String?,
     val treatmentDirectory: String,
     val doidJson: String,
     val icdTsv: String,
@@ -31,6 +32,7 @@ data class TreatmentMatcherConfig(
 
         private const val PATIENT_RECORD_JSON = "patient_json"
         private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
+        private const val TRIAL_CONFIG_JSON = "trial_config_json"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
         private const val ICD_TSV = "icd_tsv"
@@ -48,6 +50,7 @@ data class TreatmentMatcherConfig(
             val options = Options()
             options.addOption(PATIENT_RECORD_JSON, true, "File containing the patient record")
             options.addOption(TRIAL_DATABASE_DIRECTORY, true, "Directory containing all available trials")
+            options.addOption(TRIAL_CONFIG_JSON, true, "Directory containing config to create trial database")
             options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
             options.addOption(ICD_TSV, true, "Path to TSV file containing the full ICD-11 tree")
@@ -91,6 +94,7 @@ data class TreatmentMatcherConfig(
             return TreatmentMatcherConfig(
                 patientRecordJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_RECORD_JSON),
                 trialDatabaseDirectory = ApplicationConfig.nonOptionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
+                trialConfigJson = ApplicationConfig.optionalDir(cmd, TRIAL_CONFIG_JSON),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
