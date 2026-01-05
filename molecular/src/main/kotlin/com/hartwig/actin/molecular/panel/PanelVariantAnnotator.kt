@@ -10,8 +10,6 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
-private const val UNASSIGNED_QUERY_ID = -1
-
 data class AnnotatableVariant(
     val queryId: Int,
     val sequencedVariant: SequencedVariant,
@@ -26,6 +24,12 @@ class PanelVariantAnnotator(
     private val paver: Paver,
     private val decompositions: VariantDecompositionIndex
 ) {
+
+    private data class PendingVariant(
+        val sequencedVariant: SequencedVariant,
+        val queryHgvs: String,
+        val localPhaseSet: Int?
+    )
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
         val expanded = applyDecompositions(sortSequencedVariantsForDeterminism(sequencedVariants))
@@ -55,8 +59,7 @@ class PanelVariantAnnotator(
 
             if (decomposedHgvsList != null) {
                 decomposedHgvsList.map { decomposedHgvs ->
-                    AnnotatableVariant(
-                        queryId = UNASSIGNED_QUERY_ID,
+                    PendingVariant(
                         sequencedVariant = variant,
                         queryHgvs = decomposedHgvs,
                         localPhaseSet = sequencedVariantId
@@ -64,8 +67,7 @@ class PanelVariantAnnotator(
                 }
             } else {
                 listOf(
-                    AnnotatableVariant(
-                        queryId = UNASSIGNED_QUERY_ID,
+                    PendingVariant(
                         sequencedVariant = variant,
                         queryHgvs = variant.hgvsCodingOrProteinImpact(),
                         localPhaseSet = null
@@ -74,8 +76,13 @@ class PanelVariantAnnotator(
             }
         }
 
-        return expanded.mapIndexed { idx, variant ->
-            variant.copy(queryId = idx)
+        return expanded.mapIndexed { idx, pending ->
+            AnnotatableVariant(
+                queryId = idx,
+                sequencedVariant = pending.sequencedVariant,
+                queryHgvs = pending.queryHgvs,
+                localPhaseSet = pending.localPhaseSet
+            )
         }
     }
 
