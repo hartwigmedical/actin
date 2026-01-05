@@ -3,11 +3,9 @@ package com.hartwig.actin.molecular.panel
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
-import com.hartwig.actin.molecular.panel.prototype2.PVA3
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
-import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
@@ -24,7 +22,6 @@ data class TestPanelVariantAnnotatorConfig(
     val transcript: String?,
     val originalVariant: String,
     val decomposedVariants: List<String>,
-    val phaseSet: Int,
     val refGenomeVersion: RefGenomeVersion,
     val referenceGenomeFastaPath: String,
     val ensemblCachePath: String,
@@ -52,7 +49,6 @@ class TestPanelVariantAnnotatorApplication(private val config: TestPanelVariantA
             config.driverGenePanelPath,
             config.tempDir
         )
-        val paveLite = PaveLite(ensemblDataCache, false)
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
@@ -61,7 +57,7 @@ class TestPanelVariantAnnotatorApplication(private val config: TestPanelVariantA
                 )
             )
         )
-        val annotator = PVA3(variantAnnotator, paver, decompositions)
+        val annotator = PanelVariantAnnotator(variantAnnotator, paver, decompositions)
 
         val sequencedVariants = buildSequencedVariants(
             config.gene,
@@ -116,7 +112,7 @@ private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefG
 private fun toRefGenomeVersion(refGenomeVersion: String): RefGenomeVersion {
     return try {
         RefGenomeVersion.valueOf(refGenomeVersion.uppercase())
-    } catch (exception: IllegalArgumentException) {
+    } catch (_: IllegalArgumentException) {
         throw IllegalArgumentException("Invalid ref genome version '$refGenomeVersion', expected one of ${RefGenomeVersion.entries}")
     }
 }
@@ -125,7 +121,6 @@ private const val GENE = "gene"
 private const val TRANSCRIPT = "transcript"
 private const val ORIGINAL_VARIANT = "original_variant"
 private const val DECOMPOSED_VARIANT = "decomposed_variant"
-private const val PHASE_SET = "phase_set"
 private const val REF_GENOME_VERSION = "ref_genome_version"
 private const val REF_GENOME_FASTA_PATH = "ref_genome_fasta_file"
 private const val ENSEMBL_CACHE_PATH = "ensembl_data_dir"
@@ -138,7 +133,6 @@ private fun createOptions(): Options {
     options.addOption(TRANSCRIPT, true, "Transcript for the variant(s)")
     options.addOption(ORIGINAL_VARIANT, true, "Original variant HGVS coding impact")
     options.addOption(DECOMPOSED_VARIANT, true, "Decomposed variant HGVS coding impact (can be specified multiple times)")
-    options.addOption(PHASE_SET, true, "Local phase set id applied to all decomposed variants (default: 1)")
     options.addOption(REF_GENOME_VERSION, true, "Reference genome version (V37 or V38)")
     options.addOption(REF_GENOME_FASTA_PATH, true, "Path to reference genome fasta file")
     options.addOption(ENSEMBL_CACHE_PATH, true, "Path to ensembl data cache directory")
@@ -153,7 +147,6 @@ private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
         throw IllegalArgumentException("At least one --$DECOMPOSED_VARIANT must be provided")
     }
 
-    val phaseSet = cmd.getOptionValue(PHASE_SET)?.toInt() ?: 1
     val refGenomeVersion = toRefGenomeVersion(ApplicationConfig.nonOptionalValue(cmd, REF_GENOME_VERSION))
 
     return TestPanelVariantAnnotatorConfig(
@@ -161,7 +154,6 @@ private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
         transcript = ApplicationConfig.optionalValue(cmd, TRANSCRIPT),
         originalVariant = ApplicationConfig.nonOptionalValue(cmd, ORIGINAL_VARIANT),
         decomposedVariants = decomposedVariants,
-        phaseSet = phaseSet,
         refGenomeVersion = refGenomeVersion,
         referenceGenomeFastaPath = ApplicationConfig.nonOptionalFile(cmd, REF_GENOME_FASTA_PATH),
         ensemblCachePath = ApplicationConfig.nonOptionalDir(cmd, ENSEMBL_CACHE_PATH),
