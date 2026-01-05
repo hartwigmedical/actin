@@ -15,6 +15,14 @@ data class VariantDecomposition(
 )
 
 data class VariantDecompositionIndex(private val entries: List<VariantDecomposition>) {
+    init {
+        require(entries.all { it.decomposedCodingHgvs.isNotEmpty() }) {
+            val invalid = entries.filter { it.decomposedCodingHgvs.isEmpty() }
+                .joinToString(", ") { it.proteinHgvs }
+            "Decomposed coding HGVS list cannot be empty for variant(s): $invalid"
+        }
+    }
+
     private val index: Map<String, VariantDecomposition> = entries
         .associateBy { it.proteinHgvs }
         .also { idx ->
