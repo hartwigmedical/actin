@@ -125,22 +125,35 @@ class PanelVariantAnnotator(
     ): Map<String, PaveResponse> {
         val responsesById = responses.associateBy { it.id }
         val expectedIds = queries.map { it.id }.toSet()
-
-        if (responsesById.size != responses.size) {
-            val duplicates = responses
-                .groupBy { it.id }
-                .filter { (_, values) -> values.size > 1 }
-                .keys
-                .sorted()
-            throw IllegalStateException("PAVE returned duplicate responses for ids: ${duplicates.joinToString(", ")}")
+        val duplicates = responses
+            .groupBy { it.id }
+            .filter { (_, values) -> values.size > 1 }
+            .keys
+            .sorted()
+        val expectedPhaseById = queries
+            .filter { it.localPhaseSet != null }
+            .associate { it.id to it.localPhaseSet }
+        val mismatchedPhaseIds = expectedPhaseById.mapNotNull { (id, expected) ->
+            val actual = responsesById[id]?.localPhaseSet
+            if (actual == null || actual != expected) id else null
         }
 
-        if (responsesById.keys != expectedIds) {
-            val missing = (expectedIds - responsesById.keys).sorted()
-            val extra = (responsesById.keys - expectedIds).sorted()
-            throw IllegalStateException(
-                "PAVE returned unexpected set of response ids; missing=${missing.joinToString(", ")}, extra=${extra.joinToString(", ")}"
-            )
+        when {
+            duplicates.isNotEmpty() -> {
+                throw IllegalStateException("PAVE returned duplicate responses for ids: ${duplicates.joinToString(", ")}")
+            }
+            responsesById.keys != expectedIds -> {
+                val missing = (expectedIds - responsesById.keys).sorted()
+                val extra = (responsesById.keys - expectedIds).sorted()
+                throw IllegalStateException(
+                    "PAVE returned unexpected set of response ids; missing=${missing.joinToString(", ")}, extra=${extra.joinToString(", ")}"
+                )
+            }
+            mismatchedPhaseIds.isNotEmpty() -> {
+                throw IllegalStateException(
+                    "Missing or mismatched localPhaseSet for responses: ${mismatchedPhaseIds.sorted().joinToString(", ")}"
+                )
+            }
         }
 
         return responsesById
