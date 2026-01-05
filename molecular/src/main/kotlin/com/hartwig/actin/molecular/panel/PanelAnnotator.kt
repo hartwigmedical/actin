@@ -12,7 +12,6 @@ import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurd
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.panel.PanelSpecificationFunctions
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
-import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.util.ExtractionUtil
@@ -26,6 +25,7 @@ class PanelAnnotator(
     private val panelFusionAnnotator: PanelFusionAnnotator,
     private val panelCopyNumberAnnotator: PanelCopyNumberAnnotator,
     private val panelVirusAnnotator: PanelVirusAnnotator,
+    private val panelImmunologyAnnotator: PanelImmunologyAnnotator,
     private val panelDriverAttributeAnnotator: PanelDriverAttributeAnnotator,
     private val panelSpecifications: PanelSpecifications
 ) : MolecularAnnotator<SequencingTest> {
@@ -37,21 +37,20 @@ class PanelAnnotator(
     }
 
     private fun interpret(input: SequencingTest): MolecularTest {
-        val testVersion = PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
+        val testVersion =
+            PanelSpecificationFunctions.determineTestVersion(input, panelSpecifications.panelTestSpecifications, registrationDate)
 
         val specification = if (input.knownSpecifications) {
-            panelSpecifications.panelTargetSpecification(
-                PanelTestSpecification(input.test, testVersion),
-                input.negativeResults
-            )
+            panelSpecifications.panelTargetSpecification(input, testVersion)
         } else PanelTargetSpecification(PanelSpecificationFunctions.derivedGeneTargetMap(input))
-        
+
         val annotatedVariants = panelVariantAnnotator.annotate(input.variants)
         val annotatedAmplifications = panelCopyNumberAnnotator.annotate(input.amplifications)
         val annotatedDeletions = panelCopyNumberAnnotator.annotate(input.deletions)
         val annotatedFusions = panelFusionAnnotator.annotate(input.fusions, input.skippedExons)
         val annotatedViruses = panelVirusAnnotator.annotate(input.viruses)
-        
+        val annotatedImmunology = panelImmunologyAnnotator.annotate(input.hlaAlleles)
+
         return MolecularTest(
             date = input.date,
             sampleId = null,
@@ -103,7 +102,7 @@ class PanelAnnotator(
                 },
                 tumorMutationalLoad = null
             ),
-            immunology = null,
+            immunology = annotatedImmunology,
             pharmaco = emptySet(),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display()

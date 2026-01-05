@@ -27,6 +27,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             EligibilityRule.HAS_QTCF_OF_AT_LEAST_X_FOR_FEMALE_OR_Y_FOR_MALE to hasSufficientQTCFWithGenderCreator(),
             EligibilityRule.HAS_JTC_OF_AT_LEAST_X to hasSufficientJTcCreator(),
             EligibilityRule.HAS_LONG_QT_SYNDROME to hasLongQTSyndromeCreator(),
+            EligibilityRule.HAS_TORSADES_DE_POINTES to hasTorsadesDePointesCreator(),
             EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE to hasNormalCardiacFunctionByMUGAOrTTECreator(),
             EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH to hasFamilyHistoryOfIdiopathicSuddenDeathCreator(),
             EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME to hasFamilyHistoryOfLongQTSyndromeCreator(),
@@ -105,6 +106,17 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasLongQTSyndromeCreator(): FunctionCreator {
         return { HasLongQTSyndrome(icdModel()) }
+    }
+
+    private fun hasTorsadesDePointesCreator(): FunctionCreator {
+        return {
+            HasHadComorbidityWithIcdCode(
+                icdModel(),
+                setOf(IcdCode(IcdConstants.TORSADES_DE_POINTES_CODE)),
+                "Torsades de Pointes",
+                referenceDateProvider().date()
+            )
+        }
     }
 
     private fun hasNormalCardiacFunctionByMUGAOrTTECreator(): FunctionCreator {

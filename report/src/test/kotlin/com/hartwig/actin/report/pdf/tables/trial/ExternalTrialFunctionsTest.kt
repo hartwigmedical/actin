@@ -10,6 +10,7 @@ private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = "nct",
     title = "title",
     url = "url",
+    phase = null,
     actinMolecularEvents = sortedSetOf(),
     sourceMolecularEvents = sortedSetOf(),
     applicableCancerTypes = sortedSetOf(),

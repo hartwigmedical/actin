@@ -4,6 +4,7 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
@@ -82,6 +83,8 @@ class SummaryChapterTest {
             report.patientRecord,
             report.treatmentMatch,
             configuration.countryOfReference,
+            TestDoidModelFactory.createMinimalTestDoidModel(),
+            configuration.dutchExternalTrialsToExclude,
             configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
             configuration.filterOnSOCExhaustionAndTumorType,
         )

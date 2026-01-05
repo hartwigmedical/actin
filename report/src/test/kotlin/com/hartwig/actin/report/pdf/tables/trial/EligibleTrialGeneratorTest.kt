@@ -1,9 +1,13 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.configuration.ExternalTrialTumorType
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
+import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
+import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
 import org.assertj.core.api.Assertions.assertThat
@@ -46,7 +50,8 @@ class EligibleTrialGeneratorTest {
             externalTrials,
             requestingSource,
             countryOfReference,
-            LocalTrialsType.LOCAL_EARLY_PHASE
+            LocalTrialsType.LOCAL_EARLY_PHASE,
+            ExternalTrialTumorType.NONE
         )
 
         assertThat(result.cohortSize()).isEqualTo(2)
@@ -74,7 +79,8 @@ class EligibleTrialGeneratorTest {
             externalTrials,
             requestingSource,
             countryOfReference,
-            LocalTrialsType.LOCAL_LATE_PHASE
+            LocalTrialsType.LOCAL_LATE_PHASE,
+            ExternalTrialTumorType.NONE
         )
 
         assertThat(result.cohortSize()).isEqualTo(1)
@@ -125,5 +131,34 @@ class EligibleTrialGeneratorTest {
 
         assertThat(result?.cohortSize()).isEqualTo(3)
         assertThat(result?.title()).isEqualTo("Trials in NL that are open but additional molecular tests needed to evaluate eligibility (3 cohorts from 2 trials)")
+    }
+
+    @Test
+    fun `Should show specific footnote if filtering is applied based on lung tumor type`() {
+        assertThat(localAndNationalGenerator(ExternalTrialTumorType.LUNG).footnote())
+            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE}")
+    }
+
+    @Test
+    fun `Should show standard footnote if filtering based on lung tumor type is not applied`() {
+        assertThat(localAndNationalGenerator(ExternalTrialTumorType.NONE).footnote())
+            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE}")
+    }
+
+    private fun localAndNationalGenerator(effectiveExternalTrialExclusion: ExternalTrialTumorType): TrialTableGenerator {
+        return EligibleTrialGenerator.localAndNationalExternalOpenAndEligibleCohorts(
+            cohorts = emptyList(),
+            externalTrials = ExternalTrials(
+                MolecularFilteredExternalTrials(
+                    setOf(ActionableWithExternalTrial(TestVariantFactory.createMinimal().copy(), TestExternalTrialFactory.create())),
+                    emptySet()
+                ),
+                MolecularFilteredExternalTrials(emptySet(), emptySet())
+            ),
+            requestingSource = TrialSource.EXAMPLE,
+            countryOfReference = Country.NETHERLANDS,
+            localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE,
+            effectiveDutchExternalTrialExclusion = effectiveExternalTrialExclusion
+        )
     }
 }

@@ -25,6 +25,9 @@ object TreatmentHistoryEntryFunctions {
         val matchesWithToxicity: Boolean = false
     )
 
+    fun TreatmentHistoryEntry.containsTreatment(treatmentNameToFind: String) =
+        allTreatments().any { it.name.equals(treatmentNameToFind, ignoreCase = true) }
+
     fun evaluateIfDrugHadPDResponse(treatmentHistory: List<TreatmentHistoryEntry>, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {
         val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)
 

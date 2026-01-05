@@ -170,7 +170,8 @@ class ClinicalSummaryGenerator(
         val cyclesString = treatmentHistoryEntry.treatmentHistoryDetails?.cycles?.let { if (it == 1) "$it cycle" else "$it cycles" }
 
         val stopReasonString = treatmentHistoryEntry.treatmentHistoryDetails?.stopReasonDetail
-            ?.let { if (!it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true)) "stop reason: $it" else null }
+            ?.takeUnless { it.isBlank() || it.equals(STOP_REASON_PROGRESSIVE_DISEASE, ignoreCase = true) }
+            ?.let { "stop reason: $it" }
 
         val annotation = listOfNotNull(intentString, cyclesString, stopReasonString).joinToString(", ")
 

@@ -24,6 +24,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_HIGH_GRADE_CANCER to hasHighGradeCancerCreator(),
             EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to hasKnownSclcTransformationCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNsclcCreator(),
+            EligibilityRule.HAS_TRIPLE_NEGATIVE_BREAST_CANCER to hasTripleNegativeBreastCancerCreator(),
             EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
             EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to hasOvarianBorderlineTumorCreator(),
@@ -155,6 +156,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasNonSquamousNsclcCreator(): FunctionCreator {
         return { HasNonSquamousNsclc(doidModel()) }
+    }
+
+    private fun hasTripleNegativeBreastCancerCreator(): FunctionCreator {
+        return { HasTripleNegativeBreastCancer(doidModel()) }
     }
 
     private fun hasOvarianCancerWithMucinousComponentCreator(): FunctionCreator {

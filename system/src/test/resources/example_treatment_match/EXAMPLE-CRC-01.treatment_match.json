@@ -180,7 +180,7 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
+                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
                   "parameters": [
                     "KAYRAS"
                   ]
@@ -515,7 +515,7 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
+                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
                   "parameters": [
                     "IEMOEN"
                   ]
@@ -530,7 +530,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial IEMOEN"
+                "message": "Has not participated in this trial"
               }
             ],
             "warnMessages": [],

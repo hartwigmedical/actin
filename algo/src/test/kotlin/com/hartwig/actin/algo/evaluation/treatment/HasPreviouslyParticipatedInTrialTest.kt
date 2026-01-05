@@ -7,27 +7,13 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import org.junit.Test
 
 const val ACRONYM = "ACR"
-val FUNCTION = HasPreviouslyParticipatedInTrial()
 val FUNCTION_WITH_ACRONYM = HasPreviouslyParticipatedInTrial(ACRONYM)
 
 class HasPreviouslyParticipatedInTrialTest {
 
     @Test
     fun `Should fail with empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
         assertEvaluation(EvaluationResult.FAIL, FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(emptyList())))
-    }
-
-    @Test
-    fun `Should fail with non trial treatment`() {
-        val treatmentHistory = listOf(treatmentHistoryEntry(isTrial = false))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
-    }
-
-    @Test
-    fun `Should pass with trial treatment`() {
-        val treatmentHistory = listOf(treatmentHistoryEntry(isTrial = true))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test

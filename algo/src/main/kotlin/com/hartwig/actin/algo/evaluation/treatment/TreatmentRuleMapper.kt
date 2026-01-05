@@ -55,8 +55,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_ANY_SYSTEMIC_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(true),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_DOSE_REDUCTION_DURING_TREATMENT_NAME_X to hasHadSpecificTreatmentAndDoseReductionCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X to hasHadFirstLineSystemicTreatmentNameCreator(),
-            EligibilityRule.HAS_HAD_FIRST_LINE_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
+            EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugCreator(),
@@ -136,8 +137,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_CUMULATIVE_ANTHRACYCLINE_EXPOSURE_OF_AT_MOST_X_MG_PER_M2_DOXORUBICIN_OR_EQUIVALENT to
                     { HasLimitedCumulativeAnthracyclineExposure(doidModel()) },
             EligibilityRule.HAS_PATHOLOGICAL_COMPLETE_RESPONSE_AFTER_SURGERY to { HasPathologicalCompleteResponseAfterSurgery() },
-            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL to { HasPreviouslyParticipatedInTrial() },
-            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X to hasPreviouslyParticipatedInSpecificTrialCreator(),
+            EligibilityRule.HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X to hasPreviouslyParticipatedInSpecificTrialCreator(),
             EligibilityRule.IS_NOT_PARTICIPATING_IN_ANOTHER_INTERVENTIONAL_TRIAL to {
                 IsNotParticipatingInAnotherInterventionalTrial(
                     selector,
@@ -284,6 +284,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadSpecificTreatmentAndDoseReductionCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
+            HasHadSomeSpecificTreatmentsWithDoseReduction(listOf(treatment))
+        }
+    }
+
     private fun hasHadFirstLineSystemicTreatmentNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneSystemicTreatment(function)
@@ -294,7 +301,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
-            HasHadFirstLineTreatmentNameWithoutPdAndWithCycles(input.treatment.display(), input.integer)
+            HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(input.treatment, minCycles = input.integer)
         }
     }
 

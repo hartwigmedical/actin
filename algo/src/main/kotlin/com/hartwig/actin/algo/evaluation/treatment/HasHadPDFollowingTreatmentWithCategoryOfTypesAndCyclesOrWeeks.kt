@@ -52,16 +52,10 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             )
         }
             .toSet()
-        
+
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS in treatmentEvaluations -> {
-                if (minCycles == null && minWeeks == null) {
-                    pass(hasTreatmentMessage())
-                } else if (minCycles != null) {
-                    pass(hasTreatmentMessage(" and at least $minCycles cycles"))
-                } else {
-                    pass(hasTreatmentMessage(" for at least $minWeeks weeks"))
-                }
+                pass(hasTreatmentMessage(suffix()))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
@@ -88,18 +82,28 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 undetermined("Undetermined if patient received ${treatment()}}")
             }
 
-            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                fail("No PD after " + category.display())
-            }
+            PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> fail(hasNoPDAfterMessage(suffix()))
 
-            else -> {
-                fail("No ${treatment()} with PD")
-            }
+            else -> fail(hasNoTreatmentMessage(suffix()))
         }
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
         return "Has had ${treatment()} with PD$suffix"
+    }
+
+    private fun hasNoPDAfterMessage(suffix: String = ""): String {
+        return "No PD after ${category.display()}$suffix"
+    }
+
+    private fun hasNoTreatmentMessage(suffix: String = ""): String {
+        return "No ${treatment()} with PD$suffix"
+    }
+
+    private fun suffix(): String = when {
+        minCycles == null && minWeeks == null -> ""
+        minCycles != null -> " and at least $minCycles cycles"
+        else -> " for at least $minWeeks weeks"
     }
 
     private fun treatment(): String {

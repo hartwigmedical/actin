@@ -96,6 +96,42 @@ class PatientClinicalHistoryGeneratorTest {
         assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 1))).isEqualTo("Pembrolizumab")
     }
 
+    @Test
+    fun `Should omit PD stop reason detail from treatment string`() {
+        assertTreatmentSummaryWithStopReasonDetailOmitted("PD")
+    }
+
+    @Test
+    fun `Should omit empty stop reason detail from treatment string`() {
+        assertTreatmentSummaryWithStopReasonDetailOmitted("")
+    }
+
+    @Test
+    fun `Should omit blank reason detail from treatment string`() {
+        assertTreatmentSummaryWithStopReasonDetailOmitted(" ")
+    }
+
+    private fun assertTreatmentSummaryWithStopReasonDetailOmitted(stopReasonDetail: String) {
+        val reportWithStopReason = report.copy(
+            patientRecord = report.patientRecord.copy(
+                oncologicalHistory = listOf(
+                    TreatmentTestFactory.treatmentHistoryEntry(
+                        treatments = setOf(TreatmentTestFactory.drugTreatment("Chemotherapy", TreatmentCategory.CHEMOTHERAPY)),
+                        startYear = 2023,
+                        numCycles = 4,
+                        stopReasonDetail = stopReasonDetail
+                    )
+                )
+            )
+        )
+
+        val systemicHistoryTable =
+            generateHistoryAndReturnTableWithText(reportWithStopReason, "Relevant systemic treatment history")
+
+        assertThat(systemicHistoryTable.numberOfRows).isEqualTo(1)
+        assertThat(extractTextFromCell(systemicHistoryTable.getCell(0, 1))).isEqualTo("Chemotherapy (4 cycles)")
+    }
+
     private fun generateHistoryAndReturnTableWithText(report: Report, cellToFind: String): Table {
         val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
         val cells = clinicalSummaryGenerator.contentsAsList()

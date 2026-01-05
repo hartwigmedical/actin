@@ -526,9 +526,11 @@ CREATE TABLE `hlaAllele`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `sampleId` varchar(50) NOT NULL,
     `isReliable` BOOLEAN NOT NULL,
-    `name` varchar(50) NOT NULL,
-    `tumorCopyNumber` double precision NOT NULL,
-    `hasSomaticMutations` BOOLEAN NOT NULL,
+    `gene` varchar(50) NOT NULL,
+    `alleleGroup` varchar(50) NOT NULL,
+    `hlaProtein` varchar(50) NOT NULL,
+    `tumorCopyNumber` double precision,
+    `hasSomaticMutations` BOOLEAN,
     PRIMARY KEY (`id`)
 );
 

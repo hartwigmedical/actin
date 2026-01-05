@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicability
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.immunology.TestHlaAlleleFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.CancerTypeApplicabilityResolver
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
@@ -87,6 +88,97 @@ class EvidenceAnnotatorTest {
     }
 
     @Test
+    fun `Should annotate HLA alleles with evidence`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
+        val indication = evidence.indication()
+        val trial = TestServeTrialFactory.create(
+            anyMolecularCriteria = setOf(evidence.molecularCriterium()),
+            indications = setOf(indication),
+            title = "hla trial"
+        )
+
+        val cancerTypeResolver = mockk<CancerTypeApplicabilityResolver> {
+            every { resolve(indication) } returns CancerTypeMatchApplicability.SPECIFIC_TYPE
+        }
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(cancerTypeResolver, Gender.FEMALE)
+        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial), emptySet())
+        val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
+
+        val hlaAllele = TestHlaAlleleFactory.createMinimal()
+            .copy(
+                gene = "HLA-A",
+                alleleGroup = "02",
+                hlaProtein = "01",
+                evidence = TestClinicalEvidenceFactory.createEmpty(),
+                event = "HLA-A*02:01"
+            )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = true, hlaAlleles = setOf(hlaAllele)))
+
+        val updatedTest = evidenceAnnotator.annotate(molecularTest)
+        val annotatedAllele = updatedTest.immunology!!.hlaAlleles.single()
+
+        assertThat(annotatedAllele.evidence.treatmentEvidence).isNotEmpty
+        assertThat(annotatedAllele.evidence.treatmentEvidence.first().treatment).isEqualTo("treatment")
+        assertThat(annotatedAllele.evidence.eligibleTrials).hasSize(1)
+        assertThat(annotatedAllele.evidence.eligibleTrials.first().title).isEqualTo("hla trial")
+    }
+
+    @Test
+    fun `Should not annotate HLA alleles when immunology is not reliable`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(CancerTypeApplicabilityResolver(emptySet()), patientGender = null)
+        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial), emptySet())
+        val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
+
+        val hlaAllele = TestHlaAlleleFactory.createMinimal()
+            .copy(
+                gene = "HLA-A",
+                alleleGroup = "02",
+                hlaProtein = "01",
+                evidence = TestClinicalEvidenceFactory.createEmpty(),
+                event = "HLA-A*02:01"
+            )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = false, hlaAlleles = setOf(hlaAllele)))
+
+        val updatedTest = evidenceAnnotator.annotate(molecularTest)
+        val annotatedAllele = updatedTest.immunology!!.hlaAlleles.single()
+        assertThat(annotatedAllele.evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
+    }
+
+    @Test
+    fun `Should annotate only matching HLA allele`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+
+        val clinicalEvidenceFactory = ClinicalEvidenceFactory(CancerTypeApplicabilityResolver(emptySet()), patientGender = null)
+        val actionabilityMatcher = ActionabilityMatcher(listOf(evidence), listOf(trial), emptySet())
+        val evidenceAnnotator = evidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher)
+
+        val matchingAllele = TestHlaAlleleFactory.createMinimal()
+            .copy(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createEmpty(), event = "HLA-A*02:01")
+        val nonMatchingAllele = TestHlaAlleleFactory.createMinimal()
+            .copy(gene = "HLA-B", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createEmpty(), event = "HLA-B*02:01")
+
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(
+                immunology = TestMolecularFactory.createMinimalTestImmunology().copy(
+                    isReliable = true,
+                    hlaAlleles = setOf(matchingAllele, nonMatchingAllele)
+                )
+            )
+
+        val updatedTest = evidenceAnnotator.annotate(molecularTest)
+        val allelesByGene = updatedTest.immunology!!.hlaAlleles.associateBy { it.gene }
+
+        assertThat(allelesByGene["HLA-A"]!!.evidence.treatmentEvidence).isNotEmpty
+        assertThat(allelesByGene["HLA-B"]!!.evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
+    }
+
+    @Test
     fun `Should not fail annotating variants without evidence`() {
         val tumorDoids = setOf("DOID:162", "DOID:14502")
         val cancerTypeResolver = CancerTypeApplicabilityResolver(tumorDoids)
@@ -164,8 +256,8 @@ class EvidenceAnnotatorTest {
     private fun evidenceAnnotator(
         clinicalEvidenceFactory: ClinicalEvidenceFactory,
         actionabilityMatcher: ActionabilityMatcher
-    ) = EvidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher) { input, drivers, characteristics ->
-        input.copy(drivers = drivers, characteristics = characteristics)
+    ) = EvidenceAnnotator(clinicalEvidenceFactory, actionabilityMatcher) { input, drivers, characteristics, immunology ->
+        input.copy(drivers = drivers, characteristics = characteristics, immunology = immunology)
     }
 
     private fun clearEvidence(variant: Variant): Variant {

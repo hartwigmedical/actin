@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteri
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.ClinicalEvidenceFactory
@@ -13,7 +14,7 @@ import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
 class EvidenceAnnotator(
     private val clinicalEvidenceFactory: ClinicalEvidenceFactory,
     private val actionabilityMatcher: ActionabilityMatcher,
-    private val annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics) -> MolecularTest
+    private val annotationFunction: (MolecularTest, Drivers, MolecularCharacteristics, MolecularImmunology?) -> MolecularTest
 ) : MolecularAnnotator<MolecularTest> {
 
     override fun annotate(input: MolecularTest): MolecularTest {
@@ -21,7 +22,8 @@ class EvidenceAnnotator(
         return annotationFunction.invoke(
             input,
             annotateDriversWithEvidence(input.drivers, matchesForActionable),
-            annotateCharacteristicsWithEvidence(input.characteristics, matchesForActionable)
+            annotateCharacteristicsWithEvidence(input.characteristics, matchesForActionable),
+            annotateImmunologyWithEvidence(input.immunology, matchesForActionable)
         )
     }
 
@@ -77,6 +79,17 @@ class EvidenceAnnotator(
                     )
                 )
             }
+        )
+    }
+
+    private fun annotateImmunologyWithEvidence(
+        immunology: MolecularImmunology?,
+        matchesForActionable: MatchesForActionable
+    ): MolecularImmunology? {
+        return immunology?.copy(
+            hlaAlleles = immunology.hlaAlleles
+                .map { allele -> allele.copy(evidence = matchEvidence(allele, matchesForActionable)) }
+                .toSet()
         )
     }
 

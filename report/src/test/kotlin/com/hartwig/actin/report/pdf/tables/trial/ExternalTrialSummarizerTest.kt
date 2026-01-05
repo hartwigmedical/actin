@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.CancerType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
@@ -7,10 +8,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestMolecularMatchDetailsFactory
 import com.hartwig.actin.report.trial.ActionableWithExternalTrial
-import com.hartwig.actin.report.trial.EGFR_ACTIONABLE
-import com.hartwig.actin.report.trial.EGFR_TARGET
-import com.hartwig.actin.report.trial.TMB_ACTIONABLE
-import com.hartwig.actin.report.trial.TMB_TARGET
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
@@ -21,7 +18,11 @@ private const val NCT_02 = "NCT00000002"
 private const val TITLE = "title"
 private const val ACRONYM = "acronym"
 private const val URL = "url"
+private const val EGFR_TARGET = "EGFR"
+private const val TMB_TARGET = "TMB"
 
+private val EGFR_ACTIONABLE = TestVariantFactory.createMinimal().copy(event = EGFR_TARGET)
+private val TMB_ACTIONABLE = TestVariantFactory.createMinimal().copy(event = TMB_TARGET)
 private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = emptyMap())
 private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
 private val TRIAL_1 = TestExternalTrialFactory.create(
@@ -86,6 +87,7 @@ class ExternalTrialSummarizerTest {
         return ExternalTrialSummary(
             nctId = externalTrial.nctId,
             title = externalTrial.title(),
+            phase = externalTrial.phase,
             countries = countries,
             actinMolecularEvents = actinMolecularEvents,
             sourceMolecularEvents = externalTrial.molecularMatches.map { it.sourceEvent }.toSortedSet(),

@@ -18,6 +18,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -41,6 +42,8 @@ class HasExhaustedSOCTreatmentsTest {
         )
     )
 
+    private val curativeNeoAdjuvantOrAdjuvant = setOf(Intent.CURATIVE, Intent.NEOADJUVANT, Intent.ADJUVANT)
+
     @Test
     fun `Should pass for patient with NSCLC and platinum doublet chemotherapy in treatment history`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
@@ -52,8 +55,29 @@ class HasExhaustedSOCTreatmentsTest {
                     Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
                 )
             )
-        val record = createHistoryWithNSCLCAndTreatment(platinumDoublet)
+        val record = createHistoryWithNSCLCAndTreatmentWithIntents(platinumDoublet)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for patient with NSCLC and platinum doublet chemotherapy in treatment history but intent is curative, neoadjuvant or adjuvant`() {
+        setStandardOfCareCanBeEvaluatedForPatient(false)
+        val platinumDoublet =
+            DrugTreatment(
+                name = "Carboplatin+Pemetrexed",
+                drugs = setOf(
+                    Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)),
+                    Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
+                )
+            )
+
+        curativeNeoAdjuvantOrAdjuvant.forEach { intent ->
+            val record = createHistoryWithNSCLCAndTreatmentWithIntents(
+                platinumDoublet,
+                intents = setOf(intent)
+            )
+            assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        }
     }
 
     @Test
@@ -87,18 +111,64 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
+    fun `Should fail for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
+        setStandardOfCareCanBeEvaluatedForPatient(false)
+
+        curativeNeoAdjuvantOrAdjuvant.forEach { intent ->
+            val chemoradiation = TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = listOf(
+                    TreatmentTestFactory.treatment("CHEMOTHERAPY", true, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
+                    TreatmentTestFactory.treatment("RADIOTHERAPY", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())
+                ),
+                intents = setOf(intent)
+            )
+
+            val chemoradiationWithOther = chemoradiation.copy(
+                treatments = chemoradiation.treatments + TreatmentTestFactory.treatment(
+                    "OTHER",
+                    false,
+                    setOf(TreatmentCategory.IMMUNOTHERAPY),
+                    emptySet()
+                )
+            )
+
+            listOf(chemoradiation, chemoradiationWithOther).forEach {
+                assertEvaluation(
+                    EvaluationResult.FAIL,
+                    function.evaluate(
+                        TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
+                            .copy(oncologicalHistory = listOf(it))
+                    )
+                )
+            }
+        }
+    }
+
+    @Test
     fun `Should pass for patient with NSCLC and history entry with chemo-immuno with undefined chemotherapy`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
-        val record = createHistoryWithNSCLCAndTreatment(
+        val record = createHistoryWithNSCLCAndTreatmentWithIntents(
             TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
+    fun `Should fail for patient with NSCLC and history entry with chemo-immuno with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
+        setStandardOfCareCanBeEvaluatedForPatient(false)
+
+        curativeNeoAdjuvantOrAdjuvant.forEach { intent ->
+            val record = createHistoryWithNSCLCAndTreatmentWithIntents(
+                TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY), setOf(intent)
+            )
+            assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        }
+    }
+
+    @Test
     fun `Should return undetermined for patient with NSCLC and history entry with undefined chemotherapy`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
-        val record = createHistoryWithNSCLCAndTreatment(
+        val record = createHistoryWithNSCLCAndTreatmentWithIntents(
             TreatmentTestFactory.drugTreatment("CHEMOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
@@ -109,19 +179,21 @@ class HasExhaustedSOCTreatmentsTest {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         val treatment =
             TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
-        val record = createHistoryWithNSCLCAndTreatment(treatment)
+        val record = createHistoryWithNSCLCAndTreatmentWithIntents(treatment)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
+        assertThat(evaluation.failMessagesStrings())
+            .containsExactly("Has not exhausted SOC (has not received platinum doublet in metastatic setting)")
     }
 
     @Test
     fun `Should fail for patient with NSCLC with empty treatment history`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
-        val record = createHistoryWithNSCLCAndTreatment(null)
+        val record = createHistoryWithNSCLCAndTreatmentWithIntents(null)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Has not exhausted SOC (at least platinum doublet remaining)")
+        assertThat(evaluation.failMessagesStrings())
+            .containsExactly("Has not exhausted SOC (has not received platinum doublet in metastatic setting)")
     }
 
     @Test
@@ -180,13 +252,13 @@ class HasExhaustedSOCTreatmentsTest {
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
 
-    private fun createHistoryWithNSCLCAndTreatment(drugTreatment: Treatment?): PatientRecord {
+    private fun createHistoryWithNSCLCAndTreatmentWithIntents(drugTreatment: Treatment?, intents: Set<Intent>? = null): PatientRecord {
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         return base.copy(
             tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
             oncologicalHistory = if (drugTreatment != null) {
                 listOf(
-                    TreatmentTestFactory.treatmentHistoryEntry(listOf(drugTreatment))
+                    TreatmentTestFactory.treatmentHistoryEntry(listOf(drugTreatment), intents = intents)
                 )
             } else emptyList()
         )

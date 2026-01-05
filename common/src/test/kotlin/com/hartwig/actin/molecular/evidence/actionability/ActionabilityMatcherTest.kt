@@ -17,6 +17,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.datamodel.molecular.immunology.TestHlaAlleleFactory
 import com.hartwig.actin.molecular.evidence.TestServeEvidenceFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.actin.molecular.evidence.TestServeTrialFactory
@@ -389,20 +390,33 @@ class ActionabilityMatcherTest {
 
     @Test
     fun `Should match hla`() {
-        val molecularCriterium = TestServeMolecularFactory.createHlaCriterium(
-            baseActionableEvent = TestServeMolecularFactory.createActionableEvent(), gene = "HLA-A", alleleGroup = "02", hlaProtein = "01"
-        )
-        val evidence = TestServeEvidenceFactory.create(
-            molecularCriterium = molecularCriterium
-        )
-        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(molecularCriterium))
-
+        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
+        val hlaAlelle = TestHlaAlleleFactory.createMinimal()
+            .copy(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = true, hlaAlleles = setOf(hlaAlelle)))
 
         val matches = matcher.match(molecularTest)
-        assertThat(matches).isEmpty()
+        assertThat(matches).hasSize(1)
+        assertThat(matches[hlaAlelle]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should not match hla when isReliable is false`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForHla(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01")
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val hlaAlelle = TestHlaAlleleFactory.createMinimal()
+            .copy(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = false, hlaAlleles = setOf(hlaAlelle)))
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(0)
     }
 
     @Test
@@ -1142,8 +1156,11 @@ class ActionabilityMatcherTest {
         return ActionabilityMatcherFactory.create(serveRecord(evidences, trials))
     }
 
-    private fun evidenceWithDrugClass(name: String, drugClass: String, molecularCriterium: MolecularCriterium =
-        TestServeMolecularFactory.createHotspotCriterium()): EfficacyEvidence {
+    private fun evidenceWithDrugClass(
+        name: String,
+        drugClass: String,
+        molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium()
+    ): EfficacyEvidence {
         val base = TestServeEvidenceFactory.create(treatment = name, molecularCriterium = molecularCriterium)
         val treatment = ImmutableTreatment.builder()
             .from(base.treatment())

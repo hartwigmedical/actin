@@ -223,7 +223,7 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
+                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
                   "parameters": [
                     "IEMOEN"
                   ]
@@ -457,7 +457,7 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
+                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
                   "parameters": [
                     "KAYRAS"
                   ]
@@ -707,7 +707,7 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
+                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
                   "parameters": [
                     "NO-SEE797ES"
                   ]
@@ -882,7 +882,7 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
+                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
                   "parameters": [
                     "TEDR1"
                   ]
@@ -1098,7 +1098,7 @@
               "rule": "WARN_IF",
               "parameters": [
                 {
-                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_X",
+                  "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
                   "parameters": [
                     "PICKME3CA"
                   ]

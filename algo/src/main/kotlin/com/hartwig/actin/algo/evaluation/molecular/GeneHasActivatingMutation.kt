@@ -189,11 +189,11 @@ class GeneHasActivatingMutation(
                 EventsWithMessages(
                     activatingSubclonalVariants,
                     gene + " potentially activating mutation(s) " + activatingSubclonalVariants?.let { concatVariants(it, gene) } +
-                            " but subclonal likelihood > $Format.percentage(1 - CLONAL_CUTOFF)$inKinaseDomainString"
+                            " but subclonal likelihood > ${Format.percentage(1 - CLONAL_CUTOFF)}$inKinaseDomainString"
                 ),
                 EventsWithMessages(
                     nonHighDriverSubclonalVariants,
-                    "$gene potentially activating mutation(s) " + activatingSubclonalVariants?.let { concatVariants(it, gene) } +
+                    "$gene potentially activating mutation(s) " + nonHighDriverSubclonalVariants?.let { concatVariants(it, gene) } +
                             " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood$inKinaseDomainString"
                 ),
                 EventsWithMessages(
