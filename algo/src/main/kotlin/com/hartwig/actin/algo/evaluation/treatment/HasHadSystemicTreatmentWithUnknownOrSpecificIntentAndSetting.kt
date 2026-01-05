@@ -13,29 +13,32 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val referenceDate: LocalDate, private val metastaticOnly: Boolean) :
+class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
+    private val referenceDate: LocalDate,
+    private val intentsToIgnore: Set<Intent>,
+    private val settingString: String
+) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val priorSystemicTreatments = priorTreatments.filter { it.treatments.any(Treatment::isSystemic) }
-        val wrongIntents = if (metastaticOnly) Intent.curativeAdjuvantNeoadjuvantSet() else setOf(Intent.CURATIVE)
-        val (wrongIntentTreatments, potentiallyCorrectIntentTreatments) =
-            priorSystemicTreatments.partition { it.intents?.any { intent -> wrongIntents.contains(intent) } == true }
+        val (excludedIntentTreatments, includedIntentTreatments) =
+            priorSystemicTreatments.partition { it.intents?.any { intent -> intentsToIgnore.contains(intent) } == true }
         val (recentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) =
-            partitionRecentTreatments(potentiallyCorrectIntentTreatments, false)
+            partitionRecentTreatments(includedIntentTreatments, false)
         val (recentPotentiallyCorrectIntentTreatmentsIncludingUnknown, _) =
-            partitionRecentTreatments(potentiallyCorrectIntentTreatments, true)
-        val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = potentiallyCorrectIntentTreatments.filter { it.stopYear() == null }
+            partitionRecentTreatments(includedIntentTreatments, true)
+        val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = includedIntentTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
-        val messageEnding = if (metastaticOnly) "metastatic setting" else "metastatic or advanced setting"
-        val wrongIntentMessage = if (metastaticOnly) "non (neo)adjuvant/curative intent" else "non-curative intent"
+        val messageEnding = "$settingString setting"
+        val wrongIntentMessage = "${Format.concatItemsWithOr(intentsToIgnore)} intent"
 
         return when {
-            wrongIntentTreatments.isNotEmpty() && potentiallyCorrectIntentTreatments.isEmpty() -> {
+            excludedIntentTreatments.isNotEmpty() && includedIntentTreatments.isEmpty() -> {
                 EvaluationFactory.fail(
                     createMessage(
                         "Has only had prior systemic treatment with ${
-                            Format.concatItemsWithAnd(wrongIntentTreatments.mapNotNull { it.intents }.toSet().flatten())
+                            Format.concatItemsWithAnd(excludedIntentTreatments.mapNotNull { it.intents }.toSet().flatten())
                         } intent - thus presumably not in $messageEnding",
                         priorSystemicTreatments
                     )
@@ -57,12 +60,12 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(private val reference
                 )
             }
 
-            potentiallyCorrectIntentTreatments.size > 1 -> {
+            includedIntentTreatments.size > 1 -> {
                 EvaluationFactory.pass(
                     createMessage(
                         "Has had more than one systemic lines with unknown or $wrongIntentMessage" +
                                 "- presumably at least one in $messageEnding",
-                        potentiallyCorrectIntentTreatments
+                        includedIntentTreatments
                     )
                 )
             }
