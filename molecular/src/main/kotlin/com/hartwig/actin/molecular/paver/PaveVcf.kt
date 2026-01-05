@@ -16,47 +16,44 @@ object PaveVcf {
 
     fun write(vcfFile: String, queries: List<PaveQuery>, refGenomeFasta: String) {
         val refSequence = IndexedFastaSequenceFile(File(refGenomeFasta))
-        val writer = VCFWriterFactory.openIndexedVCFWriter(vcfFile, refSequence)
+        VCFWriterFactory.openIndexedVCFWriter(vcfFile, refSequence).use { writer ->
+            val sortedQueries = queries.sortedWith(
+                compareBy<PaveQuery> { chromToIndex(it.chromosome) }.thenBy { it.position }
+            )
 
-        val sortedQueries = queries.sortedWith(
-            compareBy<PaveQuery> { chromToIndex(it.chromosome) }.thenBy { it.position }
-        )
+            for (query in sortedQueries) {
+                val alleles = listOf(Allele.create(query.ref, true), Allele.create(query.alt, false))
+                val variant = VariantContextBuilder()
+                    .noGenotypes()
+                    .source("TransVar")
+                    .chr(query.chromosome)
+                    .start(query.position.toLong())
+                    .id(query.id)
+                    .alleles(alleles)
+                    .computeEndFromAlleles(alleles, query.position)
+                    .apply { query.localPhaseSet?.let { attribute(LOCAL_PHASE_SET_FIELD, it) } }
+                    .make()
 
-        for (query in sortedQueries) {
-            val alleles = listOf(Allele.create(query.ref, true), Allele.create(query.alt, false))
-            val variant = VariantContextBuilder()
-                .noGenotypes()
-                .source("TransVar")
-                .chr(query.chromosome)
-                .start(query.position.toLong())
-                .id(query.id)
-                .alleles(alleles)
-                .computeEndFromAlleles(alleles, query.position)
-                .apply { query.localPhaseSet?.let { attribute(LOCAL_PHASE_SET_FIELD, it) } }
-                .make()
-
-            writer.add(variant)
+                writer.add(variant)
+            }
         }
-
-        writer.close()
     }
 
     fun read(paveVcfFile: String): List<PaveResponse> {
-        val reader = AbstractFeatureReader.getFeatureReader(paveVcfFile, VCFCodec(), false)
-
-        val response = mutableListOf<PaveResponse>()
-        for (variant in reader) {
-            val paveImpact = extractPaveImpact(variant)
-            val paveTranscriptImpact = extractPaveTranscriptImpact(variant)
-            val localPhaseSet = if (variant.hasAttribute(LOCAL_PHASE_SET_FIELD)) {
-                variant.getAttributeAsInt(LOCAL_PHASE_SET_FIELD, -1).takeIf { it >= 0 }
-            } else {
-                null
+        AbstractFeatureReader.getFeatureReader(paveVcfFile, VCFCodec(), false).use { reader ->
+            val response = mutableListOf<PaveResponse>()
+            for (variant in reader) {
+                val paveImpact = extractPaveImpact(variant)
+                val paveTranscriptImpact = extractPaveTranscriptImpact(variant)
+                val localPhaseSet = if (variant.hasAttribute(LOCAL_PHASE_SET_FIELD)) {
+                    variant.getAttributeAsInt(LOCAL_PHASE_SET_FIELD, -1).takeIf { it >= 0 }
+                } else {
+                    null
+                }
+                response.add(PaveResponse(variant.id, paveImpact, paveTranscriptImpact, localPhaseSet))
             }
-            response.add(PaveResponse(variant.id, paveImpact, paveTranscriptImpact, localPhaseSet))
+            return response
         }
-
-        return response
     }
 
     private fun extractPaveImpact(variant: VariantContext): PaveImpact {
