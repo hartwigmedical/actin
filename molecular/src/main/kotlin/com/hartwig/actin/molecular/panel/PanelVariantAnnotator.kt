@@ -187,7 +187,16 @@ class PanelVariantAnnotator(
                 require(proteinImpacts.size <= 1) {
                     "Mismatched protein impacts within phase set $phaseSet: $proteinImpacts"
                 }
-                variants.take(1)
+                val resolvedExonCodon = PhaseSetExonCodonResolver.resolve(phaseSet, variants.mapNotNull { it.paveResponse })
+                val representative = variants.first()
+                val updatedRepresentative = if (resolvedExonCodon == null || representative.paveResponse == null) {
+                    representative
+                } else {
+                    representative.copy(
+                        paveResponse = PhaseSetExonCodonResolver.applyToResponse(representative.paveResponse, resolvedExonCodon)
+                    )
+                }
+                listOf(updatedRepresentative)
             }
         }
 
