@@ -44,8 +44,6 @@ object TreatmentDatabaseFactory {
 
     private inline fun <reified T> writeFilesInFolder(treatmentDbPath: String, folderName: String, content: Map<String, T>, serializer: Gson) {
         val folder = getPath(treatmentDbPath, folderName)
-        folder.deleteRecursively()
-        folder.mkdir()
         content.forEach { (fileName, value) ->
             File(folder, "$fileName.json").writeText(serializer.toJson(value))
         }
