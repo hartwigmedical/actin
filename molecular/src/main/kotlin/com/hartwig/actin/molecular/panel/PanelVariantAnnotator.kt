@@ -149,6 +149,7 @@ class PanelVariantAnnotator(
             duplicates.isNotEmpty() -> {
                 throw IllegalStateException("PAVE returned duplicate responses for ids: ${duplicates.joinToString(", ")}")
             }
+
             responsesById.keys != expectedIds -> {
                 val missing = (expectedIds - responsesById.keys).sorted()
                 val extra = (responsesById.keys - expectedIds).sorted()
@@ -156,6 +157,7 @@ class PanelVariantAnnotator(
                     "PAVE returned unexpected set of response ids; missing=${missing.joinToString(", ")}, extra=${extra.joinToString(", ")}"
                 )
             }
+
             mismatchedPhaseIds.isNotEmpty() -> {
                 throw IllegalStateException(
                     "Missing or mismatched localPhaseSet for responses: ${mismatchedPhaseIds.sorted().joinToString(", ")}"
@@ -242,6 +244,7 @@ class PanelVariantAnnotator(
                 paveResponse
             )
 
+            // TODO do we need phase group here for the decomposed variants? this is not a true phased variant from upstream wgs
             paveResponse.localPhaseSet?.let { phase -> baseVariant.copy(phaseGroups = setOf(phase)) } ?: baseVariant
         }
     }
