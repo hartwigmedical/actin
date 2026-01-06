@@ -110,6 +110,53 @@ class PanelVariantAnnotatorTest {
     }
 
     @Test
+    fun `Should use original transvar coordinates for decomposed variants`() {
+        val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
+        val decompositions = VariantDecompositionIndex(
+            listOf(
+                VariantDecomposition(
+                    originalCodingHgvs = "c.2A>T",
+                    decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
+                )
+            )
+        )
+
+        every { variantResolver.resolve(any(), any(), any()) } answers {
+            val hgvs = thirdArg<String>()
+            when (hgvs) {
+                "c.2A>G" -> transvarVariant(chromosome = "7", position = 2, ref = "A", alt = "G")
+                "c.3_4delinsA" -> transvarVariant(chromosome = "7", position = 3, ref = "AT", alt = "A")
+                "c.2A>T" -> transvarVariant(chromosome = "7", position = 99, ref = "C", alt = "T")
+                else -> null
+            }
+        }
+
+        every { paver.run(any<List<PaveQuery>>()) } answers {
+            val queries = firstArg<List<PaveQuery>>()
+            queries.map { query ->
+                paveResponse(
+                    id = query.id,
+                    gene = "GENE",
+                    canonicalTranscript = "TX",
+                    hgvsCodingImpact = "c.mock",
+                    hgvsProteinImpact = "p.M1L",
+                    localPhaseSet = query.localPhaseSet
+                )
+            }
+        }
+
+        val annotator = PanelVariantAnnotator(variantResolver, paver, decompositions)
+
+        val result = annotator.annotate(setOf(decomposedVariant))
+
+        assertThat(result).hasSize(1)
+        val variant = result.single()
+        assertThat(variant.position).isEqualTo(99)
+        assertThat(variant.ref).isEqualTo("C")
+        assertThat(variant.alt).isEqualTo("T")
+    }
+
+    @Test
     fun `Should not decompose variants when hgvsCodingImpact is null`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = null, hgvsProteinImpact = "p.V34E")
         val decompositions = VariantDecompositionIndex(

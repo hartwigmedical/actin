@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.clinical.SequencedVariant
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
-import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
@@ -25,64 +24,12 @@ class PanelVariantAnnotator(
     private val decompositions: VariantDecompositionIndex
 ) {
 
-    private data class PendingVariant(
-        val sequencedVariant: SequencedVariant,
-        val queryHgvs: String,
-        val localPhaseSet: Int?
-    )
-
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
-        val expanded = applyDecompositions(sortSequencedVariantsForDeterminism(sequencedVariants))
+        val expanded = VariantDecompositionExpander.expand(sequencedVariants, decompositions)
         val withTransvar = annotateWithTransvar(expanded)
         val withPave = annotateWithPave(withTransvar)
-        val dedupedAnnotated = deduplicateAnnotated(withPave)
-        val normalized = normalizePhasedEffects(dedupedAnnotated)
-
-        return createVariants(normalized)
-    }
-
-    private fun sortSequencedVariantsForDeterminism(variants: Set<SequencedVariant>): List<SequencedVariant> {
-        val comparator =
-            compareBy<SequencedVariant> { it.gene }
-                .thenBy { it.transcript.orEmpty() }
-                .thenBy { it.hgvsCodingImpact.orEmpty() }
-                .thenBy { it.hgvsProteinImpact.orEmpty() }
-
-        return variants.sortedWith(comparator)
-    }
-
-    fun applyDecompositions(sequencedVariants: List<SequencedVariant>): List<AnnotatableVariant> {
-        val expanded = sequencedVariants.withIndex().flatMap { (sequencedVariantId, variant) ->
-            val decomposedHgvsList =
-                variant.hgvsCodingImpact?.let { decompositions.lookup(it) }?.decomposedCodingHgvs
-
-            if (decomposedHgvsList != null) {
-                decomposedHgvsList.map { decomposedHgvs ->
-                    PendingVariant(
-                        sequencedVariant = variant,
-                        queryHgvs = decomposedHgvs,
-                        localPhaseSet = sequencedVariantId
-                    )
-                }
-            } else {
-                listOf(
-                    PendingVariant(
-                        sequencedVariant = variant,
-                        queryHgvs = variant.hgvsCodingOrProteinImpact(),
-                        localPhaseSet = null
-                    )
-                )
-            }
-        }
-
-        return expanded.mapIndexed { idx, pending ->
-            AnnotatableVariant(
-                queryId = idx,
-                sequencedVariant = pending.sequencedVariant,
-                queryHgvs = pending.queryHgvs,
-                localPhaseSet = pending.localPhaseSet
-            )
-        }
+        val collapsed = collapseDecompositions(withPave)
+        return createVariants(collapsed)
     }
 
     fun annotateWithTransvar(annotatable: List<AnnotatableVariant>): List<AnnotatableVariant> {
@@ -167,7 +114,7 @@ class PanelVariantAnnotator(
         return responsesById
     }
 
-    fun deduplicateAnnotated(annotated: List<AnnotatableVariant>): List<AnnotatableVariant> {
+    fun collapseDecompositions(annotated: List<AnnotatableVariant>): List<AnnotatableVariant> {
         val (expanded, direct) = annotated.partition { it.localPhaseSet != null }
 
         val groupedByPhase: Map<Int?, List<AnnotatableVariant>> =
@@ -178,63 +125,11 @@ class PanelVariantAnnotator(
             if (phaseSet == null) {
                 variants
             } else {
-                val proteinImpactsRaw = variants.map { it.paveResponse?.impact?.hgvsProteinImpact }
-                if (proteinImpactsRaw.any { it.isNullOrBlank() }) {
-                    throw IllegalStateException("Missing protein impact within phase set $phaseSet")
-                }
-
-                val proteinImpacts = proteinImpactsRaw.filterNotNull().toSet()
-                require(proteinImpacts.size <= 1) {
-                    "Mismatched protein impacts within phase set $phaseSet: $proteinImpacts"
-                }
-                val resolvedExonCodon = PhaseSetExonCodonResolver.resolve(phaseSet, variants.mapNotNull { it.paveResponse })
-                val representative = variants.first()
-                val updatedRepresentative = if (resolvedExonCodon == null || representative.paveResponse == null) {
-                    representative
-                } else {
-                    representative.copy(
-                        paveResponse = PhaseSetExonCodonResolver.applyToResponse(representative.paveResponse, resolvedExonCodon)
-                    )
-                }
-                listOf(updatedRepresentative)
+                listOf(PhasedDecompositionCollapser.collapse(phaseSet, variants, variantResolver))
             }
         }
 
         return direct + dedupedExpanded
-    }
-
-    private fun normalizePhasedEffects(annotated: List<AnnotatableVariant>): List<AnnotatableVariant> {
-        return annotated.map { variant ->
-            val paveResponse = variant.paveResponse
-            if (variant.localPhaseSet == null || paveResponse == null) {
-                variant
-            } else {
-                val normalizedImpact = paveResponse.impact.copy(
-                    canonicalEffects = paveResponse.impact.canonicalEffects.map(::toNonPhasedEffect)
-                )
-                val normalizedTranscriptImpacts = paveResponse.transcriptImpacts.map { transcriptImpact ->
-                    transcriptImpact.copy(
-                        effects = transcriptImpact.effects.map(::toNonPhasedEffect)
-                    )
-                }
-                variant.copy(
-                    paveResponse = paveResponse.copy(
-                        impact = normalizedImpact,
-                        transcriptImpacts = normalizedTranscriptImpacts,
-                    )
-                )
-            }
-        }
-    }
-
-    private fun toNonPhasedEffect(effect: PaveVariantEffect): PaveVariantEffect {
-        return when (effect) {
-            PaveVariantEffect.PHASED_MISSENSE -> PaveVariantEffect.MISSENSE
-            PaveVariantEffect.PHASED_INFRAME_INSERTION -> PaveVariantEffect.INFRAME_INSERTION
-            PaveVariantEffect.PHASED_INFRAME_DELETION -> PaveVariantEffect.INFRAME_DELETION
-            PaveVariantEffect.PHASED_SYNONYMOUS -> PaveVariantEffect.SYNONYMOUS
-            else -> effect
-        }
     }
 
     private fun createVariants(
