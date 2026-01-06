@@ -104,8 +104,7 @@ class PanelVariantAnnotatorTest {
         val decomposedQueries = queries.filter { it.id != directQuery.id }
         assertThat(decomposedQueries.map { it.localPhaseSet }.toSet()).containsExactly(1)
 
-        assertThat(result.count { it.phaseGroups == setOf(1) }).isEqualTo(1)
-        assertThat(result.count { it.phaseGroups == null }).isEqualTo(1)
+        assertThat(result.all { it.phaseGroups == null }).isTrue()
         assertThat(result.single { it.gene == "B" }.canonicalImpact.hgvsCodingImpact).isEqualTo("c.2A>T")
     }
 

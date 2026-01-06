@@ -142,14 +142,11 @@ class PanelVariantAnnotator(
                 ?: throw IllegalStateException("Missing PAVE response for id ${annotatedVariant.queryId}")
             val adjustedPaveResponse = adjustPaveResponseForOriginalCodingHgvs(annotatedVariant, paveResponse)
 
-            val baseVariant = VariantFactory.createVariant(
+            VariantFactory.createVariant(
                 annotatedVariant.sequencedVariant,
                 transvar,
                 adjustedPaveResponse
             )
-
-            // TODO do we need phase group here for the decomposed variants? this is not a true phased variant from upstream wgs
-            adjustedPaveResponse.localPhaseSet?.let { phase -> baseVariant.copy(phaseGroups = setOf(phase)) } ?: baseVariant
         }
     }
 
