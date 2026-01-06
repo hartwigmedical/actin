@@ -20,13 +20,13 @@ class HasHadLimitedWeeksOfSpecificTreatment(
             val matchTreatment =
                 record.oncologicalHistory.any { it.allTreatments().any { treatment -> treatment.name == treatmentToFind.name } }
 
-            val durationWeeks = TreatmentHistoryEntryFunctions.durationWeeks(treatmentHistoryEntry)
-            val durationWeeksMax = TreatmentHistoryEntryFunctions.durationWeeksMax(treatmentHistoryEntry)
+            val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(treatmentHistoryEntry)
+            val durationWeeksMax = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(treatmentHistoryEntry)
 
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) { matchTreatment }
                 ?.let { matchingPortionOfEntry ->
-                    val durationWeeksMatchingPortion = TreatmentHistoryEntryFunctions.durationWeeks(matchingPortionOfEntry)
-                    val durationWeeksMaxMatchingPortion = TreatmentHistoryEntryFunctions.durationWeeksMax(matchingPortionOfEntry)
+                    val durationWeeksMatchingPortion = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
+                    val durationWeeksMaxMatchingPortion = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(matchingPortionOfEntry)
 
                     TreatmentEvaluation.create(
                         hadTreatment = true,

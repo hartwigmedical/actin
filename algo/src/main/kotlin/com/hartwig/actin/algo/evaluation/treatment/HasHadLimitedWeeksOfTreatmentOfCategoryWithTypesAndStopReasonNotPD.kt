@@ -24,8 +24,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
             }?.let { matchingPortionOfEntry ->
                 val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry)
 
-                val durationWeeks = TreatmentHistoryEntryFunctions.durationWeeks(matchingPortionOfEntry)
-                val durationWeeksMax = TreatmentHistoryEntryFunctions.durationWeeksMax(matchingPortionOfEntry)
+                val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
+                val durationWeeksMax = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(matchingPortionOfEntry)
 
                 val meetsMaxWeeks = if (maxWeeks != null) durationWeeksMax != null && durationWeeksMax <= maxWeeks else true
                 val meetsUnclearWeeks = maxWeeks != null && durationWeeks == null && durationWeeksMax?.let { it > maxWeeks } != false

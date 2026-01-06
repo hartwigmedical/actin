@@ -119,14 +119,14 @@ object TreatmentHistoryEntryFunctions {
         }
     }
 
-    fun durationWeeks(treatmentHistoryEntry: TreatmentHistoryEntry) = DateComparison.minWeeksBetweenDates(
+    fun weeksBetweenDates(treatmentHistoryEntry: TreatmentHistoryEntry) = DateComparison.minWeeksBetweenDates(
         treatmentHistoryEntry.startYear,
         treatmentHistoryEntry.startMonth,
         treatmentHistoryEntry.treatmentHistoryDetails?.stopYear,
         treatmentHistoryEntry.treatmentHistoryDetails?.stopMonth
     )
 
-    fun durationWeeksMax(matchingPortionOfEntry: TreatmentHistoryEntry) = DateComparison.minWeeksBetweenDates(
+    fun maxWeeksBetweenDates(matchingPortionOfEntry: TreatmentHistoryEntry) = DateComparison.minWeeksBetweenDates(
         matchingPortionOfEntry.startYear,
         matchingPortionOfEntry.startMonth,
         matchingPortionOfEntry.stopYear(),

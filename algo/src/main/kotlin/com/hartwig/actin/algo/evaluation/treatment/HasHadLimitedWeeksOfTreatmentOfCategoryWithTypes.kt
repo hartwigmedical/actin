@@ -22,8 +22,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
                 categoryMatches && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             }?.let { matchingPortionOfEntry ->
-                val durationWeeks = TreatmentHistoryEntryFunctions.durationWeeks(matchingPortionOfEntry)
-                val durationWeeksMax = TreatmentHistoryEntryFunctions.durationWeeksMax(matchingPortionOfEntry)
+                val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
+                val durationWeeksMax = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(matchingPortionOfEntry)
 
                 TreatmentEvaluation.create(
                     hadTreatment = true,

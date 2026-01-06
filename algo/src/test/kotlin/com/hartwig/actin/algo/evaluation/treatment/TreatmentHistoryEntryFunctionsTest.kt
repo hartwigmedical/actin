@@ -296,14 +296,14 @@ class TreatmentHistoryEntryFunctionsTest {
     }
 
     @Test
-    fun `Should return min number of weeks between the start and stop date of the treatment`() {
+    fun `Should return number of weeks between the start and stop date of the treatment`() {
         val entry = treatmentHistoryEntry(startYear = 2024, startMonth = 3, stopYear = 2024, stopMonth = 8)
-        assertThat(TreatmentHistoryEntryFunctions.durationWeeks(entry)).isEqualTo(17)
+        assertThat(TreatmentHistoryEntryFunctions.weeksBetweenDates(entry)).isEqualTo(17)
     }
 
     @Test
     fun `Should return max number of weeks between the start and stop date of the treatment`() {
         val entry = TreatmentHistoryEntry(treatments = emptySet(), startYear = 2024, startMonth = 3, treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8))
-        assertThat(TreatmentHistoryEntryFunctions.durationWeeksMax(entry)).isEqualTo(17)
+        assertThat(TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(entry)).isEqualTo(17)
     }
 }
