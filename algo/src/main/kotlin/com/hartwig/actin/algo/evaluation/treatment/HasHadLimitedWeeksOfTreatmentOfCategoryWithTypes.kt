@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -23,19 +22,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
                 categoryMatches && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             }?.let { matchingPortionOfEntry ->
-                val durationWeeks: Long? = DateComparison.minWeeksBetweenDates(
-                    matchingPortionOfEntry.startYear,
-                    matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
-                )
-
-                val durationWeeksMax: Long? = DateComparison.minWeeksBetweenDates(
-                    matchingPortionOfEntry.startYear,
-                    matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.stopYear(),
-                    matchingPortionOfEntry.stopMonth()
-                )
+                val durationWeeks = TreatmentHistoryEntryFunctions.durationWeeks(matchingPortionOfEntry)
+                val durationWeeksMax = TreatmentHistoryEntryFunctions.durationWeeksMax(matchingPortionOfEntry)
 
                 TreatmentEvaluation.create(
                     hadTreatment = true,

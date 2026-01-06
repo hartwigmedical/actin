@@ -269,10 +269,17 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadLimitedWeeksOfSpecificTreatmentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
+            HasHadLimitedWeeksOfSpecificTreatment(input.treatment, input.integer)
+        }
+    }
+
     private fun hasHadSpecificTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
-            HasHadSomeSpecificTreatments(listOf(treatment), 1)
+            HasHadLimitedWeeksOfSpecificTreatment(treatment, null)
         }
     }
 
@@ -287,7 +294,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadSpecificTreatmentAndDoseReductionCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
-            HasHadSomeSpecificTreatmentsWithDoseReduction(listOf(treatment))
+            HasHadSomeSpecificTreatmentsWithDoseReduction(treatment)
         }
     }
 
