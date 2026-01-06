@@ -55,7 +55,6 @@ class PanelVariantAnnotator(
         val expanded = sequencedVariants.withIndex().flatMap { (sequencedVariantId, variant) ->
             val decomposedHgvsList =
                 variant.hgvsCodingImpact?.let { decompositions.lookup(it) }?.decomposedCodingHgvs
-                    ?: variant.hgvsProteinImpact?.let { decompositions.lookup(it) }?.decomposedCodingHgvs
 
             if (decomposedHgvsList != null) {
                 decomposedHgvsList.map { decomposedHgvs ->
@@ -237,15 +236,30 @@ class PanelVariantAnnotator(
                 ?: throw IllegalStateException("Missing Transvar annotation for id ${annotatedVariant.queryId}")
             val paveResponse = annotatedVariant.paveResponse
                 ?: throw IllegalStateException("Missing PAVE response for id ${annotatedVariant.queryId}")
+            val adjustedPaveResponse = adjustPaveResponseForOriginalCodingHgvs(annotatedVariant, paveResponse)
 
             val baseVariant = VariantFactory.createVariant(
                 annotatedVariant.sequencedVariant,
                 transvar,
-                paveResponse
+                adjustedPaveResponse
             )
 
             // TODO do we need phase group here for the decomposed variants? this is not a true phased variant from upstream wgs
-            paveResponse.localPhaseSet?.let { phase -> baseVariant.copy(phaseGroups = setOf(phase)) } ?: baseVariant
+            adjustedPaveResponse.localPhaseSet?.let { phase -> baseVariant.copy(phaseGroups = setOf(phase)) } ?: baseVariant
+        }
+    }
+
+    private fun adjustPaveResponseForOriginalCodingHgvs(
+        annotatedVariant: AnnotatableVariant,
+        paveResponse: PaveResponse
+    ): PaveResponse {
+        val originalCodingHgvs = annotatedVariant.sequencedVariant.hgvsCodingImpact?.trim()
+        return if (annotatedVariant.localPhaseSet != null && !originalCodingHgvs.isNullOrEmpty()) {
+            paveResponse.copy(
+                impact = paveResponse.impact.copy(hgvsCodingImpact = originalCodingHgvs)
+            )
+        } else {
+            paveResponse
         }
     }
 }

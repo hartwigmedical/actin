@@ -55,7 +55,7 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
-                    proteinHgvs = "c.2A>T",
+                    originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
             )
@@ -106,15 +106,16 @@ class PanelVariantAnnotatorTest {
 
         assertThat(result.count { it.phaseGroups == setOf(1) }).isEqualTo(1)
         assertThat(result.count { it.phaseGroups == null }).isEqualTo(1)
+        assertThat(result.single { it.gene == "B" }.canonicalImpact.hgvsCodingImpact).isEqualTo("c.2A>T")
     }
 
     @Test
-    fun `Should decompose variants using hgvsProteinImpact when hgvsCodingImpact is null`() {
+    fun `Should not decompose variants when hgvsCodingImpact is null`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = null, hgvsProteinImpact = "p.V34E")
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
-                    proteinHgvs = "p.V34E",
+                    originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
             )
@@ -123,8 +124,7 @@ class PanelVariantAnnotatorTest {
         every { variantResolver.resolve(any(), any(), any()) } answers {
             val hgvs = thirdArg<String>()
             when (hgvs) {
-                "c.2A>G" -> transvarVariant(chromosome = "7", position = 2, ref = "A", alt = "G")
-                "c.3_4delinsA" -> transvarVariant(chromosome = "7", position = 3, ref = "AT", alt = "A")
+                "p.V34E" -> transvarVariant(chromosome = "7", position = 2, ref = "A", alt = "G")
                 else -> null
             }
         }
@@ -150,9 +150,8 @@ class PanelVariantAnnotatorTest {
 
         assertThat(result).hasSize(1)
         val queries = capturedQueries.single()
-        assertThat(queries).hasSize(2)
-        assertThat(queries.map { it.localPhaseSet }.toSet()).containsExactly(0)
-        assertThat(queries.map { it.position }.toSet()).containsExactlyInAnyOrder(2, 3)
+        assertThat(queries).hasSize(1)
+        assertThat(queries.single().localPhaseSet).isNull()
     }
 
     @Test
@@ -161,7 +160,7 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
-                    proteinHgvs = "c.2A>T",
+                    originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
             )
@@ -208,7 +207,7 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
-                    proteinHgvs = "c.2A>T",
+                    originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
             )
@@ -274,7 +273,7 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
-                    proteinHgvs = "c.2A>T",
+                    originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
             )
@@ -318,7 +317,7 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
-                    proteinHgvs = "c.2A>T",
+                    originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
             )

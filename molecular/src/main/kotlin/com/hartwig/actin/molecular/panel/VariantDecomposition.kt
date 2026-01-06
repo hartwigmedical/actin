@@ -10,7 +10,7 @@ import java.io.Reader
 val DEFAULT_VARIANT_DECOMPOSITION = VariantDecompositionIndex(emptyList())
 
 data class VariantDecomposition(
-    val proteinHgvs: String,
+    val originalCodingHgvs: String,
     val decomposedCodingHgvs: List<String>,
 )
 
@@ -18,27 +18,27 @@ data class VariantDecompositionIndex(private val entries: List<VariantDecomposit
     init {
         require(entries.all { it.decomposedCodingHgvs.isNotEmpty() }) {
             val invalid = entries.filter { it.decomposedCodingHgvs.isEmpty() }
-                .joinToString(", ") { it.proteinHgvs }
+                .joinToString(", ") { it.originalCodingHgvs }
             "Decomposed coding HGVS list cannot be empty for variant(s): $invalid"
         }
     }
 
     private val index: Map<String, VariantDecomposition> = entries
-        .associateBy { it.proteinHgvs }
+        .associateBy { it.originalCodingHgvs }
         .also { idx ->
             require(idx.size == entries.size) {
-                val dupes = entries.groupBy { it.proteinHgvs }
+                val dupes = entries.groupBy { it.originalCodingHgvs }
                     .filter { it.value.size > 1 }
                     .keys.joinToString(", ")
                 "Duplicate variant decomposition entries for: $dupes"
             }
         }
 
-    fun lookup(proteinHgvs: String): VariantDecomposition? = index[proteinHgvs.trim()]
+    fun lookup(originalCodingHgvs: String): VariantDecomposition? = index[originalCodingHgvs.trim()]
 }
 
 private data class RawVariantDecomposition(
-    @JsonProperty("variant") val variant: String,
+    @JsonProperty("variant") val originalCodingHgvs: String,
     @JsonProperty("decomposition") val decomposition: String
 )
 
@@ -54,7 +54,7 @@ object PaveVariantDecomposition {
         val raw = csvReader.readValues<RawVariantDecomposition>(reader).readAll().toList()
         return raw.map {
             VariantDecomposition(
-                proteinHgvs = it.variant.trim(),
+                originalCodingHgvs = it.originalCodingHgvs.trim(),
                 decomposedCodingHgvs = it.decomposition.split(",").map(String::trim).filter { part -> part.isNotEmpty() }
             )
         }

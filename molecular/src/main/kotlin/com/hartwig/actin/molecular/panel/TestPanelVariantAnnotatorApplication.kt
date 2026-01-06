@@ -52,7 +52,7 @@ class TestPanelVariantAnnotatorApplication(private val config: TestPanelVariantA
         val decompositions = VariantDecompositionIndex(
             listOf(
                 VariantDecomposition(
-                    proteinHgvs = config.originalVariant.trim(),
+                    originalCodingHgvs = config.originalVariant.trim(),
                     decomposedCodingHgvs = config.decomposedVariants.map(String::trim)
                 )
             )

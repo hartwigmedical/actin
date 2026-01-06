@@ -143,6 +143,17 @@ class VariantFactoryTest {
     }
 
     @Test
+    fun `Should drop other impacts for phased output`() {
+        val phasedPaveAnnotation = PAVE_ANNOTATION.copy(
+            transcriptImpacts = listOf(paveTranscriptImpact()),
+            localPhaseSet = 1
+        )
+
+        val transcriptImpact = VariantFactory.otherImpacts(phasedPaveAnnotation)
+        assertThat(transcriptImpact).isEmpty()
+    }
+
+    @Test
     fun `Should retain all effects data and have complete annotation of variants`() {
         val complexPaveAnnotation = PAVE_ANNOTATION.copy(
             transcriptImpacts = listOf(
@@ -415,4 +426,3 @@ class VariantFactoryTest {
             codingEffect = codingEffect
         )
 }
-

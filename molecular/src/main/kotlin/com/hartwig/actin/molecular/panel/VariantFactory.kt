@@ -132,6 +132,10 @@ object VariantFactory {
     }
 
     fun otherImpacts(paveResponse: PaveResponse): Set<TranscriptVariantImpact> {
+        // Phased component records may disagree on transcript impacts, so drop otherImpacts for recombined output.
+        if (paveResponse.localPhaseSet != null) {
+            return emptySet()
+        }
         return paveResponse.transcriptImpacts
             .filter { it.gene == paveResponse.impact.gene && it.transcript != paveResponse.impact.canonicalTranscript }
             .map { transcriptImpact(it) }
