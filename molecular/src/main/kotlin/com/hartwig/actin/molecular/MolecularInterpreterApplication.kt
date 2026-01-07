@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
+import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -121,8 +122,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()
-        val panelDriverAttributeAnnotator =
-            PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), inputData.dndsDatabase)
+        val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(
+            KnownEventResolverFactory.create(serveRecord.knownEvents()),
+            inputData.dndsDatabase,
+            MolecularConfiguration()
+        )
 
         val patientGender = clinical.patient.gender
         val evidenceAnnotator =
