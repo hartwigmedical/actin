@@ -12,7 +12,7 @@ class VariantDecompositionExpanderTest {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
         val otherVariant = SequencedVariant(gene = "C", transcript = null, hgvsCodingImpact = "c.3A>T")
 
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -40,7 +40,7 @@ class VariantDecompositionExpanderTest {
     @Test
     fun `Should not decompose when coding hgvs is missing`() {
         val variant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = null, hgvsProteinImpact = "p.V34E")
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",

@@ -7,14 +7,14 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import java.io.File
 import java.io.Reader
 
-val EMPTY_VARIANT_DECOMPOSITION_INDEX = VariantDecompositionIndex(emptyList())
+val EMPTY_VARIANT_DECOMPOSITION_TABLE = VariantDecompositionTable(emptyList())
 
 data class VariantDecomposition(
     val originalCodingHgvs: String,
     val decomposedCodingHgvs: List<String>,
 )
 
-data class VariantDecompositionIndex(private val entries: List<VariantDecomposition>) {
+data class VariantDecompositionTable(private val entries: List<VariantDecomposition>) {
     init {
         require(entries.all { it.decomposedCodingHgvs.isNotEmpty() }) {
             val invalid = entries.filter { it.decomposedCodingHgvs.isEmpty() }

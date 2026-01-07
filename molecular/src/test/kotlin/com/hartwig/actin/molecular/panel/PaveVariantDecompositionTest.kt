@@ -32,7 +32,7 @@ class PaveVariantDecompositionTest {
 
         val decompositions = PaveVariantDecomposition.read(StringReader(tsv))
 
-        Assertions.assertThatThrownBy { VariantDecompositionIndex(decompositions) }
+        Assertions.assertThatThrownBy { VariantDecompositionTable(decompositions) }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("c.variant1")
     }

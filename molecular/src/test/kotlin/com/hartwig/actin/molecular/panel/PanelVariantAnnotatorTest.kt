@@ -25,7 +25,7 @@ class PanelVariantAnnotatorTest {
 
     @Test
     fun `Should not run PAVE when no variants`() {
-        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionIndex(emptyList()))
+        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionTable(emptyList()))
 
         val result = annotator.annotate(emptySet())
 
@@ -39,7 +39,7 @@ class PanelVariantAnnotatorTest {
         val variant = SequencedVariant(gene = "EGFR", transcript = null, hgvsCodingImpact = "c.1A>T")
         every { variantResolver.resolve("EGFR", null, "c.1A>T") } returns null
 
-        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionIndex(emptyList()))
+        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionTable(emptyList()))
 
         assertThatThrownBy { annotator.annotate(setOf(variant)) }
             .isInstanceOf(IllegalStateException::class.java)
@@ -52,7 +52,7 @@ class PanelVariantAnnotatorTest {
         val directVariant = SequencedVariant(gene = "A", transcript = null, hgvsCodingImpact = "c.1A>T")
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
 
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -111,7 +111,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should use original transvar coordinates for decomposed variants`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -158,7 +158,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should not decompose variants when hgvsCodingImpact is null`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = null, hgvsProteinImpact = "p.V34E")
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -203,7 +203,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should decompose variants using hgvsCodingImpact when hgvsProteinImpact is null`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T", hgvsProteinImpact = null)
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -250,7 +250,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should normalize phased effects after selecting representative phased response`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -316,7 +316,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should throw on mismatched protein impacts within a local phase set`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -360,7 +360,7 @@ class PanelVariantAnnotatorTest {
     @Test
     fun `Should throw when protein impact is missing within a local phase set`() {
         val decomposedVariant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = "c.2A>T",
@@ -406,7 +406,7 @@ class PanelVariantAnnotatorTest {
         every { variantResolver.resolve("EGFR", null, "c.1A>T") } returns transvarVariant(chromosome = "7", position = 1, ref = "A", alt = "T")
         every { paver.run(any<List<PaveQuery>>()) } returns emptyList()
 
-        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionIndex(emptyList()))
+        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionTable(emptyList()))
 
         assertThatThrownBy { annotator.annotate(setOf(variant)) }
             .isInstanceOf(IllegalStateException::class.java)
@@ -436,7 +436,7 @@ class PanelVariantAnnotatorTest {
             ),
         )
 
-        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionIndex(emptyList()))
+        val annotator = PanelVariantAnnotator(variantResolver, paver, VariantDecompositionTable(emptyList()))
 
         assertThatThrownBy { annotator.annotate(setOf(variant)) }
             .isInstanceOf(IllegalStateException::class.java)

@@ -21,7 +21,7 @@ data class AnnotatableVariant(
 class PanelVariantAnnotator(
     private val variantResolver: VariantAnnotator,
     private val paver: Paver,
-    private val decompositions: VariantDecompositionIndex
+    private val decompositions: VariantDecompositionTable
 ) {
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {

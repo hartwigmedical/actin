@@ -49,7 +49,7 @@ class TestPanelVariantAnnotatorApplication(private val config: TestPanelVariantA
             config.driverGenePanelPath,
             config.tempDir
         )
-        val decompositions = VariantDecompositionIndex(
+        val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
                     originalCodingHgvs = config.originalVariant.trim(),

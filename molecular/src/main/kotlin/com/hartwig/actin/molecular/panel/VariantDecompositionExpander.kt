@@ -12,7 +12,7 @@ object VariantDecompositionExpander {
 
     fun expand(
         sequencedVariants: Set<SequencedVariant>,
-        decompositions: VariantDecompositionIndex
+        decompositions: VariantDecompositionTable
     ): List<AnnotatableVariant> {
         val sortedSequencedVariants = sortSequencedVariantsForDeterminism(sequencedVariants)
         return expand(sortedSequencedVariants, decompositions)
@@ -30,7 +30,7 @@ object VariantDecompositionExpander {
 
     private fun expand(
         sequencedVariants: List<SequencedVariant>,
-        decompositions: VariantDecompositionIndex
+        decompositions: VariantDecompositionTable
     ): List<AnnotatableVariant> {
         val expanded = sequencedVariants.withIndex().flatMap { (sequencedVariantId, variant) ->
             val decomposedHgvsList =
