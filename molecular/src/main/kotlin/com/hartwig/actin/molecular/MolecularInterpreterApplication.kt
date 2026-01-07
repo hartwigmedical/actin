@@ -64,8 +64,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val patientGender = inputData.clinical.patient.gender
         val orangeMolecularTests = interpretOrangeRecord(tumorDoids, inputData, patientGender)
 
-        val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
 
         val allTests = orangeMolecularTests + clinicalMolecularTests
         MolecularTestPrinter(DatamodelPrinter.withDefaultIndentation()).print(allTests)
@@ -122,10 +121,13 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()
+
+        val configuration = MolecularConfiguration.create(config.overridesYaml)
+        LOGGER.info("Loaded molecular config: $configuration")
         val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(
             KnownEventResolverFactory.create(serveRecord.knownEvents()),
             inputData.dndsDatabase,
-            MolecularConfiguration()
+            configuration
         )
 
         val patientGender = clinical.patient.gender
