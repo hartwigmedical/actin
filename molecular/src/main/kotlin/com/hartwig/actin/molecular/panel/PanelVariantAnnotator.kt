@@ -109,7 +109,7 @@ class PanelVariantAnnotator(
     private fun createVariant(
         variant: SequencedVariant,
         transvarAnnotation: TransvarVariant,
-        paveResponse: PaveResponse,
+        paveResponse: PaveResponse
     ) = Variant(
         chromosome = transvarAnnotation.chromosome(),
         position = transvarAnnotation.position(),
