@@ -10,8 +10,11 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
+import com.hartwig.actin.molecular.panel.EMPTY_VARIANT_DECOMPOSITION_INDEX
 import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
 import com.hartwig.actin.molecular.panel.PanelSpecifications
+import com.hartwig.actin.molecular.panel.PaveVariantDecomposition
+import com.hartwig.actin.molecular.panel.VariantDecompositionIndex
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
@@ -35,7 +38,8 @@ data class MolecularInterpreterInputData(
     val dndsDatabase: DndsDatabase,
     val knownFusionCache: KnownFusionCache,
     val panelSpecifications: PanelSpecifications,
-    val geneFilter: GeneFilter
+    val geneFilter: GeneFilter,
+    val variantDecompositions: VariantDecompositionIndex
 )
 
 object InputDataLoader {
@@ -120,6 +124,18 @@ object InputDataLoader {
                 }
             }
 
+            val deferredVariantDecompositions = async {
+                withContext(Dispatchers.IO) {
+                    val decompositionFilePath = config.variantDecompositionFilePath
+                        ?: return@withContext EMPTY_VARIANT_DECOMPOSITION_INDEX
+
+                    LOGGER.info("Loading variant decompositions from {}", decompositionFilePath)
+                    val entries = PaveVariantDecomposition.readFromFile(decompositionFilePath)
+                    LOGGER.info("Loaded {} variant decomposition entries", entries.size)
+                    VariantDecompositionIndex(entries)
+                }
+            }
+
             MolecularInterpreterInputData(
                 clinical = clinical.await(),
                 orange = orange.await(),
@@ -129,8 +145,8 @@ object InputDataLoader {
                 dndsDatabase = deferredDndsDatabase.await(),
                 knownFusionCache = deferredKnownFusionCache.await(),
                 panelSpecifications = deferredPanelSpecifications.await(),
-                geneFilter = deferredGeneFilter.await()
+                geneFilter = deferredGeneFilter.await(),
+                variantDecompositions = deferredVariantDecompositions.await()
             )
         }
 }
-

@@ -7,7 +7,7 @@ import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import java.io.File
 import java.io.Reader
 
-val DEFAULT_VARIANT_DECOMPOSITION = VariantDecompositionIndex(emptyList())
+val EMPTY_VARIANT_DECOMPOSITION_INDEX = VariantDecompositionIndex(emptyList())
 
 data class VariantDecomposition(
     val originalCodingHgvs: String,
