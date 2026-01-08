@@ -10,7 +10,7 @@ private val SPLICE_NONSENSE_OR_FRAMESHIFT_CODING_EFFECT = setOf(CodingEffect.SPL
 
 class GeneDriverLikelihoodModel(private val dndsModel: DndsModel) {
 
-    fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>, variantPathogenicityIsConfirmed: Boolean): Double? {
+    fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>, variantPathogenicityIsConfirmed: Boolean = false): Double? {
         val hasCancerAssociatedVariant = variants.any { it.isCancerAssociatedVariant }
         val hasBiallelicSpliceNonSenseOrFrameshift =
             variants.any { it.isBiallelic == true && it.canonicalImpact.codingEffect in SPLICE_NONSENSE_OR_FRAMESHIFT_CODING_EFFECT }

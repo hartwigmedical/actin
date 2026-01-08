@@ -35,7 +35,6 @@ class GeneDriverLikelihoodModelTest {
             "BRAF",
             GeneRole.ONCO,
             listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE)),
-            false
         )
         assertThat(result).isEqualTo(0.504, Offset.offset(0.001))
     }
@@ -72,7 +71,6 @@ class GeneDriverLikelihoodModelTest {
                 createVariant(VariantType.SNV, CodingEffect.MISSENSE),
                 createVariant(VariantType.SNV, CodingEffect.NONSENSE_OR_FRAMESHIFT)
             ),
-            false
         )
         assertThat(result).isEqualTo(0.967, Offset.offset(0.001))
     }
@@ -83,7 +81,6 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.ONCO,
             listOf(TestVariantFactory.createMinimal().copy(isCancerAssociatedVariant = true)),
-            false
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -100,7 +97,6 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.TSG,
             listOf(biallelicVariant),
-            false
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -111,7 +107,6 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.UNKNOWN,
             listOf(TestVariantFactory.createMinimal()),
-            false
         )
         assertThat(result).isNull()
     }
@@ -284,7 +279,7 @@ class GeneDriverLikelihoodModelTest {
         expectedLikelihood: Double?,
         vararg variants: Variant
     ) {
-        val result = model.evaluate(GENE, geneRole, variants.toList(), false)
+        val result = model.evaluate(GENE, geneRole, variants.toList())
 
         if (expectedLikelihood == null) {
             assertThat(result).isNull()
