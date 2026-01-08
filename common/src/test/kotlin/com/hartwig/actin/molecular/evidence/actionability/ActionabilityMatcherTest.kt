@@ -33,11 +33,8 @@ import com.hartwig.actin.molecular.util.GeneConstants
 import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
-import com.hartwig.serve.datamodel.efficacy.ImmutableEfficacyEvidence
-import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
-import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.molecular.characteristic.TumorCharacteristicType
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import com.hartwig.serve.datamodel.molecular.fusion.ActionableFusion
@@ -728,12 +725,6 @@ class ActionabilityMatcherTest {
         assertThat(matches).isEmpty()
     }
 
-    private fun actionabilityMatch(evidence: EfficacyEvidence) =
-        ActionabilityMatch(
-            evidenceMatches = listOf(evidence),
-            matchingCriteriaPerTrialMatch = emptyMap()
-        )
-
     private fun indirectActionabilityMatch(evidence: EfficacyEvidence) =
         ActionabilityMatch(
             evidenceMatches = emptyList(),
@@ -971,8 +962,8 @@ class ActionabilityMatcherTest {
     }
 
     @Test
-    fun `Should match absence of protein evidence with deletion if MMR gene`() {
-        val gene = GeneConstants.MMR_GENES.first()
+    fun `Should match absence of protein evidence with deletion`() {
+        val gene = "gene"
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
@@ -981,8 +972,11 @@ class ActionabilityMatcherTest {
             gene = gene,
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
         )
-        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
-            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                copyNumbers = listOf(copyNumber)
+            )
+        )
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
@@ -990,21 +984,25 @@ class ActionabilityMatcherTest {
     }
 
     @Test
-    fun `Should not match absence of protein with deletion if non-MMR gene`() {
-        val gene = "some gene"
-        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+    fun `Should match presence of protein evidence with amplification`() {
+        val gene = "gene"
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.PRESENCE_OF_PROTEIN)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val copyNumber = TestMolecularFactory.createMinimalCopyNumber().copy(
             gene = gene,
-            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN),
         )
-        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
-            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                copyNumbers = listOf(copyNumber)
+            )
+        )
 
         val matches = matcher.match(molecularTest)
-        assertThat(matches).isEmpty()
+        assertThat(matches).hasSize(1)
+        assertThat(matches[copyNumber]).isEqualTo(actionabilityMatch(evidence, trial))
     }
 
     @Test
@@ -1154,23 +1152,6 @@ class ActionabilityMatcherTest {
 
     private fun matcherFactory(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial> = emptyList()): ActionabilityMatcher {
         return ActionabilityMatcherFactory.create(serveRecord(evidences, trials))
-    }
-
-    private fun evidenceWithDrugClass(
-        name: String,
-        drugClass: String,
-        molecularCriterium: MolecularCriterium = TestServeMolecularFactory.createHotspotCriterium()
-    ): EfficacyEvidence {
-        val base = TestServeEvidenceFactory.create(treatment = name, molecularCriterium = molecularCriterium)
-        val treatment = ImmutableTreatment.builder()
-            .from(base.treatment())
-            .treatmentApproachesDrugClass(listOf(drugClass))
-            .build()
-
-        return ImmutableEfficacyEvidence.builder()
-            .from(base)
-            .treatment(treatment)
-            .build()
     }
 
     private fun serveRecord(evidences: List<EfficacyEvidence>, trials: List<ActionableTrial> = emptyList()): ServeRecord {
