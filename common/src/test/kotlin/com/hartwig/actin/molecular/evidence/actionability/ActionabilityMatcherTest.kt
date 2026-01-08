@@ -392,7 +392,13 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val hlaAlelle = TestHlaAlleleFactory.createMinimal()
-            .copy(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
+            .copy(
+                gene = "HLA-A",
+                alleleGroup = "02",
+                hlaProtein = "01",
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                event = "HLA-A*02:01"
+            )
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = true, hlaAlleles = setOf(hlaAlelle)))
 
@@ -408,7 +414,13 @@ class ActionabilityMatcherTest {
         val matcher = matcherFactory(listOf(evidence), listOf(trial))
 
         val hlaAlelle = TestHlaAlleleFactory.createMinimal()
-            .copy(gene = "HLA-A", alleleGroup = "02", hlaProtein = "01", evidence = TestClinicalEvidenceFactory.createExhaustive(), event = "HLA-A*02:01")
+            .copy(
+                gene = "HLA-A",
+                alleleGroup = "02",
+                hlaProtein = "01",
+                evidence = TestClinicalEvidenceFactory.createExhaustive(),
+                event = "HLA-A*02:01"
+            )
         val molecularTest = TestMolecularFactory.createMinimalPanelTest()
             .copy(immunology = TestMolecularFactory.createMinimalTestImmunology().copy(isReliable = false, hlaAlleles = setOf(hlaAlelle)))
 
@@ -962,7 +974,7 @@ class ActionabilityMatcherTest {
     }
 
     @Test
-    fun `Should match absence of protein evidence with deletion`() {
+    fun `Should match absence of protein evidence with any deletion`() {
         val gene = "gene"
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
@@ -972,11 +984,8 @@ class ActionabilityMatcherTest {
             gene = gene,
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL),
         )
-        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
-            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
-                copyNumbers = listOf(copyNumber)
-            )
-        )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
@@ -984,7 +993,7 @@ class ActionabilityMatcherTest {
     }
 
     @Test
-    fun `Should match presence of protein evidence with amplification`() {
+    fun `Should match presence of protein evidence with any amplification`() {
         val gene = "gene"
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.PRESENCE_OF_PROTEIN)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
@@ -994,11 +1003,8 @@ class ActionabilityMatcherTest {
             gene = gene,
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN),
         )
-        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
-            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
-                copyNumbers = listOf(copyNumber)
-            )
-        )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest()
+            .copy(drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(copyNumber)))
 
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
