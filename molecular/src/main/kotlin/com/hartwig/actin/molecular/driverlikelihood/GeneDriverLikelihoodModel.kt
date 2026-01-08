@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.driverlikelihood
 
-import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.Variant
@@ -11,13 +10,13 @@ private val SPLICE_NONSENSE_OR_FRAMESHIFT_CODING_EFFECT = setOf(CodingEffect.SPL
 
 class GeneDriverLikelihoodModel(private val dndsModel: DndsModel) {
 
-    fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>, configuration: MolecularConfiguration): Double? {
+    fun evaluate(gene: String, geneRole: GeneRole, variants: List<Variant>, variantPathogenicityIsConfirmed: Boolean): Double? {
         val hasCancerAssociatedVariant = variants.any { it.isCancerAssociatedVariant }
         val hasBiallelicSpliceNonSenseOrFrameshift =
             variants.any { it.isBiallelic == true && it.canonicalImpact.codingEffect in SPLICE_NONSENSE_OR_FRAMESHIFT_CODING_EFFECT }
         return when {
             variants.isEmpty() -> null
-            configuration.variantPathogenicityIsConfirmed -> 1.0
+            variantPathogenicityIsConfirmed -> 1.0
             hasCancerAssociatedVariant -> 1.0
             geneRole == GeneRole.TSG && hasBiallelicSpliceNonSenseOrFrameshift -> 1.0
             else -> handleVariantsOfUnknownSignificance(gene, geneRole, variants)
