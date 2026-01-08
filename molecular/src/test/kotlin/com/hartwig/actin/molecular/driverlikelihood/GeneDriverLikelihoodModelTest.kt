@@ -37,7 +37,7 @@ class GeneDriverLikelihoodModelTest {
             "BRAF",
             GeneRole.ONCO,
             listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE)),
-            configuration
+            configuration.variantPathogenicityIsConfirmed
         )
         assertThat(result).isEqualTo(0.504, Offset.offset(0.001))
     }
@@ -54,7 +54,7 @@ class GeneDriverLikelihoodModelTest {
             "BRAF",
             GeneRole.ONCO,
             listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE)),
-            MolecularConfiguration(variantPathogenicityIsConfirmed = true)
+            true
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -74,7 +74,7 @@ class GeneDriverLikelihoodModelTest {
                 createVariant(VariantType.SNV, CodingEffect.MISSENSE),
                 createVariant(VariantType.SNV, CodingEffect.NONSENSE_OR_FRAMESHIFT)
             ),
-            configuration
+            configuration.variantPathogenicityIsConfirmed
         )
         assertThat(result).isEqualTo(0.967, Offset.offset(0.001))
     }
@@ -85,7 +85,7 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.ONCO,
             listOf(TestVariantFactory.createMinimal().copy(isCancerAssociatedVariant = true)),
-            configuration
+            configuration.variantPathogenicityIsConfirmed
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -102,7 +102,7 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.TSG,
             listOf(biallelicVariant),
-            configuration
+            configuration.variantPathogenicityIsConfirmed
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -113,7 +113,7 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.UNKNOWN,
             listOf(TestVariantFactory.createMinimal()),
-            configuration
+            configuration.variantPathogenicityIsConfirmed
         )
         assertThat(result).isNull()
     }
@@ -286,7 +286,7 @@ class GeneDriverLikelihoodModelTest {
         expectedLikelihood: Double?,
         vararg variants: Variant
     ) {
-        val result = model.evaluate(GENE, geneRole, variants.toList(), configuration)
+        val result = model.evaluate(GENE, geneRole, variants.toList(), configuration.variantPathogenicityIsConfirmed)
 
         if (expectedLikelihood == null) {
             assertThat(result).isNull()
