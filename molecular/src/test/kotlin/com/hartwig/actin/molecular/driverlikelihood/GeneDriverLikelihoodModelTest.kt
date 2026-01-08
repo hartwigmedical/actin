@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.driverlikelihood
 
-import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
@@ -23,7 +22,6 @@ private const val HIGHER_DRIVER_LIKELIHOOD = 0.526
 class GeneDriverLikelihoodModelTest {
 
     private val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(mockk())
-    private val configuration = MolecularConfiguration()
 
     @Test
     fun `Should load proper dnds database and return expected likelihood for BRAF VUS`() {
@@ -37,7 +35,7 @@ class GeneDriverLikelihoodModelTest {
             "BRAF",
             GeneRole.ONCO,
             listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE)),
-            configuration.variantPathogenicityIsConfirmed
+            false
         )
         assertThat(result).isEqualTo(0.504, Offset.offset(0.001))
     }
@@ -74,7 +72,7 @@ class GeneDriverLikelihoodModelTest {
                 createVariant(VariantType.SNV, CodingEffect.MISSENSE),
                 createVariant(VariantType.SNV, CodingEffect.NONSENSE_OR_FRAMESHIFT)
             ),
-            configuration.variantPathogenicityIsConfirmed
+            false
         )
         assertThat(result).isEqualTo(0.967, Offset.offset(0.001))
     }
@@ -85,7 +83,7 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.ONCO,
             listOf(TestVariantFactory.createMinimal().copy(isCancerAssociatedVariant = true)),
-            configuration.variantPathogenicityIsConfirmed
+            false
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -102,7 +100,7 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.TSG,
             listOf(biallelicVariant),
-            configuration.variantPathogenicityIsConfirmed
+            false
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -113,7 +111,7 @@ class GeneDriverLikelihoodModelTest {
             GENE,
             GeneRole.UNKNOWN,
             listOf(TestVariantFactory.createMinimal()),
-            configuration.variantPathogenicityIsConfirmed
+            false
         )
         assertThat(result).isNull()
     }
@@ -286,7 +284,7 @@ class GeneDriverLikelihoodModelTest {
         expectedLikelihood: Double?,
         vararg variants: Variant
     ) {
-        val result = model.evaluate(GENE, geneRole, variants.toList(), configuration.variantPathogenicityIsConfirmed)
+        val result = model.evaluate(GENE, geneRole, variants.toList(), false)
 
         if (expectedLikelihood == null) {
             assertThat(result).isNull()
