@@ -5,7 +5,6 @@ import com.hartwig.actin.clinical.serialization.ClinicalRecordJsonMapper
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import org.apache.logging.log4j.LogManager
-import java.io.File
 import java.nio.file.NoSuchFileException
 import java.nio.file.Path
 
@@ -35,24 +34,11 @@ object TreatmentDatabaseFactory {
         return TreatmentDatabase(drugsByName, treatmentsByName)
     }
 
-    @Suppress("unused")
-    fun writeToPath(treatmentDbPath: String, treatmentDatabase: TreatmentDatabase) {
-        val drugsByName = treatmentDatabase.drugsByName
-        writeFilesInFolder(treatmentDbPath, DRUG_FOLDER, drugsByName, ClinicalRecordJsonMapper.create())
-        writeFilesInFolder(treatmentDbPath, TREATMENT_FOLDER, treatmentDatabase.treatmentsByName, ClinicalRecordJsonMapper.createWithDrugMap(drugsByName))
-    }
-
-    private inline fun <reified T> writeFilesInFolder(treatmentDbPath: String, folderName: String, content: Map<String, T>, serializer: Gson) {
-        val folder = getPath(treatmentDbPath, folderName)
-        folder.deleteRecursively()
-        folder.mkdir()
-        content.forEach { (fileName, value) ->
-            File(folder, "$fileName.json").writeText(serializer.toJson(value))
-        }
-    }
-
     private inline fun <reified T> readFilesInFolder(treatmentDbPath: String, folderName: String, deserializer: Gson): List<T> {
-        val folder = getPath(treatmentDbPath, folderName)
+        val folder = Path.of(treatmentDbPath, folderName).toFile()
+        require(folder.exists() && folder.isDirectory) {
+            throw NoSuchFileException("Folder does not exist or is not a directory ${folder.path}")
+        }
         return folder.walkTopDown()
             .filter { it.isFile }
             .map { file ->
@@ -61,13 +47,5 @@ object TreatmentDatabaseFactory {
                 }
             }
             .toList()
-    }
-
-    private fun getPath(treatmentDbPath: String, folderName: String): File {
-        val folder = Path.of(treatmentDbPath, folderName).toFile()
-        require(folder.exists() && folder.isDirectory) {
-            throw NoSuchFileException("Folder does not exist or is not a directory ${folder.path}")
-        }
-        return folder
     }
 }
