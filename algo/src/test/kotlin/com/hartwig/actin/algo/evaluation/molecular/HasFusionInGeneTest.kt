@@ -44,6 +44,16 @@ class HasFusionInGeneTest {
     }
 
     @Test
+    fun `Should pass on matching high driver reportable gain of function fusion when potential IHC fusion (ie warn case) also present`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS, function.evaluate(
+                MolecularTestFactory.withDrivers(matchingFusion)
+                    .copy(ihcTests = listOf(IhcTest(MATCHING_GENE_IHC, scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first())))
+            )
+        )
+    }
+
+    @Test
     fun `Should fail on three gene match when type five promiscuous`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,

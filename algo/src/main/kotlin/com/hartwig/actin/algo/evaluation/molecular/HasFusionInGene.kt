@@ -58,13 +58,8 @@ class HasFusionInGene(override val gene: String) :
             else -> emptySet<String>() to emptySet()
         }
 
-        val anyWarns = listOf(
-            fusionsWithNoEffect,
-            fusionsWithNoHighDriverLikelihood,
-            unreportableFusionsWithGainOfFunction,
-            ihcEventsThatQualify,
-            ihcEventsThatAreIndeterminate
-        ).any { it.isNotEmpty() }
+        val anyWarns =
+            listOf(fusionsWithNoEffect, fusionsWithNoHighDriverLikelihood, unreportableFusionsWithGainOfFunction).any { it.isNotEmpty() }
 
         return when {
             matchingFusions.isNotEmpty() && !anyWarns -> {
