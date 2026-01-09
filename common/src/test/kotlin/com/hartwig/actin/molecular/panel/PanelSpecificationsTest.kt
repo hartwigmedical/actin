@@ -13,10 +13,10 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.SpecificGenesFilter
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Test
+import java.time.LocalDate
 
 private const val GENE = "gene"
 private const val ANOTHER_GENE = "another gene"
@@ -99,6 +99,35 @@ class PanelSpecificationsTest {
         assertThatThrownBy {
             specifications.panelTargetSpecification(
                 SequencingTest("panel", negativeResults = negativeResults), TestVersion(null)
+            )
+        }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Test
+    fun `Should NOT throw illegal state exception when result contains fusion with only one unknown gene in the pair`() {
+        val panelSpec = PanelTestSpecification("panel", TestVersion(null))
+        val specifications = PanelSpecifications(
+            geneFilter,
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
+        )
+        assertThat(
+            specifications.panelTargetSpecification(
+                SequencingTest("panel", fusions = setOf(SequencedFusion(geneUp = GENE, geneDown = "unknown"))), TestVersion(null)
+            )
+        ).isNotInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Test
+    fun `Should throw illegal state exception when result contains fusion with both genes in the pair unknown`() {
+        val panelSpec = PanelTestSpecification("panel", TestVersion(null))
+        val specifications = PanelSpecifications(
+            geneFilter,
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
+        )
+
+        assertThatThrownBy {
+            specifications.panelTargetSpecification(
+                SequencingTest("panel", fusions = setOf(SequencedFusion(geneUp = "unknown 1", geneDown = "unknown 2"))), TestVersion(null)
             )
         }.isInstanceOf(IllegalStateException::class.java)
     }
