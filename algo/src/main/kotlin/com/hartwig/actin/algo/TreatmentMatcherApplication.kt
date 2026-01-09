@@ -42,7 +42,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 treatmentDatabase, MedicationCategories.create(inputData.atcTree)
             )
         val configuration = AlgoConfiguration.create(config.overridesYaml)
-        LOGGER.info(" Loaded algo config: $configuration")
+        LOGGER.info("Loaded algo config: $configuration")
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
