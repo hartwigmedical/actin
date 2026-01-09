@@ -62,16 +62,6 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
     }
 
     @Test
-    fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
-        val function =
-            HasHadLimitedWeeksOfSpecificTreatment(treatment(MATCHING_TREATMENT_NAME, false, setOf(TreatmentCategory.TRANSPLANTATION)), null)
-        val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
-        assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
-        )
-    }
-
-    @Test
     fun `Should evaluate to undetermined when trial entry without treatment and weeks are missing`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         listOf(functionWithoutMaxWeeks, functionWithMaxWeeks).forEach { function ->
@@ -113,18 +103,35 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
     }
 
     @Test
-    fun `Should pass for correct treatment within requested amount of weeks and correct treatment with treatment duration more than max weeks`() {
+    fun `Should evaluate to undetermined for correct treatment within requested amount of weeks and correct treatment with treatment duration more than max weeks`() {
+        val treatmentHistoryEntryTooManyWeeks =
+            treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2017, startMonth = 3, stopYear = 2018, stopMonth = 3)
         val treatmentHistoryEntryCorrectNbOfWeeks =
             treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 4)
-        val treatmentHistoryEntryTooManyWeeks =
-            treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2017, startMonth = 3, stopYear = 2018, stopMonth = 4)
         assertEvaluation(
-            EvaluationResult.PASS,
+            EvaluationResult.UNDETERMINED,
             functionWithMaxWeeks.evaluate(
                 withTreatmentHistory(
                     listOf(
                         treatmentHistoryEntryCorrectNbOfWeeks,
                         treatmentHistoryEntryTooManyWeeks
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined for correct treatment received twice within requested amount of weeks but together this exceeds the max weeks`() {
+        val treatmentHistoryEntry1 = treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2017, startMonth = 3, stopYear = 2017, stopMonth = 4)
+        val treatmentHistoryEntry2 = treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2018, startMonth = 3, stopYear = 2018, stopMonth = 4)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionWithMaxWeeks.evaluate(
+                withTreatmentHistory(
+                    listOf(
+                        treatmentHistoryEntry1,
+                        treatmentHistoryEntry2
                     )
                 )
             )
