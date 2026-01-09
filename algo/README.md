@@ -1,6 +1,5 @@
 ## ACTIN-Algo
 
-//
 ACTIN-Algo matches a patient record (clinical & molecular data) with available treatments.
 
 This application requires Java 11+ and can be run as follows:

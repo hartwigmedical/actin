@@ -35,7 +35,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).contains("Amplification of geneA and geneC detected and therefore possible overexpression in RNA")
+        assertThat(evaluation.warnMessagesStrings()).contains("(Possible) amplification of geneA and geneC detected and therefore possible overexpression in RNA")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("Potential geneA overexpression", "Potential geneC overexpression"))
     }
 
