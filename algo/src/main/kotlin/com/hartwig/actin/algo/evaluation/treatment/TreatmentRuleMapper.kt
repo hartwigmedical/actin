@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -9,14 +11,16 @@ import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.trial.DrugParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
 import com.hartwig.actin.datamodel.trial.ManyGenesParameter
-import com.hartwig.actin.datamodel.trial.ManyIntentsParameter
 import com.hartwig.actin.datamodel.trial.ManyIntegersParameter
+import com.hartwig.actin.datamodel.trial.ManyIntentsParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentCategoriesParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentTypesParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
@@ -28,8 +32,8 @@ import com.hartwig.actin.datamodel.trial.TreatmentCategoryParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
 import com.hartwig.actin.datamodel.trial.TreatmentResponseParameter
 import com.hartwig.actin.datamodel.trial.TreatmentTypeParameter
-import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.trial.input.EligibilityRule
 
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -115,6 +119,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_WEEKS to hasHadSystemicTherapyWithIntentsWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_AT_LEAST_Y_WEEKS_AGO to hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to {
+                object : EvaluationFunction {
+                    override fun evaluate(record: PatientRecord): Evaluation {
+                        return EvaluationFactory.notEvaluated("")
+                    }
+                }
+            },
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
                 HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(
                     referenceDate

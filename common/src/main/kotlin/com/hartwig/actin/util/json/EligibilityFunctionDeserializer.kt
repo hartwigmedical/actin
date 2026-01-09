@@ -5,7 +5,6 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -35,11 +34,7 @@ class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction>, J
     }
 
     private fun toEligibilityFunction(function: JsonObject): EligibilityFunction {
-        val rule = when {
-            function.has("rule") -> function.get("rule").asString
-            function.has("ruleName") -> function.get("ruleName").asString
-            else -> throw IllegalArgumentException("Missing rule name for eligibility function")
-        }
+        val rule = function.get("rule").asString
         return EligibilityFunction(
             rule = rule,
             parameters = toParameters(function.getAsJsonArray("parameters"), rule)
@@ -55,6 +50,7 @@ class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction>, J
                     val type = expectedTypes?.getOrNull(index) ?: Parameter.Type.STRING
                     type.create(element.asJsonPrimitive.asString)
                 }
+
                 else -> null
             }
         }
@@ -100,8 +96,7 @@ class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction>, J
     }
 
     private fun parameterValueToString(param: Parameter<*>): String {
-        val value = param.value
-        return when (value) {
+        return when (val value = param.value) {
             is Iterable<*> -> value.joinToString(";") { valueToString(it) }
             is Array<*> -> value.joinToString(";") { valueToString(it) }
             else -> valueToString(value)
@@ -113,9 +108,7 @@ class EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction>, J
             null -> ""
             is Drug -> value.name
             is Treatment -> value.name
-            is TreatmentCategoryOrType -> {
-                value.category?.name ?: value.type?.let { valueToString(it) }.orEmpty()
-            }
+            is TreatmentCategoryOrType -> value.category.name
             is Enum<*> -> value.name
             else -> value.toString()
         }

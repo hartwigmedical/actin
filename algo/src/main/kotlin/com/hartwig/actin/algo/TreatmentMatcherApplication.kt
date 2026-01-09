@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo
 
-import com.fasterxml.jackson.core.type.TypeReference
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
@@ -13,6 +13,8 @@ import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
 import com.hartwig.pipeline.trial.TrialIngestion
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
@@ -61,9 +63,11 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             )
 
         val trialsOrErrors = inputData.trials?.right() ?: TrialIngestion(EligibilityFactory()).ingest(
-            ObjectMapper().readValue(
-                config.trialConfigJson ?: error("One of trial config or trial database must be specified."),
-                object : TypeReference<List<TrialConfig>>() {}),
+            Gson().fromJson(
+                Files.readString(config.trialConfigJson?.let { Path.of(it) }
+                    ?: error("One of trial config or trial database must be specified.")),
+                object : TypeToken<List<TrialConfig>>() {}.type
+            )
         )
 
         val trials = when (trialsOrErrors) {

@@ -9,7 +9,7 @@ class CompositeRulesTest {
 
     @Test
     fun `Should identify composite rules`() {
-        val firstCompositeRule = CompositeRules.COMPOSITE_RULE_MAPPING.first()
+        val firstCompositeRule = CompositeRules.COMPOSITE_RULES.first()
         assertThat(isComposite(firstCompositeRule)).isTrue
         assertThat(isComposite(EligibilityRule.HAS_ACTIVE_INFECTION)).isFalse()
     }
