@@ -37,7 +37,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val configuration = AlgoConfiguration.create(config.overridesYaml)
-        LOGGER.info(" Loaded algo config: $configuration")
+        LOGGER.info("Loaded algo config: $configuration")
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
