@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.tre
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -29,26 +28,30 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLi
             TimingEvaluatedEntry(entry, entry.stoppedWithinMaxMonthsBeforeNextLine(nextLine, maxMonthsBeforeNextLine))
         }
 
-        val (certainlyCountingEntries, otherEntries) = timingEvaluatedHistory.partition {
+        val (certainlyCountingEntries, potentiallyCountingCurativeAndNeoAdjuvantEntries) = timingEvaluatedHistory.partition {
             val passOnIntent = it.entry.intents?.intersect(Intent.curativeAdjuvantNeoadjuvantSet()).isNullOrEmpty()
-            val passOnStopReason = it.entry.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY
-            passOnIntent || passOnStopReason || it.timing == TreatmentTiming.WITHIN
+            passOnIntent || it.timing == TreatmentTiming.WITHIN
         }
 
-        val potentialCountingEntries = otherEntries.filter { it.timing in setOf(TreatmentTiming.AMBIGUOUS, TreatmentTiming.UNKNOWN) }
+        val curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming = potentiallyCountingCurativeAndNeoAdjuvantEntries.filter {
+            it.timing in setOf(TreatmentTiming.AMBIGUOUS, TreatmentTiming.UNKNOWN)
+        }
 
         val minCertainCount = SystemicTreatmentAnalyser.minSystemicTreatments(certainlyCountingEntries.map { it.entry })
-        val maxPotentialCount =
-            SystemicTreatmentAnalyser.maxSystemicTreatments((certainlyCountingEntries + potentialCountingEntries).map { it.entry })
+        val maxPotentialCount = SystemicTreatmentAnalyser.maxSystemicTreatments(
+            (certainlyCountingEntries + curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming).map { it.entry }
+        )
 
         return when {
             minCertainCount >= minSystemicTreatments ->
                 EvaluationFactory.pass("Received at least $minSystemicTreatments systemic treatments")
 
             maxPotentialCount >= minSystemicTreatments -> {
+                val undeterminedMessageEnding = curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming.takeIf { it.isNotEmpty() }
+                    ?.let { " (incomplete date information)" } ?: ""
                 EvaluationFactory.undetermined(
                     "Undetermined if received at least $minSystemicTreatments systemic treatments since it is unclear if (neo)adjuvant " +
-                            "treatment(s) resulted in PD within $maxMonthsBeforeNextLine months after stopping (dates missing)"
+                            "treatment(s) resulted in PD within $maxMonthsBeforeNextLine months after stopping$undeterminedMessageEnding"
                 )
             }
 

@@ -157,4 +157,69 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLi
             assertEvaluation(EvaluationResult.FAIL, minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
         }
     }
+
+    @Test
+    fun `Should evaluate to undetermined when uncertain if curative or (neo)adjuvant treatment counts for threshold due to ambiguous timeline`() {
+        listOf(Intent.CURATIVE, Intent.ADJUVANT, Intent.NEOADJUVANT).forEach { intent ->
+            val treatments = listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    intents = setOf(intent),
+                    startYear = null,
+                    stopYear = null
+                ),
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
+                    intents = setOf(Intent.PALLIATIVE),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue
+                )
+            )
+            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when unclear if curative or (neo)adjuvant treatment counts for threshold since stop month is missing and date range has conflicting results`() {
+        listOf(Intent.CURATIVE, Intent.ADJUVANT, Intent.NEOADJUVANT).forEach { intent ->
+            val treatments = listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    intents = setOf(intent),
+                    stopYear = referenceDate.year,
+                    stopMonth = null
+                ),
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
+                    intents = setOf(Intent.PALLIATIVE),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue
+                )
+            )
+            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when unclear if curative or (neo)adjuvant treatment counts for threshold since start date is missing and inferred stop date is not more than minimum months before next line`() {
+        listOf(Intent.CURATIVE, Intent.ADJUVANT, Intent.NEOADJUVANT).forEach { intent ->
+            val treatments = listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    intents = setOf(intent),
+                    stopYear = null,
+                    stopMonth = null,
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue - 5
+                ),
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
+                    intents = setOf(Intent.PALLIATIVE),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue
+                )
+            )
+            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
+    }
 }
