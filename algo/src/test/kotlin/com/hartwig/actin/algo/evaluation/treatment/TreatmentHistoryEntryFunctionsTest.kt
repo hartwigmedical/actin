@@ -422,77 +422,88 @@ class TreatmentHistoryEntryFunctionsTest {
             ).first().timing).isEqualTo(TreatmentHistoryEntryFunctions.TreatmentTiming.OUTSIDE)
         }
 
-//        @Test
-//        fun `Should mark treatment as AMBIGUOUS when stop month is missing and date range overlaps threshold`() {
-//            val history = listOf(
-//                TreatmentTestFactory.treatmentHistoryEntry(
-//                    treatments = setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
-//                    stopYear = referenceDate.year,
-//                    stopMonth = null
-//                ),
-//                TreatmentTestFactory.treatmentHistoryEntry(
-//                    treatments = setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
-//                    startYear = referenceDate.year,
-//                    startMonth = referenceDate.monthValue
-//                )
-//            )
-//
-//            val result = TreatmentHistoryEntryFunctions.evaluateTreatmentTimingRelativeToNextLine(
-//                history,
-//                MAX_MONTHS_BEFORE_NEXT_LINE,
-//                referenceDate
-//            )
-//
-//            assert(result.first().timing == TreatmentHistoryEntryFunctions.TreatmentTiming.AMBIGUOUS)
-//        }
-//
-//        @Test
-//        fun `Should mark treatment as UNKNOWN when both start and stop dates are missing`() {
-//            val history = listOf(
-//                TreatmentTestFactory.treatmentHistoryEntry(
-//                    treatments = setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
-//                    startYear = null,
-//                    startMonth = null,
-//                    stopYear = null,
-//                    stopMonth = null
-//                ),
-//                TreatmentTestFactory.treatmentHistoryEntry(
-//                    treatments = setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
-//                    startYear = referenceDate.year,
-//                    startMonth = referenceDate.monthValue
-//                )
-//            )
-//
-//            val result = TreatmentHistoryEntryFunctions.evaluateTreatmentTimingRelativeToNextLine(
-//                history,
-//                MAX_MONTHS_BEFORE_NEXT_LINE,
-//                referenceDate
-//            )
-//
-//            assert(result.first().timing == TreatmentHistoryEntryFunctions.TreatmentTiming.UNKNOWN)
-//        }
-//
-//        @Test
-//        fun `Should preserve chronological order after sorting by start date`() {
-//            val older = TreatmentTestFactory.treatmentHistoryEntry(
-//                treatments = setOf(TreatmentTestFactory.treatment("older", isSystemic = true)),
-//                startYear = referenceDate.year - 2
-//            )
-//            val newer = TreatmentTestFactory.treatmentHistoryEntry(
-//                treatments = setOf(TreatmentTestFactory.treatment("newer", isSystemic = true)),
-//                startYear = referenceDate.year
-//            )
-//
-//            val history = listOf(newer, older)
-//
-//            val result = TreatmentHistoryEntryFunctions.evaluateTreatmentTimingRelativeToNextLine(
-//                history,
-//                MAX_MONTHS_BEFORE_NEXT_LINE,
-//                referenceDate
-//            )
-//
-//            assert(result.first().entry == older)
-//            assert(result.last().entry == newer)
-//        }
+        @Test
+        fun `Should mark treatment as AMBIGUOUS when stop month is missing and date range overlaps threshold`() {
+            val history = listOf(
+                treatmentHistoryEntry(
+                    treatments = setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    stopYear = referenceDate.year,
+                    stopMonth = null
+                ),
+                treatmentHistoryEntry(
+                    treatments = setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue
+                )
+            )
+
+            assertThat(TreatmentHistoryEntryFunctions.evaluateTreatmentTimingRelativeToNextLine(
+                history,
+                maxMonthsBeforeNextLine,
+                referenceDate
+            ).first().timing).isEqualTo(TreatmentHistoryEntryFunctions.TreatmentTiming.AMBIGUOUS)
+        }
+
+        @Test
+        fun `Should mark treatment as AMBIGUOUS when stop date is missing and inferred stop date is less than minimal months before next line`() {
+            val history = listOf(
+                treatmentHistoryEntry(
+                    treatments = setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue - 1
+                ),
+                treatmentHistoryEntry(
+                    treatments = setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue
+                )
+            )
+
+            assertThat(TreatmentHistoryEntryFunctions.evaluateTreatmentTimingRelativeToNextLine(
+                history,
+                maxMonthsBeforeNextLine,
+                referenceDate
+            ).first().timing).isEqualTo(TreatmentHistoryEntryFunctions.TreatmentTiming.AMBIGUOUS)
+        }
+
+        @Test
+        fun `Should mark treatment as UNKNOWN when both start and stop dates are missing`() {
+            val history = listOf(
+                treatmentHistoryEntry(
+                    treatments = setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    startYear = null,
+                    startMonth = null,
+                    stopYear = null,
+                    stopMonth = null
+                )
+            )
+
+            assertThat(TreatmentHistoryEntryFunctions.evaluateTreatmentTimingRelativeToNextLine(
+                history,
+                maxMonthsBeforeNextLine,
+                referenceDate
+            ).first().timing).isEqualTo(TreatmentHistoryEntryFunctions.TreatmentTiming.UNKNOWN)
+        }
+
+        @Test
+        fun `Should mark treatment as UNKNOWN when timeline is unclear since both start and stop dates are for next line`() {
+            val history = listOf(
+                treatmentHistoryEntry(
+                    treatments = setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue
+                ),
+                treatmentHistoryEntry(
+                    treatments = setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
+                    startYear = null
+                )
+            )
+
+            assertThat(TreatmentHistoryEntryFunctions.evaluateTreatmentTimingRelativeToNextLine(
+                history,
+                maxMonthsBeforeNextLine,
+                referenceDate
+            ).first().timing).isEqualTo(TreatmentHistoryEntryFunctions.TreatmentTiming.UNKNOWN)
+        }
     }
 }
