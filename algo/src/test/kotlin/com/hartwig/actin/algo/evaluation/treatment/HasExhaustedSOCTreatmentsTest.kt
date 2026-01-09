@@ -42,8 +42,6 @@ class HasExhaustedSOCTreatmentsTest {
         )
     )
 
-    private val curativeNeoAdjuvantOrAdjuvant = setOf(Intent.CURATIVE, Intent.NEOADJUVANT, Intent.ADJUVANT)
-
     @Test
     fun `Should pass for patient with NSCLC and platinum doublet chemotherapy in treatment history`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
@@ -71,7 +69,7 @@ class HasExhaustedSOCTreatmentsTest {
                 )
             )
 
-        curativeNeoAdjuvantOrAdjuvant.forEach { intent ->
+        Intent.curativeAdjuvantNeoadjuvantSet().forEach { intent ->
             val record = createHistoryWithNSCLCAndTreatmentWithIntents(
                 platinumDoublet,
                 intents = setOf(intent)
@@ -114,7 +112,7 @@ class HasExhaustedSOCTreatmentsTest {
     fun `Should fail for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
 
-        curativeNeoAdjuvantOrAdjuvant.forEach { intent ->
+        Intent.curativeAdjuvantNeoadjuvantSet().forEach { intent ->
             val chemoradiation = TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = listOf(
                     TreatmentTestFactory.treatment("CHEMOTHERAPY", true, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet()),
@@ -157,7 +155,7 @@ class HasExhaustedSOCTreatmentsTest {
     fun `Should fail for patient with NSCLC and history entry with chemo-immuno with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
 
-        curativeNeoAdjuvantOrAdjuvant.forEach { intent ->
+        Intent.curativeAdjuvantNeoadjuvantSet().forEach { intent ->
             val record = createHistoryWithNSCLCAndTreatmentWithIntents(
                 TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY), setOf(intent)
             )
