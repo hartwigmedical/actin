@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
@@ -117,6 +118,20 @@ object TreatmentHistoryEntryFunctions {
             null
         }
     }
+
+    fun weeksBetweenDates(treatmentHistoryEntry: TreatmentHistoryEntry) = DateComparison.minWeeksBetweenDates(
+        treatmentHistoryEntry.startYear,
+        treatmentHistoryEntry.startMonth,
+        treatmentHistoryEntry.treatmentHistoryDetails?.stopYear,
+        treatmentHistoryEntry.treatmentHistoryDetails?.stopMonth
+    )
+
+    fun maxWeeksBetweenDates(matchingPortionOfEntry: TreatmentHistoryEntry) = DateComparison.minWeeksBetweenDates(
+        matchingPortionOfEntry.startYear,
+        matchingPortionOfEntry.startMonth,
+        matchingPortionOfEntry.stopYear(),
+        matchingPortionOfEntry.stopMonth()
+    )
 
     private fun sumOrNullIfEmpty(list: List<Int>) = if (list.isEmpty()) null else list.sum()
 

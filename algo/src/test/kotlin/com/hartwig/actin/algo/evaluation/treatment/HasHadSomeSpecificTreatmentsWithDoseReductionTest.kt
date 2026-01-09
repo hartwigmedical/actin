@@ -8,19 +8,19 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private val TREATMENTS_TO_MATCH = listOf(treatment("Treat1", true), treatment("Treat2", true))
+private val TREATMENT_TO_MATCH = treatment("Treat1", true)
 
 class HasHadSomeSpecificTreatmentsWithDoseReductionTest {
 
-    val function = HasHadSomeSpecificTreatmentsWithDoseReduction(TREATMENTS_TO_MATCH)
+    val function = HasHadSomeSpecificTreatmentsWithDoseReduction(TREATMENT_TO_MATCH)
 
     @Test
     fun `Should be undetermined with specific message when patient has received treatment`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(TREATMENTS_TO_MATCH)
+        val treatmentHistoryEntry = treatmentHistoryEntry(listOf(TREATMENT_TO_MATCH))
         val result = function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
 
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Has received Treat1 and Treat2 but unknown if there may have been a dose reduction")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Has received treat1 but unknown if there may have been a dose reduction")
     }
 
     @Test
@@ -29,7 +29,7 @@ class HasHadSomeSpecificTreatmentsWithDoseReductionTest {
         val result = function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
 
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if patient may have received Treat1 and Treat2 and if there may have been a dose reduction")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if patient may have received treat1 and if there may have been a dose reduction")
     }
 
     @Test
