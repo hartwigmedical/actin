@@ -8,6 +8,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
+import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+
+private const val ASSUMED_MINIMAL_TREATMENT_DURATION_IN_MONTHS = 3L
 
 object TreatmentHistoryEntryFunctions {
 
@@ -24,6 +28,15 @@ object TreatmentHistoryEntryFunctions {
         val possibleTrialMatch: Boolean = false,
         val matchesWithToxicity: Boolean = false
     )
+
+    data class TimingEvaluatedEntry(val entry: TreatmentHistoryEntry, val timing: TreatmentTiming)
+
+    enum class TreatmentTiming {
+        WITHIN,
+        OUTSIDE,
+        AMBIGUOUS,
+        UNKNOWN
+    }
 
     fun TreatmentHistoryEntry.containsTreatment(treatmentNameToFind: String) =
         allTreatments().any { it.name.equals(treatmentNameToFind, ignoreCase = true) }
@@ -117,6 +130,67 @@ object TreatmentHistoryEntryFunctions {
             null
         }
     }
+
+    fun evaluateTreatmentTimingRelativeToNextLine(
+        history: List<TreatmentHistoryEntry>, maxMonthsBeforeNextLine: Int, referenceDate: LocalDate
+    ): List<TimingEvaluatedEntry> {
+        val sortedHistory = history.sortedWith(TreatmentHistoryEntryStartDateComparator())
+
+        return sortedHistory.mapIndexed { index, entry ->
+            val nextLine = sortedHistory.getOrNull(index + 1)
+            TimingEvaluatedEntry(entry, entry.stoppedWithinMaxMonthsBeforeNextLine(nextLine, maxMonthsBeforeNextLine, referenceDate))
+        }
+    }
+
+    private fun TreatmentHistoryEntry.stoppedWithinMaxMonthsBeforeNextLine(
+        nextLine: TreatmentHistoryEntry?,
+        maxMonthsBeforeNextLine: Int,
+        referenceDate: LocalDate
+    ): TreatmentTiming {
+
+        val (referenceMin, referenceMax) =
+            when {
+                nextLine == null -> referenceDate to referenceDate
+                nextLine.startYear != null -> dateRange(nextLine.startYear!!, nextLine.startMonth)
+                else -> null to null
+            }
+
+        return when {
+            nextLine != null && nextLine.startYear == null -> TreatmentTiming.UNKNOWN
+
+            this.stopYear() != null -> {
+                val (stopMin, stopMax) = dateRange(this.stopYear()!!, this.stopMonth())
+                val minMonthsBetween = ChronoUnit.MONTHS.between(stopMax, referenceMin)
+                val maxMonthsBetween = ChronoUnit.MONTHS.between(stopMin, referenceMax)
+
+                when {
+                    minMonthsBetween > maxMonthsBeforeNextLine -> TreatmentTiming.OUTSIDE
+                    maxMonthsBetween <= maxMonthsBeforeNextLine -> TreatmentTiming.WITHIN
+                    else -> TreatmentTiming.AMBIGUOUS
+                }
+            }
+
+            this.startYear == null -> TreatmentTiming.UNKNOWN
+
+            else -> {
+                val (_, startMax) = dateRange(this.startYear!!, this.startMonth)
+                val assumedStopDateLowerBound = startMax.plusMonths(ASSUMED_MINIMAL_TREATMENT_DURATION_IN_MONTHS)
+
+                when {
+                    ChronoUnit.MONTHS.between(assumedStopDateLowerBound, referenceMin) > maxMonthsBeforeNextLine -> TreatmentTiming.OUTSIDE
+                    else -> TreatmentTiming.AMBIGUOUS
+                }
+            }
+        }
+    }
+
+    private fun dateRange(year: Int, month: Int?): Pair<LocalDate, LocalDate> =
+        if (month == null) {
+            LocalDate.of(year, 1, 1) to LocalDate.of(year, 12, 31)
+        } else {
+            val date = LocalDate.of(year, month, 1)
+            date to date
+        }
 
     private fun sumOrNullIfEmpty(list: List<Int>) = if (list.isEmpty()) null else list.sum()
 

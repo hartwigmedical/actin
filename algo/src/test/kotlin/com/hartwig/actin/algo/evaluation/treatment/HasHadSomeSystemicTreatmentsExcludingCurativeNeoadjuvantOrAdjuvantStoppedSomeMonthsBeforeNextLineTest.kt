@@ -9,13 +9,13 @@ import java.time.LocalDate
 
 private const val MAX_MONTHS_BEFORE_NEXT_LINE = 3
 
-class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLineTest {
+class HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedSomeMonthsBeforeNextLineTest {
 
     private val referenceDate = LocalDate.of(2025, 12, 1)
     private val function =
-        HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLine(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
+        HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedSomeMonthsBeforeNextLine(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
     private val minimalOneLineFunction =
-        HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLine(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
+        HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedSomeMonthsBeforeNextLine(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
 
     @Test
     fun `Should pass when unknown intent systemic treatments reach threshold`() {
