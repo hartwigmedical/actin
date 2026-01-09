@@ -29,14 +29,13 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLi
             TimingEvaluatedEntry(entry, entry.stoppedWithinMaxMonthsBeforeNextLine(nextLine, maxMonthsBeforeNextLine))
         }
 
-        val includedEntries = timingEvaluatedHistory.filter {
+        val (certainlyCountingEntries, otherEntries) = timingEvaluatedHistory.partition {
             val passOnIntent = it.entry.intents?.intersect(Intent.curativeAdjuvantNeoadjuvantSet()).isNullOrEmpty()
             val passOnStopReason = it.entry.treatmentHistoryDetails?.stopReason == StopReason.TOXICITY
-            passOnIntent || passOnStopReason || it.timing != TreatmentTiming.OUTSIDE
+            passOnIntent || passOnStopReason || it.timing == TreatmentTiming.WITHIN
         }
 
-        val certainlyCountingEntries = includedEntries.filter { it.timing == TreatmentTiming.WITHIN }
-        val potentialCountingEntries = includedEntries.filter { it.timing in setOf(TreatmentTiming.AMBIGUOUS, TreatmentTiming.UNKNOWN) }
+        val potentialCountingEntries = otherEntries.filter { it.timing in setOf(TreatmentTiming.AMBIGUOUS, TreatmentTiming.UNKNOWN) }
 
         val minCertainCount = SystemicTreatmentAnalyser.minSystemicTreatments(certainlyCountingEntries.map { it.entry })
         val maxPotentialCount =

@@ -125,8 +125,23 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLi
     }
 
     @Test
-    fun `Should fail when threshold is not reached because curative or (neo)adjuvant treatment is excluded from count since stopped too long before next line`() {
-
+    fun `Should fail when threshold is not reached because curative or (neo)adjuvant treatment is excluded from count since inferred stop date is too long before next line`() {
+        listOf(Intent.CURATIVE, Intent.ADJUVANT, Intent.NEOADJUVANT).forEach { intent ->
+            val treatments = listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
+                    intents = setOf(intent),
+                    startYear = referenceDate.year - 2
+                ),
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(TreatmentTestFactory.treatment("2", isSystemic = true)),
+                    intents = setOf(Intent.PALLIATIVE),
+                    startYear = referenceDate.year,
+                    startMonth = referenceDate.monthValue
+                )
+            )
+            assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        }
     }
 
     @Test
@@ -136,8 +151,7 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLi
                 TreatmentTestFactory.treatmentHistoryEntry(
                     setOf(TreatmentTestFactory.treatment("1", isSystemic = true)),
                     intents = setOf(intent),
-                    stopYear = referenceDate.year - 2,
-                    stopMonth = referenceDate.monthValue
+                    startYear = referenceDate.year - 2
                 )
             )
             assertEvaluation(EvaluationResult.FAIL, minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
