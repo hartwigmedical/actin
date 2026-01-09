@@ -12,7 +12,6 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 private const val ASSUMED_MINIMAL_NEOADJUVANT_OR_ADJUVANT_TREATMENT_DURATION_IN_MONTHS = 3L
-private const val ASSUMED_MAXIMAL_NEOADJUVANT_OR_ADJUVANT_TREATMENT_DURATION_IN_MONTHS = 9L
 
 class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLine(
     private val minSystemicTreatments: Int,
@@ -88,14 +87,11 @@ class HasHadSomeSystemicTreatmentsExcludingAdjuvantStoppedSomeMonthsBeforeNextLi
             this.startYear == null -> TreatmentTiming.UNKNOWN
 
             else -> {
-                val (startMin, startMax) = dateRange(this.startYear!!, this.startMonth)
-
-                val hardStopMax = startMax.plusMonths(ASSUMED_MINIMAL_NEOADJUVANT_OR_ADJUVANT_TREATMENT_DURATION_IN_MONTHS)
-                val softStopMin = startMin.plusMonths(ASSUMED_MAXIMAL_NEOADJUVANT_OR_ADJUVANT_TREATMENT_DURATION_IN_MONTHS)
+                val (_, startMax) = dateRange(this.startYear!!, this.startMonth)
+                val assumedStopDateLowerBound = startMax.plusMonths(ASSUMED_MINIMAL_NEOADJUVANT_OR_ADJUVANT_TREATMENT_DURATION_IN_MONTHS)
 
                 when {
-                    ChronoUnit.MONTHS.between(hardStopMax, referenceMin) > maxMonthsBeforeNextLine -> TreatmentTiming.OUTSIDE
-                    ChronoUnit.MONTHS.between(softStopMin, referenceMax) <= maxMonthsBeforeNextLine -> TreatmentTiming.WITHIN
+                    ChronoUnit.MONTHS.between(assumedStopDateLowerBound, referenceMin) > maxMonthsBeforeNextLine -> TreatmentTiming.OUTSIDE
                     else -> TreatmentTiming.AMBIGUOUS
                 }
             }
