@@ -10,7 +10,6 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.medication.AtcTree
-import com.hartwig.actin.trial.input.TestFunctionInputResolverFactory
 
 object RuleMappingResourcesTestFactory {
 
@@ -20,13 +19,10 @@ object RuleMappingResourcesTestFactory {
         atcTree: AtcTree = AtcTestFactory.createProperAtcTree(),
         treatmentDatabase: TreatmentDatabase = TestTreatmentDatabaseFactory.createProper()
     ): RuleMappingResources {
-        val functionInputResolver =
-            TestFunctionInputResolverFactory.createResolverWithDoidModelAndTreatmentDatabase(doidModel, treatmentDatabase)
         return RuleMappingResources(
             referenceDateProvider = ReferenceDateProviderTestFactory.createCurrentDateProvider(),
             doidModel = doidModel,
             icdModel = icdModel,
-            functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,

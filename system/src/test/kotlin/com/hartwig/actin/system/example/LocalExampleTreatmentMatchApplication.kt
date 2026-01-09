@@ -19,10 +19,7 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
-import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.trial.input.FunctionInputResolver
 import com.hartwig.actin.trial.serialization.TrialJson
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
@@ -85,22 +82,12 @@ class LocalExampleTreatmentMatchApplication {
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(treatmentDatabaseDir)
 
-        val functionInputResolver =
-            FunctionInputResolver(
-                doidModel = doidModel,
-                icdModel = icdModel,
-                molecularInputChecker = MolecularInputChecker.createAnyGeneValid(),
-                treatmentDatabase = treatmentDatabase,
-                medicationCategories = MedicationCategories.create(atcTree)
-            )
-
         val algoConfiguration = AlgoConfiguration()
 
         return RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = doidModel,
             icdModel = icdModel,
-            functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,

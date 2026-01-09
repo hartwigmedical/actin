@@ -20,7 +20,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
 import io.mockk.every
 import io.mockk.mockk
@@ -37,7 +37,7 @@ class HasExhaustedSOCTreatmentsTest {
         EvaluatedTreatment(
             TreatmentCandidate(
                 TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList()))
+                setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
             ), listOf(EvaluationFactory.pass("Has MSI"))
         )
     )
@@ -238,7 +238,7 @@ class HasExhaustedSOCTreatmentsTest {
             EvaluatedTreatment(
                 TreatmentCandidate(
                     TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                    setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT, emptyList()))
+                    setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
                 ),
                 listOf(EvaluationFactory.undetermined("Cannot determine if MSI", isMissingMolecularResultForEvaluation = true))
             )

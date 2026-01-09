@@ -6,7 +6,8 @@ import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.trial.input.EligibilityRule
 
 class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -42,14 +43,14 @@ class InfectionRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasReceivedLiveVaccineWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minMonths = functionInputResolver().createOneIntegerInput(function)
+            val minMonths = function.param<IntegerParameter>(0).value
             HasReceivedLiveVaccineWithinMonths(minMonths)
         }
     }
 
     private fun hasReceivedNonLiveVaccineWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minWeeks = functionInputResolver().createOneIntegerInput(function)
+            val minWeeks = function.param<IntegerParameter>(0).value
             HasReceivedNonLiveVaccineWithinWeeks(minWeeks)
         }
     }

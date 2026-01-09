@@ -1,11 +1,10 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.medication.AtcTree
-import com.hartwig.actin.trial.input.FunctionInputResolver
 
 abstract class RuleMapper(val resources: RuleMappingResources) {
 
@@ -19,10 +18,6 @@ abstract class RuleMapper(val resources: RuleMappingResources) {
 
     protected fun icdModel(): IcdModel {
         return resources.icdModel
-    }
-
-    protected fun functionInputResolver(): FunctionInputResolver {
-        return resources.functionInputResolver
     }
 
     protected fun atcTree(): AtcTree {

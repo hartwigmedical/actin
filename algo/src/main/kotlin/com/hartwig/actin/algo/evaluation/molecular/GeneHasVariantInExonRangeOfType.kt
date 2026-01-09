@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
-import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
+import com.hartwig.actin.datamodel.trial.VariantTypeInput
 
 class GeneHasVariantInExonRangeOfType(
     override val gene: String, private val minExon: Int, private val maxExon: Int, private val requiredVariantType: VariantTypeInput?

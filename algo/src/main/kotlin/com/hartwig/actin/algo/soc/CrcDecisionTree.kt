@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.soc.datamodel.DecisionTreeLeaf
 import com.hartwig.actin.algo.soc.datamodel.DecisionTreeNode
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 
 class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : DecisionTreeNode {
 
@@ -28,7 +28,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
         trueBranch = DecisionTreeLeaf(listOf(treatmentCandidateDatabase.treatmentCandidate(ENCORAFENIB_CETUXIMAB))),
         falseBranch = DecisionTree(
             decision = EligibilityFunction(
-                EligibilityRule.AND,
+                EligibilityRule.AND.name,
                 rasWildTypeAndLeftSided
             ),
             trueBranch = DecisionTreeLeaf(treatmentCandidatesForRasWtBrafV600EWtAndLeftSidedTumor),
@@ -37,7 +37,7 @@ class CrcDecisionTree(treatmentCandidateDatabase: TreatmentCandidateDatabase) : 
     )
 
     private val msiDecisionTree = DecisionTree(
-        decision = EligibilityFunction(EligibilityRule.MMR_DEFICIENT),
+        decision = EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name),
         trueBranch = DecisionTreeLeaf(listOf(PEMBROLIZUMAB, NIVOLUMAB).map(treatmentCandidateDatabase::treatmentCandidate)),
         falseBranch = DecisionTreeLeaf(emptyList())
     )

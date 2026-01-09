@@ -14,9 +14,6 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
-import com.hartwig.actin.medication.MedicationCategories
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.trial.input.FunctionInputResolver
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -50,16 +47,12 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
-        val functionInputResolver = FunctionInputResolver(
-            doidModel, icdModel, MolecularInputChecker.createAnyGeneValid(), treatmentDatabase, MedicationCategories.create(atcTree)
-        )
         val configuration = AlgoConfiguration.create(config.overridesYaml)
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = doidModel,
             icdModel = icdModel,
-            functionInputResolver = functionInputResolver,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,

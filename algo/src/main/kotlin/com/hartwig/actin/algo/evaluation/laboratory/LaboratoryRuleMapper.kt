@@ -17,8 +17,11 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
+import com.hartwig.actin.datamodel.trial.AlbiGradeParameter
+import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.trial.input.EligibilityRule
 import java.time.LocalDate
 
 class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
@@ -164,7 +167,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasSpecificAlbiGradeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val albiGrade = functionInputResolver().createOneAlbiGradeInput(function)
+            val albiGrade = function.param<AlbiGradeParameter>(0).value
             HasSpecificAlbiGrade(albiGrade, minValidLabDate(), minPassLabDate())
         }
     }
@@ -178,35 +181,35 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         targetUnit: LabUnit = measurement.defaultUnit
     ): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minValue = functionInputResolver().createOneDoubleInput(function)
+            val minValue = function.param<DoubleParameter>(0).value
             createLabEvaluator(measurement, HasSufficientLabValue(minValue, measurement, targetUnit), false)
         }
     }
 
     private fun hasSufficientLabValueLLNCreator(measurement: LabMeasurement): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minLLNFactor = functionInputResolver().createOneDoubleInput(function)
+            val minLLNFactor = function.param<DoubleParameter>(0).value
             createLabEvaluator(measurement, HasSufficientLabValueLLN(minLLNFactor), false)
         }
     }
 
     private fun hasLimitedLabValueCreator(measurement: LabMeasurement, targetUnit: LabUnit = measurement.defaultUnit): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxValue = functionInputResolver().createOneDoubleInput(function)
+            val maxValue = function.param<DoubleParameter>(0).value
             createLabEvaluator(measurement, HasLimitedLabValue(maxValue, measurement, targetUnit))
         }
     }
 
     private fun hasLimitedLabValueULNCreator(measurement: LabMeasurement): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxULNFactor = functionInputResolver().createOneDoubleInput(function)
+            val maxULNFactor = function.param<DoubleParameter>(0).value
             createLabEvaluator(measurement, HasLimitedLabValueULN(maxULNFactor))
         }
     }
 
     private fun hasSufficientLabValueULNCreator(measurement: LabMeasurement): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minULNFactor = functionInputResolver().createOneDoubleInput(function)
+            val minULNFactor = function.param<DoubleParameter>(0).value
             createLabEvaluator(measurement, HasSufficientLabValueULN(minULNFactor))
         }
     }
@@ -217,7 +220,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasLimitedAsatAndAlatDependingOnLiverMetastasesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (maxULNWithoutLiverMetastases, maxULNWithLiverMetastases) = functionInputResolver().createTwoDoublesInput(function)
+            function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
+            val maxULNWithoutLiverMetastases = function.param<DoubleParameter>(0).value
+            val maxULNWithLiverMetastases = function.param<DoubleParameter>(1).value
             HasLimitedAsatAndAlatDependingOnLiverMetastases(
                 maxULNWithoutLiverMetastases, maxULNWithLiverMetastases, minValidLabDate(), minPassLabDate()
             )
@@ -228,7 +233,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         labMeasureWithGilbertDisease: LabMeasurement
     ): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (maxUlnWithoutGilbertDisease, maxUlnWithGilbertDisease) = functionInputResolver().createTwoDoublesInput(function)
+            function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
+            val maxUlnWithoutGilbertDisease = function.param<DoubleParameter>(0).value
+            val maxUlnWithGilbertDisease = function.param<DoubleParameter>(1).value
             HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisease(
                 maxUlnWithoutGilbertDisease,
                 labMeasureWithGilbertDisease,
@@ -242,21 +249,21 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasLimitedBilirubinPercentageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxPercentage = functionInputResolver().createOneDoubleInput(function)
+            val maxPercentage = function.param<DoubleParameter>(0).value
             createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN, HasLimitedBilirubinPercentageOfTotal(maxPercentage, minValidLabDate()))
         }
     }
 
     private fun hasLimitedIndirectBilirubinCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxValue = functionInputResolver().createOneDoubleInput(function)
+            val maxValue = function.param<DoubleParameter>(0).value
             createLabEvaluator(LabMeasurement.DIRECT_BILIRUBIN, HasLimitedIndirectBilirubinULN(maxValue, minValidLabDate()))
         }
     }
 
     private fun hasSufficientCreatinineClearanceCreator(method: CreatinineClearanceMethod): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minCreatinineClearance = functionInputResolver().createOneDoubleInput(function)
+            val minCreatinineClearance = function.param<DoubleParameter>(0).value
             val measurement = retrieveForMethod(method)
             val minimalDateWeightMeasurements = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val main =
@@ -275,17 +282,19 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasCreatinineClearanceBetweenValuesCreator(method: CreatinineClearanceMethod): FunctionCreator {
         return { function: EligibilityFunction ->
-            val inputs = functionInputResolver().createTwoDoublesInput(function)
+            function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
+            val minValue = function.param<DoubleParameter>(0).value
+            val maxValue = function.param<DoubleParameter>(1).value
             val measurement = retrieveForMethod(method)
             val mininumDateForBodyWeights = referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
             val minFunction = createLabEvaluator(
                 measurement,
-                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double1, mininumDateForBodyWeights),
+                HasSufficientDerivedCreatinineClearance(referenceDateProvider().year(), method, minValue, mininumDateForBodyWeights),
                 false
             )
             val maxFunction = createLabEvaluator(
                 measurement,
-                HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, inputs.double2, mininumDateForBodyWeights)
+                HasLimitedDerivedCreatinineClearance(referenceDateProvider().year(), method, maxValue, mininumDateForBodyWeights)
             )
             And(listOf(minFunction, maxFunction))
         }

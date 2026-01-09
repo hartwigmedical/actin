@@ -30,7 +30,7 @@ data class TreatmentMatcherInputData(
     val patient: PatientRecord,
     val doidModel: DoidModel,
     val icdModel: IcdModel,
-    val trials: List<Trial>,
+    val trials: List<Trial>?,
     val atcTree: AtcTree,
     val treatmentDatabase: TreatmentDatabase,
     val serveRecord: ServeRecord
@@ -50,10 +50,12 @@ object InputDataLoader {
         }
         val deferredTrials = async {
             withContext(Dispatchers.IO) {
-                LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
-                val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
-                LOGGER.info(" Loaded {} trials", trials.size)
-                trials
+                config.trialDatabaseDirectory?.let {
+                    LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
+                    val trials = TrialJson.readFromDir(it)
+                    LOGGER.info(" Loaded {} trials", trials.size)
+                    trials
+                }
             }
         }
         val deferredDoidEntry = async {
