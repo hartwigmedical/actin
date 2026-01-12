@@ -97,18 +97,86 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
     }
 
     @Test
+    fun `Should fail for correct treatment given twice both with treatment duration more than max weeks`() {
+        val treatmentHistoryEntryTooManyWeeks1 =
+            TreatmentTestFactory.treatmentHistoryEntry(
+                MATCHING_TREATMENT_SET,
+                startYear = 2017,
+                startMonth = 3,
+                stopYear = 2018,
+                stopMonth = 3
+            )
+        val treatmentHistoryEntryTooManyWeeks2 =
+            TreatmentTestFactory.treatmentHistoryEntry(
+                MATCHING_TREATMENT_SET,
+                startYear = 2022,
+                startMonth = 3,
+                stopYear = 2023,
+                stopMonth = 4
+            )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TreatmentTestFactory.withTreatmentHistory(
+                    listOf(
+                        treatmentHistoryEntryTooManyWeeks1,
+                        treatmentHistoryEntryTooManyWeeks2
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined for correct treatment within requested amount of weeks and correct treatment with treatment duration more than max weeks`() {
         val treatmentHistoryEntryTooManyWeeks =
-            TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = 2017, startMonth = 3, stopYear = 2018, stopMonth = 3)
+            TreatmentTestFactory.treatmentHistoryEntry(
+                MATCHING_TREATMENT_SET,
+                startYear = 2017,
+                startMonth = 3,
+                stopYear = 2018,
+                stopMonth = 3
+            )
         val treatmentHistoryEntryCorrectNbOfWeeks =
-            TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 4)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntryCorrectNbOfWeeks, treatmentHistoryEntryTooManyWeeks))))
+            TreatmentTestFactory.treatmentHistoryEntry(
+                MATCHING_TREATMENT_SET,
+                startYear = 2022,
+                startMonth = 3,
+                stopYear = 2022,
+                stopMonth = 4
+            )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                TreatmentTestFactory.withTreatmentHistory(
+                    listOf(
+                        treatmentHistoryEntryCorrectNbOfWeeks,
+                        treatmentHistoryEntryTooManyWeeks
+                    )
+                )
+            )
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined for correct treatment received twice within requested amount of weeks but together this exceeds the max weeks`() {
-        val treatmentHistoryEntry1 = TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = 2017, startMonth = 3, stopYear = 2017, stopMonth = 4)
-        val treatmentHistoryEntry2 = TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = 2018, startMonth = 3, stopYear = 2018, stopMonth = 4)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2))))
+        val treatmentHistoryEntry1 = TreatmentTestFactory.treatmentHistoryEntry(
+            MATCHING_TREATMENT_SET,
+            startYear = 2017,
+            startMonth = 3,
+            stopYear = 2017,
+            stopMonth = 4
+        )
+        val treatmentHistoryEntry2 = TreatmentTestFactory.treatmentHistoryEntry(
+            MATCHING_TREATMENT_SET,
+            startYear = 2018,
+            startMonth = 3,
+            stopYear = 2018,
+            stopMonth = 4
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2)))
+        )
     }
 }

@@ -35,15 +35,19 @@ class TreatmentWithLimitedWeeksEvaluator(
                         hadUnclearWeeks = hadUnclearWeeks(durationWeeksMatchingPortion, durationWeeksMaxMatchingPortion)
                     )
                 } ?: TreatmentEvaluation.create(
-                hadTreatment = if (specificMatchCannotBeDetermined(treatmentHistoryEntry)) null else false,
-                hadTrial = mayMatchAsTrial,
-                lessThanMaxWeeks = lessThanMaxWeeks(durationWeeksMax),
-                hadUnclearWeeks = hadUnclearWeeks(durationWeeks, durationWeeksMax)
-            )
+                    hadTreatment = if (specificMatchCannotBeDetermined(treatmentHistoryEntry)) null else false,
+                    hadTrial = mayMatchAsTrial,
+                    lessThanMaxWeeks = lessThanMaxWeeks(durationWeeksMax),
+                    hadUnclearWeeks = hadUnclearWeeks(durationWeeks, durationWeeksMax)
+                )
         }
 
         return when {
-            maxWeeks != null  && treatmentEvaluations.size > 1 -> {
+            treatmentEvaluations.all { it == TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS } -> {
+                EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $maxWeeks weeks")
+            }
+
+            maxWeeks != null && treatmentEvaluations.size > 1 -> {
                 EvaluationFactory.undetermined("Undetermined if multiple received $treatmentMessage is counted as received for more than $maxWeeks weeks")
             }
 
@@ -61,10 +65,6 @@ class TreatmentWithLimitedWeeksEvaluator(
                 EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage for at most $maxWeeks weeks")
             }
 
-            TreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $maxWeeks weeks")
-            }
-
             else -> {
                 EvaluationFactory.fail("Has not received $treatmentMessage")
             }
@@ -75,7 +75,7 @@ class TreatmentWithLimitedWeeksEvaluator(
         HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS,
         HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS,
         HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
-        HAS_HAD_TREATMENT,
+        HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS,
         NO_MATCH;
 
         companion object {
@@ -88,7 +88,7 @@ class TreatmentWithLimitedWeeksEvaluator(
                 hadTreatment == true && lessThanMaxWeeks -> HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS
                 hadTreatment == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS
                 (hadTreatment == null || hadTrial) && (lessThanMaxWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
-                hadTreatment == true -> HAS_HAD_TREATMENT
+                hadTreatment == true -> HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS
                 else -> NO_MATCH
             }
         }
