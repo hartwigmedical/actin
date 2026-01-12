@@ -11,7 +11,7 @@ object TumorDetailsInterpreter {
         val nonLymphNodeLesions: List<String>,
         val lymphNodeLesions: List<String>,
         val suspectedLesions: List<String>,
-        val negativeCategories: List<String>,
+        val negativeCategories: List<String>
     )
 
     private data class Lesion(val type: String, val hasLesion: Boolean?, val hasSuspectedLesion: Boolean?)
@@ -78,7 +78,7 @@ object TumorDetailsInterpreter {
             nonLymphNodeLesions,
             lymphNodeLesionsString(lymphNodeLesions),
             nonLymphSuspected.plus(if (lymphSuspected.isNotEmpty()) listOf("Lymph nodes (suspected)") else emptyList()),
-            negativeCategorizedLesions,
+            negativeCategorizedLesions
         )
     }
 

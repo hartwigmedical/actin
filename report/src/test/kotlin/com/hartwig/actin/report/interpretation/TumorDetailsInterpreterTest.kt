@@ -155,7 +155,7 @@ class TumorDetailsInterpreterTest {
                 nonLymphNodeLesions = listOf("Bone", "CNS"),
                 lymphNodeLesions = listOf("Lymph nodes (inguinal, mediastinal)"),
                 suspectedLesions = listOf("Lung (suspected)", "Adrenal gland (suspected)"),
-                negativeCategories = listOf("Liver"),
+                negativeCategories = listOf("Liver")
             )
             assertThat(classifyLesions(details)).isEqualTo(expected)
         }
