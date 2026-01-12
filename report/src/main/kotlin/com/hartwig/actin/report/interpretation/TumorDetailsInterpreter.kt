@@ -12,7 +12,6 @@ object TumorDetailsInterpreter {
         val lymphNodeLesions: List<String>,
         val suspectedLesions: List<String>,
         val negativeCategories: List<String>,
-        val unknownLesions: List<String>
     )
 
     private data class Lesion(val type: String, val hasLesion: Boolean?, val hasSuspectedLesion: Boolean?)
@@ -62,8 +61,6 @@ object TumorDetailsInterpreter {
         val confirmedOtherLesions = tumor.otherLesions.orEmpty()
         val suspectedOtherLesions =
             tumor.otherSuspectedLesions?.filterNot { it in confirmedOtherLesions }?.map { "$it (suspected)" }.orEmpty()
-        val unknownCategories = allCategorizedLesions.filter { it.hasLesion == null && it.hasSuspectedLesion != true }.map { it.type }
-        val unknownLesions = if (tumor.otherLesions != null) unknownCategories else unknownCategories + "Other"
 
         val allLesions = (confirmedCategorizedLesions + confirmedOtherLesions + listOfNotNull(tumor.biopsyLocation))
             .sorted()
@@ -82,7 +79,6 @@ object TumorDetailsInterpreter {
             lymphNodeLesionsString(lymphNodeLesions),
             nonLymphSuspected.plus(if (lymphSuspected.isNotEmpty()) listOf("Lymph nodes (suspected)") else emptyList()),
             negativeCategorizedLesions,
-            unknownLesions
         )
     }
 
