@@ -2,8 +2,10 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 import java.time.LocalDate
 
@@ -13,16 +15,33 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
 
     private val referenceDate = LocalDate.of(2025, 12, 1)
     private val function =
-        HasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
+        HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate, atLeast = true)
     private val minimalOneLineFunction =
-        HasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
+        HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate, atLeast = true)
 
     @Test
-    fun `Should pass when unknown intent systemic treatments reach threshold`() {
+    fun `Should pass with correct comparator in message when unknown intent systemic treatments reach threshold`() {
         val treatments = listOf("1", "2").map {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment(it, isSystemic = true)), intents = null)
         }
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at least 2 systemic treatments"))
+    }
+
+    @Test
+    fun `Should pass with correct comparator in message when unknown intent systemic treatments do not exceed limit`() {
+        val treatments = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", isSystemic = true)), intents = null)
+        )
+        val evaluation = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
+            2,
+            MAX_MONTHS_BEFORE_NEXT_LINE,
+            referenceDate,
+            atLeast = false
+        ).evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at most 2 systemic treatments"))
     }
 
     @Test
@@ -222,5 +241,4 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
             assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
         }
     }
-
 }
