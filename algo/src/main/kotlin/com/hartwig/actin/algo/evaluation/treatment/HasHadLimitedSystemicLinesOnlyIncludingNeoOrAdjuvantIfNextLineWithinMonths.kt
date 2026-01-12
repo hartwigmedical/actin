@@ -6,9 +6,11 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.tre
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
+import kotlin.collections.partition
 
-class HasHadLimitedSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLine(
+class HasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
     private val maxSystemicTreatments: Int,
     private val maxMonthsBeforeNextLine: Int,
     private val referenceDate: LocalDate

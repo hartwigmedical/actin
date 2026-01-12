@@ -48,8 +48,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to hasHadLimitedSystemicTreatmentsCreator(),
-            EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES_EXCLUDING_ADJUVANT_OR_NEOADJUVANT_STOPPED_MORE_THAN_Y_MONTHS_BEFORE_NEXT_LINE to hasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLineCreator(),
-            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_EXCLUDING_ADJUVANT_OR_NEOADJUVANT_STOPPED_MORE_THAN_Y_MONTHS_BEFORE_NEXT_LINE to hasHadLimitedSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLineCreator(),
+            EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES_EXCLUDING_ADJUVANT_OR_NEOADJUVANT_STOPPED_MORE_THAN_Y_MONTHS_BEFORE_NEXT_LINE to hasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_EXCLUDING_ADJUVANT_OR_NEOADJUVANT_STOPPED_MORE_THAN_Y_MONTHS_BEFORE_NEXT_LINE to hasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT to hasHadAnyCancerTreatmentCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_X to hasHadAnyCancerTreatmentIgnoringCategoriesCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X_OF_TYPES_Y_WITHIN_Z_MONTHS to hasHadAnyCancerTreatmentIgnoringTypesWithinMonthsCreator(),
@@ -226,24 +226,26 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLineCreator(): FunctionCreator {
+    private fun hasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (minSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
-            HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedSomeMonthsBeforeNextLine(
+            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
                 minSystemicTreatments,
                 maxMonthsBeforeNextLine,
-                referenceDate
+                referenceDate,
+                atLeast = true
             )
         }
     }
 
-    private fun hasHadLimitedSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLineCreator(): FunctionCreator {
+    private fun hasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (maxSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
-            HasHadLimitedSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLine(
+            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
                 maxSystemicTreatments,
                 maxMonthsBeforeNextLine,
-                referenceDate
+                referenceDate,
+                atLeast = false
             )
         }
     }

@@ -9,7 +9,7 @@ import java.time.LocalDate
 
 private const val MAX_MONTHS_BEFORE_NEXT_LINE = 3
 
-class HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedSomeMonthsBeforeNextLineTest {
+class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
 
     private val referenceDate = LocalDate.of(2025, 12, 1)
     private val function =
@@ -222,4 +222,5 @@ class HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedS
             assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
         }
     }
+
 }

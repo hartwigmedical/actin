@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import java.time.LocalDate
 
-class HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedSomeMonthsBeforeNextLine(
+class HasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
     private val minSystemicTreatments: Int,
     private val maxMonthsBeforeNextLine: Int,
     private val referenceDate: LocalDate
@@ -44,10 +44,10 @@ class HasHadSomeSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStoppedS
 
             maxPotentialCount >= minSystemicTreatments -> {
                 val undeterminedMessageEnding = curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming.takeIf { it.isNotEmpty() }
-                    ?.let { " (incomplete date information)" } ?: ""
+                    ?.let { " since it is unclear if (neo)adjuvant treatment(s) resulted in PD within $maxMonthsBeforeNextLine months after " +
+                            "stopping (incomplete date information)" } ?: ""
                 EvaluationFactory.undetermined(
-                    "Undetermined if received at least $minSystemicTreatments systemic treatments since it is unclear if (neo)adjuvant " +
-                            "treatment(s) resulted in PD within $maxMonthsBeforeNextLine months after stopping$undeterminedMessageEnding"
+                    "Undetermined if received at least $minSystemicTreatments systemic treatments$undeterminedMessageEnding"
                 )
             }
 

@@ -13,13 +13,13 @@ class HasHadLimitedSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStart
 
     private val referenceDate = LocalDate.of(2025, 12, 1)
     private val function =
-        HasHadLimitedSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLine(
+        HasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
             1,
             MAX_MONTHS_BEFORE_NEXT_LINE,
             referenceDate
         )
     private val maxZeroLinesFunction =
-        HasHadLimitedSystemicTreatmentsExcludingCurativeNeoadjuvantOrAdjuvantStartedSomeMonthsBeforeNextLine(
+        HasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
             0,
             MAX_MONTHS_BEFORE_NEXT_LINE,
             referenceDate
