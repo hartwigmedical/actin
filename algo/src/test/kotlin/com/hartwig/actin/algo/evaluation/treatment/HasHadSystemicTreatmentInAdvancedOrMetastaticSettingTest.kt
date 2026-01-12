@@ -20,7 +20,7 @@ class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
     private val function = HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         referenceDate,
         intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
-        settingString = "metastatic"
+        settingDescription = "metastatic"
     )
     private val nonRecentTreatment = createTreatment(
         intent = null, isSystemic = true, "Treatment a", stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue

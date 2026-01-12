@@ -16,7 +16,7 @@ import java.time.LocalDate
 class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
     private val referenceDate: LocalDate,
     private val intentsToIgnore: Set<Intent>,
-    private val settingString: String
+    private val settingDescription: String
 ) :
     EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -30,7 +30,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
             partitionRecentTreatments(includedIntentTreatments, true)
         val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = includedIntentTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
-        val messageEnding = "$settingString setting"
+        val messageEnding = "$settingDescription setting"
         val wrongIntentMessage = "${Format.concatItemsWithOr(intentsToIgnore)} intent"
 
         return when {
