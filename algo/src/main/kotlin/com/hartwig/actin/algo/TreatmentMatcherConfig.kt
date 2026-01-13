@@ -94,7 +94,7 @@ data class TreatmentMatcherConfig(
             return TreatmentMatcherConfig(
                 patientRecordJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_RECORD_JSON),
                 trialDatabaseDirectory = ApplicationConfig.optionalDir(cmd, TRIAL_DATABASE_DIRECTORY),
-                trialConfigJson = ApplicationConfig.optionalDir(cmd, TRIAL_CONFIG_JSON),
+                trialConfigJson = ApplicationConfig.optionalFile(cmd, TRIAL_CONFIG_JSON),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
