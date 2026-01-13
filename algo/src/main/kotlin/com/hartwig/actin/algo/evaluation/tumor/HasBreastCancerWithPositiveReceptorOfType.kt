@@ -54,7 +54,8 @@ class HasBreastCancerWithPositiveReceptorOfType(
                 return when {
                     targetHer2AndErbb2Amplified -> {
                         EvaluationFactory.warn(
-                            "Undetermined if ${receptorType.display()}-positive breast cancer (HER2 low IHC inconsistent with ERBB2 gene amp)"
+                            "Undetermined if ${receptorType.display()}-positive breast cancer " +
+                                    "(HER2 low IHC inconsistent with ERBB2 gene amp)"
                         )
                     }
 

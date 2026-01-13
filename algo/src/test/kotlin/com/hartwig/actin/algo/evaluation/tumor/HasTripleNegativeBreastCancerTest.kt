@@ -88,7 +88,9 @@ class HasTripleNegativeBreastCancerTest {
                 createIhcTest(item = "ER", scoreValue = 2.0, scoreValueUnit = "%")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patient))
+        val evaluation = function.evaluate(patient)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if IHC ER/PR low is considered triple negative breast cancer")
     }
 
     @Test

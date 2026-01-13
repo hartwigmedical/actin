@@ -35,14 +35,9 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
             }
 
             her2TestResults.all { it == ihcResultToFind } -> {
-                if (geneERBB2IsAmplified && ihcResultToFind == TestResult.NEGATIVE) {
+                if (geneERBB2IsAmplified && (ihcResultToFind == TestResult.NEGATIVE || ihcResultToFind == TestResult.LOW)) {
                     EvaluationFactory.warn(
-                        "Undetermined if HER2 IHC test results indicate negative HER2 status$erbb2AmplifiedMessage",
-                        inclusionEvents = warnInclusionEvent
-                    )
-                } else if (geneERBB2IsAmplified && ihcResultToFind == TestResult.LOW) {
-                    EvaluationFactory.warn(
-                        "Undetermined if HER2 IHC test results indicate low HER2 status$erbb2AmplifiedMessage",
+                        "Undetermined if HER2 IHC test results indicate $ihcResultString HER2 status$erbb2AmplifiedMessage",
                         inclusionEvents = warnInclusionEvent
                     )
                 } else {
@@ -53,10 +48,15 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
                 }
             }
 
-            (her2TestResults.all { it == TestResult.NEGATIVE || it == TestResult.LOW } && ihcResultToFind == TestResult.POSITIVE) ||
-                    (her2TestResults.all { it == TestResult.POSITIVE || it == TestResult.NEGATIVE } && ihcResultToFind == TestResult.LOW) || (her2TestResults.all { it == TestResult.LOW || it == TestResult.POSITIVE || it == TestResult.BORDERLINE } && ihcResultToFind == TestResult.NEGATIVE) -> {
+            listOf(
+                Pair(setOf(TestResult.NEGATIVE, TestResult.LOW), TestResult.POSITIVE),
+                Pair(setOf(TestResult.NEGATIVE, TestResult.POSITIVE), TestResult.LOW),
+                Pair(setOf(TestResult.LOW, TestResult.BORDERLINE, TestResult.POSITIVE), TestResult.NEGATIVE)
+            ).any { (failResults, targetResult) ->
+                her2TestResults.all { it in failResults } && ihcResultToFind == targetResult
+            } -> {
                 val failMessage = "Has no $ihcResultString HER2 IHC result"
-                if (geneERBB2IsAmplified && her2TestResults.all { it == TestResult.POSITIVE }) {
+                if (geneERBB2IsAmplified && ihcResultToFind == TestResult.POSITIVE) {
                     EvaluationFactory.recoverableFail("$failMessage$erbb2AmplifiedMessage")
                 } else {
                     EvaluationFactory.fail(failMessage)
