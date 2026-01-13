@@ -40,8 +40,7 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
                         "Undetermined if HER2 IHC test results indicate negative HER2 status$erbb2AmplifiedMessage",
                         inclusionEvents = warnInclusionEvent
                     )
-                }
-                else {
+                } else {
                     EvaluationFactory.pass(
                         "Has $ihcResultString HER2 IHC result",
                         inclusionEvents = setOf("IHC HER2 $ihcResultString")
@@ -49,7 +48,8 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
                 }
             }
 
-            her2TestResults.all { it == TestResult.NEGATIVE } || her2TestResults.all { it == TestResult.POSITIVE } || her2TestResults.all { it == TestResult.LOW } -> {
+            (her2TestResults.all { it == TestResult.NEGATIVE || it == TestResult.LOW } && ihcResultToFind == TestResult.POSITIVE) ||
+                    (her2TestResults.all { it == TestResult.POSITIVE || it == TestResult.NEGATIVE } && ihcResultToFind == TestResult.LOW) || (her2TestResults.all { it == TestResult.LOW || it == TestResult.POSITIVE || it == TestResult.BORDERLINE } && ihcResultToFind == TestResult.NEGATIVE) -> {
                 val failMessage = "Has no $ihcResultString HER2 IHC result"
                 if (geneERBB2IsAmplified && her2TestResults.all { it == TestResult.POSITIVE }) {
                     EvaluationFactory.recoverableFail("$failMessage$erbb2AmplifiedMessage")
@@ -58,10 +58,10 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
                 }
             }
 
-            her2TestResults.all { it == TestResult.BORDERLINE } -> {
-                EvaluationFactory.warn(
+            TestResult.BORDERLINE in her2TestResults -> {
+                EvaluationFactory.undetermined(
                     "Undetermined if IHC HER2 score value(s) is considered $ihcResultString",
-                    inclusionEvents = warnInclusionEvent,
+                    isMissingMolecularResultForEvaluation = true
                 )
             }
 

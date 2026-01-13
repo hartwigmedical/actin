@@ -157,6 +157,30 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     }
 
     @Test
+    fun `Should fail if HER2 1+ based on IHC`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+                TumorTestFactory.withIhcTestsAndDoids(
+                    listOf(createIhcTest(item = "HER2", scoreValue = 1.0, scoreValueUnit = "+")),
+                    setOf(DoidConstants.BREAST_CANCER_DOID)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail if HER2 low based on IHC`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+                TumorTestFactory.withIhcTestsAndDoids(
+                    listOf(createIhcTest(item = "HER2", scoreText = "low")),
+                    setOf(DoidConstants.BREAST_CANCER_DOID)
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should warn if HER2 negative based on doids but ERBB2 amp present`() {
         assertEvaluation(
             EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(

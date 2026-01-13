@@ -29,14 +29,18 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
             evaluationPerReceptor.values.contains(BreastCancerReceptorEvaluation.NOT_BREAST_CANCER) || evaluationPerReceptor.values.contains(
                 BreastCancerReceptorEvaluation.POSITIVE
             )
-        val allReceptorsNegative = evaluationPerReceptor.values.all { it == BreastCancerReceptorEvaluation.NEGATIVE || it == BreastCancerReceptorEvaluation.LOW }
+        val her2NegativeOrLow = evaluationPerReceptor[ReceptorType.HER2] == BreastCancerReceptorEvaluation.NEGATIVE || evaluationPerReceptor[ReceptorType.HER2] == BreastCancerReceptorEvaluation.LOW
+        val allReceptorsNegativeOrHer2Low = evaluationPerReceptor[ReceptorType.ER] == BreastCancerReceptorEvaluation.NEGATIVE && evaluationPerReceptor[ReceptorType.PR] == BreastCancerReceptorEvaluation.NEGATIVE && her2NegativeOrLow
+        val allReceptorsNegativeOrLow = evaluationPerReceptor.values.all { it == BreastCancerReceptorEvaluation.NEGATIVE || it == BreastCancerReceptorEvaluation.LOW }
 
         return when {
             hasNoTripleNegativeBreastCancer -> EvaluationFactory.fail("Has no triple negative breast cancer")
 
-            allReceptorsNegative && erbb2Amplified -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
+            allReceptorsNegativeOrHer2Low && erbb2Amplified -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
 
-            allReceptorsNegative -> EvaluationFactory.pass("Has triple negative breast cancer")
+            allReceptorsNegativeOrHer2Low -> EvaluationFactory.pass("Has triple negative breast cancer")
+
+            allReceptorsNegativeOrLow -> EvaluationFactory.undetermined("Undetermined if ER/PR low is considered triple negative breast cancer")
 
             prAndErNotPositive && erbb2Amplified && evaluationPerReceptor[ReceptorType.HER2] != BreastCancerReceptorEvaluation.NEGATIVE -> EvaluationFactory.undetermined(
                 "Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so potentially not triple negative)"
