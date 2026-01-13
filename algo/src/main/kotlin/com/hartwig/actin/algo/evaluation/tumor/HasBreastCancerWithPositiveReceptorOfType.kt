@@ -42,38 +42,34 @@ class HasBreastCancerWithPositiveReceptorOfType(
                 EvaluationFactory.pass("Has ${receptorType.display()}-positive breast cancer")
             }
 
+            BreastCancerReceptorEvaluation.BORDERLINE -> {
+                EvaluationFactory.undetermined(
+                    "No ${receptorType.display()}-positive breast cancer but ${receptorType.display()}-score is " +
+                            "2+ hence FISH may be useful",
+                    isMissingMolecularResultForEvaluation = true
+                )
+            }
+
             BreastCancerReceptorEvaluation.LOW -> {
                 return when {
-                    receptorType == ReceptorType.HER2 && !targetHer2AndErbb2Amplified -> {
+                    targetHer2AndErbb2Amplified -> {
+                        EvaluationFactory.warn(
+                            "Undetermined if ${receptorType.display()}-positive breast cancer (HER2 low IHC inconsistent with ERBB2 gene amp)"
+                        )
+                    }
+
+                    receptorType == ReceptorType.HER2 -> {
                         EvaluationFactory.fail(
                             "No ${receptorType.display()}-positive breast cancer"
                         )
                     }
-                    receptorType == ReceptorType.HER2 -> {
-                        EvaluationFactory.warn(
-                            "No ${receptorType.display()}-positive breast cancer"
-                        )
-                    }
+
                     else -> {
                         EvaluationFactory.warn(
                             "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
                                     "(${receptorType.display()}-score under 10%)"
                         )
                     }
-                }
-            }
-
-            BreastCancerReceptorEvaluation.BORDERLINE -> {
-                return if (receptorType == ReceptorType.HER2) {
-                    EvaluationFactory.undetermined(
-                        "No ${receptorType.display()}-positive breast cancer but ${receptorType.display()}-score is " +
-                                "2+ hence FISH may be useful"
-                    )
-                } else {
-                    EvaluationFactory.warn(
-                        "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
-                                "(${receptorType.display()}-score under 10%)"
-                    )
                 }
             }
 

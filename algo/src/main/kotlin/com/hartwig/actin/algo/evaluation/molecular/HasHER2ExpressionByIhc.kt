@@ -40,6 +40,11 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
                         "Undetermined if HER2 IHC test results indicate negative HER2 status$erbb2AmplifiedMessage",
                         inclusionEvents = warnInclusionEvent
                     )
+                } else if (geneERBB2IsAmplified && ihcResultToFind == TestResult.LOW) {
+                    EvaluationFactory.warn(
+                        "Undetermined if HER2 IHC test results indicate low HER2 status$erbb2AmplifiedMessage",
+                        inclusionEvents = warnInclusionEvent
+                    )
                 } else {
                     EvaluationFactory.pass(
                         "Has $ihcResultString HER2 IHC result",
@@ -58,7 +63,7 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
                 }
             }
 
-            TestResult.BORDERLINE in her2TestResults -> {
+            her2TestResults.all { it == TestResult.BORDERLINE } && ihcResultToFind in setOf(TestResult.POSITIVE, TestResult.LOW) -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if IHC HER2 score value(s) is considered $ihcResultString",
                     isMissingMolecularResultForEvaluation = true

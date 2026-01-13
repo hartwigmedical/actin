@@ -23,9 +23,9 @@ private val NEGATIVE_DOID_MOLECULAR_COMBINATION = mapOf(
 enum class BreastCancerReceptorEvaluation {
     NOT_BREAST_CANCER,
     POSITIVE,
-    NEGATIVE,
-    LOW,
     BORDERLINE,
+    LOW,
+    NEGATIVE,
     DATA_MISSING,
     INCONSISTENT_DATA
 }
@@ -36,19 +36,17 @@ class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
         val targetIhcTests = ihcTests.filter { it.item == receptorType.display() }
         val testSummary = summarizeTests(targetIhcTests, receptorType)
         val positiveArguments = positiveArguments(testSummary, tumorDoids, receptorType)
-        val negativeArguments = negativeArguments(testSummary, tumorDoids, receptorType)
         val lowArguments = TestResult.LOW in testSummary
-        val targetReceptorIsPositive = resultIsPositive(positiveArguments, negativeArguments, lowArguments)
+        val negativeArguments = negativeArguments(testSummary, tumorDoids, receptorType)
         val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments || lowArguments)
 
-        // !!! REVIEW LOGIC!!!
         return when {
             !isBreastCancer(tumorDoids) -> BreastCancerReceptorEvaluation.NOT_BREAST_CANCER
-            targetReceptorIsPositive == true -> BreastCancerReceptorEvaluation.POSITIVE
             targetIhcTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> BreastCancerReceptorEvaluation.DATA_MISSING
-            targetReceptorIsPositive == null && !specificArgumentsForStatusDeterminationMissing -> BreastCancerReceptorEvaluation.INCONSISTENT_DATA
-            TestResult.BORDERLINE in testSummary -> BreastCancerReceptorEvaluation.BORDERLINE
+            listOf(positiveArguments, negativeArguments, lowArguments).count { it } > 1 -> BreastCancerReceptorEvaluation.INCONSISTENT_DATA
+            positiveArguments -> BreastCancerReceptorEvaluation.POSITIVE
             lowArguments -> BreastCancerReceptorEvaluation.LOW
+            TestResult.BORDERLINE in testSummary && !positiveArguments -> BreastCancerReceptorEvaluation.BORDERLINE
             else -> BreastCancerReceptorEvaluation.NEGATIVE
         }
     }
@@ -62,14 +60,6 @@ class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
             ReceptorType.HER2 -> ::classifyHer2Test
         }
         return targetIhcTests.map(classifier).toSet()
-    }
-
-    private fun resultIsPositive(positiveArguments: Boolean, negativeArguments: Boolean, lowArguments: Boolean): Boolean? {
-        return when {
-            positiveArguments && !negativeArguments && !lowArguments -> true
-            !positiveArguments -> false
-            else -> null
-        }
     }
 
     private fun positiveArguments(testSummary: Set<TestResult>, tumorDoids: Set<String>, receptor: ReceptorType): Boolean {
