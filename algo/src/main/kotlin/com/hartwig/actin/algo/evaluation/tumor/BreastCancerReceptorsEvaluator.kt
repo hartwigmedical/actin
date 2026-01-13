@@ -24,6 +24,7 @@ enum class BreastCancerReceptorEvaluation {
     NOT_BREAST_CANCER,
     POSITIVE,
     NEGATIVE,
+    LOW,
     BORDERLINE,
     DATA_MISSING,
     INCONSISTENT_DATA
@@ -36,15 +37,18 @@ class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
         val testSummary = summarizeTests(targetIhcTests, receptorType)
         val positiveArguments = positiveArguments(testSummary, tumorDoids, receptorType)
         val negativeArguments = negativeArguments(testSummary, tumorDoids, receptorType)
-        val targetReceptorIsPositive = resultIsPositive(positiveArguments, negativeArguments)
-        val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments)
+        val lowArguments = TestResult.LOW in testSummary
+        val targetReceptorIsPositive = resultIsPositive(positiveArguments, negativeArguments, lowArguments)
+        val specificArgumentsForStatusDeterminationMissing = !(positiveArguments || negativeArguments || lowArguments)
 
+        // !!! REVIEW LOGIC!!!
         return when {
             !isBreastCancer(tumorDoids) -> BreastCancerReceptorEvaluation.NOT_BREAST_CANCER
             targetReceptorIsPositive == true -> BreastCancerReceptorEvaluation.POSITIVE
             targetIhcTests.isEmpty() && specificArgumentsForStatusDeterminationMissing -> BreastCancerReceptorEvaluation.DATA_MISSING
             targetReceptorIsPositive == null && !specificArgumentsForStatusDeterminationMissing -> BreastCancerReceptorEvaluation.INCONSISTENT_DATA
-            targetReceptorIsPositive != false && TestResult.BORDERLINE in testSummary -> BreastCancerReceptorEvaluation.BORDERLINE
+            TestResult.BORDERLINE in testSummary -> BreastCancerReceptorEvaluation.BORDERLINE
+            lowArguments -> BreastCancerReceptorEvaluation.LOW
             else -> BreastCancerReceptorEvaluation.NEGATIVE
         }
     }
@@ -60,10 +64,10 @@ class BreastCancerReceptorsEvaluator(private val doidModel: DoidModel) {
         return targetIhcTests.map(classifier).toSet()
     }
 
-    private fun resultIsPositive(positiveArguments: Boolean, negativeArguments: Boolean): Boolean? {
+    private fun resultIsPositive(positiveArguments: Boolean, negativeArguments: Boolean, lowArguments: Boolean): Boolean? {
         return when {
-            positiveArguments && !negativeArguments -> true
-            negativeArguments && !positiveArguments -> false
+            positiveArguments && !negativeArguments && !lowArguments -> true
+            !positiveArguments -> false
             else -> null
         }
     }

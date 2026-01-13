@@ -7,23 +7,26 @@ object IhcTestClassificationFunctions {
 
     enum class TestResult {
         POSITIVE,
+        LOW,
         NEGATIVE,
         BORDERLINE,
         UNKNOWN
     }
 
     fun classifyHer2Test(test: IhcTest): TestResult {
-        return classifyTest(test, "+", 2, 3, 3)
+        return classifyTest(test, "+", 0, 1, 1, 3, 3)
     }
 
     fun classifyPrOrErTest(test: IhcTest): TestResult {
-        return classifyTest(test, "%", 1, 10, 100)
+        return classifyTest(test, "%", 1, 1, 10, 10, 100)
     }
 
     private fun classifyTest(
         test: IhcTest,
         unit: String,
         negativeUpperBound: Int,
+        lowLowerBound: Int,
+        lowUpperBound: Int,
         positiveLowerBound: Int,
         positiveUpperBound: Int
     ): TestResult {
@@ -33,6 +36,9 @@ object IhcTestClassificationFunctions {
 
             test.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS || scoreValue == 0 ||
                     (scoreValue in 0 until negativeUpperBound && test.scoreValueUnit == unit) -> TestResult.NEGATIVE
+
+            test.scoreText?.lowercase() in IhcTestEvaluationConstants.LOW_TERMS ||
+                    (scoreValue in lowLowerBound..lowUpperBound && test.scoreValueUnit == unit) -> TestResult.LOW
 
             test.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS ||
                     (scoreValue in positiveLowerBound..positiveUpperBound && test.scoreValueUnit == unit) -> TestResult.POSITIVE

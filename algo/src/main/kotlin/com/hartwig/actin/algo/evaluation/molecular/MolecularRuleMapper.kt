@@ -431,7 +431,15 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasPositiveHER2ExpressionByIhcCreator(): FunctionCreator {
-        return { HasPositiveHER2ExpressionByIhc() }
+        return { HasHER2ExpressionByIhc(IhcTestClassificationFunctions.TestResult.POSITIVE) }
+    }
+
+    private fun hasNegativeHER2ExpressionByIhcCreator(): FunctionCreator {
+        return { HasHER2ExpressionByIhc(IhcTestClassificationFunctions.TestResult.NEGATIVE) }
+    }
+
+    private fun hasLowHER2ExpressionByIhcCreator(): FunctionCreator {
+        return { HasHER2ExpressionByIhc(IhcTestClassificationFunctions.TestResult.LOW) }
     }
 
     private fun proteinHasLimitedExpressionByIhcCreator(): FunctionCreator {

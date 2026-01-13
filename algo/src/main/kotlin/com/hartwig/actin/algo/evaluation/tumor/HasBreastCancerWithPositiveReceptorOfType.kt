@@ -42,6 +42,27 @@ class HasBreastCancerWithPositiveReceptorOfType(
                 EvaluationFactory.pass("Has ${receptorType.display()}-positive breast cancer")
             }
 
+            BreastCancerReceptorEvaluation.LOW -> {
+                return when {
+                    receptorType == ReceptorType.HER2 && !targetHer2AndErbb2Amplified -> {
+                        EvaluationFactory.fail(
+                            "No ${receptorType.display()}-positive breast cancer"
+                        )
+                    }
+                    receptorType == ReceptorType.HER2 -> {
+                        EvaluationFactory.warn(
+                            "No ${receptorType.display()}-positive breast cancer"
+                        )
+                    }
+                    else -> {
+                        EvaluationFactory.warn(
+                            "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
+                                    "(${receptorType.display()}-score under 10%)"
+                        )
+                    }
+                }
+            }
+
             BreastCancerReceptorEvaluation.BORDERLINE -> {
                 return if (receptorType == ReceptorType.HER2) {
                     EvaluationFactory.undetermined(

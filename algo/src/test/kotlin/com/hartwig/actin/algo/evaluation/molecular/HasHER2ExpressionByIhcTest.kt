@@ -12,9 +12,9 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class HasPositiveHER2ExpressionByIhcTest {
+class HasHER2ExpressionByIhcTest {
 
-    val function = HasPositiveHER2ExpressionByIhc()
+    val function = HasHER2ExpressionByIhc(IhcTestClassificationFunctions.TestResult.POSITIVE)
 
     @Test
     fun `Should be undetermined when no prior molecular tests available`() {
@@ -60,7 +60,6 @@ class HasPositiveHER2ExpressionByIhcTest {
             MolecularTestFactory.withIhcTests(
                 listOf(
                     ihcTest(scoreValue = 0.0),
-                    ihcTest(scoreValue = 1.0, scoreValueUnit = "+"),
                     ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
                 )
             )
