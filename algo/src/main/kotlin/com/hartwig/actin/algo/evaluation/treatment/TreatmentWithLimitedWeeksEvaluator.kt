@@ -43,7 +43,7 @@ class TreatmentWithLimitedWeeksEvaluator(
         }
 
         return when {
-            treatmentEvaluations.all { it == TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS } -> {
+            TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS in treatmentEvaluations -> {
                 EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $maxWeeks weeks")
             }
 

@@ -122,13 +122,13 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined for correct treatment within requested amount of weeks and correct treatment with treatment duration more than max weeks`() {
+    fun `Should fail for correct treatment within requested amount of weeks and correct treatment with treatment duration more than max weeks`() {
         val treatmentHistoryEntryTooManyWeeks =
             treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2017, startMonth = 3, stopYear = 2018, stopMonth = 3)
         val treatmentHistoryEntryCorrectNbOfWeeks =
             treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 4)
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.FAIL,
             functionWithMaxWeeks.evaluate(
                 withTreatmentHistory(
                     listOf(
