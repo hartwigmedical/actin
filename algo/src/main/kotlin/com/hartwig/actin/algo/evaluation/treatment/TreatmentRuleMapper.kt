@@ -227,11 +227,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (minSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
-            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
+            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMinimumTreatmentLines(
                 minSystemicTreatments,
                 maxMonthsBeforeNextLine,
-                referenceDate,
-                atLeast = true
+                referenceDate
             )
         }
     }
@@ -239,11 +238,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val (maxSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
-            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
+            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMaximumTreatmentLines(
                 maxSystemicTreatments,
                 maxMonthsBeforeNextLine,
-                referenceDate,
-                atLeast = false
+                referenceDate
             )
         }
     }

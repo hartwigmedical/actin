@@ -14,10 +14,10 @@ private const val MAX_MONTHS_BEFORE_NEXT_LINE = 3
 class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
 
     private val referenceDate = LocalDate.of(2025, 12, 1)
-    private val function =
-        HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate, atLeast = true)
-    private val minimalOneLineFunction =
-        HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate, atLeast = true)
+    private val function = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths
+        .createForMinimumTreatmentLines(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
+    private val minimalOneLineFunction = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths
+        .createForMinimumTreatmentLines(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
 
     @Test
     fun `Should pass with correct comparator in message when unknown intent systemic treatments reach threshold`() {
@@ -34,11 +34,10 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
         val treatments = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", isSystemic = true)), intents = null)
         )
-        val evaluation = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
+        val evaluation = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMaximumTreatmentLines(
             2,
             MAX_MONTHS_BEFORE_NEXT_LINE,
-            referenceDate,
-            atLeast = false
+            referenceDate
         ).evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at most 2 systemic treatments"))

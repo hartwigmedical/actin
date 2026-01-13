@@ -28,14 +28,16 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
     private val referenceTreatmentCount: Int,
     private val maxMonthsBeforeNextLine: Int,
     private val referenceDate: LocalDate,
-    private val atLeast: Boolean
-): EvaluationFunction {
+    private val comparator: (Int, Int) -> Boolean,
+    private val comparatorMessage: String
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val timingEvaluatedHistory = evaluateTreatmentTimingRelativeToNextLine(
             record.oncologicalHistory.filter(::treatmentHistoryEntryIsSystemic),
-            maxMonthsBeforeNextLine, referenceDate
+            maxMonthsBeforeNextLine,
+            referenceDate
         )
 
         val (certainlyCountingEntries, potentiallyCountingCurativeAndNeoAdjuvantEntries) = timingEvaluatedHistory.partition {
@@ -44,16 +46,13 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
         }
 
         val curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming = potentiallyCountingCurativeAndNeoAdjuvantEntries.filter {
-            it.timing in setOf(TreatmentTiming.AMBIGUOUS,TreatmentTiming.UNKNOWN)
+            it.timing in setOf(TreatmentTiming.AMBIGUOUS, TreatmentTiming.UNKNOWN)
         }
 
         val minCertainCount = SystemicTreatmentAnalyser.minSystemicTreatments(certainlyCountingEntries.map { it.entry })
         val maxPotentialCount = SystemicTreatmentAnalyser.maxSystemicTreatments(
             (certainlyCountingEntries + curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming).map { it.entry }
         )
-
-        val comparator: (Int, Int) -> Boolean = if (atLeast) { a, b -> a >= b } else { a, b -> a <= b }
-        val comparatorMessage = if (atLeast) "least" else "most"
 
         return when {
             comparator(minCertainCount, referenceTreatmentCount) ->
@@ -62,8 +61,10 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
 
             comparator(maxPotentialCount, referenceTreatmentCount) -> {
                 val undeterminedMessageEnding = curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming.takeIf { it.isNotEmpty() }
-                    ?.let { " since it is unclear if (neo)adjuvant treatment(s) resulted in PD within $maxMonthsBeforeNextLine months after " +
-                            "stopping (incomplete date information)" } ?: ""
+                    ?.let {
+                        " since it is unclear if (neo)adjuvant treatment(s) resulted in PD within $maxMonthsBeforeNextLine months after " +
+                                "stopping (incomplete date information)"
+                    } ?: ""
                 EvaluationFactory.undetermined(
                     "Undetermined if received at $comparatorMessage $referenceTreatmentCount systemic treatments$undeterminedMessageEnding"
                 )
@@ -130,4 +131,34 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
         } else {
             YearMonth.of(year, month) to YearMonth.of(year, month)
         }
+
+    companion object {
+        fun createForMinimumTreatmentLines(
+            referenceTreatmentCount: Int,
+            maxMonthsBeforeNextLine: Int,
+            referenceDate: LocalDate
+        ): EvaluationFunction {
+            return HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
+                referenceTreatmentCount,
+                maxMonthsBeforeNextLine,
+                referenceDate,
+                { count, reference -> count >= reference },
+                "least"
+            )
+        }
+
+        fun createForMaximumTreatmentLines(
+            referenceTreatmentCount: Int,
+            maxMonthsBeforeNextLine: Int,
+            referenceDate: LocalDate
+        ): EvaluationFunction {
+            return HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
+                referenceTreatmentCount,
+                maxMonthsBeforeNextLine,
+                referenceDate,
+                { count, reference -> count <= reference },
+                "most"
+            )
+        }
+    }
 }
