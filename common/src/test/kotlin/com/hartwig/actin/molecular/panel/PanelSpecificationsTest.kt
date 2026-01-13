@@ -133,6 +133,26 @@ class PanelSpecificationsTest {
     }
 
     @Test
+    fun `Should throw illegal state exception when result contains fusion with only one gene in the pair unknown and but unknown gene also in variant`() {
+        val unknownGene = "unknown"
+        val panelSpec = PanelTestSpecification("panel", TestVersion(null))
+        val specifications = PanelSpecifications(
+            geneFilter,
+            mapOf(panelSpec to listOf(PanelGeneSpecification(GENE, listOf(MolecularTestTarget.MUTATION))))
+        )
+
+        assertThatThrownBy {
+            specifications.panelTargetSpecification(
+                SequencingTest(
+                    "panel",
+                    fusions = setOf(SequencedFusion(geneUp = GENE, geneDown = unknownGene)),
+                    variants = setOf(SequencedVariant(gene = unknownGene))
+                ), TestVersion(null)
+            )
+        }.isInstanceOf(IllegalStateException::class.java)
+    }
+
+    @Test
     fun `Should return true when specifications derived from test and mutation is on gene`() {
         val derivedSpecification =
             PanelTargetSpecification(derivedGeneTargetMap(SequencingTest(test = TEST, variants = setOf(SequencedVariant(gene = GENE)))))
