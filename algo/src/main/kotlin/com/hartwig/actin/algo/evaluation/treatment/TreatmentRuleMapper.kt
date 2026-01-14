@@ -9,6 +9,7 @@ import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.EligibilityRule
@@ -48,6 +49,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_AT_LEAST_X_APPROVED_TREATMENT_LINES to hasHadSomeApprovedTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES to hasHadSomeSystemicTreatmentCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES to hasHadLimitedSystemicTreatmentsCreator(),
+            EligibilityRule.HAS_HAD_AT_LEAST_X_SYSTEMIC_TREATMENT_LINES_ONLY_INCLUDING_NEO_OR_ADJUVANT_IF_NEXT_LINE_WITHIN_Y_MONTHS to hasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_ONLY_INCLUDING_NEO_OR_ADJUVANT_IF_NEXT_LINE_WITHIN_Y_MONTHS to hasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT to hasHadAnyCancerTreatmentCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORIES_X to hasHadAnyCancerTreatmentIgnoringCategoriesCreator(),
             EligibilityRule.HAS_HAD_ANY_CANCER_TREATMENT_IGNORING_CATEGORY_X_OF_TYPES_Y_WITHIN_Z_MONTHS to hasHadAnyCancerTreatmentIgnoringTypesWithinMonthsCreator(),
@@ -55,6 +58,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_ANY_SYSTEMIC_CANCER_TREATMENT_WITHIN_X_MONTHS to hasHadAnyCancerTreatmentWithinMonthsCreator(true),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_NAME_X_FOR_AT_MOST_Y_WEEKS to hasHadLimitedWeeksOfSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_DOSE_REDUCTION_DURING_TREATMENT_NAME_X to hasHadSpecificTreatmentAndDoseReductionCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X to hasHadFirstLineSystemicTreatmentNameCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
@@ -98,11 +102,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_WEEKS to hasHadSystemicTherapyWithIntentsWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_AT_LEAST_Y_WEEKS_AGO to hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
-            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
-                HasHadSystemicTreatmentInAdvancedOrMetastaticSetting(
-                    referenceDate
-                )
-            },
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to { HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(referenceDate, intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(), "metastatic") },
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to { HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(referenceDate, intentsToIgnore = setOf(Intent.CURATIVE), "advanced or metastatic") },
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
@@ -224,6 +225,28 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (minSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
+            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMinimumTreatmentLines(
+                minSystemicTreatments,
+                maxMonthsBeforeNextLine,
+                referenceDate
+            )
+        }
+    }
+
+    private fun hasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val (maxSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
+            HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMaximumTreatmentLines(
+                maxSystemicTreatments,
+                maxMonthsBeforeNextLine,
+                referenceDate
+            )
+        }
+    }
+
     private fun hasHadAnyCancerTreatmentCreator(): FunctionCreator {
         return { HasHadAnyCancerTreatment(emptySet(), antiCancerCategories) }
     }
@@ -269,10 +292,17 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadLimitedWeeksOfSpecificTreatmentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
+            HasHadLimitedWeeksOfSpecificTreatment(input.treatment, input.integer)
+        }
+    }
+
     private fun hasHadSpecificTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
-            HasHadSomeSpecificTreatments(listOf(treatment), 1)
+            HasHadLimitedWeeksOfSpecificTreatment(treatment, null)
         }
     }
 
@@ -287,7 +317,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadSpecificTreatmentAndDoseReductionCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
-            HasHadSomeSpecificTreatmentsWithDoseReduction(listOf(treatment))
+            HasHadSomeSpecificTreatmentsWithDoseReduction(treatment)
         }
     }
 

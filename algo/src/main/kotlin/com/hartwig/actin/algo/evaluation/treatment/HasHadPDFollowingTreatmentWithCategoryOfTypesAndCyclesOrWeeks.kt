@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermin
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.calendar.DateComparison.minWeeksBetweenDates
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -29,12 +28,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 val cycles = matchingPortionOfEntry.treatmentHistoryDetails?.cycles
                 val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry)
 
-                val durationWeeks: Long? = minWeeksBetweenDates(
-                    matchingPortionOfEntry.startYear,
-                    matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
-                )
+                val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
                 val meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles)
                 val meetsMinWeeks = minWeeks == null || (durationWeeks != null && durationWeeks >= minWeeks)
 
@@ -79,7 +73,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                undetermined("Undetermined if patient received ${treatment()}}")
+                undetermined("Undetermined if patient received ${treatment()}")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> fail(hasNoPDAfterMessage(suffix()))

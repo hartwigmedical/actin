@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular
 
 import com.hartwig.actin.PatientRecordFactory
 import com.hartwig.actin.PatientRecordJson
+import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -63,8 +64,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val patientGender = inputData.clinical.patient.gender
         val orangeMolecularTests = interpretOrangeRecord(tumorDoids, inputData, patientGender)
 
-        val clinicalMolecularTests =
-            interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
+        val clinicalMolecularTests = interpretClinicalMolecularTests(config, inputData.clinical, tumorDoids, inputData)
 
         val allTests = orangeMolecularTests + clinicalMolecularTests
         MolecularTestPrinter(DatamodelPrinter.withDefaultIndentation()).print(allTests)
@@ -121,8 +121,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator()
-        val panelDriverAttributeAnnotator =
-            PanelDriverAttributeAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents()), inputData.dndsDatabase)
+
+        val configuration = MolecularConfiguration.create(config.overridesYaml)
+        LOGGER.info("Loaded molecular config: $configuration")
+        val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(
+            KnownEventResolverFactory.create(serveRecord.knownEvents()),
+            inputData.dndsDatabase,
+            configuration
+        )
 
         val patientGender = clinical.patient.gender
         val evidenceAnnotator =

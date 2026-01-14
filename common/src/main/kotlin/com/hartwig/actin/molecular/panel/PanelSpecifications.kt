@@ -27,8 +27,10 @@ class PanelSpecifications(
     fun panelTargetSpecification(input: SequencingTest, testVersion: TestVersion): PanelTargetSpecification {
         val testSpec = PanelTestSpecification(input.test, testVersion)
         val derivedTargets = PanelSpecificationFunctions.derivedGeneTargetMap(input)
+        val derivedFusionGenePairs = input.fusions.map { listOfNotNull(it.geneUp, it.geneDown) }
+        val derivedSingleGeneEvents = PanelSpecificationFunctions.derivedGeneTargetMap(input.copy(fusions = emptySet())).keys
 
-        checkForUnknownGenes(derivedTargets.keys, testSpec)
+        checkForUnknownGenes(derivedFusionGenePairs, derivedSingleGeneEvents, testSpec)
 
         val baseTargets = molecularTargetsPerTest[testSpec]
             ?: throw IllegalStateException(
@@ -50,15 +52,17 @@ class PanelSpecifications(
         return PanelTargetSpecification(mergedTargets, testSpec.testVersion)
     }
 
-    private fun checkForUnknownGenes(results: Set<String>, testSpec: PanelTestSpecification) {
-        results.filterNot(geneFilter::include).takeIf { it.isNotEmpty() }
-            ?.let { unknownGenes ->
-                throw IllegalStateException(
-                    "${logPanelName(testSpec)} has results associated containing " +
-                            "gene(s) not present in SERVE known genes: ${unknownGenes.joinToString()}." +
-                            "Correct this in the feed UI before continuing."
-                )
-            }
+    private fun checkForUnknownGenes(fusionGenePairs: List<List<String>>, otherGenes: Set<String>, testSpec: PanelTestSpecification) {
+        val exception: (Set<String>) -> IllegalStateException = { genes ->
+            IllegalStateException(
+                "${logPanelName(testSpec)} has results associated containing gene(s) not present in SERVE known genes: " +
+                        "${genes.joinToString()}. Correct this in the feed UI before continuing."
+            )
+        }
+
+        fusionGenePairs.filter { genePair -> genePair.none(geneFilter::include) }
+            .flatMap { genePair -> genePair.filterNot(geneFilter::include) }.toSet().takeIf { it.isNotEmpty() }?.let { throw exception(it) }
+        otherGenes.filterNot(geneFilter::include).toSet().takeIf { it.isNotEmpty() }?.let { throw exception(it) }
     }
 
     fun logPanelName(testSpec: PanelTestSpecification) =
