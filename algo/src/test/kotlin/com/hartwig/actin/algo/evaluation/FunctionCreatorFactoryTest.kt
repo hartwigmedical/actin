@@ -82,7 +82,7 @@ class FunctionCreatorFactoryTest {
             Parameter.Type.STRING -> "value"
             Parameter.Type.DOID_TERM -> doidTerm
             Parameter.Type.TUMOR_TYPE -> "CARCINOMA"
-            Parameter.Type.ALBI_GRADE -> AlbiGrade.GRADE_1.name
+            Parameter.Type.ALBI_GRADE -> "1"
             Parameter.Type.MANY_INTEGERS -> "1"
             Parameter.Type.MANY_STRINGS -> "value"
             Parameter.Type.ICD_TITLE -> icdTitle
