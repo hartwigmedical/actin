@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
-import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -25,18 +24,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
             }?.let { matchingPortionOfEntry ->
                 val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry)
 
-                val durationWeeks: Long? = DateComparison.minWeeksBetweenDates(
-                    matchingPortionOfEntry.startYear,
-                    matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopYear,
-                    matchingPortionOfEntry.treatmentHistoryDetails?.stopMonth
-                )
-                val durationWeeksMax: Long? = DateComparison.minWeeksBetweenDates(
-                    matchingPortionOfEntry.startYear,
-                    matchingPortionOfEntry.startMonth,
-                    matchingPortionOfEntry.stopYear(),
-                    matchingPortionOfEntry.stopMonth()
-                )
+                val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
+                val durationWeeksMax = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(matchingPortionOfEntry)
 
                 val meetsMaxWeeks = if (maxWeeks != null) durationWeeksMax != null && durationWeeksMax <= maxWeeks else true
                 val meetsUnclearWeeks = maxWeeks != null && durationWeeks == null && durationWeeksMax?.let { it > maxWeeks } != false
