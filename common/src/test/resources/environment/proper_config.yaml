@@ -1,4 +1,6 @@
-report:
-  hospitalOfReference: "Erasmus MC"
+molecular:
+  variantPathogenicityIsConfirmed: true
 algo:
   warnIfToxicitiesNotFromQuestionnaire: false
+report:
+  hospitalOfReference: "Erasmus MC"
