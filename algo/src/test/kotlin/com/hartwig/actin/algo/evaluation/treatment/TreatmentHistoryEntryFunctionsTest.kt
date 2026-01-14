@@ -9,6 +9,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -19,9 +21,9 @@ private val DRUG_TREATMENT_WITH_TARGET_CATEGORY = drugTreatment("Target therapy 
 private val TRIAL_DRUG_TREATMENT_NO_CATEGORY = drugTreatment("Some trial drug", TreatmentCategory.TARGETED_THERAPY, emptySet())
 
 class TreatmentHistoryEntryFunctionsTest {
-    
+
     private val predicate: (Treatment) -> Boolean = { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
-    
+
     @Test
     fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`() {
         assertThat(evaluateIfDrugHadPDResponse(emptyList(), TARGET_DRUG_SET)).isEqualTo(
@@ -106,7 +108,7 @@ class TreatmentHistoryEntryFunctionsTest {
         val treatmentHistory = treatmentHistoryEntry(treatments = setOf(TARGET_DRUG_TREATMENT), stopReason = StopReason.TOXICITY)
         assertThat(evaluateIfDrugHadPDResponse(listOf(treatmentHistory), TARGET_DRUG_SET).matchesWithToxicity).isTrue
     }
-    
+
     @Test
     fun `Should return unmodified entry for matching single-stage treatment`() {
         val entry = treatmentHistoryEntry(setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)))
@@ -271,7 +273,7 @@ class TreatmentHistoryEntryFunctionsTest {
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate)).isNull()
     }
-    
+
     @Test
     fun `Should display switch and maintenance treatments when present`() {
         val switchToTreatment = treatmentStage(drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)
@@ -291,5 +293,17 @@ class TreatmentHistoryEntryFunctionsTest {
     fun `Should display base treatment when no switch and maintenance treatments present`() {
         val entry = treatmentHistoryEntry(setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)), numCycles = 2)
         assertThat(TreatmentHistoryEntryFunctions.fullTreatmentDisplay(entry)).isEqualTo("Test treatment")
+    }
+
+    @Test
+    fun `Should return number of weeks between the start and stop date of the treatment`() {
+        val entry = treatmentHistoryEntry(startYear = 2024, startMonth = 3, stopYear = 2024, stopMonth = 8)
+        assertThat(TreatmentHistoryEntryFunctions.weeksBetweenDates(entry)).isEqualTo(17)
+    }
+
+    @Test
+    fun `Should return max number of weeks between the start and stop date of the treatment`() {
+        val entry = TreatmentHistoryEntry(treatments = emptySet(), startYear = 2024, startMonth = 3, treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8))
+        assertThat(TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(entry)).isEqualTo(17)
     }
 }
