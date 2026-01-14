@@ -62,7 +62,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
             )
 
-        val trialsOrErrors = inputData.trials?.right() ?: TrialIngestion(EligibilityFactory()).ingest(
+        val trialsOrErrors = inputData.trials?.right() ?: TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(
             Gson().fromJson(
                 Files.readString(config.trialConfigJson?.let { Path.of(it) }
                     ?: error("One of trial config or trial database must be specified.")),

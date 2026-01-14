@@ -15,6 +15,7 @@ import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.StringParameter
 import com.hartwig.actin.datamodel.trial.Trial
+import com.hartwig.actin.trial.TestTrialFactory
 import com.hartwig.actin.trial.input.ruleAsEnum
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test

@@ -7,9 +7,9 @@ import com.hartwig.actin.datamodel.trial.FunctionParameter
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.ManyDoidTermsParameter
 import com.hartwig.actin.datamodel.trial.Parameter
-import com.hartwig.actin.datamodel.trial.TestTrialFactory
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import com.hartwig.actin.trial.TestTrialFactory
 import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.input.ruleAsEnum
 import com.hartwig.actin.trial.serialization.TrialJson.fromJson

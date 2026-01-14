@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo
+package com.hartwig.actin.trial
 
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortAvailability
