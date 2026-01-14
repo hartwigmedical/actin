@@ -95,7 +95,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIhcCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIhcCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_MUST_BE_AVAILABLE to hasAvailableProteinExpressionCreator(),
-            EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIhcCreator(),
+            EligibilityRule.HER2_IHC_STATUS_IS_X to hasHER2ExpressionByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator("CPS"),
@@ -430,16 +430,11 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasPositiveHER2ExpressionByIhcCreator(): FunctionCreator {
-        return { HasHER2ExpressionByIhc(IhcTestClassificationFunctions.TestResult.POSITIVE) }
-    }
-
-    private fun hasNegativeHER2ExpressionByIhcCreator(): FunctionCreator {
-        return { HasHER2ExpressionByIhc(IhcTestClassificationFunctions.TestResult.NEGATIVE) }
-    }
-
-    private fun hasLowHER2ExpressionByIhcCreator(): FunctionCreator {
-        return { HasHER2ExpressionByIhc(IhcTestClassificationFunctions.TestResult.LOW) }
+    private fun hasHER2ExpressionByIhcCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val ihcTestResult = functionInputResolver().createOneIhcTestResult(function)
+            HasHER2ExpressionByIhc(ihcTestResult)
+        }
     }
 
     private fun proteinHasLimitedExpressionByIhcCreator(): FunctionCreator {

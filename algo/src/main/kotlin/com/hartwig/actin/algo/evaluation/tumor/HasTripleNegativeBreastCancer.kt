@@ -29,10 +29,12 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
             evaluationPerReceptor.values.contains(BreastCancerReceptorEvaluation.NOT_BREAST_CANCER) || evaluationPerReceptor.values.contains(
                 BreastCancerReceptorEvaluation.POSITIVE
             )
-        val her2NegativeOrLow = evaluationPerReceptor[ReceptorType.HER2] == BreastCancerReceptorEvaluation.NEGATIVE || evaluationPerReceptor[ReceptorType.HER2] == BreastCancerReceptorEvaluation.LOW
-        val allReceptorsNegativeOrLow =
-            evaluationPerReceptor.values.all { it == BreastCancerReceptorEvaluation.NEGATIVE || it == BreastCancerReceptorEvaluation.LOW }
-        val allReceptorsNegativeOrHer2Low = evaluationPerReceptor[ReceptorType.ER] == BreastCancerReceptorEvaluation.NEGATIVE && evaluationPerReceptor[ReceptorType.PR] == BreastCancerReceptorEvaluation.NEGATIVE && her2NegativeOrLow
+        val her2NegativeOrLow = breastCancerReceptorsEvaluator.isNegativeOrLow(evaluationPerReceptor[ReceptorType.HER2]!!)
+        val allReceptorsNegativeOrLow = evaluationPerReceptor.values.all { breastCancerReceptorsEvaluator.isNegativeOrLow(it) }
+        val allReceptorsNegativeOrHer2Low = listOf(
+            ReceptorType.ER,
+            ReceptorType.PR
+        ).all { evaluationPerReceptor[it] == BreastCancerReceptorEvaluation.NEGATIVE } && her2NegativeOrLow
 
         return when {
             hasNoTripleNegativeBreastCancer -> EvaluationFactory.fail("Has no triple negative breast cancer")

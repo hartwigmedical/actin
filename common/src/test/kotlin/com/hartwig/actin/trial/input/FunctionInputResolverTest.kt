@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
+import com.hartwig.actin.datamodel.clinical.IhcTestResult
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -1120,6 +1121,18 @@ class FunctionInputResolverTest {
 
         assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
         assertThat(resolver.hasValidInputs(create(rule, listOf("not a drug interaction type")))!!).isFalse
+    }
+
+    @Test
+    fun `Should resolve functions with one ihc test result as input`() {
+        val rule = firstOfType(FunctionInput.ONE_IHC_TEST_RESULT)
+        val valid = create(rule, listOf("low"))
+
+        assertThat(resolver.hasValidInputs(valid)!!).isTrue
+        assertThat(resolver.createOneIhcTestResult(valid)).isEqualTo(IhcTestResult.LOW)
+        assertThat(resolver.hasValidInputs(create(rule, emptyList()))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("invalid ihc test result")))!!).isFalse
+        assertThat(resolver.hasValidInputs(create(rule, listOf("low", "negative")))!!).isFalse
     }
 
     private fun firstOfType(input: FunctionInput): EligibilityRule {

@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
+import com.hartwig.actin.datamodel.clinical.IhcTestResult
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
@@ -431,6 +432,11 @@ class FunctionInputResolver(
 
                 FunctionInput.MANY_DRUG_INTERACTION_TYPES -> {
                     createManyDrugInteractionTypes(function)
+                    return true
+                }
+
+                FunctionInput.ONE_IHC_TEST_RESULT -> {
+                    createOneIhcTestResult(function)
                     return true
                 }
 
@@ -1032,6 +1038,19 @@ class FunctionInputResolver(
     fun createOneProteinOneStringInput(function: EligibilityFunction): OneProteinOneString {
         assertParamConfig(function, FunctionInput.ONE_PROTEIN_ONE_STRING, 2)
         return OneProteinOneString(proteinName = parameterAsString(function, 0), string = parameterAsString(function, 1))
+    }
+
+    fun createOneIhcTestResult(function: EligibilityFunction): IhcTestResult {
+        assertParamConfig(function, FunctionInput.ONE_IHC_TEST_RESULT, 1)
+        return toIhcTestResult(parameterAsString(function, 0))
+    }
+
+    private fun toIhcTestResult(ihcTestResult: String): IhcTestResult {
+        try {
+            return IhcTestResult.valueOf(ihcTestResult.uppercase())
+        } catch (e: Exception) {
+            throw IllegalStateException("IHC test result not found: $ihcTestResult")
+        }
     }
 
     private fun toTreatmentCategoriesSet(input: Any): Set<TreatmentCategory> {

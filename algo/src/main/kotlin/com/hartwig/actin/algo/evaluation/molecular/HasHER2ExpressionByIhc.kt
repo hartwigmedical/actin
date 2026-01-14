@@ -3,13 +3,13 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.TestResult
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunctions.classifyHer2Test
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.IhcTestResult
 
-class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : EvaluationFunction {
+class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestEvaluation = IhcTestEvaluation.create("HER2", record.ihcTests)
@@ -35,7 +35,7 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
             }
 
             her2TestResults.all { it == ihcResultToFind } -> {
-                if (geneERBB2IsAmplified && (ihcResultToFind == TestResult.NEGATIVE || ihcResultToFind == TestResult.LOW)) {
+                if (geneERBB2IsAmplified && (ihcResultToFind == IhcTestResult.NEGATIVE || ihcResultToFind == IhcTestResult.LOW)) {
                     EvaluationFactory.warn(
                         "Undetermined if HER2 IHC test results indicate $ihcResultString HER2 status$erbb2AmplifiedMessage",
                         inclusionEvents = warnInclusionEvent
@@ -50,14 +50,17 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
 
             failingResultsByTargetResult[ihcResultToFind]?.let { failResults -> her2TestResults.all { it in failResults } } == true -> {
                 val failMessage = "Has no $ihcResultString HER2 IHC result"
-                if (geneERBB2IsAmplified && ihcResultToFind == TestResult.POSITIVE) {
+                if (geneERBB2IsAmplified && ihcResultToFind == IhcTestResult.POSITIVE) {
                     EvaluationFactory.recoverableFail("$failMessage$erbb2AmplifiedMessage")
                 } else {
                     EvaluationFactory.fail(failMessage)
                 }
             }
 
-            her2TestResults.all { it == TestResult.BORDERLINE } && ihcResultToFind in setOf(TestResult.POSITIVE, TestResult.LOW) -> {
+            her2TestResults.all { it == IhcTestResult.BORDERLINE } && ihcResultToFind in setOf(
+                IhcTestResult.POSITIVE,
+                IhcTestResult.LOW
+            ) -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if IHC HER2 score value(s) is considered $ihcResultString",
                     isMissingMolecularResultForEvaluation = true
@@ -74,8 +77,8 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
     }
 
     private val failingResultsByTargetResult = mapOf(
-        TestResult.POSITIVE to setOf(TestResult.NEGATIVE, TestResult.LOW),
-        TestResult.LOW to setOf(TestResult.NEGATIVE, TestResult.POSITIVE),
-        TestResult.NEGATIVE to setOf(TestResult.LOW, TestResult.BORDERLINE, TestResult.POSITIVE),
+        IhcTestResult.POSITIVE to setOf(IhcTestResult.NEGATIVE, IhcTestResult.LOW),
+        IhcTestResult.LOW to setOf(IhcTestResult.NEGATIVE, IhcTestResult.POSITIVE),
+        IhcTestResult.NEGATIVE to setOf(IhcTestResult.LOW, IhcTestResult.BORDERLINE, IhcTestResult.POSITIVE),
     )
 }

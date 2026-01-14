@@ -330,6 +330,10 @@ class ParameterizedFunctionTestFactory(private val doidTermToUse: String, privat
             FunctionInput.MANY_DRUG_INTERACTION_TYPES -> {
                 listOf("Inducer;Inhibitor")
             }
+
+            FunctionInput.ONE_IHC_TEST_RESULT -> {
+                listOf("low")
+            }
         }
     }
 
