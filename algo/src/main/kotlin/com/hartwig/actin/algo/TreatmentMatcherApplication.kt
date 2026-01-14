@@ -12,7 +12,10 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
-import com.hartwig.pipeline.trial.TrialIngestion
+import com.hartwig.actin.trial.Either
+import com.hartwig.actin.trial.EligibilityFactory
+import com.hartwig.actin.trial.TrialIngestion
+import com.hartwig.actin.trial.right
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.system.exitProcess

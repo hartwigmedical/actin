@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo
+package com.hartwig.actin.trial
 
 sealed class Either<out L, out R>(val isLeft: Boolean) {
     data class Left<L>(val value: L) : Either<L, Nothing>(true)

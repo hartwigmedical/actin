@@ -1,10 +1,5 @@
-package com.hartwig.pipeline.trial
+package com.hartwig.actin.trial
 
-import com.hartwig.actin.algo.Either
-import com.hartwig.actin.algo.EligibilityFactory
-import com.hartwig.actin.algo.left
-import com.hartwig.actin.algo.partitionAndJoin
-import com.hartwig.actin.algo.right
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata

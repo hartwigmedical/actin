@@ -1,5 +1,6 @@
-package com.hartwig.actin.algo
+package com.hartwig.actin.trial
 
+import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortAvailabilityConfig
@@ -13,8 +14,6 @@ import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
-import com.hartwig.pipeline.trial.TrialIngestion
-import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -33,7 +32,7 @@ class TrialIngestionTest {
 
     @Test
     fun `Should map trial config to internal trial model and eligibility criteria`() {
-        val ingestion = TrialIngestion(EligibilityFactory(mockk()))
+        val ingestion = TrialIngestion(EligibilityFactory(TestTreatmentDatabaseFactory.createProper()))
         val result = ingestion.ingest(
             listOf(
                 TrialConfig(

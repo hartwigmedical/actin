@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo
+package com.hartwig.actin.trial
 
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
