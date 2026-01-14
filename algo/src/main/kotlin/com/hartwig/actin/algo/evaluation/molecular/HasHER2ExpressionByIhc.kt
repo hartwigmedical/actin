@@ -48,13 +48,7 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
                 }
             }
 
-            listOf(
-                Pair(setOf(TestResult.NEGATIVE, TestResult.LOW), TestResult.POSITIVE),
-                Pair(setOf(TestResult.NEGATIVE, TestResult.POSITIVE), TestResult.LOW),
-                Pair(setOf(TestResult.LOW, TestResult.BORDERLINE, TestResult.POSITIVE), TestResult.NEGATIVE)
-            ).any { (failResults, targetResult) ->
-                her2TestResults.all { it in failResults } && ihcResultToFind == targetResult
-            } -> {
+            failingResultsByTargetResult[ihcResultToFind]?.let { failResults -> her2TestResults.all { it in failResults } } == true -> {
                 val failMessage = "Has no $ihcResultString HER2 IHC result"
                 if (geneERBB2IsAmplified && ihcResultToFind == TestResult.POSITIVE) {
                     EvaluationFactory.recoverableFail("$failMessage$erbb2AmplifiedMessage")
@@ -78,4 +72,10 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: TestResult) : Evaluati
             }
         }
     }
+
+    private val failingResultsByTargetResult = mapOf(
+        TestResult.POSITIVE to setOf(TestResult.NEGATIVE, TestResult.LOW),
+        TestResult.LOW to setOf(TestResult.NEGATIVE, TestResult.POSITIVE),
+        TestResult.NEGATIVE to setOf(TestResult.LOW, TestResult.BORDERLINE, TestResult.POSITIVE),
+    )
 }
