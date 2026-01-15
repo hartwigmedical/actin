@@ -1,8 +1,9 @@
 package com.hartwig.actin.algo.matchcomparison
 
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.input.ruleAsEnum
 
 object EligibilityFunctionComparison {
 
@@ -33,20 +34,28 @@ object EligibilityFunctionComparison {
             oldFunction == newFunction ->
                 Triple(emptyList(), emptyList(), FunctionDifferences())
 
-            newFunction.rule == EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X ->
-                Triple(emptyList(), emptyList(), FunctionDifferences(nameToDrugDifferences = listOf(
-                    "${oldFunction.rule}[${paramString(oldFunction)}] -> HAS_HAD_TREATMENT_WITH_ANY_DRUG_X[${newFunction.parameters[0]}]"
-                )))
+            newFunction.ruleAsEnum() == EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X ->
+                Triple(
+                    emptyList(), emptyList(), FunctionDifferences(
+                        nameToDrugDifferences = listOf(
+                            "${oldFunction.ruleAsEnum()}[${paramString(oldFunction)}] -> HAS_HAD_TREATMENT_WITH_ANY_DRUG_X[${newFunction.parameters[0]}]"
+                        )
+                    )
+                )
 
-            oldFunction.rule == EligibilityRule.OR && newFunction.rule == EligibilityRule.OR && newFunction.parameters
-                .mapNotNull { (it as? EligibilityFunction)?.rule }
+            oldFunction.ruleAsEnum() == EligibilityRule.OR && newFunction.ruleAsEnum() == EligibilityRule.OR && newFunction.parameters
+                .mapNotNull { (it as? EligibilityFunction)?.ruleAsEnum() }
                 .all { it == EligibilityRule.HAS_HAD_TREATMENT_NAME_X || it == EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X } -> {
-                Triple(emptyList(), emptyList(), FunctionDifferences(nameToDrugDifferences = listOf(
-                    "${oldFunction.rule}[${paramString(oldFunction)}] -> \"${newFunction.rule}[${paramString(newFunction)}]}]"
-                )))
+                Triple(
+                    emptyList(), emptyList(), FunctionDifferences(
+                        nameToDrugDifferences = listOf(
+                            "${oldFunction.rule}[${paramString(oldFunction)}] -> \"${newFunction.rule}[${paramString(newFunction)}]}]"
+                        )
+                    )
+                )
             }
 
-            CompositeRules.isComposite(oldFunction.rule) && CompositeRules.isComposite(newFunction.rule) -> {
+            CompositeRules.isComposite(oldFunction.ruleAsEnum()) && CompositeRules.isComposite(newFunction.ruleAsEnum()) -> {
                 val ruleDifferences = if (oldFunction.rule != newFunction.rule) {
                     listOf("${oldFunction.rule} != ${newFunction.rule}")
                 } else {
@@ -60,7 +69,11 @@ object EligibilityFunctionComparison {
             }
 
             oldFunction.rule == newFunction.rule ->
-                Triple(emptyList(), emptyList(), FunctionDifferences(parameterDifferences = listOf("${paramString(oldFunction)} != ${paramString(newFunction)}")))
+                Triple(
+                    emptyList(),
+                    emptyList(),
+                    FunctionDifferences(parameterDifferences = listOf("${paramString(oldFunction)} != ${paramString(newFunction)}"))
+                )
 
             else -> Triple(emptyList(), emptyList(), FunctionDifferences(otherDifferences = listOf("$oldFunction != $newFunction")))
         }

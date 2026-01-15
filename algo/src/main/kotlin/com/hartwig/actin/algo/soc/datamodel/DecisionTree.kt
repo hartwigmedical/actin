@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.soc.datamodel
 
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.trial.input.EligibilityRule
 
 data class DecisionTree(
     private val decision: EligibilityFunction,
@@ -11,7 +12,7 @@ data class DecisionTree(
 ) : DecisionTreeNode {
 
     override fun treatmentCandidates(): List<TreatmentCandidate> {
-        val negatedDecision = EligibilityFunction(EligibilityRule.NOT, listOf(decision))
+        val negatedDecision = EligibilityFunction(EligibilityRule.NOT.name, listOf(FunctionParameter(decision)))
         return candidatesForChild(trueBranch, decision) + candidatesForChild(falseBranch, negatedDecision)
     }
 

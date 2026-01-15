@@ -3,10 +3,15 @@ package com.hartwig.actin.trial.serialization
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
-import com.hartwig.actin.datamodel.trial.TestTrialFactory
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyDoidTermsParameter
+import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import com.hartwig.actin.trial.TestTrialFactory
+import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.trial.input.ruleAsEnum
 import com.hartwig.actin.trial.serialization.TrialJson.fromJson
 import com.hartwig.actin.trial.serialization.TrialJson.readFromDir
 import com.hartwig.actin.trial.serialization.TrialJson.toJson
@@ -66,7 +71,7 @@ class TrialJsonTest {
 
         val generalFunction = findBaseFunction(trial.generalEligibility, EligibilityRule.IS_AT_LEAST_X_YEARS_OLD)
         assertThat(generalFunction.parameters).hasSize(1)
-        assertThat(generalFunction.parameters).contains("18")
+        assertThat(generalFunction.parameters).contains(IntegerParameter(18))
 
         assertThat(trial.cohorts).hasSize(3)
         val cohortA = findCohort(trial.cohorts, "A")
@@ -104,7 +109,7 @@ class TrialJsonTest {
 
         val subFunction1 = findSubFunction(functionC2.parameters, EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X)
         assertThat(subFunction1.parameters).hasSize(1)
-        assertThat(subFunction1.parameters).contains("cancer term")
+        assertThat(subFunction1.parameters).contains(ManyDoidTermsParameter(listOf("cancer term")))
 
         val subFunction2 = findSubFunction(functionC2.parameters, EligibilityRule.IS_PREGNANT)
         assertThat(subFunction2.parameters).isEmpty()
@@ -116,12 +121,12 @@ class TrialJsonTest {
     }
 
     private fun findBaseFunction(eligibility: List<Eligibility>, rule: EligibilityRule): EligibilityFunction {
-        return eligibility.find { entry -> entry.function.rule == rule }?.function
+        return eligibility.find { entry -> entry.function.ruleAsEnum() == rule }?.function
             ?: throw IllegalStateException("Could not find base eligibility function with rule: $rule")
     }
 
-    private fun findSubFunction(functions: List<Any>, rule: EligibilityRule): EligibilityFunction {
-        return functions.map { it as EligibilityFunction }.find { it.rule == rule }
+    private fun findSubFunction(parameters: List<Parameter<*>>, rule: EligibilityRule): EligibilityFunction {
+        return parameters.map { (it as FunctionParameter).value }.find { it.ruleAsEnum() == rule }
             ?: throw IllegalStateException("Could not find sub function with rule: $rule")
     }
 }

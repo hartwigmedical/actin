@@ -1,5 +1,7 @@
 package com.hartwig.actin.trial.serialization
 
+import com.hartwig.actin.clinical.serialization.TreatmentAdapter
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
@@ -51,6 +53,7 @@ object TrialJson {
     }
 
     private fun gson() = GsonSerializer.createBuilder()
+        .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
         .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
         .create()
 

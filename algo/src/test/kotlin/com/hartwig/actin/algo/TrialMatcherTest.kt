@@ -11,8 +11,12 @@ import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.trial.Eligibility
-import com.hartwig.actin.datamodel.trial.EligibilityRule
-import com.hartwig.actin.datamodel.trial.TestTrialFactory
+import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.StringParameter
+import com.hartwig.actin.datamodel.trial.Trial
+import com.hartwig.actin.trial.TestTrialFactory
+import com.hartwig.actin.trial.input.ruleAsEnum
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -130,7 +134,7 @@ class TrialMatcherTest {
         }
 
         private fun findEvaluationResultForRule(evaluations: Map<Eligibility, Evaluation>, ruleToFind: EligibilityRule): EvaluationResult {
-            val match = evaluations.entries.find { (key, _) -> key.function.rule == ruleToFind }
+            val match = evaluations.entries.find { (key, _) -> key.function.ruleAsEnum() == ruleToFind }
                 ?: throw IllegalStateException("Cannot find evaluation for rule '$ruleToFind'")
             return match.value.result
         }

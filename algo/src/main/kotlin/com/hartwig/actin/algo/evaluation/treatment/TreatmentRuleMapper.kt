@@ -11,9 +11,26 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEv
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import com.hartwig.actin.datamodel.trial.DrugParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
+import com.hartwig.actin.datamodel.trial.ManyGenesParameter
+import com.hartwig.actin.datamodel.trial.ManyIntegersParameter
+import com.hartwig.actin.datamodel.trial.ManyIntentsParameter
+import com.hartwig.actin.datamodel.trial.ManyTreatmentCategoriesParameter
+import com.hartwig.actin.datamodel.trial.ManyTreatmentTypesParameter
+import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.StringParameter
+import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
+import com.hartwig.actin.datamodel.trial.TreatmentCategoryOrTypeParameter
+import com.hartwig.actin.datamodel.trial.TreatmentCategoryParameter
+import com.hartwig.actin.datamodel.trial.TreatmentParameter
+import com.hartwig.actin.datamodel.trial.TreatmentResponseParameter
+import com.hartwig.actin.datamodel.trial.TreatmentTypeParameter
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.trial.input.EligibilityRule
 
 class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -102,8 +119,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_WITHIN_Y_WEEKS to hasHadSystemicTherapyWithIntentsWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_AT_LEAST_Y_WEEKS_AGO to hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
-            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to { HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(referenceDate, intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(), "metastatic") },
-            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to { HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(referenceDate, intentsToIgnore = setOf(Intent.CURATIVE), "advanced or metastatic") },
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to {
+                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
+                    referenceDate,
+                    intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                    "metastatic"
+                )
+            },
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
+                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
+                    referenceDate,
+                    intentsToIgnore = setOf(Intent.CURATIVE),
+                    "advanced or metastatic"
+                )
+            },
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
@@ -155,14 +184,16 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (chemotherapyType, minCycles) = functionInputResolver().createOneTreatmentTypeOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.TREATMENT_TYPE, Parameter.Type.INTEGER)
+            val chemotherapyType = function.param<TreatmentTypeParameter>(0).value
+            val minCycles = function.param<IntegerParameter>(1).value
             CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(chemotherapyType, minCycles, referenceDate)
         }
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatmentName = functionInputResolver().createOneSpecificTreatmentInput(function)
+            val treatmentName = function.param<TreatmentParameter>(0).value
             val minDate = referenceDate.minusWeeks(26)
             IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate)
         }
@@ -170,7 +201,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun isEligibleForRadiotherapyToBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val bodyLocation = functionInputResolver().createOneStringInput(function)
+            val bodyLocation = function.param<StringParameter>(0).value
             IsEligibleForRadiotherapy(bodyLocation)
         }
     }
@@ -181,22 +212,24 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun isEligibleForTreatmentLinesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val lines = functionInputResolver().createManyIntegersInput(function)
+            val lines = function.param<ManyIntegersParameter>(0).value
             IsEligibleForTreatmentLines(lines)
         }
     }
 
     private fun isEligibleForSpecificSurgeryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneStringInput(function)
+            val input = function.param<StringParameter>(0).value
             IsEligibleForSpecificSurgery(input)
         }
     }
 
     private fun isEligibleForTreatmentOfCategoryAndTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            IsEligibleForTreatmentOfCategoryAndType(input.category, input.types)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            IsEligibleForTreatmentOfCategoryAndType(category, types)
         }
     }
 
@@ -206,28 +239,29 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSomeApprovedTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minApprovedTreatments = functionInputResolver().createOneIntegerInput(function)
+            val minApprovedTreatments = function.param<IntegerParameter>(0).value
             HasHadSomeApprovedTreatments(minApprovedTreatments)
         }
     }
 
     private fun hasHadSomeSystemicTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minSystemicTreatments = functionInputResolver().createOneIntegerInput(function)
+            val minSystemicTreatments = function.param<IntegerParameter>(0).value
             HasHadSomeSystemicTreatments(minSystemicTreatments)
         }
     }
 
     private fun hasHadLimitedSystemicTreatmentsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxSystemicTreatments = functionInputResolver().createOneIntegerInput(function)
+            val maxSystemicTreatments = function.param<IntegerParameter>(0).value
             HasHadLimitedSystemicTreatments(maxSystemicTreatments)
         }
     }
 
     private fun hasHadSomeSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (minSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
+            val minSystemicTreatments = function.param<IntegerParameter>(0).value
+            val maxMonthsBeforeNextLine = function.param<IntegerParameter>(1).value
             HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMinimumTreatmentLines(
                 minSystemicTreatments,
                 maxMonthsBeforeNextLine,
@@ -238,7 +272,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadLimitedSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (maxSystemicTreatments, maxMonthsBeforeNextLine) = functionInputResolver().createTwoIntegersInput(function)
+            val maxSystemicTreatments = function.param<IntegerParameter>(0).value
+            val maxMonthsBeforeNextLine = function.param<IntegerParameter>(1).value
             HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMaximumTreatmentLines(
                 maxSystemicTreatments,
                 maxMonthsBeforeNextLine,
@@ -253,16 +288,21 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadAnyCancerTreatmentIgnoringCategoriesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatmentCategories = functionInputResolver().createManyTreatmentCategories(function)
-            HasHadAnyCancerTreatment(treatmentCategories.treatmentCategories, antiCancerCategories)
+            val treatmentCategories = function.param<ManyTreatmentCategoriesParameter>(0).value
+            HasHadAnyCancerTreatment(treatmentCategories, antiCancerCategories)
         }
     }
 
     private fun hasHadAnyCancerTreatmentIgnoringTypesWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (categoryToIgnore, typesToIgnore, monthsAgo) = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(
-                function
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
             )
+            val categoryToIgnore = function.param<TreatmentCategoryParameter>(0).value
+            val typesToIgnore = function.param<ManyTreatmentTypesParameter>(1).value
+            val monthsAgo = function.param<IntegerParameter>(2).value
             val (interpreter, minDate) = createInterpreterForWashout(null, monthsAgo, referenceDate)
             HasHadAnyCancerTreatmentSinceDate(
                 minDate,
@@ -278,7 +318,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadAnyCancerTreatmentWithinMonthsCreator(onlySystemicTreatments: Boolean = false): FunctionCreator {
         return { function: EligibilityFunction ->
-            val monthsAgo = functionInputResolver().createOneIntegerInput(function)
+            val monthsAgo = function.param<IntegerParameter>(0).value
             val (interpreter, minDate) = createInterpreterForWashout(null, monthsAgo, referenceDate)
             HasHadAnyCancerTreatmentSinceDate(
                 minDate,
@@ -294,255 +334,366 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadLimitedWeeksOfSpecificTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
-            HasHadLimitedWeeksOfSpecificTreatment(input.treatment, input.integer)
+            val treatment = function.param<TreatmentParameter>(0).value
+            val weeks = function.param<IntegerParameter>(1).value
+            HasHadLimitedWeeksOfSpecificTreatment(treatment, weeks)
         }
     }
 
     private fun hasHadSpecificTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
+            val treatment = function.param<TreatmentParameter>(0).value
             HasHadLimitedWeeksOfSpecificTreatment(treatment, null)
         }
     }
 
     private fun hasHadSpecificTreatmentWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
-            val minDate = referenceDate.minusWeeks(input.integer.toLong())
-            HasHadSpecificTreatmentSinceDate(input.treatment, minDate)
+            function.expectTypes(Parameter.Type.TREATMENT, Parameter.Type.INTEGER)
+            val treatment = function.param<TreatmentParameter>(0).value
+            val weeksAgo = function.param<IntegerParameter>(1).value
+            val minDate = referenceDate.minusWeeks(weeksAgo.toLong())
+            HasHadSpecificTreatmentSinceDate(treatment, minDate)
         }
     }
 
     private fun hasHadSpecificTreatmentAndDoseReductionCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneSpecificTreatmentInput(function)
+            val treatment = function.param<TreatmentParameter>(0).value
             HasHadSomeSpecificTreatmentsWithDoseReduction(treatment)
         }
     }
 
     private fun hasHadFirstLineSystemicTreatmentNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneSystemicTreatment(function)
-            HasHadSpecificFirstLineSystemicTreatment(input)
+            val treatment = function.param<SystemicTreatmentParameter>(0).value
+            require(treatment.isSystemic) { "Not a systemic treatment: ${treatment.display()}" }
+            HasHadSpecificFirstLineSystemicTreatment(treatment)
         }
     }
 
     private fun hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneSpecificTreatmentOneIntegerInput(function)
-            HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(input.treatment, minCycles = input.integer)
+            function.expectTypes(Parameter.Type.TREATMENT, Parameter.Type.INTEGER)
+            val treatment = function.param<TreatmentParameter>(0).value
+            val minCycles = function.param<IntegerParameter>(1).value
+            HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(treatment, minCycles = minCycles)
         }
     }
 
     private fun hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneSpecificDrugOneTreatmentCategoryManyTypesInput(function)
-            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(input.drug, input.category, input.types)
+            function.expectTypes(
+                Parameter.Type.DRUG,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES
+            )
+            val drug = function.param<DrugParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            val types = function.param<ManyTreatmentTypesParameter>(2).value
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(drug, category, types)
         }
     }
 
     private fun hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createTwoTreatmentCategoriesManyTypesInput(function)
-            HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(input.category1, input.types1, input.category2, input.types2)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES
+            )
+            val category1 = function.param<TreatmentCategoryParameter>(0).value
+            val types1 = function.param<ManyTreatmentTypesParameter>(1).value
+            val category2 = function.param<TreatmentCategoryParameter>(2).value
+            val types2 = function.param<ManyTreatmentTypesParameter>(3).value
+            HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(category1, types1, category2, types2)
         }
     }
 
     private fun hasHadTreatmentWithAnyDrugCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadTreatmentWithDrugAndCycles(functionInputResolver().createManyDrugsInput(function), null)
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            HasHadTreatmentWithDrugAndCycles(drugs, null)
         }
     }
 
     private fun hasHadTreatmentWithAnyDrugWithCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyDrugsOneIntegerInput(function)
-            HasHadTreatmentWithDrugAndCycles(input.drugs, input.integer)
+            function.expectTypes(Parameter.Type.MANY_DRUGS, Parameter.Type.INTEGER)
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            val cycles = function.param<IntegerParameter>(1).value
+            HasHadTreatmentWithDrugAndCycles(drugs, cycles)
         }
     }
 
     private fun hasHadTreatmentWithAnyDrugAsMostRecentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadTreatmentWithDrugFromSetAsMostRecent(functionInputResolver().createManyDrugsInput(function))
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            HasHadTreatmentWithDrugFromSetAsMostRecent(drugs)
         }
     }
 
     private fun hasHadCombinedTreatmentNamesWithCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManySpecificTreatmentsTwoIntegerInput(function)
-            HasHadCombinedTreatmentNamesWithCycles(input.treatments, input.integer1, input.integer2)
+            function.expectTypes(Parameter.Type.MANY_TREATMENTS, Parameter.Type.INTEGER, Parameter.Type.INTEGER)
+            val treatments = function.param<ManyTreatmentsParameter>(0).value
+            val minCycles = function.param<IntegerParameter>(1).value
+            val maxCycles = function.param<IntegerParameter>(2).value
+            HasHadCombinedTreatmentNamesWithCycles(treatments, minCycles, maxCycles)
         }
     }
 
     private fun hasHadTreatmentWithCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            treatment.mappedType?.let { mappedType ->
-                HasHadSomeTreatmentsWithCategoryOfTypes(treatment.mappedCategory, setOf(mappedType), 1)
-            } ?: HasHadSomeTreatmentsWithCategory(treatment.mappedCategory, 1)
+            val treatment = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            treatment.type?.let { mappedType ->
+                HasHadSomeTreatmentsWithCategoryOfTypes(treatment.category, setOf(mappedType), 1)
+            } ?: HasHadSomeTreatmentsWithCategory(treatment.category, 1)
         }
     }
 
     private fun hasHadTreatmentCategoryOfTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadSomeTreatmentsWithCategoryOfTypes(input.category, input.types, 1)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            HasHadSomeTreatmentsWithCategoryOfTypes(category, types, 1)
         }
     }
 
     private fun hasHadTreatmentCategoryWithAnyIntentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyIntentsInput(function)
-            HasHadSomeTreatmentsWithCategoryWithIntents(input.category, input.intents)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_INTENTS)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val intents = function.param<ManyIntentsParameter>(1).value
+            HasHadSomeTreatmentsWithCategoryWithIntents(category, intents)
         }
     }
 
     private fun hasHadTreatmentCategoryWithAnyIntentRecentlyCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyIntentsOneIntegerInput(function)
-            val minDate = createInterpreterForWashout(input.integer, null, referenceDate).second
-            HasHadSomeTreatmentsWithCategoryWithIntents(input.category, input.intents, minDate)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_INTENTS,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val intents = function.param<ManyIntentsParameter>(1).value
+            val weeksAgo = function.param<IntegerParameter>(2).value
+            val minDate = createInterpreterForWashout(weeksAgo, null, referenceDate).second
+            HasHadSomeTreatmentsWithCategoryWithIntents(category, intents, minDate)
         }
     }
 
     private fun hasHadTreatmentCategoryOfAllTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadSomeTreatmentsWithCategoryOfAllTypes(input.category, input.types, 1)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            HasHadSomeTreatmentsWithCategoryOfAllTypes(category, types, 1)
         }
     }
 
     private fun hasHadSomeTreatmentCategoryOfAllTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadSomeTreatmentsWithCategoryOfAllTypes(input.category, input.types, input.integer)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val lines = function.param<IntegerParameter>(2).value
+            HasHadSomeTreatmentsWithCategoryOfAllTypes(category, types, lines)
         }
     }
 
     private fun hasHadTreatmentCategoryWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
-            val (interpreter, minDate) = createInterpreterForWashout(input.integer, null, referenceDate)
-            val treatment = input.treatment
-            treatment.mappedType?.let { mappedType ->
-                HasHadTreatmentWithCategoryOfTypesRecently(treatment.mappedCategory, setOf(mappedType), minDate, interpreter)
-            } ?: HasHadTreatmentWithCategoryOfTypesRecently(treatment.mappedCategory, null, minDate, interpreter)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE, Parameter.Type.INTEGER)
+            val treatment = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            val weeksAgo = function.param<IntegerParameter>(1).value
+            val (interpreter, minDate) = createInterpreterForWashout(weeksAgo, null, referenceDate)
+            treatment.type?.let { mappedType ->
+                HasHadTreatmentWithCategoryOfTypesRecently(treatment.category, setOf(mappedType), minDate, interpreter)
+            } ?: HasHadTreatmentWithCategoryOfTypesRecently(treatment.category, null, minDate, interpreter)
         }
     }
 
     private fun hasHadTreatmentCategoryOfTypesWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            val (interpreter, minDate) = createInterpreterForWashout(input.integer, null, referenceDate)
-            HasHadTreatmentWithCategoryOfTypesRecently(input.category, input.types, minDate, interpreter)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val weeksAgo = function.param<IntegerParameter>(2).value
+            val (interpreter, minDate) = createInterpreterForWashout(weeksAgo, null, referenceDate)
+            HasHadTreatmentWithCategoryOfTypesRecently(category, types, minDate, interpreter)
         }
     }
 
     private fun hasHadTreatmentCategoryIgnoringTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadTreatmentWithCategoryButNotOfTypes(input.category, input.types)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            HasHadTreatmentWithCategoryButNotOfTypes(category, types)
         }
     }
 
     private fun hasHadTreatmentCategoryIgnoringTypesWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            val (interpreter, minDate) = createInterpreterForWashout(input.integer, null, referenceDate)
-            HasHadTreatmentWithCategoryButNotOfTypesRecently(input.category, input.types, minDate, interpreter)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val weeksAgo = function.param<IntegerParameter>(2).value
+            val (interpreter, minDate) = createInterpreterForWashout(weeksAgo, null, referenceDate)
+            HasHadTreatmentWithCategoryButNotOfTypesRecently(category, types, minDate, interpreter)
         }
     }
 
     private fun hasHadTreatmentCategoryIgnoringDrugsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyDrugsInput(function)
-            HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(input.category, null, input.drugs)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_DRUGS)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val drugs = function.param<ManyDrugsParameter>(1).value
+            HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(category, null, drugs)
         }
     }
 
     private fun hasHadTreatmentCategoryOfTypesIgnoringDrugsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesManyDrugsInput(function)
-            HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(input.category, input.types, input.drugs)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.MANY_DRUGS
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val drugs = function.param<ManyDrugsParameter>(2).value
+            HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(category, types, drugs)
         }
     }
 
     private fun hasHadSomeTreatmentsOfCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
-            val treatment = input.treatment
-            treatment.mappedType?.let { mappedType ->
-                HasHadSomeTreatmentsWithCategoryOfTypes(treatment.mappedCategory, setOf(mappedType), input.integer)
-            } ?: HasHadSomeTreatmentsWithCategory(treatment.mappedCategory, input.integer)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE, Parameter.Type.INTEGER)
+            val treatment = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            val lines = function.param<IntegerParameter>(1).value
+            treatment.type?.let { mappedType ->
+                HasHadSomeTreatmentsWithCategoryOfTypes(treatment.category, setOf(mappedType), lines)
+            } ?: HasHadSomeTreatmentsWithCategory(treatment.category, lines)
         }
     }
 
     private fun hasHadLimitedTreatmentsOfCategoryCreator(treatmentIsRequired: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
-            val treatment = input.treatment
-            treatment.mappedType?.let { mappedType ->
-                HasHadLimitedTreatmentsWithCategoryOfTypes(treatment.mappedCategory, setOf(mappedType), input.integer, treatmentIsRequired)
-            } ?: HasHadLimitedTreatmentsWithCategoryOfTypes(treatment.mappedCategory, null, input.integer, treatmentIsRequired)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE, Parameter.Type.INTEGER)
+            val treatment = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            val lines = function.param<IntegerParameter>(1).value
+            treatment.type?.let { mappedType ->
+                HasHadLimitedTreatmentsWithCategoryOfTypes(treatment.category, setOf(mappedType), lines, treatmentIsRequired)
+            } ?: HasHadLimitedTreatmentsWithCategoryOfTypes(treatment.category, null, lines, treatmentIsRequired)
         }
     }
 
     private fun hasHadSomeTreatmentsOfCategoryWithTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadSomeTreatmentsWithCategoryOfTypes(input.category, input.types, input.integer)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val lines = function.param<IntegerParameter>(2).value
+            HasHadSomeTreatmentsWithCategoryOfTypes(category, types, lines)
         }
     }
 
     private fun hasHadLimitedTreatmentsOfCategoryWithTypesCreator(treatmentIsRequired: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadLimitedTreatmentsWithCategoryOfTypes(input.category, input.types, input.integer, treatmentIsRequired)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val lines = function.param<IntegerParameter>(2).value
+            HasHadLimitedTreatmentsWithCategoryOfTypes(category, types, lines, treatmentIsRequired)
         }
     }
 
     private fun hasHadTreatmentsOfCategoryWithTypesAndStopReasonNotPDCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(input.category, input.types, null)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(category, types, null)
         }
     }
 
     private fun hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(input.category, input.types, input.integer)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val weeks = function.param<IntegerParameter>(2).value
+            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(category, types, weeks)
         }
     }
 
     private fun hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(input.category, input.types, input.integer)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val weeks = function.param<IntegerParameter>(2).value
+            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(category, types, weeks)
         }
     }
 
     private fun hasHadAdjuvantTreatmentWithCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            treatment.mappedType?.let { mappedType ->
-                HasHadAdjuvantTreatmentWithCategoryOfTypes(setOf(mappedType), treatment.mappedCategory)
-            } ?: HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory, null, null)
+            val treatment = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            treatment.type?.let { mappedType ->
+                HasHadAdjuvantTreatmentWithCategoryOfTypes(setOf(mappedType), treatment.category)
+            } ?: HasHadAdjuvantTreatmentWithCategory(treatment.category, null, null)
         }
     }
 
     private fun hasHadAdjuvantTreatmentWithCategoryWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (treatment, weeksAgo) = functionInputResolver().createOneTreatmentCategoryOrTypeOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE, Parameter.Type.INTEGER)
+            val treatment = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            val weeksAgo = function.param<IntegerParameter>(1).value
             val minDate = referenceDate.minusWeeks(weeksAgo.toLong())
-            HasHadAdjuvantTreatmentWithCategory(treatment.mappedCategory, minDate, weeksAgo)
+            HasHadAdjuvantTreatmentWithCategory(treatment.category, minDate, weeksAgo)
         }
     }
 
     private fun hasHadSystemicTherapyWithIntentsWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (intents, weeks) = functionInputResolver().createManyIntentsOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.MANY_INTENTS, Parameter.Type.INTEGER)
+            val intents = function.param<ManyIntentsParameter>(0).value
+            val weeks = function.param<IntegerParameter>(1).value
             val refDate = referenceDate.minusWeeks(weeks.toLong())
             HasHadSystemicTherapyWithAnyIntent(intents, refDate, weeks, true)
         }
@@ -550,7 +701,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (intents, weeks) = functionInputResolver().createManyIntentsOneIntegerInput(function)
+            function.expectTypes(Parameter.Type.MANY_INTENTS, Parameter.Type.INTEGER)
+            val intents = function.param<ManyIntentsParameter>(0).value
+            val weeks = function.param<IntegerParameter>(1).value
             val refDate = referenceDate.minusWeeks(weeks.toLong())
             HasHadSystemicTherapyWithAnyIntent(intents, refDate, weeks, false)
         }
@@ -558,25 +711,32 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSystemicTherapyWithIntentsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyIntentsInput(function)
-            HasHadSystemicTherapyWithAnyIntent(input.intents, null, null, null)
+            val intents = function.param<ManyIntentsParameter>(0).value
+            HasHadSystemicTherapyWithAnyIntent(intents, null, null, null)
         }
     }
 
     private fun hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentResponseOneTreatmentCategoryManyTypesInput(function)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_RESPONSE,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES
+            )
+            val treatmentResponse = function.param<TreatmentResponseParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            val types = function.param<ManyTreatmentTypesParameter>(2).value
             HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
-                treatmentResponses = setOf(input.treatmentResponse),
-                category = input.category,
-                types = input.types
+                treatmentResponses = setOf(treatmentResponse),
+                category = category,
+                types = types
             )
         }
     }
 
     private fun hasHadClinicalBenefitFollowingSomeTreatmentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManySpecificTreatmentsInput(function)
+            val input = function.param<ManyTreatmentsParameter>(0).value
             HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
                 treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
                 targetTreatments = input
@@ -586,30 +746,34 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
+            val input = function.param<TreatmentCategoryOrTypeParameter>(0).value
             HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
                 treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
-                category = input.mappedCategory,
-                types = input.mappedType?.let { setOf(it) }
+                category = input.category,
+                types = input.type?.let { setOf(it) }
             )
         }
     }
 
     private fun hasHadClinicalBenefitFollowingTreatmentOfCategoryAndTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
             HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
                 treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
-                category = input.category,
-                types = input.types
+                category = category,
+                types = types
             )
         }
     }
 
     private fun hasHadSystemicTreatmentOnlyOfCategoryOfTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadSystemicTreatmentOnlyOfCategoryOfTypes(category = input.category, types = input.types)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            HasHadSystemicTreatmentOnlyOfCategoryOfTypes(category = category, types = types)
         }
     }
 
@@ -619,8 +783,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadSocTargetedTherapyForNsclcExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyGenesInput(function).geneNames
-            HasHadSOCTargetedTherapyForNSCLC(input)
+            val genes = function.param<ManyGenesParameter>(0).value
+            HasHadSOCTargetedTherapyForNSCLC(genes)
         }
     }
 
@@ -630,56 +794,77 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadRadiotherapyToSomeBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadRadiotherapyToSomeBodyLocation(functionInputResolver().createOneStringInput(function))
+            HasHadRadiotherapyToSomeBodyLocation(function.param<StringParameter>(0).value)
         }
     }
 
     private fun hasHadTreatmentCategoryOfTypesAsMostRecentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadTreatmentWithCategoryOfTypesAsMostRecent(input.category, input.types)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            HasHadTreatmentWithCategoryOfTypesAsMostRecent(category, types)
         }
     }
 
     private fun hasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
-            HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(input.category, input.types, input.integer)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val months = function.param<IntegerParameter>(2).value
+            HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(category, types, months)
         }
     }
 
     private fun hasHadChemoradiotherapyWithAnyDrugAndMinimumCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyDrugsOneIntegerInput(function)
-            HasHadChemoradiotherapyWithDrugAndCycles(input.drugs, input.integer)
+            function.expectTypes(Parameter.Type.MANY_DRUGS, Parameter.Type.INTEGER)
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            val cycles = function.param<IntegerParameter>(1).value
+            HasHadChemoradiotherapyWithDrugAndCycles(drugs, cycles)
         }
     }
 
     private fun hasProgressiveDiseaseFollowingTreatmentNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadPDFollowingSpecificTreatment(listOf(functionInputResolver().createOneSpecificTreatmentInput(function)))
+            val treatment = function.param<TreatmentParameter>(0).value
+            HasHadPDFollowingSpecificTreatment(listOf(treatment))
         }
     }
 
     private fun hasProgressiveDiseaseFollowingTreatmentCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = functionInputResolver().createOneTreatmentCategoryOrTypeInput(function)
-            treatment.mappedType?.let { mappedType ->
-                HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(treatment.mappedCategory, setOf(mappedType), null, null)
-            } ?: HasHadPDFollowingTreatmentWithCategory(treatment.mappedCategory)
+            val treatment = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            treatment.type?.let { mappedType ->
+                HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(treatment.category, setOf(mappedType), null, null)
+            } ?: HasHadPDFollowingTreatmentWithCategory(treatment.category)
         }
     }
 
     private fun hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (category, types) = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
             HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(category, types, null, null)
         }
     }
 
     private fun hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCyclesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (category, types, cycles) = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val cycles = function.param<IntegerParameter>(2).value
             HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(category, types, cycles, null)
         }
     }
@@ -687,14 +872,21 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     //TODO: Check implementation
     private fun hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (category, types, weeks) = functionInputResolver().createOneTreatmentCategoryManyTypesOneIntegerInput(function)
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val weeks = function.param<IntegerParameter>(2).value
             HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(category, types, null, weeks)
         }
     }
 
     private fun hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minSystemicTreatments = functionInputResolver().createOneIntegerInput(function)
+            val minSystemicTreatments = function.param<IntegerParameter>(0).value
             And(
                 listOf(
                     HasHadSomeSystemicTreatments(minSystemicTreatments),
@@ -706,27 +898,31 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasProgressiveDiseaseFollowingTreatmentWithAnyDrugCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadPDFollowingTreatmentWithAnyDrug(functionInputResolver().createManyDrugsInput(function))
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            HasHadPDFollowingTreatmentWithAnyDrug(drugs)
         }
     }
 
     private fun hasProgressiveDiseaseFollowingFirstLineTreatmentWithCategoryOfTypes(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneTreatmentCategoryManyTypesInput(function)
-            HasHadPDFollowingFirstLineTreatmentCategoryOfTypes(input.category, input.types)
+            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            HasHadPDFollowingFirstLineTreatmentCategoryOfTypes(category, types)
         }
     }
 
     private fun hasAcquiredResistanceToSomeDrugCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasAcquiredResistanceToAnyDrug(functionInputResolver().createManyDrugsInput(function))
+            val drugs = function.param<ManyDrugsParameter>(0).value
+            HasAcquiredResistanceToAnyDrug(drugs)
         }
     }
 
     //TODO: Check implementation
     private fun hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minSystemicTreatments = functionInputResolver().createOneIntegerInput(function)
+            val minSystemicTreatments = function.param<IntegerParameter>(0).value
             And(
                 listOf(
                     HasHadSomeSystemicTreatments(minSystemicTreatments),
@@ -738,7 +934,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadResectionWithinWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxWeeksAgo = functionInputResolver().createOneIntegerInput(function)
+            val maxWeeksAgo = function.param<IntegerParameter>(0).value
             val minDate = referenceDate.minusWeeks(maxWeeksAgo.toLong())
             HasHadRecentResection(minDate)
         }
@@ -746,13 +942,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasPreviouslyParticipatedInSpecificTrialCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasPreviouslyParticipatedInTrial(functionInputResolver().createOneStringInput(function))
+            HasPreviouslyParticipatedInTrial(function.param<StringParameter>(0).value)
         }
     }
 
     private fun isPrimaryPlatinumRefractoryWithinMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            IsPrimaryPlatinumRefractoryWithinMonths(functionInputResolver().createOneIntegerInput(function), referenceDate)
+            IsPrimaryPlatinumRefractoryWithinMonths(function.param<IntegerParameter>(0).value, referenceDate)
         }
     }
 }

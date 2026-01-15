@@ -8,12 +8,14 @@ import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory.createTestCoho
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.StringParameter
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createEvaluableCohorts
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createNonEvaluableCohorts
+import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -143,7 +145,8 @@ class InterpretedCohortFactoryTest {
 
     @Test
     fun `Should correctly handle isMissingMolecularResultForEvaluation flag on cohort level`() {
-        val cohortAEvaluation = createEvaluation(RULE_1, listOf("EGFR", "ALK", "ROS1"), EvaluationResult.UNDETERMINED, true)
+        val cohortAEvaluation =
+            createEvaluation(RULE_1, listOf("EGFR", "ALK", "ROS1").map(::StringParameter), EvaluationResult.UNDETERMINED, true)
         val cohortBEvaluation = createEvaluation(RULE_2, emptyList(), EvaluationResult.PASS, false)
 
         val cohorts = listOf(createCohortMatch("A", cohortAEvaluation), createCohortMatch("B", cohortBEvaluation))
@@ -158,9 +161,9 @@ class InterpretedCohortFactoryTest {
 
     @Test
     fun `Should correctly set isMissingMolecularResultForEvaluation to true for cohorts if true for a trial evaluation`() {
-        val cohortAEvaluation = createEvaluation(RULE_1, listOf("EGFR"), EvaluationResult.PASS, false)
+        val cohortAEvaluation = createEvaluation(RULE_1, listOf("EGFR").map(::StringParameter), EvaluationResult.PASS, false)
         val cohortBEvaluation = createEvaluation(RULE_2, emptyList(), EvaluationResult.PASS, false)
-        val trialEvaluation = createEvaluation(RULE_1, listOf("ALK, ROS1"), EvaluationResult.UNDETERMINED, true)
+        val trialEvaluation = createEvaluation(RULE_1, listOf("ALK, ROS1").map(::StringParameter), EvaluationResult.UNDETERMINED, true)
 
         val cohorts = listOf(createCohortMatch("A", cohortAEvaluation), createCohortMatch("B", cohortBEvaluation))
         val trialMatch = createTrialMatch(cohorts, trialEvaluation)
@@ -179,10 +182,13 @@ class InterpretedCohortFactoryTest {
     }
 
     private fun createEvaluation(
-        eligibilityRule: EligibilityRule, parameters: List<Any>, result: EvaluationResult, isMissingMolecularResultForEvaluation: Boolean
+        eligibilityRule: EligibilityRule,
+        parameters: List<Parameter<*>>,
+        result: EvaluationResult,
+        isMissingMolecularResultForEvaluation: Boolean
     ): Map<Eligibility, Evaluation> {
         return mapOf(
-            Eligibility(references = emptySet(), EligibilityFunction(eligibilityRule, parameters)) to Evaluation(
+            Eligibility(references = emptySet(), EligibilityFunction(eligibilityRule.name, parameters)) to Evaluation(
                 result = result,
                 recoverable = false,
                 failMessages = emptySet(),
