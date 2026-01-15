@@ -15,6 +15,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFa
 import com.hartwig.actin.trial.Either
 import com.hartwig.actin.trial.EligibilityFactory
 import com.hartwig.actin.trial.TrialIngestion
+import com.hartwig.actin.trial.getOrNull
 import com.hartwig.actin.trial.right
 import java.nio.file.Files
 import java.nio.file.Path
@@ -65,20 +66,19 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                 actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
             )
 
-        val trialsOrErrors = inputData.trials?.right() ?: TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(
+        val trials = inputData.trials ?: TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(
             Gson().fromJson(
                 Files.readString(config.trialConfigJson?.let { Path.of(it) }
                     ?: error("One of trial config or trial database must be specified.")),
                 object : TypeToken<List<TrialConfig>>() {}.type
             )
         )
-
-        val trials = when (trialsOrErrors) {
-            is Either.Right -> trialsOrErrors.value
-            is Either.Left -> throw IllegalArgumentException(
-                "Failed to ingest trials. Unmappable trials found: ${trialsOrErrors.value.joinToString { it.trialId }}"
-            )
-        }
+            .mapLeft { unmappableTrials ->
+                throw IllegalArgumentException(
+                    "Failed to ingest trials. Unmappable trials found: ${unmappableTrials.joinToString { it.trialId }}"
+                )
+            }
+            .getOrNull()!!
 
         val treatmentMatcher =
             TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)

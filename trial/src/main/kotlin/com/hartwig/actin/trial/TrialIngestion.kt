@@ -26,17 +26,10 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
 
     fun ingest(config: List<TrialConfig>): Either<List<UnmappableTrial>, List<Trial>> {
         val trialsAndUnmappableTrials = config.map { trialState ->
-            val (trialErrors, criteria) = trialState.inclusionCriterion.map {
-                toEligibility(
-                    inclusionCriterion = it
-                )
-            }.partitionAndJoin()
+            val (trialErrors, criteria) = trialState.inclusionCriterion.map { toEligibility(inclusionCriterion = it) }.partitionAndJoin()
             val (unmappableCohorts, mappedCohorts) = trialState.cohorts.map { cohortConfig ->
-                val (cohortMappingErrors, cohortCriteria) = cohortConfig.inclusionCriterion.map {
-                    toEligibility(
-                        inclusionCriterion = it
-                    )
-                }.partitionAndJoin()
+                val (cohortMappingErrors, cohortCriteria) = cohortConfig.inclusionCriterion.map { toEligibility(inclusionCriterion = it) }
+                    .partitionAndJoin()
                 if (cohortMappingErrors.isEmpty()) Cohort(
                     metadata = CohortMetadata(
                         cohortId = cohortConfig.cohortId,
