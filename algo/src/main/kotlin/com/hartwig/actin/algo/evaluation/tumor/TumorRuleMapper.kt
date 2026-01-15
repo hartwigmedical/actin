@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Not
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.trial.BodyLocationParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -202,7 +203,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasAnyTumorStageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val stagesToMatch = function.param<ManyTumorStagesParameter>(0).value
-            DerivedTumorStageEvaluationFunction(HasTumorStage(stagesToMatch), "tumor stage(s) ${stagesToMatch.joinToString { " or " }}")
+            DerivedTumorStageEvaluationFunction(HasTumorStage(stagesToMatch), "tumor stage(s) ${Format.concatItemsWithOr(stagesToMatch)}")
         }
     }
 
