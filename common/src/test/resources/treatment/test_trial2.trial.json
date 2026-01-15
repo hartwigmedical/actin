@@ -107,7 +107,7 @@
             "rule": "HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_MOST_Z_LINES",
             "parameters": [
               "Immunotherapy",
-              "PD-1;PD-L1",
+              "ANTI_PD_1;ANTI_PD_L1",
               "2"
             ]
           }

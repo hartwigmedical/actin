@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.input.ruleAsEnum
 import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
@@ -79,7 +80,7 @@ class TrialDAO(private val context: DSLContext) {
     }
 
     private fun writeEligibilityFunction(trialId: Int, cohortId: Int?, parentId: Int?, function: EligibilityFunction): Int {
-        val isComposite = CompositeRules.isComposite(function.rule)
+        val isComposite = CompositeRules.isComposite(function.ruleAsEnum())
         val parameters = if (isComposite) "" else DataUtil.concatObjects(function.parameters) ?: ""
         val id = context.insertInto(
             Tables.ELIGIBILITY,
@@ -90,7 +91,7 @@ class TrialDAO(private val context: DSLContext) {
             Tables.ELIGIBILITY.PARAMETERS,
             Tables.ELIGIBILITY.DISPLAY
         )
-            .values(trialId, cohortId, parentId, function.rule.toString(), parameters, EligibilityFunctionDisplay.format(function))
+            .values(trialId, cohortId, parentId, function.rule, parameters, EligibilityFunctionDisplay.format(function))
             .returning(Tables.ELIGIBILITY.ID)
             .fetchOne()!!
             .getValue(Tables.ELIGIBILITY.ID)

@@ -21,7 +21,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.doid.DoidModel
-import com.hartwig.actin.trial.input.datamodel.VariantTypeInput
+import com.hartwig.actin.datamodel.trial.VariantTypeInput
 import java.time.LocalDate
 
 class IsEligibleForOnLabelTreatment(
