@@ -28,9 +28,9 @@ class PanelSpecifications(
         val testSpec = PanelTestSpecification(input.test, testVersion)
         val derivedTargets = PanelSpecificationFunctions.derivedGeneTargetMap(input)
         val derivedFusionGenePairs = input.fusions.map { listOfNotNull(it.geneUp, it.geneDown) }
-        val derivedOtherGenes = derivedTargets.keys - derivedFusionGenePairs.flatten().toSet()
+        val derivedSingleGeneEvents = PanelSpecificationFunctions.derivedGeneTargetMap(input.copy(fusions = emptySet())).keys
 
-        checkForUnknownGenes(derivedFusionGenePairs, derivedOtherGenes, testSpec)
+        checkForUnknownGenes(derivedFusionGenePairs, derivedSingleGeneEvents, testSpec)
 
         val baseTargets = molecularTargetsPerTest[testSpec]
             ?: throw IllegalStateException(
