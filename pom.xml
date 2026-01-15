@@ -181,6 +181,11 @@
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
+                <artifactId>trial</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
                 <artifactId>interpretation</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
