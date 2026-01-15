@@ -89,7 +89,6 @@ class PanelDriverAttributeAnnotatorTest {
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
         assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
         assertThat(annotatedPanelRecord.drivers.variants.first().evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
-
     }
 
     @Test
