@@ -3,6 +3,8 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.clinical.WhoStatus
+import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
@@ -19,8 +21,8 @@ import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
-import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.ExternalPhaseFilter
+import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
@@ -72,9 +74,15 @@ class SummaryChapter(
         addParagraphWithContent(document, tumorDetailFields)
     }
 
-    private fun whoStatus(who: Int?): String {
-        return who?.toString() ?: Formats.VALUE_UNKNOWN
-    }
+    private fun whoStatus(who: WhoStatus?): String =
+        who?.let { w ->
+            when (w.precision) {
+                WhoStatusPrecision.EXACT -> w.status.toString()
+                WhoStatusPrecision.AT_LEAST -> "> ${w.status}"
+                WhoStatusPrecision.AT_MOST -> "< ${w.status}"
+            }
+        } ?: Formats.VALUE_UNKNOWN
+
 
     private fun stageSummary(tumor: TumorDetails): Pair<String, String> {
         val knownStage = "Stage"

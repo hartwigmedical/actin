@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -35,4 +36,13 @@ class HasWHOStatusTest {
     fun `Should pass when WHO is exact match`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withWHO(2)))
     }
+
+    @Test
+    fun `Should return undetermined when WHO is not an exact value`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(GeneralTestFactory.withWHO(1, WhoStatusPrecision.AT_LEAST))
+        )
+    }
+
 }

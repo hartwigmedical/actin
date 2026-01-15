@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import org.junit.Test
 
 class HasSevereConcomitantIllnessTest {
@@ -28,5 +29,13 @@ class HasSevereConcomitantIllnessTest {
     @Test
     fun `Should pass when WHO 5`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withWHO(5)))
+    }
+
+    @Test
+    fun `Should return undetermined when WHO is not an exact value`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(ComorbidityTestFactory.withWHO(5, WhoStatusPrecision.AT_LEAST))
+        )
     }
 }

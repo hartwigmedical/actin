@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import kotlin.math.abs
 
 class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
@@ -15,11 +16,15 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
                 EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (WHO data missing)")
             }
 
-            who == requiredWHO -> {
+            who.precision != WhoStatusPrecision.EXACT -> {
+                EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (exact WHO not available)")
+            }
+
+            who.status == requiredWHO -> {
                 EvaluationFactory.pass("Has WHO status $requiredWHO")
             }
 
-            abs(who - requiredWHO) == 1 -> {
+            abs(who.status - requiredWHO) == 1 -> {
                 EvaluationFactory.recoverableFail("WHO status is $who but should be $requiredWHO")
             }
 

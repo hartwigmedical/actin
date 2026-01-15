@@ -4,18 +4,27 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 
 class HasSevereConcomitantIllness : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val whoStatus = record.performanceStatus.latestWho
+        val notEvaluatedResult = EvaluationFactory.notEvaluated("Assumed that severe concomitant illnesses are not present")
+        return when {
+            whoStatus == null -> notEvaluatedResult
 
-        if (whoStatus == 3 || whoStatus == 4) {
-            return EvaluationFactory.warn("Potential severe concomitant illnesses (WHO $whoStatus)")
+            whoStatus.precision != WhoStatusPrecision.EXACT -> EvaluationFactory.undetermined(
+                "Unable to determine severe concomitant illnesses (exact WHO not available)"
+            )
+
+            whoStatus.status == 3 || whoStatus.status == 4 -> EvaluationFactory.warn(
+                "Potential severe concomitant illnesses (WHO $whoStatus)"
+            )
+
+            whoStatus.status == 5 -> EvaluationFactory.pass("WHO 5")
+
+            else -> notEvaluatedResult
         }
-        return if (whoStatus == 5) {
-            EvaluationFactory.pass("WHO 5")
-        } else
-            EvaluationFactory.notEvaluated("Assumed that severe concomitant illnesses are not present")
     }
 }
