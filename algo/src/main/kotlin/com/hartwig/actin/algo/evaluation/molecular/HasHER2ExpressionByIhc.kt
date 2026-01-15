@@ -11,6 +11,12 @@ import com.hartwig.actin.datamodel.clinical.IhcTestResult
 
 class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : EvaluationFunction {
 
+    private val failingResultsByTargetResult = mapOf(
+        IhcTestResult.POSITIVE to setOf(IhcTestResult.NEGATIVE, IhcTestResult.LOW),
+        IhcTestResult.LOW to setOf(IhcTestResult.NEGATIVE, IhcTestResult.POSITIVE),
+        IhcTestResult.NEGATIVE to setOf(IhcTestResult.LOW, IhcTestResult.BORDERLINE, IhcTestResult.POSITIVE),
+    )
+
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestEvaluation = IhcTestEvaluation.create("HER2", record.ihcTests)
         val geneERBB2IsAmplified = geneIsAmplifiedForPatient("ERBB2", record)
@@ -75,10 +81,4 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : Evalu
             }
         }
     }
-
-    private val failingResultsByTargetResult = mapOf(
-        IhcTestResult.POSITIVE to setOf(IhcTestResult.NEGATIVE, IhcTestResult.LOW),
-        IhcTestResult.LOW to setOf(IhcTestResult.NEGATIVE, IhcTestResult.POSITIVE),
-        IhcTestResult.NEGATIVE to setOf(IhcTestResult.LOW, IhcTestResult.BORDERLINE, IhcTestResult.POSITIVE),
-    )
 }
