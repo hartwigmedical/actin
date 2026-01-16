@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.general.isAtMost
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 
 class HasSevereConcomitantIllness : EvaluationFunction {
@@ -32,5 +32,3 @@ class HasSevereConcomitantIllness : EvaluationFunction {
     }
 
 }
-
-fun WhoStatus.isAtMost(value: Int) = precision == WhoStatusPrecision.AT_MOST && status <= value
