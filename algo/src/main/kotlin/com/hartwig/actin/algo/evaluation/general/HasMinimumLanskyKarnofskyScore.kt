@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.interpretation.asRange
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
@@ -13,9 +14,10 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
             ?: return EvaluationFactory.undetermined(
                 "Undetermined if ${performanceScore.display()} score based on WHO status is at least $minScore (WHO data missing)"
             )
-        val passScore = toMinScoreForWHO(who)
-        val undeterminedScore = toMaxScoreForWHO(who)
-        val warnScore = toMaxScoreForWHO((who - 1).coerceAtLeast(0))
+        val whoRange = who.asRange()
+        val passScore = toMinScoreForWHO(whoRange.last)
+        val undeterminedScore = toMaxScoreForWHO(whoRange.first)
+        val warnScore = toMaxScoreForWHO((whoRange.first - 1).coerceAtLeast(0))
         return when {
             passScore >= minScore -> {
                 EvaluationFactory.pass("${performanceScore.display()} score based on WHO status is at least $minScore")

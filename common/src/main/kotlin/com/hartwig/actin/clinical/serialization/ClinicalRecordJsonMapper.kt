@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.serialization
 
+import WhoStatusAdapter
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
@@ -10,6 +11,7 @@ import com.google.gson.JsonPrimitive
 import com.google.gson.JsonSerializationContext
 import com.google.gson.JsonSerializer
 import com.hartwig.actin.datamodel.clinical.Comorbidity
+import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
@@ -34,6 +36,7 @@ object ClinicalRecordJsonMapper {
         return GsonSerializer.createBuilder()
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
             .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
+            .registerTypeAdapter(WhoStatus::class.java, WhoStatusAdapter())
             .registerTypeAdapter(DrugType::class.java, StrictEnumDeserializer(DrugType::class.java))
             .registerTypeAdapter(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))
             .registerTypeAdapter(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))

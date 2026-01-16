@@ -35,7 +35,6 @@ class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.PATIENT).execute()
         context.truncate(Tables.TUMOR).execute()
         context.truncate(Tables.CLINICALSTATUS).execute()
-        context.truncate(Tables.PERFORMANCESTATUS).execute()
         context.truncate(Tables.TREATMENTHISTORYENTRY).execute()
         context.truncate(Tables.PRIORPRIMARY).execute()
         context.truncate(Tables.OTHERCONDITION).execute()
@@ -196,19 +195,6 @@ class ClinicalDAO(private val context: DSLContext) {
 
 
     private fun writePerformanceStatus(patientId: String, performanceStatus: PerformanceStatus) {
-        context.insertInto(
-            Tables.PERFORMANCESTATUS,
-            Tables.PERFORMANCESTATUS.PATIENTID,
-            Tables.PERFORMANCESTATUS.LATESTASA,
-            Tables.PERFORMANCESTATUS.LATESTWHO,
-        )
-            .values(
-                patientId,
-                performanceStatus.latestAsa,
-                performanceStatus.latestWho,
-            )
-            .execute()
-
         performanceStatus.whoStatuses.forEach { writeWhoStatus(patientId, it) }
         performanceStatus.asaScores.forEach { writeAsaScore(patientId, it) }
     }

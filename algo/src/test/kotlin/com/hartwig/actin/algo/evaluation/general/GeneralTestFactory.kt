@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.clinical.PatientDetails
 import com.hartwig.actin.datamodel.clinical.PerformanceStatus
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.clinical.WhoStatus
+import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import java.time.LocalDate
 
 internal object GeneralTestFactory {
@@ -19,10 +20,10 @@ internal object GeneralTestFactory {
         return withPatientDetails(TestClinicalFactory.createMinimalTestClinicalRecord().patient.copy(gender = gender))
     }
 
-    fun withWHO(who: Int?): PatientRecord {
+    fun withWHO(who: Int?, precision: WhoStatusPrecision = WhoStatusPrecision.EXACT): PatientRecord {
         return withPerformanceStatus(
             TestClinicalFactory.createMinimalTestClinicalRecord().performanceStatus.copy(
-                whoStatuses = who?.let { listOf(WhoStatus(LocalDate.now(), it)) } ?: emptyList()
+                whoStatuses = who?.let { listOf(WhoStatus(LocalDate.now(), it, precision)) } ?: emptyList()
             )
         )
     }
