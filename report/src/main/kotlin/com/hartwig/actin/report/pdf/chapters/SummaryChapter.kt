@@ -78,8 +78,8 @@ class SummaryChapter(
         who?.let { w ->
             when (w.precision) {
                 WhoStatusPrecision.EXACT -> w.status.toString()
-                WhoStatusPrecision.AT_LEAST -> "> ${w.status}"
-                WhoStatusPrecision.AT_MOST -> "< ${w.status}"
+                WhoStatusPrecision.AT_LEAST -> ">= ${w.status}"
+                WhoStatusPrecision.AT_MOST -> "<= ${w.status}"
             }
         } ?: Formats.VALUE_UNKNOWN
 
