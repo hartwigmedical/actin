@@ -2,10 +2,9 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.interpretation.asRange
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.WhoStatus
-import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 
 class HasMinimumLanskyKarnofskyScore internal constructor(private val performanceScore: PerformanceScore, private val minScore: Int) :
     EvaluationFunction {
@@ -15,7 +14,7 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
             ?: return EvaluationFactory.undetermined(
                 "Undetermined if ${performanceScore.display()} score based on WHO status is at least $minScore (WHO data missing)"
             )
-        val whoRange = getWhoRange(who)
+        val whoRange = who.asRange()
         val passScore = toMinScoreForWHO(whoRange.last)
         val undeterminedScore = toMaxScoreForWHO(whoRange.first)
         val warnScore = toMaxScoreForWHO((whoRange.first - 1).coerceAtLeast(0))
@@ -33,14 +32,6 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
             }
 
             else -> EvaluationFactory.fail("${performanceScore.display()} score based on WHO status is below $minScore")
-        }
-    }
-
-    private fun getWhoRange(who: WhoStatus): IntRange {
-        return when (who.precision) {
-            WhoStatusPrecision.EXACT -> who.status..who.status
-            WhoStatusPrecision.AT_MOST -> 0..who.status
-            WhoStatusPrecision.AT_LEAST -> who.status..5
         }
     }
 

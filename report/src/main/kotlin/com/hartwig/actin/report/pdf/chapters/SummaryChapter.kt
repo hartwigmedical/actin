@@ -1,10 +1,10 @@
 package com.hartwig.actin.report.pdf.chapters
 
+import com.hartwig.actin.clinical.interpretation.asText
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.WhoStatus
-import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
@@ -74,15 +74,7 @@ class SummaryChapter(
         addParagraphWithContent(document, tumorDetailFields)
     }
 
-    private fun whoStatus(who: WhoStatus?): String =
-        who?.let { w ->
-            when (w.precision) {
-                WhoStatusPrecision.EXACT -> w.status.toString()
-                WhoStatusPrecision.AT_LEAST -> ">= ${w.status}"
-                WhoStatusPrecision.AT_MOST -> "<= ${w.status}"
-            }
-        } ?: Formats.VALUE_UNKNOWN
-
+    private fun whoStatus(who: WhoStatus?) = who?.asText() ?: Formats.VALUE_UNKNOWN
 
     private fun stageSummary(tumor: TumorDetails): Pair<String, String> {
         val knownStage = "Stage"

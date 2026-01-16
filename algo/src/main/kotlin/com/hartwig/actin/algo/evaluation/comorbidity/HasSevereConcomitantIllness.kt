@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.general.isAtMost
+import com.hartwig.actin.clinical.interpretation.asText
+import com.hartwig.actin.clinical.interpretation.isAtMost
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
@@ -22,7 +23,7 @@ class HasSevereConcomitantIllness : EvaluationFunction {
             )
 
             whoStatus.status == 3 || whoStatus.status == 4 -> EvaluationFactory.warn(
-                "Potential severe concomitant illnesses (WHO $whoStatus)"
+                "Potential severe concomitant illnesses (WHO ${whoStatus.asText()})"
             )
 
             whoStatus.status == 5 -> EvaluationFactory.pass("WHO 5")

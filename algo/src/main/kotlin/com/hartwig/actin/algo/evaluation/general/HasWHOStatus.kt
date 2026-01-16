@@ -2,9 +2,10 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.clinical.interpretation.asText
+import com.hartwig.actin.clinical.interpretation.isExactly
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import kotlin.math.abs
 
@@ -21,7 +22,7 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
                 EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (exact WHO not available)")
             }
 
-            who.isExact(requiredWHO) -> {
+            who.isExactly(requiredWHO) -> {
                 EvaluationFactory.pass("Has WHO status $requiredWHO")
             }
 
@@ -36,13 +37,4 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
     }
 }
 
-fun WhoStatus.isAtMost(value: Int) = precision == WhoStatusPrecision.AT_MOST && status <= value
 
-fun WhoStatus.isExact(value: Int) = precision == WhoStatusPrecision.EXACT && status == value
-
-fun WhoStatus.asText() =
-    when (precision) {
-        WhoStatusPrecision.EXACT -> "$status"
-        WhoStatusPrecision.AT_LEAST -> ">=$status"
-        WhoStatusPrecision.AT_MOST -> "<=$status"
-    }
