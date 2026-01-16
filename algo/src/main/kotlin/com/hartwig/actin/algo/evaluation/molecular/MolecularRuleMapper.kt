@@ -5,11 +5,14 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.datamodel.clinical.IhcTestResult
+import com.hartwig.actin.datamodel.trial.AlbiGradeParameter
 import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.GeneParameter
 import com.hartwig.actin.datamodel.trial.HaplotypeParameter
 import com.hartwig.actin.datamodel.trial.HlaGroupParameter
+import com.hartwig.actin.datamodel.trial.IhcTestResultParameter
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.ManyCodonsParameter
 import com.hartwig.actin.datamodel.trial.ManyGenesParameter
@@ -509,7 +512,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHER2ExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val ihcTestResult = functionInputResolver().createOneIhcTestResult(function)
+            val ihcTestResult = function.param<IhcTestResultParameter>(0).value
             HasHER2ExpressionByIhc(ihcTestResult)
         }
     }

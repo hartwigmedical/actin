@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
+import com.hartwig.actin.datamodel.clinical.IhcTestResult
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TnmT
@@ -115,6 +116,7 @@ class FunctionCreatorFactoryTest {
             Parameter.Type.PROTEIN -> "TP53"
             Parameter.Type.TREATMENT_RESPONSE -> TreatmentResponse.COMPLETE_RESPONSE.name
             Parameter.Type.MANY_DOID_TERMS -> doidTerm
+            Parameter.Type.IHC_TEST_RESULT -> IhcTestResult.LOW.name
             Parameter.Type.TREATMENT,
             Parameter.Type.SYSTEMIC_TREATMENT,
             Parameter.Type.MANY_TREATMENTS,
