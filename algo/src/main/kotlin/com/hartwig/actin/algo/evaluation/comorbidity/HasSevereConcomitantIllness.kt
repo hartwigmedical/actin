@@ -14,9 +14,7 @@ class HasSevereConcomitantIllness : EvaluationFunction {
         val whoStatus = record.performanceStatus.latestWho
         val notEvaluatedResult = EvaluationFactory.notEvaluated("Assumed that severe concomitant illnesses are not present")
         return when {
-            whoStatus == null -> notEvaluatedResult
-
-            whoStatus.isAtMost(2) -> notEvaluatedResult
+            whoStatus == null || whoStatus.isAtMost(2) -> notEvaluatedResult
 
             whoStatus.precision != WhoStatusPrecision.EXACT -> EvaluationFactory.undetermined(
                 "Unable to determine severe concomitant illnesses (exact WHO not available)"
