@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 
 class HasSevereConcomitantIllness : EvaluationFunction {
@@ -13,6 +14,8 @@ class HasSevereConcomitantIllness : EvaluationFunction {
         val notEvaluatedResult = EvaluationFactory.notEvaluated("Assumed that severe concomitant illnesses are not present")
         return when {
             whoStatus == null -> notEvaluatedResult
+
+            whoStatus.isAtMost(2) -> notEvaluatedResult
 
             whoStatus.precision != WhoStatusPrecision.EXACT -> EvaluationFactory.undetermined(
                 "Unable to determine severe concomitant illnesses (exact WHO not available)"
@@ -27,4 +30,8 @@ class HasSevereConcomitantIllness : EvaluationFunction {
             else -> notEvaluatedResult
         }
     }
+
+
+    fun WhoStatus.isAtMost(value: Int) = precision == WhoStatusPrecision.AT_MOST && status <= value
+
 }
