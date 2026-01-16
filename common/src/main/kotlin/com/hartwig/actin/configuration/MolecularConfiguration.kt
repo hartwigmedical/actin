@@ -1,6 +1,6 @@
 package com.hartwig.actin.configuration
 
-data class MolecularConfiguration(val variantPathogenicityIsConfirmed: Boolean = false) {
+data class MolecularConfiguration(val eventPathogenicityIsConfirmed: Boolean = false) {
 
     companion object {
         fun create(environmentConfigFile: String?): MolecularConfiguration {

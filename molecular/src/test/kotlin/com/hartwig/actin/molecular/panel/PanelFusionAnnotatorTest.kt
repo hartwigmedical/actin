@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -34,26 +35,33 @@ class PanelFusionAnnotatorTest {
 
     private val knownFusionCache = mockk<KnownFusionCache>()
     private val ensembleDataCache = mockk<EnsemblDataCache>()
-    private val annotator = PanelFusionAnnotator(knownFusionCache, ensembleDataCache)
+    private val configuration = MolecularConfiguration()
+    private val annotator = PanelFusionAnnotator(knownFusionCache, ensembleDataCache, configuration)
 
     @Test
     fun `Should determine fusion driver likelihood`() {
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR, false))
+        assertThat(annotator.fusionDriverLikelihood(false, FusionDriverType.KNOWN_PAIR))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_IG, false))
+        assertThat(annotator.fusionDriverLikelihood(false, FusionDriverType.KNOWN_PAIR_IG))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.KNOWN_PAIR_DEL_DUP, false))
+        assertThat(annotator.fusionDriverLikelihood(false, FusionDriverType.KNOWN_PAIR_DEL_DUP))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_3, true))
+        assertThat(annotator.fusionDriverLikelihood(true, FusionDriverType.PROMISCUOUS_3))
             .isEqualTo(DriverLikelihood.HIGH)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_ENHANCER_TARGET, false))
+        assertThat(annotator.fusionDriverLikelihood(true, FusionDriverType.PROMISCUOUS_3, true))
+            .isEqualTo(DriverLikelihood.HIGH)
+
+        assertThat(annotator.fusionDriverLikelihood(false, FusionDriverType.PROMISCUOUS_ENHANCER_TARGET))
             .isEqualTo(DriverLikelihood.LOW)
 
-        assertThat(annotator.fusionDriverLikelihood(FusionDriverType.PROMISCUOUS_3, false))
+        assertThat(annotator.fusionDriverLikelihood(false, FusionDriverType.PROMISCUOUS_ENHANCER_TARGET, true))
+            .isEqualTo(DriverLikelihood.HIGH)
+
+        assertThat(annotator.fusionDriverLikelihood(false, FusionDriverType.PROMISCUOUS_3))
             .isEqualTo(DriverLikelihood.LOW)
     }
 
