@@ -5,8 +5,6 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Or
-import com.hartwig.actin.datamodel.clinical.IhcTestResult
-import com.hartwig.actin.datamodel.trial.AlbiGradeParameter
 import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.GeneParameter
