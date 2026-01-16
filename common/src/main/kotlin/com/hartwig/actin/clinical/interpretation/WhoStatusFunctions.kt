@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 
 fun WhoStatus.isAtMost(value: Int) =
-    (precision == WhoStatusPrecision.AT_MOST && status <= value) || (precision == WhoStatusPrecision.EXACT && status <= value)
+    status <= value && (precision == WhoStatusPrecision.AT_MOST || precision == WhoStatusPrecision.EXACT)
 
 fun WhoStatus.isExactly(value: Int) = precision == WhoStatusPrecision.EXACT && status == value
 
