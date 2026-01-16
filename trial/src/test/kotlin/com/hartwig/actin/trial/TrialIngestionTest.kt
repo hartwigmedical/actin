@@ -28,6 +28,7 @@ const val COHORT_ID = "cohortId"
 const val DESCRIPTION = "description"
 const val REFERENCE_ID = "id"
 const val LOCATION = "location"
+
 class TrialIngestionTest {
 
     @Test

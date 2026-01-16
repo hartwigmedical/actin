@@ -117,13 +117,14 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
         val paveLite = PaveLite(inputData.ensemblDataCache, false)
 
-        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
-        val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache)
-        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
-        val panelVirusAnnotator = PanelVirusAnnotator()
-
         val configuration = MolecularConfiguration.create(config.overridesYaml)
         LOGGER.info("Loaded molecular config: $configuration")
+
+        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
+        val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache, configuration)
+        val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
+        val panelVirusAnnotator = PanelVirusAnnotator(configuration)
+
         val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(
             KnownEventResolverFactory.create(serveRecord.knownEvents()),
             inputData.dndsDatabase,

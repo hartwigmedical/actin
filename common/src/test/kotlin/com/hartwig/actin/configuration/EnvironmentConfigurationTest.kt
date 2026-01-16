@@ -12,10 +12,10 @@ class EnvironmentConfigurationTest {
     @Test
     fun `Should load proper config from file`() {
         val molecularConfig = MolecularConfiguration.create(properConfigFile)
-        assertThat(molecularConfig.variantPathogenicityIsConfirmed).isTrue()
+        assertThat(molecularConfig.eventPathogenicityIsConfirmed).isTrue
 
         val algoConfig = AlgoConfiguration.create(properConfigFile)
-        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isFalse()
+        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isFalse
 
         val reportConfig = ReportConfiguration.create(properConfigFile)
         assertThat(reportConfig.hospitalOfReference).isEqualTo("Erasmus MC")
@@ -24,10 +24,10 @@ class EnvironmentConfigurationTest {
     @Test
     fun `Should use defaults for fields not provided in file`() {
         val molecularConfig = MolecularConfiguration.create(minimalConfigFile)
-        assertThat(molecularConfig.variantPathogenicityIsConfirmed).isFalse()
+        assertThat(molecularConfig.eventPathogenicityIsConfirmed).isFalse
 
         val algoConfig = AlgoConfiguration.create(minimalConfigFile)
-        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isTrue()
+        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isTrue
 
         val reportConfig = ReportConfiguration.create(minimalConfigFile)
         assertThat(reportConfig.hospitalOfReference).isNull()

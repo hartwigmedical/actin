@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.clinical.SequencedFusion
 import com.hartwig.actin.datamodel.clinical.SequencedSkippedExons
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -16,7 +17,8 @@ import org.apache.logging.log4j.LogManager
 
 class PanelFusionAnnotator(
     private val knownFusionCache: KnownFusionCache,
-    private val ensembleDataCache: EnsemblDataCache
+    private val ensembleDataCache: EnsemblDataCache,
+    private val molecularConfiguration: MolecularConfiguration
 ) {
 
     private val logger = LogManager.getLogger(PanelAnnotator::class.java)
@@ -25,9 +27,13 @@ class PanelFusionAnnotator(
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
     }
 
-    fun fusionDriverLikelihood(driverType: FusionDriverType, isPromiscuousWithMatchingExons: Boolean?): DriverLikelihood {
+    fun fusionDriverLikelihood(
+        isPromiscuousWithMatchingExons: Boolean?,
+        driverType: FusionDriverType,
+        eventPathogenicityIsConfirmed: Boolean = false,
+    ): DriverLikelihood {
         return when {
-            isPromiscuousWithMatchingExons == true || driverType in setOf(
+            eventPathogenicityIsConfirmed || isPromiscuousWithMatchingExons == true || driverType in setOf(
                 FusionDriverType.KNOWN_PAIR,
                 FusionDriverType.KNOWN_PAIR_IG,
                 FusionDriverType.KNOWN_PAIR_DEL_DUP
@@ -61,8 +67,9 @@ class PanelFusionAnnotator(
                 exonDown = sequencedFusion.exonDown
             ),
             driverLikelihood = if (isReportable) fusionDriverLikelihood(
+                isPromiscuousWithMatchingExons(driverType, sequencedFusion),
                 driverType,
-                isPromiscuousWithMatchingExons(driverType, sequencedFusion)
+                molecularConfiguration.eventPathogenicityIsConfirmed,
             ) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
@@ -144,7 +151,11 @@ class PanelFusionAnnotator(
             proteinEffect = ProteinEffect.UNKNOWN,
             isReportable = isReportable,
             event = sequencedSkippedExons.display(),
-            driverLikelihood = if (isReportable) fusionDriverLikelihood(driverType, false) else null,
+            driverLikelihood = if (isReportable) fusionDriverLikelihood(
+                false,
+                driverType,
+                molecularConfiguration.eventPathogenicityIsConfirmed
+            ) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
             geneTranscriptStart = transcript,

@@ -1,5 +1,5 @@
 molecular:
-  variantPathogenicityIsConfirmed: true
+  eventPathogenicityIsConfirmed: true
 algo:
   warnIfToxicitiesNotFromQuestionnaire: false
 report:

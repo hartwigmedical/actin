@@ -40,7 +40,7 @@ class GeneDriverLikelihoodModelTest {
     }
 
     @Test
-    fun `Should return driver likelihood of 1 for BRAF VUS when variant pathogenicity is confirmed`() {
+    fun `Should return driver likelihood of 1 for BRAF VUS when event pathogenicity is confirmed`() {
         val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(
             DndsModel.create(
                 DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV),

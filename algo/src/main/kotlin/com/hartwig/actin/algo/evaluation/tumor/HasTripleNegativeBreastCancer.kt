@@ -29,14 +29,21 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
             evaluationPerReceptor.values.contains(BreastCancerReceptorEvaluation.NOT_BREAST_CANCER) || evaluationPerReceptor.values.contains(
                 BreastCancerReceptorEvaluation.POSITIVE
             )
-        val allReceptorsNegative = evaluationPerReceptor.values.all { it == BreastCancerReceptorEvaluation.NEGATIVE }
+        val her2NegativeOrLow = breastCancerReceptorsEvaluator.isNegativeOrLow(evaluationPerReceptor[ReceptorType.HER2]!!)
+        val allReceptorsNegativeOrLow = evaluationPerReceptor.values.all { breastCancerReceptorsEvaluator.isNegativeOrLow(it) }
+        val allReceptorsNegativeOrHer2Low = listOf(
+            ReceptorType.ER,
+            ReceptorType.PR
+        ).all { evaluationPerReceptor[it] == BreastCancerReceptorEvaluation.NEGATIVE } && her2NegativeOrLow
 
         return when {
             hasNoTripleNegativeBreastCancer -> EvaluationFactory.fail("Has no triple negative breast cancer")
 
-            allReceptorsNegative && erbb2Amplified -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
+            allReceptorsNegativeOrLow && erbb2Amplified -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
 
-            allReceptorsNegative -> EvaluationFactory.pass("Has triple negative breast cancer")
+            allReceptorsNegativeOrHer2Low && !erbb2Amplified -> EvaluationFactory.pass("Has triple negative breast cancer")
+
+            allReceptorsNegativeOrLow -> EvaluationFactory.undetermined("Undetermined if IHC ER/PR low is considered triple negative breast cancer")
 
             prAndErNotPositive && erbb2Amplified && evaluationPerReceptor[ReceptorType.HER2] != BreastCancerReceptorEvaluation.NEGATIVE -> EvaluationFactory.undetermined(
                 "Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so potentially not triple negative)"
