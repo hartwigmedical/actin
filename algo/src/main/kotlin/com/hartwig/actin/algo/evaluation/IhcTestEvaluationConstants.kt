@@ -11,4 +11,6 @@ object IhcTestEvaluationConstants {
     val NO_LOSS_TERMS = setOf("no loss", "positive", "normal", "normal expression")
 
     val WILD_TYPE_TERMS = setOf("wildtype", "wild-type", "wild type")
+
+    val LOW_TERMS = setOf("low")
 }

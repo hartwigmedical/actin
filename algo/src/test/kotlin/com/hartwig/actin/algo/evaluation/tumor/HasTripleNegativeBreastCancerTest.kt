@@ -32,7 +32,7 @@ class HasTripleNegativeBreastCancerTest {
     }
 
     @Test
-    fun `Should pass if all breast cancer target receptors are negative with data source prior molecular tests`() {
+    fun `Should pass if all breast cancer target receptors are negative with data source scoreText from prior molecular tests`() {
         val patient = TumorTestFactory.withIhcTestsAndDoids(
             listOf(
                 createIhcTest("PR", "Negative"),
@@ -44,7 +44,31 @@ class HasTripleNegativeBreastCancerTest {
     }
 
     @Test
+    fun `Should pass if ER and PR are negative and HER2 is low with data source scoreText from prior molecular tests`() {
+        val patient = TumorTestFactory.withIhcTestsAndDoids(
+            listOf(
+                createIhcTest("PR", "Negative"),
+                createIhcTest("ER", "Negative"),
+                createIhcTest("HER2", "Low")
+            ), setOf(DoidConstants.BREAST_CANCER_DOID)
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+    }
+
+    @Test
     fun `Should pass if all breast cancer target receptors are negative with data source scoreValue from prior molecular tests`() {
+        val patient = TumorTestFactory.withIhcTestsAndDoids(
+            listOf(
+                createIhcTest(item = "PR", scoreValue = 0.0, scoreValueUnit = "%"),
+                createIhcTest(item = "HER2", scoreValue = 0.0, scoreValueUnit = "+"),
+                createIhcTest(item = "ER", scoreValue = 0.0, scoreValueUnit = "%")
+            ), setOf(DoidConstants.BREAST_CANCER_DOID)
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+    }
+
+    @Test
+    fun `Should pass if ER and PR are negative and HER2 is low with data source scoreValue from prior molecular tests`() {
         val patient = TumorTestFactory.withIhcTestsAndDoids(
             listOf(
                 createIhcTest(item = "PR", scoreValue = 0.0, scoreValueUnit = "%"),
@@ -53,6 +77,20 @@ class HasTripleNegativeBreastCancerTest {
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if all breast cancer receptors are low with data source scoreValue from prior molecular tests`() {
+        val patient = TumorTestFactory.withIhcTestsAndDoids(
+            listOf(
+                createIhcTest(item = "PR", scoreValue = 2.0, scoreValueUnit = "%"),
+                createIhcTest(item = "HER2", scoreValue = 1.0, scoreValueUnit = "+"),
+                createIhcTest(item = "ER", scoreValue = 2.0, scoreValueUnit = "%")
+            ), setOf(DoidConstants.BREAST_CANCER_DOID)
+        )
+        val evaluation = function.evaluate(patient)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if IHC ER/PR low is considered triple negative breast cancer")
     }
 
     @Test

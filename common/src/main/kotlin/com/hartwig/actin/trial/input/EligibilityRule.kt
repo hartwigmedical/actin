@@ -12,7 +12,7 @@ enum class EligibilityRule(val input: List<Parameter.Type>) {
     OR(FunctionInput.NONE),
     NOT(FunctionInput.NONE),
     WARN_IF(FunctionInput.NONE),
-    
+
     // Rules related to general patient characteristics / statements
     IS_AT_LEAST_X_YEARS_OLD(FunctionInput.ONE_INTEGER),
     IS_MALE(FunctionInput.NONE),
@@ -287,7 +287,7 @@ enum class EligibilityRule(val input: List<Parameter.Type>) {
     EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y(FunctionInput.ONE_PROTEIN_ONE_INTEGER),
     PROTEIN_X_IS_WILD_TYPE_BY_IHC(FunctionInput.ONE_PROTEIN),
     EXPRESSION_OF_PROTEIN_X_BY_IHC_MUST_BE_AVAILABLE(FunctionInput.ONE_PROTEIN),
-    HER2_STATUS_IS_POSITIVE(FunctionInput.NONE),
+    HER2_IHC_STATUS_IS_X(FunctionInput.ONE_IHC_TEST_RESULT),
     PD_L1_SCORE_OF_AT_LEAST_X(FunctionInput.ONE_INTEGER),
     PD_L1_SCORE_OF_AT_MOST_X(FunctionInput.ONE_INTEGER),
     PD_L1_SCORE_CPS_OF_AT_LEAST_X(FunctionInput.ONE_INTEGER),

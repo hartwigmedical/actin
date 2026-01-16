@@ -86,4 +86,5 @@ object FunctionInput {
     val ONE_PROTEIN_ONE_STRING = listOf(Parameter.Type.PROTEIN, Parameter.Type.STRING)
     val ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES =
         listOf(Parameter.Type.TREATMENT_RESPONSE, Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+    val ONE_IHC_TEST_RESULT = listOf(Parameter.Type.IHC_TEST_RESULT)
 }

@@ -24,7 +24,7 @@ class EligibilityFactoryTest {
     @Test
     fun `Should parse composite criterion with nested treatment criteria`() {
         val criterion = "AND(IS_MALE, OR(HAS_HAD_TREATMENT_NAME_X[${TestTreatmentDatabaseFactory.CISPLATIN}]," +
-            " HAS_HAD_TREATMENT_NAME_X[${TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN}]))"
+                " HAS_HAD_TREATMENT_NAME_X[${TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN}]))"
 
         val cisplatin = requireNotNull(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
         val capox = requireNotNull(
@@ -62,7 +62,7 @@ class EligibilityFactoryTest {
     @Test
     fun `Should parse many drugs parameters from treatment database`() {
         val criterion = "${EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X.name}[" +
-            "${TestTreatmentDatabaseFactory.CISPLATIN};${TestTreatmentDatabaseFactory.PEMBROLIZUMAB}]"
+                "${TestTreatmentDatabaseFactory.CISPLATIN};${TestTreatmentDatabaseFactory.PEMBROLIZUMAB}]"
 
         val cisplatin = requireNotNull(treatmentDatabase.findDrugByName(TestTreatmentDatabaseFactory.CISPLATIN))
         val pembrolizumab = requireNotNull(treatmentDatabase.findDrugByName(TestTreatmentDatabaseFactory.PEMBROLIZUMAB))
@@ -77,7 +77,7 @@ class EligibilityFactoryTest {
     @Test
     fun `Should parse systemic treatment parameters from treatment database`() {
         val criterion = "${EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X.name}[" +
-            TestTreatmentDatabaseFactory.CISPLATIN + "]"
+                TestTreatmentDatabaseFactory.CISPLATIN + "]"
 
         val cisplatin = requireNotNull(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
         val expected = EligibilityFunction(
@@ -91,7 +91,7 @@ class EligibilityFactoryTest {
     @Test
     fun `Should parse many treatments and integer parameters`() {
         val criterion = "${EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES.name}[" +
-            "${TestTreatmentDatabaseFactory.CISPLATIN};${TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN}, 2, 6]"
+                "${TestTreatmentDatabaseFactory.CISPLATIN};${TestTreatmentDatabaseFactory.CAPECITABINE_OXALIPLATIN}, 2, 6]"
 
         val cisplatin = requireNotNull(treatmentDatabase.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
         val capox = requireNotNull(
@@ -110,7 +110,7 @@ class EligibilityFactoryTest {
     @Test
     fun `Should parse drug parameter with treatment category and types`() {
         val criterion = "${EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z.name}[" +
-            "${TestTreatmentDatabaseFactory.PEMBROLIZUMAB}, ${TreatmentCategory.CHEMOTHERAPY.name}, ${DrugType.ANTI_PD_1.name}]"
+                "${TestTreatmentDatabaseFactory.PEMBROLIZUMAB}, ${TreatmentCategory.CHEMOTHERAPY.name}, ${DrugType.ANTI_PD_1.name}]"
 
         val pembrolizumab = requireNotNull(treatmentDatabase.findDrugByName(TestTreatmentDatabaseFactory.PEMBROLIZUMAB))
 
