@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 
 class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
@@ -16,18 +17,26 @@ class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
             )
 
             who.precision == WhoStatusPrecision.AT_LEAST -> EvaluationFactory.undetermined(
-                "Undetermined if WHO status is within requested max WHO $maximumWHO (Only Minimum WHO available)"
+                "Undetermined if WHO status is within requested max WHO $maximumWHO (Only minimum WHO available)"
             )
 
             who.status <= maximumWHO -> EvaluationFactory.pass(
-                "WHO $who is below WHO $maximumWHO"
+                "WHO ${who.asText()} is below WHO $maximumWHO"
             )
 
-            who.precision == WhoStatusPrecision.EXACT && who.status - maximumWHO == 1 -> EvaluationFactory.recoverableFail(
-                "WHO $who exceeds WHO $maximumWHO"
+            who.status - maximumWHO == 1 -> EvaluationFactory.recoverableFail(
+                "WHO ${who.asText()} exceeds WHO $maximumWHO"
             )
 
-            else -> EvaluationFactory.fail("WHO $who exceeds WHO $maximumWHO")
+            else -> EvaluationFactory.fail("WHO ${who.asText()} exceeds WHO $maximumWHO")
         }
     }
 }
+
+fun WhoStatus.asText() =
+    when (precision) {
+        WhoStatusPrecision.EXACT -> "$status"
+        WhoStatusPrecision.AT_LEAST -> ">=$status"
+        WhoStatusPrecision.AT_MOST -> "<=$status"
+    }
+

@@ -31,7 +31,6 @@ class HasSevereConcomitantIllness : EvaluationFunction {
         }
     }
 
-
-    fun WhoStatus.isAtMost(value: Int) = precision == WhoStatusPrecision.AT_MOST && status <= value
-
 }
+
+fun WhoStatus.isAtMost(value: Int) = precision == WhoStatusPrecision.AT_MOST && status <= value

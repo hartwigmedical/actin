@@ -30,6 +30,14 @@ class HasMaximumWHOStatusTest {
     }
 
     @Test
+    fun `Should return recoverable fail when WHO difference is exactly one with at most range`() {
+        val evaluation = function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_MOST))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.recoverable).isTrue()
+        assertThat(evaluation.failMessages.first().toString()).isEqualTo("WHO <=3 exceeds WHO 2")
+    }
+
+    @Test
     fun `Should fail when WHO difference is greater than one`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withWHO(4)))
     }
