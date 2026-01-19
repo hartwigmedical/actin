@@ -12,15 +12,22 @@ class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : Evaluati
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val hasHadDrug = (record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications))
-            .any {
-                entry -> entry.treatments.any {
-                    treatment -> (treatment as? DrugTreatment)?.drugs?.any { it.name.equals(drug.name, ignoreCase = true) } == true
-                }
+        val hasHadDrug = (record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)).any { entry ->
+            entry.treatments.any { treatment ->
+                (treatment as? DrugTreatment)?.drugs?.any {
+                    it.name.equals(
+                        drug.name,
+                        ignoreCase = true
+                    )
+                } == true
             }
+        }
 
         return when {
-            hasHadDrug -> EvaluationFactory.undetermined("Undetermined if patient may have had a dose reduction during $drug treatment")
+            hasHadDrug -> {
+                EvaluationFactory.undetermined("Undetermined if patient may have had a dose reduction during $drug treatment")
+            }
+
             else -> EvaluationFactory.fail("Patient did not dose reduction receive $drug during treatment")
         }
     }
