@@ -33,6 +33,7 @@ object FunctionInput {
     val MANY_SPECIFIC_TREATMENTS = listOf(Parameter.Type.MANY_TREATMENTS)
     val MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS =
         listOf(Parameter.Type.MANY_TREATMENTS, Parameter.Type.INTEGER, Parameter.Type.INTEGER)
+    val ONE_SPECIFIC_DRUG = listOf(Parameter.Type.DRUG)
     val ONE_SPECIFIC_DRUG_ONE_TREATMENT_CATEGORY_MANY_TYPES =
         listOf(Parameter.Type.DRUG, Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
     val ONE_TREATMENT_CATEGORY_MANY_DRUGS = listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_DRUGS)
