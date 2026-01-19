@@ -84,6 +84,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AND_AT_LEAST_Y_CYCLES to hasHadTreatmentWithAnyDrugWithCyclesCreator(),
+            EligibilityRule.HAS_HAD_DOSE_REDUCTION_DURING_TREATMENT_WITH_DRUG_X to hasHadTreatmentWithDrugAndDoseReductionCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT to hasHadTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
@@ -424,6 +425,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val drugs = function.param<ManyDrugsParameter>(0).value
             val cycles = function.param<IntegerParameter>(1).value
             HasHadTreatmentWithDrugAndCycles(drugs, cycles)
+        }
+    }
+
+    private fun hasHadTreatmentWithDrugAndDoseReductionCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.DRUG)
+            val drug = function.param<DrugParameter>(0).value
+            HasHadTreatmentWithDrugAndDoseReduction(drug)
         }
     }
 
