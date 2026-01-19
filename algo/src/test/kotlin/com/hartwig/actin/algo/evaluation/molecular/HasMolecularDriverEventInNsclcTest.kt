@@ -293,16 +293,22 @@ class HasMolecularDriverEventInNsclcTest {
 
     @Test
     fun `Should return undetermined with target coverage message when specific molecular results are missing`() {
-        val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
-            molecularTests = listOf(
-                TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL, date = LocalDate.of(2025, 12, 1))
+        val function = createFunction(
+            genesToInclude = setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE, CORRECT_FUSION_GENE),
+            genesToExclude = emptySet()
+        )
+        val evaluation = function.evaluate(
+            TestPatientFactory.createEmptyMolecularTestPatientRecord().copy(
+                molecularTests = listOf(
+                    TestMolecularFactory.createMinimalPanelTest()
+                        .copy(experimentType = ExperimentType.PANEL, date = LocalDate.of(2025, 12, 1))
+                )
             )
         )
-        val evaluation = functionIncludingSpecificGenes.evaluate(patient)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation (EvaluationResult.UNDETERMINED, evaluation)
         evaluateMessages(
             evaluation.undeterminedMessagesStrings(),
-            setOf("Presence of NSCLC driver event(s) undetermined (BRAF and EGFR not tested)")
+            setOf("Presence of NSCLC driver event(s) undetermined (ALK not tested for fusions and BRAF and EGFR not tested for mutations)")
         )
     }
 
