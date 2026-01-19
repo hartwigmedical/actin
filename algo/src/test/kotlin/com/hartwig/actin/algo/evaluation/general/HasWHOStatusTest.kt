@@ -43,6 +43,10 @@ class HasWHOStatusTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(GeneralTestFactory.withWHO(1, WhoStatusPrecision.AT_LEAST))
         )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_LEAST))
+        )
     }
 
     @Test

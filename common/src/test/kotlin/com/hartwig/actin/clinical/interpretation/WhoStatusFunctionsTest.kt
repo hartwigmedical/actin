@@ -6,7 +6,7 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-class WhoFunctionsTest {
+class WhoStatusFunctionsTest {
 
     private val now = LocalDate.now()
 

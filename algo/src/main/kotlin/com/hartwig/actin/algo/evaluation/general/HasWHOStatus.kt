@@ -19,7 +19,7 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
             }
 
             who.precision == WhoStatusPrecision.AT_LEAST -> {
-                EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (exact WHO not available)")
+                EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (only ${who.asText()} range available)")
             }
 
             who.isExactly(requiredWHO) -> {
