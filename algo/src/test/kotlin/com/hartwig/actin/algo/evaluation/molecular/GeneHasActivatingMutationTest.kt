@@ -87,12 +87,6 @@ class GeneHasActivatingMutationTest {
     }
 
     @Test
-    fun `Should warn with activating mutation with drug resistance for gene`() {
-        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(isAssociatedWithDrugResistance = true))
-        assertResultForVariantIgnoringCodons(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(isAssociatedWithDrugResistance = true))
-    }
-
-    @Test
     fun `Should warn with activating mutation for gene with no protein effect or cancer-associated variant`() {
         assertResultForVariant(
             EvaluationResult.WARN,
@@ -264,7 +258,6 @@ class GeneHasActivatingMutationTest {
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
             isCancerAssociatedVariant = true,
-            isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(300),
             clonalLikelihood = 0.8
         )
@@ -276,7 +269,6 @@ class GeneHasActivatingMutationTest {
             geneRole = GeneRole.ONCO,
             proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
             isCancerAssociatedVariant = true,
-            isAssociatedWithDrugResistance = false,
             canonicalImpact = impactWithCodon(100),
             clonalLikelihood = 0.8
         )
