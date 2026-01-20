@@ -14,36 +14,41 @@ class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) :
         val nameToMatch = drug.name.lowercase()
 
         val matchingDrugTreatments = record.oncologicalHistory.filter { entry ->
-                entry.treatments.any { treatment ->
-                    (treatment as? DrugTreatment)?.drugs?.any { it.name.lowercase() == nameToMatch } == true
-                }
+            entry.treatments.any { treatment ->
+                (treatment as? DrugTreatment)?.drugs?.any { it.name.lowercase() == nameToMatch } == true
             }
+        }
         val matchingTreatmentsToResponseMap = matchingDrugTreatments.groupBy { it.treatmentHistoryDetails?.bestResponse }
         val (positiveResponses, otherResponses) = matchingTreatmentsToResponseMap.entries.partition {
             it.key in TreatmentResponse.BENEFIT_RESPONSES
         }.let { (withResponse, otherResponse) -> withResponse.flatMap { it.value } to otherResponse.mapNotNull { it.key } }
 
         return when {
-            matchingDrugTreatments.isEmpty() -> EvaluationFactory.fail("Patient did not receive $drug during treatment")
+            matchingDrugTreatments.isEmpty() -> EvaluationFactory.fail("Patient did not have radiological response to $drug treatment")
 
             positiveResponses.isNotEmpty() -> {
-                EvaluationFactory.pass("Patient had a positive radiological response to treatment with $drug - " +
-                        "it assumed this response was radiological")
+                EvaluationFactory.pass(
+                    "Patient had a radiological response to treatment with $drug - " +
+                            "it is assumed this response was radiological"
+                )
             }
 
             otherResponses.contains(TreatmentResponse.MIXED) -> {
-                EvaluationFactory.undetermined("Patient had a mixed radiological response to treatment with $drug - " +
-                        "it assumed this response was radiological")
+                EvaluationFactory.undetermined(
+                    "Patient had a mixed radiological response to treatment with $drug - " +
+                            "it is undetermined if this response is considered radiological"
+                )
             }
 
             otherResponses.isNotEmpty() -> {
-                EvaluationFactory.fail("Patient had a negative radiological response to treatment with $drug - " +
-                        "it assumed this response was radiological")
+                EvaluationFactory.fail(
+                    "Patient had a negative radiological response to treatment with $drug - " +
+                            "it assumed this response was radiological"
+                )
             }
 
             else -> {
-                EvaluationFactory.undetermined("No radiological response available for treatment with $drug - " +
-                        "it assumed this response was radiological")
+                EvaluationFactory.undetermined("Undetermined if patient had radiological response to $drug treatment")
             }
         }
     }
