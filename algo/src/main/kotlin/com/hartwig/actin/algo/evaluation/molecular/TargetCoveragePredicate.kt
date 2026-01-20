@@ -63,7 +63,7 @@ class TargetCoveragePredicate(
     }
 }
 
-data class TargetCoverageMessage(private val messagePrefix: String?, private val targetString: String, val genes: Set<String>) :
+data class TargetCoverageMessage(private val messagePrefix: String?, val targetString: String, val genes: Set<String>) :
     EvaluationMessage {
     override fun combineBy(): String {
         return listOf(messagePrefix, targetString).joinToString { ":" }
