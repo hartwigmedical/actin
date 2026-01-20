@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentsA
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.Test
 
 private const val MATCHING_DRUG_NAME = "match"
@@ -19,9 +18,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
 
     private val function = HasHadTreatmentWithDrugAndDoseReduction(drugWithName(MATCHING_DRUG_NAME))
 
-    fun drugWithName(drugName: String): Drug {
-        return Drug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
-    }
+    fun drugWithName(drugName: String): Drug = Drug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
 
     @Test
     fun `Should fail for empty treatment history`() {
@@ -61,6 +58,10 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
                     DrugTreatment(
                         "treatment",
                         setOf(drugWithName(MATCHING_DRUG_NAME))
+                    ),
+                    DrugTreatment(
+                        "other_treatment",
+                        setOf(drugWithName("other_drug"))
                     )
                 )
             )
