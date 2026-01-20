@@ -12,11 +12,9 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
-import com.hartwig.actin.trial.Either
 import com.hartwig.actin.trial.EligibilityFactory
 import com.hartwig.actin.trial.TrialIngestion
 import com.hartwig.actin.trial.getOrNull
-import com.hartwig.actin.trial.right
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.system.exitProcess
@@ -56,32 +54,31 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
-        val resistanceEvidenceMatcher =
-            ResistanceEvidenceMatcher.create(
-                doidModel = inputData.doidModel,
-                tumorDoids = inputData.patient.tumor.doids.orEmpty().toSet(),
-                evidences = inputData.serveRecord.evidences(),
-                treatmentDatabase = treatmentDatabase,
-                molecularTests = inputData.patient.molecularTests,
-                actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
-            )
+        val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
+            doidModel = inputData.doidModel,
+            tumorDoids = inputData.patient.tumor.doids.orEmpty().toSet(),
+            evidences = inputData.serveRecord.evidences(),
+            treatmentDatabase = treatmentDatabase,
+            molecularTests = inputData.patient.molecularTests,
+            actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
+        )
 
         val trials = inputData.trials ?: TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(
             Gson().fromJson(
                 Files.readString(config.trialConfigJson?.let { Path.of(it) }
-                    ?: error("One of trial config or trial database must be specified.")),
-                object : TypeToken<List<TrialConfig>>() {}.type
+                    ?: error("One of trial config or trial database must be specified.")), object : TypeToken<List<TrialConfig>>() {}.type
             )
-        )
-            .mapLeft { unmappableTrials ->
-                throw IllegalArgumentException(
-                    "Failed to ingest trials. Unmappable trials found: ${unmappableTrials.joinToString { it.trialId }}"
-                )
-            }
-            .getOrNull()!!
+        ).mapLeft { unmappableTrials ->
+            throw IllegalArgumentException(
+                "Failed to ingest trials. Unmappable trials found: \n" + "${
+                    unmappableTrials.map {
+                        "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.error}\n" }} " +
+                                "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.error}\n" }}" }}"
+                    }
+                }\n}")
+        }.getOrNull()!!
 
-        val treatmentMatcher =
-            TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
+        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         LOGGER.info("Printing treatment match")
