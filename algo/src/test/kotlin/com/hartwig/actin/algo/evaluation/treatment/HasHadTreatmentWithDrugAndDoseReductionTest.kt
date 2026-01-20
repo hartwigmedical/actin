@@ -17,7 +17,7 @@ private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 
 class HasHadTreatmentWithDrugAndDoseReductionTest {
 
-    private val functionWithDrug = HasHadTreatmentWithDrugAndDoseReduction(drugWithName(MATCHING_DRUG_NAME))
+    private val function = HasHadTreatmentWithDrugAndDoseReduction(drugWithName(MATCHING_DRUG_NAME))
 
     fun drugWithName(drugName: String): Drug {
         return Drug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
@@ -25,7 +25,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
 
     @Test
     fun `Should fail for empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, functionWithDrug.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
@@ -40,16 +40,16 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, functionWithDrug.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
     fun `Should fail for no matching drugs in medication`() {
-        val treatmentHistory = emptyList<TreatmentHistoryEntry>()
+        val treatmentHistory = treatmentHistoryEntry(emptyList())
         val medication = WashoutTestFactory.medication().copy(drug = drugWithName("other_drug"))
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithDrug.evaluate(withTreatmentsAndMedications(treatmentHistory, listOf(medication)))
+            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication)))
         )
     }
 
@@ -65,16 +65,16 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDrug.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
-    fun `Should be Undetermined if matching drugs in medication`() {
-        val treatmentHistory = emptyList<TreatmentHistoryEntry>()
+    fun `Should be undetermined if matching drugs in medication`() {
+        val treatmentHistory = treatmentHistoryEntry(emptyList())
         val medication = WashoutTestFactory.medication().copy(drug = drugWithName(MATCHING_DRUG_NAME))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithDrug.evaluate(withTreatmentsAndMedications(treatmentHistory, listOf(medication)))
+            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication)))
         )
     }
 }
