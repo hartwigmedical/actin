@@ -11,25 +11,32 @@ class EnvironmentConfigurationTest {
     
     @Test
     fun `Should load proper config from file`() {
-        val reportConfig = ReportConfiguration.create(properConfigFile)
-        assertThat(reportConfig.hospitalOfReference).isEqualTo("Erasmus MC")
+        val molecularConfig = MolecularConfiguration.create(properConfigFile)
+        assertThat(molecularConfig.eventPathogenicityIsConfirmed).isTrue
 
         val algoConfig = AlgoConfiguration.create(properConfigFile)
-        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isFalse()
+        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isFalse
+
+        val reportConfig = ReportConfiguration.create(properConfigFile)
+        assertThat(reportConfig.hospitalOfReference).isEqualTo("Erasmus MC")
     }
     
     @Test
     fun `Should use defaults for fields not provided in file`() {
-        val reportConfig = ReportConfiguration.create(minimalConfigFile)
-        assertThat(reportConfig.hospitalOfReference).isNull()
+        val molecularConfig = MolecularConfiguration.create(minimalConfigFile)
+        assertThat(molecularConfig.eventPathogenicityIsConfirmed).isFalse
 
         val algoConfig = AlgoConfiguration.create(minimalConfigFile)
-        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isTrue()
+        assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isTrue
+
+        val reportConfig = ReportConfiguration.create(minimalConfigFile)
+        assertThat(reportConfig.hospitalOfReference).isNull()
     }
 
     @Test
     fun `Should create default configuration when provided file is null`() {
-        assertThat(ReportConfiguration.create(null)).isEqualTo(ReportConfiguration())
+        assertThat(MolecularConfiguration.create(null)).isEqualTo(MolecularConfiguration())
         assertThat(AlgoConfiguration.create(null)).isEqualTo(AlgoConfiguration())
+        assertThat(ReportConfiguration.create(null)).isEqualTo(ReportConfiguration())
     }
 }

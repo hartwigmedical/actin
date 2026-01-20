@@ -11,6 +11,7 @@
     <modules>
         <module>common</module>
         <module>molecular</module>
+        <module>trial</module>
         <module>algo</module>
         <module>interpretation</module>
         <module>report</module>
@@ -25,7 +26,7 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
 
-        <actin-datamodel.version>1.0.1</actin-datamodel.version>
+        <actin-datamodel.version>2.1.2</actin-datamodel.version>
         <serve.version>8.6.0</serve.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.2.0</actin-transvar.version>
@@ -176,6 +177,11 @@
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>algo</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>trial</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>

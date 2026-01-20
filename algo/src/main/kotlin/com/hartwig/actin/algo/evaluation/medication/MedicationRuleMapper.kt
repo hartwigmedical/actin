@@ -5,9 +5,18 @@ import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
+import com.hartwig.actin.datamodel.trial.CypParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyDrugInteractionTypesParameter
+import com.hartwig.actin.datamodel.trial.ManyStringsParameter
+import com.hartwig.actin.datamodel.trial.MedicationCategoryParameter
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.StringParameter
+import com.hartwig.actin.datamodel.trial.TransporterParameter
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.trial.input.single.OneMedicationCategory
 
 class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -38,22 +47,25 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsActiveMedicationWithConfiguredNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneStringInput(function)
+            val termToFind = function.param<StringParameter>(0).value
             CurrentlyGetsMedicationOfName(selector, setOf(termToFind))
         }
     }
 
     private fun getsActiveMedicationWithCategoryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val categoryInput = functionInputResolver().createOneMedicationCategoryInput(function)
+            function.expectTypes(Parameter.Type.MEDICATION_CATEGORY)
+            val categoryInput = medicationCategory(function.param<MedicationCategoryParameter>(0).value)
             CurrentlyGetsMedicationOfAtcLevel(selector, categoryInput.categoryName, categoryInput.atcLevels)
         }
     }
 
     private fun hasRecentlyReceivedMedicationOfAtcLevelCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (categoryInput, integerInput) = functionInputResolver().createOneMedicationCategoryOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(integerInput.toLong())
+            function.expectTypes(Parameter.Type.MEDICATION_CATEGORY, Parameter.Type.INTEGER)
+            val categoryInput = medicationCategory(function.param<MedicationCategoryParameter>(0).value)
+            val minWeeks = function.param<IntegerParameter>(1).value
+            val maxStopDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
             HasRecentlyReceivedMedicationOfAtcLevel(selector, categoryInput.categoryName, categoryInput.atcLevels, maxStopDate)
         }
     }
@@ -64,64 +76,66 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsCypXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
+            val cyp = function.param<CypParameter>(0).value
+            CurrentlyGetsCypXInducingMedication(selector, MedicationUtil.extractCypString(cyp))
         }
     }
 
     private fun hasRecentlyReceivedCypXInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneCypOneIntegerInput(function)
-            val maxStopDate = referenceDateProvider().date().minusWeeks(input.integer.toLong())
-            HasRecentlyReceivedCypXInducingMedication(selector, MedicationUtil.extractCypString(input.cyp), maxStopDate)
+            function.expectTypes(Parameter.Type.CYP, Parameter.Type.INTEGER)
+            val cyp = function.param<CypParameter>(0).value
+            val minWeeks = function.param<IntegerParameter>(1).value
+            val maxStopDate = referenceDateProvider().date().minusWeeks(minWeeks.toLong())
+            HasRecentlyReceivedCypXInducingMedication(selector, MedicationUtil.extractCypString(cyp), maxStopDate)
         }
     }
 
     private fun getsCypXInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingMedication(selector, MedicationUtil.extractCypString(termToFind))
+            val cyp = function.param<CypParameter>(0).value
+            CurrentlyGetsCypXInhibitingMedication(selector, MedicationUtil.extractCypString(cyp))
         }
     }
 
     private fun getsCypXInhibitingOrInducingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, MedicationUtil.extractCypString(termToFind))
+            val cyp = function.param<CypParameter>(0).value
+            CurrentlyGetsCypXInhibitingOrInducingMedication(selector, MedicationUtil.extractCypString(cyp))
         }
     }
 
     private fun getsCypSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneCypInput(function)
-            CurrentlyGetsCypXSubstrateMedication(selector, MedicationUtil.extractCypString(termToFind))
+            val cyp = function.param<CypParameter>(0).value
+            CurrentlyGetsCypXSubstrateMedication(selector, MedicationUtil.extractCypString(cyp))
         }
     }
 
     private fun getsAnyCypMedicationOfTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val types = functionInputResolver().createManyDrugInteractionTypes(function)
+            val types = function.param<ManyDrugInteractionTypesParameter>(0).value
             CurrentlyGetsAnyCypMedicationOfTypes(selector, types)
         }
     }
 
     private fun getsTransporterInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
+            val termToFind = function.param<TransporterParameter>(0).value.toString()
             CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.INHIBITOR)
         }
     }
 
     private fun getsTransporterSubstrateMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val termToFind = functionInputResolver().createOneTransporterInput(function).toString()
+            val termToFind = function.param<TransporterParameter>(0).value.toString()
             CurrentlyGetsTransporterInteractingMedication(selector, termToFind, DrugInteraction.Type.SUBSTRATE)
         }
     }
 
     private fun getsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val types = functionInputResolver().createManyStringsInput(function)
+            val types = function.param<ManyStringsParameter>(0).value
             CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication(selector, types)
         }
     }
@@ -138,5 +152,18 @@ class MedicationRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun getsHerbalMedicationCreator(): FunctionCreator {
         return { CurrentlyGetsHerbalMedication(selector) }
+    }
+
+    private fun medicationCategory(categoryName: String): OneMedicationCategory {
+        throwExceptionIfAtcCategoryNotMapped(categoryName)
+        return OneMedicationCategory(categoryName, categories.resolve(categoryName))
+    }
+
+    private fun throwExceptionIfAtcCategoryNotMapped(category: String) {
+        val hasMapping = MedicationCategories.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.containsKey(category)
+                || MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.containsKey(category)
+        if (MedicationCategories.ANTI_CANCER_ATC_CODES.any { category.startsWith(it) } && !hasMapping) {
+            throw IllegalStateException("No treatment category or drug type mapping for ATC code $category")
+        }
     }
 }

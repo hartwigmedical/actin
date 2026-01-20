@@ -5,9 +5,23 @@ import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.evaluation.composite.Or
+import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.datamodel.trial.GeneParameter
+import com.hartwig.actin.datamodel.trial.HaplotypeParameter
+import com.hartwig.actin.datamodel.trial.HlaGroupParameter
+import com.hartwig.actin.datamodel.trial.IhcTestResultParameter
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.ManyCodonsParameter
+import com.hartwig.actin.datamodel.trial.ManyGenesParameter
+import com.hartwig.actin.datamodel.trial.ManyHlaAllelesParameter
+import com.hartwig.actin.datamodel.trial.ManyProteinImpactsParameter
+import com.hartwig.actin.datamodel.trial.Parameter
+import com.hartwig.actin.datamodel.trial.ProteinParameter
+import com.hartwig.actin.datamodel.trial.StringParameter
+import com.hartwig.actin.datamodel.trial.VariantTypeParameter
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.trial.input.EligibilityRule
 
 private val EGFR_PACC_PROTEIN_IMPACTS = setOf(
     "S768I",
@@ -95,7 +109,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_OF_AT_MOST_Y to proteinHasLimitedExpressionByIhcCreator(),
             EligibilityRule.PROTEIN_X_IS_WILD_TYPE_BY_IHC to proteinIsWildTypeByIhcCreator(),
             EligibilityRule.EXPRESSION_OF_PROTEIN_X_BY_IHC_MUST_BE_AVAILABLE to hasAvailableProteinExpressionCreator(),
-            EligibilityRule.HER2_STATUS_IS_POSITIVE to hasPositiveHER2ExpressionByIhcCreator(),
+            EligibilityRule.HER2_IHC_STATUS_IS_X to hasHER2ExpressionByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator("CPS"),
@@ -131,9 +145,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createManyGenesInput(function)
+            val genes = function.param<ManyGenesParameter>(0).value
             AnyGeneHasDriverEventWithApprovedTherapy(
-                input.geneNames,
+                genes,
                 doidModel(),
                 EvaluationFunctionFactory.create(resources),
             )
@@ -142,22 +156,22 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasMolecularDriverEventInNSCLCInSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), false, false)
+            val genes = function.param<ManyGenesParameter>(0).value
+            HasMolecularDriverEventInNsclc(genes, emptySet(), false, false)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInAtLeastSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNsclc(genes.geneNames, emptySet(), true, false)
+            val genes = function.param<ManyGenesParameter>(0).value
+            HasMolecularDriverEventInNsclc(genes, emptySet(), true, false)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = functionInputResolver().createManyGenesInput(function)
-            HasMolecularDriverEventInNsclc(null, genes.geneNames, false, false)
+            val genes = function.param<ManyGenesParameter>(0).value
+            HasMolecularDriverEventInNsclc(null, genes, false, false)
         }
     }
 
@@ -174,7 +188,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasMolecularEventInNSCLCWithAvailableSocAnyLineExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = setOf(functionInputResolver().createManyGenesInput(function).toString())
+            val genes = function.param<ManyGenesParameter>(0).value
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE - genes,
                 emptySet(),
@@ -197,7 +211,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasMolecularEventInNSCLCWithAvailableSocFirstLineExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = setOf(functionInputResolver().createManyGenesInput(function).toString())
+            val genes = function.param<ManyGenesParameter>(0).value
             HasMolecularDriverEventInNsclc(
                 NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE - genes,
                 emptySet(),
@@ -209,7 +223,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun geneIsActivatedOrAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val gene = functionInputResolver().createOneGeneInput(function).geneName
+            val gene = function.param<GeneParameter>(0).value
             Or(
                 listOf(
                     GeneHasActivatingMutation(gene, codonsToIgnore = null),
@@ -222,7 +236,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun geneIsInactivatedCreator(onlyDeletions: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
             GeneIsInactivated(
-                gene = functionInputResolver().createOneGeneInput(function).geneName,
+                gene = function.param<GeneParameter>(0).value,
                 onlyDeletions = onlyDeletions
             )
         }
@@ -230,254 +244,326 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun anyGeneHasActivatingMutationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = functionInputResolver().createManyGenesInput(function)
-            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null) })
+            val genes = function.param<ManyGenesParameter>(0).value
+            Or(genes.map { GeneHasActivatingMutation(it, codonsToIgnore = null) })
         }
     }
 
     private fun geneHasActivatingMutationIgnoringSomeCodonsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasActivatingMutation(input.geneName, codonsToIgnore = input.codons)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.MANY_CODONS
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val codons = function.param<ManyCodonsParameter>(1).value
+            GeneHasActivatingMutation(gene, codonsToIgnore = codons)
         }
     }
 
     private fun anyGeneHasActivatingMutationInKinaseDomainCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = functionInputResolver().createManyGenesInput(function)
-            Or(genes.geneNames.map { GeneHasActivatingMutation(it, codonsToIgnore = null, inKinaseDomain = true) })
+            val genes = function.param<ManyGenesParameter>(0).value
+            Or(genes.map { GeneHasActivatingMutation(it, codonsToIgnore = null, inKinaseDomain = true) })
         }
     }
 
     private fun geneHasVariantWithAnyProteinImpactsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneManyProteinImpactsInput(function)
-            GeneHasVariantWithProteinImpact(input.geneName, input.proteinImpacts)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.MANY_PROTEIN_IMPACTS
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val proteinImpacts = function.param<ManyProteinImpactsParameter>(1).value
+            GeneHasVariantWithProteinImpact(gene, proteinImpacts)
         }
     }
 
     private fun geneHasVariantInAnyCodonsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneManyCodonsInput(function)
-            GeneHasVariantInCodon(input.geneName, input.codons)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.MANY_CODONS
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val codons = function.param<ManyCodonsParameter>(1).value
+            GeneHasVariantInCodon(gene, codons)
         }
     }
 
     private fun geneHasVariantInExonCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (gene, exon) = functionInputResolver().createOneGeneOneIntegerInput(function)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.INTEGER
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val exon = function.param<IntegerParameter>(1).value
             GeneHasVariantInExonRangeOfType(gene, exon, exon, null)
         }
     }
 
     private fun geneHasVariantInExonRangeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (gene, minExon, maxExon) = functionInputResolver().createOneGeneTwoIntegersInput(function)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.INTEGER,
+                Parameter.Type.INTEGER
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val minExon = function.param<IntegerParameter>(1).value
+            val maxExon = function.param<IntegerParameter>(2).value
             GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null)
         }
     }
 
     private fun geneHasVariantInExonOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (gene, exon, variantType) = functionInputResolver().createOneGeneOneIntegerOneVariantTypeInput(function)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.INTEGER,
+                Parameter.Type.VARIANT_TYPE
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val exon = function.param<IntegerParameter>(1).value
+            val variantType = function.param<VariantTypeParameter>(2).value
             GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType)
         }
     }
 
     private fun geneHasUTR3LossCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneHasUTR3Loss(functionInputResolver().createOneGeneInput(function).geneName)
+            GeneHasUTR3Loss(function.param<GeneParameter>(0).value)
         }
     }
 
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsAmplified(functionInputResolver().createOneGeneInput(function).geneName, null)
+            GeneIsAmplified(function.param<GeneParameter>(0).value, null)
         }
     }
 
     private fun geneIsAmplifiedMinCopiesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneIsAmplified(input.geneName, input.integer)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.INTEGER
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val minCopies = function.param<IntegerParameter>(1).value
+            GeneIsAmplified(gene, minCopies)
         }
     }
 
     private fun geneHasSufficientCopyNumber(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasSufficientCopyNumber(input.geneName, input.integer)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.INTEGER
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val minCopies = function.param<IntegerParameter>(1).value
+            GeneHasSufficientCopyNumber(gene, minCopies)
         }
     }
 
     private fun hasFusionInGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasFusionInGene(functionInputResolver().createOneGeneInput(function).geneName)
+            HasFusionInGene(function.param<GeneParameter>(0).value)
         }
     }
 
     private fun geneIsWildTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsWildType(functionInputResolver().createOneGeneInput(function).geneName)
+            GeneIsWildType(function.param<GeneParameter>(0).value)
         }
     }
 
     private fun geneHasSpecificExonSkippingCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createOneGeneOneIntegerInput(function)
-            GeneHasSpecificExonSkipping(input.geneName, input.integer)
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.INTEGER
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val exon = function.param<IntegerParameter>(1).value
+            GeneHasSpecificExonSkipping(gene, exon)
         }
     }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minTumorMutationalBurden = functionInputResolver().createOneDoubleInput(function)
+            val minTumorMutationalBurden = function.param<DoubleParameter>(0).value
             HasSufficientTumorMutationalBurden(minTumorMutationalBurden)
         }
     }
 
     private fun hasSufficientTumorMutationalLoadCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minTumorMutationalLoad = functionInputResolver().createOneIntegerInput(function)
+            val minTumorMutationalLoad = function.param<IntegerParameter>(0).value
             HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null)
         }
     }
 
     private fun hasCertainTumorMutationalLoadCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val input = functionInputResolver().createTwoIntegersInput(function)
-            HasTumorMutationalLoadWithinRange(input.integer1, input.integer2)
+            function.expectTypes(
+                Parameter.Type.INTEGER,
+                Parameter.Type.INTEGER
+            )
+            val start = function.param<IntegerParameter>(0).value
+            val end = function.param<IntegerParameter>(1).value
+            HasTumorMutationalLoadWithinRange(start, end)
         }
     }
 
     private fun hasSpecificHLAGroupCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val hlaGroupToFind = functionInputResolver().createOneHlaGroupInput(function)
-            HasAnyHLAType(setOf(hlaGroupToFind.group), matchOnHlaGroup = true)
+            val hlaGroupToFind = function.param<HlaGroupParameter>(0).value
+            HasAnyHLAType(setOf(hlaGroupToFind), matchOnHlaGroup = true)
         }
     }
 
     private fun hasAnyHLATypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val hlaAllelesToFind = functionInputResolver().createManyHlaAllelesInput(function)
-            HasAnyHLAType(hlaAllelesToFind.alleles)
+            val hlaAllelesToFind = function.param<ManyHlaAllelesParameter>(0).value
+            HasAnyHLAType(hlaAllelesToFind)
         }
     }
 
     private fun hasUGT1A1HaplotypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val haplotypeToFind = functionInputResolver().createOneHaplotypeInput(function)
-            HasUGT1A1Haplotype(haplotypeToFind.haplotype)
+            val haplotypeToFind = function.param<HaplotypeParameter>(0).value
+            HasUGT1A1Haplotype(haplotypeToFind)
         }
     }
 
     private fun anyGeneFromSetIsOverExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = functionInputResolver().createManyGenesInput(function).geneNames
+            val genes = function.param<ManyGenesParameter>(0).value
             AnyGeneFromSetIsOverexpressed(genes)
         }
     }
 
     private fun anyGeneFromSetIsNotExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val geneSet = functionInputResolver().createManyGenesInput(function).geneNames
+            val geneSet = function.param<ManyGenesParameter>(0).value
             AnyGeneFromSetIsNotExpressed(geneSet)
         }
     }
 
     private fun genesFromSetMeetMrnaExpressionRequirementsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genes = functionInputResolver().createManyGenesInput(function).geneNames
+            val genes = function.param<ManyGenesParameter>(0).value
             GenesMeetSpecificMrnaExpressionRequirements(genes)
         }
     }
 
     private fun proteinIsLostByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsLostByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
+            ProteinIsLostByIhc(function.param<ProteinParameter>(0).value)
         }
     }
 
     private fun proteinIsExpressedByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsExpressedByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
+            ProteinIsExpressedByIhc(function.param<ProteinParameter>(0).value)
         }
     }
 
     private fun proteinHasExactExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            function.expectTypes(
+                Parameter.Type.PROTEIN,
+                Parameter.Type.INTEGER
+            )
+            val protein = function.param<ProteinParameter>(0).value
+            val expressionLevel = function.param<IntegerParameter>(1).value
             ProteinHasExactExpressionByIhc(protein, expressionLevel)
         }
     }
 
     private fun proteinHasSufficientExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            function.expectTypes(
+                Parameter.Type.PROTEIN,
+                Parameter.Type.INTEGER
+            )
+            val protein = function.param<ProteinParameter>(0).value
+            val expressionLevel = function.param<IntegerParameter>(1).value
             ProteinHasSufficientExpressionByIhc(protein, expressionLevel)
         }
     }
 
     private fun proteinIsWildTypeByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsWildTypeByIhc(functionInputResolver().createOneProteinInput(function).proteinName)
+            ProteinIsWildTypeByIhc(function.param<ProteinParameter>(0).value)
         }
     }
 
     private fun hasAvailableProteinExpressionCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasAvailableProteinExpression(functionInputResolver().createOneProteinInput(function).proteinName)
+            HasAvailableProteinExpression(function.param<ProteinParameter>(0).value)
         }
     }
 
-    private fun hasPositiveHER2ExpressionByIhcCreator(): FunctionCreator {
-        return { HasPositiveHER2ExpressionByIhc() }
+    private fun hasHER2ExpressionByIhcCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val ihcTestResult = function.param<IhcTestResultParameter>(0).value
+            HasHER2ExpressionByIhc(ihcTestResult)
+        }
     }
 
     private fun proteinHasLimitedExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, expressionLevel) = functionInputResolver().createOneProteinOneIntegerInput(function)
+            function.expectTypes(
+                Parameter.Type.PROTEIN,
+                Parameter.Type.INTEGER
+            )
+            val protein = function.param<ProteinParameter>(0).value
+            val expressionLevel = function.param<IntegerParameter>(1).value
             ProteinHasLimitedExpressionByIhc(protein, expressionLevel)
         }
     }
 
     private fun hasSufficientPDL1ByMeasureByIhcCreator(measure: String? = null): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minPDL1 = functionInputResolver().createOneIntegerInput(function)
+            val minPDL1 = function.param<IntegerParameter>(0).value
             HasSufficientPDL1ByIhc(measure, minPDL1.toDouble())
         }
     }
 
     private fun hasLimitedPDL1ByMeasureByIhcCreator(measure: String? = null): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxPDL1 = functionInputResolver().createOneIntegerInput(function)
+            val maxPDL1 = function.param<IntegerParameter>(0).value
             HasLimitedPDL1ByIhc(measure, maxPDL1.toDouble())
         }
     }
 
     private fun hasSufficientPDL1ByDoubleMeasureByIhcCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
-            val minPDL1 = functionInputResolver().createOneDoubleInput(function)
+            val minPDL1 = function.param<DoubleParameter>(0).value
             HasSufficientPDL1ByIhc(measure, minPDL1, doidModel)
         }
     }
 
     private fun hasLimitedPDL1ByDoubleMeasureByIhcCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
-            val maxPDL1 = functionInputResolver().createOneDoubleInput(function)
+            val maxPDL1 = function.param<DoubleParameter>(0).value
             HasLimitedPDL1ByIhc(measure, maxPDL1, doidModel)
         }
     }
 
     private fun molecularResultsAreKnownForGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            MolecularResultsAreKnownForGene(functionInputResolver().createOneGeneInput(function).geneName)
+            MolecularResultsAreKnownForGene(function.param<GeneParameter>(0).value)
         }
     }
 
     private fun molecularResultsAreKnownForPromoterOfGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            MolecularResultsAreKnownForPromoterOfGene(functionInputResolver().createOneGeneInput(function).geneName)
+            MolecularResultsAreKnownForPromoterOfGene(function.param<GeneParameter>(0).value)
         }
     }
 
@@ -494,29 +580,39 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasCoDeletionOfChromosomeArmsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (chromosome1, chromosome2) = functionInputResolver().createTwoStringsInput(function)
+            function.expectTypes(
+                Parameter.Type.STRING,
+                Parameter.Type.STRING
+            )
+            val chromosome1 = function.param<StringParameter>(0).value
+            val chromosome2 = function.param<StringParameter>(1).value
             HasCodeletionOfChromosomeArms(chromosome1, chromosome2)
         }
     }
 
     private fun hasProteinPolymorphismCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val (protein, polymorphism) = functionInputResolver().createOneProteinOneStringInput(function)
+            function.expectTypes(
+                Parameter.Type.PROTEIN,
+                Parameter.Type.STRING
+            )
+            val protein = function.param<ProteinParameter>(0).value
+            val polymorphism = function.param<StringParameter>(1).value
             ProteinHasPolymorphism(protein, polymorphism)
         }
     }
 
     private fun isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind.geneNames)
+            val genesToFind = function.param<ManyGenesParameter>(0).value
+            IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind)
         }
     }
 
     private fun isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val genesToFind = functionInputResolver().createManyGenesInput(function)
-            IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind.geneNames)
+            val genesToFind = function.param<ManyGenesParameter>(0).value
+            IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind)
         }
     }
 }

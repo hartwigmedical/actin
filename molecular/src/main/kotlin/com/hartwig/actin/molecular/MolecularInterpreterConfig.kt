@@ -1,5 +1,7 @@
 package com.hartwig.actin.molecular
 
+import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
+import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
@@ -23,7 +25,8 @@ data class MolecularInterpreterConfig(
     val panelSpecificationsFilePath: String?,
     val variantDecompositionFilePath: String?,
     val tempDir: String,
-    val outputDirectory: String
+    val outputDirectory: String,
+    val overridesYaml: String?
 ) {
 
     companion object {
@@ -72,6 +75,7 @@ data class MolecularInterpreterConfig(
             options.addOption(TEMP_DIR, false, "if set, path to temp dir to use for intermediate files, otherwise system temp dir is used")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
+            options.addOption(OVERRIDE_YAML_ARGUMENT, true, OVERRIDE_YAML_DESCRIPTION)
             return options
         }
 
@@ -80,6 +84,7 @@ data class MolecularInterpreterConfig(
                 Configurator.setRootLevel(Level.DEBUG)
                 LOGGER.debug("Switched root level logging to DEBUG")
             }
+
             return MolecularInterpreterConfig(
                 clinicalJson = ApplicationConfig.nonOptionalFile(cmd, CLINICAL_JSON),
                 orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
@@ -95,7 +100,8 @@ data class MolecularInterpreterConfig(
                 panelSpecificationsFilePath = ApplicationConfig.optionalFile(cmd, PANEL_SPECIFICATIONS_FILE_PATH),
                 variantDecompositionFilePath = ApplicationConfig.optionalFile(cmd, VARIANT_DECOMPOSITION_FILE_PATH),
                 tempDir = ApplicationConfig.optionalDir(cmd, TEMP_DIR) ?: System.getProperty("java.io.tmpdir"),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)
             )
         }
     }

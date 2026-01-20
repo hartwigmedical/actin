@@ -1,21 +1,12 @@
 package com.hartwig.actin.trial.input.composite
 
-import com.hartwig.actin.datamodel.trial.EligibilityRule
+import com.hartwig.actin.trial.input.EligibilityRule
 
 object CompositeRules {
 
-    val COMPOSITE_RULE_MAPPING = mapOf(
-        EligibilityRule.AND to CompositeInput.AT_LEAST_2,
-        EligibilityRule.OR to CompositeInput.AT_LEAST_2,
-        EligibilityRule.NOT to CompositeInput.EXACTLY_1,
-        EligibilityRule.WARN_IF to CompositeInput.EXACTLY_1,
-    )
+    val COMPOSITE_RULES = setOf(EligibilityRule.AND, EligibilityRule.OR, EligibilityRule.NOT, EligibilityRule.WARN_IF)
 
     fun isComposite(rule: EligibilityRule): Boolean {
-        return COMPOSITE_RULE_MAPPING.containsKey(rule)
-    }
-
-    fun inputsForCompositeRule(compositeRule: EligibilityRule): CompositeInput {
-        return (COMPOSITE_RULE_MAPPING[compositeRule])!!
+        return COMPOSITE_RULES.contains(rule)
     }
 }

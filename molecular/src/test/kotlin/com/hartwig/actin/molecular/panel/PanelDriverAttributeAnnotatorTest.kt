@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
@@ -39,9 +40,11 @@ private val NON_CANCER_ASSOCIATED_VARIANT =
 class PanelDriverAttributeAnnotatorTest {
 
     private val knownEventResolver = mockk<KnownEventResolver>()
+    private val configuration = MolecularConfiguration()
     private val panelDriverAttributeAnnotator = PanelDriverAttributeAnnotator(
         knownEventResolver,
-        DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV)
+        DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV),
+        configuration
     )
 
     @Test
@@ -86,7 +89,6 @@ class PanelDriverAttributeAnnotatorTest {
         val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
         assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
         assertThat(annotatedPanelRecord.drivers.variants.first().evidence).isEqualTo(TestClinicalEvidenceFactory.createEmpty())
-
     }
 
     @Test

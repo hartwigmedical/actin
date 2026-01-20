@@ -1,5 +1,6 @@
 package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.configuration.MolecularConfiguration
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -15,6 +16,7 @@ import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 class PanelDriverAttributeAnnotator(
     private val knownEventResolver: KnownEventResolver,
     private val dndsDatabase: DndsDatabase,
+    private val configuration: MolecularConfiguration
 ) : MolecularAnnotator<MolecularTest> {
 
     override fun annotate(input: MolecularTest): MolecularTest {
@@ -55,7 +57,7 @@ class PanelDriverAttributeAnnotator(
         val variantsByGene = variants.groupBy { it.gene }
         return variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()
-            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value)
+            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value, configuration.eventPathogenicityIsConfirmed)
             likelihood to it.value
         }.flatMap {
             it.second.map { variant ->

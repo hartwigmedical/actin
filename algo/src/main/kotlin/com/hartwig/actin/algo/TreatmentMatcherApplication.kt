@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo
 
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
@@ -8,10 +10,14 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
-import com.hartwig.actin.medication.MedicationCategories
+import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import com.hartwig.actin.trial.input.FunctionInputResolver
+import com.hartwig.actin.trial.EligibilityFactory
+import com.hartwig.actin.trial.TrialIngestion
+import com.hartwig.actin.trial.getOrNull
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -19,7 +25,6 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
@@ -33,22 +38,15 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val referenceDateProvider = ReferenceDateProviderFactory.create(inputData.patient, config.runHistorically)
         LOGGER.info("Matching patient to available trials")
 
-        // We assume we never check validity of a gene inside algo.
-        val molecularInputChecker = MolecularInputChecker.createAnyGeneValid()
+
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val functionInputResolver =
-            FunctionInputResolver(
-                inputData.doidModel, inputData.icdModel, molecularInputChecker,
-                treatmentDatabase, MedicationCategories.create(inputData.atcTree)
-            )
         val configuration = AlgoConfiguration.create(config.overridesYaml)
-        LOGGER.info(" Loaded algo config: $configuration")
+        LOGGER.info("Loaded algo config: $configuration")
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = inputData.doidModel,
             icdModel = inputData.icdModel,
-            functionInputResolver = functionInputResolver,
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,
@@ -56,18 +54,31 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 
-        val resistanceEvidenceMatcher =
-            ResistanceEvidenceMatcher.create(
-                doidModel = inputData.doidModel,
-                tumorDoids = inputData.patient.tumor.doids.orEmpty().toSet(),
-                evidences = inputData.serveRecord.evidences(),
-                treatmentDatabase = treatmentDatabase,
-                molecularTests = inputData.patient.molecularTests,
-                actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
-            )
+        val resistanceEvidenceMatcher = ResistanceEvidenceMatcher.create(
+            doidModel = inputData.doidModel,
+            tumorDoids = inputData.patient.tumor.doids.orEmpty().toSet(),
+            evidences = inputData.serveRecord.evidences(),
+            treatmentDatabase = treatmentDatabase,
+            molecularTests = inputData.patient.molecularTests,
+            actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
+        )
 
-        val treatmentMatcher =
-            TreatmentMatcher.create(resources, inputData.trials, evidenceEntries, resistanceEvidenceMatcher)
+        val trials = inputData.trials ?: TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(
+            Gson().fromJson(
+                Files.readString(config.trialConfigJson?.let { Path.of(it) }
+                    ?: error("One of trial config or trial database must be specified.")), object : TypeToken<List<TrialConfig>>() {}.type
+            )
+        ).mapLeft { unmappableTrials ->
+            throw IllegalArgumentException(
+                "Failed to ingest trials. Unmappable trials found: \n" + "${
+                    unmappableTrials.map {
+                        "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.inclusionRule}: ${e.error}\n" }} " +
+                                "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.inclusionRule} ${e.error}\n" }}" }}"
+                    }
+                }\n}")
+        }.getOrNull()!!
+
+        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         LOGGER.info("Printing treatment match")

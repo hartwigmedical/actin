@@ -63,7 +63,7 @@ class TreatmentMatchJsonTest {
                     "isPotentiallyEligible":true,
                     "evaluations":[
                         [{"references":["I-01"],
-                        "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[]}},
+                        "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[{"type":"INTEGER","value":"18"}]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
                         "passMessages":[{"message":"msg 1"},{"message":"msg 2"},{"message":"msg 3"}],"warnMessages":[],"undeterminedMessages":[],
                         "failMessages":[],"isMissingMolecularResultForEvaluation":false}]],

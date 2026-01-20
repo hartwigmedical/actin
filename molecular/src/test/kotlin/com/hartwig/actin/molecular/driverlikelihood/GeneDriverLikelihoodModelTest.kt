@@ -34,9 +34,26 @@ class GeneDriverLikelihoodModelTest {
         val result = geneDriverLikelihoodModel.evaluate(
             "BRAF",
             GeneRole.ONCO,
-            listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE))
+            listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE)),
         )
         assertThat(result).isEqualTo(0.504, Offset.offset(0.001))
+    }
+
+    @Test
+    fun `Should return driver likelihood of 1 for BRAF VUS when event pathogenicity is confirmed`() {
+        val geneDriverLikelihoodModel = GeneDriverLikelihoodModel(
+            DndsModel.create(
+                DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV),
+                tumorMutationalBurden = null
+            )
+        )
+        val result = geneDriverLikelihoodModel.evaluate(
+            "BRAF",
+            GeneRole.ONCO,
+            listOf(createVariant(VariantType.SNV, CodingEffect.MISSENSE)),
+            true
+        )
+        assertThat(result).isEqualTo(1.0)
     }
 
     @Test
@@ -53,7 +70,7 @@ class GeneDriverLikelihoodModelTest {
             listOf(
                 createVariant(VariantType.SNV, CodingEffect.MISSENSE),
                 createVariant(VariantType.SNV, CodingEffect.NONSENSE_OR_FRAMESHIFT)
-            )
+            ),
         )
         assertThat(result).isEqualTo(0.967, Offset.offset(0.001))
     }
@@ -63,7 +80,7 @@ class GeneDriverLikelihoodModelTest {
         val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.ONCO,
-            listOf(TestVariantFactory.createMinimal().copy(isCancerAssociatedVariant = true))
+            listOf(TestVariantFactory.createMinimal().copy(isCancerAssociatedVariant = true)),
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -79,7 +96,7 @@ class GeneDriverLikelihoodModelTest {
         val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.TSG,
-            listOf(biallelicVariant)
+            listOf(biallelicVariant),
         )
         assertThat(result).isEqualTo(1.0)
     }
@@ -89,7 +106,7 @@ class GeneDriverLikelihoodModelTest {
         val result = geneDriverLikelihoodModel.evaluate(
             GENE,
             GeneRole.UNKNOWN,
-            listOf(TestVariantFactory.createMinimal())
+            listOf(TestVariantFactory.createMinimal()),
         )
         assertThat(result).isNull()
     }
@@ -114,7 +131,6 @@ class GeneDriverLikelihoodModelTest {
             )
         )
     }
-
 
     @Test
     fun `Should evaluate single VUS missense in onco and tsg gene`() {
