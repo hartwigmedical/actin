@@ -26,13 +26,25 @@ class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) :
         return when {
             matchingDrugTreatments.isEmpty() -> EvaluationFactory.fail("Patient did not receive $drug during treatment")
 
-            positiveResponses.isNotEmpty() -> EvaluationFactory.pass("Patient had a positive radiological response to treatment with $drug - it assumed this response was radiological")
+            positiveResponses.isNotEmpty() -> {
+                EvaluationFactory.pass("Patient had a positive radiological response to treatment with $drug - " +
+                        "it assumed this response was radiological")
+            }
 
-            otherResponses.contains(TreatmentResponse.MIXED) -> EvaluationFactory.undetermined("Patient had a mixed radiological response to treatment with $drug - it assumed this response was radiological")
+            otherResponses.contains(TreatmentResponse.MIXED) -> {
+                EvaluationFactory.undetermined("Patient had a mixed radiological response to treatment with $drug - " +
+                        "it assumed this response was radiological")
+            }
 
-            otherResponses.isNotEmpty() -> EvaluationFactory.fail("Patient had a negative radiological response to treatment with $drug - it assumed this response was radiological")
+            otherResponses.isNotEmpty() -> {
+                EvaluationFactory.fail("Patient had a negative radiological response to treatment with $drug - " +
+                        "it assumed this response was radiological")
+            }
 
-            else -> EvaluationFactory.undetermined("No radiological response available for treatment with $drug - it assumed this response was radiological")
+            else -> {
+                EvaluationFactory.undetermined("No radiological response available for treatment with $drug - " +
+                        "it assumed this response was radiological")
+            }
         }
     }
 }
