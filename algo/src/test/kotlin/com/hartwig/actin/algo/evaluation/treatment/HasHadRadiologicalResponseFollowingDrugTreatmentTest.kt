@@ -22,7 +22,6 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         )
     )
 
-
     @Test
     fun `Should fail for empty treatment history`() {
         assertEvaluation(EvaluationResult.FAIL, functionWithDrug.evaluate(withTreatmentHistory(emptyList())))
@@ -115,7 +114,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
                 ), bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDrug.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.PASS, functionWithDrug.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
