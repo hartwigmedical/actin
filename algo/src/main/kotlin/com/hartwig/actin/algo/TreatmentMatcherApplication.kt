@@ -72,8 +72,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             throw IllegalArgumentException(
                 "Failed to ingest trials. Unmappable trials found: \n" + "${
                     unmappableTrials.map {
-                        "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.error}\n" }} " +
-                                "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.error}\n" }}" }}"
+                        "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.inclusionRule}: ${e.error}\n" }} " +
+                                "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.inclusionRule} ${e.error}\n" }}" }}"
                     }
                 }\n}")
         }.getOrNull()!!
