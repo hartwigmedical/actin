@@ -109,7 +109,7 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should fail for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
+    fun `Should warn for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
 
         Intent.curativeAdjuvantNeoadjuvantSet().forEach { intent ->
@@ -132,7 +132,7 @@ class HasExhaustedSOCTreatmentsTest {
 
             listOf(chemoradiation, chemoradiationWithOther).forEach {
                 assertEvaluation(
-                    EvaluationResult.FAIL,
+                    EvaluationResult.WARN,
                     function.evaluate(
                         TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
                             .copy(oncologicalHistory = listOf(it))
@@ -180,7 +180,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(treatment)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.failMessagesStrings())
+        assertThat(evaluation.warnMessagesStrings())
             .containsExactly("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
     }
 
@@ -190,7 +190,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(null)
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.failMessagesStrings())
+        assertThat(evaluation.warnMessagesStrings())
             .containsExactly("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
     }
 
