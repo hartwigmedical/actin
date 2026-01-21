@@ -178,13 +178,15 @@ internal object TumorTestFactory {
 
     fun withBrainLesionStatus(
         hasBrainLesions: Boolean?,
-        hasActiveBrainLesions: Boolean?,
+        hasActiveBrainLesions: Boolean? = false,
+        hasSymptomaticBrainLesions: Boolean? = false,
         hasSuspectedBrainLesions: Boolean? = false
     ): PatientRecord {
         return withTumorDetails(
             TumorDetails(
                 hasBrainLesions = hasBrainLesions,
                 hasActiveBrainLesions = hasActiveBrainLesions,
+                hasSymptomaticBrainLesions = hasSymptomaticBrainLesions,
                 hasSuspectedBrainLesions = hasSuspectedBrainLesions
             )
         )
