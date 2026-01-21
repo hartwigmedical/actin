@@ -28,7 +28,7 @@ class ImmunologyExtractionTest {
             .build()
 
         val allele2 = TestLilacFactory.builder()
-            .allele("B*01:01")
+            .allele("B*01:101")
             .tumorCopyNumber(1.3)
             .somaticMissense(0.0)
             .somaticInframeIndel(0.0)
@@ -46,7 +46,7 @@ class ImmunologyExtractionTest {
         assertThat(hlaAllele1.tumorCopyNumber).isEqualTo(1.2, Offset.offset(EPSILON))
         assertThat(hlaAllele1.hasSomaticMutations).isTrue
 
-        val hlaAllele2 = findByName(immunology.hlaAlleles, "HLA-B", "01", "01")
+        val hlaAllele2 = findByName(immunology.hlaAlleles, "HLA-B", "01", "101")
         assertThat(hlaAllele2.tumorCopyNumber).isEqualTo(1.3, Offset.offset(EPSILON))
         assertThat(hlaAllele2.hasSomaticMutations).isFalse
     }
