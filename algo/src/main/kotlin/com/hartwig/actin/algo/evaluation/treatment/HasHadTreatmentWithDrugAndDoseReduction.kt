@@ -14,12 +14,7 @@ class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : Evaluati
 
         val hasHadDrug = (record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)).any { entry ->
             entry.treatments.any { treatment ->
-                (treatment as? DrugTreatment)?.drugs?.any {
-                    it.name.equals(
-                        drug.name,
-                        ignoreCase = true
-                    )
-                } == true
+                (treatment as? DrugTreatment)?.drugs?.any { it.name.equals(drug.name, ignoreCase = true) } == true
             }
         }
 
