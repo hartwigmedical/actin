@@ -70,6 +70,27 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
     }
 
     @Test
+    fun `Should fail if matching drugs found and response is both stable and progressive disease`() {
+        val treatmentHistory = listOf(
+            treatmentHistoryEntry(
+                treatments = setOf(
+                    DrugTreatment(
+                        "treatment", setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet()))
+                    )
+                ), bestResponse = TreatmentResponse.STABLE_DISEASE
+            ),
+            treatmentHistoryEntry(
+                treatments = setOf(
+                    DrugTreatment(
+                        "treatment", setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet()))
+                    )
+                ), bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
+            )
+        )
+        assertEvaluation(EvaluationResult.FAIL, functionWithDrug.evaluate(withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
     fun `Should be undetermined if matching drugs found and response is mixed`() {
         val treatmentHistory = listOf(
             treatmentHistoryEntry(
