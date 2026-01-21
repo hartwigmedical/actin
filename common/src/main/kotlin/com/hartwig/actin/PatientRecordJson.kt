@@ -1,18 +1,10 @@
 package com.hartwig.actin
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.hartwig.actin.clinical.serialization.ComorbidityAdapter
+import com.hartwig.actin.clinical.serialization.ClinicalRecordJsonMapper
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.clinical.Comorbidity
-import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.util.json.GsonLocalDateAdapter
-import com.hartwig.actin.util.json.GsonSerializer
-import com.hartwig.actin.util.json.TreatmentAdapter
-import org.apache.logging.log4j.LogManager
 import java.nio.file.Files
 import java.nio.file.Path
-import java.time.LocalDate
+import org.apache.logging.log4j.LogManager
 
 object PatientRecordJson {
     private val logger = LogManager.getLogger(PatientRecordJson::class.java)
@@ -39,19 +31,11 @@ object PatientRecordJson {
     }
 
     fun toJson(patientRecord: PatientRecord): String {
-        return gson().toJson(patientRecord)
+        return ClinicalRecordJsonMapper.create().toJson(patientRecord)
     }
 
     fun fromJson(json: String): PatientRecord {
-        return gson().fromJson(json, PatientRecord::class.java)
+        return ClinicalRecordJsonMapper.create().fromJson(json, PatientRecord::class.java)
     }
 
-    private fun gson(): Gson {
-        val gsonBuilder = GsonSerializer.createBuilder()
-        return gsonBuilder
-            .registerTypeAdapter(object : TypeToken<LocalDate?>() {}.type, GsonLocalDateAdapter())
-            .registerTypeAdapter(Treatment::class.java, TreatmentAdapter(gsonBuilder.create()))
-            .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
-            .create()
-    }
 }

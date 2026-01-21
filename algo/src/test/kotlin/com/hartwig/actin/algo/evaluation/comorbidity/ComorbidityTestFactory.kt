@@ -11,6 +11,7 @@ import com.hartwig.actin.datamodel.clinical.PerformanceStatus
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.datamodel.clinical.WhoStatus
+import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import java.time.LocalDate
 
 internal object ComorbidityTestFactory {
@@ -90,10 +91,10 @@ internal object ComorbidityTestFactory {
         return base.copy(medications = medications)
     }
 
-    fun withWHO(who: Int?): PatientRecord {
+    fun withWHO(who: Int?, precision: WhoStatusPrecision = WhoStatusPrecision.EXACT): PatientRecord {
         return base.copy(
             performanceStatus = PerformanceStatus(
-                whoStatuses = who?.let { listOf(WhoStatus(LocalDate.now(), it)) } ?: emptyList(),
+                whoStatuses = who?.let { listOf(WhoStatus(LocalDate.now(), it, precision)) } ?: emptyList(),
                 emptyList()
             )
         )
