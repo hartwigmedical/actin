@@ -736,14 +736,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasHadRadiologicalResponseFollowingDrugTreatmentCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            function.expectTypes(
-                Parameter.Type.DRUG
-            )
+        return { function: EligibilityFunction -> function.expectTypes(Parameter.Type.DRUG)
             val drug = function.param<DrugParameter>(0).value
-            HasHadRadiologicalResponseFollowingDrugTreatment(
-                drug = drug
-            )
+            HasHadRadiologicalResponseFollowingDrugTreatment(drug = drug)
         }
     }
 
