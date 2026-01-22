@@ -76,7 +76,7 @@ class IsEligibleForOnLabelTreatment(
             }
 
             else -> {
-                EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label $treatmentDisplay")
+                EvaluationFactory.recoverableUndetermined("Undetermined if patient is eligible for on-label $treatmentDisplay")
             }
         }
     }

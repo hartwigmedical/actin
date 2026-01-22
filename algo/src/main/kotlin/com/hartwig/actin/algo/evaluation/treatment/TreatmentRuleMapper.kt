@@ -77,6 +77,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_FOR_AT_MOST_Y_WEEKS to hasHadLimitedWeeksOfSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_DOSE_REDUCTION_DURING_TREATMENT_NAME_X to hasHadSpecificTreatmentAndDoseReductionCreator(),
+            EligibilityRule.HAS_HAD_DOSE_REDUCTION_DURING_TREATMENT_WITH_DRUG_X to hasHadTreatmentWithDrugAndDoseReductionCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X to hasHadFirstLineSystemicTreatmentNameCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
@@ -134,6 +135,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 )
             },
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
+            EligibilityRule.HAS_HAD_RADIOLOGICAL_RESPONSE_TO_TREATMENT_WITH_DRUG_X to hasHadRadiologicalResponseFollowingDrugTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadClinicalBenefitFollowingTreatmentOfCategoryAndTypesCreator(),
@@ -424,6 +426,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val drugs = function.param<ManyDrugsParameter>(0).value
             val cycles = function.param<IntegerParameter>(1).value
             HasHadTreatmentWithDrugAndCycles(drugs, cycles)
+        }
+    }
+
+    private fun hasHadTreatmentWithDrugAndDoseReductionCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.DRUG)
+            val drug = function.param<DrugParameter>(0).value
+            HasHadTreatmentWithDrugAndDoseReduction(drug)
         }
     }
 
@@ -731,6 +741,13 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 category = category,
                 types = types
             )
+        }
+    }
+
+    private fun hasHadRadiologicalResponseFollowingDrugTreatmentCreator(): FunctionCreator {
+        return { function: EligibilityFunction -> function.expectTypes(Parameter.Type.DRUG)
+            val drug = function.param<DrugParameter>(0).value
+            HasHadRadiologicalResponseFollowingDrugTreatment(drug = drug)
         }
     }
 

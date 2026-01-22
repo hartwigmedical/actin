@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
 
@@ -63,7 +64,7 @@ class HasMolecularDriverEventInNsclc(
             result = if (mustWarn) EvaluationResult.WARN else evaluation.result,
             passMessages = writePassMessage(evaluation.passMessagesStrings(), mustWarn, message),
             warnMessages = writeWarnMessage(evaluation.passMessagesStrings(), evaluation.warnMessagesStrings(), mustWarn, message),
-            undeterminedMessages = writeUndeterminedMessage(evaluation.undeterminedMessagesStrings()),
+            undeterminedMessages = writeUndeterminedMessage(evaluation.undeterminedMessages),
             failMessages = writeFailMessage(evaluation.failMessagesStrings()),
             inclusionMolecularEvents = emptySet(),
             exclusionMolecularEvents = emptySet(),
@@ -85,18 +86,21 @@ class HasMolecularDriverEventInNsclc(
         }
     }
 
-    private fun writeUndeterminedMessage(undeterminedInput: Set<String>): Set<StaticMessage> {
-        val undeterminedGenes = undeterminedInput.filter { it.contains(UNDETERMINED_NOT_TESTED_STRING) }
-            .flatMap { msg -> ALL_GENES.filter { gene -> msg.contains(gene, ignoreCase = true) } }
-            .toSet()
+    private fun writeUndeterminedMessage(undeterminedInput: Set<EvaluationMessage>): Set<StaticMessage> {
+        val notTestedMessages = undeterminedInput.filterIsInstance<TargetCoverageMessage>()
 
         return when {
-            undeterminedInput.any { it in setOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE) } -> {
+            undeterminedInput.any { it.toString() in setOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE) } -> {
                 setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (molecular data missing)"))
             }
 
-            undeterminedGenes.isNotEmpty() -> {
-                setOf(StaticMessage("Presence of NSCLC driver event(s) undetermined (${Format.concat(undeterminedGenes)} not tested)"))
+            notTestedMessages.isNotEmpty() -> {
+                val grouped = notTestedMessages.groupBy { it.targetString }
+                val geneAndTargetDetails = grouped.map { (target, messages) ->
+                    val genes = messages.flatMap { it.genes }.toSet()
+                    "${Format.concat(genes)} not tested for $target"
+                }.toSet()
+                setOf(StaticMessage("Presence of NSCLC driver event(s) undetermined (${Format.concat(geneAndTargetDetails)})"))
             }
 
             else -> emptySet()

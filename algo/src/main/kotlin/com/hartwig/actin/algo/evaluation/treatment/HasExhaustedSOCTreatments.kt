@@ -25,6 +25,7 @@ class HasExhaustedSOCTreatments(
                     remainingNonOptionalTreatments.isEmpty() -> {
                         EvaluationFactory.pass("Has exhausted SOC")
                     }
+
                     treatmentEvaluation.isMissingMolecularResultForEvaluation() -> {
                         EvaluationFactory.warn(
                             "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) " +
@@ -32,6 +33,7 @@ class HasExhaustedSOCTreatments(
                             isMissingMolecularResultForEvaluation = true
                         )
                     }
+
                     else -> {
                         EvaluationFactory.fail(
                             "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
@@ -60,7 +62,7 @@ class HasExhaustedSOCTreatments(
                         EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in history)")
                     }
 
-                    else -> EvaluationFactory.fail("Has not exhausted SOC (has not received platinum doublet in metastatic setting)")
+                    else -> EvaluationFactory.warn("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
                 }
             }
 
