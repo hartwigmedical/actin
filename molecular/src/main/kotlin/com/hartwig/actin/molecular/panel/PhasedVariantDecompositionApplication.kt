@@ -132,7 +132,7 @@ private fun createOptions(): Options {
     options.addOption(GENE, true, "Gene symbol for the variant(s)")
     options.addOption(TRANSCRIPT, true, "Transcript for the variant(s)")
     options.addOption(ORIGINAL_CODING_HGVS, true, "Original HGVS coding impact")
-    options.addOption(DECOMPOSED_CODING_HGVS, true, "Decomposed HGVS coding impact (can be specified multiple times)")
+    options.addOption(DECOMPOSED_CODING_HGVS, true, "Decomposed HGVS coding impacts (comma-separated)")
     options.addOption(REF_GENOME_VERSION, true, "Reference genome version (V37 or V38)")
     options.addOption(REF_GENOME_FASTA_PATH, true, "Path to reference genome fasta file")
     options.addOption(ENSEMBL_CACHE_PATH, true, "Path to ensembl data cache directory")
@@ -142,9 +142,12 @@ private fun createOptions(): Options {
 }
 
 private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
-    val decomposedVariants = cmd.getOptionValues(DECOMPOSED_CODING_HGVS)?.toList() ?: emptyList()
+    val decomposedVariants = ApplicationConfig.nonOptionalValue(cmd, DECOMPOSED_CODING_HGVS)
+        .split(",")
+        .map(String::trim)
+        .filter { it.isNotEmpty() }
     if (decomposedVariants.isEmpty()) {
-        throw IllegalArgumentException("At least one --$DECOMPOSED_CODING_HGVS must be provided")
+        throw IllegalArgumentException("At least one entry must be provided in --$DECOMPOSED_CODING_HGVS")
     }
 
     val refGenomeVersion = toRefGenomeVersion(ApplicationConfig.nonOptionalValue(cmd, REF_GENOME_VERSION))
