@@ -29,7 +29,7 @@ data class TestPanelVariantAnnotatorConfig(
     val tempDir: String,
 )
 
-class TestPanelVariantAnnotatorApplication(private val config: TestPanelVariantAnnotatorConfig) {
+class PhasedVariantDecompositionApplication(private val config: TestPanelVariantAnnotatorConfig) {
 
     fun run() {
         val ensemblDataCache = EnsemblDataLoader.load(
@@ -162,8 +162,8 @@ private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
     )
 }
 
-private val LOGGER: Logger = LogManager.getLogger(TestPanelVariantAnnotatorApplication::class.java)
-private const val APPLICATION = "Test Panel Variant Annotator"
+private val LOGGER: Logger = LogManager.getLogger(PhasedVariantDecompositionApplication::class.java)
+private const val APPLICATION = "Phased Variant Decomposition"
 
 fun main(args: Array<String>) {
     val options: Options = createOptions()
@@ -176,5 +176,5 @@ fun main(args: Array<String>) {
         exitProcess(1)
     }
 
-    TestPanelVariantAnnotatorApplication(config).run()
+    PhasedVariantDecompositionApplication(config).run()
 }
