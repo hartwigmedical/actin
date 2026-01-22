@@ -114,6 +114,69 @@ class VariantFactoryTest {
     }
 
     @Test
+    fun `Should null affected codon for three prime UTR when coding effect is none`() {
+        val utrAnnotation = PAVE_ANNOTATION.copy(
+            impact = PAVE_ANNOTATION.impact.copy(
+                canonicalEffects = listOf(PaveVariantEffect.THREE_PRIME_UTR),
+                canonicalCodingEffect = PaveCodingEffect.NONE,
+                hgvsProteinImpact = ""
+            ),
+            transcriptImpacts = listOf(
+                PAVE_ANNOTATION.transcriptImpacts.first().copy(
+                    effects = listOf(PaveVariantEffect.THREE_PRIME_UTR),
+                    hgvsProteinImpact = "",
+                    codon = 417
+                )
+            )
+        )
+
+        val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, utrAnnotation)
+        assertThat(annotated.canonicalImpact.affectedCodon).isNull()
+        assertThat(annotated.canonicalImpact.affectedExon).isEqualTo(EXON)
+    }
+
+    @Test
+    fun `Should null affected codon for five prime UTR when coding effect is none`() {
+        val utrAnnotation = PAVE_ANNOTATION.copy(
+            impact = PAVE_ANNOTATION.impact.copy(
+                canonicalEffects = listOf(PaveVariantEffect.FIVE_PRIME_UTR),
+                canonicalCodingEffect = PaveCodingEffect.NONE,
+                hgvsProteinImpact = ""
+            ),
+            transcriptImpacts = listOf(
+                PAVE_ANNOTATION.transcriptImpacts.first().copy(
+                    effects = listOf(PaveVariantEffect.FIVE_PRIME_UTR),
+                    hgvsProteinImpact = "",
+                    codon = 99
+                )
+            )
+        )
+
+        val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, utrAnnotation)
+        assertThat(annotated.canonicalImpact.affectedCodon).isNull()
+        assertThat(annotated.canonicalImpact.affectedExon).isEqualTo(EXON)
+    }
+
+    @Test
+    fun `Should null affected codon for intronic when coding effect is none`() {
+        val intronicAnnotation = PAVE_ANNOTATION.copy(
+            impact = PAVE_ANNOTATION.impact.copy(
+                canonicalEffects = listOf(PaveVariantEffect.INTRONIC),
+                canonicalCodingEffect = PaveCodingEffect.NONE
+            ),
+            transcriptImpacts = listOf(
+                PAVE_ANNOTATION.transcriptImpacts.first().copy(
+                    effects = listOf(PaveVariantEffect.INTRONIC),
+                    codon = 7
+                )
+            )
+        )
+
+        val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, intronicAnnotation)
+        assertThat(annotated.canonicalImpact.affectedCodon).isNull()
+    }
+
+    @Test
     fun `Should propagate confirmed exon skipping flag`() {
         val annotated =
             VariantFactory.createVariant(ARCHER_VARIANT.copy(exonSkippingIsConfirmed = true), TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
