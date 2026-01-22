@@ -10,11 +10,7 @@ import com.hartwig.actin.molecular.paver.PaveImpact
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
-import com.hartwig.actin.tools.pave.ImmutableVariantTranscriptImpact
-import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.variant.ImmutableVariant
-import io.mockk.every
-import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
@@ -34,9 +30,6 @@ private val ARCHER_VARIANT = SequencedVariant(gene = GENE, hgvsCodingImpact = HG
 
 private val TRANSCRIPT_ANNOTATION =
     ImmutableVariant.builder().alt(ALT).ref(REF).chromosome(CHROMOSOME).position(POSITION).build()
-
-private val PAVE_LITE_ANNOTATION =
-    ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(1).build()
 
 private val PAVE_ANNOTATION = PaveResponse(
     id = "0",
@@ -69,12 +62,6 @@ private val PAVE_ANNOTATION = PaveResponse(
 )
 
 class VariantFactoryTest {
-
-    private val paveLite = mockk<PaveLite> {
-        every { run(any(), any(), POSITION) } returns PAVE_LITE_ANNOTATION
-    }
-
-
     @Test
     fun `Should annotate variants with transcript, genetic variation and genomic position`() {
         val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
@@ -105,9 +92,6 @@ class VariantFactoryTest {
 
     @Test
     fun `Should annotate variants with affected exon and codon`() {
-        every { paveLite.run(GENE, TRANSCRIPT, POSITION) } returns
-                ImmutableVariantTranscriptImpact.builder().affectedExon(1).affectedCodon(2).build()
-
         val annotated = VariantFactory.createVariant(ARCHER_VARIANT, TRANSCRIPT_ANNOTATION, PAVE_ANNOTATION)
         assertThat(annotated.canonicalImpact.affectedExon).isEqualTo(1)
         assertThat(annotated.canonicalImpact.affectedCodon).isEqualTo(2)
@@ -196,10 +180,8 @@ class VariantFactoryTest {
     }
 
     @Test
-    fun `Should annotate valid other transcripts with paveLite`() {
+    fun `Should annotate valid other transcripts`() {
         val complexPaveAnnotation = PAVE_ANNOTATION.copy(transcriptImpacts = listOf(paveTranscriptImpact()))
-
-        every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
 
         val transcriptImpact = VariantFactory.otherImpacts(complexPaveAnnotation)
         assertThat(transcriptImpact).containsExactly(transcriptVariantImpact(emptySet(), CodingEffect.NONE))
@@ -225,8 +207,6 @@ class VariantFactoryTest {
                 )
             )
         )
-
-        every { paveLite.run(GENE, OTHER_TRANSCRIPT, POSITION) } returns PAVE_LITE_ANNOTATION
 
         val transcriptImpact = VariantFactory.otherImpacts(complexPaveAnnotation)
         assertThat(transcriptImpact).containsExactly(
