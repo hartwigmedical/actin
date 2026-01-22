@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 
@@ -24,7 +25,8 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
     private fun drugTreatmentHistoryEntry(drugName: String, bestResponse: TreatmentResponse? = null): TreatmentHistoryEntry =
         treatmentHistoryEntry(
             treatments = setOf(DrugTreatment("treatment", setOf(drug(drugName)))),
-            bestResponse = bestResponse)
+            bestResponse = bestResponse
+        )
 
     @Test
     fun `Should fail for empty treatment history`() {
@@ -46,14 +48,24 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
     @Test
     fun `Should fail if matching drugs found and response is stable disease`() {
         val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.STABLE_DISEASE))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        val evaluation = function.evaluate(withTreatmentHistory(treatmentHistory))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Patient had a stable disease response to match treatment - which is not considered a radiological response to match"
+        )
     }
 
     @Test
     fun `Should fail if matching drugs found and response is both stable and progressive disease`() {
-        val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.STABLE_DISEASE),
-            drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.PROGRESSIVE_DISEASE))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        val treatmentHistory = listOf(
+            drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.STABLE_DISEASE),
+            drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.PROGRESSIVE_DISEASE)
+        )
+        val evaluation = function.evaluate(withTreatmentHistory(treatmentHistory))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Patient had a stable disease and a progressive disease response to match treatment - which is not considered a radiological response to match"
+        )
     }
 
     @Test
@@ -70,8 +82,10 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
 
     @Test
     fun `Should pass if treatments of matching drugs found and both positive and negative response available`() {
-        val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.COMPLETE_RESPONSE),
-            drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.PROGRESSIVE_DISEASE))
+        val treatmentHistory = listOf(
+            drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.COMPLETE_RESPONSE),
+            drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.PROGRESSIVE_DISEASE)
+        )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
