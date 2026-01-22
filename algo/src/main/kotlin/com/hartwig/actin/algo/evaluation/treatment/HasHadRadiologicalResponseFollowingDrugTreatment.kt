@@ -35,20 +35,13 @@ class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) :
             otherResponses.contains(TreatmentResponse.MIXED) -> {
                 EvaluationFactory.undetermined(
                     "Patient had a mixed response to treatment with ${drug.name} - " +
-                            "it is undetermined if this response is considered radiological"
+                            "it is undetermined if this response is considered a radiological response"
                 )
             }
 
-            otherResponses.size == 1 -> {
+            otherResponses.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Patient had ${otherResponses[0].display()} response to ${drug.name} treatment - " +
-                            "which is not considered a radiological response to ${drug.name}"
-                )
-            }
-
-            otherResponses.size > 1 -> {
-                EvaluationFactory.fail(
-                    "Patient had ${otherResponses.joinToString { it.display() }} responses to ${drug.name} treatment - " +
+                    "Patient had a ${otherResponses.joinToString(separator = " and a ") { it.display() }} response to ${drug.name} treatment - " +
                             "which is not considered a radiological response to ${drug.name}"
                 )
             }
