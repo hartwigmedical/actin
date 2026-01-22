@@ -119,8 +119,8 @@ private fun toRefGenomeVersion(refGenomeVersion: String): RefGenomeVersion {
 
 private const val GENE = "gene"
 private const val TRANSCRIPT = "transcript"
-private const val ORIGINAL_VARIANT = "original_variant"
-private const val DECOMPOSED_VARIANT = "decomposed_variant"
+private const val ORIGINAL_CODING_HGVS = "original_coding_hgvs"
+private const val DECOMPOSED_CODING_HGVS = "decomposed_coding_hgvs"
 private const val REF_GENOME_VERSION = "ref_genome_version"
 private const val REF_GENOME_FASTA_PATH = "ref_genome_fasta_file"
 private const val ENSEMBL_CACHE_PATH = "ensembl_data_dir"
@@ -131,8 +131,8 @@ private fun createOptions(): Options {
     val options = Options()
     options.addOption(GENE, true, "Gene symbol for the variant(s)")
     options.addOption(TRANSCRIPT, true, "Transcript for the variant(s)")
-    options.addOption(ORIGINAL_VARIANT, true, "Original variant HGVS coding impact")
-    options.addOption(DECOMPOSED_VARIANT, true, "Decomposed variant HGVS coding impact (can be specified multiple times)")
+    options.addOption(ORIGINAL_CODING_HGVS, true, "Original HGVS coding impact")
+    options.addOption(DECOMPOSED_CODING_HGVS, true, "Decomposed HGVS coding impact (can be specified multiple times)")
     options.addOption(REF_GENOME_VERSION, true, "Reference genome version (V37 or V38)")
     options.addOption(REF_GENOME_FASTA_PATH, true, "Path to reference genome fasta file")
     options.addOption(ENSEMBL_CACHE_PATH, true, "Path to ensembl data cache directory")
@@ -142,9 +142,9 @@ private fun createOptions(): Options {
 }
 
 private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
-    val decomposedVariants = cmd.getOptionValues(DECOMPOSED_VARIANT)?.toList() ?: emptyList()
+    val decomposedVariants = cmd.getOptionValues(DECOMPOSED_CODING_HGVS)?.toList() ?: emptyList()
     if (decomposedVariants.isEmpty()) {
-        throw IllegalArgumentException("At least one --$DECOMPOSED_VARIANT must be provided")
+        throw IllegalArgumentException("At least one --$DECOMPOSED_CODING_HGVS must be provided")
     }
 
     val refGenomeVersion = toRefGenomeVersion(ApplicationConfig.nonOptionalValue(cmd, REF_GENOME_VERSION))
@@ -152,7 +152,7 @@ private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
     return TestPanelVariantAnnotatorConfig(
         gene = ApplicationConfig.nonOptionalValue(cmd, GENE),
         transcript = ApplicationConfig.optionalValue(cmd, TRANSCRIPT),
-        originalVariant = ApplicationConfig.nonOptionalValue(cmd, ORIGINAL_VARIANT),
+        originalVariant = ApplicationConfig.nonOptionalValue(cmd, ORIGINAL_CODING_HGVS),
         decomposedVariants = decomposedVariants,
         refGenomeVersion = refGenomeVersion,
         referenceGenomeFastaPath = ApplicationConfig.nonOptionalFile(cmd, REF_GENOME_FASTA_PATH),
