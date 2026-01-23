@@ -22,7 +22,7 @@ class EligibilityFunctionDeserializerTest {
         val function = EligibilityFunction(
             rule = EligibilityRule.NOT.name, parameters = listOf(
                 FunctionParameter(
-                    EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
+                    EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
                 )
             )
         )

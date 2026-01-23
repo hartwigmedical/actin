@@ -101,7 +101,7 @@ object TestTreatmentMatchFactory {
                 treatmentCandidate = TreatmentCandidate(
                     TreatmentTestFactory.treatment("Pembrolizumab", true),
                     true,
-                    setOf(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES.name, parameters = emptyList()))
+                    setOf(EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_CNS_METASTASES.name, parameters = emptyList()))
                 ),
                 evaluations = listOf(
                     Evaluation(
@@ -139,7 +139,7 @@ object TestTreatmentMatchFactory {
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT.name, parameters = listOf(
                         FunctionParameter(
-                            EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
+                            EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
                         )
                     )
                 )
@@ -216,7 +216,7 @@ object TestTreatmentMatchFactory {
                 function = EligibilityFunction(
                     rule = EligibilityRule.NOT.name,
                     parameters = listOf(
-                        FunctionParameter(EligibilityFunction(rule = EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES.name))
+                        FunctionParameter(EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_CNS_METASTASES.name))
                     ),
                 )
             ) to unrecoverable(EvaluationResult.FAIL, "Has active CNS metastases", null)
