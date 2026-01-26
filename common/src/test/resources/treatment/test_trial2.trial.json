@@ -40,7 +40,7 @@
             "rule": "NOT",
             "parameters": [
               {
-                "rule": "HAS_KNOWN_ACTIVE_CNS_METASTASES",
+                "rule": "HAS_ACTIVE_CNS_METASTASES",
                 "parameters": []
               }
             ]

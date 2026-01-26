@@ -84,7 +84,7 @@ class TrialJsonTest {
         val functionA = findBaseFunction(cohortA.eligibility, EligibilityRule.NOT)
         assertThat(functionA.parameters).hasSize(1)
 
-        val subFunctionA = findSubFunction(functionA.parameters, EligibilityRule.HAS_KNOWN_ACTIVE_CNS_METASTASES)
+        val subFunctionA = findSubFunction(functionA.parameters, EligibilityRule.HAS_ACTIVE_CNS_METASTASES)
         assertThat(subFunctionA.parameters).isEmpty()
 
         val cohortB = findCohort(trial.cohorts, "B")

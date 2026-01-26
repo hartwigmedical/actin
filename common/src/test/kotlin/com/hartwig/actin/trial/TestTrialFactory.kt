@@ -66,7 +66,7 @@ object TestTrialFactory {
                         function = EligibilityFunction(
                             rule = "NOT",
                             parameters = listOf(
-                                FunctionParameter(EligibilityFunction(rule = "HAS_KNOWN_ACTIVE_CNS_METASTASES", parameters = emptyList()))
+                                FunctionParameter(EligibilityFunction(rule = "HAS_ACTIVE_CNS_METASTASES", parameters = emptyList()))
                             )
                         )
                     )
