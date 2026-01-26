@@ -63,7 +63,10 @@ class PaverTest {
                     effects = listOf(PaveVariantEffect.MISSENSE),
                     spliceRegion = false,
                     hgvsCodingImpact = "c.6A>C",
-                    hgvsProteinImpact = "p.Lys2Asn")
+                    hgvsProteinImpact = "p.Lys2Asn",
+                    refSeqId = "",
+                    exon = 1,
+                    codon = 2)
                 )
             )
         )
@@ -91,7 +94,10 @@ class PaverTest {
                     effects = listOf(PaveVariantEffect.SPLICE_DONOR, PaveVariantEffect.SYNONYMOUS),
                     spliceRegion = true,
                     hgvsCodingImpact = "c.18A>G",
-                    hgvsProteinImpact = "p.?")
+                    hgvsProteinImpact = "p.?",
+                    refSeqId = "",
+                    exon = 1,
+                    codon = 6)
                 )
             )
         )
@@ -144,7 +150,7 @@ class PaverTest {
     @Test
     fun `Should parse PAVE Transcript Impact field`() {
         val parsed = parsePaveTranscriptImpact(listOf(
-            "gene_id|gene_name|transcript|frameshift_variant&stop_gained|false|c.coding|p.protein",
+            "gene_id|gene_name|transcript|frameshift_variant&stop_gained|false|c.coding|p.protein|refseq_transcript|1|1",
         ))
 
         assertThat(parsed).isEqualTo(listOf(
@@ -155,7 +161,10 @@ class PaverTest {
                 effects = listOf(PaveVariantEffect.FRAMESHIFT, PaveVariantEffect.STOP_GAINED),
                 spliceRegion = false,
                 hgvsCodingImpact = "c.coding",
-                hgvsProteinImpact = "p.protein"
+                hgvsProteinImpact = "p.protein",
+                refSeqId = "refseq_transcript",
+                exon = 1,
+                codon = 1,
             )
         ))
     }

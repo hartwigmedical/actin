@@ -23,6 +23,7 @@ data class MolecularInterpreterConfig(
     val driverGenePanelPath: String,
     val knownFusionsPath: String,
     val panelSpecificationsFilePath: String?,
+    val variantDecompositionFilePath: String?,
     val tempDir: String,
     val outputDirectory: String,
     val overridesYaml: String?
@@ -43,6 +44,7 @@ data class MolecularInterpreterConfig(
         private const val DRIVER_GENE_PANEL_PATH = "driver_gene_panel"
         private const val KNOWN_FUSIONS_PATH = "known_fusions_file"
         private const val PANEL_SPECIFICATIONS_FILE_PATH = "panel_specifications_file"
+        private const val VARIANT_DECOMPOSITION_FILE_PATH = "variant_decomposition_file"
         private const val TEMP_DIR: String = "temp"
         private const val OUTPUT_DIRECTORY: String = "output_directory"
         private const val LOG_DEBUG: String = "log_debug"
@@ -64,6 +66,11 @@ data class MolecularInterpreterConfig(
                 PANEL_SPECIFICATIONS_FILE_PATH,
                 true,
                 "Path to TSV file containing panel gene and genomic alteration coverage specifications"
+            )
+            options.addOption(
+                VARIANT_DECOMPOSITION_FILE_PATH,
+                true,
+                "Optional path to TSV file containing curated phased variant decompositions"
             )
             options.addOption(TEMP_DIR, false, "if set, path to temp dir to use for intermediate files, otherwise system temp dir is used")
             options.addOption(OUTPUT_DIRECTORY, true, "Directory where molecular data output will be written to")
@@ -91,6 +98,7 @@ data class MolecularInterpreterConfig(
                 driverGenePanelPath = ApplicationConfig.nonOptionalFile(cmd, DRIVER_GENE_PANEL_PATH),
                 knownFusionsPath = ApplicationConfig.nonOptionalFile(cmd, KNOWN_FUSIONS_PATH),
                 panelSpecificationsFilePath = ApplicationConfig.optionalFile(cmd, PANEL_SPECIFICATIONS_FILE_PATH),
+                variantDecompositionFilePath = ApplicationConfig.optionalFile(cmd, VARIANT_DECOMPOSITION_FILE_PATH),
                 tempDir = ApplicationConfig.optionalDir(cmd, TEMP_DIR) ?: System.getProperty("java.io.tmpdir"),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 overridesYaml = ApplicationConfig.optionalFile(cmd, OVERRIDE_YAML_ARGUMENT)

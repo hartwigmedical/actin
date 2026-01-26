@@ -28,13 +28,11 @@ import com.hartwig.actin.molecular.panel.PanelVirusAnnotator
 import com.hartwig.actin.molecular.paver.PaveRefGenomeVersion
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.MolecularTestPrinter
-import com.hartwig.actin.tools.pave.PaveLite
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.actin.util.DatamodelPrinter
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
-import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -42,6 +40,7 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
 val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
@@ -115,12 +114,11 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val paver = Paver(
             config.ensemblCachePath, config.referenceGenomeFastaPath, paveRefGenomeVersion, config.driverGenePanelPath, config.tempDir
         )
-        val paveLite = PaveLite(inputData.ensemblDataCache, false)
 
         val configuration = MolecularConfiguration.create(config.overridesYaml)
         LOGGER.info("Loaded molecular config: $configuration")
 
-        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, paveLite)
+        val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, inputData.variantDecompositions)
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache, configuration)
         val panelCopyNumberAnnotator = PanelCopyNumberAnnotator(inputData.ensemblDataCache)
         val panelVirusAnnotator = PanelVirusAnnotator(configuration)

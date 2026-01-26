@@ -27,10 +27,6 @@
             <artifactId>actin-transvar</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hartwig.actin</groupId>
-            <artifactId>actin-pave-lite</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.hartwig</groupId>
             <artifactId>pave</artifactId>
         </dependency>
