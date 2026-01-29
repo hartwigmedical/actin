@@ -12,11 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 
-enum class ActivationWarningType(val description: String? = null) {
-    ASSOCIATED_WITH_RESISTANCE(
-        "Potentially activating mutation(s) that have high driver likelihood " +
-                "but are also associated with drug resistance"
-    ),
+private enum class ActivationWarningType(val description: String? = null) {
     NON_ONCOGENE,
     NO_CANCER_ASSOCIATED_VARIANT(
         "Potentially activating mutation(s) that have high driver likelihood " +
@@ -31,7 +27,7 @@ enum class ActivationWarningType(val description: String? = null) {
     OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT,
 }
 
-data class ActivationProfile(
+private data class ActivationProfile(
     val event: String,
     val activating: Boolean,
     val warningType: ActivationWarningType? = null
@@ -61,7 +57,6 @@ class GeneHasActivatingMutation(
             variantCharacteristics.groupBy { it.warningType }.mapValues { entry -> entry.value.map(ActivationProfile::event).toSet() }
 
         val potentiallyActivatingWarnings = listOf(
-            ActivationWarningType.ASSOCIATED_WITH_RESISTANCE,
             ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT,
             ActivationWarningType.SUBCLONAL,
         ).flatMap { warningType -> eventsByWarningType[warningType]?.map { event -> event to warningType } ?: emptyList() }
@@ -92,7 +87,6 @@ class GeneHasActivatingMutation(
 
             else -> {
                 val potentialWarnEvaluation = evaluatePotentialWarns(
-                    eventsByWarningType[ActivationWarningType.ASSOCIATED_WITH_RESISTANCE],
                     eventsByWarningType[ActivationWarningType.NON_ONCOGENE],
                     eventsByWarningType[ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT],
                     eventsByWarningType[ActivationWarningType.SUBCLONAL],
@@ -113,7 +107,6 @@ class GeneHasActivatingMutation(
         return if (variant.isReportable) {
             if (variant.driverLikelihood == DriverLikelihood.HIGH) {
                 when {
-                    isAssociatedWithDrugResistance(variant) -> profile(variant.event, ActivationWarningType.ASSOCIATED_WITH_RESISTANCE)
                     !variant.isCancerAssociatedVariant -> profile(
                         variant.event,
                         ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT
@@ -155,7 +148,6 @@ class GeneHasActivatingMutation(
     }
 
     private fun evaluatePotentialWarns(
-        activatingVariantsAssociatedWithResistance: Set<String>?,
         activatingVariantsInNonOncogene: Set<String>?,
         activatingVariantsNoCavAndNoGainOfFunction: Set<String>?,
         activatingSubclonalVariants: Set<String>?,
@@ -168,11 +160,6 @@ class GeneHasActivatingMutation(
 
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOf(
-                EventsWithMessages(
-                    activatingVariantsAssociatedWithResistance,
-                    "$gene activating mutation(s) ${activatingVariantsAssociatedWithResistance?.let { concatVariants(it, gene) }} " +
-                            "is/are associated with drug resistance in $evidenceSource$inKinaseDomainString"
-                ),
                 EventsWithMessages(
                     activatingVariantsInNonOncogene,
                     "$gene activating mutation(s) ${activatingVariantsInNonOncogene?.let { concatVariants(it, gene) }} " +
@@ -212,11 +199,6 @@ class GeneHasActivatingMutation(
                 )
             )
         )
-    }
-
-    private fun isAssociatedWithDrugResistance(variant: Variant): Boolean {
-        val isAssociatedWithDrugResistance = variant.isAssociatedWithDrugResistance
-        return isAssociatedWithDrugResistance != null && isAssociatedWithDrugResistance
     }
 
     private fun isMissenseOrCancerAssociatedVariant(variant: Variant): Boolean {
