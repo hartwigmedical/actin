@@ -57,15 +57,6 @@ CREATE TABLE `clinicalStatus`
     PRIMARY KEY (`id`)
 );
 
-DROP TABLE IF EXISTS `performanceStatus`;
-CREATE TABLE `performanceStatus`
-(   `id` int NOT NULL AUTO_INCREMENT,
-    `patientId` varchar(50) UNIQUE,
-    `latestWho` int,
-    `latestAsa` int,
-    PRIMARY KEY (`id`)
-);
-
 DROP TABLE IF EXISTS `asaScore`;
 CREATE TABLE `asaScore`
 (   `id` int NOT NULL AUTO_INCREMENT,
@@ -80,6 +71,7 @@ CREATE TABLE `whoStatus`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `patientId` varchar(50) UNIQUE,
     `status` int NOT NULL,
+    `precision` varchar(50) NOT NULL,
     `date` DATE NOT NULL,
     PRIMARY KEY (`id`)
 );
