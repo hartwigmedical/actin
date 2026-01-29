@@ -15,6 +15,8 @@ class VariantDecompositionExpanderTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA")
                 )
@@ -43,6 +45,8 @@ class VariantDecompositionExpanderTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA")
                 )
@@ -53,6 +57,48 @@ class VariantDecompositionExpanderTest {
 
         assertThat(expanded).hasSize(1)
         assertThat(expanded.single().queryHgvs).isEqualTo("p.V34E")
+        assertThat(expanded.single().localPhaseSet).isNull()
+    }
+
+    @Test
+    fun `Should not decompose when transcript does not match`() {
+        val variant = SequencedVariant(gene = "B", transcript = "TX1", hgvsCodingImpact = "c.2A>T")
+        val decompositions = VariantDecompositionTable(
+            listOf(
+                VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
+                    originalCodingHgvs = "c.2A>T",
+                    decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA")
+                )
+            )
+        )
+
+        val expanded = VariantDecompositionExpander.expand(setOf(variant), decompositions)
+
+        assertThat(expanded).hasSize(1)
+        assertThat(expanded.single().queryHgvs).isEqualTo("c.2A>T")
+        assertThat(expanded.single().localPhaseSet).isNull()
+    }
+
+    @Test
+    fun `Should not decompose when transcript is missing but decomposition is transcript-specific`() {
+        val variant = SequencedVariant(gene = "B", transcript = null, hgvsCodingImpact = "c.2A>T")
+        val decompositions = VariantDecompositionTable(
+            listOf(
+                VariantDecomposition(
+                    gene = "B",
+                    transcript = "TX1",
+                    originalCodingHgvs = "c.2A>T",
+                    decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA")
+                )
+            )
+        )
+
+        val expanded = VariantDecompositionExpander.expand(setOf(variant), decompositions)
+
+        assertThat(expanded).hasSize(1)
+        assertThat(expanded.single().queryHgvs).isEqualTo("c.2A>T")
         assertThat(expanded.single().localPhaseSet).isNull()
     }
 }

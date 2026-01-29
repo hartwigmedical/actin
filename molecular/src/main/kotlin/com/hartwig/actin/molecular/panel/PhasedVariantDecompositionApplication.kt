@@ -52,6 +52,8 @@ class PhasedVariantDecompositionApplication(private val config: TestPanelVariant
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = config.gene,
+                    transcript = config.transcript,
                     originalCodingHgvs = config.originalVariant.trim(),
                     decomposedCodingHgvs = config.decomposedVariants.map(String::trim)
                 )

@@ -58,9 +58,9 @@ GRCh37 or HG19).
 
 Optionally, provide a curated variant decomposition TSV for phased annotation workarounds:
 
-| Argument                  | Example Value                      | Details                                                |
-|---------------------------|------------------------------------|--------------------------------------------------------|
-| variant_decomposition_file | /path/to/variant_decomposition.tsv | TSV with `variant` and `decomposition` columns        |
+| Argument                  | Example Value                      | Details                                                                          |
+|---------------------------|------------------------------------|----------------------------------------------------------------------------------|
+| variant_decomposition_file | /path/to/variant_decomposition.tsv | TSV with `gene`, `transcript`, `variant`, `decomposition` columns (`transcript` optional) |
 
 ## ACTIN molecular datamodel
 

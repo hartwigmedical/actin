@@ -33,8 +33,9 @@ object VariantDecompositionExpander {
         decompositions: VariantDecompositionTable
     ): List<AnnotatableVariant> {
         val expanded = sequencedVariants.withIndex().flatMap { (sequencedVariantId, variant) ->
-            val decomposedHgvsList =
-                variant.hgvsCodingImpact?.let { decompositions.lookup(it) }?.decomposedCodingHgvs
+            val decomposedHgvsList = variant.hgvsCodingImpact
+                ?.let { decompositions.lookup(variant.gene, variant.transcript, it) }
+                ?.decomposedCodingHgvs
 
             if (decomposedHgvsList != null) {
                 decomposedHgvsList.map { decomposedHgvs ->

@@ -55,6 +55,8 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
@@ -114,6 +116,8 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
@@ -161,6 +165,8 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
@@ -206,6 +212,8 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
@@ -253,6 +261,8 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
@@ -319,6 +329,8 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )
@@ -363,6 +375,8 @@ class PanelVariantAnnotatorTest {
         val decompositions = VariantDecompositionTable(
             listOf(
                 VariantDecomposition(
+                    gene = "B",
+                    transcript = null,
                     originalCodingHgvs = "c.2A>T",
                     decomposedCodingHgvs = listOf("c.2A>G", "c.3_4delinsA"),
                 )

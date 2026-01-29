@@ -10,12 +10,19 @@ import java.io.Reader
 val EMPTY_VARIANT_DECOMPOSITION_TABLE = VariantDecompositionTable(emptyList())
 
 data class VariantDecomposition(
+    val gene: String,
+    val transcript: String?,
     val originalCodingHgvs: String,
     val decomposedCodingHgvs: List<String>,
 )
 
 data class VariantDecompositionTable(private val entries: List<VariantDecomposition>) {
     init {
+        require(entries.all { it.gene.isNotBlank() }) {
+            val invalid = entries.filter { it.gene.isBlank() }
+                .joinToString(", ") { it.originalCodingHgvs }
+            "Gene cannot be empty for variant decomposition entries: $invalid"
+        }
         require(entries.all { it.decomposedCodingHgvs.isNotEmpty() }) {
             val invalid = entries.filter { it.decomposedCodingHgvs.isEmpty() }
                 .joinToString(", ") { it.originalCodingHgvs }
@@ -23,21 +30,26 @@ data class VariantDecompositionTable(private val entries: List<VariantDecomposit
         }
     }
 
-    private val index: Map<String, VariantDecomposition> = entries
-        .associateBy { it.originalCodingHgvs }
+    private val index: Map<VariantDecompositionKey, VariantDecomposition> = entries
+        .associateBy { keyFor(it.gene, it.transcript, it.originalCodingHgvs) }
         .also { idx ->
             require(idx.size == entries.size) {
-                val dupes = entries.groupBy { it.originalCodingHgvs }
+                val dupes = entries.groupBy { keyFor(it.gene, it.transcript, it.originalCodingHgvs) }
                     .filter { it.value.size > 1 }
-                    .keys.joinToString(", ")
+                    .keys.joinToString(", ") { key ->
+                        listOfNotNull(key.gene, key.transcript, key.originalCodingHgvs).joinToString(":")
+                    }
                 "Duplicate variant decomposition entries for: $dupes"
             }
         }
 
-    fun lookup(originalCodingHgvs: String): VariantDecomposition? = index[originalCodingHgvs.trim()]
+    fun lookup(gene: String, transcript: String?, originalCodingHgvs: String): VariantDecomposition? =
+        index[keyFor(gene, transcript, originalCodingHgvs)]
 }
 
 private data class RawVariantDecomposition(
+    @JsonProperty("gene") val gene: String,
+    @JsonProperty("transcript") val transcript: String,
     @JsonProperty("variant") val originalCodingHgvs: String,
     @JsonProperty("decomposition") val decomposition: String
 )
@@ -53,7 +65,13 @@ object PaveVariantDecomposition {
 
         val raw = csvReader.readValues<RawVariantDecomposition>(reader).readAll().toList()
         return raw.map {
+            val gene = it.gene.trim()
+            require(gene.isNotEmpty()) {
+                "Gene cannot be empty for variant ${it.originalCodingHgvs.trim()}"
+            }
             VariantDecomposition(
+                gene = gene,
+                transcript = it.transcript.trim().ifEmpty { null },
                 originalCodingHgvs = it.originalCodingHgvs.trim(),
                 decomposedCodingHgvs = it.decomposition.split(",").map(String::trim).filter { part -> part.isNotEmpty() }
             )
@@ -63,4 +81,15 @@ object PaveVariantDecomposition {
     fun readFromFile(tsvPath: String): List<VariantDecomposition> {
         return File(tsvPath).bufferedReader().use { reader -> read(reader) }
     }
+}
+
+private data class VariantDecompositionKey(
+    val gene: String,
+    val transcript: String?,
+    val originalCodingHgvs: String
+)
+
+private fun keyFor(gene: String, transcript: String?, originalCodingHgvs: String): VariantDecompositionKey {
+    val normalizedTranscript = transcript?.trim()?.ifEmpty { null }
+    return VariantDecompositionKey(gene.trim(), normalizedTranscript, originalCodingHgvs.trim())
 }
