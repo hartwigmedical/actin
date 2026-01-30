@@ -8,6 +8,7 @@ import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.variant.VariantAnnotator
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
+import org.apache.logging.log4j.LogManager
 
 data class AnnotatableVariant(
     val queryId: Int,
@@ -24,6 +25,8 @@ class PanelVariantAnnotator(
     private val decompositions: VariantDecompositionTable
 ) {
 
+    private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
+
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
         val expanded = VariantDecompositionExpander.expand(sequencedVariants, decompositions)
         val withTransvar = annotateWithTransvar(expanded)
@@ -36,6 +39,17 @@ class PanelVariantAnnotator(
         return annotatable.map { variant ->
             val transvar = variantResolver.resolve(variant.sequencedVariant.gene, variant.sequencedVariant.transcript, variant.queryHgvs)
                 ?: throw IllegalStateException("Unable to resolve variant '${variant.queryHgvs}' for gene '${variant.sequencedVariant.gene}'")
+
+            logger.info(
+                "Resolved {}:{} {} -> {}:{} {}>{}",
+                variant.sequencedVariant.gene,
+                variant.sequencedVariant.transcript ?: "null",
+                variant.queryHgvs,
+                transvar.chromosome(),
+                transvar.position(),
+                transvar.ref(),
+                transvar.alt()
+            )
 
             variant.copy(transvarVariant = transvar)
         }

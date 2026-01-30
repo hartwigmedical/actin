@@ -49,16 +49,20 @@ class PhasedVariantDecompositionApplication(private val config: TestPanelVariant
             config.driverGenePanelPath,
             config.tempDir
         )
-        val decompositions = VariantDecompositionTable(
-            listOf(
-                VariantDecomposition(
-                    gene = config.gene,
-                    transcript = config.transcript,
-                    originalCodingHgvs = config.originalVariant.trim(),
-                    decomposedCodingHgvs = config.decomposedVariants.map(String::trim)
+        val decompositions = if (config.decomposedVariants.isEmpty()) {
+            EMPTY_VARIANT_DECOMPOSITION_TABLE
+        } else {
+            VariantDecompositionTable(
+                listOf(
+                    VariantDecomposition(
+                        gene = config.gene,
+                        transcript = config.transcript,
+                        originalCodingHgvs = config.originalVariant.trim(),
+                        decomposedCodingHgvs = config.decomposedVariants.map(String::trim)
+                    )
                 )
             )
-        )
+        }
         val annotator = PanelVariantAnnotator(variantAnnotator, paver, decompositions)
 
         val sequencedVariants = buildSequencedVariants(
@@ -144,13 +148,11 @@ private fun createOptions(): Options {
 }
 
 private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
-    val decomposedVariants = ApplicationConfig.nonOptionalValue(cmd, DECOMPOSED_CODING_HGVS)
-        .split(",")
-        .map(String::trim)
-        .filter { it.isNotEmpty() }
-    if (decomposedVariants.isEmpty()) {
-        throw IllegalArgumentException("At least one entry must be provided in --$DECOMPOSED_CODING_HGVS")
-    }
+    val decomposedVariants = ApplicationConfig.optionalValue(cmd, DECOMPOSED_CODING_HGVS)
+        ?.split(",")
+        ?.map(String::trim)
+        ?.filter { it.isNotEmpty() }
+        ?: emptyList()
 
     val refGenomeVersion = toRefGenomeVersion(ApplicationConfig.nonOptionalValue(cmd, REF_GENOME_VERSION))
 
