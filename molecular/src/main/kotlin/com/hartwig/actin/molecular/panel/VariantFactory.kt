@@ -126,7 +126,7 @@ object VariantFactory {
             transcriptId = paveImpact.canonicalTranscript,
             hgvsCodingImpact = paveImpact.hgvsCodingImpact,
             hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(paveImpact.hgvsProteinImpact),
-            affectedCodon = nullCodonForNonCodingEffects(canonicalTranscriptImpact.codon, codingEffect, effects),
+            affectedCodon = canonicalTranscriptImpact.codon,
             affectedExon = canonicalTranscriptImpact.exon,
             inSpliceRegion = paveImpact.spliceRegion,
             effects = effects,
@@ -164,7 +164,7 @@ object VariantFactory {
             hgvsProteinImpact = if (shouldAnnotateAsSpliceOverNonsenseOrFrameshift) "p.?" else forceSingleLetterAminoAcids(
                 paveTranscriptImpact.hgvsProteinImpact
             ),
-            affectedCodon = nullCodonForNonCodingEffects(paveTranscriptImpact.codon, codingEffect, effects),
+            affectedCodon = paveTranscriptImpact.codon,
             affectedExon = paveTranscriptImpact.exon,
             inSpliceRegion = paveTranscriptImpact.spliceRegion,
             effects = effects,
@@ -174,27 +174,6 @@ object VariantFactory {
 
     private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PaveVariantEffect>, gene: String): Boolean =
         gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
-
-    private fun nullCodonForNonCodingEffects(
-        affectedCodon: Int?,
-        codingEffect: CodingEffect,
-        effects: Set<VariantEffect>
-    ): Int? {
-        if (affectedCodon == null || codingEffect != CodingEffect.NONE) {
-            return affectedCodon
-        }
-
-        return if (effects.any {
-                it == VariantEffect.FIVE_PRIME_UTR ||
-                    it == VariantEffect.THREE_PRIME_UTR ||
-                    it == VariantEffect.INTRONIC
-            }
-        ) {
-            null
-        } else {
-            affectedCodon
-        }
-    }
 
     private fun codingEffect(paveCodingEffect: PaveCodingEffect): CodingEffect {
         return when (paveCodingEffect) {
