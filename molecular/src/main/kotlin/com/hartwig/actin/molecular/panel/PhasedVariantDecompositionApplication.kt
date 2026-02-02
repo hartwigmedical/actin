@@ -17,7 +17,7 @@ import org.apache.logging.log4j.Logger
 import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
-data class TestPanelVariantAnnotatorConfig(
+data class PhasedVariantDecompositionApplicationConfig(
     val gene: String,
     val transcript: String?,
     val originalVariant: String,
@@ -29,7 +29,7 @@ data class TestPanelVariantAnnotatorConfig(
     val tempDir: String,
 )
 
-class PhasedVariantDecompositionApplication(private val config: TestPanelVariantAnnotatorConfig) {
+class PhasedVariantDecompositionApplication(private val config: PhasedVariantDecompositionApplicationConfig) {
 
     fun run() {
         val ensemblDataCache = EnsemblDataLoader.load(
@@ -147,7 +147,7 @@ private fun createOptions(): Options {
     return options
 }
 
-private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
+private fun createConfig(cmd: CommandLine): PhasedVariantDecompositionApplicationConfig {
     val decomposedVariants = ApplicationConfig.optionalValue(cmd, DECOMPOSED_CODING_HGVS)
         ?.split(",")
         ?.map(String::trim)
@@ -156,7 +156,7 @@ private fun createConfig(cmd: CommandLine): TestPanelVariantAnnotatorConfig {
 
     val refGenomeVersion = toRefGenomeVersion(ApplicationConfig.nonOptionalValue(cmd, REF_GENOME_VERSION))
 
-    return TestPanelVariantAnnotatorConfig(
+    return PhasedVariantDecompositionApplicationConfig(
         gene = ApplicationConfig.nonOptionalValue(cmd, GENE),
         transcript = ApplicationConfig.optionalValue(cmd, TRANSCRIPT),
         originalVariant = ApplicationConfig.nonOptionalValue(cmd, ORIGINAL_CODING_HGVS),
@@ -174,7 +174,7 @@ private const val APPLICATION = "Phased Variant Decomposition"
 
 fun main(args: Array<String>) {
     val options: Options = createOptions()
-    val config: TestPanelVariantAnnotatorConfig
+    val config: PhasedVariantDecompositionApplicationConfig
     try {
         config = createConfig(DefaultParser().parse(options, args))
     } catch (exception: Exception) {
