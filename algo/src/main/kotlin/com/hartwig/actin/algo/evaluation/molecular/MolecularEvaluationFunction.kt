@@ -51,7 +51,7 @@ abstract class MolecularEvaluationFunction(
                 recentMolecularTests.mapNotNull { evaluate(it, record.ihcTests)?.let { eval -> MolecularEvaluation(it, eval) } }
             val onlyIhcEvaluation = evaluate(createEmptyMolecularTest(), record.ihcTests)
 
-            return if (testEvaluation.isNotEmpty()) {
+            if (testEvaluation.isNotEmpty()) {
                 MolecularEvaluation.combine(testEvaluation, evaluationPrecedence())
             } else {
                 onlyIhcEvaluation
