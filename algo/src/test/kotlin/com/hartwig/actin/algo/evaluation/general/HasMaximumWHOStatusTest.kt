@@ -31,11 +31,10 @@ class HasMaximumWHOStatusTest {
     }
 
     @Test
-    fun `Should return recoverable fail when WHO difference is exactly one with at most range`() {
+    fun `Should return undetermined when WHO is at most and exceeding maximum`() {
         val evaluation = function.evaluate(withWHO(3, WhoStatusPrecision.AT_MOST))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.recoverable).isTrue()
-        assertThat(evaluation.failMessages.first().toString()).isEqualTo("WHO <=3 exceeds WHO 2")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages.first().toString()).isEqualTo("Undetermined if WHO <=3 exceeds WHO 2")
     }
 
     @Test
@@ -58,18 +57,9 @@ class HasMaximumWHOStatusTest {
     }
 
     @Test
-    fun `Should fail when WHO at most value is more than the maximum`() {
-        assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(withWHO(3, WhoStatusPrecision.AT_MOST))
-        )
+    fun `Should result in pass when WHO with at most range below maximum`() {
+        val evaluation = function.evaluate(withWHO(1, WhoStatusPrecision.AT_MOST))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessages.first().toString()).isEqualTo("WHO <=1 is below WHO 2")
     }
-
-    @Test
-    fun `Should result in recoverable Fail when WHO with at most range may be recoverable`() {
-        val evaluation = HasMaximumWHOStatus(0).evaluate(withWHO(1, WhoStatusPrecision.AT_MOST))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.recoverable).isTrue()
-        assertThat(evaluation.failMessages.first().toString()).isEqualTo("WHO <=1 exceeds WHO 0")
-    }
-
 }
