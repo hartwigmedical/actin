@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -12,18 +13,22 @@ import com.hartwig.actin.datamodel.molecular.driver.TestDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
-private const val MATCHING_GENE = "gene A"
+private const val MATCHING_GENE = "GeneA"
 
 class GeneIsWildTypeTest {
 
     private val function = GeneIsWildType(MATCHING_GENE)
 
     @Test
-    fun `Should evaluate variants`() {
+    fun `Should pass with no molecular findings`() {
         assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    }
+
+    @Test
+    fun `Should fail with reportable high driver variant with protein effect`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -37,6 +42,10 @@ class GeneIsWildTypeTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should warn with reportable high driver variant with no protein effect`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -50,6 +59,10 @@ class GeneIsWildTypeTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should warn with reportable low driver variant`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -66,37 +79,19 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should evaluate copy numbers`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withCopyNumber(
-                    TestCopyNumberFactory.createMinimal().copy(
-                        gene = MATCHING_GENE,
-                        isReportable = true,
-                        proteinEffect = ProteinEffect.NO_EFFECT
-                    )
-                )
-            )
+    fun `Should warn with specific message for reportable copy number`() {
+        val evaluation = function.evaluate(
+            MolecularTestFactory.withCopyNumber(
+                TestCopyNumberFactory.createMinimal().copy(event = "$MATCHING_GENE CN", gene = MATCHING_GENE, isReportable = true))
         )
-        assertMolecularEvaluation(
-            EvaluationResult.WARN,
-            function.evaluate(
-                MolecularTestFactory.withCopyNumber(
-                    TestCopyNumberFactory.createMinimal().copy(
-                        gene = MATCHING_GENE,
-                        isReportable = true,
-                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
-                    )
-                )
-            )
-        )
+        
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnMessages).isEqualTo(
+            setOf(StaticMessage("Reportable event(s) GeneA CN in GeneA which may potentially be considered wild-type")))
     }
-
+    
     @Test
-    fun `Should evaluate homozygous disruptions`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    fun `Should fail with reportable homozygous disruption with loss of function in TSG`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -110,6 +105,10 @@ class GeneIsWildTypeTest {
                 )
             )
         )
+    }
+    
+    @Test
+    fun `Should warn with reportable homozygous disruption with no protein effect`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -123,6 +122,10 @@ class GeneIsWildTypeTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should pass with reportable homozygous disruption with in oncogene`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -139,8 +142,7 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should evaluate disruptions`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    fun `Should fail with reportable disruption with loss of function in TSG`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -154,6 +156,10 @@ class GeneIsWildTypeTest {
                 )
             )
         )
+    }
+    
+    @Test
+    fun `Should warn with reportable disruption with no protein effect in TSG`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -167,6 +173,10 @@ class GeneIsWildTypeTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should pass with Reportable disruption with loss of function in ONCO`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -183,8 +193,7 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should evaluate fusions`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    fun `Should fail with reportable fusion with gain of function`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -197,18 +206,10 @@ class GeneIsWildTypeTest {
                 )
             )
         )
-        assertMolecularEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(
-                MolecularTestFactory.withFusion(
-                    TestFusionFactory.createMinimal().copy(
-                        geneEnd = MATCHING_GENE,
-                        isReportable = true,
-                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
-                    )
-                )
-            )
-        )
+    }
+
+    @Test
+    fun `Should warn with reportable fusion with no protein effect`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -237,7 +238,7 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should be pass in case no variant is found and sufficient quality and purity`() {
+    fun `Should pass in case no variant is found and sufficient quality and purity`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -250,7 +251,7 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should pass for tested gene having no event in panel `() {
+    fun `Should pass for tested gene having no event in panel`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(
                 molecularTests = listOf(
@@ -326,7 +327,7 @@ class GeneIsWildTypeTest {
     }
 
     @Test
-    fun `Should return FAIL when at least one test FAILs`() {
+    fun `Should fail when at least one test fails`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
             .copy(
                 molecularTests = listOf(
@@ -378,8 +379,8 @@ class GeneIsWildTypeTest {
                 molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
         )
-        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessagesStrings())
-            .containsExactly("Wildtype of gene gene A undetermined (not tested for at least mutations)")
+        assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(result.undeterminedMessagesStrings())
+            .containsExactly("Wildtype of gene GeneA undetermined (not tested for at least mutations)")
     }
 }

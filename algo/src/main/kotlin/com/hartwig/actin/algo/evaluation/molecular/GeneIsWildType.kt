@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -13,9 +14,11 @@ import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 
+private val NO_PROTEIN_EFFECT_SET = setOf(ProteinEffect.NO_EFFECT, ProteinEffect.NO_EFFECT_PREDICTED)
+
 class GeneIsWildType(override val gene: String) :
     MolecularEvaluationFunction(targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, "Wildtype of")) {
-
+    
     override fun evaluationPrecedence() = ::evaluationPrecedenceFunction
 
     private fun evaluationPrecedenceFunction(groupedEvaluationsByResult: Map<EvaluationResult, List<MolecularEvaluation>>) =
@@ -39,7 +42,7 @@ class GeneIsWildType(override val gene: String) :
         ).flatten()
             .filter { it.gene == gene && it.isReportable }
             .forEach {
-                if (it.proteinEffect == ProteinEffect.NO_EFFECT || it.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED) {
+                if (NO_PROTEIN_EFFECT_SET.contains(it.proteinEffect) && (it !is CopyNumber)) {
                     reportableEventsWithNoEffect.add(it.event)
                 } else if ((it is Variant && it.driverLikelihood == DriverLikelihood.HIGH)
                     || it is HomozygousDisruption || it is Disruption
@@ -52,9 +55,7 @@ class GeneIsWildType(override val gene: String) :
 
         for (fusion in drivers.fusions) {
             if ((fusion.geneStart == gene || fusion.geneEnd == gene) && fusion.isReportable) {
-                val hasNoEffect =
-                    fusion.proteinEffect == ProteinEffect.NO_EFFECT || fusion.proteinEffect == ProteinEffect.NO_EFFECT_PREDICTED
-                if (hasNoEffect) {
+                if (NO_PROTEIN_EFFECT_SET.contains(fusion.proteinEffect)) {
                     reportableEventsWithNoEffect.add(fusion.event)
                 } else {
                     reportableEventsWithEffect.add(fusion.event)
