@@ -12,13 +12,15 @@ import org.apache.logging.log4j.LogManager
 class PanelVariantAnnotator(
     private val variantResolver: VariantAnnotator,
     private val paver: Paver,
-    private val decompositions: VariantDecompositionTable
+    decompositions: VariantDecompositionTable,
+    private val expander: VariantDecompositionExpander = VariantDecompositionExpander(decompositions),
+    private val phasedCollapser: PhasedDecompositionCollapser = PhasedDecompositionCollapser(variantResolver)
 ) {
 
     private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
-        val expanded = VariantDecompositionExpander.expand(sequencedVariants, decompositions)
+        val expanded = expander.expand(sequencedVariants)
         val withTransvar = annotateWithTransvar(expanded)
         val withPave = annotateWithPave(withTransvar)
         val collapsed = collapseDecompositions(withPave)
@@ -129,7 +131,7 @@ class PanelVariantAnnotator(
             if (phaseSet == null) {
                 variants
             } else {
-                listOf(PhasedDecompositionCollapser.collapse(phaseSet, variants, variantResolver))
+                listOf(phasedCollapser.collapse(phaseSet, variants))
             }
         }
 

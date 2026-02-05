@@ -22,11 +22,9 @@ class VariantDecompositionExpanderTest {
                 )
             )
         )
+        val expander = VariantDecompositionExpander(decompositions)
 
-        val expanded = VariantDecompositionExpander.expand(
-            setOf(decomposedVariant, directVariant, otherVariant),
-            decompositions
-        )
+        val expanded = expander.expand(setOf(decomposedVariant, directVariant, otherVariant))
 
         val direct = expanded.single { it.queryHgvs == "c.1A>T" }
         assertThat(direct.localPhaseSet).isNull()
@@ -52,8 +50,9 @@ class VariantDecompositionExpanderTest {
                 )
             )
         )
+        val expander = VariantDecompositionExpander(decompositions)
 
-        val expanded = VariantDecompositionExpander.expand(setOf(variant), decompositions)
+        val expanded = expander.expand(setOf(variant))
 
         assertThat(expanded).hasSize(1)
         assertThat(expanded.single().queryHgvs).isEqualTo("p.V34E")
@@ -73,8 +72,9 @@ class VariantDecompositionExpanderTest {
                 )
             )
         )
+        val expander = VariantDecompositionExpander(decompositions)
 
-        val expanded = VariantDecompositionExpander.expand(setOf(variant), decompositions)
+        val expanded = expander.expand(setOf(variant))
 
         assertThat(expanded).hasSize(1)
         assertThat(expanded.single().queryHgvs).isEqualTo("c.2A>T")
@@ -94,8 +94,9 @@ class VariantDecompositionExpanderTest {
                 )
             )
         )
+        val expander = VariantDecompositionExpander(decompositions)
 
-        val expanded = VariantDecompositionExpander.expand(setOf(variant), decompositions)
+        val expanded = expander.expand(setOf(variant))
 
         assertThat(expanded).hasSize(1)
         assertThat(expanded.single().queryHgvs).isEqualTo("c.2A>T")

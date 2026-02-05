@@ -5,20 +5,21 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import org.apache.logging.log4j.LogManager
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
-object PhasedDecompositionCollapser {
+class PhasedDecompositionCollapser(
+    private val variantResolver: VariantAnnotator
+) {
 
-    private val LOGGER = LogManager.getLogger(PhasedDecompositionCollapser::class.java)
+    private val logger = LogManager.getLogger(PhasedDecompositionCollapser::class.java)
 
     fun collapse(
         phaseSet: Int,
-        variants: List<AnnotatableVariant>,
-        variantResolver: VariantAnnotator
+        variants: List<AnnotatableVariant>
     ): AnnotatableVariant {
         validateProteinImpacts(phaseSet, variants)
 
         val representative = selectRepresentative(variants)
         val withResolvedExonCodon = applyPhaseSetExonCodon(phaseSet, variants, representative)
-        val withOriginalCoordinates = applyOriginalHgvsCoordinates(phaseSet, variants, variantResolver, withResolvedExonCodon)
+        val withOriginalCoordinates = applyOriginalHgvsCoordinates(phaseSet, variants, withResolvedExonCodon)
         return normalizePhasedEffects(withOriginalCoordinates)
     }
 
@@ -54,10 +55,9 @@ object PhasedDecompositionCollapser {
     private fun applyOriginalHgvsCoordinates(
         phaseSet: Int,
         variants: List<AnnotatableVariant>,
-        variantResolver: VariantAnnotator,
         representative: AnnotatableVariant
     ): AnnotatableVariant {
-        val originalTransvar = resolveOriginalHgvsTransvar(phaseSet, variants, variantResolver)
+        val originalTransvar = resolveOriginalHgvsTransvar(phaseSet, variants)
         return if (originalTransvar == null) {
             representative
         } else {
@@ -95,8 +95,7 @@ object PhasedDecompositionCollapser {
 
     private fun resolveOriginalHgvsTransvar(
         phaseSet: Int,
-        variants: List<AnnotatableVariant>,
-        variantResolver: VariantAnnotator
+        variants: List<AnnotatableVariant>
     ): TransvarVariant? {
         val variant = variants.first().sequencedVariant
         return variant.hgvsCodingImpact
@@ -105,7 +104,7 @@ object PhasedDecompositionCollapser {
             ?.let { originalHgvs ->
                 variantResolver.resolve(variant.gene, variant.transcript, originalHgvs).also { resolved ->
                     if (resolved == null) {
-                        LOGGER.warn(
+                        logger.warn(
                             "Unable to resolve original coding HGVS '{}' for gene '{}' in phase set {}",
                             originalHgvs,
                             variant.gene,

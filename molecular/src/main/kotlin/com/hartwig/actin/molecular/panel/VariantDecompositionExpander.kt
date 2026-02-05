@@ -2,7 +2,9 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.SequencedVariant
 
-object VariantDecompositionExpander {
+class VariantDecompositionExpander(
+    private val decompositions: VariantDecompositionTable
+) {
 
     private data class PendingVariant(
         val sequencedVariant: SequencedVariant,
@@ -11,11 +13,10 @@ object VariantDecompositionExpander {
     )
 
     fun expand(
-        sequencedVariants: Set<SequencedVariant>,
-        decompositions: VariantDecompositionTable
+        sequencedVariants: Set<SequencedVariant>
     ): List<AnnotatableVariant> {
         val sortedSequencedVariants = sortSequencedVariantsForDeterminism(sequencedVariants)
-        return expand(sortedSequencedVariants, decompositions)
+        return expand(sortedSequencedVariants)
     }
 
     private fun sortSequencedVariantsForDeterminism(variants: Set<SequencedVariant>): List<SequencedVariant> {
@@ -29,8 +30,7 @@ object VariantDecompositionExpander {
     }
 
     private fun expand(
-        sequencedVariants: List<SequencedVariant>,
-        decompositions: VariantDecompositionTable
+        sequencedVariants: List<SequencedVariant>
     ): List<AnnotatableVariant> {
         val expanded = sequencedVariants.withIndex().flatMap { (sequencedVariantId, variant) ->
             val decomposedHgvsList = variant.hgvsCodingImpact

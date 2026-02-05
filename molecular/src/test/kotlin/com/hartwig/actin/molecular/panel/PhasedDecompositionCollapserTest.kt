@@ -16,6 +16,7 @@ import org.junit.Test
 class PhasedDecompositionCollapserTest {
 
     private val variantResolver = mockk<VariantAnnotator>()
+    private val collapser = PhasedDecompositionCollapser(variantResolver)
 
     @Test
     fun `Should apply original coordinates and resolved exon codon to representative`() {
@@ -39,7 +40,7 @@ class PhasedDecompositionCollapserTest {
 
         every { variantResolver.resolve("B", null, "c.2A>T") } returns transvarVariant(position = 99, ref = "C", alt = "T")
 
-        val collapsed = PhasedDecompositionCollapser.collapse(1, listOf(representative, other), variantResolver)
+        val collapsed = collapser.collapse(1, listOf(representative, other))
 
         assertThat(collapsed.transvarVariant?.position()).isEqualTo(99)
         assertThat(collapsed.transvarVariant?.ref()).isEqualTo("C")
