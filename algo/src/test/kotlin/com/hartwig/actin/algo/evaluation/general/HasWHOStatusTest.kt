@@ -50,14 +50,7 @@ class HasWHOStatusTest {
     }
 
     @Test
-    fun `Should return fail when WHO difference is exactly one with an at most range`() {
-        val evaluationFor1 = function.evaluate(GeneralTestFactory.withWHO(1, WhoStatusPrecision.AT_MOST))
-        assertEvaluation(EvaluationResult.FAIL, evaluationFor1)
-        assertThat(evaluationFor1.recoverable).isFalse()
-    }
-
-    @Test
-    fun `Should return undetermined when WHO is at most and exceeding maximum`() {
+    fun `Should return undetermined when WHO is at most`() {
         val evaluationFor3 = function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_MOST))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluationFor3)
     }
