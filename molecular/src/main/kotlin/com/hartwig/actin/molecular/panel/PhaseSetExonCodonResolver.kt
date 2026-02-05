@@ -24,8 +24,8 @@ object PhaseSetExonCodonResolver {
                 ?: throw IllegalStateException("Missing canonical transcript impact for phase set $phaseSet")
         }
 
-        val exons = canonicalImpacts.map { it?.exon }
-        val codons = canonicalImpacts.map { it?.codon }
+        val exons = canonicalImpacts.map { it.exon }
+        val codons = canonicalImpacts.map { it.codon }
         val exonMatches = exons.distinct().size <= 1
         val codonMatches = codons.distinct().size <= 1
 

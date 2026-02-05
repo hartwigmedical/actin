@@ -1,8 +1,10 @@
 package com.hartwig.actin.molecular.panel
 
+import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions
 import org.junit.Test
 import java.io.StringReader
+import java.io.File
 
 class PaveVariantDecompositionTest {
 
@@ -19,6 +21,18 @@ class PaveVariantDecompositionTest {
         Assertions.assertThat(parsed).containsExactly(
             VariantDecomposition("gene1", "ENST1", "c.variant1", listOf("c.variant1a", "c.variant1b")),
             VariantDecomposition("gene2", null, "c.variant2", listOf("c.variant2a", "c.variant2b"))
+        )
+    }
+
+    @Test
+    fun `Should parse decomposition resource file`() {
+        val path = ResourceLocator.resourceOnClasspath("panel/variant_decomposition.tsv")
+        val parsed = File(path).bufferedReader().use { reader ->
+            PaveVariantDecomposition.read(reader)
+        }
+
+        Assertions.assertThat(parsed).containsExactly(
+            VariantDecomposition("GENE1", "ENST0001", "c.test1", listOf("c.test1a", "c.test1b"))
         )
     }
 

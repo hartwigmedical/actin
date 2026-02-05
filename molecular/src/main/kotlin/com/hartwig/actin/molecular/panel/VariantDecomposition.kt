@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.panel
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import java.io.File
 import java.io.Reader
 
@@ -16,7 +16,7 @@ data class VariantDecomposition(
     val decomposedCodingHgvs: List<String>,
 )
 
-data class VariantDecompositionTable(private val entries: List<VariantDecomposition>) {
+class VariantDecompositionTable(private val entries: List<VariantDecomposition>) {
     init {
         require(entries.all { it.gene.isNotBlank() }) {
             val invalid = entries.filter { it.gene.isBlank() }
@@ -48,15 +48,16 @@ data class VariantDecompositionTable(private val entries: List<VariantDecomposit
 }
 
 private data class RawVariantDecomposition(
-    @JsonProperty("gene") val gene: String,
-    @JsonProperty("transcript") val transcript: String,
-    @JsonProperty("variant") val originalCodingHgvs: String,
-    @JsonProperty("decomposition") val decomposition: String
+    val gene: String,
+    val transcript: String,
+    val variant: String,
+    val decomposition: String
 )
 
 object PaveVariantDecomposition {
     fun read(reader: Reader): List<VariantDecomposition> {
         val csvReader = CsvMapper().apply {
+            registerModule(KotlinModule.Builder().build())
             enable(CsvParser.Feature.FAIL_ON_MISSING_HEADER_COLUMNS)
             enable(CsvParser.Feature.FAIL_ON_MISSING_COLUMNS)
         }
@@ -67,12 +68,12 @@ object PaveVariantDecomposition {
         return raw.map {
             val gene = it.gene.trim()
             require(gene.isNotEmpty()) {
-                "Gene cannot be empty for variant ${it.originalCodingHgvs.trim()}"
+                "Gene cannot be empty for variant ${it.variant.trim()}"
             }
             VariantDecomposition(
                 gene = gene,
                 transcript = it.transcript.trim().ifEmpty { null },
-                originalCodingHgvs = it.originalCodingHgvs.trim(),
+                originalCodingHgvs = it.variant.trim(),
                 decomposedCodingHgvs = it.decomposition.split(",").map(String::trim).filter { part -> part.isNotEmpty() }
             )
         }

@@ -7,17 +7,7 @@ import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 import org.apache.logging.log4j.LogManager
-
-data class AnnotatableVariant(
-    val queryId: Int,
-    val sequencedVariant: SequencedVariant,
-    val queryHgvs: String,
-    val localPhaseSet: Int?,
-    val transvarVariant: TransvarVariant? = null,
-    val paveResponse: PaveResponse? = null,
-)
 
 class PanelVariantAnnotator(
     private val variantResolver: VariantAnnotator,
