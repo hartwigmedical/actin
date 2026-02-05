@@ -100,6 +100,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Other antianemic preparations" to convertToAtcLevel(setOf("B03X"), atcTree),
                     "PARP inhibitors" to convertToAtcLevel(setOf("L01XK"), atcTree),
                     "Platelet aggregation inhibitors" to convertToAtcLevel(setOf("B01AC"), atcTree),
+                    "Proton pump inhibitors" to convertToAtcLevel(setOf("A02BC"), atcTree),
                     "RANKL targeting agents" to convertToAtcLevel(setOf("M05BX04"), atcTree),
                     "Systemic antibiotics" to convertToAtcLevel(systemicAntibiotics, atcTree),
                     "Systemic antimicrobials" to convertToAtcLevel(systemicAntimicrobials, atcTree),

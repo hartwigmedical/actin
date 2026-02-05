@@ -19,6 +19,7 @@ internal object AtcTestFactory {
     fun createProperAtcTree(): AtcTree {
         return AtcTree(
             mapOf(
+                "A02BC" to NAME_NOT_APPLICABLE,
                 "A07A" to NAME_NOT_APPLICABLE,
                 "A07AC" to NAME_NOT_APPLICABLE,
                 "B01" to NAME_NOT_APPLICABLE,

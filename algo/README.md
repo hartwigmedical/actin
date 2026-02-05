@@ -697,6 +697,7 @@ Ophthalmic steroids ("S01BA", "S01BB", "S01CA", "S01CB") <br>
 Opioids ("N02A") <br>
 Other antianemic preparations ("B03X") <br>
 Platelet aggregation inhibitors ("B01AC") <br>
+Proton pump inhibitors ("A02BC") <br>
 RANKL targeting agents ("M05BX04") <br>
 Systemic antibiotics ("A07A", "G01AA", "R02AB", "J01") <br>
 Systemic antimicrobials = systemicAntibiotics + systemicAntimycobacterials + systemicAntimycotics + systemicAntivirals <br>
