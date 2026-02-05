@@ -22,11 +22,15 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
                 EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (only ${who.asText()} range available)")
             }
 
+            who.precision == WhoStatusPrecision.AT_MOST && who.status > requiredWHO -> {
+                EvaluationFactory.undetermined("Undetermined if WHO ${who.asText()} is required WHO $requiredWHO")
+            }
+
             who.isExactly(requiredWHO) -> {
                 EvaluationFactory.pass("Has WHO status $requiredWHO")
             }
 
-            abs(who.status - requiredWHO) == 1 -> {
+            abs(who.status - requiredWHO) == 1 && who.precision == WhoStatusPrecision.EXACT -> {
                 EvaluationFactory.recoverableFail("WHO status is ${who.asText()} but should be $requiredWHO")
             }
 

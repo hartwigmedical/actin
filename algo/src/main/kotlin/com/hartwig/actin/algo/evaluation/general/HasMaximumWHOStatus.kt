@@ -20,11 +20,15 @@ class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
                 "Undetermined if WHO status is within requested max WHO $maximumWHO (Only minimum WHO available)"
             )
 
+            who.precision == WhoStatusPrecision.AT_MOST && who.status > maximumWHO -> EvaluationFactory.undetermined(
+                "Undetermined if WHO ${who.asText()} exceeds WHO $maximumWHO"
+            )
+
             who.status <= maximumWHO -> EvaluationFactory.pass(
                 "WHO ${who.asText()} is below WHO $maximumWHO"
             )
 
-            who.status - maximumWHO == 1 -> EvaluationFactory.recoverableFail(
+            who.status - maximumWHO == 1 && who.precision == WhoStatusPrecision.EXACT -> EvaluationFactory.recoverableFail(
                 "WHO ${who.asText()} exceeds WHO $maximumWHO"
             )
 
