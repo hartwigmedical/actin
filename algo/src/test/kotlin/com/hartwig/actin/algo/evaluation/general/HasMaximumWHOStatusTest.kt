@@ -31,7 +31,7 @@ class HasMaximumWHOStatusTest {
     }
 
     @Test
-    fun `Should return undetermined when WHO difference is at most and exceeding maximum`() {
+    fun `Should return undetermined when WHO is at most and exceeding maximum`() {
         val evaluation = function.evaluate(withWHO(3, WhoStatusPrecision.AT_MOST))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessages.first().toString()).isEqualTo("Undetermined if WHO <=3 exceeds WHO 2")
