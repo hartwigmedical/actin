@@ -80,6 +80,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
+            EligibilityRule.HAS_RISK_OF_AT_LEAST_X_PERCENTAGE_FOR_SENTINEL_NODE_POSITIVITY to hasMinimumRiskForSentinelNodePositivityCreator(),
             EligibilityRule.HAS_SYNCHRONOUS_METASTASTIC_DISEASE to { HasSynchronousMetastaticDisease() },
             EligibilityRule.HAS_OLIGOPROGRESSIVE_DISEASE to { HasOligoprogressiveDisease() },
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
@@ -366,6 +367,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasMinimumSitesWithLesions(function.param<IntegerParameter>(0).value)
+        }
+    }
+
+    private fun hasMinimumRiskForSentinelNodePositivityCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasMinimumRiskForSentinelNodePositivity(function.param<IntegerParameter>(0).value)
         }
     }
 
