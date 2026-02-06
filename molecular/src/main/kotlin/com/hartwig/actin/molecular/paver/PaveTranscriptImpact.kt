@@ -8,4 +8,7 @@ data class PaveTranscriptImpact(
     val spliceRegion: Boolean,
     val hgvsCodingImpact: String,
     val hgvsProteinImpact: String,
+    val refSeqId: String,
+    val exon: Int?,
+    val codon: Int?,
 )

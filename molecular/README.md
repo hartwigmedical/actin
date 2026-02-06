@@ -56,6 +56,12 @@ input. Note that all of these resources are available as standard resources with
 Currently, it is assumed that all molecular tests provided by the clinical input have been analysed with respect to ref genome version V37 (
 GRCh37 or HG19).
 
+Optionally, provide a curated variant decomposition TSV for phased annotation workarounds:
+
+| Argument                  | Example Value                      | Details                                                                          |
+|---------------------------|------------------------------------|----------------------------------------------------------------------------------|
+| variant_decomposition_file | /path/to/variant_decomposition.tsv | TSV with `gene`, `transcript`, `variant`, `decomposition` columns (`transcript` optional) |
+
 ## ACTIN molecular datamodel
 
 A single molecular history represents all molecular testing done for a patient. This includes WGS results, large targeted panels, archer,
