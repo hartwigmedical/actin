@@ -10,7 +10,7 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 object ImmunologyExtraction {
 
     const val LILAC_QC_PASS: String = "PASS"
-    private val HLA_REGEX = Regex(pattern = """^(?<gene>[A-Z]+)\*(?<alleleGroup>\d{2}):(?<hlaProtein>\d{2,3})$""")
+    private val HLA_REGEX = Regex(pattern = """^(?<gene>[A-Z]+)\*(?<alleleGroup>\d{2}):(?<hlaProtein>\d{2,3})N?$""")
 
     fun extract(record: OrangeRecord): MolecularImmunology {
         val lilac = record.lilac()
