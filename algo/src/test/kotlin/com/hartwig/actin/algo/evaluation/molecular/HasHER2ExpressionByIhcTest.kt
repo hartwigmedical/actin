@@ -30,9 +30,10 @@ class HasHER2ExpressionByIhcTest {
     @Test
     fun `Should evaluate to undetermined when no prior molecular tests available`() {
         listOf(positiveFunction, negativeFunction, lowFunction).forEach { function ->
-            assertMolecularEvaluation(
-                EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularTests(emptyList()))
-            )
+            val evaluation = function.evaluate(MolecularTestFactory.withMolecularTests(emptyList()))
+            assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+            assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No IHC HER2 expression test available")
+            assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
         }
     }
 
@@ -174,6 +175,15 @@ class HasHER2ExpressionByIhcTest {
     }
 
     @Test
+    fun `Should evaluate HER2 negative to undetermined if no IHC HER2 results with ERBB2 amp`() {
+        val evaluation = negativeFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, emptyList()))
+
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected)")
+        assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
+    }
+
+    @Test
     fun `Should pass HER2 negative if only negative IHC HER2 data`() {
         val evaluation = negativeFunction.evaluate(
             MolecularTestFactory.withIhcTests(
@@ -253,6 +263,15 @@ class HasHER2ExpressionByIhcTest {
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
 
+    }
+
+    @Test
+    fun `Should evaluate HER2 low to undetermined if no IHC HER2 results with ERBB2 amp`() {
+        val evaluation = lowFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, emptyList()))
+
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected)")
+        assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
 
     private fun ihcTest(

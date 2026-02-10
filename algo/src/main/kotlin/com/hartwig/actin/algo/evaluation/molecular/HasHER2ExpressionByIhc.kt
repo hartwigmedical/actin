@@ -29,12 +29,17 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : Evalu
         return when {
             her2TestResults.isEmpty() -> {
                 val undeterminedMessage = "No IHC HER2 expression test available"
+                val undeterminedErbb2AmpMessage = "$undeterminedMessage$erbb2AmplifiedMessage"
                 if (geneERBB2IsAmplified) {
-                    EvaluationFactory.warn(
-                        "$undeterminedMessage$erbb2AmplifiedMessage",
-                        inclusionEvents = warnInclusionEvent,
-                        isMissingMolecularResultForEvaluation = true,
-                    )
+                    if (ihcResultToFind == IhcTestResult.POSITIVE) {
+                        EvaluationFactory.warn(
+                            undeterminedErbb2AmpMessage,
+                            inclusionEvents = warnInclusionEvent,
+                            isMissingMolecularResultForEvaluation = true,
+                        )
+                    } else {
+                        EvaluationFactory.undetermined(undeterminedErbb2AmpMessage, isMissingMolecularResultForEvaluation = true)
+                    }
                 } else {
                     EvaluationFactory.undetermined(undeterminedMessage, isMissingMolecularResultForEvaluation = true)
                 }
