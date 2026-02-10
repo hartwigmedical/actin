@@ -92,6 +92,12 @@ class HasMtapDeletionTest {
     }
 
     @Test
+    fun `Should fail when WGS result with no MTAP deletion`() {
+        val wgs = TestMolecularFactory.createMinimalWholeGenomeTest()
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(wgs))))
+    }
+
+    @Test
     fun `Should warn when CDKN2A is deleted and MTAP is not tested`() {
         assertEvaluation(
             EvaluationResult.WARN,

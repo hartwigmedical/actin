@@ -15,8 +15,10 @@ class HasMtapDeletion : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val mtapTested =
-            record.molecularTests.any { test -> test.targetSpecification?.testsGene(MTAP) { it.contains(MolecularTestTarget.DELETION) } == true }
-                    || IhcTestEvaluation.create(MTAP, record.ihcTests).filteredTests.isNotEmpty()
+            record.molecularTests.any { test -> test.testsGene(MTAP) { it.contains(MolecularTestTarget.DELETION) } } || IhcTestEvaluation.create(
+                MTAP,
+                record.ihcTests
+            ).filteredTests.isNotEmpty()
 
         return when {
             mtapTested -> {
