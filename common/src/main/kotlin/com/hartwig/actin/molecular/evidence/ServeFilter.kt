@@ -7,10 +7,10 @@ import com.hartwig.serve.datamodel.ServeRecord
 
 object ServeFilter {
 
-    fun filterCountriesInServeDatabase(database: ServeDatabase, countries: Set<String>): ServeDatabase {
+    fun filterCountriesInServeDatabase(database: ServeDatabase, country: String): ServeDatabase {
 
         val filteredRecords = database.records().mapValues { (_, record) ->
-            filterCountriesInRecord(record, countries)
+            filterCountriesInRecord(record, country)
         }
 
         return ImmutableServeDatabase.builder()
@@ -19,9 +19,9 @@ object ServeFilter {
             .build()
     }
 
-    private fun filterCountriesInRecord(record: ServeRecord, countries: Set<String>): ServeRecord {
+    private fun filterCountriesInRecord(record: ServeRecord, country: String): ServeRecord {
         val filteredTrials = record.trials().filter { trial ->
-            trial.countries().map { country -> country.name() }.intersect(countries).isNotEmpty()
+            trial.countries().map { country -> country.name()}.contains(country)
         }
 
         return ImmutableServeRecord.builder()
