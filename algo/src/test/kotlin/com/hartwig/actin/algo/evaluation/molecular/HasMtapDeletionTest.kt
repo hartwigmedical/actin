@@ -58,7 +58,10 @@ class HasMtapDeletionTest {
             targetSpecification = testsMtap,
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(mtapDel))
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(test))))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+        )
     }
 
     @Test
@@ -72,7 +75,10 @@ class HasMtapDeletionTest {
             targetSpecification = testsMtap,
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(mtapInactivation))
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(test))))
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+        )
     }
 
     @Test
@@ -81,7 +87,10 @@ class HasMtapDeletionTest {
             targetSpecification = testsMtap,
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = listOf(cdkn2aDel))
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(test))))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+        )
     }
 
     @Test
@@ -94,14 +103,17 @@ class HasMtapDeletionTest {
     @Test
     fun `Should fail when WGS result with no MTAP deletion`() {
         val wgs = TestMolecularFactory.createMinimalWholeGenomeTest()
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(wgs))))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(wgs)))
+        )
     }
 
     @Test
     fun `Should warn when CDKN2A is deleted and MTAP is not tested`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withMolecularTests(listOf(panelTestWithCdkn2aDelOnly)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(panelTestWithCdkn2aDelOnly)))
         )
     }
 
@@ -110,12 +122,18 @@ class HasMtapDeletionTest {
         val test = panelTestWithCdkn2aDelOnly.copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = emptyList())
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(test))))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined for no molecular tests`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularTests(emptyList())))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(emptyList()))
+        )
     }
 
     @Test
@@ -124,6 +142,9 @@ class HasMtapDeletionTest {
             targetSpecification = PanelTargetSpecification(emptyMap()),
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(copyNumbers = emptyList())
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMolecularTests(listOf(test))))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+        )
     }
 }
