@@ -64,7 +64,11 @@ object InputDataLoader {
             val deferredServeDatabase = async {
                 withContext(Dispatchers.IO) {
                     LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
-                    val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, config.removeCombinedProfilesEvidence)
+                    val serveDatabase = ServeLoader.loadServeDatabase(
+                        serveJsonFilePath,
+                        config.removeCombinedProfilesEvidence,
+                        config.filterServeTrialsByCountry
+                    )
                     LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
                     serveDatabase
                 }

@@ -15,6 +15,7 @@ data class MolecularInterpreterConfig(
     val orangeJson: String?,
     val serveDirectory: String,
     val removeCombinedProfilesEvidence: Boolean,
+    val filterServeTrialsByCountry: String,
     val doidJson: String,
     val oncoDndsDatabasePath: String,
     val tsgDndsDatabasePath: String,
@@ -35,6 +36,7 @@ data class MolecularInterpreterConfig(
         private const val ORANGE_JSON: String = "orange_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
         private const val REMOVE_COMBINED_PROFILES_EVIDENCE: String = "remove_combined_profiles_evidence"
+        private const val FILTER_SERVE_TRIALS_BY_COUNTRY: String = "filter_serve_trials_by_country"
         private const val DOID_JSON: String = "doid_json"
         private const val ONCO_DNDS_DATABASE_PATH: String = "onco_dnds_database_path"
         private const val TSG_DNDS_DATABASE_PATH: String = "tsg_dnds_database_path"
@@ -83,6 +85,7 @@ data class MolecularInterpreterConfig(
                 orangeJson = ApplicationConfig.optionalFile(cmd, ORANGE_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
                 removeCombinedProfilesEvidence = cmd.hasOption(REMOVE_COMBINED_PROFILES_EVIDENCE),
+                filterServeTrialsByCountry = cmd.getOptionValue(FILTER_SERVE_TRIALS_BY_COUNTRY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
                 oncoDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, ONCO_DNDS_DATABASE_PATH),
                 tsgDndsDatabasePath = ApplicationConfig.nonOptionalFile(cmd, TSG_DNDS_DATABASE_PATH),

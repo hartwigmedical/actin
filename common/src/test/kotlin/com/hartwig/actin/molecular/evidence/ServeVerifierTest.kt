@@ -1,8 +1,6 @@
 package com.hartwig.actin.molecular.evidence
 
-import com.hartwig.actin.molecular.evidence.TestServeFactory.createCountry
 import com.hartwig.actin.molecular.evidence.TestServeFactory.createServeDatabase
-import com.hartwig.serve.datamodel.trial.ImmutableCountry
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.junit.Test
