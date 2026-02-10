@@ -12,7 +12,7 @@ class HasHadLimitedWeeksOfSpecificTreatment(private val treatmentToFind: Treatme
             { it.name == treatmentToFind.name },
             { it.treatments.isEmpty() },
             treatmentToFind.categories(),
-            treatmentToFind.name.lowercase(),
+            treatmentToFind.display().lowercase(),
             maxWeeks
         ).evaluate(record)
     }
