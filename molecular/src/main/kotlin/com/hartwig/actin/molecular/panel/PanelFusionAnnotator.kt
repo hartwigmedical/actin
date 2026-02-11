@@ -76,7 +76,9 @@ class PanelFusionAnnotator(
             geneTranscriptStart = sequencedFusion.transcriptUp,
             geneTranscriptEnd = sequencedFusion.transcriptDown,
             fusedExonUp = sequencedFusion.exonUp,
-            fusedExonDown = sequencedFusion.exonDown
+            fusedExonDown = sequencedFusion.exonDown,
+            domainsKept = sequencedFusion.domainsKept,
+            domainsLost = sequencedFusion.domainsLost
         )
     }
 
@@ -116,6 +118,7 @@ class PanelFusionAnnotator(
                 sequencedFusion.exonUp,
                 KnownFusionType.PROMISCUOUS_5
             )
+
             else -> false
         }
     }
@@ -161,7 +164,9 @@ class PanelFusionAnnotator(
             geneTranscriptStart = transcript,
             geneTranscriptEnd = transcript,
             fusedExonUp = sequencedSkippedExons.exonStart - 1,
-            fusedExonDown = sequencedSkippedExons.exonEnd + 1
+            fusedExonDown = sequencedSkippedExons.exonEnd + 1,
+            domainsKept = null,
+            domainsLost = null
         )
     }
 

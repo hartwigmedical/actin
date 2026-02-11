@@ -37,7 +37,9 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
                 geneTranscriptStart = fusion.geneTranscriptStart(),
                 geneTranscriptEnd = fusion.geneTranscriptEnd(),
                 fusedExonUp = fusion.fusedExonUp(),
-                fusedExonDown = fusion.fusedExonDown()
+                fusedExonDown = fusion.fusedExonDown(),
+                domainsKept = fusion.domainsKept(),
+                domainsLost = fusion.domainsLost()
             )
         }.sorted()
     }
