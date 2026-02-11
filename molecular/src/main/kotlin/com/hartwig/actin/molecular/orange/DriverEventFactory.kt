@@ -52,13 +52,27 @@ object DriverEventFactory {
         return breakend.gene() + " disruption"
     }
 
+    fun LinxFusion.hasDomainInfo(): Boolean {
+        return !domainsKept().isEmpty() || !domainsLost().isEmpty()
+    }
+
+    fun LinxFusion.getDomainInfo(): String {
+        return if (hasDomainInfo()) {
+            "\n[Domains: Kept=${domainsKept()}, Lost=${domainsLost()}]"
+        } else ""
+    }
+
     fun fusionEvent(fusion: LinxFusion): String {
-        return FormatFunctions.formatFusionEvent(
+
+        val domainInfo = fusion.getDomainInfo()
+
+        val fusionFormatted = FormatFunctions.formatFusionEvent(
             geneUp = fusion.geneStart(),
             exonUp = fusion.fusedExonUp(),
             geneDown = fusion.geneEnd(),
             exonDown = fusion.fusedExonDown()
         )
+        return "${fusionFormatted}${domainInfo}"
     }
 
     fun virusEvent(virus: VirusInterpreterEntry): String {
