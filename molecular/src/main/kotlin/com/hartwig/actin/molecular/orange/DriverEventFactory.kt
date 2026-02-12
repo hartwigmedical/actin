@@ -52,6 +52,8 @@ object DriverEventFactory {
         return breakend.gene() + " disruption"
     }
 
+    // Do I need this ??
+    /*
     fun LinxFusion.hasDomainInfo(): Boolean {
         return !domainsKept().isEmpty() || !domainsLost().isEmpty()
     }
@@ -73,6 +75,15 @@ object DriverEventFactory {
             exonDown = fusion.fusedExonDown()
         )
         return "${fusionFormatted}${domainInfo}"
+    }*/
+
+    fun fusionEvent(fusion: LinxFusion): String {
+        return FormatFunctions.formatFusionEvent(
+            geneUp = fusion.geneStart(),
+            exonUp = fusion.fusedExonUp(),
+            geneDown = fusion.geneEnd(),
+            exonDown = fusion.fusedExonDown()
+        )
     }
 
     fun virusEvent(virus: VirusInterpreterEntry): String {
