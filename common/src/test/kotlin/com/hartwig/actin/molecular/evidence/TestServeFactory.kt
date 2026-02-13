@@ -55,19 +55,19 @@ object TestServeFactory {
         return ImmutableHospital.builder().name(name).isChildrensHospital(isChildrenHospital).build()
     }
 
-    fun createServeDatabase(evidence: EfficacyEvidence, trial: ActionableTrial): ServeDatabase {
+    fun createServeDatabase(evidence: EfficacyEvidence, trials: List<ActionableTrial>): ServeDatabase {
         return ImmutableServeDatabase.builder()
             .version("test")
-            .putRecords(RefGenome.V37, createServeRecord(evidence, trial))
-            .putRecords(RefGenome.V38, createServeRecord(evidence, trial))
+            .putRecords(RefGenome.V37, createServeRecord(evidence, trials))
+            .putRecords(RefGenome.V38, createServeRecord(evidence, trials))
             .build()
     }
 
-    fun createServeRecord(evidence: EfficacyEvidence, trial: ActionableTrial): ServeRecord {
+    fun createServeRecord(evidence: EfficacyEvidence, trials: List<ActionableTrial>): ServeRecord {
         return ImmutableServeRecord.builder()
             .knownEvents(ImmutableKnownEvents.builder().build())
             .addEvidences(evidence)
-            .addTrials(trial)
+            .apply { trials.forEach { addTrials(it) } }
             .build()
     }
 }
