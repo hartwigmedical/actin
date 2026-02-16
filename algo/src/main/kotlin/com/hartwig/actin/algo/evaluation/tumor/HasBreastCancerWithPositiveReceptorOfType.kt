@@ -21,6 +21,8 @@ class HasBreastCancerWithPositiveReceptorOfType(
         val breastCancerReceptorEvaluation = BreastCancerReceptorsEvaluator(doidModel).evaluate(tumorDoids!!, record.ihcTests, receptorType)
         val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record)
 
+        val warnInclusionEvents = setOf("Potential IHC ${receptorType.display()} positive")
+
         return when (breastCancerReceptorEvaluation) {
             BreastCancerReceptorEvaluation.NOT_BREAST_CANCER -> EvaluationFactory.fail("No breast cancer")
 
@@ -39,7 +41,10 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             BreastCancerReceptorEvaluation.POSITIVE -> {
-                EvaluationFactory.pass("Has ${receptorType.display()}-positive breast cancer")
+                EvaluationFactory.pass(
+                    "Has ${receptorType.display()}-positive breast cancer",
+                    inclusionEvents = setOf("IHC ${receptorType.display()} positive")
+                )
             }
 
             BreastCancerReceptorEvaluation.BORDERLINE -> {
@@ -55,7 +60,8 @@ class HasBreastCancerWithPositiveReceptorOfType(
                     targetHer2AndErbb2Amplified -> {
                         EvaluationFactory.warn(
                             "Undetermined if ${receptorType.display()}-positive breast cancer " +
-                                    "(HER2 low IHC inconsistent with ERBB2 gene amp)"
+                                    "(HER2 low IHC inconsistent with ERBB2 gene amp)",
+                            inclusionEvents = warnInclusionEvents
                         )
                     }
 
@@ -68,7 +74,8 @@ class HasBreastCancerWithPositiveReceptorOfType(
                     else -> {
                         EvaluationFactory.warn(
                             "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
-                                    "(${receptorType.display()}-score under 10%)"
+                                    "(${receptorType.display()}-score under 10%)",
+                            inclusionEvents = warnInclusionEvents
                         )
                     }
                 }
@@ -77,7 +84,8 @@ class HasBreastCancerWithPositiveReceptorOfType(
             BreastCancerReceptorEvaluation.NEGATIVE -> {
                 return if (targetHer2AndErbb2Amplified) {
                     EvaluationFactory.warn(
-                        "Undetermined if ${receptorType.display()}-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)"
+                        "Undetermined if ${receptorType.display()}-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)",
+                        inclusionEvents = warnInclusionEvents
                     )
                 } else {
                     EvaluationFactory.fail("No ${receptorType.display()}-positive breast cancer")
