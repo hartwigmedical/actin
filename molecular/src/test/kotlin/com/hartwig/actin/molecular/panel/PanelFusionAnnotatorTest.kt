@@ -266,8 +266,8 @@ class PanelFusionAnnotatorTest {
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createEmpty(),
-                domainsKept = null,
-                domainsLost = null,
+                domainsKept = emptyList(),
+                domainsLost = emptyList(),
             )
         )
     }
@@ -292,8 +292,8 @@ class PanelFusionAnnotatorTest {
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
                 evidence = TestClinicalEvidenceFactory.createEmpty(),
-                domainsKept = null,
-                domainsLost = null
+                domainsKept = emptyList(),
+                domainsLost = emptyList(),
             )
         )
     }
@@ -329,8 +329,8 @@ class PanelFusionAnnotatorTest {
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty(),
-                    domainsKept = null,
-                    domainsLost = null
+                    domainsKept = emptyList(),
+                    domainsLost = emptyList(),
                 )
             )
         )
@@ -358,8 +358,8 @@ class PanelFusionAnnotatorTest {
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
                     evidence = TestClinicalEvidenceFactory.createEmpty(),
-                    domainsKept = null,
-                    domainsLost = null
+                    domainsKept = emptyList(),
+                    domainsLost = emptyList(),
                 )
             )
         )

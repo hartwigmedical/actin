@@ -52,19 +52,15 @@ object DriverEventFactory {
         return breakend.gene() + " disruption"
     }
 
-    // Do I need this ??
+    // CODE NOT REMOVED INTENTIONALLY - FLAGGED TO ASK QUESTION DURING PR:
+    // Below was what I initially coded but it didn't change the output on the PDF
+    // I don't understand why. The original code seen below essentially formats the
+    // fusion into an event string for display with other drivers identified from
+    // molecular results. So I modified this string to include the domain info.
+    // I dont understand the data flow and why this did not modify the event string
+    // in the PDF
     /*
-    fun LinxFusion.hasDomainInfo(): Boolean {
-        return !domainsKept().isEmpty() || !domainsLost().isEmpty()
-    }
-
-    fun LinxFusion.getDomainInfo(): String {
-        return if (hasDomainInfo()) {
-            "\n[Domains: Kept=${domainsKept()}, Lost=${domainsLost()}]"
-        } else ""
-    }
-
-    fun fusionEvent(fusion: LinxFusion): String {
+   fun fusionEvent(fusion: LinxFusion): String {
 
         val domainInfo = fusion.getDomainInfo()
 
@@ -75,7 +71,18 @@ object DriverEventFactory {
             exonDown = fusion.fusedExonDown()
         )
         return "${fusionFormatted}${domainInfo}"
-    }*/
+    }
+
+    fun LinxFusion.hasDomainInfo(): Boolean {
+        return !domainsKept().isEmpty() || !domainsLost().isEmpty()
+    }
+
+    fun LinxFusion.getDomainInfo(): String {
+        return if (hasDomainInfo()) {
+            "\n[Domains: Kept=${domainsKept()}, Lost=${domainsLost()}]"
+        } else ""
+    }
+*/
 
     fun fusionEvent(fusion: LinxFusion): String {
         return FormatFunctions.formatFusionEvent(

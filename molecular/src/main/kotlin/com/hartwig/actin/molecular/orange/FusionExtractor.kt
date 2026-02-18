@@ -38,8 +38,8 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
                 geneTranscriptEnd = fusion.geneTranscriptEnd(),
                 fusedExonUp = fusion.fusedExonUp(),
                 fusedExonDown = fusion.fusedExonDown(),
-                domainsKept = fusion.domainsKept(),
-                domainsLost = fusion.domainsLost()
+                domainsKept = fusion.domainsKept().split(";").map { it.trim() }.filter { it.isNotEmpty() },
+                domainsLost = fusion.domainsLost().split(";").map { it.trim() }.filter { it.isNotEmpty() }
             )
         }.sorted()
     }

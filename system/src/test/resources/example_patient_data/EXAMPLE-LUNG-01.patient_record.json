@@ -717,8 +717,12 @@
             "fusedExonDown": 15,
             "isReportable": true,
             "event": "MET(exon13)::MET(exon15) fusion",
-            "domainsKept": "Tyrosine Kinase",
-            "domainsLost": "Juxtamembrane",
+            "domainsKept": [
+              "Tyrosine Kinase"
+            ],
+            "domainsLost": [
+              "Juxtamembrane"
+            ],
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],

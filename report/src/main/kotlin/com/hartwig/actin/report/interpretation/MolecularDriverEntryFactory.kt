@@ -148,7 +148,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
         val fusionWithDomainInfo = if (!fusion.domainsKept.isNullOrEmpty() || !fusion.domainsLost.isNullOrEmpty()) {
             "${fusion.event}\nDomain(s) Kept: ${fusion.domainsKept}\nDomain(s) Lost: ${fusion.domainsLost}"
-        } else ""
+        } else fusion.event
 
         return driverEntry(combined, fusionWithDomainInfo, fusion, fusion.proteinEffect)
     }
