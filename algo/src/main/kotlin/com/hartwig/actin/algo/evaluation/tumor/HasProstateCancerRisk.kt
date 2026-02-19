@@ -16,7 +16,10 @@ class HasProstateCancerRisk(private val risks: List<String>, private val doidMod
             return EvaluationFactory.undetermined("Prostate cancer undetermined (tumor doids missing)")
         }
         if (DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.PROSTATE_CANCER_DOID)) {
-            return EvaluationFactory.undetermined("Undetermined if patient has ${Format.concatLowercaseWithCommaAndOr(risks)} risk prostate cancer")
+            return EvaluationFactory.undetermined(
+                "Undetermined if patient has " +
+                        "${Format.concatLowercaseWithCommaAndOr(risks)} risk prostate cancer"
+            )
         }
         return EvaluationFactory.fail("No prostate cancer")
     }
