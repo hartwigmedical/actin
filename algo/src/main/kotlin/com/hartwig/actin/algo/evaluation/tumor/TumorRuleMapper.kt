@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.BodyLocationParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.ManyDoidTermsParameter
+import com.hartwig.actin.datamodel.trial.ManyStringsParameter
 import com.hartwig.actin.datamodel.trial.ManyTnmTParameter
 import com.hartwig.actin.datamodel.trial.ManyTumorStagesParameter
 import com.hartwig.actin.datamodel.trial.Parameter
@@ -99,6 +100,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT to hasLowRiskOfHemorrhageUponTreatmentCreator(),
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
+            EligibilityRule.HAS_ANY_RISK_X_PROSTATE_CANCER to hasAnyProstateCancerRiskCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
             EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSitu()
         )
@@ -438,6 +440,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasBCLCStageCreator(): FunctionCreator {
         return { HasBCLCStage() }
+    }
+
+    private fun hasAnyProstateCancerRiskCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasProstateCancerRisk(function.param<ManyStringsParameter>(0).value, doidModel())
+        }
     }
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
