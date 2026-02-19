@@ -108,6 +108,7 @@ enum class EligibilityRule(val input: List<Parameter.Type>) {
     HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT(FunctionInput.NONE),
     HAS_SUPERSCAN_BONE_SCAN(FunctionInput.NONE),
     HAS_BCLC_STAGE_X(FunctionInput.ONE_STRING),
+    HAS_ANY_RISK_X_PROSTATE_CANCER(FunctionInput.MANY_STRINGS),
     HAS_LEFT_SIDED_COLORECTAL_TUMOR(FunctionInput.NONE),
     HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU(FunctionInput.NONE),
 
