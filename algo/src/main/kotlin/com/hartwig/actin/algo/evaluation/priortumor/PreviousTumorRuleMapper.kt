@@ -42,7 +42,9 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     private fun hasHistoryOfSecondMalignancyWithDoidTermCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidTermToMatch = function.param<DoidTermParameter>(0).value
-            HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidModel().resolveDoidForTerm(doidTermToMatch)!!)
+            val doidToMatch = doidModel().resolveDoidForTerm(doidTermToMatch)
+            doidToMatch?.let { HasHistoryOfSecondMalignancyWithDoid(doidModel(), it) }
+                ?: error("DOID term not found: $doidTermToMatch")
         }
     }
 
