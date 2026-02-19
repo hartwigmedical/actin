@@ -19,7 +19,7 @@ class HasProstateCancerRiskTest {
     }
 
     @Test
-    fun `Should evaluate to fail when breast cancer`() {
+    fun `Should fail when breast cancer`() {
         val result = function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.BREAST_CANCER_DOID, "breast cancer"))
         assertEvaluation(EvaluationResult.FAIL, result)
     }
