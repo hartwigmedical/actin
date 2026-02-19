@@ -77,8 +77,8 @@ class PanelFusionAnnotator(
             geneTranscriptEnd = sequencedFusion.transcriptDown,
             fusedExonUp = sequencedFusion.exonUp,
             fusedExonDown = sequencedFusion.exonDown,
-            domainsKept = sequencedFusion.domainsKept?.split(";")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList(),
-            domainsLost = sequencedFusion.domainsLost?.split(";")?.map { it.trim() }?.filter { it.isNotEmpty() } ?: emptyList()
+            domainsKept = emptyList(),
+            domainsLost = emptyList()
         )
     }
 

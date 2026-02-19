@@ -297,6 +297,15 @@ class MolecularDriverEntryFactoryTest {
     }
 
     @Test
+    fun `Should ingest fusion protein domains kept or lost from orange`() {
+
+        val fusion = TestMolecularFactory.createExhaustiveFusion()
+        
+        assertThat(fusion.domainsKept?.joinToString(";")).isEqualTo("PNT;ETS_DOMAIN_3;PNT;ETS_DOMAIN_3")
+        assertThat(fusion.domainsLost?.joinToString(";")).isEqualTo("MAM_2;RBD;ZF_DAG_PE_2;PROTEIN_KINASE_DOM;RBD;ZF_DAG_PE_2;PROTEIN_KINASE_DOM")
+    }
+
+    @Test
     fun `Should show driver likelihood for fusions and viruses except when known fusion`() {
         val fusions = listOf(
             TestMolecularFactory.createProperFusion(),

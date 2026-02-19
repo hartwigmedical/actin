@@ -11,6 +11,10 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusion
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 import com.hartwig.hmftools.datamodel.linx.LinxRecord
 
+fun domainsAsList(domains: String): List<String> {
+    return domains.split(";").filter { it.isNotEmpty() }
+}
+
 class FusionExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(linx: LinxRecord): List<Fusion> {
@@ -38,8 +42,8 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
                 geneTranscriptEnd = fusion.geneTranscriptEnd(),
                 fusedExonUp = fusion.fusedExonUp(),
                 fusedExonDown = fusion.fusedExonDown(),
-                domainsKept = fusion.domainsKept().split(";").map { it.trim() }.filter { it.isNotEmpty() },
-                domainsLost = fusion.domainsLost().split(";").map { it.trim() }.filter { it.isNotEmpty() }
+                domainsKept = domainsAsList(fusion.domainsKept()),
+                domainsLost = domainsAsList(fusion.domainsLost()),
             )
         }.sorted()
     }

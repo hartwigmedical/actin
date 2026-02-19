@@ -52,6 +52,39 @@ class FusionExtractorTest {
         assertThat(fusion.driverType).isEqualTo(FusionDriverType.PROMISCUOUS_5)
     }
 
+    @Test
+    fun `Should extract fusions protein domains kept and lost`() {
+        val linxFusion = TestLinxFactory.fusionBuilder()
+            .reported(true)
+            .reportedType(LinxFusionType.PROMISCUOUS_5)
+            .geneStart("gene start")
+            .geneTranscriptStart("trans start")
+            .fusedExonUp(1)
+            .geneEnd("gene end")
+            .geneTranscriptEnd("trans end")
+            .fusedExonDown(4)
+            .driverLikelihood(FusionLikelihoodType.HIGH)
+            .domainsKept("PNT;ETS_DOMAIN_3;PNT;ETS_DOMAIN_3")
+            .domainsLost("MAM_2;RBD;ZF_DAG_PE_2;PROTEIN_KINASE_DOM;RBD;ZF_DAG_PE_2;PROTEIN_KINASE_DOM")
+            .build()
+
+        val linx = ImmutableLinxRecord.builder()
+            .from(TestOrangeFactory.createMinimalTestOrangeRecord().linx())
+            .addAllSomaticFusions(linxFusion)
+            .build()
+        val geneFilter = TestGeneFilterFactory.createValidForGenes("gene end")
+        val fusionExtractor = FusionExtractor(geneFilter)
+
+        val fusions = fusionExtractor.extract(linx)
+        val fusion = fusions.iterator().next()
+        val expectedDomainsKept = listOf("PNT", "ETS_DOMAIN_3", "PNT", "ETS_DOMAIN_3")
+        val expectedDomainsLost = listOf("MAM_2", "RBD", "ZF_DAG_PE_2", "PROTEIN_KINASE_DOM", "RBD", "ZF_DAG_PE_2", "PROTEIN_KINASE_DOM")
+
+        assertThat(fusion.domainsKept).allMatch { element -> element in expectedDomainsKept }
+        assertThat(fusion.domainsLost).allMatch { element -> element in expectedDomainsLost }
+
+    }
+
     @Test(expected = IllegalStateException::class)
     fun `Should throw exception when filtering reported fusion`() {
         val linxFusion = TestLinxFactory.fusionBuilder().reported(true).geneStart("other start").geneEnd("other end").build()
