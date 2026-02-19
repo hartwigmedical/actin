@@ -9,22 +9,18 @@ import org.junit.Test
 
 class HasProstateCancerRiskTest {
 
+    val function = HasProstateCancerRisk(listOf("High", "Low"), TestDoidModelFactory.createMinimalTestDoidModel())
+
     @Test
     fun `Should evaluate to undetermined when prostate cancer`() {
-        val result = HasProstateCancerRisk(
-            listOf("High", "Low"),
-            TestDoidModelFactory.createMinimalTestDoidModel()
-        ).evaluate(TumorTestFactory.withDoidAndName(DoidConstants.PROSTATE_CANCER_DOID, "prostate cancer"))
+        val result = function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.PROSTATE_CANCER_DOID, "prostate cancer"))
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
         assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has high or low risk prostate cancer")
     }
 
     @Test
     fun `Should evaluate to fail when breast cancer`() {
-        val result = HasProstateCancerRisk(
-            listOf("High", "Low"),
-            TestDoidModelFactory.createMinimalTestDoidModel()
-        ).evaluate(TumorTestFactory.withDoidAndName(DoidConstants.BREAST_CANCER_DOID, "breast cancer"))
+        val result = function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.BREAST_CANCER_DOID, "breast cancer"))
         assertEvaluation(EvaluationResult.FAIL, result)
     }
 }
