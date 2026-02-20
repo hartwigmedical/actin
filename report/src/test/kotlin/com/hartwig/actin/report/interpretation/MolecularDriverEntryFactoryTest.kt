@@ -297,6 +297,20 @@ class MolecularDriverEntryFactoryTest {
     }
 
     @Test
+    fun `Should show fusions with domains kept or lost`() {
+        val fusion = TestMolecularFactory.createExhaustiveFusion()
+        val test = TestMolecularFactory.createProperWholeGenomeTest().copy(
+            drivers = TestMolecularFactory.createProperTestDrivers()
+                .copy(variants = emptyList(), copyNumbers = emptyList(), fusions = listOf(fusion))
+        )
+        val result = createFactoryForMolecularTest(test).create()
+
+        assertThat(result).hasSize(1)
+        val expectedDescription = "${fusion.event}\nDomain(s) Kept: ${fusion.domainsKept}\nDomain(s) Lost: ${fusion.domainsLost}"
+        assertThat(result[0].description).isEqualTo(expectedDescription)
+    }
+
+    @Test
     fun `Should show driver likelihood for fusions and viruses except when known fusion`() {
         val fusions = listOf(
             TestMolecularFactory.createProperFusion(),

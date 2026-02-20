@@ -723,6 +723,8 @@
             "fusedExonDown": 14,
             "isReportable": true,
             "event": "MET_MET",
+            "domainsKept": [],
+            "domainsLost": [],
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],
