@@ -17,7 +17,7 @@ private const val EPSILON = 1.0E-10
 class ImmunologyExtractionTest {
 
     @Test
-    fun `Should extract immunology`() {
+    fun `Should extract immunology with non-null HLA alleles`() {
         val allele1 = TestLilacFactory.builder()
             .allele("A*02:01")
             .tumorCopyNumber(1.2)
@@ -49,6 +49,30 @@ class ImmunologyExtractionTest {
         val hlaAllele2 = findByName(immunology.hlaAlleles, "HLA-B", "01", "101")
         assertThat(hlaAllele2.tumorCopyNumber).isEqualTo(1.3, Offset.offset(EPSILON))
         assertThat(hlaAllele2.hasSomaticMutations).isFalse
+    }
+
+    @Test
+    fun `Should extract immunology with null HLA allele containing N suffix`() {
+        val alleleWithN = TestLilacFactory.builder()
+            .allele("A*02:01N")
+            .tumorCopyNumber(1.2)
+            .somaticMissense(1.0)
+            .somaticInframeIndel(1.0)
+            .somaticSplice(1.0)
+            .somaticNonsenseOrFrameshift(0.0)
+            .build()
+
+        val orange = withLilacData(alleleWithN)
+
+        val immunology = ImmunologyExtraction.extract(orange)
+        assertThat(immunology.isReliable).isTrue
+        assertThat(immunology.hlaAlleles).hasSize(1)
+
+        val hlaAllele = immunology.hlaAlleles.first()
+        assertThat(hlaAllele.gene).isEqualTo("HLA-A")
+        assertThat(hlaAllele.alleleGroup).isEqualTo("02")
+        assertThat(hlaAllele.hlaProtein).isEqualTo("01")
+        assertThat(hlaAllele.event).isEqualTo("HLA-A*02:01N")
     }
 
     @Test
