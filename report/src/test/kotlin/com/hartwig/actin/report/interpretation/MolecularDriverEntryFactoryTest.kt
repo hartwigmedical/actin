@@ -297,12 +297,17 @@ class MolecularDriverEntryFactoryTest {
     }
 
     @Test
-    fun `Should ingest fusion protein domains kept or lost from orange`() {
-
+    fun `Should show fusions with domains kept or lost`() {
         val fusion = TestMolecularFactory.createExhaustiveFusion()
-        
-        assertThat(fusion.domainsKept?.joinToString(";")).isEqualTo("PNT;ETS_DOMAIN_3;PNT;ETS_DOMAIN_3")
-        assertThat(fusion.domainsLost?.joinToString(";")).isEqualTo("MAM_2;RBD;ZF_DAG_PE_2;PROTEIN_KINASE_DOM;RBD;ZF_DAG_PE_2;PROTEIN_KINASE_DOM")
+        val test = TestMolecularFactory.createProperWholeGenomeTest().copy(
+            drivers = TestMolecularFactory.createProperTestDrivers()
+                .copy(variants = emptyList(), copyNumbers = emptyList(), fusions = listOf(fusion))
+        )
+        val result = createFactoryForMolecularTest(test).create()
+
+        assertThat(result).hasSize(1)
+        val expectedDescription = "${fusion.event}\nDomain(s) Kept: ${fusion.domainsKept}\nDomain(s) Lost: ${fusion.domainsLost}"
+        assertThat(result[0].description).isEqualTo(expectedDescription)
     }
 
     @Test

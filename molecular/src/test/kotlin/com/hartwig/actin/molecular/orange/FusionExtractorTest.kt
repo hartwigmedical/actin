@@ -80,8 +80,16 @@ class FusionExtractorTest {
         val expectedDomainsKept = listOf("PNT", "ETS_DOMAIN_3", "PNT", "ETS_DOMAIN_3")
         val expectedDomainsLost = listOf("MAM_2", "RBD", "ZF_DAG_PE_2", "PROTEIN_KINASE_DOM", "RBD", "ZF_DAG_PE_2", "PROTEIN_KINASE_DOM")
 
-        assertThat(fusion.domainsKept).allMatch { element -> element in expectedDomainsKept }
-        assertThat(fusion.domainsLost).allMatch { element -> element in expectedDomainsLost }
+        assertThat(fusion.domainsKept).containsExactly("PNT", "ETS_DOMAIN_3", "PNT", "ETS_DOMAIN_3")
+        assertThat(fusion.domainsLost).containsExactly(
+            "MAM_2",
+            "RBD",
+            "ZF_DAG_PE_2",
+            "PROTEIN_KINASE_DOM",
+            "RBD",
+            "ZF_DAG_PE_2",
+            "PROTEIN_KINASE_DOM"
+        )
 
     }
 
