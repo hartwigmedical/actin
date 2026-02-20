@@ -2,6 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.report.pdf.util.Formats
+import kotlin.text.replaceFirstChar
 
 object TumorDetailsInterpreter {
 
@@ -22,8 +23,7 @@ object TumorDetailsInterpreter {
 
     fun lesionString(tumor: TumorDetails): String {
         return with(classifyLesions(tumor)) {
-            (nonLymphNodeLesions + lymphNodeLesions + suspectedLesions)
-                .joinToString(", ")
+            (nonLymphNodeLesions + lymphNodeLesions + suspectedLesions).joinToString(", ") { it.replaceFirstChar(Char::uppercase) }
                 .ifEmpty { Formats.VALUE_UNKNOWN }
         }
     }

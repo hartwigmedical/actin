@@ -124,7 +124,7 @@ object WgsSummaryGeneratorFunctions {
     }
 
     private fun biopsySummary(patientRecord: PatientRecord, molecular: MolecularTest): Cell {
-        val biopsyLocation = patientRecord.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN
+        val biopsyLocation = (patientRecord.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN).replaceFirstChar(Char::uppercase)
         val purity = molecular.characteristics.purity
         val wgsMolecular = if (molecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME) molecular else null
         return if (wgsMolecular != null && purity != null) {

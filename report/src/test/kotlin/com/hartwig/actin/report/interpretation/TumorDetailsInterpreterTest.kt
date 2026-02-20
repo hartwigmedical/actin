@@ -81,6 +81,12 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
+        fun `Should return capitalized omental string`() {
+            val lesions = lesionString(TumorDetails(otherLesions = listOf("omental")))
+            assertThat(lesions).isEqualTo("Omental")
+        }
+
+        @Test
         fun `Should map name Brain to brainLesions`() {
             val details = TumorDetails(name = "Some brain")
             val expected = "Brain"
