@@ -10,8 +10,12 @@ class Or(private val functions: List<EvaluationFunction>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val evaluationsByResult = functions.map { it.evaluate(record) }.distinct().groupBy(Evaluation::result)
-        val bestResult = evaluationsByResult.keys.maxOrNull()
-            ?: throw IllegalStateException("Could not determine OR result for functions: $functions")
+        val resultKeys = evaluationsByResult.keys
+        val bestResult = if (resultKeys.containsAll(setOf(EvaluationResult.NOT_EVALUATED, EvaluationResult.PASS))) {
+            EvaluationResult.PASS
+        } else {
+            resultKeys.maxOrNull() ?: throw IllegalStateException("Could not determine OR result for functions: $functions")
+        }
 
         val finalResult =
             if (bestResult == EvaluationResult.UNDETERMINED && undeterminedWithMissingMolecularResultAndWarnWithMolecularEvent(
