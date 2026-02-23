@@ -21,7 +21,6 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
 import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.pdf.util.Formats
-import kotlin.collections.any
 import kotlin.math.min
 
 class MolecularDriverEntryFactory(private val molecularDriversInterpreter: MolecularDriversInterpreter) {
@@ -147,7 +146,15 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val knownList = listOf(FusionDriverType.KNOWN_PAIR, FusionDriverType.KNOWN_PAIR_IG, FusionDriverType.KNOWN_PAIR_DEL_DUP)
         val combined = if (fusion.driverType in knownList) driverType else driverType + driverlikelihood
 
-        return driverEntry(combined, fusion.event, fusion, fusion.proteinEffect)
+        val fusionWithDomainInfo = if (!fusion.domainsKept.isNullOrEmpty() || !fusion.domainsLost.isNullOrEmpty()) {
+            "${fusion.event}\nDomain(s) kept: ${fusion.domainsKept?.joinToString(", ") ?: ""}\nDomain(s) lost: ${
+                fusion.domainsLost?.joinToString(
+                    ", "
+                ) ?: ""
+            }"
+        } else fusion.event
+
+        return driverEntry(combined, fusionWithDomainInfo, fusion, fusion.proteinEffect)
     }
 
     private fun fromVirus(virus: Virus): MolecularDriverEntry {

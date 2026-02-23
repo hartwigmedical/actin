@@ -713,12 +713,16 @@
             "driverType": "KNOWN_PAIR",
             "proteinEffect": "GAIN_OF_FUNCTION",
             "isAssociatedWithDrugResistance": true,
-            "geneTranscriptStart": "116312446",
-            "geneTranscriptEnd": "116438440",
             "fusedExonUp": 13,
             "fusedExonDown": 15,
             "isReportable": true,
             "event": "MET(exon13)::MET(exon15) fusion",
+            "domainsKept": [
+              "Tyrosine Kinase"
+            ],
+            "domainsLost": [
+              "Juxtamembrane"
+            ],
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],

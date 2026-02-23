@@ -265,7 +265,9 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START::$GENE_END fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createEmpty()
+                evidence = TestClinicalEvidenceFactory.createEmpty(),
+                domainsKept = emptyList(),
+                domainsLost = emptyList(),
             )
         )
     }
@@ -289,7 +291,9 @@ class PanelFusionAnnotatorTest {
                 event = "$GENE_START(exon$FUSED_EXON_UP)::$GENE_END(exon$FUSED_EXON_DOWN) fusion",
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                evidence = TestClinicalEvidenceFactory.createEmpty()
+                evidence = TestClinicalEvidenceFactory.createEmpty(),
+                domainsKept = emptyList(),
+                domainsLost = emptyList(),
             )
         )
     }
@@ -324,7 +328,9 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE exons $EXON_SKIPPED_UP-$EXON_SKIPPED_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = TestClinicalEvidenceFactory.createEmpty()
+                    evidence = TestClinicalEvidenceFactory.createEmpty(),
+                    domainsKept = emptyList(),
+                    domainsLost = emptyList(),
                 )
             )
         )
@@ -351,7 +357,9 @@ class PanelFusionAnnotatorTest {
                     event = "$GENE exons $EXON_SKIPPED_UP-$EXON_SKIPPED_DOWN skipping",
                     isReportable = true,
                     driverLikelihood = DriverLikelihood.HIGH,
-                    evidence = TestClinicalEvidenceFactory.createEmpty()
+                    evidence = TestClinicalEvidenceFactory.createEmpty(),
+                    domainsKept = emptyList(),
+                    domainsLost = emptyList(),
                 )
             )
         )
