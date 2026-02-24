@@ -29,7 +29,7 @@ class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
             )
 
             who.precision == WhoStatusPrecision.EXACT && who.status - maximumWHO == 1 -> EvaluationFactory.recoverableFail(
-                "WHO ${who.asText()} exceeds WHO $maximumWHO"
+                "WHO ${who.asText()} exceeds max WHO $maximumWHO"
             )
 
             else -> EvaluationFactory.fail("WHO ${who.asText()} exceeds WHO $maximumWHO")
