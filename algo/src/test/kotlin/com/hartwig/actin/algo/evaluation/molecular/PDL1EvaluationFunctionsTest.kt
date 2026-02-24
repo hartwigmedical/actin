@@ -45,21 +45,22 @@ class PDL1EvaluationFunctionsTest {
     }
 
     @Test
-    fun `Should fail with message when molecular history only contains tests with other measure types `() {
+    fun `Should fail with specific message when molecular history only contains tests with other measure types `() {
         val record = MolecularTestFactory.withIhcTests(
             MolecularTestFactory.ihcTest(item = "PD-L1", measure = "wrong"),
             MolecularTestFactory.ihcTest(item = "PD-L1", measure = "other wrong")
         )
         evaluateFunctions(EvaluationResult.FAIL, record)
-        assertMessage(record, "Available PD-L1 tests not in correct unit (not in $MEASURE)")
+        assertMessage(record, message = "Available PD-L1 tests not in requested measure ($MEASURE)", measure = MEASURE)
     }
 
     @Test
-    fun `Should use any measurement type when requested measure in function is an empty string`() {
+    fun `Should fail with specific message when requested measure is null`() {
         val record = MolecularTestFactory.withIhcTests(
-            MolecularTestFactory.ihcTest(item = "PD-L1", scoreValue = PDL1_REFERENCE, measure = "wrong")
+            MolecularTestFactory.ihcTest(item = "PD-L1", scoreValue = PDL1_REFERENCE, measure = "measure")
         )
-        evaluateFunctions(EvaluationResult.PASS, record, measure = null)
+        evaluateFunctions(EvaluationResult.FAIL, record, measure = null)
+        assertMessage(record, message = "No specific PD-L1 measure requested - hence PD-L1 cannot be evaluated", measure = null)
     }
 
     @Test
@@ -141,7 +142,10 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should fail when test value is below minimum value`() {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.minus(1.0)))
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+        )
     }
 
     @Test
@@ -310,10 +314,10 @@ class PDL1EvaluationFunctionsTest {
         assertMolecularEvaluation(expected, evaluatePDL1byIhc(record, measure, reference, doidModel, evaluateMaxPDL1 = false))
     }
 
-    private fun assertMessage(record: PatientRecord, message: String) {
+    private fun assertMessage(record: PatientRecord, message: String, measure: String?) {
         val evaluations = listOf(
-            evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true),
-            evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true),
+            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         )
         evaluations.forEach {
             assertThat(it.failMessagesStrings()).containsExactly(message)
