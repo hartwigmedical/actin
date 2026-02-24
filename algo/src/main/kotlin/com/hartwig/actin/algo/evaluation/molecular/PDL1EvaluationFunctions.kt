@@ -25,7 +25,8 @@ object PDL1EvaluationFunctions {
     ): Evaluation {
         val ihcTests = record.ihcTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
-        val pdl1TestsWithRequestedMeasurement = IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, measure, isLungCancer)
+        val pdl1TestsWithRequestedMeasurement =
+            measure?.let { IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, measure, isLungCancer) } ?: emptyList()
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->

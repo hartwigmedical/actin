@@ -11,15 +11,6 @@ import org.junit.Test
 class IhcTestFilterTest {
 
     @Test
-    fun `Should remove all entries for PDL1 if measure to find is null`() {
-        val test1 = ihcTest(item = "PD-L1")
-        val test2 = ihcTest(item = "PD-L1", measure = "TPS")
-        val test3 = ihcTest(item = "BRAF")
-        val filtered = allPDL1TestsByMeasureToFind(listOf(test1, test2, test3), null)
-        assertThat(filtered).isEmpty()
-    }
-
-    @Test
     fun `Should filter prior ihc tests for PDL1 with specific measure`() {
         val test1 = ihcTest(item = "PD-L1", measure = "CPS")
         val test2 = ihcTest(item = "PD-L1", measure = "wrong")
