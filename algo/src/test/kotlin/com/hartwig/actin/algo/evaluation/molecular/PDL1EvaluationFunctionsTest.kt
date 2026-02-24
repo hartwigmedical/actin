@@ -51,7 +51,7 @@ class PDL1EvaluationFunctionsTest {
             MolecularTestFactory.ihcTest(item = "PD-L1", measure = "other wrong")
         )
         evaluateFunctions(EvaluationResult.FAIL, record)
-        assertMessage(record, "PD-L1 tests not in correct unit ($MEASURE)")
+        assertMessage(record, "Available PD-L1 tests not in correct unit (not in $MEASURE)")
     }
 
     @Test
