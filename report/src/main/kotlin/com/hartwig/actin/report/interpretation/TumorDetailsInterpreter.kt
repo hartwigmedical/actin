@@ -32,12 +32,12 @@ object TumorDetailsInterpreter {
         val allCategorizedLesions = with(tumor) {
             listOf(
                 Lesion(
-                    TumorDetails.CNS + if (hasCnsLesions == true && hasActiveCnsLesions == true) " (active)" else "",
+                    TumorDetails.CNS + additionalCnsString(hasCnsLesions, hasActiveCnsLesions),
                     hasCnsLesions,
                     hasSuspectedCnsLesions
                 ),
                 Lesion(
-                    TumorDetails.BRAIN + if (hasBrainLesions == true && hasActiveBrainLesions == true) " (active)" else "",
+                    TumorDetails.BRAIN + additionalBrainString(hasBrainLesions, hasActiveBrainLesions, hasSymptomaticBrainLesions),
                     when {
                         hasBrainLesions == true -> true
                         name.contains("brain", ignoreCase = true) || name.contains("glioma", ignoreCase = true) -> true
@@ -80,6 +80,19 @@ object TumorDetailsInterpreter {
             nonLymphSuspected.plus(if (lymphSuspected.isNotEmpty()) listOf("Lymph nodes (suspected)") else emptyList()),
             negativeCategorizedLesions
         )
+    }
+
+    private fun additionalBrainString(hasBrainLesions: Boolean?, hasActiveBrainLesions: Boolean?, hasSymptomaticBrainLesions: Boolean?): String {
+        val activeString = hasActiveBrainLesions?.let { if (it) "active" else "inactive" } ?: "active unknown"
+        val symptomaticString = hasSymptomaticBrainLesions?.let { if (it) "symptomatic" else "not symptomatic" } ?: "symptomatic unknown"
+
+        return if (hasBrainLesions == true) " ($activeString, $symptomaticString)" else ""
+    }
+
+    private fun additionalCnsString(hasCnsLesions: Boolean?, hasActiveCnsLesions: Boolean?): String {
+        val activeString = hasActiveCnsLesions?.let { if (it) "active" else "inactive" } ?: "active unknown"
+
+        return if (hasCnsLesions == true) " ($activeString)" else ""
     }
 
     private fun lymphNodeLesionsString(lymphNodeLesions: List<String>): List<String> {
