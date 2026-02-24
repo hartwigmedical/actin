@@ -78,7 +78,7 @@ object PDL1EvaluationFunctions {
             }
 
             IhcTestFilter.allPDL1Tests(ihcTests).isNotEmpty() -> {
-                EvaluationFactory.recoverableFail("PD-L1 tests not in correct unit ($measure)")
+                EvaluationFactory.recoverableFail("Available PD-L1 tests not in correct unit (not in $measure)")
             }
 
             else -> EvaluationFactory.undetermined("PD-L1 expression (IHC) not tested", isMissingMolecularResultForEvaluation = true)
