@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.molecular
 
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter
-import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allPDL1Tests
+import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.allPDL1TestsByMeasureToFind
 import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import java.time.LocalDate
@@ -11,26 +11,18 @@ import org.junit.Test
 class IhcTestFilterTest {
 
     @Test
-    fun `Should filter prior ihc tests for PDL1`() {
-        val test1 = ihcTest(item = "PD-L1")
-        val test2 = ihcTest(item = "BRAF")
-        val filtered = allPDL1Tests(listOf(test1, test2))
-        assertThat(filtered).containsOnly(test1)
-    }
-
-    @Test
     fun `Should filter prior ihc tests for PDL1 with specific measure`() {
         val test1 = ihcTest(item = "PD-L1", measure = "CPS")
         val test2 = ihcTest(item = "PD-L1", measure = "wrong")
         val test3 = ihcTest(item = "BRAF")
-        val filtered = allPDL1Tests(listOf(test1, test2, test3), "CPS")
+        val filtered = allPDL1TestsByMeasureToFind(listOf(test1, test2, test3), "CPS")
         assertThat(filtered).containsExactly(test1)
     }
 
     @Test
     fun `Should assume that measurement is TPS if cancer is (subtype of) lung cancer and measurement is not specified`() {
         val test2 = ihcTest(item = "PD-L1", measure = null)
-        val filtered = allPDL1Tests(listOf(test2), "TPS", true)
+        val filtered = allPDL1TestsByMeasureToFind(listOf(test2), "TPS", true)
         assertThat(filtered).containsExactly(test2)
     }
 

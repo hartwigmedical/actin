@@ -25,7 +25,8 @@ object PDL1EvaluationFunctions {
     ): Evaluation {
         val ihcTests = record.ihcTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
-        val pdl1TestsWithRequestedMeasurement = IhcTestFilter.allPDL1Tests(ihcTests, measure, isLungCancer)
+        val pdl1TestsWithRequestedMeasurement =
+            measure?.let { IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, measure, isLungCancer) } ?: emptyList()
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
@@ -77,8 +78,10 @@ object PDL1EvaluationFunctions {
                 )
             }
 
-            IhcTestFilter.allPDL1Tests(ihcTests).isNotEmpty() -> {
-                EvaluationFactory.recoverableFail("Available PD-L1 tests not in correct unit (not in $measure)")
+            IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(ihcTests, "PD-L1").isNotEmpty() -> {
+                val message = measure?.let { "Available PD-L1 tests not in requested measure ($measure)" }
+                    ?: "No specific PD-L1 measure requested - hence PD-L1 cannot be evaluated"
+                EvaluationFactory.recoverableFail(message)
             }
 
             else -> EvaluationFactory.undetermined("PD-L1 expression (IHC) not tested", isMissingMolecularResultForEvaluation = true)
