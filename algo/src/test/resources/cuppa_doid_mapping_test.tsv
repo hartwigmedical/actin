@@ -1,0 +1,5 @@
+cuppa_cancer_type	doid_ids	doid_labels	notes
+HPB: Pancreas	DOID:4074	pancreatic adenocarcinoma	Excludes pancreatic neuroendocrine tumors
+Colorectum/Small intestine/Appendix	DOID:0050861;DOID:4906;DOID:3608	colorectal adenocarcinoma;small intestine adenocarcinoma;appendix adenocarcinoma	Multi-site adenocarcinoma group
+Esophagus/Stomach	DOID:1107;DOID:10534	esophageal carcinoma;stomach cancer	Multi-site group
+Skin: Melanoma	DOID:8923	skin melanoma

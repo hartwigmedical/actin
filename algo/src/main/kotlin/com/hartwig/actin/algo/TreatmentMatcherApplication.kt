@@ -46,6 +46,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = inputData.doidModel,
+            cuppaToDoidMapping = inputData.cuppaToDoidMapping,
             icdModel = inputData.icdModel,
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,

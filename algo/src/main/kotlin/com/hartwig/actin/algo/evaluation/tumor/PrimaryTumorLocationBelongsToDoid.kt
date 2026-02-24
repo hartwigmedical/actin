@@ -8,16 +8,27 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.DoidModel
+import org.apache.logging.log4j.LogManager
 
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
+    private val cuppaToDoidMapping: CuppaToDoidMapping?,
     private val doidsToMatch: Set<String>,
     private val specificQuery: String?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val tumorDoids = record.tumor.doids
+        val result = evaluateForDoids(record, record.tumor.doids)
+        if (result.result != EvaluationResult.FAIL) {
+            return result
+        }
+        return evaluateCuppaForCup(record) ?: result
+    }
+
+    private fun evaluateForDoids(record: PatientRecord, tumorDoids: Set<String>?): Evaluation {
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
             EvaluationFactory.undetermined("Unknown tumor type")
         } else {
@@ -55,6 +66,46 @@ class PrimaryTumorLocationBelongsToDoid(
                 else -> EvaluationFactory.fail("No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}")
             }
         }
+    }
+
+    private fun evaluateCuppaForCup(record: PatientRecord): Evaluation? {
+        if (!TumorEvaluationFunctions.hasCancerOfUnknownPrimary(record.tumor.name)) {
+            return null
+        }
+
+        val orangeRecord = MolecularHistory(record.molecularTests).latestOrangeMolecularRecord() ?: return null
+        if (!orangeRecord.hasSufficientQuality) {
+            return null
+        }
+
+        val predictedTumorOrigin = orangeRecord.characteristics.predictedTumorOrigin ?: return null
+        val likelihood = predictedTumorOrigin.likelihood()
+        if (likelihood < CUPPA_CONFIDENCE_THRESHOLD) {
+            return null
+        }
+
+        val cancerType = predictedTumorOrigin.cancerType()
+
+        if (cuppaToDoidMapping == null) {
+            LOGGER.warn("CUP patient has conclusive CUPPA prediction ({}, {}%) but no CUPPA-to-DOID mapping configured",
+                cancerType, (likelihood * 100).toInt())
+            return null
+        }
+
+        val cuppaDoids = cuppaToDoidMapping.doidsForCuppaType(cancerType) ?: return null
+
+        val cuppaResult = evaluateForDoids(record, cuppaDoids)
+        return if (cuppaResult.result == EvaluationResult.PASS) {
+            val likelihoodPct = (likelihood * 100).toInt()
+            EvaluationFactory.warn("Tumor type undetermined but CUPPA predicts $cancerType ($likelihoodPct%)")
+        } else {
+            null
+        }
+    }
+
+    companion object {
+        private val LOGGER = LogManager.getLogger(PrimaryTumorLocationBelongsToDoid::class.java)
+        private const val CUPPA_CONFIDENCE_THRESHOLD = 0.8
     }
 
     private fun isPotentialAdenoSquamousMatch(tumorDoids: Set<String>, doidsToMatch: Set<String>): Set<String> {

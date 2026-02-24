@@ -119,7 +119,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { function: EligibilityFunction ->
             val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
             val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, null)
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, null)
         }
     }
 
@@ -127,7 +127,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { function: EligibilityFunction ->
             val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
             val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, "distal")
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, "distal")
         }
     }
 
