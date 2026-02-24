@@ -8,12 +8,18 @@ import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
-class TreatmentWithLimitedWeeksEvaluator(
+enum class TreatmentDurationType {
+    LIMITED,
+    SUFFICIENT
+}
+
+class TreatmentDurationEvaluator(
     private val matchesTreatment: (Treatment) -> Boolean?,
     private val specificMatchCannotBeDetermined: (TreatmentHistoryEntry) -> Boolean,
     private val potentialTrialCategories: Set<TreatmentCategory>,
     private val treatmentMessage: String,
-    private val maxWeeks: Int?
+    private val treatmentDurationType: TreatmentDurationType,
+    private val weeks: Int?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -31,29 +37,29 @@ class TreatmentWithLimitedWeeksEvaluator(
                     TreatmentEvaluation.create(
                         hadTreatment = true,
                         hadTrial = mayMatchAsTrial,
-                        lessThanMaxWeeks = lessThanMaxWeeks(durationWeeksMaxMatchingPortion),
+                        correctNumberOfWeeks = correctNumberOfWeeks(durationWeeksMatchingPortion, durationWeeksMaxMatchingPortion),
                         hadUnclearWeeks = hadUnclearWeeks(durationWeeksMatchingPortion, durationWeeksMaxMatchingPortion)
                     )
                 } ?: TreatmentEvaluation.create(
                     hadTreatment = if (specificMatchCannotBeDetermined(treatmentHistoryEntry)) null else false,
                     hadTrial = mayMatchAsTrial,
-                    lessThanMaxWeeks = lessThanMaxWeeks(durationWeeksMax),
+                correctNumberOfWeeks = correctNumberOfWeeks(durationWeeks, durationWeeksMax),
                     hadUnclearWeeks = hadUnclearWeeks(durationWeeks, durationWeeksMax)
                 )
         }
 
         return when {
-            TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $maxWeeks weeks")
+            treatmentDurationType == TreatmentDurationType.LIMITED && TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS in treatmentEvaluations -> {
+                EvaluationFactory.fail("Has had $treatmentMessage treatment but for ${durationMessageParts.first} $weeks weeks")
             }
 
-            maxWeeks != null && treatmentEvaluations.size > 1 -> {
-                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentMessage is counted as received for more than $maxWeeks weeks")
+            weeks != null && treatmentEvaluations.size > 1 -> {
+                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentMessage is counted as received for ${durationMessageParts.first} $weeks weeks")
             }
 
-            TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS in treatmentEvaluations -> {
-                val maxWeeksString = if (maxWeeks != null) " for less than $maxWeeks weeks" else ""
-                EvaluationFactory.pass("Has received $treatmentMessage$maxWeeksString")
+            TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS in treatmentEvaluations -> {
+                val weeksString = if (weeks != null) " for ${durationMessageParts.second} $weeks weeks" else ""
+                EvaluationFactory.pass("Has received $treatmentMessage$weeksString")
 
             }
 
@@ -62,7 +68,7 @@ class TreatmentWithLimitedWeeksEvaluator(
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage for at most $maxWeeks weeks")
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage for ${durationMessageParts.second} $weeks weeks")
             }
 
             else -> {
@@ -72,29 +78,42 @@ class TreatmentWithLimitedWeeksEvaluator(
     }
 
     private enum class TreatmentEvaluation {
-        HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS,
+        HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS,
         HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS,
         HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
-        HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS,
+        HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS,
         NO_MATCH;
 
         companion object {
             fun create(
                 hadTreatment: Boolean?,
                 hadTrial: Boolean,
-                lessThanMaxWeeks: Boolean = false,
+                correctNumberOfWeeks: Boolean = false,
                 hadUnclearWeeks: Boolean = false
             ) = when {
-                hadTreatment == true && lessThanMaxWeeks -> HAS_HAD_TREATMENT_FOR_AT_MOST_WEEKS
+                hadTreatment == true && correctNumberOfWeeks -> HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS
                 hadTreatment == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS
-                (hadTreatment == null || hadTrial) && (lessThanMaxWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
-                hadTreatment == true -> HAS_HAD_TREATMENT_WITH_EXCESSIVE_WEEKS
+                (hadTreatment == null || hadTrial) && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
+                hadTreatment == true -> HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS
                 else -> NO_MATCH
             }
         }
     }
 
-    private fun lessThanMaxWeeks(durationWeeksMax: Long?) = maxWeeks == null || (durationWeeksMax != null && durationWeeksMax <= maxWeeks)
-    private fun hadUnclearWeeks(durationWeeks: Long?, durationWeeksMax: Long?) =
-        maxWeeks == null || (durationWeeks == null && ((durationWeeksMax != null && durationWeeksMax > maxWeeks) || durationWeeksMax == null))
+    val durationMessageParts = when (treatmentDurationType) {
+        TreatmentDurationType.LIMITED -> Pair("more than", "less than")
+        TreatmentDurationType.SUFFICIENT -> Pair("less than", "at least")
+    }
+
+    private fun correctNumberOfWeeks(durationWeeks: Long?, durationWeeksMax: Long?): Boolean =
+        when (treatmentDurationType) {
+            TreatmentDurationType.LIMITED -> weeks == null || (durationWeeksMax != null && durationWeeksMax <= weeks)
+            TreatmentDurationType.SUFFICIENT -> weeks == null || (durationWeeks != null && durationWeeks >= weeks)
+        }
+
+    private fun hadUnclearWeeks(durationWeeks: Long?, durationWeeksMax: Long?): Boolean =
+        when (treatmentDurationType) {
+            TreatmentDurationType.LIMITED -> weeks == null || (durationWeeks == null && ((durationWeeksMax != null && durationWeeksMax > weeks) || durationWeeksMax == null))
+            TreatmentDurationType.SUFFICIENT -> weeks != null && durationWeeks == null
+        }
 }
