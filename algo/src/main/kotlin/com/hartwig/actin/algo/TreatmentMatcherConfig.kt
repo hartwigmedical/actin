@@ -16,6 +16,7 @@ data class TreatmentMatcherConfig(
     val trialConfigJson: String?,
     val treatmentDirectory: String,
     val doidJson: String,
+    val cuppaDoidMappingTsv: String?,
     val icdTsv: String,
     val atcTsv: String,
     val extendedEfficacyJson: String,
@@ -35,6 +36,7 @@ data class TreatmentMatcherConfig(
         private const val TRIAL_CONFIG_JSON = "trial_config_json"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
         private const val DOID_JSON = "doid_json"
+        private const val CUPPA_DOID_MAPPING_TSV = "cuppa_doid_mapping_tsv"
         private const val ICD_TSV = "icd_tsv"
         private const val ATC_TSV = "atc_tsv"
         private const val EXTENDED_EFFICACY_JSON = "extended_efficacy_json"
@@ -53,6 +55,7 @@ data class TreatmentMatcherConfig(
             options.addOption(TRIAL_CONFIG_JSON, true, "Directory containing config to create trial database")
             options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree.")
+            options.addOption(CUPPA_DOID_MAPPING_TSV, true, "Path to TSV file containing the CUPPA to DOID mapping")
             options.addOption(ICD_TSV, true, "Path to TSV file containing the full ICD-11 tree")
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
             options.addOption(EXTENDED_EFFICACY_JSON, true, "Path to JSON file containing extended efficacy evidence")
@@ -97,6 +100,7 @@ data class TreatmentMatcherConfig(
                 trialConfigJson = ApplicationConfig.optionalFile(cmd, TRIAL_CONFIG_JSON),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                cuppaDoidMappingTsv = ApplicationConfig.optionalFile(cmd, CUPPA_DOID_MAPPING_TSV),
                 icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
                 atcTsv = ApplicationConfig.nonOptionalFile(cmd, ATC_TSV),
                 extendedEfficacyJson = ApplicationConfig.nonOptionalFile(cmd, EXTENDED_EFFICACY_JSON),

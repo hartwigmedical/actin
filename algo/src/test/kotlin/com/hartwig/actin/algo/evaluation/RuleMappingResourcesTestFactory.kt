@@ -4,6 +4,7 @@ import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
+import com.hartwig.actin.algo.evaluation.tumor.CuppaToDoidMapping
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -15,6 +16,7 @@ object RuleMappingResourcesTestFactory {
 
     fun create(
         doidModel: DoidModel = TestDoidModelFactory.createMinimalTestDoidModel(),
+        cuppaToDoidMapping: CuppaToDoidMapping? = null,
         icdModel: IcdModel = TestIcdFactory.createTestModel(),
         atcTree: AtcTree = AtcTestFactory.createProperAtcTree(),
         treatmentDatabase: TreatmentDatabase = TestTreatmentDatabaseFactory.createProper()
@@ -22,6 +24,7 @@ object RuleMappingResourcesTestFactory {
         return RuleMappingResources(
             referenceDateProvider = ReferenceDateProviderTestFactory.createCurrentDateProvider(),
             doidModel = doidModel,
+            cuppaToDoidMapping = cuppaToDoidMapping,
             icdModel = icdModel,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,

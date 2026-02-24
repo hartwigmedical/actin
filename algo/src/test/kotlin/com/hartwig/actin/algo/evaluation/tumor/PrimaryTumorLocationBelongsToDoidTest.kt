@@ -10,6 +10,9 @@ import com.hartwig.actin.doid.config.TestDoidManualConfigFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
+private const val PANCREAS_DOID = "4905"
+private const val COLORECTAL_DOID = "9256"
+
 private const val PARENT_DOID_1 = "100"
 private const val CHILD_DOID_1 = "200"
 private const val PARENT_DOID_2 = "300"
@@ -21,12 +24,12 @@ private const val NAME_WITH_SPECIFIC_QUERY = "name with $SPECIFIC_QUERY term"
 class PrimaryTumorLocationBelongsToDoidTest {
     
     private val specificQueryFunction =
-        PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), SPECIFIC_QUERY)
+        PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(CHILD_DOID_1, CHILD_DOID_2), SPECIFIC_QUERY)
 
     @Test
     fun `Should evaluate whether tumor doid matches target`() {
-        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(PARENT_DOID_1, PARENT_DOID_2), null), true)
-        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), null), false)
+        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PARENT_DOID_1, PARENT_DOID_2), null), true)
+        assertResultsForFunction(PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(CHILD_DOID_1, CHILD_DOID_2), null), false)
     }
 
     @Test
@@ -42,7 +45,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
             stomachLymphoma to stomachCancer, stomachCancer to cancer
         )
         val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(stomachCancer, childToParentMap)
-        val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf(stomachCarcinoma, esophagusCancer), null)
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, testCuppaToDoidMapping, setOf(stomachCarcinoma, esophagusCancer), null)
         assertResultForDoid(EvaluationResult.FAIL, function, "something else")
         assertResultForDoid(EvaluationResult.FAIL, function, cancer)
         assertResultForDoid(EvaluationResult.FAIL, function, stomachLymphoma)
@@ -65,17 +68,17 @@ class PrimaryTumorLocationBelongsToDoidTest {
             ovaryNeuroendocrine to listOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
         )
         val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentsMap(pancreaticCancer, childToParentsMap)
-        val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticAdeno), null)
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, testCuppaToDoidMapping, setOf(pancreaticAdeno), null)
         assertResultForDoids(EvaluationResult.FAIL, function, setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID))
         assertResultForDoids(
             EvaluationResult.UNDETERMINED,
-            PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticNeuroendocrine), null),
+            PrimaryTumorLocationBelongsToDoid(doidModel, testCuppaToDoidMapping, setOf(pancreaticNeuroendocrine), null),
             setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
         )
         assertResultForDoid(EvaluationResult.UNDETERMINED, function, pancreaticCancer)
         assertResultForDoids(
             EvaluationResult.FAIL,
-            PrimaryTumorLocationBelongsToDoid(doidModel, setOf(pancreaticAdeno, ovaryNeuroendocrine), null),
+            PrimaryTumorLocationBelongsToDoid(doidModel, testCuppaToDoidMapping, setOf(pancreaticAdeno, ovaryNeuroendocrine), null),
             setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
         )
     }
@@ -85,7 +88,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
         val mapping = AdenoSquamousMapping(adenoSquamousDoid = "1", squamousDoid = "2", adenoDoid = "3")
         val config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
         val doidModel = TestDoidModelFactory.createWithDoidManualConfig(config)
-        val function = PrimaryTumorLocationBelongsToDoid(doidModel, setOf("2", "5"), null)
+        val function = PrimaryTumorLocationBelongsToDoid(doidModel, testCuppaToDoidMapping, setOf("2", "5"), null)
         assertResultForDoid(EvaluationResult.FAIL, function, "4")
         assertResultForDoid(EvaluationResult.WARN, function, "1")
         assertResultForDoid(EvaluationResult.PASS, function, "2")
@@ -115,7 +118,7 @@ class PrimaryTumorLocationBelongsToDoidTest {
 
     @Test
     fun `Should show correct fail message`() {
-        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, setOf(CHILD_DOID_1, CHILD_DOID_2), null)
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(CHILD_DOID_1, CHILD_DOID_2), null)
         assertThat(
             function.evaluate(TumorTestFactory.withDoids(setOf("50", "250"))).failMessagesStrings()
         ).contains("No child term 1 or child term 2")
@@ -149,6 +152,43 @@ class PrimaryTumorLocationBelongsToDoidTest {
         assertThat(pass.passMessagesStrings()).contains("Tumor belongs to child term 1 with specific request 'specific'")
     }
 
+    @Test
+    fun `Should warn for CUP patient with conclusive CUPPA matching queried DOID`() {
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PANCREAS_DOID), null)
+        val record = TumorTestFactory.withCupAndCuppaPrediction(setOf(DoidConstants.CANCER_DOID), "HPB: Pancreas", 0.95)
+        val result = function.evaluate(record)
+        assertEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessagesStrings().first()).contains("CUPPA predicts HPB: Pancreas (95%)")
+    }
+
+    @Test
+    fun `Should fail for CUP patient with conclusive CUPPA not matching queried DOID`() {
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PANCREAS_DOID), null)
+        val record = TumorTestFactory.withCupAndCuppaPrediction(setOf(DoidConstants.CANCER_DOID), "Colorectum/Small intestine/Appendix", 0.95)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for CUP patient with inconclusive CUPPA`() {
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PANCREAS_DOID), null)
+        val record = TumorTestFactory.withCupAndCuppaPrediction(setOf(DoidConstants.CANCER_DOID), "HPB: Pancreas", 0.5)
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for CUP patient without molecular data`() {
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PANCREAS_DOID), null)
+        val record = TumorTestFactory.withDoidAndName(DoidConstants.CANCER_DOID, "Cancer (CUP)")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail for non-CUP patient even if CUPPA matches`() {
+        val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PANCREAS_DOID), null)
+        val record = TumorTestFactory.withDoids(setOf("50"))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+    }
+
     companion object {
         private val simpleDoidModel = TestDoidModelFactory.createWithParentChildAndTermPerDoidMaps(
             mapOf(CHILD_DOID_1 to PARENT_DOID_1, CHILD_DOID_2 to PARENT_DOID_2),
@@ -158,6 +198,12 @@ class PrimaryTumorLocationBelongsToDoidTest {
                 CHILD_DOID_2 to "child term 2",
                 PARENT_DOID_2 to "parent term 2"
             ),
+        )
+        private val testCuppaToDoidMapping = CuppaToDoidMapping(
+            mapOf(
+                "HPB: Pancreas" to setOf(PANCREAS_DOID),
+                "Colorectum/Small intestine/Appendix" to setOf(COLORECTAL_DOID)
+            )
         )
     }
 }
