@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.findings
 
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
-import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
@@ -11,15 +10,9 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.AminoAcid
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.datamodel.finding.DriverFindingList
-import com.hartwig.hmftools.datamodel.finding.ReportedStatus
 import com.hartwig.hmftools.datamodel.finding.SmallVariant
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleDriver
-import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
-import com.hartwig.hmftools.datamodel.purple.PurpleRecord
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.apache.logging.log4j.LogManager
@@ -42,21 +35,16 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
     )
 
     fun extract(findings: List<SmallVariant>): List<Variant> {
+        //TODO: Look at moving VariantDedup to findings
         return VariantDedup.apply(findings).filter { variant ->
-            val reported = MappingUtil.determineReported(variant)
-            val geneIncluded = geneFilter.include(variant.gene())
-            if (reported && !geneIncluded) {
-                throw IllegalStateException(
-                    "Filtered a reported variant through gene filtering: '${DriverEventFactory.variantEvent(variant)}'."
-                            + " Please make sure '${variant.gene()}' is configured as a known gene."
-                )
-            }
-            val coding = relevantCodingEffects.contains(variant.transcriptImpact().codingEffect())
-            val inSpliceRegion = variant.transcriptImpact().inSpliceRegion()
-            geneIncluded && (reported || coding || inSpliceRegion)
+            MappingUtil.includedInGeneFilter(variant, geneFilter, {
+                val coding = relevantCodingEffects.contains(it.transcriptImpact().codingEffect())
+                val inSpliceRegion = it.transcriptImpact().inSpliceRegion()
+                (coding || inSpliceRegion)
+            })
         }
             .map { variant ->
-                val event = DriverEventFactory.variantEvent(variant)
+                val event = variant.event()
                 Variant(
                     chromosome = variant.chromosome(),
                     position = variant.position(),
@@ -74,7 +62,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                     phaseGroups = variant.localPhaseSets()?.toSet(),
                     exonSkippingIsConfirmed = false,
                     isCancerAssociatedVariant = variant.hotspot() == HotspotType.HOTSPOT,
-                    isReportable = MappingUtil.determineReported(variant),
+                    isReportable = variant.isReported,
                     event = event,
                     driverLikelihood = MappingUtil.determineDriverLikelihood(variant),
                     evidence = ExtractionUtil.noEvidence(),

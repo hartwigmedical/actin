@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.DriverEventFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
@@ -19,28 +18,25 @@ import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 
 class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
-    fun extractDisruptions(disruptions: List<com.hartwig.hmftools.datamodel.finding.Disruption>, lostGenes: Set<String>, drivers: List<LinxDriver>): List<Disruption> {
+    fun extractDisruptions(
+        disruptions: List<com.hartwig.hmftools.datamodel.finding.Disruption>,
+        lostGenes: Set<String>,
+        drivers: List<LinxDriver>
+    ): List<Disruption> {
         val canonicalReportedSvIds = linx.allSomaticBreakends().filter { it.isCanonical && it.reported() }.map { it.svId() }.toSet()
         return disruptions
             .filter { breakend -> breakend.isCanonical || !canonicalReportedSvIds.contains(breakend.svId()) }
             .filter { breakend -> breakend.disruptive() }
             .filter { disruption ->
-                val geneIncluded = geneFilter.include(disruption.gene())
-                if (!geneIncluded && MappingUtil.determineReported(disruption)) {
-                    throw IllegalStateException(
-                        "Filtered a reported breakend through gene filtering: '${DriverEventFactory.disruptionEvent(disruption)}'."
-                                + " Please make sure '${disruption.gene()}' is configured as a known gene."
-                    )
-                }
-                geneIncluded && include(disruption, lostGenes)
+                MappingUtil.includedInGeneFilter(disruption, geneFilter) { include(it, lostGenes) }
             }.map { disruption ->
                 Disruption(
                     gene = disruption.gene(),
                     geneRole = GeneRole.UNKNOWN,
                     proteinEffect = ProteinEffect.UNKNOWN,
                     isAssociatedWithDrugResistance = null,
-                    isReportable = MappingUtil.determineReported(disruption),
-                    event = DriverEventFactory.disruptionEvent(disruption),
+                    isReportable = disruption.isReported,
+                    event = disruption.event(),
                     driverLikelihood = DriverLikelihood.LOW,
                     evidence = ExtractionUtil.noEvidence(),
                     type = determineDisruptionType(disruption.breakendType()),

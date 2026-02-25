@@ -7,13 +7,11 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.DriverEventFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.finding.GainDeletion
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
-import com.hartwig.hmftools.datamodel.purple.PurpleGainDeletion
 import kotlin.math.roundToInt
 
 private val AMP_DRIVERS = setOf(PurpleDriverType.AMP, PurpleDriverType.PARTIAL_AMP)
@@ -28,23 +26,14 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
             .map { geneCopyNumber ->
                 Pair(geneCopyNumber, findCopyNumberDrivers(drivers, geneCopyNumber.gene()))
             }
-            .filter { (geneCopyNumber, drivers) ->
-                val geneIncluded = geneFilter.include(geneCopyNumber.gene())
-                if (!geneIncluded && drivers.isNotEmpty()) {
-                    throw IllegalStateException(
-                        "Filtered a reported copy number through gene filtering: ${geneCopyNumber.gene()}."
-                                + " Please make sure ${geneCopyNumber.gene()} is configured as a known gene."
-                    )
-                }
-                geneIncluded
-            }
+            .filter { (geneCopyNumber, drivers) -> MappingUtil.includedInGeneFilter(geneCopyNumber, geneFilter, { drivers.isNotEmpty() }) }
             .map { (geneCopyNumber, drivers) ->
                 val canonicalDriver = drivers.firstOrNull { it.isCanonical }
                 val otherGainDels =
-                    drivers.filter { it != canonicalDriver }.map { driver -> findGainDel(purple.allSomaticGainsDels(), driver) }
+                    drivers.filter { it != canonicalDriver }.map { driver -> findGainDel(gainDeletions, driver) }
                 if (canonicalDriver != null) {
-                    val canonicalGainDel = findGainDel(purple.allSomaticGainsDels(), canonicalDriver)
-                    val event = DriverEventFactory.gainDelEvent(canonicalGainDel)
+                    val canonicalGainDel = findGainDel(gainDeletions, canonicalDriver)
+                    val event = canonicalGainDel.event()
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,
@@ -57,22 +46,22 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         canonicalImpact = TranscriptCopyNumberImpact(
                             canonicalGainDel.transcript(),
                             determineType(canonicalGainDel.interpretation()),
-                            canonicalGainDel.minCopies().roundToInt(),
-                            canonicalGainDel.maxCopies().roundToInt()
+                            canonicalGainDel.tumorMinCopies().roundToInt(),
+                            canonicalGainDel.tumorMaxCopies().roundToInt()
                         ),
                         otherImpacts = otherGainDels.map { gainDel ->
                             TranscriptCopyNumberImpact(
                                 gainDel.transcript(),
                                 determineType(gainDel.interpretation()),
-                                gainDel.minCopies().roundToInt(),
-                                gainDel.maxCopies().roundToInt()
+                                gainDel.tumorMinCopies().roundToInt(),
+                                gainDel.tumorMaxCopies().roundToInt()
                             )
                         }.toSet(),
                     )
                 } else {
                     val event =
-                        if (otherGainDels.isEmpty()) DriverEventFactory.geneCopyNumberEvent(geneCopyNumber) else otherGainDels.first()
-                            .let { DriverEventFactory.gainDelEvent(it) }
+                        if (otherGainDels.isEmpty()) geneCopyNumber.event() else otherGainDels.first()
+                            .let { it.event() }
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,
@@ -85,17 +74,17 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         canonicalImpact = TranscriptCopyNumberImpact(
                             transcriptId = "",
                             type = CopyNumberType.NONE,
-                            minCopies = geneCopyNumber.minCopyNumber()
+                            minCopies = geneCopyNumber.tumorMinCopies()
                                 .roundToInt(), // TODO (CB): Should be changed once PurpleGeneCopyNumber has transcript / isCanonical fields
-                            maxCopies = geneCopyNumber.maxCopyNumber()
+                            maxCopies = geneCopyNumber.tumorMaxCopies()
                                 .roundToInt() // TODO (CB): Should be changed once PurpleGeneCopyNumber has transcript / isCanonical fields
                         ),
                         otherImpacts = otherGainDels.map { gainDel ->
                             TranscriptCopyNumberImpact(
                                 gainDel.transcript(),
                                 determineType(gainDel.interpretation()),
-                                gainDel.minCopies().roundToInt(),
-                                gainDel.maxCopies().roundToInt()
+                                gainDel.tumorMaxCopies().roundToInt(),
+                                gainDel.tumorMaxCopies().roundToInt()
                             )
                         }.toSet()
                     )
@@ -134,7 +123,7 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    private fun findGainDel(gainsDeles: List<PurpleGainDeletion>, driverToMatch: PurpleDriver): PurpleGainDeletion {
+    private fun findGainDel(gainsDeles: List<GainDeletion>, driverToMatch: PurpleDriver): GainDeletion {
         val gainDel =
             gainsDeles.firstOrNull { gainDel ->
                 gainDel.gene() == driverToMatch.gene() && gainDel.isCanonical == driverToMatch.isCanonical

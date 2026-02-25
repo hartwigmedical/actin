@@ -18,8 +18,8 @@ class VirusExtractor() {
                 type = determineType(virus.interpretation()),
                 isReliable = virus.qcStatus() == QC_PASS_STATUS,
                 integrations = virus.integrations(),
-                isReportable = MappingUtil.determineReported(virus),
-                event = DriverEventFactory.virusEvent(virus),
+                isReportable = virus.isReported,
+                event = virus.event(),
                 driverLikelihood = MappingUtil.determineDriverLikelihood(virus),
                 evidence = ExtractionUtil.noEvidence(),
             )

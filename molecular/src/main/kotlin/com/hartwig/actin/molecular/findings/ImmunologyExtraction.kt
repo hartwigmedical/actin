@@ -21,7 +21,7 @@ object ImmunologyExtraction {
                 tumorCopyNumber = allele.tumorCopyNumber(),
                 hasSomaticMutations = allele.hasSomaticVariants(),
                 evidence = ExtractionUtil.noEvidence(),
-                event = DriverEventFactory.immunologyEvent(allele)
+                event = allele.event()
             )
         }.toSet()
     }

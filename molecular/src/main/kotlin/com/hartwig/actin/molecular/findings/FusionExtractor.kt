@@ -11,19 +11,12 @@ import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 class FusionExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(fusions: DriverFindingList<com.hartwig.hmftools.datamodel.finding.Fusion>): List<Fusion> {
-        return fusions.somaticOnly().findings.filter { fusion ->
-            val included = geneFilter.include(fusion.geneStart()) || geneFilter.include(fusion.geneEnd())
-            if (!included && MappingUtil.determineReported(fusion)) {
-                throw IllegalStateException(
-                    "Filtered a reported fusion '${fusion.geneStart()}::${fusion.geneEnd()}' through gene filtering."
-                            + " Please make sure either '${fusion.geneStart()}' or '${fusion.geneEnd()}' is configured as a known gene."
-                )
-            }
-            included
+        return fusions.somaticOnly().findings.filter {
+            MappingUtil.includedInGeneFilter(it, geneFilter)
         }.map { fusion ->
             Fusion(
-                isReportable = MappingUtil.determineReported(fusion),
-                event = DriverEventFactory.fusionEvent(fusion),
+                isReportable = fusion.isReported,
+                event = fusion.event(),
                 driverLikelihood = MappingUtil.determineDriverLikelihood(fusion),
                 evidence = ExtractionUtil.noEvidence(),
                 geneStart = fusion.geneStart(),

@@ -11,28 +11,19 @@ import com.hartwig.hmftools.datamodel.finding.Disruption
 class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractHomozygousDisruptions(disruptions: List<Disruption>): List<HomozygousDisruption> {
-        val relevantHomozygousDisruptions = relevantHomozygousDisruptions(disruptions)
-
-        relevantHomozygousDisruptions.find { !geneFilter.include(it.gene()) }
-            ?.let { homozygousDisruption ->
-                throw IllegalStateException(
-                    "Filtered a reported homozygous disruption through gene filtering: '${homozygousDisruption.gene()}'. "
-                            + "Please make sure '${homozygousDisruption.gene()}' is configured as a known gene."
+        return relevantHomozygousDisruptions(disruptions).filter { MappingUtil.includedInGeneFilter(it, geneFilter) }
+            .map { homozygousDisruption ->
+                HomozygousDisruption(
+                    gene = homozygousDisruption.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
+                    isReportable = true,
+                    event = homozygousDisruption.event(),
+                    driverLikelihood = DriverLikelihood.HIGH,
+                    evidence = ExtractionUtil.noEvidence(),
                 )
             }
-
-        return relevantHomozygousDisruptions.map { homozygousDisruption ->
-            HomozygousDisruption(
-                gene = homozygousDisruption.gene(),
-                geneRole = GeneRole.UNKNOWN,
-                proteinEffect = ProteinEffect.UNKNOWN,
-                isAssociatedWithDrugResistance = null,
-                isReportable = true,
-                event = DriverEventFactory.homozygousDisruptionEvent(homozygousDisruption),
-                driverLikelihood = DriverLikelihood.HIGH,
-                evidence = ExtractionUtil.noEvidence(),
-            )
-        }
             .distinctBy { it.gene }
             .sorted()
     }
