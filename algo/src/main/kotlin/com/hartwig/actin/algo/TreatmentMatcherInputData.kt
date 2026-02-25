@@ -4,7 +4,7 @@ import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.TreatmentDatabaseFactory
-import com.hartwig.actin.algo.evaluation.tumor.CuppaToDoidMapping
+import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
@@ -30,7 +30,7 @@ import org.apache.logging.log4j.Logger
 data class TreatmentMatcherInputData(
     val patient: PatientRecord,
     val doidModel: DoidModel,
-    val cuppaToDoidMapping: CuppaToDoidMapping?,
+    val cuppaToDoidMapping: CuppaToDoidMapping,
     val icdModel: IcdModel,
     val trials: List<Trial>?,
     val atcTree: AtcTree,
@@ -106,7 +106,7 @@ object InputDataLoader {
         val serveDatabase = deferredServeDatabase.await()
 
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
-        val cuppaToDoidMapping = config.cuppaDoidMappingTsv?.let { CuppaToDoidMapping.createFromFile(it) }
+        val cuppaToDoidMapping = CuppaToDoidMapping.createFromFile(config.cuppaDoidMappingTsv)
         val icdModel = IcdModel.create(icdNodes)
 
         val refGenomeVersion =

@@ -1,4 +1,4 @@
-package com.hartwig.actin.algo.evaluation.tumor
+package com.hartwig.actin.doid
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
@@ -21,12 +21,12 @@ class CuppaToDoidMapping(private val mapping: Map<String, Set<String>>) {
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(CuppaToDoidMapping::class.java)
+        private val logger = LogManager.getLogger(CuppaToDoidMapping::class.java)
         private const val DOID_SEPARATOR = ";"
         private const val DOID_PREFIX = "DOID:"
 
         fun createFromFile(tsvPath: String): CuppaToDoidMapping {
-            LOGGER.info("Loading CUPPA to DOID mapping from {}", tsvPath)
+            logger.info("Loading CUPPA to DOID mapping from {}", tsvPath)
             val reader = CsvMapper().apply {
                 enable(CsvParser.Feature.EMPTY_STRING_AS_NULL)
             }.readerFor(CuppaDoidRow::class.java).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
@@ -35,7 +35,7 @@ class CuppaToDoidMapping(private val mapping: Map<String, Set<String>>) {
             val mapping = rows.associate { row ->
                 row.cuppaCancerType to row.doidIds.split(DOID_SEPARATOR).map { it.removePrefix(DOID_PREFIX) }.toSet()
             }
-            LOGGER.info(" Loaded {} CUPPA cancer type mappings", mapping.size)
+            logger.info(" Loaded {} CUPPA cancer type mappings", mapping.size)
             return CuppaToDoidMapping(mapping)
         }
     }

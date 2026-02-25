@@ -10,12 +10,13 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
+import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.doid.DoidModel
-import org.apache.logging.log4j.LogManager
+
 
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
-    private val cuppaToDoidMapping: CuppaToDoidMapping?,
+    private val cuppaToDoidMapping: CuppaToDoidMapping,
     private val doidsToMatch: Set<String>,
     private val specificQuery: String?
 ) : EvaluationFunction {
@@ -85,15 +86,6 @@ class PrimaryTumorLocationBelongsToDoid(
         }
 
         val cancerType = predictedTumorOrigin.cancerType()
-
-        if (cuppaToDoidMapping == null) {
-            LOGGER.warn(
-                "CUP patient has conclusive CUPPA prediction ({}, {}%) but no CUPPA-to-DOID mapping configured",
-                cancerType, (likelihood * 100).toInt()
-            )
-            return null
-        }
-
         val cuppaDoids = cuppaToDoidMapping.doidsForCuppaType(cancerType) ?: return null
 
         val cuppaResult = evaluateForDoids(record, cuppaDoids)
@@ -106,7 +98,6 @@ class PrimaryTumorLocationBelongsToDoid(
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(PrimaryTumorLocationBelongsToDoid::class.java)
         private const val CUPPA_CONFIDENCE_THRESHOLD = 0.8
     }
 
