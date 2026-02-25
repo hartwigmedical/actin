@@ -87,8 +87,10 @@ class PrimaryTumorLocationBelongsToDoid(
         val cancerType = predictedTumorOrigin.cancerType()
 
         if (cuppaToDoidMapping == null) {
-            LOGGER.warn("CUP patient has conclusive CUPPA prediction ({}, {}%) but no CUPPA-to-DOID mapping configured",
-                cancerType, (likelihood * 100).toInt())
+            LOGGER.warn(
+                "CUP patient has conclusive CUPPA prediction ({}, {}%) but no CUPPA-to-DOID mapping configured",
+                cancerType, (likelihood * 100).toInt()
+            )
             return null
         }
 
@@ -129,7 +131,8 @@ class PrimaryTumorLocationBelongsToDoid(
     }
 
     private fun hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids: Set<String>, fullDoidToMatchTree: Set<String>): Boolean {
-        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isNotEmpty() && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
+        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS)
+            .isNotEmpty() && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
     }
 
     private fun doidsToTerms(doids: Set<String>): Set<String> {

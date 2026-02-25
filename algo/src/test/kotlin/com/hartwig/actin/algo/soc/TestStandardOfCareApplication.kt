@@ -39,7 +39,12 @@ class TestStandardOfCareApplication {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH)
 
         val standardOfCareEvaluator = StandardOfCareEvaluatorFactory(
-            RuleMappingResourcesTestFactory.create(doidModel = doidModel, icdModel = icdModel, atcTree = AtcTree.createFromFile(ATC_TREE_PATH), treatmentDatabase = treatmentDatabase)
+            RuleMappingResourcesTestFactory.create(
+                doidModel = doidModel,
+                icdModel = icdModel,
+                atcTree = AtcTree.createFromFile(ATC_TREE_PATH),
+                treatmentDatabase = treatmentDatabase
+            )
         ).create()
 
         val patient = patient(treatmentDatabase)

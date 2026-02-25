@@ -164,7 +164,8 @@ class PrimaryTumorLocationBelongsToDoidTest {
     @Test
     fun `Should fail for CUP patient with conclusive CUPPA not matching queried DOID`() {
         val function = PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PANCREAS_DOID), null)
-        val record = TumorTestFactory.withCupAndCuppaPrediction(setOf(DoidConstants.CANCER_DOID), "Colorectum/Small intestine/Appendix", 0.95)
+        val record =
+            TumorTestFactory.withCupAndCuppaPrediction(setOf(DoidConstants.CANCER_DOID), "Colorectum/Small intestine/Appendix", 0.95)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
