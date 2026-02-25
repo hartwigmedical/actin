@@ -13,6 +13,7 @@ import com.hartwig.actin.molecular.evidence.EvidenceAnnotator
 import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
+import com.hartwig.actin.molecular.findings.FindingsExtractor
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.orange.OrangeExtractor
 import com.hartwig.actin.molecular.panel.IhcAnnotator
@@ -79,16 +80,16 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         inputData: MolecularInterpreterInputData,
         patientGender: Gender?
     ): List<MolecularTest> {
-        return if (inputData.orange != null) {
-            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.orange.refGenomeVersion())
+        return if (inputData.findings != null) {
+            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.findings.metaProperties.refGenomeVersion())
             val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, orangeRefGenomeVersion)
 
             LOGGER.info("Interpreting ORANGE record")
             MolecularInterpreter(
-                OrangeExtractor(inputData.geneFilter, inputData.panelSpecifications),
+                FindingsExtractor(inputData.geneFilter, inputData.panelSpecifications),
                 MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents())),
                 listOf(EvidenceAnnotatorFactory.createMolecularRecordAnnotator(serveRecord, inputData.doidEntry, tumorDoids, patientGender))
-            ).run(listOf(inputData.orange))
+            ).run(listOf(inputData.findings))
         } else {
             emptyList()
         }

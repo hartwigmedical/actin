@@ -19,7 +19,8 @@ import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.datamodel.OrangeJson
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord
+import com.hartwig.hmftools.datamodel.finding.FindingRecord
+import com.hartwig.hmftools.datamodel.finding.FindingsJson
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.serialization.ServeJson
 import kotlinx.coroutines.Dispatchers
@@ -28,10 +29,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Path
 
 data class MolecularInterpreterInputData(
     val clinical: ClinicalRecord,
-    val orange: OrangeRecord? = null,
+    val findings: FindingRecord? = null,
     val serveDatabase: ServeDatabase,
     val doidEntry: DoidEntry,
     val ensemblDataCache: EnsemblDataCache,
@@ -55,11 +57,11 @@ object InputDataLoader {
                     ClinicalRecordJson.read(config.clinicalJson)
                 }
             }
-            val orange = async {
+            val findings = async {
                 withContext(Dispatchers.IO) {
                     if (config.orangeJson != null) {
                         LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
-                        OrangeJson.getInstance().read(config.orangeJson)
+                        FindingsJson().read(Path.of(config.orangeJson))
                     } else {
                         null
                     }
@@ -138,7 +140,7 @@ object InputDataLoader {
 
             MolecularInterpreterInputData(
                 clinical = clinical.await(),
-                orange = orange.await(),
+                findings = findings.await(),
                 serveDatabase = deferredServeDatabase.await(),
                 doidEntry = deferredDoidEntry.await(),
                 ensemblDataCache = deferredEnsemblDataCache.await(),

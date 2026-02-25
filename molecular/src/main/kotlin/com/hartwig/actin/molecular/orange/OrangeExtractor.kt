@@ -16,7 +16,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
 import java.time.LocalDate
 import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentType
 
-private const val ONCO_PANEL = "OncoPanel"
+const val ONCO_PANEL = "OncoPanel"
 
 class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpecifications: PanelSpecifications) :
     MolecularExtractor<OrangeRecord, MolecularTest> {
