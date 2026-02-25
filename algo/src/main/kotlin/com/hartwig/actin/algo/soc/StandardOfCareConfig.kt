@@ -13,7 +13,7 @@ import org.apache.logging.log4j.core.config.Configurator
 data class StandardOfCareConfig(
     val patientJson: String,
     val doidJson: String,
-    val cuppaDoidMappingTsv: String?,
+    val cuppaDoidMappingTsv: String,
     val icdTsv: String,
     val atcTsv: String,
     val treatmentDirectory: String,
@@ -63,7 +63,7 @@ data class StandardOfCareConfig(
             return StandardOfCareConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
-                cuppaDoidMappingTsv = ApplicationConfig.optionalFile(cmd, CUPPA_DOID_MAPPING_TSV),
+                cuppaDoidMappingTsv = ApplicationConfig.nonOptionalFile(cmd, CUPPA_DOID_MAPPING_TSV),
                 icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 runHistorically = runHistorically,

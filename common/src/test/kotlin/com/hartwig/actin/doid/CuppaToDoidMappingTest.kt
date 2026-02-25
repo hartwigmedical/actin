@@ -1,12 +1,13 @@
-package com.hartwig.actin.algo.evaluation.tumor
+package com.hartwig.actin.doid
 
+import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class CuppaToDoidMappingTest {
 
     private val mapping = CuppaToDoidMapping.createFromFile(
-        CuppaToDoidMappingTest::class.java.getResource("/cuppa_doid_mapping_test.tsv")!!.path
+        resourceOnClasspath("cuppa_doid_mapping_test.tsv")
     )
 
     @Test
