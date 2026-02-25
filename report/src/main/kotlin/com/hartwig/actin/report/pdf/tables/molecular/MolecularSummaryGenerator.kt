@@ -39,8 +39,8 @@ class MolecularSummaryGenerator(
         val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }
-        val testReportsHash = nonIhcTestsIncludedInTrialMatching.mapNotNull { it.reportHash } + ihcTestsFiltered.mapNotNull { it.reportHash }
-        val filteredPathologyReports = patientRecord.pathologyReports?.filter { it.reportHash in testReportsHash }
+        val filteredPathologyReports =
+            PathologyReportFunctions.filterPathologyReport(patientRecord.molecularTests, ihcTestsFiltered, patientRecord.pathologyReports)
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             emptyList(),
             nonIhcTestsIncludedInTrialMatching,

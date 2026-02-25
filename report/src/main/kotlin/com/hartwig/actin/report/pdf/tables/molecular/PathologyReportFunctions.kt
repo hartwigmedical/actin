@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
+import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -80,6 +81,18 @@ object PathologyReportFunctions {
             Text(label),
             Text(date(date)).addStyle(Styles.tableHighlightStyle())
         )
+
+    fun filterPathologyReport(
+        molecularTests: List<MolecularTest>,
+        ihcTests: List<IhcTest>,
+        pathologyReports: List<PathologyReport>?
+    ): List<PathologyReport>? {
+        val ihcTestsReportHash = ihcTests.mapNotNull { it.reportHash }
+        val nonIhcTestsHash = molecularTests.filterNot { it.experimentType == ExperimentType.IHC }.mapNotNull { it.reportHash }
+        val testReportsHash = nonIhcTestsHash + ihcTestsReportHash
+
+        return pathologyReports?.filter { it.reportHash in testReportsHash }
+    }
 
     fun groupTestsByPathologyReport(
         orangeMolecularRecords: List<MolecularTest>,

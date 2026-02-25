@@ -73,14 +73,20 @@ class MolecularDetailsChapter(
 
     private fun addMolecularDetails(document: Document) {
         val cohorts =
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch.trialMatches, configuration.filterOnSOCExhaustionAndTumorType)
+            InterpretedCohortFactory.createEvaluableCohorts(
+                report.treatmentMatch.trialMatches,
+                configuration.filterOnSOCExhaustionAndTumorType
+            )
 
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
-        val nonIhcTestsIncludedInTrialMatching = report.patientRecord.molecularTests.filterNot { it.experimentType == ExperimentType.IHC }
-        val testReportsHash = nonIhcTestsIncludedInTrialMatching.mapNotNull { it.reportHash } + filteredIhcTests.mapNotNull { it.reportHash }
-        val filteredPathologyReports = report.patientRecord.pathologyReports?.filter { it.reportHash in testReportsHash }
+        val filteredPathologyReports = PathologyReportFunctions.filterPathologyReport(
+            report.patientRecord.molecularTests,
+            filteredIhcTests,
+            report.patientRecord.pathologyReports
+        )
+
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             listOfNotNull(orangeMolecularTest),
             externalPanelResults,

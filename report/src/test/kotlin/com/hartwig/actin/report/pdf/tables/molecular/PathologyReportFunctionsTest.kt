@@ -66,6 +66,27 @@ class PathologyReportFunctionsTest {
     }
 
     @Test
+    fun `Should filter pathology report using both icd and non icd test hashes`() {
+        val pathologyReport1 = pathologyReport(1, date1)
+        val pathologyReport2 = pathologyReport(2, date2)
+        val pathologyReport3 = pathologyReport(3, date2)
+        val wholeGenomeTest = minimalWholeGenomeTest.copy(reportHash = "hash1")
+        val ihcTest = ihcTest(reportHash = "hash2")
+
+        val result = PathologyReportFunctions.filterPathologyReport(
+            molecularTests = listOf(wholeGenomeTest),
+            ihcTests = listOf(ihcTest),
+            pathologyReports = listOf(pathologyReport1, pathologyReport2, pathologyReport3)
+        )
+
+        assertThat(result).isNotNull()
+        assertThat(result?.size).isEqualTo(2)
+        assertThat(result).contains(pathologyReport1)
+        assertThat(result).contains(pathologyReport2)
+        assertThat(result).doesNotContain(pathologyReport3)
+    }
+
+    @Test
     fun `Should group test results by report hash if match available`() {
         val pathologyReport1 = pathologyReport(1, date1)
         val pathologyReport2 = pathologyReport(2, date2)
