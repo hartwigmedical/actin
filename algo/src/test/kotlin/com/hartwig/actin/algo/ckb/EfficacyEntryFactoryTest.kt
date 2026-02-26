@@ -122,7 +122,7 @@ class EfficacyEntryFactoryTest {
     @Test
     fun `Should convert primary tumor locations`() {
         val actual = evidenceEntryFactory.convertPrimaryTumorLocation("{\"right\": 45, \"left\": 136, \"both or unknown\": 2}")
-        val expected = mapOf("right" to 45, "left" to 136, "both or unknown" to 2)
+        val expected = mapOf("right" to 45.0, "left" to 136.0, "both or unknown" to 2.0)
         assertThat(actual).isEqualTo(expected)
     }
 
