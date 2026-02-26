@@ -62,7 +62,7 @@
         <commons-math3.version>3.6.1</commons-math3.version>
         <jsonschema-generator.version>4.36.0</jsonschema-generator.version>
         <letsplot.version>4.8.2</letsplot.version>
-        <letsplot-kotlin.version>4.11.0</letsplot-kotlin.version>
+        <letsplot-kotlin.version>4.12.1</letsplot-kotlin.version>
 
     </properties>
 
