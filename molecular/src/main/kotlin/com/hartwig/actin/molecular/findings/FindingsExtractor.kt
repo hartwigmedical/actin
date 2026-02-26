@@ -27,8 +27,8 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
         val driverExtractor = DriverExtractor.Companion.create(geneFilter)
         val metaProperties = record.metaProperties
         return MolecularTest(
-            date = record.samplingDate(),
-            sampleId = record.sampleId(),
+            date = metaProperties.samplingDate(),
+            sampleId = metaProperties.sampleId(),
             reportHash = null,
             experimentType = determineExperimentType(metaProperties.experimentType()),
             testTypeDisplay = null,
