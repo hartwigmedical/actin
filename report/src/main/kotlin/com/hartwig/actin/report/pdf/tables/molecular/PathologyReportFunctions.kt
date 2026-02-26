@@ -64,7 +64,12 @@ object PathologyReportFunctions {
                                 Text("Diagnosis: "),
                                 Text(pathologyReport.diagnosis).addStyle(Styles.tableHighlightStyle()),
                             )
-                        }
+                        },
+                        pathologyReport.biopsyLocation?.let {
+                            listOf(
+                                Text("Biopsy location: "),
+                                Text(pathologyReport.biopsyLocation).addStyle(Styles.tableHighlightStyle()),
+                            )                        }
                     ).joinWithSeparator(Text(", ")),
                     listOf(Text(")"))
                 ).flatten()

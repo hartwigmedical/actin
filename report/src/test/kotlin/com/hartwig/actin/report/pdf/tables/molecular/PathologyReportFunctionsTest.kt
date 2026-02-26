@@ -123,7 +123,8 @@ class PathologyReportFunctionsTest {
         tissueDate = date,
         authorisationDate = null,
         extractionDate = date,
-        report = "Report$idx"
+        report = "Report$idx",
+        biopsyLocation = "Location$idx",
     )
 
     private fun ihcTest(item: String = "", measure: String? = null, measureDate: LocalDate? = null, reportHash: String? = null): IhcTest {
