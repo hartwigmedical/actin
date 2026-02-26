@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasIntoleranceWithSpecificIcdTitleTest {
 

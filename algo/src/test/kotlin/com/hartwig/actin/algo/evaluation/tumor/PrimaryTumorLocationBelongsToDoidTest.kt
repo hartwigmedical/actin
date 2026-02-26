@@ -8,7 +8,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.doid.config.AdenoSquamousMapping
 import com.hartwig.actin.doid.config.TestDoidManualConfigFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val PARENT_DOID_1 = "100"
 private const val CHILD_DOID_1 = "200"

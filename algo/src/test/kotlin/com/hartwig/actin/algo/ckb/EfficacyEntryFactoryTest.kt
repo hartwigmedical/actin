@@ -17,7 +17,8 @@ import com.hartwig.actin.datamodel.efficacy.TimeOfMetastases
 import com.hartwig.actin.datamodel.efficacy.ValuePercentage
 import com.hartwig.actin.datamodel.efficacy.VariantRequirement
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 class EfficacyEntryFactoryTest {
 
@@ -72,9 +73,11 @@ class EfficacyEntryFactoryTest {
         assertThat(actual).isEqualTo(Intent.ADJUVANT)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should return exception when unknown therapeutic setting is provided`() {
-        evidenceEntryFactory.extractTherapeuticSettingFromString("Unknown therapeutic setting")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.extractTherapeuticSettingFromString("Unknown therapeutic setting")
+        }
     }
 
     @Test
@@ -119,7 +122,7 @@ class EfficacyEntryFactoryTest {
     @Test
     fun `Should convert primary tumor locations`() {
         val actual = evidenceEntryFactory.convertPrimaryTumorLocation("{\"right\": 45, \"left\": 136, \"both or unknown\": 2}")
-        val expected = mapOf("right" to 45.0, "left" to 136.0, "both or unknown" to 2.0)
+        val expected = mapOf("right" to 45, "left" to 136, "both or unknown" to 2)
         assertThat(actual).isEqualTo(expected)
     }
 
@@ -137,9 +140,11 @@ class EfficacyEntryFactoryTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception if incorrect metastatic sites formatting`() {
-        evidenceEntryFactory.convertMetastaticSites("Liver only: 58-32%, Lung only: 10-6%")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.convertMetastaticSites("Liver only: 58-32%, Lung only: 10-6%")
+        }
     }
 
     @Test
@@ -148,9 +153,11 @@ class EfficacyEntryFactoryTest {
         assertThat(actual).isEqualTo(TimeOfMetastases.METACHRONOUS)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception if unknown time of metastases`() {
-        evidenceEntryFactory.convertMetastaticSites("Two months after primary diagnosis")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.convertMetastaticSites("Two months after primary diagnosis")
+        }
     }
 
     @Test
@@ -160,9 +167,11 @@ class EfficacyEntryFactoryTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception region formatting is incorrect`() {
-        evidenceEntryFactory.convertRaceOrRegion("North America/Western Europe/Australia, Rest of world: 354")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.convertRaceOrRegion("North America/Western Europe/Australia, Rest of world: 354")
+        }
     }
 
     @Test
@@ -172,9 +181,11 @@ class EfficacyEntryFactoryTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception if race formatting is incorrect`() {
-        evidenceEntryFactory.convertRaceOrRegion("Black, White: 26")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.convertRaceOrRegion("Black, White: 26")
+        }
     }
 
     @Test
@@ -184,9 +195,11 @@ class EfficacyEntryFactoryTest {
         assertThat(actual).isEqualTo(expected)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception if invalid confidence interval is provided`() {
-        evidenceEntryFactory.convertConfidenceInterval("4.0;6.8")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.convertConfidenceInterval("4.0;6.8")
+        }
     }
 
     @Test
@@ -195,9 +208,11 @@ class EfficacyEntryFactoryTest {
         assertThat(monthsEndPointType).isEqualTo(16.0)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception when primary end point value is not a number`() {
-        evidenceEntryFactory.convertEndPointValue("invalid input", "Months")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.convertEndPointValue("invalid input", "Months")
+        }
     }
 
     @Test
@@ -212,9 +227,11 @@ class EfficacyEntryFactoryTest {
         assertThat(noEndPointType).isEqualTo(0.0)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception when primary end point type is YN and primary end point value is neither Y or N`() {
-        evidenceEntryFactory.convertEndPointValue("invalid input", "Y/N")
+        assertThrows(IllegalStateException::class.java) {
+            evidenceEntryFactory.convertEndPointValue("invalid input", "Y/N")
+        }
     }
 
     @Test

@@ -12,8 +12,8 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.jupiter.api.Test
 
 class HasActiveInfectionTest {
 

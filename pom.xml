@@ -43,7 +43,7 @@
 
         <commons.cli.version>1.5.0</commons.cli.version>
         <google.gson.version>2.10</google.gson.version>
-        <apache.log4j.version>2.18.0</apache.log4j.version>
+        <apache.log4j.version>2.25.3</apache.log4j.version>
         <slf4j-reload4j.version>2.0.9</slf4j-reload4j.version>
 
         <jooq.version>3.15.5</jooq.version>
@@ -54,14 +54,14 @@
         <kotlin.compiler.apiVersion>2.0</kotlin.compiler.apiVersion>
         <kotlin.code.style>official</kotlin.code.style>
 
-        <junit.version>4.13.2</junit.version>
-        <assertj-core.version>3.27.3</assertj-core.version>
+        <junit-jupiter.version>5.10.3</junit-jupiter.version>
+        <assertj-core.version>3.27.7</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
         <jackson.version>2.16.1</jackson.version>
         <kotlinx-coroutines-core.version>1.8.0</kotlinx-coroutines-core.version>
         <commons-math3.version>3.6.1</commons-math3.version>
         <jsonschema-generator.version>4.36.0</jsonschema-generator.version>
-        <letsplot.version>4.7.0</letsplot.version>
+        <letsplot.version>4.8.2</letsplot.version>
         <letsplot-kotlin.version>4.11.0</letsplot-kotlin.version>
 
     </properties>
@@ -138,18 +138,6 @@
                     <groupId>org.jooq</groupId>
                     <artifactId>jooq-codegen-maven</artifactId>
                     <version>${jooq.version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven.surefire.plugin.version}</version>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.apache.maven.surefire</groupId>
-                            <artifactId>surefire-junit47</artifactId>
-                            <version>${maven.surefire.plugin.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -332,9 +320,9 @@
             </dependency>
 
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit-jupiter.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

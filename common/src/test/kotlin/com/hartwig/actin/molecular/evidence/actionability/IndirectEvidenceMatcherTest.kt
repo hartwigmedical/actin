@@ -17,7 +17,7 @@ import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import com.hartwig.serve.datamodel.molecular.ImmutableMolecularCriterium
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect as DriverProteinEffect
 
 class IndirectEvidenceMatcherTest {

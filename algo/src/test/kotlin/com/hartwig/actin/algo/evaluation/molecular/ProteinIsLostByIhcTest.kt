@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluat
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.ihcTest
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val PROTEIN = "protein 1"
 

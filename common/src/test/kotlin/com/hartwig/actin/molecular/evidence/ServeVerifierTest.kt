@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.evidence
 import com.hartwig.actin.molecular.evidence.TestServeFactory.createServeDatabase
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 val SINGLE_PROFILE_1 = TestServeMolecularFactory.createHotspotCriterium()
 val SINGLE_PROFILE_2 = TestServeMolecularFactory.createGeneCriterium()
