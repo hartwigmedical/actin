@@ -4,7 +4,7 @@ import com.hartwig.actin.doid.datamodel.Edge
 import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.TestDoidEntryFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DoidModelFactoryTest {
 

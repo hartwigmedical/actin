@@ -14,7 +14,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val REQUIRED_COPY_NR = 5
 private const val PASSING_COPY_NR = REQUIRED_COPY_NR + 2

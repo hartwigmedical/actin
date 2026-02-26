@@ -17,7 +17,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createEv
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory.createNonEvaluableCohorts
 import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val RULE_1 = EligibilityRule.ACTIVATING_MUTATION_IN_ANY_GENES_X
 private val RULE_2 = EligibilityRule.IS_AT_LEAST_X_YEARS_OLD

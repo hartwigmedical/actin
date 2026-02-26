@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BloodTransfusion
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.jupiter.api.Test
 
 class HasHadRecentBloodTransfusionTest {
     @Test

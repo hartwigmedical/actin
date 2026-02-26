@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Gender
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CreatinineFunctionsTest {
 

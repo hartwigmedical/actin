@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasKnownHPVStatusTest {
 

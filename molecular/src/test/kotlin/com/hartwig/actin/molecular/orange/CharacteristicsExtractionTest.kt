@@ -14,7 +14,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val EPSILON = 1.0E-10
 

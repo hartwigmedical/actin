@@ -2,7 +2,7 @@ package com.hartwig.actin.trial.input
 
 import com.hartwig.actin.trial.input.composite.CompositeRules.isComposite
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FunctionInputMappingTest {
 

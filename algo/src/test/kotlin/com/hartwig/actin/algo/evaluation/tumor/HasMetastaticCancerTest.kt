@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasMetastaticCancerTest {
 

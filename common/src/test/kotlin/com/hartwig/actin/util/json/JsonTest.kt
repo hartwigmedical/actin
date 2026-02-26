@@ -15,7 +15,7 @@ import com.hartwig.actin.util.json.Json.optionalStringList
 import com.hartwig.actin.util.json.Json.string
 import com.hartwig.actin.util.json.Json.stringList
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class JsonTest {
 

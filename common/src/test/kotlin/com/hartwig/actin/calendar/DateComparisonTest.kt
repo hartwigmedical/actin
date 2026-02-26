@@ -1,8 +1,8 @@
 package com.hartwig.actin.calendar
 
-import org.assertj.core.api.Assertions
-import org.junit.Test
 import java.time.LocalDate
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.Test
 
 class DateComparisonTest {
 

@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.molecular.IhcTestFilter.mostRecentAndUn
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class IhcTestFilterTest {
 

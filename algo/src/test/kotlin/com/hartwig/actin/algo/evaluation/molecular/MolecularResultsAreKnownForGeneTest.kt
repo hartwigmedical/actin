@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class MolecularResultsAreKnownForGeneTest {
     

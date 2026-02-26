@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.jupiter.api.Test
 
 class HasHadSomeTreatmentsWithCategoryWithIntentsTest {
 
