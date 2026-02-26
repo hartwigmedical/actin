@@ -23,9 +23,6 @@ object DosageFormatter {
         }
     }
 
-    private fun formatDosageLimit(dosageLimit: Double?) =
-        if (dosageLimit != null && dosageLimit != 0.0) TWO_DECIMAL_PLACES_FORMAT.format(dosageLimit) else "?"
-
     fun formatFrequency(dosage: Dosage): String {
         val frequency = if (dosage.frequency != null && dosage.frequency != 0.0) {
             TWO_DECIMAL_PLACES_FORMAT.format(dosage.frequency!!)
@@ -44,4 +41,7 @@ object DosageFormatter {
             else -> "$frequency / $frequencyUnit"
         }
     }
+
+    private fun formatDosageLimit(dosageLimit: Double?) =
+        if (dosageLimit != null && dosageLimit != 0.0) TWO_DECIMAL_PLACES_FORMAT.format(dosageLimit) else "?"
 }
