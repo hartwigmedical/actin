@@ -1,10 +1,10 @@
 package com.hartwig.actin.report.interpretation
 
-import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
+import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.report.interpretation.ClonalityInterpreter.isPotentiallySubclonal
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ClonalityInterpreterTest {
 

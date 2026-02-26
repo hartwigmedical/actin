@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FallbackTest {
     @Test

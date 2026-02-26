@@ -9,8 +9,8 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.jupiter.api.Test
 
 class RequiresRegularHematopoieticSupportTest {
     @Test

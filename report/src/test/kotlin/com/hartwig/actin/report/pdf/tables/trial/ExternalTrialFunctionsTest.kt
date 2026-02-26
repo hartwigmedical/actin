@@ -4,7 +4,8 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
 import com.hartwig.actin.datamodel.molecular.evidence.Hospital
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 private val BASE_EXTERNAL_TRIAL_SUMMARY = ExternalTrialSummary(
     nctId = "nct",
@@ -87,9 +88,11 @@ class ExternalTrialFunctionsTest {
         assertThat(hospitalsAndCitiesExternalTrialBelgium.second).isEqualTo("3+ locations (see link)")
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw illegal state exception if country not found in external trial`() {
-        ExternalTrialFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
+        assertThrows(IllegalStateException::class.java) {
+            ExternalTrialFunctions.hospitalsAndCitiesInCountry(externalTrialNetherlands, Country.BELGIUM)
+        }
     }
 
     @Test

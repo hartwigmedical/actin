@@ -6,9 +6,9 @@ import com.hartwig.actin.datamodel.algo.SimilarPatientsSummary
 import com.hartwig.actin.datamodel.algo.TreatmentEfficacyPrediction
 import com.hartwig.actin.datamodel.algo.TreatmentProportion
 import com.hartwig.actin.testutil.ResourceLocator
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.io.File
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class TreatmentEfficacyPredictionJsonTest {
 

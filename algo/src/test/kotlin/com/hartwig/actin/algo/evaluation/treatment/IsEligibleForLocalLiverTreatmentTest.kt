@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class IsEligibleForLocalLiverTreatmentTest {
 

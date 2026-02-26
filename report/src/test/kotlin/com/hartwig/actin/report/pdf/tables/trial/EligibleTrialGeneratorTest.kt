@@ -11,7 +11,7 @@ import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class EligibleTrialGeneratorTest {
 

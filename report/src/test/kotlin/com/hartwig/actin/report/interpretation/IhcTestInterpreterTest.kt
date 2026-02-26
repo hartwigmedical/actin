@@ -1,9 +1,9 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 private val DEFAULT_DATE = LocalDate.of(2025, 2, 10)
 private val MORE_RECENT_DATE = LocalDate.of(2025, 2, 11)

@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.serve.datamodel.molecular.MutationType
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val VARIANT = TestMolecularFactory.createMinimalVariant().copy(
     gene = "gene 1",

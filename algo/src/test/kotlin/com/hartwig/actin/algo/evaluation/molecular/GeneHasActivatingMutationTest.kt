@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactF
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class GeneHasActivatingMutationTest {
 

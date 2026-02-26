@@ -6,7 +6,8 @@ import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
 import com.hartwig.hmftools.datamodel.linx.ImmutableLinxRecord
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 class HomozygousDisruptionExtractorTest {
 
@@ -44,7 +45,7 @@ class HomozygousDisruptionExtractorTest {
         assertThat(homDisruptions).hasSize(1)
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception when filtering reported homozygous disruption`() {
         val linxHomDisruption = TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build()
         val linx = ImmutableLinxRecord.builder()
@@ -53,6 +54,8 @@ class HomozygousDisruptionExtractorTest {
             .build()
         val geneFilter = TestGeneFilterFactory.createValidForGenes("other gene")
         val homDisruptionExtractor = HomozygousDisruptionExtractor(geneFilter)
-        homDisruptionExtractor.extractHomozygousDisruptions(linx)
+        assertThrows(IllegalStateException::class.java) {
+            homDisruptionExtractor.extractHomozygousDisruptions(linx)
+        }
     }
 }

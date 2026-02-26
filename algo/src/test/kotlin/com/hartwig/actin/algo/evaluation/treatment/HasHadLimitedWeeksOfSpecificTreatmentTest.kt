@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val MATCHING_TREATMENT_NAME = "treatment 1"
 private val MATCHING_TREATMENT = treatment(MATCHING_TREATMENT_NAME, true)

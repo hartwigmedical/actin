@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
-import org.junit.Test
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class IhcTestEvaluationTest {
 
