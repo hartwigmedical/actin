@@ -18,12 +18,13 @@ class ImmunologyGenerator(private val molecular: MolecularTest) : TableGenerator
     }
 
     override fun contents(): Table {
-        val table = Tables.createRelativeWidthCols(25f, 35f, 20f, 20f)
 
-        table.addHeaderCell(Cells.createHeader("Type"))
-        table.addHeaderCell(Cells.createHeader("Allele Status"))
-        table.addHeaderCell(Cells.createHeader("CN"))
-        table.addHeaderCell(Cells.createHeader("Mutation"))
+        val table = Tables.createRelativeWidthCols(2f, 3f, 2f, 2f, 5f)
+
+        table.addHeaderCell(Cells.createHeaderWithBorder("HLA gene"))
+        table.addHeaderCell(Cells.createHeaderWithBorder("Type"))
+        table.addHeaderCell(Cells.createHeaderWithBorder("Tumor copy number"))
+        table.addHeaderCell(Cells.createHeaderWithBorder("Mutated in tumor"))
 
         addHlaAAlleles(table)
 
@@ -39,13 +40,15 @@ class ImmunologyGenerator(private val molecular: MolecularTest) : TableGenerator
             if (hlaAAlleles.isNotEmpty()) {
                 hlaAAlleles.forEachIndexed { index, hlaAllele ->
                     if (index == 0) {
-                        table.addCell(Cells.createContent("HLA-A"))
+                        table.addCell(Cells.createContentNoBorder("HLA-A"))
                     } else {
+                        table.addCell(Cells.createContentNoBorder(""))  // Add this 5th cell
                         table.addCell(Cells.createContentNoBorder(""))
                     }
 
+
                     val alleleString = "${hlaAllele.gene}*${hlaAllele.alleleGroup}:${hlaAllele.hlaProtein}"
-                    table.addCell(Cells.createContent(alleleString))
+                    table.addCell(Cells.createContentNoBorder(alleleString))
 
                     val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
                         val boundedCopyNumber = cn.coerceAtLeast(0.0)
@@ -53,26 +56,26 @@ class ImmunologyGenerator(private val molecular: MolecularTest) : TableGenerator
                             boundedCopyNumber
                         )
                     } ?: "-"
-                    table.addCell(Cells.createContent(cnDisplay))
+                    table.addCell(Cells.createContentNoBorder(cnDisplay))
 
                     val mutationDisplay = when (hlaAllele.hasSomaticMutations) {
                         true -> "Yes"
                         false -> "No"
                         null -> "-"
                     }
-                    table.addCell(Cells.createContent(mutationDisplay))
+                    table.addCell(Cells.createContentNoBorder(mutationDisplay))
                 }
             } else {
                 table.addCell(Cells.createKey("HLA-A"))
-                table.addCell(Cells.createContent("No HLA-A alleles detected"))
-                table.addCell(Cells.createContent(""))
-                table.addCell(Cells.createContent(""))
+                table.addCell(Cells.createContentNoBorder("No HLA-A alleles detected"))
+                table.addCell(Cells.createContentNoBorder(""))
+                table.addCell(Cells.createContentNoBorder(""))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createContent("HLA typing not available"))
-            table.addCell(Cells.createContent(""))
-            table.addCell(Cells.createContent(""))
+            table.addCell(Cells.createContentNoBorder("HLA typing not available"))
+            table.addCell(Cells.createContentNoBorder(""))
+            table.addCell(Cells.createContentNoBorder(""))
         }
     }
 }
