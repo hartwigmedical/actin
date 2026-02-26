@@ -22,12 +22,10 @@ import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WgsSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Table
 
@@ -114,11 +112,10 @@ class MolecularDetailsChapter(
         val valueWidth = tableWidth - keyWidth
 
         val reportTable = pathologyReport?.run {
-            Tables.createSingleColWithWidth(tableWidth)
-        } ?: Tables.createSingleColWithWidth(topTable.width.value)
-
-        topTable.addCell(Cells.create(reportTable))
-        reportTable.setBorderBottom(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
+            val innerTable = Tables.createSingleColWithWidth(tableWidth)
+            topTable.addCell(Cells.create(innerTable))
+            innerTable
+        } ?: topTable
 
         val orangeGenerators = orangeMolecularRecord.map {
             OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport)

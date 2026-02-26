@@ -62,12 +62,8 @@ class MolecularSummaryGenerator(
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable, valueWidth - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE)
                 table.addCell(Cells.create(reportTable).setPaddingLeft(Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE))
-                reportTable.setBorderBottom(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
             } ?: run {
-                val reportTable = Tables.createSingleCol()
-                content(pathologyReport, molecularTests, ihcTests, reportTable, valueWidth)
-                table.addCell(Cells.create(reportTable))
-                reportTable.setBorderBottom(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
+                content(pathologyReport, molecularTests, ihcTests, table, valueWidth)
             }
         }
 
