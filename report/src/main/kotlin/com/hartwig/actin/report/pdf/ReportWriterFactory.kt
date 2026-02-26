@@ -7,6 +7,6 @@ object ReportWriterFactory {
     }
 
     fun createInMemoryReportWriter(): ReportWriter {
-        return ReportWriter(false, null)
+        return ReportWriter(true, ".")
     }
 }

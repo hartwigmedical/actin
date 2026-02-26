@@ -36,7 +36,6 @@ CREATE TABLE `tumor`
     `hasSuspectedLymphNodeLesions` BOOLEAN,
     `otherLesions` varchar(500),
     `otherSuspectedLesions` varchar(500),
-    `biopsyLocation` varchar(100),
     PRIMARY KEY (`id`)
 );
 
