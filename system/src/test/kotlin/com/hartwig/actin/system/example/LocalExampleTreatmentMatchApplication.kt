@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.TreatmentMatcher
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
@@ -63,6 +64,7 @@ class LocalExampleTreatmentMatchApplication {
             listOf(System.getProperty("user.home"), "hmf", "repos", "actin-resources-private").joinToString(File.separator)
 
         val doidJson = listOf(resourceDirectory, "disease_ontology", "doid.json").joinToString(File.separator)
+        val cuppaDoidMappingTsv = listOf(resourceDirectory, "disease_ontology", "cuppa_doid_mapping.tsv").joinToString(File.separator)
         val icdTsv = listOf(resourceDirectory, "icd", "SimpleTabulation-ICD-11-MMS-en.tsv").joinToString(File.separator)
         val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
         val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
@@ -71,6 +73,8 @@ class LocalExampleTreatmentMatchApplication {
         val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
         LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+
+        val cuppaToDoidMapping = CuppaToDoidMapping.createFromFile(cuppaDoidMappingTsv)
 
         LOGGER.info("Creating ICD-11 tree from file {}", icdTsv)
         val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(icdTsv))
@@ -87,6 +91,7 @@ class LocalExampleTreatmentMatchApplication {
         return RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = doidModel,
+            cuppaToDoidMapping = cuppaToDoidMapping,
             icdModel = icdModel,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,

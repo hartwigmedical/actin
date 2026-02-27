@@ -13,6 +13,7 @@ import org.apache.logging.log4j.core.config.Configurator
 data class StandardOfCareConfig(
     val patientJson: String,
     val doidJson: String,
+    val cuppaDoidMappingTsv: String,
     val icdTsv: String,
     val atcTsv: String,
     val treatmentDirectory: String,
@@ -25,6 +26,7 @@ data class StandardOfCareConfig(
 
         private const val PATIENT_JSON = "patient_json"
         private const val DOID_JSON = "doid_json"
+        private const val CUPPA_DOID_MAPPING_TSV = "cuppa_doid_mapping_tsv"
         private const val ATC_TSV = "atc_tsv"
         private const val ICD_TSV = "icd_tsv"
         private const val TREATMENT_DIRECTORY = "treatment_directory"
@@ -35,6 +37,7 @@ data class StandardOfCareConfig(
             val options = Options()
             options.addOption(PATIENT_JSON, true, "File containing the patient record")
             options.addOption(DOID_JSON, true, "Path to JSON file containing the full DOID tree")
+            options.addOption(CUPPA_DOID_MAPPING_TSV, true, "Path to TSV file containing the CUPPA to DOID mapping")
             options.addOption(ICD_TSV, true, "Path to TSV file containing the full ICD-11 tree")
             options.addOption(ATC_TSV, true, "Path to TSV file container the full ATC tree")
             options.addOption(TREATMENT_DIRECTORY, true, "Path to treatment data directory")
@@ -60,6 +63,7 @@ data class StandardOfCareConfig(
             return StandardOfCareConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 doidJson = ApplicationConfig.nonOptionalFile(cmd, DOID_JSON),
+                cuppaDoidMappingTsv = ApplicationConfig.nonOptionalFile(cmd, CUPPA_DOID_MAPPING_TSV),
                 icdTsv = ApplicationConfig.nonOptionalFile(cmd, ICD_TSV),
                 treatmentDirectory = ApplicationConfig.nonOptionalDir(cmd, TREATMENT_DIRECTORY),
                 runHistorically = runHistorically,
