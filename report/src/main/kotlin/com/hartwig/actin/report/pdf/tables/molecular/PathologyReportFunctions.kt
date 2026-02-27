@@ -81,6 +81,18 @@ object PathologyReportFunctions {
             Text(date(date)).addStyle(Styles.tableHighlightStyle())
         )
 
+    fun filterPathologyReport(
+        nonIhcmolecularTests: List<MolecularTest>,
+        ihcTests: List<IhcTest>,
+        pathologyReports: List<PathologyReport>?
+    ): List<PathologyReport>? {
+        val ihcTestsReportHash = ihcTests.mapNotNull { it.reportHash }
+        val nonIhcTestsHash = nonIhcmolecularTests.mapNotNull { it.reportHash }
+        val testReportsHash = nonIhcTestsHash + ihcTestsReportHash
+
+        return pathologyReports?.filter { it.reportHash in testReportsHash }
+    }
+
     fun groupTestsByPathologyReport(
         orangeMolecularRecords: List<MolecularTest>,
         molecularTests: List<MolecularTest>,
