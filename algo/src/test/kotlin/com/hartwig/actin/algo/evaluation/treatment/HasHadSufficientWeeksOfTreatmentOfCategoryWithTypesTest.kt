@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
@@ -17,7 +18,7 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
     private val function = HasHadSufficientWeeksOfTreatmentOfCategoryWithTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6)
 
     @Test
-    fun `Should pass for right category type with requested amount of weeks`() {
+    fun `Should pass for right category and type with requested amount of weeks`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             MATCHING_TREATMENT_SET,
             startYear = 2022,
@@ -33,20 +34,36 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
     fun `Should evaluate to undetermined for right category and missing type`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, emptySet())))
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
-        )
+        val result = function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received (in previous trial) contained HER2 antibody targeted therapy treatment for at least 6 weeks")
     }
 
     @Test
     fun `Should evaluate to undetermined with trial treatment entry with matching category in history`() {
         val treatmentHistoryEntry =
-            TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
-        )
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, emptySet())),
+                isTrial = true
+            )
+        val result = function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received (in previous trial) contained HER2 antibody targeted therapy treatment for at least 6 weeks")
+    }
+
+    @Test
+    fun `Should fail with trial treatment entry with mismatching types in history`() {
+        val treatmentHistoryEntry =
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(
+                    TreatmentTestFactory.drugTreatment(
+                        "test",
+                        MATCHING_CATEGORY,
+                        setOf(DrugType.ROS1_INHIBITOR)
+                    )
+                ), isTrial = true
+            )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test

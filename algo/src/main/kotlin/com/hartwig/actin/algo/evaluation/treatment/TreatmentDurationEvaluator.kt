@@ -13,6 +13,31 @@ enum class TreatmentDurationType {
     SUFFICIENT
 }
 
+private data class DurationQualifier(val unacceptable: String, val acceptable: String)
+
+private enum class TreatmentEvaluation {
+    HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS,
+    HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS,
+    HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
+    HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS,
+    NO_MATCH;
+
+    companion object {
+        fun create(
+            hadTreatment: Boolean?,
+            hadTrial: Boolean,
+            correctNumberOfWeeks: Boolean = false,
+            hadUnclearWeeks: Boolean = false
+        ) = when {
+            hadTreatment == true && correctNumberOfWeeks -> HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS
+            hadTreatment == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS
+            (hadTreatment == null || hadTrial) && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
+            hadTreatment == true -> HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS
+            else -> NO_MATCH
+        }
+    }
+}
+
 class TreatmentDurationEvaluator(
     private val matchesTreatment: (Treatment) -> Boolean?,
     private val specificMatchCannotBeDetermined: (TreatmentHistoryEntry) -> Boolean,
@@ -21,6 +46,11 @@ class TreatmentDurationEvaluator(
     private val treatmentDurationType: TreatmentDurationType,
     private val weeks: Int?
 ) : EvaluationFunction {
+
+    private val durationMessageParts = when (treatmentDurationType) {
+        TreatmentDurationType.LIMITED -> DurationQualifier("more than", "less than")
+        TreatmentDurationType.SUFFICIENT -> DurationQualifier("less than", "at least")
+    }
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentEvaluations = record.oncologicalHistory.map { treatmentHistoryEntry ->
@@ -50,15 +80,15 @@ class TreatmentDurationEvaluator(
 
         return when {
             treatmentDurationType == TreatmentDurationType.LIMITED && TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has had $treatmentMessage treatment but for ${durationMessageParts.first} $weeks weeks")
+                EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $weeks weeks")
             }
 
             weeks != null && treatmentEvaluations.size > 1 -> {
-                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentMessage is counted as received for ${durationMessageParts.first} $weeks weeks")
+                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentMessage is counted as received for ${durationMessageParts.unacceptable} $weeks weeks")
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS in treatmentEvaluations -> {
-                val weeksString = if (weeks != null) " for ${durationMessageParts.second} $weeks weeks" else ""
+                val weeksString = if (weeks != null) " for ${durationMessageParts.acceptable} $weeks weeks" else ""
                 EvaluationFactory.pass("Has received $treatmentMessage$weeksString")
 
             }
@@ -68,41 +98,13 @@ class TreatmentDurationEvaluator(
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage for ${durationMessageParts.second} $weeks weeks")
+                EvaluationFactory.undetermined("Undetermined if treatment received (in previous trial) contained $treatmentMessage for ${durationMessageParts.acceptable} $weeks weeks")
             }
 
             else -> {
                 EvaluationFactory.fail("Has not received $treatmentMessage")
             }
         }
-    }
-
-    private enum class TreatmentEvaluation {
-        HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS,
-        HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS,
-        HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
-        HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS,
-        NO_MATCH;
-
-        companion object {
-            fun create(
-                hadTreatment: Boolean?,
-                hadTrial: Boolean,
-                correctNumberOfWeeks: Boolean = false,
-                hadUnclearWeeks: Boolean = false
-            ) = when {
-                hadTreatment == true && correctNumberOfWeeks -> HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS
-                hadTreatment == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS
-                (hadTreatment == null || hadTrial) && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
-                hadTreatment == true -> HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS
-                else -> NO_MATCH
-            }
-        }
-    }
-
-    val durationMessageParts = when (treatmentDurationType) {
-        TreatmentDurationType.LIMITED -> Pair("more than", "less than")
-        TreatmentDurationType.SUFFICIENT -> Pair("less than", "at least")
     }
 
     private fun correctNumberOfWeeks(durationWeeks: Long?, durationWeeksMax: Long?): Boolean =
@@ -113,7 +115,7 @@ class TreatmentDurationEvaluator(
 
     private fun hadUnclearWeeks(durationWeeks: Long?, durationWeeksMax: Long?): Boolean =
         when (treatmentDurationType) {
-            TreatmentDurationType.LIMITED -> weeks == null || (durationWeeks == null && ((durationWeeksMax != null && durationWeeksMax > weeks) || durationWeeksMax == null))
+            TreatmentDurationType.LIMITED -> weeks != null && (durationWeeks == null && ((durationWeeksMax != null && durationWeeksMax > weeks) || durationWeeksMax == null))
             TreatmentDurationType.SUFFICIENT -> weeks != null && durationWeeks == null
         }
 }
