@@ -80,9 +80,10 @@ class MolecularDetailsChapter(
 
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
+        val nonIhcTestsIncludedInTrialMatching = report.patientRecord.molecularTests.filterNot { it.experimentType == ExperimentType.IHC }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
         val filteredPathologyReports = PathologyReportFunctions.filterPathologyReport(
-            report.patientRecord.molecularTests,
+            nonIhcTestsIncludedInTrialMatching,
             filteredIhcTests,
             report.patientRecord.pathologyReports
         )

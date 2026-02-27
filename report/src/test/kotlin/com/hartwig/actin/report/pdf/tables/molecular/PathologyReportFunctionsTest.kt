@@ -74,7 +74,7 @@ class PathologyReportFunctionsTest {
         val ihcTest = ihcTest(reportHash = "hash2")
 
         val result = PathologyReportFunctions.filterPathologyReport(
-            molecularTests = listOf(wholeGenomeTest),
+            nonIhcmolecularTests = listOf(wholeGenomeTest),
             ihcTests = listOf(ihcTest),
             pathologyReports = listOf(pathologyReport1, pathologyReport2, pathologyReport3)
         )
