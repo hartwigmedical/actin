@@ -8,10 +8,18 @@ import com.hartwig.serve.datamodel.serialization.ServeJson
 
 object ServeLoader {
 
-    fun loadServeDatabase(jsonFilePath: String, removeCombinedProfilesEvidence: Boolean): ServeDatabase {
+    fun loadServeDatabase(
+        jsonFilePath: String,
+        removeCombinedProfilesEvidence: Boolean,
+        filterServeTrialsByCountry: String? = null
+    ): ServeDatabase {
         val serveDatabase = cleanServeDatabase(ServeJson.read(jsonFilePath), removeCombinedProfilesEvidence)
 
         ServeVerifier.verifyServeDatabase(serveDatabase, removeCombinedProfilesEvidence)
+
+        if (filterServeTrialsByCountry != null) {
+            ServeFilter.filterCountriesInServeDatabase(serveDatabase, filterServeTrialsByCountry)
+        }
 
         return serveDatabase
     }
