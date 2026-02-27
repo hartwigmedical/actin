@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val AUTOIMMUNE_ICD_MAIN_CODE = IcdConstants.AUTOIMMUNE_DISEASE_SET.first()
 private val MATCHING_ICD_MAIN_CODE = IcdConstants.DRUG_ALLERGY_SET.first()

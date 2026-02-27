@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withCnsOrBrainLe
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withSuspectedCnsOrBrainLesionsAndOncologicalHistory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasReceivedSystemicTherapyForBrainMetastasesTest {
 

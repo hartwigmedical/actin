@@ -14,7 +14,7 @@ import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.trial.TrialsProvider
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class SummaryChapterTest {
 

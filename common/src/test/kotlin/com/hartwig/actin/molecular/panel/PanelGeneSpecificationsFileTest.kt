@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.testutil.ResourceLocator
 import java.time.LocalDate
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PanelGeneSpecificationsFileTest {
 

@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.sort
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TrialMatchComparatorTest {
 

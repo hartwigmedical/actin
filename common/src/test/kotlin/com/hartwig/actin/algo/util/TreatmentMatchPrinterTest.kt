@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.util
 
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TreatmentMatchPrinterTest {
 

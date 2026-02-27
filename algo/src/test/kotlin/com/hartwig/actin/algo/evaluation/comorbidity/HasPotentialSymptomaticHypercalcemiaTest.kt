@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.algo.evaluation.laboratory.LabTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.jupiter.api.Test
 
 class HasPotentialSymptomaticHypercalcemiaTest {
 

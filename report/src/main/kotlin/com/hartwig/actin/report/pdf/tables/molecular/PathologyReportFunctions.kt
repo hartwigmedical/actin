@@ -16,7 +16,10 @@ data class MolecularTestGroup(
     val records: List<MolecularTest>,
     val tests: List<MolecularTest>,
     val ihc: List<IhcTest>
-)
+) {
+    val containsOnlyIhcTests: Boolean
+        get() = ihc.isNotEmpty() && tests.isEmpty() && records.isEmpty()
+}
 
 object PathologyReportFunctions {
 
@@ -118,7 +121,11 @@ object PathologyReportFunctions {
                 orangeTests.isNotEmpty() || molecularTest.isNotEmpty() || ihcTests.isNotEmpty()
             }
             .toList()
-            .sortedWith(compareBy(nullsLast(reverseOrder())) { it.first?.date })
+            .sortedWith(
+                compareBy<Pair<PathologyReport?, MolecularTestGroup>> { it.second.containsOnlyIhcTests }
+                    .thenBy { it.first == null }
+                    .thenBy(nullsLast(reverseOrder())) { it.first?.date }
+            )
             .toMap(LinkedHashMap())
     }
 

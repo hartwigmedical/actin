@@ -127,6 +127,7 @@ class SummaryChapter(
         val molecularSummaryGenerator = MolecularSummaryGenerator(
             patientRecord = report.patientRecord,
             cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
+            contentWidth = contentWidth(),
             keyWidth = keyWidth,
             valueWidth = valueWidth
         ).takeIf {

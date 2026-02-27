@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.testutil.ResourceLocator
-import org.assertj.core.api.Assertions
-import org.junit.Test
-import java.io.StringReader
 import java.io.File
+import java.io.StringReader
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.Test
 
 class PaveVariantDecompositionTest {
 

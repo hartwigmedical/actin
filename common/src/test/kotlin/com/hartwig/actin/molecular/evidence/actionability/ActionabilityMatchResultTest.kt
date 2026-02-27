@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ActionabilityMatchResultTest {
 

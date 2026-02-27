@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence
 
 import com.hartwig.actin.molecular.evidence.TestServeFactory.createServeDatabase
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 
 class ServeCleanerTest {

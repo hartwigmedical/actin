@@ -17,7 +17,7 @@ import com.hartwig.actin.report.pdf.getCellContents
 import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class EligibleApprovedTreatmentGeneratorTest {
 

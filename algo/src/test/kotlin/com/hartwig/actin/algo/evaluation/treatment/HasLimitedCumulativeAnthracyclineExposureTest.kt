@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasLimitedCumulativeAnthracyclineExposureTest {
     @Test

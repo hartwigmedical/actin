@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect.NONE
 import com.hartwig.serve.datamodel.molecular.gene.GeneAnnotation
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val MATCHING_GENE = "gene 1"
 
