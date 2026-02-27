@@ -14,12 +14,11 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return TreatmentDurationEvaluator(
+        return TreatmentWithLimitedWeeksEvaluator(
             { category in it.categories() && it.types().any(types::contains) },
             { category in it.categories() && !it.hasTypeConfigured() },
             setOf(category),
             "${Format.concatItemsWithOr(types)} ${category.display()} treatment",
-            TreatmentDurationType.LIMITED,
             maxWeeks
         ).evaluate(record)
     }
