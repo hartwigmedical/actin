@@ -18,7 +18,8 @@ private data class DurationQualifier(val unacceptable: String, val acceptable: S
 private enum class TreatmentEvaluation {
     HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS,
     HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS,
-    HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL,
+    HAS_HAD_UNCLEAR_TREATMENT,
+    HAS_HAD_POTENTIALLY_MATCHING_TRIAL,
     HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS,
     NO_MATCH;
 
@@ -31,7 +32,8 @@ private enum class TreatmentEvaluation {
         ) = when {
             hadTreatment == true && correctNumberOfWeeks -> HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS
             hadTreatment == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS
-            (hadTreatment == null || hadTrial) && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL
+            hadTreatment == null && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT
+            hadTrial && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_POTENTIALLY_MATCHING_TRIAL
             hadTreatment == true -> HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS
             else -> NO_MATCH
         }
@@ -97,8 +99,12 @@ class TreatmentDurationEvaluator(
                 EvaluationFactory.undetermined("Has received $treatmentMessage but unknown nb of weeks")
             }
 
-            TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received (in previous trial) contained $treatmentMessage for ${durationMessageParts.acceptable} $weeks weeks")
+            TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT in treatmentEvaluations -> {
+                EvaluationFactory.undetermined("Undetermined if treatment received contained $treatmentMessage for ${durationMessageParts.acceptable} $weeks weeks")
+            }
+
+            TreatmentEvaluation.HAS_HAD_POTENTIALLY_MATCHING_TRIAL in treatmentEvaluations -> {
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage for ${durationMessageParts.acceptable} $weeks weeks")
             }
 
             else -> {
@@ -115,7 +121,7 @@ class TreatmentDurationEvaluator(
 
     private fun hadUnclearWeeks(durationWeeks: Long?, durationWeeksMax: Long?): Boolean =
         when (treatmentDurationType) {
-            TreatmentDurationType.LIMITED -> weeks != null && (durationWeeks == null && ((durationWeeksMax != null && durationWeeksMax > weeks) || durationWeeksMax == null))
+            TreatmentDurationType.LIMITED -> weeks != null && durationWeeks == null && (durationWeeksMax == null || durationWeeksMax > weeks)
             TreatmentDurationType.SUFFICIENT -> weeks != null && durationWeeks == null
         }
 }

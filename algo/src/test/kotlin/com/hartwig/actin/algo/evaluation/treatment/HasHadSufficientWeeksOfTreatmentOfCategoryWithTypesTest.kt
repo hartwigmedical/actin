@@ -36,19 +36,16 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, emptySet())))
         val result = function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received (in previous trial) contained HER2 antibody targeted therapy treatment for at least 6 weeks")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received contained HER2 antibody targeted therapy treatment for at least 6 weeks")
     }
 
     @Test
     fun `Should evaluate to undetermined with trial treatment entry with matching category in history`() {
         val treatmentHistoryEntry =
-            TreatmentTestFactory.treatmentHistoryEntry(
-                setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, emptySet())),
-                isTrial = true
-            )
+            TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("test", isSystemic = true)), isTrial = true)
         val result = function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received (in previous trial) contained HER2 antibody targeted therapy treatment for at least 6 weeks")
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received in previous trial contained HER2 antibody targeted therapy treatment for at least 6 weeks")
     }
 
     @Test
