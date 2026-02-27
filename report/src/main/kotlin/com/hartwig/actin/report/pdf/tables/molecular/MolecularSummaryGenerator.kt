@@ -56,9 +56,7 @@ class MolecularSummaryGenerator(
         for ((pathologyReport, tests) in groupedByPathologyReport) {
             val (_, molecularTests, ihcTests) = tests
             pathologyReport?.let {
-                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(
-                    pathologyReport = pathologyReport
-                )))
+                table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)))
                 val reportTable = Tables.createSingleCol()
                 content(pathologyReport, molecularTests, ihcTests, reportTable, valueWidth - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE)
                 table.addCell(Cells.create(reportTable).setPaddingLeft(Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE))
