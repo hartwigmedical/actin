@@ -6,9 +6,7 @@ import org.junit.Test
 
 class CuppaToDoidMappingTest {
 
-    private val mapping = CuppaToDoidMapping.createFromFile(
-        resourceOnClasspath("cuppa_doid_mapping_test.tsv")
-    )
+    private val mapping = CuppaToDoidMapping.createFromFile(resourceOnClasspath("cuppa_doid_mapping_test.tsv"))
 
     @Test
     fun `Should resolve known CUPPA types to DOIDs`() {
