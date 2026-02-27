@@ -89,6 +89,9 @@ class MolecularDetailsChapter(
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         for ((pathologyReport, tests) in groupedByPathologyReport) {
+            pathologyReport ?: groupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
+                table.addCell(Cells.createTitle("Other Tests"))
+            }
             val (orangeMolecularRecords, molecularTests, ihcTests) = tests
             contentPerPathologyReport(pathologyReport, orangeMolecularRecords, molecularTests, ihcTests, cohorts, table)
         }
@@ -111,12 +114,6 @@ class MolecularDetailsChapter(
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = tableWidth - keyWidth
 
-        val reportTable = pathologyReport?.run {
-            val innerTable = Tables.createSingleColWithWidth(tableWidth)
-            topTable.addCell(Cells.create(innerTable))
-            innerTable
-        } ?: topTable
-
         val orangeGenerators = orangeMolecularRecord.map {
             OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport)
         }
@@ -138,7 +135,7 @@ class MolecularDetailsChapter(
 
         TableGeneratorFunctions.addGenerators(
             orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
-            reportTable,
+            topTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
     }
