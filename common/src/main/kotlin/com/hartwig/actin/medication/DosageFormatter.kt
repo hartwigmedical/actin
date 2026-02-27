@@ -29,13 +29,14 @@ object DosageFormatter {
         } else "?"
 
         val frequencyUnit = dosage.frequencyUnit
+        val periodBetweenValue = dosage.periodBetweenValue
         return when {
             frequencyUnit == null -> "unknown prescription"
 
             frequencyUnit in SPECIFIC_OR_UNKNOWN + "once" -> frequencyUnit
 
-            dosage.periodBetweenUnit != null -> {
-                "$frequency / ${NO_DECIMAL_PLACES_FORMAT.format(dosage.periodBetweenValue!! + 1)} ${dosage.periodBetweenUnit}"
+            dosage.periodBetweenUnit != null && periodBetweenValue != null -> {
+                "$frequency / ${NO_DECIMAL_PLACES_FORMAT.format(periodBetweenValue + 1)} ${dosage.periodBetweenUnit}"
             }
 
             else -> "$frequency / $frequencyUnit"
