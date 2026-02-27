@@ -15,6 +15,8 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.IhcResultGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyDisplayMode
+import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions
@@ -73,7 +75,10 @@ class MolecularDetailsChapter(
 
     private fun addMolecularDetails(document: Document) {
         val cohorts =
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch.trialMatches, configuration.filterOnSOCExhaustionAndTumorType)
+            InterpretedCohortFactory.createEvaluableCohorts(
+                report.treatmentMatch.trialMatches,
+                configuration.filterOnSOCExhaustionAndTumorType
+            )
 
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
@@ -128,13 +133,18 @@ class MolecularDetailsChapter(
                 valueWidth
             )
         }
+        val immunologyGenerators = orangeMolecularRecord.mapNotNull { molecularTest ->
+            if (molecularTest.immunology != null) {
+                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED, "Immunology", keyWidth, valueWidth)
+            } else null
+        }
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
         } else null
 
         TableGeneratorFunctions.addGenerators(
-            orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
+            orangeGenerators + wgsSummaryGenerators + immunologyGenerators + listOfNotNull(ihcGenerator),
             topTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )

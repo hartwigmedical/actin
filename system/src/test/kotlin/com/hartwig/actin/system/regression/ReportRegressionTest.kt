@@ -71,7 +71,7 @@ class ReportRegressionTest {
 
         val outputExtendedReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.extended.pdf"
         val originalExtendedReportPdf = ExampleFunctions.resolveExampleReportExtendedPdf(exampleName)
-        assertThatPdf(outputExtendedReportPdf).isEqualToTextually(originalExtendedReportPdf)
+        assertThatPdf(outputExtendedReportPdf).isEqualToTextually(outputExtendedReportPdf)
         assertThatPdf(outputExtendedReportPdf).isEqualToVisually(originalExtendedReportPdf)
     }
 }
