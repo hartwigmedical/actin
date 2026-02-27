@@ -24,23 +24,6 @@ class HasExtracranialMetastasesTest {
     }
 
     @Test
-    fun `Should pass for biopsy location with certain extracranial location`() {
-        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            tumor = TumorDetails(
-                hasBoneLesions = false,
-                hasLymphNodeLesions = false,
-                hasLiverLesions = false,
-                hasLungLesions = false,
-                hasCnsLesions = false,
-                hasBrainLesions = false,
-                otherLesions = emptyList(),
-                biopsyLocation = "bladder"
-            )
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
-    }
-
-    @Test
     fun `Should evaluate to undetermined when only uncategorized lesions with uncertain extracranial location present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("gland")))
@@ -65,7 +48,6 @@ class HasExtracranialMetastasesTest {
                 hasCnsLesions = false,
                 hasBrainLesions = false,
                 otherLesions = emptyList(),
-                biopsyLocation = ""
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
@@ -90,7 +72,6 @@ class HasExtracranialMetastasesTest {
                 hasCnsLesions = false,
                 hasBrainLesions = true,
                 otherLesions = emptyList(),
-                biopsyLocation = ""
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
@@ -107,7 +88,6 @@ class HasExtracranialMetastasesTest {
                 hasCnsLesions = false,
                 hasBrainLesions = false,
                 otherLesions = emptyList(),
-                biopsyLocation = ""
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
