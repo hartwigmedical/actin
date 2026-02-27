@@ -15,6 +15,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.IhcResultGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyDisplayMode
 import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
@@ -134,7 +135,7 @@ class MolecularDetailsChapter(
         }
         val immunologyGenerators = orangeMolecularRecord.mapNotNull { molecularTest ->
             if (molecularTest.immunology != null) {
-                ImmunologyGenerator(molecularTest)
+                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED, "Immunology", keyWidth, valueWidth)
             } else null
         }
 
