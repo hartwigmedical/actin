@@ -17,14 +17,14 @@ import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantAlteration
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.Knowledgebase
+import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
 import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableKnownHotspot
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
-import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as ServeProteinEffect
+import org.junit.Test
 
 private const val GENE = "gene 1"
 private val CANCER_ASSOCIATED_VARIANT_MATCH = TestMolecularFactory.createMinimalVariant().copy(

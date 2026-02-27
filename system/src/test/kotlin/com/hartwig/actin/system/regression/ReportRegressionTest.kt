@@ -4,15 +4,15 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
-import java.time.LocalDate
-import java.util.Locale
 import org.apache.logging.log4j.Level
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.After
+import org.junit.AfterClass
+import org.junit.Before
+import org.junit.BeforeClass
+import org.junit.Test
+import java.time.LocalDate
+import java.util.Locale
 
 class ReportRegressionTest {
 
@@ -21,21 +21,21 @@ class ReportRegressionTest {
     companion object {
         private val originalLocale = Locale.getDefault()
 
-        @BeforeAll
+        @BeforeClass
         @JvmStatic
         fun setReportLocale() = Locale.setDefault(Locale.US)
 
-        @AfterAll
+        @AfterClass
         @JvmStatic
         fun revertReportLocale() = Locale.setDefault(originalLocale)
     }
 
-    @BeforeEach
+    @Before
     fun setUp() {
         logLevelRecorder.start()
     }
 
-    @AfterEach
+    @After
     fun tearDown() {
         logLevelRecorder.stop()
     }

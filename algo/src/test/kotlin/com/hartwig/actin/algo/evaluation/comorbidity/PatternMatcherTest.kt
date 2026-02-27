@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class PatternMatcherTest {
 

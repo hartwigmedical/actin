@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val TARGET_CATEGORY = TreatmentCategory.CHEMOTHERAPY
 private val TARGET_TYPES = setOf(DrugType.PLATINUM_COMPOUND)

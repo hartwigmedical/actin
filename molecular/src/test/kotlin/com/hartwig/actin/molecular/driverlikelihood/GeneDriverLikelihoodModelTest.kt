@@ -10,7 +10,7 @@ import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val GENE = "gene"
 

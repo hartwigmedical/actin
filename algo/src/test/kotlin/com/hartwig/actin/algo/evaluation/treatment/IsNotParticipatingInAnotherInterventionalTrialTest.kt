@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import org.junit.Test
 import java.time.LocalDate
-import org.junit.jupiter.api.Test
 
 class IsNotParticipatingInAnotherInterventionalTrialTest {
 

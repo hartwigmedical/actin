@@ -4,7 +4,7 @@ import com.hartwig.actin.icd.datamodel.ClassKind
 import com.hartwig.actin.icd.datamodel.SerializedIcdNode
 import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val DEFAULT_CHAPTER_NO = "1"
 private const val DEFAULT_TITLE = "title"

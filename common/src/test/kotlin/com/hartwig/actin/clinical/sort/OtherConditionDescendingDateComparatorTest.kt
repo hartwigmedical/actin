@@ -2,7 +2,7 @@ package com.hartwig.actin.clinical.sort
 
 import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class OtherConditionDescendingDateComparatorTest {
 

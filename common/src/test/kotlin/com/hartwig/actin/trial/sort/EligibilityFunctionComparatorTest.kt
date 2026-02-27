@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.trial.DoubleParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionParameter
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val HAS_EXHAUSTED_SOC_TREATMENTS = "HAS_EXHAUSTED_SOC_TREATMENTS"
 private const val HAS_INR_ULN_OF_AT_MOST_X = "HAS_INR_ULN_OF_AT_MOST_X"

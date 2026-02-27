@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHadNonInternalRadiotherapyTest {
     

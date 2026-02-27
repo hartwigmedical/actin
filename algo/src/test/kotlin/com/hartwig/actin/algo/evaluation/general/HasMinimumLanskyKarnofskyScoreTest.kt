@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.general.GeneralTestFactory.withWHO
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasMinimumLanskyKarnofskyScoreTest {
 

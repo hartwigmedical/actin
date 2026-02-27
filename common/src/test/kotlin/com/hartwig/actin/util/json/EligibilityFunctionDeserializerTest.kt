@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class EligibilityFunctionDeserializerTest {
 

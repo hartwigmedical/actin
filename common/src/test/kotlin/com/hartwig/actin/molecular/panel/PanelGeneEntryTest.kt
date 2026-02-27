@@ -1,9 +1,9 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
-import java.time.LocalDate
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDate
 
 class PanelGeneEntryTest {
 

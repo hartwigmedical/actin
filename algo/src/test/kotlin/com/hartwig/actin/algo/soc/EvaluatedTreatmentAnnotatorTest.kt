@@ -12,14 +12,14 @@ import com.hartwig.actin.datamodel.efficacy.TestExtendedEvidenceEntryFactory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
-import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class EvaluatedTreatmentAnnotatorTest {
 

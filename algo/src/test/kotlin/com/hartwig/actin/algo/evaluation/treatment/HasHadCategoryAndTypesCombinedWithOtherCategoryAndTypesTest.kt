@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val CATEGORY_1 = TreatmentCategory.TARGETED_THERAPY
 private val DIFFERENT_CATEGORY_1 = TreatmentCategory.IMMUNOTHERAPY

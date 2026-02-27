@@ -11,11 +11,14 @@ import com.hartwig.actin.datamodel.algo.EvaluationTestFactory
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.trial.Eligibility
-import com.hartwig.actin.trial.TestTrialFactory
 import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.StringParameter
+import com.hartwig.actin.datamodel.trial.Trial
+import com.hartwig.actin.trial.TestTrialFactory
 import com.hartwig.actin.trial.input.ruleAsEnum
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 data class CombinableMessage(val combineKey: String, val message: String) : EvaluationMessage {
     override fun combineBy(): String {

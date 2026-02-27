@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactF
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.doid.TestDoidModelFactory.createMinimalTestDoidModel
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val CORRECT_GENE = "BRAF"
 private const val CORRECT_PROTEIN_IMPACT = "V600E"

@@ -8,8 +8,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class AndTest {
 
@@ -97,11 +96,9 @@ class AndTest {
         assertThat(result.undeterminedMessagesStrings()).containsExactly("undetermined 2")
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should crash on no functions to evaluate`() {
-        assertThrows(IllegalStateException::class.java) {
-            And(emptyList()).evaluate(TEST_PATIENT)
-        }
+        And(emptyList()).evaluate(TEST_PATIENT)
     }
 
     companion object {

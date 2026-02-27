@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
 

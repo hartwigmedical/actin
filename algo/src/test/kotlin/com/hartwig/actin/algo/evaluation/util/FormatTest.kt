@@ -4,9 +4,9 @@ import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import java.time.LocalDate
+import junit.framework.TestCase.assertNotNull
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class FormatTest {
 
@@ -72,7 +72,7 @@ class FormatTest {
 
     @Test
     fun `Should format dates`() {
-        assertThat(Format.date(LocalDate.of(2021, 8, 20))).isNotNull
+        assertNotNull(Format.date(LocalDate.of(2021, 8, 20)))
     }
 
     @Test
@@ -119,10 +119,8 @@ class FormatTest {
         assertThat(Format.concatFusions(setOf("X::Y fusion"))).isEqualTo("X::Y")
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun `Should crash with illegal fraction`() {
-        assertThrows(IllegalArgumentException::class.java) {
-            Format.percentage(50.0)
-        }
+        Format.percentage(50.0)
     }
 }

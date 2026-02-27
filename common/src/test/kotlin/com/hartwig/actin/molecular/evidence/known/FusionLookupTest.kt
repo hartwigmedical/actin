@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val FUSION = TestMolecularFactory.createMinimalFusion().copy(
     isReportable = true,

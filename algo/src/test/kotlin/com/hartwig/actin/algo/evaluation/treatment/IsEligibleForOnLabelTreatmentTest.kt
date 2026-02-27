@@ -27,12 +27,12 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactF
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.doid.TestDoidModelFactory
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.Test
 import java.time.LocalDate
-import org.junit.jupiter.api.Test
 
 private val MIN_DATE = LocalDate.of(2020, 6, 6)
 private val OSIMERTINIB = treatment("OSIMERTINIB", true)

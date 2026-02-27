@@ -42,7 +42,7 @@ import com.hartwig.serve.datamodel.molecular.fusion.ImmutableActionableFusion
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect as DriverProteinEffect
 
 private val brafActionableHotspot = TestServeMolecularFactory.hotspot(BRAF_V600E_VARIANT)

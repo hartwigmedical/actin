@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactF
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
 

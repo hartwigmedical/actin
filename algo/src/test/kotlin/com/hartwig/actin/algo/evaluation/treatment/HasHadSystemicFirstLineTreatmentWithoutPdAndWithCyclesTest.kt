@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val MIN_CYCLES = 3
 private const val RECENT_YEAR = 2024

@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class IsEligibleForFirstLinePalliativeChemotherapyTest {
 

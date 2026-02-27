@@ -16,9 +16,9 @@ import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDate
 
 class WgsSummaryGeneratorFunctionsTest {
 

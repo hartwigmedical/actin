@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.medication
 import com.hartwig.actin.algo.evaluation.medication.MedicationDosage.hasMatchingDosing
 import com.hartwig.actin.datamodel.clinical.Dosage
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class MedicationDosageTest {
 

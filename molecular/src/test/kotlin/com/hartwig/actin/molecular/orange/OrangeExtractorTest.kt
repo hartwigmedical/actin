@@ -19,10 +19,9 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDate
 
 class OrangeExtractorTest {
 
@@ -100,24 +99,20 @@ class OrangeExtractorTest {
         assertThat(interpreter.hasSufficientPurity(record)).isFalse
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception on empty QC States`() {
-        assertThrows(IllegalStateException::class.java) {
-            interpreter.interpret(orangeRecordWithQCStatuses(mutableSetOf()))
-        }
+        interpreter.interpret(orangeRecordWithQCStatuses(mutableSetOf()))
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception on missing cuppa prediction classifiers`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
             .withCuppa(ImmutableCuppaData.copyOf(proper.cuppa()).withPredictions(TestCuppaFactory.builder().build()))
-        assertThrows(IllegalStateException::class.java) {
-            interpreter.interpret(record)
-        }
+        interpreter.interpret(record)
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline variant present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
@@ -125,12 +120,10 @@ class OrangeExtractorTest {
                 ImmutablePurpleRecord.copyOf(proper.purple())
                     .withAllGermlineVariants(TestPurpleFactory.variantBuilder().gene("gene 1").build())
             )
-        assertThrows(IllegalStateException::class.java) {
-            interpreter.interpret(record)
-        }
+        interpreter.interpret(record)
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline disruption present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
@@ -138,12 +131,10 @@ class OrangeExtractorTest {
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withGermlineHomozygousDisruptions(TestLinxFactory.homozygousDisruptionBuilder().gene("gene 1").build())
             )
-        assertThrows(IllegalStateException::class.java) {
-            interpreter.interpret(record)
-        }
+        interpreter.interpret(record)
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline breakend present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
@@ -151,12 +142,10 @@ class OrangeExtractorTest {
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withAllGermlineBreakends(TestLinxFactory.breakendBuilder().gene("gene 1").build())
             )
-        assertThrows(IllegalStateException::class.java) {
-            interpreter.interpret(record)
-        }
+        interpreter.interpret(record)
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception on germline SV present`() {
         val proper = TestOrangeFactory.createProperTestOrangeRecord()
         val record = ImmutableOrangeRecord.copyOf(proper)
@@ -164,9 +153,7 @@ class OrangeExtractorTest {
                 ImmutableLinxRecord.copyOf(proper.linx())
                     .withAllGermlineStructuralVariants(TestLinxFactory.structuralVariantBuilder().svId(1).build())
             )
-        assertThrows(IllegalStateException::class.java) {
-            interpreter.interpret(record)
-        }
+        interpreter.interpret(record)
     }
 
     @Test

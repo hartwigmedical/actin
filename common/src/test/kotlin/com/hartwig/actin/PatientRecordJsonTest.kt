@@ -2,12 +2,12 @@ package com.hartwig.actin
 
 import com.hartwig.actin.PatientRecordJson.fromJson
 import com.hartwig.actin.PatientRecordJson.toJson
-import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
+import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.LabValue
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDate
 
 class PatientRecordJsonTest {
 

@@ -3,7 +3,7 @@ package com.hartwig.actin.trial.input.composite
 import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeRules.isComposite
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class CompositeRulesTest {
 

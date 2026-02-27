@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val OPIOIDS_ATC_LEVEL = AtcLevel("N02A", "Opioids")
 private val PAIN_MEDICATION =

@@ -19,7 +19,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxRecord
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
 import org.assertj.core.data.Offset
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val EPSILON = 1.0E-10
 

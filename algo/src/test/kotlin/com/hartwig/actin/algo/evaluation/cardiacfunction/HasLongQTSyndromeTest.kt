@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasLongQTSyndromeTest {
     private val function = HasLongQTSyndrome(TestIcdFactory.createTestModel())

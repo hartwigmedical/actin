@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val TARGET_CATEGORY = TreatmentCategory.CHEMOTHERAPY
 private val TARGET_TYPES = setOf(DrugType.PLATINUM_COMPOUND, DrugType.ANTHRACYCLINE)

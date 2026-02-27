@@ -6,10 +6,11 @@ import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.hasCancer
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.lesionString
 import com.hartwig.actin.report.pdf.util.Formats
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Nested
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import org.junit.experimental.runners.Enclosed
+import org.junit.runner.RunWith
 
-
+@RunWith(Enclosed::class)
 class TumorDetailsInterpreterTest {
 
     @Test
@@ -19,8 +20,7 @@ class TumorDetailsInterpreterTest {
         assertThat(hasCancerOfUnknownPrimary(TumorDetails(name = "Something (CUP))").name)).isTrue()
     }
 
-    @Nested
-    inner class LesionInterpreterTest {
+    class LesionInterpreterTest {
 
         @Test
         fun `Should return unknown string when lesion data is missing`() {

@@ -8,7 +8,7 @@ import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.trial.ActionableTrial
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class ActionabilityMatcherFactoryTest {
 

@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasReceivedPlatinumBasedDoubletTest {
 

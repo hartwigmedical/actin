@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.CancerTypeMatchApplicabili
 import com.hartwig.serve.datamodel.common.ImmutableCancerType
 import com.hartwig.serve.datamodel.common.ImmutableIndication
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class CancerTypeApplicabilityResolverTest {
 

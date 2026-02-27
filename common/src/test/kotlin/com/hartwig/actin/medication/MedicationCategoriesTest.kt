@@ -2,7 +2,7 @@ package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val CALCIUM_HOMEOSTASIS = "H05"
 private const val DRUGS_AFFECTING_BONE_STRUCTURE_AND_MINERALIZATION = "M05B"

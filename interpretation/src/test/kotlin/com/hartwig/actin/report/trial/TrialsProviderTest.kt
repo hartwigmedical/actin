@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val NCT_01 = "NCT00000001"
 private const val NCT_02 = "NCT00000002"

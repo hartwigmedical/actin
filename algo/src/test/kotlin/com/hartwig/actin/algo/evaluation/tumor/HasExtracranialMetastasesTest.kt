@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasExtracranialMetastasesTest {
 

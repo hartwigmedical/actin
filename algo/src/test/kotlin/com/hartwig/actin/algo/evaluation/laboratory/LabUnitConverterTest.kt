@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class LabUnitConverterTest {
 

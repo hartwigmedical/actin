@@ -1,9 +1,9 @@
 package com.hartwig.actin.util
 
 import com.hartwig.actin.util.Paths.forceTrailingFileSeparator
-import java.io.File
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.io.File
 
 class PathsTest {
 

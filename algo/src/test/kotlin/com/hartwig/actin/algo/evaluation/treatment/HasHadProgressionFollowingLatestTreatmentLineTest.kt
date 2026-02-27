@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import org.assertj.core.api.Assertions.assertThat
 
 
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHadProgressionFollowingLatestTreatmentLineTest {
 

@@ -17,7 +17,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 val REPORTABLE_VARIANT = TestVariantFactory.createMinimal().copy(
     event = "variant1", evidence = TestClinicalEvidenceFactory.createExhaustive(), isReportable = true

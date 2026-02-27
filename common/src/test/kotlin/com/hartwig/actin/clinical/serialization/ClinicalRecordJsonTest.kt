@@ -25,12 +25,11 @@ import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 import java.io.File
 import kotlin.reflect.KClass
 import kotlin.reflect.full.memberProperties
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
 
 class ClinicalRecordJsonTest {
 
@@ -55,9 +54,9 @@ class ClinicalRecordJsonTest {
         assertClinicalRecord(records[0])
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception when attempting to read a directory from a file`() {
-        assertThrows(IllegalArgumentException::class.java) { readFromDir(clinicalJson) }
+        readFromDir(clinicalJson)
     }
 
     @Test

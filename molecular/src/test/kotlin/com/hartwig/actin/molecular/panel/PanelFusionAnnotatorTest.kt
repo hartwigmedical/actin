@@ -15,8 +15,7 @@ import com.hartwig.hmftools.common.fusion.KnownFusionType
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val TRANSCRIPT = "transcript"
 private const val CANONICAL_TRANSCRIPT = "canonical_transcript"
@@ -366,28 +365,22 @@ class PanelFusionAnnotatorTest {
         )
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if exonUp is curated but geneUp is null`() {
         val fusion = SequencedFusion(geneUp = null, exonUp = 5)
-        assertThrows(IllegalArgumentException::class.java) {
-            annotator.annotate(setOf(fusion), emptySet())
-        }
+        annotator.annotate(setOf(fusion), emptySet())
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if exonDown is curated but geneDown is null`() {
         val fusion = SequencedFusion(geneDown = null, exonDown = 5)
-        assertThrows(IllegalArgumentException::class.java) {
-            annotator.annotate(setOf(fusion), emptySet())
-        }
+        annotator.annotate(setOf(fusion), emptySet())
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException::class)
     fun `Should throw exception if both genes are null`() {
         val fusion = SequencedFusion(geneUp = null, geneDown = null)
-        assertThrows(IllegalArgumentException::class.java) {
-            annotator.annotate(setOf(fusion), emptySet())
-        }
+        annotator.annotate(setOf(fusion), emptySet())
     }
 
     private fun setupKnownFusionCache() {

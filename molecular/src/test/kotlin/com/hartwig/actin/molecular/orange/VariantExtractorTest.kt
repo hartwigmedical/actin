@@ -18,8 +18,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val EPSILON = 1.0E-10
 
@@ -239,7 +238,7 @@ class VariantExtractorTest {
         assertThat(variant.otherImpacts.first().transcriptId).isEqualTo("ENST-correct")
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception when filtering reported variant`() {
         val purpleVariant: PurpleVariant = TestPurpleFactory.variantBuilder()
             .gene("gene 1")
@@ -258,9 +257,7 @@ class VariantExtractorTest {
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
         val variantExtractor = VariantExtractor(geneFilter)
-        assertThrows(IllegalStateException::class.java) {
-            variantExtractor.extract(purple)
-        }
+        variantExtractor.extract(purple)
     }
 
     @Test

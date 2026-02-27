@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHadPDFollowingTreatmentWithCategoryTest {
 

@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHadBrainRadiationTherapyTest {
 

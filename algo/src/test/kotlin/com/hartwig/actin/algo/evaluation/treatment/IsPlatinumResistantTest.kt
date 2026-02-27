@@ -8,8 +8,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import org.junit.Test
 import java.time.LocalDate
-import org.junit.jupiter.api.Test
 
 class IsPlatinumResistantTest {
 

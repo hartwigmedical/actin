@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHadSOCTargetedTherapyForNSCLCTest {
     

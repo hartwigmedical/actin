@@ -2,9 +2,9 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.molecular.util.GeneConstants
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDate
 
 private val FUSION_TESTED_GENE = GeneConstants.IHC_FUSION_EVALUABLE_GENES.first()
 private val OTHER_FUSION_TESTED_GENE = GeneConstants.IHC_FUSION_EVALUABLE_GENES.last()

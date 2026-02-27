@@ -8,10 +8,10 @@ import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.HEART_RATE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.NON_INVASIVE_BLOOD_PRESSURE
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory.SPO2
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 
 class VitalFunctionSelectorTest {
     private val minimumDate = LocalDate.of(2023, 12, 1)

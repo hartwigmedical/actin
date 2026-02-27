@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasLeftSidedColorectalTumorTest {
     

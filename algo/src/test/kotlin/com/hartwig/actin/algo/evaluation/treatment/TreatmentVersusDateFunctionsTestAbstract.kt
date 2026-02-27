@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import org.junit.Test
 import java.time.LocalDate
-import org.junit.jupiter.api.Test
 
 abstract class TreatmentVersusDateFunctionsTestAbstract {
 

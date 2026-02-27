@@ -3,7 +3,7 @@ package com.hartwig.actin.algo.evaluation.priortumor
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorPrimary
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHistoryOfSecondMalignancyTest {
 

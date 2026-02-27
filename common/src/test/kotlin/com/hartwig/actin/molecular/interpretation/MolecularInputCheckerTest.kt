@@ -8,7 +8,7 @@ import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companio
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isHlaGroup
 import com.hartwig.actin.molecular.interpretation.MolecularInputChecker.Companion.isProteinImpact
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class MolecularInputCheckerTest {
 

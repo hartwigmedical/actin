@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 

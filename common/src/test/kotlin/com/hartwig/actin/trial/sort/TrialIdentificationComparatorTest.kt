@@ -2,7 +2,7 @@ package com.hartwig.actin.trial.sort
 
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class TrialIdentificationComparatorTest {
 

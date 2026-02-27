@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestTreatmentEvidenceFacto
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val TREATMENT = "treatment"
 

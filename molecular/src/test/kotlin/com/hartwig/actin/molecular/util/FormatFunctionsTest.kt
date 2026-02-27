@@ -1,10 +1,10 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.molecular.util.FormatFunctions.formatFusionEvent
 import com.hartwig.actin.molecular.util.FormatFunctions.formatVariantImpact
+import com.hartwig.actin.molecular.util.FormatFunctions.formatFusionEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class FormatFunctionsTest {
 

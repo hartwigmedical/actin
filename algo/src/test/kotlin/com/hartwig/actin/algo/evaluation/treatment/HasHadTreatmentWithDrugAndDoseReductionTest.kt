@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentsA
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val MATCHING_DRUG_NAME = "match"
 private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY

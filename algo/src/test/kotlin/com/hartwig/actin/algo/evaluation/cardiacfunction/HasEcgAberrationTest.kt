@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Ecg
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasEcgAberrationTest {
     private val function = HasEcgAberration(TestIcdFactory.createTestModel())

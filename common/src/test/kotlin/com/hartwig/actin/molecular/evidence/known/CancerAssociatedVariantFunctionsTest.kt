@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.evidence.known
 import com.hartwig.serve.datamodel.Knowledgebase
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class CancerAssociatedVariantFunctionsTest {
 

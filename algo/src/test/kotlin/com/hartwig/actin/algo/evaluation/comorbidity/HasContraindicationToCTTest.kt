@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.with
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasContraindicationToCTTest {
     private val function = HasContraindicationToCT(TestIcdFactory.createTestModel())

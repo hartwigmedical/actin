@@ -4,7 +4,7 @@ import com.hartwig.serve.datamodel.molecular.common.GeneRole
 import com.hartwig.serve.datamodel.molecular.gene.ImmutableKnownGene
 import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val GENE = "gene"
 

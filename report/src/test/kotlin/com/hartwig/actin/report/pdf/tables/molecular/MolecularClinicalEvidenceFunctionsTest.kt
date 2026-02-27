@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurd
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val CLINICAL_EVIDENCE = TestClinicalEvidenceFactory.createEmpty()
 private val BASE_MOLECULAR_TEST = TestMolecularFactory.createMinimalWholeGenomeTest()

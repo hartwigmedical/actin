@@ -9,8 +9,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class OrTest {
 
@@ -208,11 +207,9 @@ class OrTest {
         assertThat(result.isMissingMolecularResultForEvaluation).isFalse()
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should crash on no functions to evaluate`() {
-        assertThrows(IllegalStateException::class.java) {
-            Or(emptyList()).evaluate(TEST_PATIENT)
-        }
+        Or(emptyList()).evaluate(TEST_PATIENT)
     }
 
     companion object {

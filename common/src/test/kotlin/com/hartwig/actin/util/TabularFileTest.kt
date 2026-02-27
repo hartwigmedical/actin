@@ -2,7 +2,7 @@ package com.hartwig.actin.util
 
 import com.hartwig.actin.util.TabularFile.createFields
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class TabularFileTest {
 

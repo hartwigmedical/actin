@@ -12,7 +12,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactF
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import org.assertj.core.api.Assertions
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val TARGET_GENE = "gene A"
 

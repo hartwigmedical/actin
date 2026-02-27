@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.RAS_MEK
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
 

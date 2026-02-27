@@ -14,7 +14,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val MTAP = "MTAP"
 private const val CDKN2A = "CDKN2A"

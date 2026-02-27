@@ -5,10 +5,10 @@ import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.itextpdf.layout.Style
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.Test
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 
 private const val YEAR = 2023
 private const val MONTH = 1

@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasIntoleranceRelatedToStudyMedicationTest {
 

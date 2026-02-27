@@ -1,8 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class TrialFormatFunctionsTest {
 
@@ -21,10 +20,8 @@ class TrialFormatFunctionsTest {
         assertThat(TrialFormatFunctions.generateCohortsFromTrialsString(cohortCount = 0, trialCount = 0)).isEqualTo("(0 trials)")
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception if trial count is more than cohort count`() {
-        assertThrows(IllegalStateException::class.java) {
-            TrialFormatFunctions.generateCohortsFromTrialsString(cohortCount = 0, trialCount = 1)
-        }
+        TrialFormatFunctions.generateCohortsFromTrialsString(cohortCount = 0, trialCount = 1)
     }
 }

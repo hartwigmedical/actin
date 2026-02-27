@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 private val MATCHING_TYPES = setOf(DrugType.HER2_ANTIBODY, DrugType.ANTIBODY_DRUG_CONJUGATE_TARGETED_THERAPY)

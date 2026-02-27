@@ -10,8 +10,7 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class ApplicationConfigTest {
 
@@ -26,14 +25,12 @@ class ApplicationConfigTest {
         assertThat(nonOptionalDir(cmd, "directory")).isEqualTo(configDirectory)
     }
 
-    @Test
+    @Test(expected = ParseException::class)
     fun `Should crash on non-existing non-optional directory`() {
-        assertThrows(ParseException::class.java) {
-            val options = Options()
-            options.addOption("directory", true, "")
-            val cmd = DefaultParser().parse(options, arrayOf("-directory", "does not exist"))
-            nonOptionalDir(cmd, "directory")
-        }
+        val options = Options()
+        options.addOption("directory", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", "does not exist"))
+        nonOptionalDir(cmd, "directory")
     }
 
     @Test
@@ -44,24 +41,20 @@ class ApplicationConfigTest {
         assertThat(optionalDir(cmd, "directory")).isNull()
     }
 
-    @Test
+    @Test(expected = ParseException::class)
     fun `Should crash on non-existent optional directory`() {
-        assertThrows(ParseException::class.java) {
-            val options = Options()
-            options.addOption("directory", true, "")
-            val cmd = DefaultParser().parse(options, arrayOf("-directory", "/123/4332l4j/1285"))
-            optionalDir(cmd, "directory")
-        }
+        val options = Options()
+        options.addOption("directory", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-directory", "/123/4332l4j/1285"))
+        optionalDir(cmd, "directory")
     }
 
-    @Test
+    @Test(expected = ParseException::class)
     fun `Should crash when optional directory points to file`() {
-        assertThrows(ParseException::class.java) {
         val options = Options()
         options.addOption("directory", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-directory", configFile))
         optionalDir(cmd, "directory")
-        }
     }
 
     @Test
@@ -80,14 +73,12 @@ class ApplicationConfigTest {
         assertThat(nonOptionalFile(cmd, "file")).isEqualTo(configFile)
     }
 
-    @Test
+    @Test(expected = ParseException::class)
     fun `Should crash on non existing file`() {
-        assertThrows(ParseException::class.java) {
-            val options = Options()
-            options.addOption("file", true, "")
-            val cmd = DefaultParser().parse(options, arrayOf("-file", "does not exist"))
-            nonOptionalFile(cmd, "file")
-        }
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-file", "does not exist"))
+        nonOptionalFile(cmd, "file")
     }
 
     @Test
@@ -98,12 +89,10 @@ class ApplicationConfigTest {
         assertThat(nonOptionalValue(cmd, "value")).isEqualTo("value")
     }
 
-    @Test
+    @Test(expected = ParseException::class)
     fun `Should crash on non existing value`() {
-        assertThrows(ParseException::class.java) {
-            val cmd = DefaultParser().parse(Options(), arrayOf())
-            nonOptionalValue(cmd, "does not exist")
-        }
+        val cmd = DefaultParser().parse(Options(), arrayOf())
+        nonOptionalValue(cmd, "does not exist")
     }
 
     @Test
@@ -114,14 +103,12 @@ class ApplicationConfigTest {
         assertThat(optionalFile(cmd, "file")).isEqualTo(null)
     }
 
-    @Test
+    @Test(expected = ParseException::class)
     fun `Should crash if optional file specified but does not exist`() {
-        assertThrows(ParseException::class.java) {
-            val options = Options()
-            options.addOption("file", true, "")
-            val cmd = DefaultParser().parse(options, arrayOf("-file", "does not exist"))
-            optionalFile(cmd, "file")
-        }
+        val options = Options()
+        options.addOption("file", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-file", "does not exist"))
+        optionalFile(cmd, "file")
     }
 
     @Test

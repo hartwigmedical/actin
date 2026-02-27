@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class PanelImmunologyAnnotatorTest {
 

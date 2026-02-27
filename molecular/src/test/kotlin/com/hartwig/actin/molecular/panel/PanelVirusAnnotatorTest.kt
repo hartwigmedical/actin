@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 val VIRUS = VirusType.HPV
 val LOW_RISK_SEQUENCED_VIRUS = SequencedVirus(VIRUS, isLowRisk = true)

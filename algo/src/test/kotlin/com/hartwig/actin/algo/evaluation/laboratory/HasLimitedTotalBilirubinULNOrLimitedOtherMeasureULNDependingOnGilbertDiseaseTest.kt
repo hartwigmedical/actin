@@ -6,9 +6,9 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.icd.TestIcdFactory
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDate
 
 class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDiseaseTest {
 

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasNormalCardiacFunctionByMugaOrTteTest {
     private val function = HasNormalCardiacFunctionByMugaOrTte()

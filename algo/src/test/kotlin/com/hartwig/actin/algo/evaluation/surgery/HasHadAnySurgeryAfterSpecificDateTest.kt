@@ -11,8 +11,8 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import org.junit.Test
 import java.time.LocalDate
-import org.junit.jupiter.api.Test
 
 class HasHadAnySurgeryAfterSpecificDateTest {
     

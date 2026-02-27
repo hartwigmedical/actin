@@ -20,7 +20,7 @@ import com.hartwig.serve.datamodel.molecular.fusion.KnownFusion
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole as actinGeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect as actinProteinEffect
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect as serveProteinEffect

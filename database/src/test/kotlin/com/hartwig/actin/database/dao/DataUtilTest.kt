@@ -5,7 +5,7 @@ import com.hartwig.actin.database.dao.DataUtil.concatObjects
 import com.hartwig.actin.database.dao.DataUtil.nullableToString
 import com.hartwig.actin.database.dao.DataUtil.toByte
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class DataUtilTest {
 

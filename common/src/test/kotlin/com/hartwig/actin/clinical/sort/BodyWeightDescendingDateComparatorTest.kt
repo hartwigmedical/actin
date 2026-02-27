@@ -1,9 +1,9 @@
 package com.hartwig.actin.clinical.sort
 
 import com.hartwig.actin.datamodel.clinical.BodyWeight
-import java.time.LocalDateTime
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDateTime
 
 class BodyWeightDescendingDateComparatorTest {
 

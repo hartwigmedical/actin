@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.ReceptorType.HER2
 import com.hartwig.actin.datamodel.clinical.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 const val TARGET_RECEPTOR = "PR"
 

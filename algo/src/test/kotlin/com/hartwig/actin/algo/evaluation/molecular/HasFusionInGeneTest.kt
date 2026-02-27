@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private const val MATCHING_GENE = "gene A"
 private val MATCHING_GENE_IHC = GeneConstants.IHC_FUSION_EVALUABLE_GENES.first()

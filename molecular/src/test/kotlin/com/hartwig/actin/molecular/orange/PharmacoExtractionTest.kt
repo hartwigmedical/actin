@@ -9,8 +9,7 @@ import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.peach.PeachGenotype
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class PharmacoExtractionTest {
 
@@ -58,22 +57,22 @@ class PharmacoExtractionTest {
         assertThat(entries).hasSize(0)
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception when unexpected pharmaco gene`() {
-        assertThrows(IllegalStateException::class.java) {
-            val peachEntry = TestPeachFactory.builder().gene("unknown gene").build()
-            val orange = withPeachEntries(peachEntry)
-            PharmacoExtraction.extract(orange)
-        }
+        val peachEntry = TestPeachFactory.builder()
+            .gene("unknown gene")
+            .build()
+        val orange = withPeachEntries(peachEntry)
+        PharmacoExtraction.extract(orange)
     }
 
-    @Test
+    @Test(expected = IllegalStateException::class)
     fun `Should throw exception when unexpected haplotype function`() {
-        assertThrows(IllegalStateException::class.java) {
-            val peachEntry = TestPeachFactory.builder().function("unexpected function").build()
-            val orange = withPeachEntries(peachEntry)
-            PharmacoExtraction.extract(orange)
-        }
+        val peachEntry = TestPeachFactory.builder()
+            .function("unexpected function")
+            .build()
+        val orange = withPeachEntries(peachEntry)
+        PharmacoExtraction.extract(orange)
     }
 
     private fun withPeachEntries(vararg peachEntries: PeachGenotype): OrangeRecord {

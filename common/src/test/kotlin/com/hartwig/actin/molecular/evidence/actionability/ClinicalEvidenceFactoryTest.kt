@@ -22,15 +22,15 @@ import com.hartwig.serve.datamodel.efficacy.EvidenceDirection
 import com.hartwig.serve.datamodel.molecular.MolecularCriterium
 import com.hartwig.serve.datamodel.trial.ActionableTrial
 import com.hartwig.serve.datamodel.trial.GenderCriterium
+import com.hartwig.serve.datamodel.trial.Phase as ServePhase
 import io.mockk.every
 import io.mockk.mockk
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
-import org.junit.jupiter.api.Test
+import org.junit.Test
+import java.time.LocalDate
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel as ServeEvidenceLevel
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevelDetails as ServeEvidenceLevelDetails
-import com.hartwig.serve.datamodel.trial.Phase as ServePhase
 
 private val BASE_ACTIONABLE_EVENT = TestServeMolecularFactory.createActionableEvent()
 

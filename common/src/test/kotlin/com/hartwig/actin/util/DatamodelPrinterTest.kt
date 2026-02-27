@@ -1,6 +1,6 @@
 package com.hartwig.actin.util
 
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class DatamodelPrinterTest {
 

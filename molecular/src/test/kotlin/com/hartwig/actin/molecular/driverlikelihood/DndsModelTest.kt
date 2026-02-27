@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 val TEST_ONCO_DNDS_TSV = System.getProperty("user.dir") + "/src/test/resources/interpretation/dnds_driver_likelihood_onco.tsv"
 val TEST_TSG_DNDS_TSV = System.getProperty("user.dir") + "/src/test/resources/interpretation/dnds_driver_likelihood_tsg.tsv"

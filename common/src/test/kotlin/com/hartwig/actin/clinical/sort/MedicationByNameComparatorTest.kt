@@ -3,7 +3,7 @@ package com.hartwig.actin.clinical.sort
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class MedicationByNameComparatorTest {
 

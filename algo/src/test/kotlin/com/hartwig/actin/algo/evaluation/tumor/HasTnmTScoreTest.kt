@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.TumorStage
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasTnmTScoreTest {
     

@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 private val BASE_EXTERNAL_TRIAL_SUMMARY = TestExternalTrialFactory.create(
     nctId = "nct",

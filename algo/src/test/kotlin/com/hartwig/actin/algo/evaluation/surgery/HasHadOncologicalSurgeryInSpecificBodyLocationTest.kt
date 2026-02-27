@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
-import org.junit.jupiter.api.Test
+import org.junit.Test
 
 class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
 
