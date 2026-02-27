@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -312,10 +313,10 @@ internal object TumorTestFactory {
         )
     }
 
-    fun withCupAndCuppaPrediction(doids: Set<String>?, cancerType: String, likelihood: Double): PatientRecord {
+    fun withCupAndCuppaPrediction(cancerType: String, likelihood: Double): PatientRecord {
         val cupName = "Cancer (CUP)"
         return base.copy(
-            tumor = TumorDetails(doids = doids, name = cupName),
+            tumor = TumorDetails(doids = setOf(DoidConstants.CANCER_DOID), name = cupName),
             molecularTests = listOf(
                 baseMolecular.copy(
                     characteristics = baseMolecular.characteristics.copy(
