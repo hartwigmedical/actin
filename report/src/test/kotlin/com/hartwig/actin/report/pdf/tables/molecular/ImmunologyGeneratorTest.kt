@@ -14,8 +14,6 @@ class ImmunologyGeneratorTest {
     private val keyWidth = 50f
     private val valueWidth = 100f
 
-    // region title / meta
-
     @Test
     fun `Should return Immunology title by default`() {
         val generator = createGenerator(displayMode = ImmunologyDisplayMode.DETAILED)

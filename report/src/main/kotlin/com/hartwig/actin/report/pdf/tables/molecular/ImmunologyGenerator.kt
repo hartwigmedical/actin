@@ -104,11 +104,10 @@ class ImmunologyGenerator(
 
             if (hlaAAlleles.isNotEmpty()) {
                 hlaAAlleles.forEachIndexed { index, hlaAllele ->
-                    // Column 1: Gene name (only on first row)
+
                     val geneCell = if (index == 0) "HLA-A" else ""
                     table.addCell(Cells.createKey(geneCell))
 
-                    // Column 2: Formatted allele info in bold
                     val alleleString = "${hlaAllele.gene}*${hlaAllele.alleleGroup}:${hlaAllele.hlaProtein}"
                     val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
                         val boundedCopyNumber = cn.coerceAtLeast(0.0)
@@ -140,6 +139,6 @@ class ImmunologyGenerator(
 }
 
 enum class ImmunologyDisplayMode {
-    DETAILED,    // For MolecularDetailsChapter
-    SUMMARY      // For MolecularSummaryGenerator
+    DETAILED,
+    SUMMARY
 }
