@@ -100,13 +100,6 @@ class TumorDetailsInterpreterTest {
             assertThat(lesionString(details)).isEqualTo(expected)
         }
 
-//        @Test
-//        fun `Should include biopsyLocation among lesions locations`() {
-//            val details = TumorDetails(biopsyLocation = "Lung")
-//            val expected = "Lung"
-//            assertThat(lesionString(details)).isEqualTo(expected)
-//        }
-
         @Test
         fun `Should show (active) postfix if active CNS or brain lesion`() {
             val details =

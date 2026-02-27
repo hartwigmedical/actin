@@ -48,11 +48,6 @@ object WgsSummaryGeneratorFunctions {
             )
         }
 
-//        if (isLongSummaryType || (isDetailsSummaryType && patientRecord.tumor.biopsyLocation != null)) {
-//            table.addCell(Cells.createKey("Biopsy location"))
-//            table.addCell(biopsySummary(patientRecord, molecular))
-//        }
-
         if (wgsMolecular?.hasSufficientQuality != false) {
             if (isLongSummaryType || (isDetailsSummaryType && wgsMolecular?.characteristics?.predictedTumorOrigin != null)) {
                 val cuppaModeIsWGTS = if (molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS) " (WGTS)" else ""
@@ -122,22 +117,6 @@ object WgsSummaryGeneratorFunctions {
         }
         return false
     }
-
-//    private fun biopsySummary(patientRecord: PatientRecord, molecular: MolecularTest): Cell {
-//        val biopsyLocation = (patientRecord.tumor.biopsyLocation ?: Formats.VALUE_UNKNOWN).replaceFirstChar(Char::uppercase)
-//        val purity = molecular.characteristics.purity
-//        val wgsMolecular = if (molecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME) molecular else null
-//        return if (wgsMolecular != null && purity != null) {
-//            val biopsyText = Text(biopsyLocation).addStyle(Styles.tableHighlightStyle())
-//            val purityText = Text(String.format(" (purity %s)", Formats.percentage(purity)))
-//            purityText.addStyle(
-//                if (wgsMolecular.hasSufficientQualityButLowPurity()) Styles.tableNoticeStyle() else Styles.tableHighlightStyle()
-//            )
-//            Cells.create(Paragraph().addAll(listOf(biopsyText, purityText)))
-//        } else {
-//            Cells.createValue(biopsyLocation)
-//        }
-//    }
 
     fun tumorOriginPredictionCell(molecular: MolecularTest): Cell {
         val originSummary = TumorOriginInterpreter.create(molecular).generateSummaryString()
