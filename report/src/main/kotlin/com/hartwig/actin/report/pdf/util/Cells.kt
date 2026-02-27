@@ -57,6 +57,10 @@ object Cells {
         return cell
     }
 
+    fun createHeaderWithBorder(text: String): Cell {
+        return createHeader(text).setBorderBottom(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
+    }
+
     fun createSpanningSubNote(text: String, table: Table): Cell {
         val cell = create(Paragraph(text), table.numberOfColumns)
         cell.addStyle(Styles.tableSubStyle())
@@ -87,7 +91,7 @@ object Cells {
     fun createContentSmallItalic(text: String): Cell {
         return createContent(Paragraph(text)).setFont(Styles.fontItalic()).setFontSize(SMALL_FONT)
     }
-    
+
     fun createContentBold(text: String): Cell {
         return createContent(Paragraph(text), Styles.tableHighlightStyle())
     }
@@ -101,7 +105,7 @@ object Cells {
         cell.addStyle(Styles.tableContentStyle())
         return cell
     }
-    
+
     fun createContentWarn(text: String): Cell {
         val cell = createContent(text)
         cell.setFontColor(Styles.PALETTE_WARN)

@@ -42,9 +42,11 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching = patientRecord.molecularTests.filterNot { it.experimentType == ExperimentType.IHC }
         val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
+
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }
-        val testReportsHash = nonIhcTestsIncludedInTrialMatching.mapNotNull { it.reportHash } + ihcTestsFiltered.mapNotNull { it.reportHash }
+        val testReportsHash =
+            nonIhcTestsIncludedInTrialMatching.mapNotNull { it.reportHash } + ihcTestsFiltered.mapNotNull { it.reportHash }
         val filteredPathologyReports = patientRecord.pathologyReports?.filter { it.reportHash in testReportsHash }
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
             emptyList(),
@@ -102,6 +104,23 @@ class MolecularSummaryGenerator(
                 noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
                 table.addCell(Cells.create(noRecent))
             }
+        }
+
+        val immunologyGenerators = molecularTests.mapNotNull { molecularTest ->
+            if (molecularTest.immunology?.isReliable == true) {
+                ImmunologyGenerator(
+                    molecularTest,
+                    ImmunologyDisplayMode.SUMMARY,
+                    "Immunology",
+                    keyWidth,
+                    valueWidth
+                )
+            } else null
+        }
+
+        immunologyGenerators.firstOrNull()?.let { generator ->
+            table.addCell(Cells.createSubTitle(generator.title()))
+            table.addCell(Cells.create(generator.contents()))
         }
 
         if (ihcTests.isNotEmpty()) {
