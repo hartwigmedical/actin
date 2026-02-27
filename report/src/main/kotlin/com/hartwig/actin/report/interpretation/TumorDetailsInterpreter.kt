@@ -32,17 +32,15 @@ object TumorDetailsInterpreter {
         val allCategorizedLesions = with(tumor) {
             listOf(
                 Lesion(
-                    TumorDetails.CNS + if (hasCnsLesions == true && hasActiveCnsLesions == true) " (active)" else "",
+                    TumorDetails.CNS + additionalCnsString(hasCnsLesions, hasActiveCnsLesions),
                     hasCnsLesions,
                     hasSuspectedCnsLesions
                 ),
                 Lesion(
-                    TumorDetails.BRAIN + if (hasBrainLesions == true && hasActiveBrainLesions == true) " (active)" else "",
+                    TumorDetails.BRAIN + additionalBrainString(hasBrainLesions, hasActiveBrainLesions, hasSymptomaticBrainLesions),
                     when {
-                        hasBrainLesions == true -> true
                         name.contains("brain", ignoreCase = true) || name.contains("glioma", ignoreCase = true) -> true
-                        hasBrainLesions == null -> null
-                        else -> false
+                        else -> hasBrainLesions
                     },
                     hasSuspectedBrainLesions
                 ),
@@ -80,6 +78,21 @@ object TumorDetailsInterpreter {
             nonLymphSuspected.plus(if (lymphSuspected.isNotEmpty()) listOf("Lymph nodes (suspected)") else emptyList()),
             negativeCategorizedLesions
         )
+    }
+
+    private fun additionalCnsString(hasCnsLesions: Boolean?, hasActiveCnsLesions: Boolean?): String {
+        return if (hasCnsLesions == true) " (${activeString(hasActiveCnsLesions)})" else ""
+    }
+
+    private fun additionalBrainString(hasBrainLesions: Boolean?, hasActiveBrainLesions: Boolean?, hasSymptomaticBrainLesions: Boolean?): String {
+        val activeString = activeString(hasActiveBrainLesions)
+        val symptomaticString = hasSymptomaticBrainLesions?.let { if (it) "symptomatic" else "not symptomatic" } ?: "symptomatic unknown"
+
+        return if (hasBrainLesions == true) " ($activeString, $symptomaticString)" else ""
+    }
+
+    private fun activeString(hasActiveLesions: Boolean?): String {
+        return hasActiveLesions?.let { if (it) "active" else "inactive" } ?: "active unknown"
     }
 
     private fun lymphNodeLesionsString(lymphNodeLesions: List<String>): List<String> {
