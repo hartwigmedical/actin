@@ -38,7 +38,8 @@ class PathologyReportFunctionsTest {
                             "Authorization date: ${df.format(authorisationDate)}, " +
                             "Report date: ${df.format(reportDate)}, " +
                             "Data retrieval date: ${df.format(extractionDate)}, " +
-                            "Diagnosis: $diagnosis)"
+                            "Diagnosis: $diagnosis, " +
+                            "Biopsy location: $biopsyLocation)"
                 )
         }
     }
@@ -53,6 +54,7 @@ class PathologyReportFunctionsTest {
             extractionDate = null,
             lab = null,
             diagnosis = null,
+            biopsyLocation = null
         )
 
         val cell = PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)
