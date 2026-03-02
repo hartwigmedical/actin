@@ -11,30 +11,28 @@ import org.junit.jupiter.api.Test
 
 class HasHadCompleteResectionTest {
 
+    private val function = HasHadCompleteResection()
+
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
     fun `Should pass on complete resection`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(HasHadCompleteResection.COMPLETE_RESECTION, false)))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(COMPLETE_RESECTION, false)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun `Should return undetermined for unspecified resection`() {
-        val treatments = setOf(treatment("some form of " + HasHadCompleteResection.RESECTION_KEYWORD, false))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
+    fun `Should be undetermined for unspecified resection`() {
+        val treatments = setOf(treatment("some form of " + HasHadCompleteResection.RESECTION_KEYWORDS.last() + " surgery", false))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }
 
     @Test
-    fun `Should return undetermined for unspecified surgery`() {
+    fun `Should be undetermined for unspecified surgery`() {
         val treatments = setOf(treatment("", false, categories = setOf(TreatmentCategory.SURGERY)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
-    }
-
-    companion object {
-        private val FUNCTION = HasHadCompleteResection()
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }
 }
