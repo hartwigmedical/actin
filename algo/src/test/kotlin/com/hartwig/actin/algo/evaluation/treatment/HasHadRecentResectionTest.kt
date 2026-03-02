@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.treatment.HasHadCompleteResection.Companion.RESECTION_KEYWORDS
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -12,43 +13,41 @@ import org.junit.jupiter.api.Test
 
 class HasHadRecentResectionTest {
 
+    private val minDate = LocalDate.of(2022, 10, 12)
+    private val function = HasHadRecentResection(minDate)
+    private val matchingTreatment = setOf(treatment("some form of " + RESECTION_KEYWORDS.first(), false))
+
     @Test
-    fun shouldFailWithNoTreatmentHistory() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+    fun `Should fail with no treatment history`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldPassOnRecentResection() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = 2022, startMonth = 11)
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    fun `Should pass with recent resection`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(matchingTreatment, startYear = 2022, startMonth = 11)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldWarnForResectionCloseToMinDate() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = 2022, startMonth = 10)
-        assertEvaluation(EvaluationResult.WARN, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    fun `Should warn for resection close to minDate`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(matchingTreatment, startYear = 2022, startMonth = 10)
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedForResectionWithUnknownDate() {
+    fun `Should be undetermined for resection with missing date`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(MATCHING_TREATMENT_SET)))
+            EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(matchingTreatment)))
         )
     }
 
     @Test
-    fun shouldReturnUndeterminedForRecentUnspecifiedSurgery() {
+    fun `Should be undetermined for unspecified surgery`() {
         val treatments = setOf(treatment("", false, categories = setOf(TreatmentCategory.SURGERY)))
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(
+            EvaluationResult.UNDETERMINED, function.evaluate(
                 withTreatmentHistoryEntry(treatmentHistoryEntry(treatments, startYear = 2022, startMonth = 11))
             )
         )
-    }
-
-    companion object {
-        private val MIN_DATE = LocalDate.of(2022, 10, 12)
-        private val FUNCTION = HasHadRecentResection(MIN_DATE)
-        private val MATCHING_TREATMENT_SET = setOf(treatment("some form of " + HasHadRecentResection.RESECTION_KEYWORD, false))
     }
 }

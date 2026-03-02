@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.HasHadCompleteResection.Companion.RESECTION_KEYWORDS
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -19,8 +20,11 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
             val isPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val isPastMoreLenientMinDate =
                 isAfterDate(minDate.minusWeeks(2), treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val isResection =
-                treatmentHistoryEntry.treatments.any { it.name.lowercase().contains(RESECTION_KEYWORD) }
+            val isResection = treatmentHistoryEntry.treatments.any { entry ->
+                RESECTION_KEYWORDS.any { keyword ->
+                    entry.name.lowercase().contains(keyword)
+                }
+            }
             val isPotentialResection = treatmentHistoryEntry.treatments.any {
                 it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty()
             }
@@ -56,9 +60,5 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
                 EvaluationFactory.fail("Has not had recent resection")
             }
         }
-    }
-
-    companion object {
-        const val RESECTION_KEYWORD = "resection"
     }
 }
