@@ -62,7 +62,7 @@ object TumorDetailsInterpreter {
         val suspectedOtherLesions =
             tumor.otherSuspectedLesions?.filterNot { it in confirmedOtherLesions }?.map { "$it (suspected)" }.orEmpty()
 
-        val allLesions = (confirmedCategorizedLesions + confirmedOtherLesions + listOfNotNull(tumor.biopsyLocation))
+        val allLesions = (confirmedCategorizedLesions + confirmedOtherLesions)
             .sorted()
             .distinctBy(String::uppercase)
 
