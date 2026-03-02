@@ -306,7 +306,7 @@ class MolecularDriverEntryFactoryTest {
         val result = createFactoryForMolecularTest(test).create()
 
         assertThat(result).hasSize(1)
-        val expectedDescription = "${fusion.event}\nDomain(s) kept: ${fusion.domainsKept?.joinToString(", ") ?: ""}\nDomain(s) lost: ${
+        val expectedDescription = "${fusion.event}\ndomain(s) kept: ${fusion.domainsKept?.joinToString(", ") ?: ""}\ndomain(s) lost: ${
             fusion.domainsLost?.joinToString(", ") ?: ""
         }"
         assertThat(result[0].description).isEqualTo(expectedDescription)

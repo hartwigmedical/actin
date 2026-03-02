@@ -7,10 +7,10 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
-class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
+class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypes(
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>,
-    private val maxWeeks: Int
+    private val minWeeks: Int
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -19,8 +19,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(
             { category in it.categories() && !it.hasTypeConfigured() },
             setOf(category),
             "${Format.concatItemsWithOr(types)} ${category.display()} treatment",
-            TreatmentDurationType.LIMITED,
-            maxWeeks
+            TreatmentDurationType.SUFFICIENT,
+            minWeeks
         ).evaluate(record)
     }
 }

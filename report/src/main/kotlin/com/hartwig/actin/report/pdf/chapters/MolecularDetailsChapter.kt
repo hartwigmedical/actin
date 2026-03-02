@@ -15,6 +15,8 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.IhcResultGenerator
+import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyDisplayMode
+import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions
@@ -73,7 +75,10 @@ class MolecularDetailsChapter(
 
     private fun addMolecularDetails(document: Document) {
         val cohorts =
-            InterpretedCohortFactory.createEvaluableCohorts(report.treatmentMatch.trialMatches, configuration.filterOnSOCExhaustionAndTumorType)
+            InterpretedCohortFactory.createEvaluableCohorts(
+                report.treatmentMatch.trialMatches,
+                configuration.filterOnSOCExhaustionAndTumorType
+            )
 
         val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
@@ -89,9 +94,6 @@ class MolecularDetailsChapter(
 
         val table = Tables.createSingleColWithWidth(contentWidth())
         for ((pathologyReport, tests) in groupedByPathologyReport) {
-            pathologyReport ?: groupedByPathologyReport.keys.takeIf { it.size > 1 }?.let {
-                table.addCell(Cells.createTitle("Other Tests"))
-            }
             val (orangeMolecularRecords, molecularTests, ihcTests) = tests
             contentPerPathologyReport(pathologyReport, orangeMolecularRecords, molecularTests, ihcTests, cohorts, table)
         }
@@ -114,6 +116,12 @@ class MolecularDetailsChapter(
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = tableWidth - keyWidth
 
+        val reportTable = pathologyReport?.run {
+            val innerTable = Tables.createSingleColWithWidth(tableWidth)
+            topTable.addCell(Cells.create(innerTable))
+            innerTable
+        } ?: topTable
+
         val orangeGenerators = orangeMolecularRecord.map {
             OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport)
         }
@@ -128,14 +136,19 @@ class MolecularDetailsChapter(
                 valueWidth
             )
         }
+        val immunologyGenerators = orangeMolecularRecord.mapNotNull { molecularTest ->
+            if (molecularTest.immunology != null) {
+                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED, "Immunology", keyWidth, valueWidth)
+            } else null
+        }
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
         } else null
 
         TableGeneratorFunctions.addGenerators(
-            orangeGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
-            topTable,
+            orangeGenerators + wgsSummaryGenerators + immunologyGenerators + listOfNotNull(ihcGenerator),
+            reportTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
     }
