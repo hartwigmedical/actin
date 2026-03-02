@@ -4,7 +4,7 @@ import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver.fromS
 import com.hartwig.actin.clinical.interpretation.TreatmentCategoryResolver.toStringList
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TreatmentCategoryResolverTest {
 

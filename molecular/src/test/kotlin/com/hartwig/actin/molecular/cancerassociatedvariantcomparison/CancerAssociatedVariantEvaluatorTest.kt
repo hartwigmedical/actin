@@ -12,7 +12,7 @@ import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.common.GeneRole
 import com.hartwig.serve.datamodel.molecular.common.ProteinEffect
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val HOTSPOT_SERVE = TestServeKnownFactory.hotspotBuilder().gene("gene1").chromosome("1").position(1).ref("ref1").alt("alt1")
     .proteinEffect(ProteinEffect.GAIN_OF_FUNCTION).geneRole(GeneRole.ONCO).sources(setOf(ActionabilityConstants.EVIDENCE_SOURCE)).build()

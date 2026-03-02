@@ -2,7 +2,7 @@ package com.hartwig.actin.util.json
 
 import com.google.gson.JsonObject
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class JsonDatamodelCheckerTest {
 

@@ -29,7 +29,7 @@ import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.molecular.MutationType
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val INDICATION = TestServeFactory.createIndicationWithDoid("1520")
 private val MOLECULAR_CRITERIUM =

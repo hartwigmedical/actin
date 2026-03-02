@@ -12,7 +12,7 @@ import com.hartwig.actin.molecular.paver.PaveTranscriptImpact
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.tools.variant.ImmutableVariant
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val TRANSCRIPT = "transcript"
 private const val GENE_ID = "gene_id"

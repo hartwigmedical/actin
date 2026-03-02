@@ -1,11 +1,11 @@
 package com.hartwig.actin.molecular.paver
 
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
+import java.nio.file.Path
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 
 private val REF_GENOME_FASTA = resourceOnClasspath("paver/ref_genome/ref_genome.fasta")
 private val ENSEMBL_DATA_DIR = resourceOnClasspath("paver/ensembl")
@@ -13,8 +13,8 @@ private val DRIVER_GENE_PANEL = resourceOnClasspath("paver/DriverGenePanel.tsv")
 
 class PaverTest {
 
-    @get:Rule
-    val tempDir = TemporaryFolder()
+    @TempDir
+    lateinit var tempDir: Path
 
     @Test
     fun `Should annotate all variants with Paver`() {
@@ -35,7 +35,13 @@ class PaverTest {
             )
         )
 
-        val paver = Paver(ENSEMBL_DATA_DIR, REF_GENOME_FASTA, PaveRefGenomeVersion.V37, DRIVER_GENE_PANEL, tempDir.root.absolutePath)
+        val paver = Paver(
+            ENSEMBL_DATA_DIR,
+            REF_GENOME_FASTA,
+            PaveRefGenomeVersion.V37,
+            DRIVER_GENE_PANEL,
+            tempDir.toAbsolutePath().toString()
+        )
 
         val responses = paver.run(queries).associateBy { it.id }
         assertThat(responses.size).isEqualTo(2)

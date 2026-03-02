@@ -7,7 +7,7 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import io.mockk.every
 import io.mockk.mockk
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class IsEligibleForLocalTreatmentOfMetastasesTest {
 

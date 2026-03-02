@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.immunology.TestHlaAlleleFactory
 import com.hartwig.actin.molecular.evidence.TestServeMolecularFactory
 import com.hartwig.serve.datamodel.molecular.immuno.ImmutableActionableHLA
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val GENE = "HLA-A"
 private const val ALLELE_GROUP = "02"

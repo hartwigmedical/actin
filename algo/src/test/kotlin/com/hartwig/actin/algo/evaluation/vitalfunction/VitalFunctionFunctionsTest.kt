@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val EPSILON = 1.0E-10
 

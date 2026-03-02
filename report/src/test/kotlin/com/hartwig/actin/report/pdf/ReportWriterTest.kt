@@ -3,7 +3,7 @@ package com.hartwig.actin.report.pdf
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ReportWriterTest {
 

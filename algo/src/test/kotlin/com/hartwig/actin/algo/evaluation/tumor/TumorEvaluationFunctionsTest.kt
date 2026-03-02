@@ -5,7 +5,8 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 const val OTHER_DOID = "other doid"
 
@@ -161,9 +162,11 @@ class TumorEvaluationFunctionsTest {
         assertThat(TumorEvaluationFunctions.isStageMatch(TumorStage.III, setOf(TumorStage.I, TumorStage.II))).isFalse()
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Should throw exception when using this rule to look for a non-categorical stage`() {
-        TumorEvaluationFunctions.isStageMatch(TumorStage.IA, setOf(TumorStage.IA, TumorStage.II))
+        assertThrows(IllegalArgumentException::class.java) {
+            TumorEvaluationFunctions.isStageMatch(TumorStage.IA, setOf(TumorStage.IA, TumorStage.II))
+        }
     }
 
     @Test

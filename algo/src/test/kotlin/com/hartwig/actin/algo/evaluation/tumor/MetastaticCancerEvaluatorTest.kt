@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.tumor.MetastaticCancerEvaluator.STAGE_I
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class MetastaticCancerEvaluatorTest {
 

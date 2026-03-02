@@ -1,16 +1,15 @@
 package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.algo.evaluation.FunctionCreatorFactory.create
-import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.Cyp
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
 import com.hartwig.actin.datamodel.clinical.IhcTestResult
 import com.hartwig.actin.datamodel.clinical.ReceptorType
-import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TnmT
-import com.hartwig.actin.datamodel.clinical.TumorStage
+import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -26,12 +25,12 @@ import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
 import com.hartwig.actin.datamodel.trial.VariantTypeInput
-import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.icd.TestIcdFactory
+import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FunctionCreatorFactoryTest {
 

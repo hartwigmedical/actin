@@ -1,9 +1,9 @@
 package com.hartwig.actin.medication
 
-import org.junit.Test
-import org.assertj.core.api.Assertions.assertThat
 import com.hartwig.actin.medication.MedicationInputChecker.isCyp
 import com.hartwig.actin.medication.MedicationInputChecker.isTransporter
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class MedicationInputCheckerTest {
 

@@ -17,7 +17,8 @@ import com.hartwig.actin.trial.serialization.TrialJson.readFromDir
 import com.hartwig.actin.trial.serialization.TrialJson.toJson
 import com.hartwig.actin.trial.serialization.TrialJson.trialFileId
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 class TrialJsonTest {
 
@@ -58,9 +59,9 @@ class TrialJsonTest {
     }
 
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Should throw exception when trying to read from regular file`() {
-        readFromDir("$trialDirectory/file.json")
+        assertThrows(IllegalArgumentException::class.java) { readFromDir("$trialDirectory/file.json") }
     }
 
     private fun assertTrial(trial: Trial) {

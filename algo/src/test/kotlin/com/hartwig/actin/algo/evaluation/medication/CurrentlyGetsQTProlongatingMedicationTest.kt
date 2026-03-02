@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CurrentlyGetsQTProlongatingMedicationTest {
 

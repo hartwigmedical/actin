@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.evidence.curation
 
 import com.hartwig.serve.datamodel.efficacy.ImmutableTreatment
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class GenericInhibitorFilteringTest {
 

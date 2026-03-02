@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val MAX_TREATMENT_LINES = 1
 private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY

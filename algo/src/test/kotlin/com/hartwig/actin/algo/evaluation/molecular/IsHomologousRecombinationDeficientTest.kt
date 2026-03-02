@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.util.GeneConstants
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class IsHomologousRecombinationDeficientTest {
     

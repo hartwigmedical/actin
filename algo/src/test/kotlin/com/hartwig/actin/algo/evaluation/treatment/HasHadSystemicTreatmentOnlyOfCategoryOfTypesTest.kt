@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
     

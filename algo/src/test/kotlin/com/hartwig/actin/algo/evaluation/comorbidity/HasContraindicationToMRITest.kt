@@ -8,7 +8,7 @@ import com.hartwig.actin.algo.evaluation.comorbidity.HasContraindicationToMRI.Co
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasContraindicationToMRITest {
     private val function = HasContraindicationToMRI(TestIcdFactory.createTestModel())

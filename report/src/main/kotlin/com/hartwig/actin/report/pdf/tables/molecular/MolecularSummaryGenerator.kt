@@ -12,13 +12,18 @@ import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.layout.borders.Border
+import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Table
 import org.apache.logging.log4j.LogManager
 
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
     private val cohorts: List<InterpretedCohort>,
+    private val contentWidth: Float,
     private val keyWidth: Float,
     private val valueWidth: Float,
 ) : TableGenerator {
@@ -37,6 +42,7 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching = patientRecord.molecularTests.filterNot { it.experimentType == ExperimentType.IHC }
         val trialRelevantEvents = cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.distinct()
+
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }
         val filteredPathologyReports =
@@ -57,13 +63,10 @@ class MolecularSummaryGenerator(
             pathologyReport?.let {
                 table.addCell(Cells.create(PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)))
                 val reportTable = Tables.createSingleCol()
-                content(pathologyReport, molecularTests, ihcTests, reportTable)
-                table.addCell(Cells.create(reportTable))
+                content(pathologyReport, molecularTests, ihcTests, reportTable, valueWidth - Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE)
+                table.addCell(Cells.create(reportTable).setPaddingLeft(Formats.STANDARD_INNER_TABLE_WIDTH_DECREASE))
             } ?: run {
-                if (groupedByPathologyReport.keys.size > 1) {
-                    table.addCell(Cells.createTitle("Other Tests"))
-                }
-                content(pathologyReport, molecularTests, ihcTests, table)
+                content(pathologyReport, molecularTests, ihcTests, table, valueWidth)
             }
         }
 
@@ -74,7 +77,8 @@ class MolecularSummaryGenerator(
         pathologyReport: PathologyReport?,
         molecularTests: List<MolecularTest>,
         ihcTests: List<IhcTest>,
-        table: Table
+        table: Table,
+        valueWidth: Float
     ) {
         for (molecularTest in molecularTests.sortedByDescending { it.date }) {
             val wgsMolecular = MolecularHistory(listOf(molecularTest)).latestOrangeMolecularRecord()
@@ -91,7 +95,11 @@ class MolecularSummaryGenerator(
                     keyWidth,
                     valueWidth
                 )
-                table.addCell(Cells.createSubTitle(wgsGenerator.title()))
+                if (pathologyReport == null) {
+                    table.addCell(Cells.createTitle(wgsGenerator.title()))
+                } else {
+                    table.addCell(Cells.createSubTitle(wgsGenerator.title()))
+                }
                 table.addCell(Cells.create(wgsGenerator.contents()))
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
@@ -99,6 +107,23 @@ class MolecularSummaryGenerator(
                 noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
                 table.addCell(Cells.create(noRecent))
             }
+        }
+
+        val immunologyGenerators = molecularTests.mapNotNull { molecularTest ->
+            if (molecularTest.immunology?.isReliable == true) {
+                ImmunologyGenerator(
+                    molecularTest,
+                    ImmunologyDisplayMode.SUMMARY,
+                    "Immunology",
+                    keyWidth,
+                    valueWidth
+                )
+            } else null
+        }
+
+        immunologyGenerators.firstOrNull()?.let { generator ->
+            table.addCell(Cells.createSubTitle(generator.title()))
+            table.addCell(Cells.create(generator.contents()))
         }
 
         if (ihcTests.isNotEmpty()) {

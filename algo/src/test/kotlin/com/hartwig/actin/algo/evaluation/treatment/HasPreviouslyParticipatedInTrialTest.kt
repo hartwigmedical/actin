@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 const val ACRONYM = "ACR"
 val FUNCTION_WITH_ACRONYM = HasPreviouslyParticipatedInTrial(ACRONYM)

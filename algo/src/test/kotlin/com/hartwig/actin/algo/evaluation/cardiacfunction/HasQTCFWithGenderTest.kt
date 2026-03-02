@@ -6,7 +6,7 @@ import com.hartwig.actin.algo.evaluation.general.GeneralTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Gender
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasQTCFWithGenderTest {
 

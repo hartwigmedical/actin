@@ -5,7 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasCancerOfUnknownPrimaryTest {
 
