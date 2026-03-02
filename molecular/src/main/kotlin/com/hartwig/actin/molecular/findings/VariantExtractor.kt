@@ -159,7 +159,6 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
             PurpleVariantEffect.UPSTREAM_GENE -> VariantEffect.UPSTREAM_GENE
             PurpleVariantEffect.NON_CODING_TRANSCRIPT -> VariantEffect.NON_CODING_TRANSCRIPT
             PurpleVariantEffect.OTHER -> VariantEffect.OTHER
-            else -> throw IllegalStateException("Could not convert purple variant effect: $effect")
         }
     }
 
@@ -171,7 +170,6 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
             PurpleCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
             PurpleCodingEffect.NONE -> CodingEffect.NONE
             PurpleCodingEffect.UNDEFINED -> null
-            else -> throw IllegalStateException("Could not convert purple coding effect: $codingEffect")
         }
     }
 }
