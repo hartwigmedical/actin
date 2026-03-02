@@ -10,8 +10,9 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val distinctCategorizedLesionLocations = confirmedCategoricalLesionList().count { it == true }
+            val biopsyLocations = record.pathologyReports?.mapNotNull { it.biopsyLocation } ?: emptyList()
 
-            val otherLesionCount = (otherLesions ?: emptyList())
+            val otherLesionCount = (otherLesions ?: biopsyLocations)
                     .filterNot { it.lowercase().contains("lymph") && true == hasLymphNodeLesions }
                     .count()
 
