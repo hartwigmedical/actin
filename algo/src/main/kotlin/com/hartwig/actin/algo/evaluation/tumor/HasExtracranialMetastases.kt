@@ -19,10 +19,10 @@ class HasExtracranialMetastases : EvaluationFunction {
             with(record.tumor) { listOf(hasBoneLesions, hasLungLesions, hasLiverLesions, hasLymphNodeLesions) }.any { it == null }
         val uncategorizedLesions = record.tumor.otherLesions ?: emptyList()
         val uncategorizedSuspectedLesions = record.tumor.otherSuspectedLesions ?: emptyList()
-        val biopsyLocations = record.pathologyReports?.mapNotNull { it.biopsyLocation }
 
         return when {
-            hasNonCnsMetastases || biopsyLocations?.any { isExtraCranialLesion(it) } == true || uncategorizedLesions.any(::isExtraCranialLesion) -> {                EvaluationFactory.pass("Has extracranial metastases")
+            hasNonCnsMetastases || uncategorizedLesions.any(::isExtraCranialLesion) -> {
+                EvaluationFactory.pass("Has extracranial metastases")
             }
 
             hasSuspectedNonCnsMetastases || uncategorizedSuspectedLesions.any(::isExtraCranialLesion) -> {
