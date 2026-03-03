@@ -141,8 +141,11 @@ class MolecularDetailsChapter(
             )
         }
         val immunologyGenerators = orangeMolecularRecord.mapNotNull { molecularTest ->
-            if (molecularTest.immunology != null) {
-                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED, "Immunology", keyWidth, valueWidth)
+            val isStandardWithPathology = configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY
+            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null
+            if (showImmunology) {
+                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.SUMMARY else ImmunologyDisplayMode.DETAILED
+                ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
             } else null
         }
 

@@ -68,10 +68,7 @@ class ImmunologyGenerator(
                     table.addCell(Cells.createContentNoBorder(alleleString))
 
                     val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
-                        val boundedCopyNumber = cn.coerceAtLeast(0.0)
-                        if (boundedCopyNumber < 1) Formats.forcedSingleDigitNumber(boundedCopyNumber) else Formats.noDigitNumber(
-                            boundedCopyNumber
-                        )
+                        Formats.forcedSingleDigitNumber(cn.coerceAtLeast(0.0))
                     } ?: "-"
                     table.addCell(Cells.createContentNoBorder(cnDisplay))
 
@@ -110,21 +107,16 @@ class ImmunologyGenerator(
 
                     val alleleString = "${hlaAllele.gene}*${hlaAllele.alleleGroup}:${hlaAllele.hlaProtein}"
                     val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
-                        val boundedCopyNumber = cn.coerceAtLeast(0.0)
-                        val cnText =
-                            if (boundedCopyNumber < 1) Formats.forcedSingleDigitNumber(boundedCopyNumber) else Formats.noDigitNumber(
-                                boundedCopyNumber
-                            )
-                        "Copy number: $cnText"
-                    } ?: "Copy number: -"
+                        ", tumor copy nr: ${Formats.noDigitNumber(cn.coerceAtLeast(0.0))}"
+                    } ?: ", tumor copy nr: -"
 
                     val mutationDisplay = when (hlaAllele.hasSomaticMutations) {
-                        true -> "Mutated: Yes"
-                        false -> "Mutated: No"
-                        null -> "Mutated: -"
+                        true -> ", mutated: Yes"
+                        false -> ", mutated: No"
+                        null -> ", mutated: -"
                     }
 
-                    val fullText = "$alleleString $cnDisplay, $mutationDisplay"
+                    val fullText = "$alleleString$cnDisplay, $mutationDisplay"
                     table.addCell(Cells.createValue(fullText))
                 }
             } else {
