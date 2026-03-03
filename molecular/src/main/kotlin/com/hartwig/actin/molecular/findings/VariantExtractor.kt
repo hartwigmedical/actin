@@ -8,13 +8,12 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.AminoAcid
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
+import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import org.apache.logging.log4j.LogManager
 
 private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"

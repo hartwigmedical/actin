@@ -4,10 +4,13 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.domainsAsList
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.DriverFindingList
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
+
+fun domainsAsList(domains: String): List<String> {
+    return domains.split(";").filter { it.isNotEmpty() }
+}
 
 class FusionExtractor(private val geneFilter: GeneFilter) {
 

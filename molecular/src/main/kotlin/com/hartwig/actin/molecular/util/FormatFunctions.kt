@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.util
 
-import com.hartwig.actin.molecular.orange.AminoAcid.forceSingleLetterAminoAcids
+import com.hartwig.actin.molecular.findings.AminoAcid.forceSingleLetterAminoAcids
 
 object FormatFunctions {
 

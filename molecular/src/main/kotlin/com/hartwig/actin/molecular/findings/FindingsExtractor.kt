@@ -7,13 +7,14 @@ import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.actin.molecular.orange.ONCO_PANEL
 import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.finding.datamodel.FindingRecord
 import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import java.time.LocalDate
+
+const val ONCO_PANEL = "OncoPanel"
 
 class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpecifications: PanelSpecifications) :
     MolecularExtractor<FindingRecord, MolecularTest> {
