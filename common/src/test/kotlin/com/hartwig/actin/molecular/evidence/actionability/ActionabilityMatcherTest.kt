@@ -45,6 +45,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect as DriverProteinEffect
 
+const val SUBCLONAL_LIKELIHOOD = 0.3
+
 private val brafActionableHotspot = TestServeMolecularFactory.hotspot(BRAF_V600E_VARIANT)
 
 private val relatedBrafActionableHotspot = TestServeMolecularFactory.hotspot(BRAF_T599R_VARIANT)
@@ -791,6 +793,49 @@ class ActionabilityMatcherTest {
     }
 
     @Test
+    fun `Should not match gene evidence with variant on that gene if gene role is TSG and subclonal`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.ANY_MUTATION)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val variant = brafMolecularTestVariant.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
+            clonalLikelihood = SUBCLONAL_LIKELIHOOD,
+            geneRole = GeneRole.TSG
+        )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                variants = listOf(variant)
+            )
+        )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).isEmpty()
+    }
+
+    @Test
+    fun `Should match gene evidence with variant on that gene if gene role is not TSG and subclonal`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.ANY_MUTATION)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val variant = brafMolecularTestVariant.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
+            clonalLikelihood = SUBCLONAL_LIKELIHOOD,
+            geneRole = GeneRole.UNKNOWN
+        )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                variants = listOf(variant)
+            )
+        )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(1)
+        assertThat(matches[variant]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
     fun `Should not match gene evidence for ineligible event with variant on that gene`() {
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.FUSION)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
@@ -829,6 +874,29 @@ class ActionabilityMatcherTest {
         val matches = matcher.match(molecularTest)
         assertThat(matches).hasSize(1)
         assertThat(matches[variant]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
+    fun `Should not match absence of protein evidence with variant on that gene if MMR gene if gene is TSG and variant is subclonal`() {
+        val gene = GeneConstants.MMR_GENES.first()
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = gene, geneEvent = GeneEvent.ABSENCE_OF_PROTEIN)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val variant = brafMolecularTestVariant.copy(
+            gene = gene,
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
+            clonalLikelihood = SUBCLONAL_LIKELIHOOD,
+            geneRole = GeneRole.TSG
+        )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                variants = listOf(variant)
+            )
+        )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).isEmpty()
     }
 
     @Test
