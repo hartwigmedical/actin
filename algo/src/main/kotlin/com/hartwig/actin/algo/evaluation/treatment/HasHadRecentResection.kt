@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.treatment.HasHadCompleteResection.Compa
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 
 class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction {
@@ -25,9 +24,8 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
                     entry.name.lowercase().contains(keyword)
                 }
             }
-            val isPotentialResection = treatmentHistoryEntry.treatments.any {
-                it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty()
-            }
+            val isPotentialResection = treatmentHistoryEntry.treatments.any { it.name.lowercase() == "surgery" }
+
             if (isResection) {
                 if (isPastMinDate == null) {
                     mayHaveHadResectionAfterMinDate = true
