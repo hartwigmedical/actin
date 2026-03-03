@@ -37,34 +37,34 @@ class TumorDetailsInterpreterTest {
         @Test
         fun `Should return string for brain lesions`() {
             val lesions = lesionString(TumorDetails(hasBrainLesions = true))
-            assertThat(lesions).isEqualTo("${TumorDetails.BRAIN} (active unknown, symptomatic unknown)")
+            assertThat(lesions).isEqualTo("${TumorDetails.BRAIN} (active status unknown, symptomatic status unknown)")
         }
 
         @Test
         fun `Should return string for cns lesions`() {
             val lesions = lesionString(TumorDetails(hasCnsLesions = true))
-            assertThat(lesions).isEqualTo("${TumorDetails.CNS} (active unknown)")
+            assertThat(lesions).isEqualTo("${TumorDetails.CNS} (active status unknown)")
         }
 
         @Test
-        fun `Should show correct postfix if active CNS or brain lesion`() {
+        fun `Should show correct suffix if active CNS or brain lesion`() {
             val details =
                 TumorDetails(hasActiveBrainLesions = true, hasBrainLesions = true, hasCnsLesions = true, hasActiveCnsLesions = true)
-            assertThat(lesionString(details)).isEqualTo("Brain (active, symptomatic unknown), CNS (active)")
+            assertThat(lesionString(details)).isEqualTo("Brain (active, symptomatic status unknown), CNS (active)")
         }
 
         @Test
-        fun `Should show correct postfix for brain lesions when active and symptomatic`() {
+        fun `Should show correct suffix for brain lesions when active and symptomatic`() {
             val lesions =
                 lesionString(TumorDetails(hasBrainLesions = true, hasActiveBrainLesions = true, hasSymptomaticBrainLesions = true))
             assertThat(lesions).isEqualTo("${TumorDetails.BRAIN} (active, symptomatic)")
         }
 
         @Test
-        fun `Should show correct postfix for brain lesions when not active and not symptomatic`() {
+        fun `Should show correct suffix for brain lesions when not active and not symptomatic`() {
             val lesions =
                 lesionString(TumorDetails(hasBrainLesions = true, hasActiveBrainLesions = false, hasSymptomaticBrainLesions = false))
-            assertThat(lesions).isEqualTo("${TumorDetails.BRAIN} (inactive, not symptomatic)")
+            assertThat(lesions).isEqualTo("${TumorDetails.BRAIN} (inactive, asymptomatic)")
         }
 
         @Test
@@ -170,7 +170,7 @@ class TumorDetailsInterpreterTest {
                 otherSuspectedLesions = listOf("Adrenal gland")
             )
             val expected = TumorDetailsInterpreter.Lesions(
-                nonLymphNodeLesions = listOf("Bone", "CNS (active unknown)"),
+                nonLymphNodeLesions = listOf("Bone", "CNS (active status unknown)"),
                 lymphNodeLesions = listOf("Lymph nodes (inguinal, mediastinal)"),
                 suspectedLesions = listOf("Lung (suspected)", "Adrenal gland (suspected)"),
                 negativeCategories = listOf("Liver")
