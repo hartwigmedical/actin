@@ -3,6 +3,7 @@ package com.hartwig.actin.molecular.evidence.actionability
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
+import com.hartwig.actin.molecular.interpretation.ClonalityInterpreter.isSubclonal
 import com.hartwig.serve.datamodel.molecular.gene.ActionableGene
 import com.hartwig.serve.datamodel.molecular.gene.GeneEvent
 
@@ -16,6 +17,6 @@ class VariantEvidence {
 
         fun isVariantEligible(variant: Variant): Boolean =
             variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH &&
-                    (variant.geneRole != GeneRole.TSG || variant.clonalLikelihood?.let { it > 0.5 } ?: true)
+                    (variant.geneRole != GeneRole.TSG || !isSubclonal(variant))
     }
 }
