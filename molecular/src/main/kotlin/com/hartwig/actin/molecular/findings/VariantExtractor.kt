@@ -42,36 +42,35 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                 val inSpliceRegion = it.transcriptImpact().inSpliceRegion()
                 (coding || inSpliceRegion)
             })
-        }
-            .map { variant ->
-                val event = variant.event()
-                Variant(
-                    chromosome = variant.chromosome(),
-                    position = variant.position(),
-                    ref = variant.ref(),
-                    alt = variant.alt(),
-                    type = determineVariantType(variant),
-                    variantAlleleFrequency = variant.adjustedVAF(),
-                    canonicalImpact = extractCanonicalImpact(variant),
-                    otherImpacts = extractOtherImpacts(variant),
-                    sourceEvent = event,
-                    variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
-                    totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
-                    isBiallelic = variant.biallelic(),
-                    clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
-                    phaseGroups = variant.localPhaseSets()?.toSet(),
-                    exonSkippingIsConfirmed = false,
-                    isCancerAssociatedVariant = variant.hotspot() == HotspotType.HOTSPOT,
-                    isReportable = variant.isReported,
-                    event = event,
-                    driverLikelihood = MappingUtil.determineDriverLikelihood(variant),
-                    evidence = ExtractionUtil.noEvidence(),
-                    gene = variant.gene(),
-                    geneRole = GeneRole.UNKNOWN,
-                    proteinEffect = ProteinEffect.UNKNOWN,
-                    isAssociatedWithDrugResistance = null,
-                )
-            }.sorted()
+        }.map { variant ->
+            val event = variant.event()
+            Variant(
+                chromosome = variant.chromosome(),
+                position = variant.position(),
+                ref = variant.ref(),
+                alt = variant.alt(),
+                type = determineVariantType(variant),
+                variantAlleleFrequency = variant.adjustedVAF(),
+                canonicalImpact = extractCanonicalImpact(variant),
+                otherImpacts = extractOtherImpacts(variant),
+                sourceEvent = event,
+                variantCopyNumber = ExtractionUtil.keep3Digits(variant.variantCopyNumber()),
+                totalCopyNumber = ExtractionUtil.keep3Digits(variant.adjustedCopyNumber()),
+                isBiallelic = variant.biallelic(),
+                clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
+                phaseGroups = variant.localPhaseSets()?.toSet(),
+                exonSkippingIsConfirmed = false,
+                isCancerAssociatedVariant = variant.hotspot() == HotspotType.HOTSPOT,
+                isReportable = variant.isReported,
+                event = event,
+                driverLikelihood = MappingUtil.determineDriverLikelihood(variant),
+                evidence = ExtractionUtil.noEvidence(),
+                gene = variant.gene(),
+                geneRole = GeneRole.UNKNOWN,
+                proteinEffect = ProteinEffect.UNKNOWN,
+                isAssociatedWithDrugResistance = null,
+            )
+        }.sorted()
     }
 
     fun determineVariantType(variant: SmallVariant): VariantType {
