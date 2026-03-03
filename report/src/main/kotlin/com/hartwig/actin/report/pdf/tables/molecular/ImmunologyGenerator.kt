@@ -116,7 +116,7 @@ class ImmunologyGenerator(
                         null -> ", mutated: -"
                     }
 
-                    val fullText = "$alleleString$cnDisplay, $mutationDisplay"
+                    val fullText = "$alleleString$cnDisplay$mutationDisplay"
                     table.addCell(Cells.createValue(fullText))
                 }
             } else {

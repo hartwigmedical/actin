@@ -140,14 +140,7 @@ class MolecularDetailsChapter(
                 valueWidth
             )
         }
-        val immunologyGenerators = orangeMolecularRecord.mapNotNull { molecularTest ->
-            val isStandardWithPathology = configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY
-            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null
-            if (showImmunology) {
-                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.SUMMARY else ImmunologyDisplayMode.DETAILED
-                ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
-            } else null
-        }
+        val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth)
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
@@ -158,6 +151,21 @@ class MolecularDetailsChapter(
             reportTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
+    }
+
+    internal fun createImmunologyGenerators(
+        molecularTests: List<MolecularTest>,
+        keyWidth: Float,
+        valueWidth: Float
+    ): List<ImmunologyGenerator> {
+        val isStandardWithPathology = configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY
+        return molecularTests.mapNotNull { molecularTest ->
+            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null
+            if (showImmunology) {
+                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.SUMMARY else ImmunologyDisplayMode.DETAILED
+                ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
+            } else null
+        }
     }
 
     private fun addPathologyReport(document: Document) {
