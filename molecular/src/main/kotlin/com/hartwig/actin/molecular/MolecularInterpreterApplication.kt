@@ -15,7 +15,6 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.findings.FindingsExtractor
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
-import com.hartwig.actin.molecular.orange.OrangeExtractor
 import com.hartwig.actin.molecular.panel.IhcAnnotator
 import com.hartwig.actin.molecular.panel.IhcExtractor
 import com.hartwig.actin.molecular.panel.PanelAnnotator
