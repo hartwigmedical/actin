@@ -15,6 +15,7 @@ class VariantEvidence {
             VARIANT_GENE_EVENTS.contains(gene.event()) || MmrActionabilityFunctions.isMmrAbsenceOfProteinEvent(gene)
 
         fun isVariantEligible(variant: Variant): Boolean =
-            variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH && (variant.geneRole != GeneRole.TSG || variant.clonalLikelihood?.let { it > 0.5 } ?: true)
+            variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH &&
+                    (variant.geneRole != GeneRole.TSG || variant.clonalLikelihood?.let { it > 0.5 } ?: true)
     }
 }
