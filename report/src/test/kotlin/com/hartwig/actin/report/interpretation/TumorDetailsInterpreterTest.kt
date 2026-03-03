@@ -133,7 +133,7 @@ class TumorDetailsInterpreterTest {
         }
 
         @Test
-        fun `Should put suspected lesions at the end with (suspected) postfix`() {
+        fun `Should put suspected lesions at the end with (suspected) suffix`() {
             val details = TumorDetails(
                 hasBoneLesions = true,
                 hasSuspectedLiverLesions = true,

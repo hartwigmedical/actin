@@ -38,7 +38,7 @@ object TumorDetailsInterpreter {
                 ),
                 Lesion(
                     TumorDetails.BRAIN + additionalBrainString(hasBrainLesions, hasActiveBrainLesions, hasSymptomaticBrainLesions),
-                    if (name.contains("brain", ignoreCase = true) || name.contains("glioma", ignoreCase = true)) true else hasBrainLesions,
+                    if (setOf("brain", "glioma").any { name.contains(it, ignoreCase = true) }) true else hasBrainLesions,
                     hasSuspectedBrainLesions
                 ),
                 Lesion(TumorDetails.LIVER, hasLiverLesions, hasSuspectedLiverLesions),
