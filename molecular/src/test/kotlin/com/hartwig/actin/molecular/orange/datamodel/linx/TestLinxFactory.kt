@@ -12,6 +12,7 @@ import com.hartwig.hmftools.datamodel.linx.ImmutableLinxSvAnnotation
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
 import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
+import com.hartwig.hmftools.datamodel.linx.LinxGeneOrientation
 
 object TestLinxFactory {
 
@@ -59,7 +60,7 @@ object TestLinxFactory {
             .codingType(TranscriptCodingType.NON_CODING)
             .transcript("")
             .isCanonical(false)
-            .geneOrientation("")
+            .geneOrientation(LinxGeneOrientation.Upstream)
             .disruptive(false)
             .nextSpliceExonRank(0)
             .chromosome("")
