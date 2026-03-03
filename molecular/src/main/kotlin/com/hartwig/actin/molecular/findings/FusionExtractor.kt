@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.orange.domainsAsList
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.DriverFindingList
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
@@ -27,7 +28,9 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
                 geneTranscriptStart = fusion.geneTranscriptStart(),
                 geneTranscriptEnd = fusion.geneTranscriptEnd(),
                 fusedExonUp = fusion.fusedExonUp(),
-                fusedExonDown = fusion.fusedExonDown()
+                fusedExonDown = fusion.fusedExonDown(),
+                domainsKept = domainsAsList(fusion.domainsKept()),
+                domainsLost = domainsAsList(fusion.domainsLost()),
             )
         }.sorted()
     }
