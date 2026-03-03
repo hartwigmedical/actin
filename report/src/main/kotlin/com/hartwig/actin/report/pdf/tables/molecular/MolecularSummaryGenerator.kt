@@ -97,29 +97,25 @@ class MolecularSummaryGenerator(
                 } else {
                     table.addCell(Cells.createSubTitle(wgsGenerator.title()))
                 }
-                table.addCell(Cells.create(wgsGenerator.contents()))
+                val wgsContents = wgsGenerator.contents()
+                molecularTest.immunology?.takeIf { it.isReliable }?.let { immunology ->
+                    val hlaAAlleles = immunology.hlaAlleles
+                        .filter { it.gene == "HLA-A" }
+                        .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
+                    wgsContents.addCell(Cells.createKey("HLA-A"))
+                    if (hlaAAlleles.isNotEmpty()) {
+                        wgsContents.addCell(Cells.createValue(hlaAAlleles.joinToString(", ") { "${it.gene}*${it.alleleGroup}:${it.hlaProtein}" }))
+                    } else {
+                        wgsContents.addCell(Cells.createValue("No HLA-A alleles detected"))
+                    }
+                }
+                table.addCell(Cells.create(wgsContents))
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
                 noRecent.addCell(Cells.createKey(molecularTest.experimentType.display() + " results"))
                 noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
                 table.addCell(Cells.create(noRecent))
             }
-        }
-
-        val immunologyGenerators = molecularTests.mapNotNull { molecularTest ->
-            if (molecularTest.immunology?.isReliable == true) {
-                ImmunologyGenerator(
-                    molecularTest,
-                    ImmunologyDisplayMode.SUMMARY,
-                    "Immunology",
-                    keyWidth,
-                    valueWidth
-                )
-            } else null
-        }
-
-        immunologyGenerators.firstOrNull()?.let { generator ->
-            table.addCell(Cells.create(generator.contents()))
         }
 
         if (ihcTests.isNotEmpty()) {

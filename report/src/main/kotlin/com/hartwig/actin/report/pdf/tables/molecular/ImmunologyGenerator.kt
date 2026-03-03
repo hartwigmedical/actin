@@ -27,6 +27,7 @@ class ImmunologyGenerator(
         return when (displayMode) {
             ImmunologyDisplayMode.DETAILED -> createDetailedTable()
             ImmunologyDisplayMode.SUMMARY -> createSummaryTable()
+            ImmunologyDisplayMode.ALLELE_ONLY -> createAlleleOnlyTable()
         }
     }
 
@@ -46,6 +47,27 @@ class ImmunologyGenerator(
     private fun createSummaryTable(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         addHlaAllelesForSummary(table)
+        return table
+    }
+
+    private fun createAlleleOnlyTable(): Table {
+        val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
+        molecular.immunology?.let { immunology ->
+            val hlaAAlleles = immunology.hlaAlleles
+                .filter { it.gene == "HLA-A" }
+                .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
+
+            table.addCell(Cells.createKey("HLA-A"))
+            if (hlaAAlleles.isNotEmpty()) {
+                val alleleNames = hlaAAlleles.joinToString(", ") { "${it.gene}*${it.alleleGroup}:${it.hlaProtein}" }
+                table.addCell(Cells.createValue(alleleNames))
+            } else {
+                table.addCell(Cells.createValue("No HLA-A alleles detected"))
+            }
+        } ?: run {
+            table.addCell(Cells.createKey("HLA-A"))
+            table.addCell(Cells.createValue("HLA typing not available"))
+        }
         return table
     }
 
@@ -132,5 +154,6 @@ class ImmunologyGenerator(
 
 enum class ImmunologyDisplayMode {
     DETAILED,
-    SUMMARY
+    SUMMARY,
+    ALLELE_ONLY
 }

@@ -140,7 +140,7 @@ class MolecularDetailsChapter(
                 valueWidth
             )
         }
-        val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth)
+        val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth - 10)
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())

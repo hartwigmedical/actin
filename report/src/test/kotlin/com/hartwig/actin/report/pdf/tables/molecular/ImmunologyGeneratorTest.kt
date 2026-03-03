@@ -278,6 +278,50 @@ class ImmunologyGeneratorTest {
         assertThat(extractTextFromCell(table.getCell(2, 1))).isEqualTo("HLA-A*03:01, tumor copy nr: 2, mutated: -")
     }
 
+    @Test
+    fun `Should show allele name only in allele-only mode`() {
+        val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = false)
+        val table = createGenerator(ImmunologyDisplayMode.ALLELE_ONLY, hlaAlleles = listOf(hlaAllele)).contents()
+
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("HLA-A")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01")
+    }
+
+    @Test
+    fun `Should not include copy number or mutation in allele-only mode`() {
+        val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = true)
+        val table = createGenerator(ImmunologyDisplayMode.ALLELE_ONLY, hlaAlleles = listOf(hlaAllele)).contents()
+
+        assertThat(extractTextFromCell(table.getCell(0, 1))).doesNotContain("tumor copy nr", "mutated")
+    }
+
+    @Test
+    fun `Should show no alleles message in allele-only mode`() {
+        val table = createGenerator(ImmunologyDisplayMode.ALLELE_ONLY, hlaAlleles = emptyList()).contents()
+
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("HLA-A")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("No HLA-A alleles detected")
+    }
+
+    @Test
+    fun `Should show unavailable message for null immunology in allele-only mode`() {
+        val table = createGeneratorWithNullImmunology(ImmunologyDisplayMode.ALLELE_ONLY).contents()
+
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("HLA-A")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA typing not available")
+    }
+
+    @Test
+    fun `Should show all alleles on one line comma-separated in allele-only mode`() {
+        val allele1 = createHlaAllele("HLA-A", "01", "01")
+        val allele2 = createHlaAllele("HLA-A", "02", "01")
+        val table = createGenerator(ImmunologyDisplayMode.ALLELE_ONLY, hlaAlleles = listOf(allele1, allele2)).contents()
+
+        assertThat(table.numberOfRows).isEqualTo(1)
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("HLA-A")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, HLA-A*02:01")
+    }
+
     private fun createGenerator(
         displayMode: ImmunologyDisplayMode = ImmunologyDisplayMode.DETAILED,
         title: String = "Immunology",
