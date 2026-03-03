@@ -2,9 +2,9 @@ package com.hartwig.actin.clinical.sort
 
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class VitalFunctionDescendingDateComparatorTest {
 

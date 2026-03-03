@@ -6,8 +6,8 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Test
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class HasNonSquamousNsclcTest {
 

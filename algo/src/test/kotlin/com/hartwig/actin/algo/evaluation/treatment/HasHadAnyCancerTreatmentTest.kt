@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
 

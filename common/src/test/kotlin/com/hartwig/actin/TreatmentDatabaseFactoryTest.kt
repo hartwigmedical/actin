@@ -5,7 +5,7 @@ import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import java.nio.file.NoSuchFileException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TreatmentDatabaseFactoryTest {
 

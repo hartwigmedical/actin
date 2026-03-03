@@ -23,7 +23,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val GENE = "gene A"
 private const val IHC_EVALUABLE_GENE = "MSH2"

@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withWHO
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasSevereConcomitantIllnessTest {
     val function = HasSevereConcomitantIllness()

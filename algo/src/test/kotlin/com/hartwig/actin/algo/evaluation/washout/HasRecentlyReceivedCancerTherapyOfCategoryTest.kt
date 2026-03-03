@@ -11,9 +11,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)

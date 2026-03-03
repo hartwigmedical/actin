@@ -819,8 +819,8 @@
         "fusedExonDown": 70,
         "chainLinks": 0,
         "chainTerminated": false,
-        "domainsKept": "",
-        "domainsLost": "",
+        "domainsKept": "PROTEIN_KINASE_DOM;RBD;ZF_DAG_PE_2",
+        "domainsLost": "LRR;IG_LIKE;PROTEIN_KINASE_DOM",
         "junctionCopyNumber": 0.9625
       }
     ],

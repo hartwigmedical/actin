@@ -690,7 +690,7 @@
           {
             "canonicalImpact": {
               "transcriptId": "",
-              "type": "DEL",
+              "type": "FULL_DEL",
               "minCopies": 0,
               "maxCopies": 0
             },
@@ -723,6 +723,8 @@
             "fusedExonDown": 14,
             "isReportable": true,
             "event": "MET_MET",
+            "domainsKept": [],
+            "domainsLost": [],
             "driverLikelihood": "HIGH",
             "evidence": {
               "treatmentEvidence": [],

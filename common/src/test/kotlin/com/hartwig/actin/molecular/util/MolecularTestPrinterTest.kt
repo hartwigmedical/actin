@@ -2,7 +2,7 @@ package com.hartwig.actin.molecular.util
 
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.util.DatamodelPrinter
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class MolecularTestPrinterTest {
 

@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
 

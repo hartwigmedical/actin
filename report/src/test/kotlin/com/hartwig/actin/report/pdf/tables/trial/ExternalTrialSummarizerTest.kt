@@ -8,10 +8,10 @@ import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestMolecularMatchDetailsFactory
 import com.hartwig.actin.report.trial.ActionableWithExternalTrial
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
 import java.util.SortedSet
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 private const val NCT_01 = "NCT00000001"
 private const val NCT_02 = "NCT00000002"

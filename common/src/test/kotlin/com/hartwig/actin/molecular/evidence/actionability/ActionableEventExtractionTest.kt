@@ -12,7 +12,7 @@ import com.hartwig.serve.datamodel.molecular.hotspot.ImmutableActionableHotspot
 import com.hartwig.serve.datamodel.molecular.immuno.ImmutableActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.ImmutableActionableRange
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ActionableEventExtractionTest {
 

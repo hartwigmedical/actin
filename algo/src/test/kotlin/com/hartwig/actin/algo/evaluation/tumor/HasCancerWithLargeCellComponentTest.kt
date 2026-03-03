@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasCancerWithLargeCellComponentTest {
 

@@ -27,10 +27,10 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.doid.TestDoidModelFactory
 import io.mockk.every
 import io.mockk.mockk
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
-import java.time.LocalDate
+import org.junit.jupiter.api.Test
 
 private val CHEMO_TREATMENT_NAMES = listOf(
     "5-FU",

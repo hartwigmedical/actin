@@ -10,7 +10,8 @@ import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 class CopyNumberExtractorTest {
 
@@ -138,7 +139,7 @@ class CopyNumberExtractorTest {
         assertThat(gene5.otherImpacts).isEmpty()
     }
 
-    @Test(expected = IllegalStateException::class)
+    @Test
     fun `Should throw exception when filtering reported copy number`() {
         val driver = TestPurpleFactory.driverBuilder().gene("gene 1").type(PurpleDriverType.DEL).isCanonical(true).build()
         val gainDel = TestPurpleFactory.gainDelBuilder().gene("gene 1").interpretation(CopyNumberInterpretation.PARTIAL_DEL).build()
@@ -153,7 +154,9 @@ class CopyNumberExtractorTest {
 
         val geneFilter = TestGeneFilterFactory.createValidForGenes("weird gene")
         val copyNumberExtractor = CopyNumberExtractor(geneFilter)
-        copyNumberExtractor.extract(purple)
+        assertThrows(IllegalStateException::class.java) {
+            copyNumberExtractor.extract(purple)
+        }
     }
 
     @Test

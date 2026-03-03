@@ -17,7 +17,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactor
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory.interpretedCohort
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class MolecularDriverEntryFactoryTest {
 
@@ -294,6 +294,22 @@ class MolecularDriverEntryFactoryTest {
         assertThat(result[0].driverType).isEqualTo("Deletion")
         assertThat(result[1].driverType).isEqualTo("Disruption (homozygous)")
         assertThat(result[2].driverType).isEqualTo("Disruption (not biallelic)")
+    }
+
+    @Test
+    fun `Should show fusions with domains kept or lost`() {
+        val fusion = TestMolecularFactory.createExhaustiveFusion()
+        val test = TestMolecularFactory.createProperWholeGenomeTest().copy(
+            drivers = TestMolecularFactory.createProperTestDrivers()
+                .copy(variants = emptyList(), copyNumbers = emptyList(), fusions = listOf(fusion))
+        )
+        val result = createFactoryForMolecularTest(test).create()
+
+        assertThat(result).hasSize(1)
+        val expectedDescription = "${fusion.event}\ndomain(s) kept: ${fusion.domainsKept?.joinToString(", ") ?: ""}\ndomain(s) lost: ${
+            fusion.domainsLost?.joinToString(", ") ?: ""
+        }"
+        assertThat(result[0].description).isEqualTo(expectedDescription)
     }
 
     @Test

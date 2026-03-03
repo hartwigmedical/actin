@@ -6,10 +6,11 @@ import com.hartwig.actin.util.ResourceFile.optionalDate
 import com.hartwig.actin.util.ResourceFile.optionalInteger
 import com.hartwig.actin.util.ResourceFile.optionalNumber
 import com.hartwig.actin.util.ResourceFile.optionalString
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.data.Offset
-import org.junit.Test
-import java.time.LocalDate
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 
 class ResourceFileTest {
 
@@ -29,9 +30,9 @@ class ResourceFileTest {
         assertThat(optionalBool("0")!!).isFalse
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `Should crash on invalid boolean`() {
-        bool("True")
+        assertThrows(IllegalArgumentException::class.java) { bool("True") }
     }
 
     @Test

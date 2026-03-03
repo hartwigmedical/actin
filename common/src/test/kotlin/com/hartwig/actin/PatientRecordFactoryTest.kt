@@ -3,7 +3,7 @@ package com.hartwig.actin
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PatientRecordFactoryTest {
 

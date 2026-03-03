@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.evidence.known.TestKnownEventResolverFactory
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private const val GENE = "gene 1"
 private val VARIANT = TestVariantFactory.createMinimal()

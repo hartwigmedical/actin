@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HasSufficientLVEFTest {
 

@@ -1,7 +1,7 @@
 package com.hartwig.actin.trial.input.datamodel
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TumorTypeInputTest {
 

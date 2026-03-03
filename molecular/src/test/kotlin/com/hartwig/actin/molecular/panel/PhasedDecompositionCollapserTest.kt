@@ -11,7 +11,7 @@ import com.hartwig.actin.tools.variant.VariantAnnotator
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PhasedDecompositionCollapserTest {
 
@@ -47,7 +47,7 @@ class PhasedDecompositionCollapserTest {
         assertThat(collapsed.transvarVariant?.alt()).isEqualTo("T")
 
         val canonicalImpact = collapsed.paveResponse!!.transcriptImpacts
-            .single { it.transcript == collapsed.paveResponse!!.impact.canonicalTranscript }
+            .single { it.transcript == collapsed.paveResponse.impact.canonicalTranscript }
         assertThat(canonicalImpact.exon).isEqualTo(10)
         assertThat(canonicalImpact.codon).isEqualTo(10)
     }

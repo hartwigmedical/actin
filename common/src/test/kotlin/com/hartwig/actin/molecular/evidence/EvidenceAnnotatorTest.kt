@@ -21,7 +21,7 @@ import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val brafActionableHotspot = TestServeMolecularFactory.hotspot(
     TestServeMolecularFactory.createVariantAnnotation(

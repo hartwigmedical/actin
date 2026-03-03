@@ -4,15 +4,15 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
-import org.apache.logging.log4j.Level
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
 import java.time.LocalDate
 import java.util.Locale
+import org.apache.logging.log4j.Level
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class ReportRegressionTest {
 
@@ -21,21 +21,21 @@ class ReportRegressionTest {
     companion object {
         private val originalLocale = Locale.getDefault()
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setReportLocale() = Locale.setDefault(Locale.US)
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun revertReportLocale() = Locale.setDefault(originalLocale)
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         logLevelRecorder.start()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         logLevelRecorder.stop()
     }
@@ -71,7 +71,7 @@ class ReportRegressionTest {
 
         val outputExtendedReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.extended.pdf"
         val originalExtendedReportPdf = ExampleFunctions.resolveExampleReportExtendedPdf(exampleName)
-        assertThatPdf(outputExtendedReportPdf).isEqualToTextually(outputExtendedReportPdf)
+        assertThatPdf(outputExtendedReportPdf).isEqualToTextually(originalExtendedReportPdf)
         assertThatPdf(outputExtendedReportPdf).isEqualToVisually(originalExtendedReportPdf)
     }
 }

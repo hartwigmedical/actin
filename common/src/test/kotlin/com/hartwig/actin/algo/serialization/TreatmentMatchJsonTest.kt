@@ -8,9 +8,9 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.io.File
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class TreatmentMatchJsonTest {
 

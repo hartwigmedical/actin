@@ -114,6 +114,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS_WITH_STOP_REASON_OTHER_THAN_PD
                     to hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_MOST_Z_WEEKS to hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_FOR_AT_LEAST_Z_WEEKS to hasHadSufficientWeeksOfTreatmentOfCategoryWithTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPE_Y_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfTypesAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT to hasHadAdjuvantTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_ADJUVANT_CATEGORY_X_TREATMENT_WITHIN_Y_WEEKS to hasHadAdjuvantTreatmentWithCategoryWithinWeeksCreator(),
@@ -677,6 +678,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val types = function.param<ManyTreatmentTypesParameter>(1).value
             val weeks = function.param<IntegerParameter>(2).value
             HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(category, types, weeks)
+        }
+    }
+
+    private fun hasHadSufficientWeeksOfTreatmentOfCategoryWithTypesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val weeks = function.param<IntegerParameter>(2).value
+            HasHadSufficientWeeksOfTreatmentOfCategoryWithTypes(category, types, weeks)
         }
     }
 

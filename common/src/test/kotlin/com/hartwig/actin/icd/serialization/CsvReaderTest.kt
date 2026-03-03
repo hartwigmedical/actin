@@ -4,7 +4,7 @@ import com.hartwig.actin.icd.datamodel.ClassKind
 import com.hartwig.actin.testutil.ResourceLocator
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CsvReaderTest {
 

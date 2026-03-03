@@ -5,10 +5,10 @@ import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.itextpdf.layout.Style
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 private const val YEAR = 2023
 private const val MONTH = 1
@@ -86,6 +86,7 @@ class PathologyReportFunctionsTest {
             pathologyReports = listOf(pathologyReport1, pathologyReport2, pathologyReport3)
         )
 
+        assertThat(result.keys.toList()).isEqualTo(listOf(pathologyReport2, pathologyReport3, pathologyReport1, null))
         assertThat(result[pathologyReport1])
             .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest1), listOf(ihcTest1)))
         assertThat(result[pathologyReport2])
@@ -93,6 +94,26 @@ class PathologyReportFunctionsTest {
         assertThat(result[pathologyReport3])
             .isEqualTo(MolecularTestGroup(emptyList(), listOf(panelTest3), listOf(ihcTest3)))
         assertThat(result[null]).isEqualTo(MolecularTestGroup(listOf(wholeGenomeTest1), emptyList(), emptyList()))
+    }
+
+    @Test
+    fun `Should sort non-IHC-only groups before IHC-only groups and matched before unmatched`() {
+        val pathologyReport1 = pathologyReport(1, date1)
+        val pathologyReport2 = pathologyReport(2, date2)
+
+        val panelTest1 = minimalPanelTest.copy(reportHash = "hash1")
+        val ihcTest1 = ihcTest(reportHash = "hash1")
+        val ihcTest2 = ihcTest(reportHash = "hash2")
+        val unmatchedWgs = minimalWholeGenomeTest.copy(reportHash = "unknown")
+
+        val result = PathologyReportFunctions.groupTestsByPathologyReport(
+            orangeMolecularRecords = listOf(unmatchedWgs),
+            molecularTests = listOf(panelTest1),
+            ihcTests = listOf(ihcTest1, ihcTest2),
+            pathologyReports = listOf(pathologyReport1, pathologyReport2)
+        )
+
+        assertThat(result.keys.toList()).isEqualTo(listOf(pathologyReport1, null, pathologyReport2))
     }
 
     @Test

@@ -18,6 +18,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.StrictEnumDeserializer
 import java.lang.reflect.Type
@@ -41,6 +42,7 @@ object ClinicalRecordJsonMapper {
             .registerTypeAdapter(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))
             .registerTypeAdapter(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))
             .registerTypeAdapter(TreatmentCategory::class.java, StrictEnumDeserializer(TreatmentCategory::class.java))
+            .registerTypeAdapter(CopyNumberType::class.java, StrictEnumDeserializer(CopyNumberType::class.java))
     }
 
     private class DrugNameAdapter(private val drugsByName: Map<String, Drug>) : JsonDeserializer<Drug>, JsonSerializer<Drug> {

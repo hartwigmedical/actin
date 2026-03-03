@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
-import org.junit.Test
 import java.time.LocalDate
+import org.junit.jupiter.api.Test
 
 private val VALID_DATE = LocalDate.of(2024, 12, 1)
 

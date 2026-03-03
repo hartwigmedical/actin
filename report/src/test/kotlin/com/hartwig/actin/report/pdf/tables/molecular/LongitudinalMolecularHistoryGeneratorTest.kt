@@ -9,9 +9,9 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.report.pdf.assertHeader
 import com.hartwig.actin.report.pdf.assertRow
-import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 val FIRST_TEST = TestMolecularFactory.createMinimalWholeGenomeTest().copy(
     date = LocalDate.of(2024, 7, 21),

@@ -2,7 +2,7 @@ package com.hartwig.actin.algo.calendar
 
 import com.hartwig.actin.datamodel.TestPatientFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ReferenceDateProviderFactoryTest {
 

@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DriverDisplayFunctionsTest {
 
