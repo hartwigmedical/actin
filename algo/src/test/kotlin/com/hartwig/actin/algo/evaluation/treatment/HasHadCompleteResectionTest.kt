@@ -26,13 +26,13 @@ class HasHadCompleteResectionTest {
 
     @Test
     fun `Should be undetermined for unspecified resection`() {
-        val treatments = setOf(treatment("some form of " + HasHadCompleteResection.RESECTION_KEYWORDS.last() + " surgery", false))
+        val treatments = setOf(treatment("some form of " + RESECTION_KEYWORDS.last() + " surgery", false))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }
 
     @Test
     fun `Should be undetermined for unspecified surgery`() {
-        val treatments = setOf(treatment("", false, categories = setOf(TreatmentCategory.SURGERY)))
+        val treatments = setOf(treatment("SURGERY", false, categories = setOf(TreatmentCategory.SURGERY)))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }
 }

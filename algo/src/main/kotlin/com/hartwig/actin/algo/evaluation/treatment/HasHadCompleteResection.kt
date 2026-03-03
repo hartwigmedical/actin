@@ -23,8 +23,4 @@ class HasHadCompleteResection : EvaluationFunction {
             else -> EvaluationFactory.fail("Has not had complete resection")
         }
     }
-
-    companion object {
-        val RESECTION_KEYWORDS = setOf("resection", "ectomy")
-    }
 }

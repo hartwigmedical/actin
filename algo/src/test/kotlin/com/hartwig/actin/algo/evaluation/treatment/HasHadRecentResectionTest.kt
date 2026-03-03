@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
-import com.hartwig.actin.algo.evaluation.treatment.HasHadCompleteResection.Companion.RESECTION_KEYWORDS
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -43,7 +42,7 @@ class HasHadRecentResectionTest {
 
     @Test
     fun `Should be undetermined for unspecified surgery`() {
-        val treatments = setOf(treatment("", false, categories = setOf(TreatmentCategory.SURGERY)))
+        val treatments = setOf(treatment("SURGERY", false, categories = setOf(TreatmentCategory.SURGERY)))
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 withTreatmentHistoryEntry(treatmentHistoryEntry(treatments, startYear = 2022, startMonth = 11))

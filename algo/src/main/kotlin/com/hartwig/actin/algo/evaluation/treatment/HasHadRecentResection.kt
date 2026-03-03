@@ -2,11 +2,12 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.HasHadCompleteResection.Companion.RESECTION_KEYWORDS
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
+
+val RESECTION_KEYWORDS = setOf("resection", "ectomy")
 
 class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction {
 
