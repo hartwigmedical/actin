@@ -11,11 +11,12 @@ import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurd
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
-import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 import com.hartwig.hmftools.finding.datamodel.FindingItem
+import com.hartwig.hmftools.finding.datamodel.FindingList
 import com.hartwig.hmftools.finding.datamodel.FindingRecord
+import com.hartwig.hmftools.finding.datamodel.FindingsStatus
 
 object CharacteristicsExtraction {
 
@@ -25,7 +26,7 @@ object CharacteristicsExtraction {
         return MolecularCharacteristics(
             purity = purityPloidyFit.purity(),
             ploidy = purityPloidyFit.ploidy(),
-            predictedTumorOrigin = determinePredictedTumorOrigin(record.predictedTumorOrigin),
+            predictedTumorOrigin = determinePredictedTumorOrigin(record.predictedTumorOrigins),
             microsatelliteStability = determineMicrosatelliteStability(record.microsatelliteStability),
             homologousRecombination = determineHomologousRecombination(record.homologousRecombination),
             tumorMutationalBurden = determineTumorMutationalBurden(record.tumorMutationStatus()),
@@ -33,10 +34,10 @@ object CharacteristicsExtraction {
         )
     }
 
-    private fun determinePredictedTumorOrigin(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.PredictedTumorOrigin>): PredictedTumorOrigin? {
-        return finding.finding()?.let {
-            PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions(), CuppaMode.valueOf(it.mode().toString())))
-        }
+    private fun determinePredictedTumorOrigin(findings: FindingList<com.hartwig.hmftools.finding.datamodel.PredictedTumorOrigin>): PredictedTumorOrigin? {
+        return if (findings.status() == FindingsStatus.OK) {
+            PredictedTumorOrigin(predictions = determineCupPredictions(findings.findings))
+        } else null
     }
 
     private fun determineMicrosatelliteStability(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability>): MicrosatelliteStability? {
@@ -117,11 +118,11 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun determineCupPredictions(cuppaPredictions: List<CuppaPrediction>, cuppaMode: CuppaMode): List<CupPrediction> {
-        return cuppaPredictions.map { cuppaPrediction: CuppaPrediction -> determineCupPrediction(cuppaPrediction, cuppaMode) }
+    private fun determineCupPredictions(cuppaPredictions: List<com.hartwig.hmftools.finding.datamodel.PredictedTumorOrigin>): List<CupPrediction> {
+        return cuppaPredictions.map { cuppaPrediction -> determineCupPrediction(cuppaPrediction) }
     }
 
-    private fun determineCupPrediction(cuppaPrediction: CuppaPrediction, cuppaMode: CuppaMode): CupPrediction {
+    private fun determineCupPrediction(cuppaPrediction: com.hartwig.hmftools.finding.datamodel.PredictedTumorOrigin): CupPrediction {
         if (cuppaPrediction.snvPairwiseClassifier() == null || cuppaPrediction.genomicPositionClassifier() == null ||
             cuppaPrediction.featureClassifier() == null
         ) {
@@ -139,7 +140,7 @@ object CharacteristicsExtraction {
             featureClassifier = cuppaPrediction.featureClassifier()!!,
             expressionPairWiseClassifier = cuppaPrediction.expressionPairwiseClassifier(),
             altSjCohortClassifier = cuppaPrediction.altSjCohortClassifier(),
-            cuppaMode = cuppaMode
+            cuppaMode = CuppaMode.valueOf(cuppaPrediction.mode().toString())
         )
     }
 }
