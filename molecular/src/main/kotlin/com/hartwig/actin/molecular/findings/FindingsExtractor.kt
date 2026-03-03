@@ -69,7 +69,7 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
     }
 
     fun hasSufficientPurity(record: FindingRecord): Boolean {
-        return record.purityPloidyFit().containsTumorCells() && !record.purityPloidyFit().isLowPurity();
+        return record.purityPloidyFit().containsTumorCells() && !record.purityPloidyFit().isLowPurity;
     }
 
     private fun containsTumorCells(record: FindingRecord): Boolean {

@@ -31,7 +31,7 @@ class DriverExtractor private constructor(
         )
 
         val disruptions =
-            disruptionExtractor.extractDisruptions(record.allDisruptions(), reportableLostGenes(copyNumbers), record.linx().somaticDrivers())
+            disruptionExtractor.extractDisruptions(record.allDisruptions(), reportableLostGenes(copyNumbers))
         LOGGER.info(" Extracted {} disruptions of which {} reportable", disruptions.size, reportableCount(disruptions))
 
         val fusions = fusionExtractor.extract(record.fusions)

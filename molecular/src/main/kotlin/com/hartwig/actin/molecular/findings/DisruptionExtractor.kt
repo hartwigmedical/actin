@@ -15,21 +15,19 @@ import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
 import com.hartwig.hmftools.datamodel.linx.LinxDriver
 import com.hartwig.hmftools.datamodel.linx.LinxDriverType
+import com.hartwig.hmftools.finding.datamodel.Breakend
 
 class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractDisruptions(
         disruptions: List<com.hartwig.hmftools.finding.datamodel.Disruption>,
-        lostGenes: Set<String>,
-        drivers: List<LinxDriver>
+        lostGenes: Set<String>
     ): List<Disruption> {
-        val canonicalReportedSvIds = linx.allSomaticBreakends().filter { it.isCanonical && it.reported() }.map { it.svId() }.toSet()
         return disruptions
-            .filter { breakend -> breakend.isCanonical || !canonicalReportedSvIds.contains(breakend.svId()) }
-            .filter { breakend -> breakend.disruptive() }
             .filter { disruption ->
                 MappingUtil.includedInGeneFilter(disruption, geneFilter) { include(it, lostGenes) }
             }.map { disruption ->
+                val breakend = disruption.breakendStart() ?: disruption.breakendEnd()!!
                 Disruption(
                     gene = disruption.gene(),
                     geneRole = GeneRole.UNKNOWN,
@@ -40,10 +38,10 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
                     driverLikelihood = DriverLikelihood.LOW,
                     evidence = ExtractionUtil.noEvidence(),
                     type = determineDisruptionType(disruption.breakendType()),
-                    junctionCopyNumber = ExtractionUtil.keep3Digits(disruption.junctionCopyNumber()),
-                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(disruption, drivers)),
-                    regionType = determineRegionType(disruption.regionType()),
-                    codingContext = determineCodingContext(disruption.codingType()),
+                    junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
+                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, listOf())),
+                    regionType = determineRegionType(breakend.regionType()),
+                    codingContext = determineCodingContext(breakend.codingType()),
                     clusterGroup = lookupClusterId(disruption)
                 )
             }.sorted()
@@ -151,7 +149,7 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    private fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double {
+    private fun correctUndisruptedCopyNumber(breakend: Breakend, drivers: List<LinxDriver>): Double {
         return if (breakend.type() == LinxBreakendType.DUP
             && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
         ) {
