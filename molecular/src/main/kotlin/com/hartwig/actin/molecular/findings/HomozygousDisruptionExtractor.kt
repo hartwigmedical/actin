@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.datamodel.finding.Disruption
+import com.hartwig.hmftools.finding.datamodel.Disruption
 
 class HomozygousDisruptionExtractor(private val geneFilter: GeneFilter) {
 

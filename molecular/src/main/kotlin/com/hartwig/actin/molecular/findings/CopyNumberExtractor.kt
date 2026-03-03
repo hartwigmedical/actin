@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.datamodel.finding.GainDeletion
+import com.hartwig.hmftools.finding.datamodel.GainDeletion
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleDriverType
@@ -59,9 +59,7 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                         }.toSet(),
                     )
                 } else {
-                    val event =
-                        if (otherGainDels.isEmpty()) geneCopyNumber.event() else otherGainDels.first()
-                            .let { it.event() }
+                    val event = if (otherGainDels.isEmpty()) geneCopyNumber.event() else otherGainDels.first().event()
                     CopyNumber(
                         gene = geneCopyNumber.gene(),
                         geneRole = GeneRole.UNKNOWN,

@@ -1,6 +1,6 @@
 package com.hartwig.actin.molecular.findings
 
-import com.hartwig.hmftools.datamodel.finding.SmallVariant
+import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import org.apache.logging.log4j.LogManager

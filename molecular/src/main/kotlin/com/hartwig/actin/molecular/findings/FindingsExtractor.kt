@@ -10,7 +10,7 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.orange.ONCO_PANEL
 import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
-import com.hartwig.hmftools.datamodel.finding.FindingRecord
+import com.hartwig.hmftools.finding.datamodel.FindingRecord
 import com.hartwig.hmftools.datamodel.orange.ExperimentType
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import java.time.LocalDate

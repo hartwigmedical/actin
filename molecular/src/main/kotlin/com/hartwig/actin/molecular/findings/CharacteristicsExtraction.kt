@@ -12,8 +12,8 @@ import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.chord.ChordStatus
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
-import com.hartwig.hmftools.datamodel.finding.FindingItem
-import com.hartwig.hmftools.datamodel.finding.FindingRecord
+import com.hartwig.hmftools.finding.datamodel.FindingItem
+import com.hartwig.hmftools.finding.datamodel.FindingRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleCharacteristics
 import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
@@ -34,13 +34,13 @@ object CharacteristicsExtraction {
         )
     }
 
-    private fun determinePredictedTumorOrigin(finding: FindingItem<com.hartwig.hmftools.datamodel.finding.PredictedTumorOrigin>): PredictedTumorOrigin? {
+    private fun determinePredictedTumorOrigin(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.PredictedTumorOrigin>): PredictedTumorOrigin? {
         return finding.finding()?.let {
             PredictedTumorOrigin(predictions = determineCupPredictions(it.predictions(), CuppaMode.valueOf(it.mode().toString())))
         }
     }
 
-    private fun determineMicrosatelliteStability(finding: FindingItem<com.hartwig.hmftools.datamodel.finding.MicrosatelliteStability>): MicrosatelliteStability? {
+    private fun determineMicrosatelliteStability(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability>): MicrosatelliteStability? {
         val microsatelliteStability = finding.finding;
         return isMicrosatelliteUnstable(microsatelliteStability.microsatelliteStatus)?.let { isUnstable ->
             MicrosatelliteStability(
@@ -51,7 +51,7 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun determineHomologousRecombination(finding: FindingItem<com.hartwig.hmftools.datamodel.finding.HomologousRecombination>): HomologousRecombination? {
+    private fun determineHomologousRecombination(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.HomologousRecombination>): HomologousRecombination? {
         return finding.finding()?.takeIf { it.hrStatus() in setOf(ChordStatus.HR_DEFICIENT, ChordStatus.HR_PROFICIENT) }?.let {
             HomologousRecombination(
                 isDeficient = isHomologousRecombinationDeficient(it.hrStatus()),
@@ -64,7 +64,7 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun determineTumorMutationalBurden(finding: FindingItem<com.hartwig.hmftools.datamodel.finding.TumorMutationStatus>): TumorMutationalBurden? {
+    private fun determineTumorMutationalBurden(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.TumorMutationStatus>): TumorMutationalBurden? {
         var tumorMutationStatus = finding.finding;
         return hasHighStatus(tumorMutationStatus.tumorMutationalBurdenStatus())?.let { isHigh ->
             TumorMutationalBurden(
@@ -75,7 +75,7 @@ object CharacteristicsExtraction {
         }
     }
 
-    private fun determineTumorMutationalLoad(finding: FindingItem<com.hartwig.hmftools.datamodel.finding.TumorMutationStatus>): TumorMutationalLoad? {
+    private fun determineTumorMutationalLoad(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.TumorMutationStatus>): TumorMutationalLoad? {
         var tumorMutationStatus = finding.finding;
         return hasHighStatus(tumorMutationStatus.tumorMutationalLoadStatus())?.let { isHigh ->
             TumorMutationalLoad(

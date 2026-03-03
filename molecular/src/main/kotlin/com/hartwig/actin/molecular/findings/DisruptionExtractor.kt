@@ -19,7 +19,7 @@ import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
     fun extractDisruptions(
-        disruptions: List<com.hartwig.hmftools.datamodel.finding.Disruption>,
+        disruptions: List<com.hartwig.hmftools.finding.datamodel.Disruption>,
         lostGenes: Set<String>,
         drivers: List<LinxDriver>
     ): List<Disruption> {
@@ -49,11 +49,11 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
             }.sorted()
     }
 
-    private fun include(disruption: com.hartwig.hmftools.datamodel.finding.Disruption, lostGenes: Set<String>): Boolean {
+    private fun include(disruption: com.hartwig.hmftools.finding.datamodel.Disruption, lostGenes: Set<String>): Boolean {
         return disruption.breakendType() != LinxBreakendType.DEL || !lostGenes.contains(disruption.gene())
     }
 
-    private fun lookupClusterId(disruption: com.hartwig.hmftools.datamodel.finding.Disruption): Int {
+    private fun lookupClusterId(disruption: com.hartwig.hmftools.finding.datamodel.Disruption): Int {
         // TODO: Can't report id here
         return disruption.clusterId()
             ?: throw IllegalStateException("Could not find structural variant")

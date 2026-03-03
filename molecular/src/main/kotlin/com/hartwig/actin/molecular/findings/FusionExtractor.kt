@@ -5,12 +5,12 @@ import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.datamodel.finding.DriverFindingList
+import com.hartwig.hmftools.finding.datamodel.DriverFindingList
 import com.hartwig.hmftools.datamodel.linx.LinxFusionType
 
 class FusionExtractor(private val geneFilter: GeneFilter) {
 
-    fun extract(fusions: DriverFindingList<com.hartwig.hmftools.datamodel.finding.Fusion>): List<Fusion> {
+    fun extract(fusions: DriverFindingList<com.hartwig.hmftools.finding.datamodel.Fusion>): List<Fusion> {
         return fusions.somaticOnly().findings.filter {
             MappingUtil.includedInGeneFilter(it, geneFilter)
         }.map { fusion ->
@@ -32,7 +32,7 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
         }.sorted()
     }
 
-    internal fun determineDriverType(fusion: com.hartwig.hmftools.datamodel.finding.Fusion): FusionDriverType {
+    internal fun determineDriverType(fusion: com.hartwig.hmftools.finding.datamodel.Fusion): FusionDriverType {
         return when (fusion.reportedType()) {
             LinxFusionType.PROMISCUOUS_3 -> {
                 FusionDriverType.PROMISCUOUS_3

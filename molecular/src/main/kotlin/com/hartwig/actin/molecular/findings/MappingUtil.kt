@@ -3,7 +3,7 @@ package com.hartwig.actin.molecular.findings
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.driver.DriverInterpretation
-import com.hartwig.hmftools.datamodel.finding.Driver
+import com.hartwig.hmftools.finding.datamodel.Driver
 
 object MappingUtil {
 

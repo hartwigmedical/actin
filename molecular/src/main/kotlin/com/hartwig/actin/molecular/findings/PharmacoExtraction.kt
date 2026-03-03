@@ -4,8 +4,8 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
 import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
-import com.hartwig.hmftools.datamodel.finding.FindingList
-import com.hartwig.hmftools.datamodel.finding.PharmocoGenotype
+import com.hartwig.hmftools.finding.datamodel.FindingList
+import com.hartwig.hmftools.finding.datamodel.PharmocoGenotype
 
 object PharmacoExtraction {
 

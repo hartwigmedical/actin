@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.hmftools.datamodel.finding.FindingRecord
+import com.hartwig.hmftools.finding.datamodel.FindingRecord
 import org.apache.logging.log4j.LogManager
 
 class DriverExtractor private constructor(
