@@ -53,10 +53,6 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
             CopyNumberInterpretation.PARTIAL_DEL -> {
                 CopyNumberType.PARTIAL_DEL
             }
-
-            else -> {
-                throw IllegalStateException("Could not determine copy number type for purple interpretation: $interpretation")
-            }
         }
     }
 }

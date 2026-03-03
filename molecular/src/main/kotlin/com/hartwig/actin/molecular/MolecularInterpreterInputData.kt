@@ -18,7 +18,6 @@ import com.hartwig.actin.molecular.panel.VariantDecompositionTable
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
-import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.finding.datamodel.FindingRecord
 import com.hartwig.hmftools.finding.datamodel.FindingsJson
 import com.hartwig.serve.datamodel.ServeDatabase

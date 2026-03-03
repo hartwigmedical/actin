@@ -1,8 +1,7 @@
 package com.hartwig.actin.molecular.findings
 
-import com.hartwig.hmftools.finding.datamodel.SmallVariant
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
+import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import org.apache.logging.log4j.LogManager
 import kotlin.math.abs
 

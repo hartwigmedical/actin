@@ -11,7 +11,6 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
 import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
-import com.hartwig.hmftools.datamodel.linx.LinxBreakend
 import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
 import com.hartwig.hmftools.datamodel.linx.LinxDriver
 import com.hartwig.hmftools.datamodel.linx.LinxDriverType
@@ -85,10 +84,6 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
             LinxBreakendType.SGL -> {
                 DisruptionType.SGL
-            }
-
-            else -> {
-                throw IllegalStateException("Cannot determine disruption type for linx disruption type: $type")
             }
         }
     }
