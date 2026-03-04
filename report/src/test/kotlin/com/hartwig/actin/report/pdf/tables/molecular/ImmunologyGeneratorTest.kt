@@ -322,6 +322,64 @@ class ImmunologyGeneratorTest {
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, HLA-A*02:01")
     }
 
+    // Companion function tests
+
+    @Test
+    fun `relevantAlleles should return only HLA-A alleles sorted by allele group and protein`() {
+        val hlaA1 = createHlaAllele("HLA-A", "02", "01")
+        val hlaA2 = createHlaAllele("HLA-A", "01", "02")
+        val hlaA3 = createHlaAllele("HLA-A", "01", "01")
+        val hlaB = createHlaAllele("HLA-B", "07", "02")
+        val immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(hlaA1, hlaA2, hlaA3, hlaB))
+
+        val result = ImmunologyGenerator.relevantAlleles(immunology)
+
+        assertThat(result).hasSize(3)
+        assertThat(result.map { "${it.alleleGroup}:${it.hlaProtein}" }).containsExactly("01:01", "01:02", "02:01")
+    }
+
+    @Test
+    fun `relevantAlleles should return empty list when no HLA-A alleles present`() {
+        val immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(createHlaAllele("HLA-B", "07", "02")))
+
+        assertThat(ImmunologyGenerator.relevantAlleles(immunology)).isEmpty()
+    }
+
+    @Test
+    fun `alleleCompactString should format as gene asterisk alleleGroup colon hlaProtein`() {
+        val allele = createHlaAllele("HLA-A", "01", "01")
+
+        assertThat(ImmunologyGenerator.alleleCompactString(allele)).isEqualTo("HLA-A*01:01")
+    }
+
+    @Test
+    fun `alleleDetailedString should include copy number and mutation when both present`() {
+        val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = true)
+
+        assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01, tumor copy nr: 2, mutated: Yes")
+    }
+
+    @Test
+    fun `alleleDetailedString should omit copy number when null`() {
+        val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = null, hasSomaticMutations = false)
+
+        assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01, mutated: No")
+    }
+
+    @Test
+    fun `alleleDetailedString should omit mutation when null`() {
+        val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 1.0, hasSomaticMutations = null)
+
+        assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01, tumor copy nr: 1")
+    }
+
+    @Test
+    fun `alleleDetailedString should return only allele name when both copy number and mutation are null`() {
+        val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = null, hasSomaticMutations = null)
+
+        assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01")
+    }
+
     private fun createGenerator(
         displayMode: ImmunologyDisplayMode = ImmunologyDisplayMode.DETAILED,
         title: String = "Immunology",

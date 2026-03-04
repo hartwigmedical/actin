@@ -1,6 +1,8 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -53,14 +55,10 @@ class ImmunologyGenerator(
     private fun createAlleleOnlyTable(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         molecular.immunology?.let { immunology ->
-            val hlaAAlleles = immunology.hlaAlleles
-                .filter { it.gene == "HLA-A" }
-                .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
-
+            val alleles = relevantAlleles(immunology)
             table.addCell(Cells.createKey("HLA-A"))
-            if (hlaAAlleles.isNotEmpty()) {
-                val alleleNames = hlaAAlleles.joinToString(", ") { "${it.gene}*${it.alleleGroup}:${it.hlaProtein}" }
-                table.addCell(Cells.createValue(alleleNames))
+            if (alleles.isNotEmpty()) {
+                table.addCell(Cells.createValue(alleles.joinToString(", ", transform = ::alleleCompactString)))
             } else {
                 table.addCell(Cells.createValue("No HLA-A alleles detected"))
             }
@@ -73,12 +71,10 @@ class ImmunologyGenerator(
 
     private fun addHlaAAlleles(table: Table) {
         molecular.immunology?.let { immunology ->
-            val hlaAAlleles = immunology.hlaAlleles
-                .filter { it.gene == "HLA-A" }
-                .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
+            val alleles = relevantAlleles(immunology)
 
-            if (hlaAAlleles.isNotEmpty()) {
-                hlaAAlleles.forEachIndexed { index, hlaAllele ->
+            if (alleles.isNotEmpty()) {
+                alleles.forEachIndexed { index, hlaAllele ->
                     if (index == 0) {
                         table.addCell(Cells.createContentNoBorder("HLA-A"))
                     } else {
@@ -86,8 +82,7 @@ class ImmunologyGenerator(
                         table.addCell(Cells.createContentNoBorder(""))
                     }
 
-                    val alleleString = "${hlaAllele.gene}*${hlaAllele.alleleGroup}:${hlaAllele.hlaProtein}"
-                    table.addCell(Cells.createContentNoBorder(alleleString))
+                    table.addCell(Cells.createContentNoBorder(alleleCompactString(hlaAllele)))
 
                     val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
                         Formats.forcedSingleDigitNumber(cn.coerceAtLeast(0.0))
@@ -117,29 +112,12 @@ class ImmunologyGenerator(
 
     private fun addHlaAllelesForSummary(table: Table) {
         molecular.immunology?.let { immunology ->
-            val hlaAAlleles = immunology.hlaAlleles
-                .filter { it.gene == "HLA-A" }
-                .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
+            val alleles = relevantAlleles(immunology)
 
-            if (hlaAAlleles.isNotEmpty()) {
-                hlaAAlleles.forEachIndexed { index, hlaAllele ->
-
-                    val geneCell = if (index == 0) "HLA-A" else ""
-                    table.addCell(Cells.createKey(geneCell))
-
-                    val alleleString = "${hlaAllele.gene}*${hlaAllele.alleleGroup}:${hlaAllele.hlaProtein}"
-                    val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
-                        ", tumor copy nr: ${Formats.noDigitNumber(cn.coerceAtLeast(0.0))}"
-                    } ?: ""
-
-                    val mutationDisplay = when (hlaAllele.hasSomaticMutations) {
-                        true -> ", mutated: Yes"
-                        false -> ", mutated: No"
-                        null -> ""
-                    }
-
-                    val fullText = "$alleleString$cnDisplay$mutationDisplay"
-                    table.addCell(Cells.createValue(fullText))
+            if (alleles.isNotEmpty()) {
+                alleles.forEachIndexed { index, hlaAllele ->
+                    table.addCell(Cells.createKey(if (index == 0) "HLA-A" else ""))
+                    table.addCell(Cells.createValue(alleleDetailedString(hlaAllele)))
                 }
             } else {
                 table.addCell(Cells.createKey("HLA-A"))
@@ -148,6 +126,28 @@ class ImmunologyGenerator(
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
             table.addCell(Cells.createValue("HLA typing not available"))
+        }
+    }
+
+    companion object {
+        fun relevantAlleles(immunology: MolecularImmunology): List<HlaAllele> =
+            immunology.hlaAlleles
+                .filter { it.gene == "HLA-A" }
+                .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
+
+        fun alleleCompactString(allele: HlaAllele): String =
+            "${allele.gene}*${allele.alleleGroup}:${allele.hlaProtein}"
+
+        fun alleleDetailedString(allele: HlaAllele): String {
+            val cnDisplay = allele.tumorCopyNumber?.let { cn ->
+                ", tumor copy nr: ${Formats.noDigitNumber(cn.coerceAtLeast(0.0))}"
+            } ?: ""
+            val mutationDisplay = when (allele.hasSomaticMutations) {
+                true -> ", mutated: Yes"
+                false -> ", mutated: No"
+                null -> ""
+            }
+            return "${alleleCompactString(allele)}$cnDisplay$mutationDisplay"
         }
     }
 }

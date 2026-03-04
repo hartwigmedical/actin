@@ -72,15 +72,24 @@ object WgsSummaryGeneratorFunctions {
             }
 
             if (isDetailsSummaryType) {
-                addHlaADetailed(molecular, table)
+                molecular.immunology?.let { immunology ->
+                    val alleles = ImmunologyGenerator.relevantAlleles(immunology)
+                    if (alleles.isNotEmpty()) {
+                        alleles.forEachIndexed { index, allele ->
+                            table.addCell(Cells.createKey(if (index == 0) "HLA-A" else ""))
+                            table.addCell(Cells.createValue(ImmunologyGenerator.alleleDetailedString(allele)))
+                        }
+                    } else {
+                        table.addCell(Cells.createKey("HLA-A"))
+                        table.addCell(Cells.createValue("No HLA-A alleles detected"))
+                    }
+                }
             } else {
                 molecular.immunology?.takeIf { it.isReliable }?.let { immunology ->
-                    val hlaAAlleles = immunology.hlaAlleles
-                        .filter { it.gene == "HLA-A" }
-                        .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
+                    val alleles = ImmunologyGenerator.relevantAlleles(immunology)
                     table.addCell(Cells.createKey("HLA-A"))
-                    if (hlaAAlleles.isNotEmpty()) {
-                        table.addCell(Cells.createValue(hlaAAlleles.joinToString(", ") { "${it.gene}*${it.alleleGroup}:${it.hlaProtein}" }))
+                    if (alleles.isNotEmpty()) {
+                        table.addCell(Cells.createValue(alleles.joinToString(", ", transform = ImmunologyGenerator::alleleCompactString)))
                     } else {
                         table.addCell(Cells.createValue("No HLA-A alleles detected"))
                     }
@@ -208,31 +217,6 @@ object WgsSummaryGeneratorFunctions {
         val tmlString = MolecularCharacteristicFormat.formatTumorMutationalLoad(molecular.characteristics, true)
         val tmbString = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, true)
         return String.format("%s / %s", tmlString, tmbString)
-    }
-
-    private fun addHlaADetailed(molecular: MolecularTest, table: Table) {
-        val hlaAAlleles = molecular.immunology?.hlaAlleles
-            ?.filter { it.gene == "HLA-A" }
-            ?.sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
-            ?: return
-        if (hlaAAlleles.isNotEmpty()) {
-            hlaAAlleles.forEachIndexed { index, hlaAllele ->
-                table.addCell(Cells.createKey(if (index == 0) "HLA-A" else ""))
-                val alleleString = "${hlaAllele.gene}*${hlaAllele.alleleGroup}:${hlaAllele.hlaProtein}"
-                val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
-                    ", tumor copy nr: ${Formats.noDigitNumber(cn.coerceAtLeast(0.0))}"
-                } ?: ""
-                val mutationDisplay = when (hlaAllele.hasSomaticMutations) {
-                    true -> ", mutated: Yes"
-                    false -> ", mutated: No"
-                    null -> ""
-                }
-                table.addCell(Cells.createValue("$alleleString$cnDisplay$mutationDisplay"))
-            }
-        } else {
-            table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createValue("No HLA-A alleles detected"))
-        }
     }
 
     private fun formatList(list: List<String>): String {
