@@ -836,6 +836,27 @@ class ActionabilityMatcherTest {
     }
 
     @Test
+    fun `Should match gene evidence with variant on that gene if gene role is TSG and subclonal likelihood is unknown`() {
+        val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.ANY_MUTATION)
+        val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
+        val matcher = matcherFactory(listOf(evidence), listOf(trial))
+
+        val variant = brafMolecularTestVariant.copy(
+            canonicalImpact = TestMolecularFactory.createMinimalTranscriptImpact().copy(codingEffect = CodingEffect.MISSENSE),
+            geneRole = GeneRole.TSG
+        )
+        val molecularTest = TestMolecularFactory.createMinimalPanelTest().copy(
+            drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
+                variants = listOf(variant)
+            )
+        )
+
+        val matches = matcher.match(molecularTest)
+        assertThat(matches).hasSize(1)
+        assertThat(matches[variant]).isEqualTo(actionabilityMatch(evidence, trial))
+    }
+
+    @Test
     fun `Should not match gene evidence for ineligible event with variant on that gene`() {
         val evidence = TestServeEvidenceFactory.createEvidenceForGene(gene = "BRAF", geneEvent = GeneEvent.FUSION)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(evidence.molecularCriterium()))
