@@ -39,7 +39,7 @@ Every criterion algorithm evaluates to one of the following options:
 | UNDETERMINED  | The data that is required to evaluate the inclusion or exclusion criterion is unavailable.                                               |
 | NOT_EVALUATED | The evaluation of the inclusion or exclusion criterion is skipped and can be assumed to be irrelevant for determining trial eligibility. |
 
-#### Recoverable status
+#### Recoverable status 
 
 Each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether the outcome of the criterion evaluation
 could potentially be recovered. For example, lab values may be insufficient at the moment of evaluation, leading
