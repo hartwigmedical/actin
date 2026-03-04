@@ -3,10 +3,12 @@ package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
 import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory.createMinimalTestOrangeRecord
-import com.hartwig.actin.molecular.orange.datamodel.purple.TestPurpleFactory
-import com.hartwig.hmftools.datamodel.orange.ImmutableOrangeRecord
 import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
+import com.hartwig.hmftools.finding.datamodel.FindingsStatus
+import com.hartwig.hmftools.finding.datamodel.SmallVariant
+import com.hartwig.hmftools.finding.datamodel.TestFindingFactory
+import com.hartwig.hmftools.finding.datamodel.TestFindingRecordFactory
 import com.hartwig.serve.datamodel.ImmutableServeRecord
 import com.hartwig.serve.datamodel.molecular.ImmutableKnownEvents
 import com.hartwig.serve.datamodel.molecular.common.GeneRole
@@ -29,7 +31,7 @@ private val SERVE_RECORD = ImmutableServeRecord.builder()
     .trials(emptyList())
     .build()
 
-private val PURPLE_VARIANT_1 = TestPurpleFactory.variantBuilder()
+private val PURPLE_VARIANT_1 = TestFindingFactory.variantBuilder()
     .gene("gene1")
     .chromosome("1")
     .position(1)
@@ -38,7 +40,7 @@ private val PURPLE_VARIANT_1 = TestPurpleFactory.variantBuilder()
     .hotspot(HotspotType.HOTSPOT)
     .build()
 
-private val PURPLE_VARIANT_2 = TestPurpleFactory.variantBuilder()
+private val PURPLE_VARIANT_2 = TestFindingFactory.variantBuilder()
     .gene("gene2")
     .chromosome("2")
     .position(2)
@@ -47,7 +49,7 @@ private val PURPLE_VARIANT_2 = TestPurpleFactory.variantBuilder()
     .hotspot(HotspotType.HOTSPOT)
     .build()
 
-private val PURPLE_VARIANT_3 = TestPurpleFactory.variantBuilder()
+private val PURPLE_VARIANT_3 = TestFindingFactory.variantBuilder()
     .gene("gene3")
     .chromosome("3")
     .position(3)
@@ -58,17 +60,22 @@ private val PURPLE_VARIANT_3 = TestPurpleFactory.variantBuilder()
 
 private val PURPLE_RECORD = ImmutablePurpleRecord.builder()
     .from(createMinimalTestOrangeRecord().purple())
-    .addAllSomaticVariants(PURPLE_VARIANT_1, PURPLE_VARIANT_2, PURPLE_VARIANT_3).build()
+    .addAllSomaticVariants().build()
 
-private val ORANGE_RECORD = ImmutableOrangeRecord.builder()
-    .from(createMinimalTestOrangeRecord())
-    .purple(PURPLE_RECORD).build()
+private val FINDING_RECORD = TestFindingRecordFactory.createMinimalTestFindingRecordBuilder()
+    .somaticSmallVariants(
+        TestFindingFactory.buildDriverFindingsList<SmallVariant>(
+            FindingsStatus.OK,
+            listOf(PURPLE_VARIANT_1, PURPLE_VARIANT_2, PURPLE_VARIANT_3)
+        )
+    )
+    .build()
 
 class CancerAssociatedVariantEvaluatorTest {
 
     @Test
     fun `Should compare cancer-associated variants between ORANGE and SERVE`() {
-        val cancerAssociatedVariants = CancerAssociatedVariantEvaluator.annotateCancerAssociatedVariants(ORANGE_RECORD, SERVE_RECORD)
+        val cancerAssociatedVariants = CancerAssociatedVariantEvaluator.annotateCancerAssociatedVariants(FINDING_RECORD, SERVE_RECORD)
         assertThat(cancerAssociatedVariants.count { it.isCancerAssociatedVariantOrange }).isEqualTo(2)
         assertThat(cancerAssociatedVariants.count { it.isCancerAssociatedVariantServe }).isEqualTo(1)
         assertThat(cancerAssociatedVariants.count { !(it.isCancerAssociatedVariantOrange && it.isCancerAssociatedVariantServe) }).isEqualTo(

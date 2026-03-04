@@ -7,17 +7,17 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
-import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.HotspotType
-import com.hartwig.hmftools.datamodel.purple.PurpleVariant
+import com.hartwig.hmftools.finding.datamodel.FindingRecord
+import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.molecular.gene.KnownGene
 
 object CancerAssociatedVariantEvaluator {
 
-    fun annotateCancerAssociatedVariants(orange: OrangeRecord, serveRecord: ServeRecord): List<AnnotatedCancerAssociatedVariant> {
+    fun annotateCancerAssociatedVariants(orange: FindingRecord, serveRecord: ServeRecord): List<AnnotatedCancerAssociatedVariant> {
         val knownGenes = serveRecord.knownEvents().genes().map(KnownGene::gene).toSet()
-        return orange.purple().allSomaticVariants().filter { it.gene() in knownGenes }
+        return orange.somaticSmallVariants.findings.filter { it.gene() in knownGenes }
             .mapNotNull { variant ->
                 val criteria = createMinimalVariantForMatching(variant)
                 val knownEventResolver =
@@ -32,8 +32,8 @@ object CancerAssociatedVariantEvaluator {
                         position = variant.position(),
                         ref = variant.ref(),
                         alt = variant.alt(),
-                        codingImpact = variant.canonicalImpact().hgvsCodingImpact(),
-                        proteinImpact = variant.canonicalImpact().hgvsProteinImpact(),
+                        codingImpact = variant.transcriptImpact().hgvsCodingImpact(),
+                        proteinImpact = variant.transcriptImpact().hgvsProteinImpact(),
                         isCancerAssociatedVariantOrange = isCancerAssociatedVariantOrange,
                         isCancerAssociatedVariantServe = isCancerAssociatedVariantServe,
                     )
@@ -43,7 +43,7 @@ object CancerAssociatedVariantEvaluator {
             }
     }
 
-    private fun createMinimalVariantForMatching(variant: PurpleVariant) =
+    private fun createMinimalVariantForMatching(variant: SmallVariant) =
         Variant(
             gene = variant.gene(),
             chromosome = variant.chromosome(),

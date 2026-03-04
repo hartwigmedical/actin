@@ -354,6 +354,13 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>finding-datamodel</artifactId>
+                <version>${finding-datamodel.version}</version>
+                <scope>test</scope>
+                <type>test-jar</type>
+            </dependency>
+            <dependency>
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>datamodel</artifactId>
                 <version>${actin-datamodel.version}</version>

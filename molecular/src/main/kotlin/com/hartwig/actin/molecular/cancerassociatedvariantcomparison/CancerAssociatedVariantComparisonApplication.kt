@@ -4,6 +4,7 @@ import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.util.Paths
 import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
+import com.hartwig.hmftools.finding.datamodel.FindingsJson
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
@@ -15,6 +16,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import java.io.BufferedWriter
 import java.io.FileWriter
+import java.nio.file.Path
 import kotlin.system.exitProcess
 import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 
@@ -28,9 +30,9 @@ class CancerAssociatedVariantComparisonApplication(private val config: CancerAss
         val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, false)
         LOGGER.info("Loaded evidence and known events from SERVE version {}", serveDatabase.version())
 
-        val orange = OrangeJson.getInstance().read(config.orangeJson)
-        val serveRecord = selectForRefGenomeVersion(serveDatabase, orange.refGenomeVersion())
-        val cancerAssociatedVariants = CancerAssociatedVariantEvaluator.annotateCancerAssociatedVariants(orange, serveRecord)
+        val findings = FindingsJson().read(Path.of(config.orangeJson))
+        val serveRecord = selectForRefGenomeVersion(serveDatabase, findings.metaProperties.refGenomeVersion())
+        val cancerAssociatedVariants = CancerAssociatedVariantEvaluator.annotateCancerAssociatedVariants(findings, serveRecord)
 
         LOGGER.info("Cancer-associated variant comparison DONE!")
         LOGGER.info(
@@ -39,7 +41,7 @@ class CancerAssociatedVariantComparisonApplication(private val config: CancerAss
             cancerAssociatedVariants.count { it.isCancerAssociatedVariantServe },
             cancerAssociatedVariants.count { !(it.isCancerAssociatedVariantOrange && it.isCancerAssociatedVariantServe) }
         )
-        write(config.outputDirectory, orange.sampleId(), cancerAssociatedVariants)
+        write(config.outputDirectory, findings.metaProperties.sampleId(), cancerAssociatedVariants)
     }
 
     private fun write(directory: String, sampleId: String, cancerAssociatedVariants: List<AnnotatedCancerAssociatedVariant>) {
