@@ -18,6 +18,18 @@ class DoidModelTest {
     }
 
     @Test
+    fun `Should add children`() {
+        val model = createTestModel(TestDoidManualConfigFactory.createWithOneAdditionalDoid("300", "301"))
+        assertThat(model.doidWithChildren("200")).containsExactlyInAnyOrder("200")
+        assertThat(model.doidWithChildren("300")).containsExactlyInAnyOrder("300", "301", "200")
+        assertThat(model.doidWithChildren("400")).containsExactlyInAnyOrder("400", "300", "301", "200")
+        assertThat(model.doidWithChildren("400", exclude = setOf("400"))).isEmpty()
+        assertThat(model.doidWithChildren("400", exclude = setOf("300"))).containsExactlyInAnyOrder("400")
+        assertThat(model.doidWithChildren("400", exclude = setOf("301"))).containsExactlyInAnyOrder("400", "300", "200")
+        assertThat(model.doidWithChildren("500")).containsExactlyInAnyOrder("500")
+    }
+
+    @Test
     fun `Should resolve main cancer types`() {
         val doidModel = createTestModel(TestDoidManualConfigFactory.createWithOneMainCancerDoid("123"))
         assertThat(doidModel.mainCancerDoids("123")).isNotEmpty()
@@ -55,8 +67,12 @@ class DoidModelTest {
             "200" to listOf("300"),
             "300" to listOf("400")
         )
+        val parentToChildrenMap = mapOf(
+            "300" to listOf("200"),
+            "400" to listOf("300")
+        )
         val termPerDoidMap = mapOf("200" to "tumor A")
         val doidPerLowerCaseTermMap = mapOf("tumor a" to "200")
-        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, manualConfig)
+        return DoidModel(childToParentsMap, parentToChildrenMap, termPerDoidMap, doidPerLowerCaseTermMap, manualConfig)
     }
 }

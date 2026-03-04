@@ -10,14 +10,16 @@ class CuppaToDoidMappingTest {
 
     @Test
     fun `Should resolve known CUPPA types to DOIDs`() {
-        assertThat(mapping.doidsForCuppaType("HPB: Pancreas")).containsExactly("4074")
-        assertThat(mapping.doidsForCuppaType("Skin: Melanoma")).containsExactly("8923")
+        assertThat(mapping.doidsForCuppaType("HPB: Pancreas")?.included).containsExactly("4074")
+        assertThat(mapping.doidsForCuppaType("HPB: Pancreas")?.excluded).containsExactly("0101")
+        assertThat(mapping.doidsForCuppaType("Skin: Melanoma")?.included).containsExactly("8923")
     }
 
     @Test
     fun `Should resolve CUPPA types with multiple DOIDs`() {
-        assertThat(mapping.doidsForCuppaType("Esophagus/Stomach")).containsExactlyInAnyOrder("1107", "10534")
-        assertThat(mapping.doidsForCuppaType("Colorectum/Small intestine/Appendix")).containsExactlyInAnyOrder("0050861", "4906", "3608")
+        assertThat(mapping.doidsForCuppaType("Esophagus/Stomach")?.included).containsExactlyInAnyOrder("1107", "10534")
+        assertThat(mapping.doidsForCuppaType("Esophagus/Stomach")?.excluded).containsExactlyInAnyOrder("0102", "0103")
+        assertThat(mapping.doidsForCuppaType("Colorectum/Small intestine/Appendix")?.included).containsExactlyInAnyOrder("0050861", "4906", "3608")
     }
 
     @Test

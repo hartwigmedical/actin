@@ -10,20 +10,25 @@ import java.io.File
 private data class CuppaDoidRow(
     @param:JsonProperty("cuppa_cancer_type") val cuppaCancerType: String = "",
     @param:JsonProperty("doid_ids") val doidIds: String = "",
+    @param:JsonProperty("excluded_doid_ids") val excludedDoidIds: String? = null,
     @param:JsonProperty("doid_labels") val doidLabels: String? = null,
     @param:JsonProperty("notes") val notes: String? = null
 )
 
-class CuppaToDoidMapping(private val mapping: Map<String, Set<String>>) {
+data class CuppaDoids(
+    val included: Set<String>,
+    val excluded: Set<String>? = null
+)
 
-    fun doidsForCuppaType(cancerType: String): Set<String>? {
+class CuppaToDoidMapping(private val mapping: Map<String, CuppaDoids>) {
+
+    fun doidsForCuppaType(cancerType: String): CuppaDoids? {
         return mapping[cancerType]
     }
 
     companion object {
         private val logger = LogManager.getLogger(CuppaToDoidMapping::class.java)
         private const val DOID_SEPARATOR = ";"
-        private const val DOID_PREFIX = "DOID:"
 
         fun createFromFile(tsvPath: String): CuppaToDoidMapping {
             logger.info("Loading CUPPA to DOID mapping from {}", tsvPath)
@@ -33,7 +38,10 @@ class CuppaToDoidMapping(private val mapping: Map<String, Set<String>>) {
 
             val rows = reader.readValues<CuppaDoidRow>(File(tsvPath)).readAll()
             val mapping = rows.associate { row ->
-                row.cuppaCancerType to row.doidIds.split(DOID_SEPARATOR).map { it.removePrefix(DOID_PREFIX) }.toSet()
+                row.cuppaCancerType to CuppaDoids(
+                    included = row.doidIds.split(DOID_SEPARATOR).toSet(),
+                    excluded = row.excludedDoidIds?.split(DOID_SEPARATOR)?.toSet()
+                )
             }
             logger.info(" Loaded {} CUPPA cancer type mappings", mapping.size)
             return CuppaToDoidMapping(mapping)
