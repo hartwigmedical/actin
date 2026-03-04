@@ -9,49 +9,48 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.finding.datamodel.GainDeletion
+import com.hartwig.hmftools.finding.datamodel.GainDeletion.GeneExtent
 import kotlin.math.roundToInt
 
 class CopyNumberExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(gainDeletions: List<GainDeletion>): List<CopyNumber> {
         return gainDeletions.filter { MappingUtil.includedInGeneFilter(it, geneFilter) }
-            .map {gainDeletion ->
-                    CopyNumber(
-                        gene = gainDeletion.gene(),
-                        geneRole = GeneRole.UNKNOWN,
-                        proteinEffect = ProteinEffect.UNKNOWN,
-                        isAssociatedWithDrugResistance = null,
-                        isReportable = gainDeletion.isReported,
-                        event = gainDeletion.event(),
-                        driverLikelihood = MappingUtil.determineDriverLikelihood(gainDeletion),
-                        evidence = ExtractionUtil.noEvidence(),
-                        canonicalImpact = TranscriptCopyNumberImpact(
-                            gainDeletion.transcript(),
-                            determineType(gainDeletion.interpretation()),
-                            gainDeletion.tumorMinCopies().roundToInt(),
-                            gainDeletion.tumorMaxCopies().roundToInt()
-                        ),
-                        otherImpacts = setOf(),
-                    )
+            .map { gainDeletion ->
+                CopyNumber(
+                    gene = gainDeletion.gene(),
+                    geneRole = GeneRole.UNKNOWN,
+                    proteinEffect = ProteinEffect.UNKNOWN,
+                    isAssociatedWithDrugResistance = null,
+                    isReportable = gainDeletion.isReported,
+                    event = gainDeletion.event(),
+                    driverLikelihood = MappingUtil.determineDriverLikelihood(gainDeletion),
+                    evidence = ExtractionUtil.noEvidence(),
+                    canonicalImpact = TranscriptCopyNumberImpact(
+                        gainDeletion.transcript(),
+                        determineType(gainDeletion),
+                        gainDeletion.tumorMinCopies().roundToInt(),
+                        gainDeletion.tumorMaxCopies().roundToInt()
+                    ),
+                    otherImpacts = setOf(),
+                )
             }.sorted()
     }
 
-    internal fun determineType(interpretation: CopyNumberInterpretation): CopyNumberType {
-        return when (interpretation) {
-            CopyNumberInterpretation.FULL_GAIN -> {
-                CopyNumberType.FULL_GAIN
+    internal fun determineType(
+        gainDeletion: GainDeletion
+    ): CopyNumberType {
+        return when (gainDeletion.geneExtent()) {
+            GeneExtent.FULL_GENE -> when (gainDeletion.somaticType()) {
+                GainDeletion.Type.HOM_DEL, GainDeletion.Type.HET_DEL -> CopyNumberType.FULL_DEL
+                GainDeletion.Type.GAIN -> CopyNumberType.FULL_GAIN
+                else -> throw IllegalArgumentException("Unsupported somatic type: " + gainDeletion.somaticType())
             }
 
-            CopyNumberInterpretation.PARTIAL_GAIN -> {
-                CopyNumberType.PARTIAL_GAIN
-            }
-
-            CopyNumberInterpretation.FULL_DEL -> {
-                CopyNumberType.FULL_DEL
-            }
-
-            CopyNumberInterpretation.PARTIAL_DEL -> {
-                CopyNumberType.PARTIAL_DEL
+            GeneExtent.PARTIAL_GENE -> when (gainDeletion.somaticType()) {
+                GainDeletion.Type.HOM_DEL, GainDeletion.Type.HET_DEL -> CopyNumberType.PARTIAL_DEL
+                GainDeletion.Type.GAIN -> CopyNumberType.PARTIAL_GAIN
+                else -> throw IllegalArgumentException("Unsupported somatic type: " + gainDeletion.somaticType())
             }
         }
     }
