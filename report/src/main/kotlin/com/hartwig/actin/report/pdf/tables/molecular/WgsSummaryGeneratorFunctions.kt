@@ -31,7 +31,8 @@ object WgsSummaryGeneratorFunctions {
         wgsMolecular: MolecularTest?,
         keyWidth: Float,
         valueWidth: Float,
-        summarizer: MolecularDriversSummarizer
+        summarizer: MolecularDriversSummarizer,
+        immunologyGenerator: ImmunologyGenerator? = null
     ): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         val isLongSummaryType = summaryType == SummaryType.LONG_SUMMARY
@@ -71,30 +72,7 @@ object WgsSummaryGeneratorFunctions {
                 filteredContents.forEach(table::addCell)
             }
 
-            if (isDetailsSummaryType) {
-                molecular.immunology?.let { immunology ->
-                    val alleles = ImmunologyGenerator.relevantAlleles(immunology)
-                    if (alleles.isNotEmpty()) {
-                        alleles.forEachIndexed { index, allele ->
-                            table.addCell(Cells.createKey(if (index == 0) "HLA-A" else ""))
-                            table.addCell(Cells.createValue(ImmunologyGenerator.alleleDetailedString(allele)))
-                        }
-                    } else {
-                        table.addCell(Cells.createKey("HLA-A"))
-                        table.addCell(Cells.createValue("No HLA-A alleles detected"))
-                    }
-                }
-            } else {
-                molecular.immunology?.takeIf { it.isReliable }?.let { immunology ->
-                    val alleles = ImmunologyGenerator.relevantAlleles(immunology)
-                    table.addCell(Cells.createKey("HLA-A"))
-                    if (alleles.isNotEmpty()) {
-                        table.addCell(Cells.createValue(alleles.joinToString(", ", transform = ImmunologyGenerator::alleleCompactString)))
-                    } else {
-                        table.addCell(Cells.createValue("No HLA-A alleles detected"))
-                    }
-                }
-            }
+            immunologyGenerator?.addContentsTo(table)
 
             val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) =
                 summarizer.actionableEventsThatAreNotKeyDrivers().partition { it.driverLikelihood == null }

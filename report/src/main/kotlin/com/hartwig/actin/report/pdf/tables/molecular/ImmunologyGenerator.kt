@@ -11,7 +11,7 @@ import com.itextpdf.layout.element.Table
 
 class ImmunologyGenerator(
     private val molecular: MolecularTest,
-    private val displayMode: ImmunologyDisplayMode = ImmunologyDisplayMode.DETAILED,
+    private val displayMode: ImmunologyDisplayMode = ImmunologyDisplayMode.DETAILED_TABLE,
     private val title: String = "Immunology",
     private val keyWidth: Float,
     private val valueWidth: Float,
@@ -27,8 +27,8 @@ class ImmunologyGenerator(
 
     override fun contents(): Table {
         return when (displayMode) {
-            ImmunologyDisplayMode.DETAILED -> createDetailedTable()
-            ImmunologyDisplayMode.SUMMARY -> createSummaryTable()
+            ImmunologyDisplayMode.DETAILED_TABLE -> createDetailedTable()
+            ImmunologyDisplayMode.DETAILED_INLINE -> createDetailedInlineTable()
             ImmunologyDisplayMode.ALLELE_ONLY -> createAlleleOnlyTable()
         }
     }
@@ -46,14 +46,23 @@ class ImmunologyGenerator(
         return table
     }
 
-    private fun createSummaryTable(): Table {
+    private fun createDetailedInlineTable(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        addHlaAllelesForSummary(table)
+        addHlaAllelesDetailedInline(table)
         return table
+    }
+
+    fun addContentsTo(table: Table) {
+        addAlleleOnlyContent(table)
     }
 
     private fun createAlleleOnlyTable(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
+        addAlleleOnlyContent(table)
+        return table
+    }
+
+    private fun addAlleleOnlyContent(table: Table) {
         molecular.immunology?.let { immunology ->
             val alleles = relevantAlleles(immunology)
             table.addCell(Cells.createKey("HLA-A"))
@@ -66,7 +75,6 @@ class ImmunologyGenerator(
             table.addCell(Cells.createKey("HLA-A"))
             table.addCell(Cells.createValue("HLA typing not available"))
         }
-        return table
     }
 
     private fun addHlaAAlleles(table: Table) {
@@ -110,7 +118,7 @@ class ImmunologyGenerator(
         }
     }
 
-    private fun addHlaAllelesForSummary(table: Table) {
+    private fun addHlaAllelesDetailedInline(table: Table) {
         molecular.immunology?.let { immunology ->
             val alleles = relevantAlleles(immunology)
 
@@ -153,7 +161,7 @@ class ImmunologyGenerator(
 }
 
 enum class ImmunologyDisplayMode {
-    DETAILED,
-    SUMMARY,
+    DETAILED_TABLE,
+    DETAILED_INLINE,
     ALLELE_ONLY
 }

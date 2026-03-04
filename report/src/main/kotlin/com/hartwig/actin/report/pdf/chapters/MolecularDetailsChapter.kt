@@ -141,19 +141,24 @@ class MolecularDetailsChapter(
             )
         }
         val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth - 10)
+        val panelImmunologyGenerators = externalPanelResults.mapNotNull { molecularTest ->
+            if (molecularTest.immunology != null)
+                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", keyWidth, valueWidth - 10)
+            else null
+        }
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
         } else null
 
         TableGeneratorFunctions.addGenerators(
-            orangeGenerators + immunologyGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
+            orangeGenerators + immunologyGenerators + wgsSummaryGenerators + panelImmunologyGenerators + listOfNotNull(ihcGenerator),
             reportTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
     }
 
-    internal fun createImmunologyGenerators(
+    private fun createImmunologyGenerators(
         molecularTests: List<MolecularTest>,
         keyWidth: Float,
         valueWidth: Float
@@ -162,7 +167,7 @@ class MolecularDetailsChapter(
         return molecularTests.mapNotNull { molecularTest ->
             val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null
             if (showImmunology) {
-                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.SUMMARY else ImmunologyDisplayMode.DETAILED
+                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.DETAILED_INLINE else ImmunologyDisplayMode.DETAILED_TABLE
                 ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
             } else null
         }

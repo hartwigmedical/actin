@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
     private val cohorts: List<InterpretedCohort>,
-    private val contentWidth: Float,
     private val keyWidth: Float,
     private val valueWidth: Float,
 ) : TableGenerator {
@@ -83,6 +82,9 @@ class MolecularSummaryGenerator(
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     logger.debug("Generating WGS results for non-WGS sample")
                 }
+                val immunologyGenerator = if (molecularTest.immunology?.isReliable == true) {
+                    ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.ALLELE_ONLY, "HLA-A", keyWidth, valueWidth)
+                } else null
                 val wgsGenerator = WgsSummaryGenerator(
                     selectSummaryType(molecularTest.experimentType),
                     patientRecord,
@@ -90,15 +92,15 @@ class MolecularSummaryGenerator(
                     pathologyReport,
                     cohorts,
                     keyWidth,
-                    valueWidth
+                    valueWidth,
+                    immunologyGenerator
                 )
                 if (pathologyReport == null) {
                     table.addCell(Cells.createTitle(wgsGenerator.title()))
                 } else {
                     table.addCell(Cells.createSubTitle(wgsGenerator.title()))
                 }
-                val wgsContents = wgsGenerator.contents()
-                table.addCell(Cells.create(wgsContents))
+                table.addCell(Cells.create(wgsGenerator.contents()))
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
                 noRecent.addCell(Cells.createKey(molecularTest.experimentType.display() + " results"))
