@@ -104,6 +104,7 @@ class LocalExampleTreatmentMatchApplication {
         return ResistanceEvidenceMatcher.create(
             doidModel = DoidModel(
                 childToParentsMap = emptyMap(),
+                parentToChildrenMap = emptyMap(),
                 termForDoidMap = emptyMap(),
                 doidForLowerCaseTermMap = emptyMap(),
                 doidManualConfig = DoidManualConfig.create()

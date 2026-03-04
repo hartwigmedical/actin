@@ -167,7 +167,7 @@ class ResistanceEvidenceMatcher(
         }
 
         private fun expandDoids(doidModel: DoidModel, doids: Set<String>): Set<String> {
-            return DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, doids)
+            return DoidEvaluationFunctions.createFullExpandedParentsDoidTree(doidModel, doids)
         }
 
         private fun hasNoPositiveResponse(resistanceEvent: EfficacyEvidence): Boolean {

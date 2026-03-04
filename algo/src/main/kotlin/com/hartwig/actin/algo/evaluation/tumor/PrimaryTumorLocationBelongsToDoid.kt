@@ -26,7 +26,7 @@ class PrimaryTumorLocationBelongsToDoid(
             EvaluationFactory.undetermined("Unknown tumor type")
         } else {
             val doidsTumorBelongsTo =
-                DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids).intersect(doidsToMatch.toSet())
+                DoidEvaluationFunctions.createFullExpandedParentsDoidTree(doidModel, tumorDoids).intersect(doidsToMatch.toSet())
             val doidTermsTumorBelongsTo = Format.concat(doidsToTerms(doidsTumorBelongsTo))
             val potentialAdenoSquamousMatches = isPotentialAdenoSquamousMatch(tumorDoids!!, doidsToMatch)
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
@@ -77,8 +77,11 @@ class PrimaryTumorLocationBelongsToDoid(
                 val cuppaDoids = cuppaToDoidMapping.doidsForCuppaType(cancerType)
                     ?: throw IllegalArgumentException("CUPPA cancer type $cancerType not found in mapping")
 
-                DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, cuppaDoids).intersect(doidsToMatch)
-                    .singleOrNull()
+                val parents = DoidEvaluationFunctions.createFullExpandedParentsDoidTree(doidModel, cuppaDoids.included)
+                val children = DoidEvaluationFunctions.createFullExpandedChildrenDoidTree(doidModel, cuppaDoids.included, cuppaDoids.excluded ?: emptySet())
+
+                (parents + children).intersect(doidsToMatch)
+                    .firstOrNull()
                     ?.let {
                         val likelihoodPct = (predictedTumorOrigin.likelihood() * 100).toInt()
                         EvaluationFactory.warn("Tumor type unknown, but CUPPA predicts $cancerType ($likelihoodPct%)")

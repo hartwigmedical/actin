@@ -10,7 +10,7 @@ object DoidModelFactory {
 
     fun createFromDoidEntry(doidEntry: DoidEntry): DoidModel {
         val doidManualConfig = DoidManualConfig.create()
-        val childToParentsMap = doidEntry.edges.asSequence()
+        val parentChildRelationships = doidEntry.edges.asSequence()
             .filter { it.predicate == "is_a" }
             .map { edge ->
                 val child = edge.subjectDoid
@@ -19,7 +19,13 @@ object DoidModelFactory {
             }
             .distinct()
             .filterNot(doidManualConfig.childToParentRelationshipsToExclude::contains)
+
+        val childToParentsMap = parentChildRelationships
             .groupBy(Pair<String, String>::first, Pair<String, String>::second)
+
+        val parentToChildrenMap = parentChildRelationships
+            .groupBy(Pair<String, String>::second, Pair<String, String>::first)
+
         LOGGER.debug("Loaded {} parent-child relationships", childToParentsMap.size)
 
         // Assume both doid and term are unique.
@@ -30,6 +36,6 @@ object DoidModelFactory {
         }
         val doidPerLowerCaseTermMap = termPerDoidMap.entries.associate { (doid, term) -> term.lowercase() to doid }
 
-        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, doidManualConfig)
+        return DoidModel(childToParentsMap, parentToChildrenMap, termPerDoidMap, doidPerLowerCaseTermMap, doidManualConfig)
     }
 }
