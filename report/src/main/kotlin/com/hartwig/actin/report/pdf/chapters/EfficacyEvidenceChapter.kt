@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.algo.ShapDetail
 import com.hartwig.actin.datamodel.algo.SimilarPatientsSummary
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
-import com.hartwig.actin.report.pdf.tables.molecular.MolecularEfficacyDescriptionGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OffLabelMolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OnLabelMolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.TreatmentRankingGenerator
@@ -15,6 +14,7 @@ import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.soc.EfficacyEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.soc.ResistanceEvidenceGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.treatment.EvidenceScoringModel
@@ -181,7 +181,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         val features = sortedShapData.map { it.first }
         val shapValues = sortedShapData.map { it.second.shapValue }
         val featureValues = sortedShapData.map { it.second.featureValue }
-        val yLabels = features.zip(featureValues) { feature, value -> "$feature = %.2f".format(value) }
+        val yLabels = features.zip(featureValues) { feature, value -> "$feature = ${Formats.twoDigitNumber(value)}" }
 
         val plot = letsPlot { x = shapValues; y = yLabels; fill = shapValues.map { sign(it) } } +
                 geomBar(stat = Stat.identity) +
@@ -237,14 +237,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         TableGeneratorFunctions.addGenerators(listOf(onLabelGenerator, offLabelGenerator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
-
-    private fun addMolecularEfficacyDescriptions(document: Document) {
-        val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = MolecularEfficacyDescriptionGenerator(molecularTests)
-        TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
-        document.add(table)
-    }
-
+    
     private fun addMolecularEvidenceRanking(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val generator = TreatmentRankingGenerator(treatmentEvidenceRanking)
