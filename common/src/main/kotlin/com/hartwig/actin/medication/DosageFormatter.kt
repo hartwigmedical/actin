@@ -1,12 +1,12 @@
 package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.Dosage
+import com.hartwig.actin.util.ApplicationConfig
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
-import java.util.Locale
 
 object DosageFormatter {
-    private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+    private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE)
     private val TWO_DECIMAL_PLACES_FORMAT = DecimalFormat("#.##", DECIMAL_FORMAT_SYMBOLS)
     private val NO_DECIMAL_PLACES_FORMAT = DecimalFormat("#", DECIMAL_FORMAT_SYMBOLS)
     private val SPECIFIC_OR_UNKNOWN = setOf("specific prescription", "unknown prescription")

@@ -4,11 +4,12 @@ import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
+import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.layout.Style
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 private const val YEAR = 2023
 private const val MONTH = 1
@@ -19,7 +20,7 @@ class PathologyReportFunctionsTest {
     private val minimalPanelTest = TestMolecularFactory.createMinimalPanelTest()
     private val date1 = LocalDate.of(YEAR, MONTH, 1)
     private val date2 = LocalDate.of(YEAR, MONTH, 2)
-    private val df = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
+    private val df = DateTimeFormatter.ofPattern("dd-MMM-yyyy", ApplicationConfig.LOCALE)
 
     @Test
     fun `Should return complete pathology report summary`() {

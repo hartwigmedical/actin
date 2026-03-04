@@ -9,14 +9,14 @@ import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationR
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateInvalidLabValue
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.evaluateVersusMaxULN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.isValid
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabMeasurement.ALANINE_AMINOTRANSFERASE
 import com.hartwig.actin.datamodel.clinical.LabMeasurement.ASPARTATE_AMINOTRANSFERASE
-import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.LabValue
+import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
-import java.util.Locale
 
 class HasLimitedAsatAndAlatDependingOnLiverMetastases(
     private val maxULNWithoutLiverMetastases: Double,
@@ -142,7 +142,7 @@ class HasLimitedAsatAndAlatDependingOnLiverMetastases(
     }
 
     private fun createLabValueString(measurement: LabMeasurement, mostRecent: LabValue?): String {
-        return "${createMeasurementString(measurement)} ${String.format(Locale.ENGLISH, "%.1f", mostRecent?.value)}"
+        return "${createMeasurementString(measurement)} ${String.format(ApplicationConfig.LOCALE, "%.1f", mostRecent?.value)}"
     }
 
     private fun evaluateOutsideMargin(measurementsWithinLimit: Boolean, hasLiverMetastases: Boolean?, message: String): Evaluation {

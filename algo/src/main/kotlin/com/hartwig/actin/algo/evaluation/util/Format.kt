@@ -1,22 +1,21 @@
 package com.hartwig.actin.algo.evaluation.util
 
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.Displayable
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.util.ApplicationConfig
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 object Format {
 
     private const val SEPARATOR_AND = " and "
     private const val SEPARATOR_OR = " or "
     private const val SEPARATOR_COMMA = ", "
-    private val DATE_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
-    private val PERCENTAGE_FORMAT: DecimalFormat = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
+    private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy", ApplicationConfig.LOCALE)
+    private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
 
     fun concat(strings: Iterable<String>) = concatWithCommaAndSeparator(strings, SEPARATOR_AND, toLowercase = false)
 
@@ -62,12 +61,12 @@ object Format {
     }
 
     fun labReferenceWithLimit(factorValue: Double, factorUnit: String, refLimit: Double?, unit: LabUnit): String {
-        val result = refLimit?.let { String.format(Locale.ENGLISH, "%.1f", factorValue * refLimit) } ?: "$factorValue*NA"
+        val result = refLimit?.let { String.format(ApplicationConfig.LOCALE, "%.1f", factorValue * refLimit) } ?: "$factorValue*NA"
         return "$factorValue*${factorUnit} ($result ${unit.display()})"
     }
 
     fun labValue(labMeasurement: LabMeasurement, value: Double, unit: LabUnit): String {
-        val formattedValue = String.format(Locale.ENGLISH, "%.1f", value)
+        val formattedValue = String.format(ApplicationConfig.LOCALE, "%.1f", value)
         return "${labMeasurement.display().replaceFirstChar { it.uppercase() }} $formattedValue ${unit.display()}"
     }
 

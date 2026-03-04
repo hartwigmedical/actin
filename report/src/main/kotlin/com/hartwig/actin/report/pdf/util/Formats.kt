@@ -1,13 +1,13 @@
 package com.hartwig.actin.report.pdf.util
 
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.kernel.colors.DeviceRgb
 import com.itextpdf.layout.Style
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 object Formats {
 
@@ -20,14 +20,13 @@ object Formats {
     const val DATE_UNKNOWN = "Date unknown"
     const val ITALIC_TEXT_MARKER = "{i}"
 
-    private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
-    private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(Locale.ENGLISH)
+    private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy", ApplicationConfig.LOCALE)
+    private val DECIMAL_FORMAT_SYMBOLS = DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE)
     private val TWO_DIGIT_FORMAT = DecimalFormat("#.##", DECIMAL_FORMAT_SYMBOLS)
     private val SINGLE_DIGIT_FORMAT = DecimalFormat("#.#", DECIMAL_FORMAT_SYMBOLS)
     private val FORCED_SINGLE_DIGIT_FORMAT = DecimalFormat("#0.0", DECIMAL_FORMAT_SYMBOLS)
     private val NO_DIGIT_FORMAT = DecimalFormat("#", DECIMAL_FORMAT_SYMBOLS)
     private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DECIMAL_FORMAT_SYMBOLS)
-    private val SINGLE_DIGIT_PERCENTAGE_FORMAT = DecimalFormat("#.#'%'", DECIMAL_FORMAT_SYMBOLS)
 
     fun twoDigitNumber(number: Double): String {
         return TWO_DIGIT_FORMAT.format(number)
@@ -47,14 +46,6 @@ object Formats {
 
     fun percentage(number: Double): String {
         return PERCENTAGE_FORMAT.format(number * 100)
-    }
-
-    fun singleDigitPercentage(number: Double): String {
-        return SINGLE_DIGIT_PERCENTAGE_FORMAT.format(number * 100)
-    }
-
-    fun daysToMonths(number: Double): String {
-        return singleDigitNumber(number / 30.44)
     }
     
     fun date(date: LocalDate?, fallback: String = DATE_UNKNOWN): String {

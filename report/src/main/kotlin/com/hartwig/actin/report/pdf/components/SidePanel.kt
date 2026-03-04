@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.components
 
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
+import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.kernel.font.PdfFont
 import com.itextpdf.kernel.geom.Rectangle
 import com.itextpdf.kernel.pdf.PdfPage
@@ -11,7 +12,6 @@ import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import java.time.LocalDate
-import java.util.Locale
 
 private const val ROW_SPACING = 35f
 private const val VALUE_TEXT_Y_OFFSET = 18f
@@ -32,7 +32,7 @@ class SidePanel(private val patientId: String, private val sourcePatientId: Stri
         canvas.fill()
         var sideTextIndex = 0
         val cv = Canvas(canvas, page.pageSize)
-        val (value, extra) = sourcePatientId.takeUnless { it.isNullOrBlank() }?.let { it to patientId } ?: patientId to null
+        val (value, extra) = sourcePatientId.takeUnless { it.isNullOrBlank() }?.let { it to patientId } ?: (patientId to null)
         cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", value, extra))
         cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", date(reportDate)))
         canvas.release()
@@ -44,7 +44,7 @@ class SidePanel(private val patientId: String, private val sourcePatientId: Stri
         var yPos = pageSize.height + FONT_HEIGHT - index * ROW_SPACING
         val xPos = pageSize.width - RECTANGLE_WIDTH + FONT_HEIGHT
         div.add(
-            Paragraph(label.uppercase(Locale.getDefault())).addStyle(Styles.sidePanelLabelStyle())
+            Paragraph(label.uppercase(ApplicationConfig.LOCALE)).addStyle(Styles.sidePanelLabelStyle())
                 .setFixedPosition(xPos, yPos, MAX_WIDTH)
         )
         val valueFontSize = maxPointSizeForWidth(Styles.fontBold(), INITIAL_FONT_SIZE, MIN_FONT_SIZE, value, MAX_WIDTH)
