@@ -130,12 +130,12 @@ class ImmunologyGenerator(
                     val alleleString = "${hlaAllele.gene}*${hlaAllele.alleleGroup}:${hlaAllele.hlaProtein}"
                     val cnDisplay = hlaAllele.tumorCopyNumber?.let { cn ->
                         ", tumor copy nr: ${Formats.noDigitNumber(cn.coerceAtLeast(0.0))}"
-                    } ?: ", tumor copy nr: -"
+                    } ?: ""
 
                     val mutationDisplay = when (hlaAllele.hasSomaticMutations) {
                         true -> ", mutated: Yes"
                         false -> ", mutated: No"
-                        null -> ", mutated: -"
+                        null -> ""
                     }
 
                     val fullText = "$alleleString$cnDisplay$mutationDisplay"

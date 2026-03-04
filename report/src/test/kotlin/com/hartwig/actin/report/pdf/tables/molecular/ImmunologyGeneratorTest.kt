@@ -178,11 +178,11 @@ class ImmunologyGeneratorTest {
     }
 
     @Test
-    fun `Should show dash for null copy number in summary mode`() {
+    fun `Should not show copy number when null in summary mode`() {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = null, hasSomaticMutations = true)
         val table = createGenerator(ImmunologyDisplayMode.SUMMARY, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: -, mutated: Yes")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, mutated: Yes")
     }
 
     @Test
@@ -206,7 +206,7 @@ class ImmunologyGeneratorTest {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 0.5, hasSomaticMutations = null)
         val table = createGenerator(ImmunologyDisplayMode.SUMMARY, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: 0, mutated: -")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: 0")
     }
 
     @Test
@@ -218,11 +218,11 @@ class ImmunologyGeneratorTest {
     }
 
     @Test
-    fun `Should show dash for null somatic mutations in summary mode`() {
+    fun `Should not show mutated when null in summary mode`() {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 1.0, hasSomaticMutations = null)
         val table = createGenerator(ImmunologyDisplayMode.SUMMARY, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: 1, mutated: -")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: 1")
     }
 
     @Test
@@ -273,9 +273,9 @@ class ImmunologyGeneratorTest {
 
         assertThat(table.numberOfRows).isEqualTo(3)
         // Sorted: 01:01, 02:01, 03:01
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: 1, mutated: -")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: 1")
         assertThat(extractTextFromCell(table.getCell(1, 1))).isEqualTo("HLA-A*02:01, tumor copy nr: 2, mutated: Yes")
-        assertThat(extractTextFromCell(table.getCell(2, 1))).isEqualTo("HLA-A*03:01, tumor copy nr: 2, mutated: -")
+        assertThat(extractTextFromCell(table.getCell(2, 1))).isEqualTo("HLA-A*03:01, tumor copy nr: 2")
     }
 
     @Test

@@ -98,17 +98,6 @@ class MolecularSummaryGenerator(
                     table.addCell(Cells.createSubTitle(wgsGenerator.title()))
                 }
                 val wgsContents = wgsGenerator.contents()
-                molecularTest.immunology?.takeIf { it.isReliable }?.let { immunology ->
-                    val hlaAAlleles = immunology.hlaAlleles
-                        .filter { it.gene == "HLA-A" }
-                        .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
-                    wgsContents.addCell(Cells.createKey("HLA-A"))
-                    if (hlaAAlleles.isNotEmpty()) {
-                        wgsContents.addCell(Cells.createValue(hlaAAlleles.joinToString(", ") { "${it.gene}*${it.alleleGroup}:${it.hlaProtein}" }))
-                    } else {
-                        wgsContents.addCell(Cells.createValue("No HLA-A alleles detected"))
-                    }
-                }
                 table.addCell(Cells.create(wgsContents))
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
