@@ -140,10 +140,11 @@ class MolecularDetailsChapter(
                 valueWidth
             )
         }
-        val immunologyGenerators = orangeMolecularRecord.mapNotNull { molecularTest ->
-            if (molecularTest.immunology != null) {
-                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED, "Immunology", keyWidth, valueWidth)
-            } else null
+        val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth - 10)
+        val panelImmunologyGenerators = externalPanelResults.mapNotNull { molecularTest ->
+            if (molecularTest.immunology != null)
+                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", keyWidth, valueWidth - 10)
+            else null
         }
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
@@ -151,10 +152,25 @@ class MolecularDetailsChapter(
         } else null
 
         TableGeneratorFunctions.addGenerators(
-            orangeGenerators + wgsSummaryGenerators + immunologyGenerators + listOfNotNull(ihcGenerator),
+            orangeGenerators + immunologyGenerators + wgsSummaryGenerators + panelImmunologyGenerators + listOfNotNull(ihcGenerator),
             reportTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
+    }
+
+    private fun createImmunologyGenerators(
+        molecularTests: List<MolecularTest>,
+        keyWidth: Float,
+        valueWidth: Float
+    ): List<ImmunologyGenerator> {
+        val isStandardWithPathology = configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY
+        return molecularTests.mapNotNull { molecularTest ->
+            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null
+            if (showImmunology) {
+                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.DETAILED_INLINE else ImmunologyDisplayMode.DETAILED_TABLE
+                ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
+            } else null
+        }
     }
 
     private fun addPathologyReport(document: Document) {

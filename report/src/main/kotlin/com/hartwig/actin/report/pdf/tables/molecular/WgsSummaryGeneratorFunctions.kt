@@ -31,7 +31,8 @@ object WgsSummaryGeneratorFunctions {
         wgsMolecular: MolecularTest?,
         keyWidth: Float,
         valueWidth: Float,
-        summarizer: MolecularDriversSummarizer
+        summarizer: MolecularDriversSummarizer,
+        immunologyGenerator: ImmunologyGenerator? = null
     ): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         val isLongSummaryType = summaryType == SummaryType.LONG_SUMMARY
@@ -70,6 +71,8 @@ object WgsSummaryGeneratorFunctions {
             if (filteredContents.isNotEmpty() || hasTmbData) {
                 filteredContents.forEach(table::addCell)
             }
+
+            immunologyGenerator?.addContentsTo(table)
 
             val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) =
                 summarizer.actionableEventsThatAreNotKeyDrivers().partition { it.driverLikelihood == null }
