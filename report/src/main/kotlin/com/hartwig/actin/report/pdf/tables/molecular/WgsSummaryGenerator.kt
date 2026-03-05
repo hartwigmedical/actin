@@ -19,6 +19,7 @@ class WgsSummaryGenerator(
     cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
+    private val immunologyGenerator: ImmunologyGenerator? = null,
 ) : TableGenerator {
 
     private val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
@@ -36,7 +37,7 @@ class WgsSummaryGenerator(
 
     override fun contents(): Table {
         return WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
-            summaryType, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer
+            summaryType, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer, immunologyGenerator
         )
     }
 }

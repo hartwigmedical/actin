@@ -13,17 +13,13 @@ import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
-import com.itextpdf.layout.borders.Border
-import com.itextpdf.layout.borders.SolidBorder
 import com.itextpdf.layout.element.Table
 import org.apache.logging.log4j.LogManager
 
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
     private val cohorts: List<InterpretedCohort>,
-    private val contentWidth: Float,
     private val keyWidth: Float,
     private val valueWidth: Float,
 ) : TableGenerator {
@@ -86,6 +82,9 @@ class MolecularSummaryGenerator(
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
                     logger.debug("Generating WGS results for non-WGS sample")
                 }
+                val immunologyGenerator = if (molecularTest.immunology?.isReliable == true) {
+                    ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.ALLELE_ONLY, "HLA-A", keyWidth, valueWidth)
+                } else null
                 val wgsGenerator = WgsSummaryGenerator(
                     selectSummaryType(molecularTest.experimentType),
                     patientRecord,
@@ -93,7 +92,8 @@ class MolecularSummaryGenerator(
                     pathologyReport,
                     cohorts,
                     keyWidth,
-                    valueWidth
+                    valueWidth,
+                    immunologyGenerator
                 )
                 if (pathologyReport == null) {
                     table.addCell(Cells.createTitle(wgsGenerator.title()))
@@ -107,23 +107,6 @@ class MolecularSummaryGenerator(
                 noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
                 table.addCell(Cells.create(noRecent))
             }
-        }
-
-        val immunologyGenerators = molecularTests.mapNotNull { molecularTest ->
-            if (molecularTest.immunology?.isReliable == true) {
-                ImmunologyGenerator(
-                    molecularTest,
-                    ImmunologyDisplayMode.SUMMARY,
-                    "Immunology",
-                    keyWidth,
-                    valueWidth
-                )
-            } else null
-        }
-
-        immunologyGenerators.firstOrNull()?.let { generator ->
-            table.addCell(Cells.createSubTitle(generator.title()))
-            table.addCell(Cells.create(generator.contents()))
         }
 
         if (ihcTests.isNotEmpty()) {
