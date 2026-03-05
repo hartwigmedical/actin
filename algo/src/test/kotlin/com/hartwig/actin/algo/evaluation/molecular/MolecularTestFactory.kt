@@ -219,6 +219,18 @@ internal object MolecularTestFactory {
         )
     }
 
+    fun withHomologousRecombination(isHrDeficient: Boolean): PatientRecord {
+        return withMolecularTest(
+            baseMolecular.copy(
+                characteristics = baseMolecular.characteristics.copy(
+                    homologousRecombination = createTestHomologousRecombination(
+                        isHrDeficient
+                    )
+                )
+            )
+        )
+    }
+
     fun withHomologousRecombinationAndVariant(isHrDeficient: Boolean, variant: Variant): PatientRecord {
         return withCharacteristicsAndDriver(
             baseMolecular.characteristics.copy(homologousRecombination = createTestHomologousRecombination(isHrDeficient)), variant

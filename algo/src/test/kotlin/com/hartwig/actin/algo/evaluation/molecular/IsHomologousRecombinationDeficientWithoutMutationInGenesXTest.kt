@@ -11,11 +11,12 @@ import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
-    
+
     private val genesToFind = setOf("BRCA1", "BRCA2")
     private val function = IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind)
 
@@ -229,6 +230,12 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesXTest {
                 )
             )
         )
+    }
+
+    @Test
+    fun `Should pass when HRD and no detected drivers when genes to ignore contains all HR genes`() {
+        val function = IsHomologousRecombinationDeficientWithoutMutationInGenesX(GeneConstants.HR_GENES)
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withHomologousRecombination(true)))
     }
 
     private fun hrdVariant(
