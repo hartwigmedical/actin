@@ -20,7 +20,6 @@ import org.apache.logging.log4j.LogManager
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
     private val cohorts: List<InterpretedCohort>,
-    //private val contentWidth: Float,
     private val keyWidth: Float,
     private val valueWidth: Float,
 ) : TableGenerator {
