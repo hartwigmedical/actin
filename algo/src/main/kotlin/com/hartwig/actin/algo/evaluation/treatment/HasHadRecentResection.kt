@@ -20,12 +20,10 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
             val isPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val isPastMoreLenientMinDate =
                 isAfterDate(minDate.minusWeeks(2), treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val isResection = treatmentHistoryEntry.treatments.any { entry ->
-                RESECTION_KEYWORDS.any { keyword ->
-                    entry.name.lowercase().contains(keyword)
-                }
-            }
-            val isPotentialResection = treatmentHistoryEntry.treatments.any { it.name.lowercase() == "surgery" }
+            val isResection = treatmentHistoryEntry.treatments.flatMap { it.synonyms + it.name }
+                .any { RESECTION_KEYWORDS.any { keyword -> it.lowercase().contains(keyword) } }
+
+            val isPotentialResection = treatmentHistoryEntry.treatments.any { it.name.lowercase() == SURGERY }
 
             if (isResection) {
                 if (isPastMinDate == null) {
@@ -43,21 +41,13 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
         }
 
         return when {
-            hasHadResectionAfterMinDate -> {
-                EvaluationFactory.pass("Has had recent resection")
-            }
+            hasHadResectionAfterMinDate -> EvaluationFactory.pass("Has had recent resection")
 
-            hasHadResectionAfterMoreLenientMinDate -> {
-                EvaluationFactory.warn("Has had reasonably recent resection")
-            }
+            hasHadResectionAfterMoreLenientMinDate -> EvaluationFactory.warn("Has had reasonably recent resection")
 
-            mayHaveHadResectionAfterMinDate -> {
-                EvaluationFactory.undetermined("May have had a recent resection")
-            }
+            mayHaveHadResectionAfterMinDate -> EvaluationFactory.undetermined("May have had a recent resection")
 
-            else -> {
-                EvaluationFactory.fail("Has not had recent resection")
-            }
+            else -> EvaluationFactory.fail("Has not had recent resection")
         }
     }
 }

@@ -16,9 +16,9 @@ class HasHadPartialResection : EvaluationFunction {
         return when {
             lowercaseTreatmentNames.contains(PARTIAL_RESECTION) -> EvaluationFactory.pass("Has had partial resection")
 
-            lowercaseTreatmentNames.any { entry -> RESECTION_KEYWORDS.any { keyword -> entry.contains(keyword) } } ||
-                    record.oncologicalHistory.any { entry -> entry.treatments.any { it.name.lowercase() == "surgery" } }
-                         -> EvaluationFactory.undetermined("Undetermined whether patient has had partial resection")
+            lowercaseTreatmentNames.any { name -> name == SURGERY || RESECTION_KEYWORDS.any(name::contains) } -> {
+                EvaluationFactory.undetermined("Undetermined whether patient has had partial resection")
+            }
 
             else -> EvaluationFactory.fail("Has not had partial resection")
         }
