@@ -20,8 +20,8 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
             val isPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val isPastMoreLenientMinDate =
                 isAfterDate(minDate.minusWeeks(2), treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val isResection = treatmentHistoryEntry.treatments.flatMap { it.synonyms + it.name }
-                .any { RESECTION_KEYWORDS.any { keyword -> it.lowercase().contains(keyword) } }
+            val isResection = treatmentHistoryEntry.treatments.flatMap { it.synonyms + it.name }.map(String::lowercase)
+                .any { RESECTION_KEYWORDS.any(it::contains) }
 
             val isPotentialResection = treatmentHistoryEntry.treatments.any { it.name.lowercase() == SURGERY }
 
