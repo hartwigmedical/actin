@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator
+import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
@@ -26,7 +27,8 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationF
         val ihcTestEvaluations =
             listOf("SCLC transformation", "small cell transformation").map { IhcTestEvaluation.create(it, record.ihcTests) }
 
-        val inactivatedGenes = listOf("TP53", "RB1").filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record) }
+        val indicativeGenes = setOf("TP53", "RB1")
+        val inactivatedGenes = indicativeGenes.filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record) }
 
         return when {
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
@@ -41,9 +43,8 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationF
                 EvaluationFactory.undetermined("Has NSCLC with small cell component - undetermined if this is considered SCLC transformation")
             }
 
-            isNsclc && inactivatedGenes.isNotEmpty() -> {
-                val genes = inactivatedGenes.joinToString(" and ")
-                EvaluationFactory.undetermined("Undetermined if SCLC transformation may have occurred ($genes inactivation detected)")
+            isNsclc && inactivatedGenes.size == indicativeGenes.size -> {
+                EvaluationFactory.undetermined("Undetermined if SCLC transformation may have occurred (${Format.concat(inactivatedGenes)} inactivation detected)")
             }
 
             isOfUncertainLungCancerType -> {

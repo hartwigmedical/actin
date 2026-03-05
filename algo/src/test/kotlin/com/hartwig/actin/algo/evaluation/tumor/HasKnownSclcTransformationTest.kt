@@ -98,20 +98,21 @@ class HasKnownSclcTransformationTest {
 
     @Test
     fun `Should resolve to undetermined if tumor has small cell molecular profile`() {
-        val copyNumber = TestCopyNumberFactory.createMinimal().copy(
+        val deletionRB1 = TestCopyNumberFactory.createMinimal().copy(
             gene = "RB1",
             isReportable = true,
             geneRole = GeneRole.TSG,
             proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
             canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
         )
+        val deletionTP53 = deletionRB1.copy(gene = "TP53")
         val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val record = base.copy(
             tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
-            molecularTests = MolecularTestFactory.withCopyNumber(copyNumber).molecularTests
+            molecularTests = MolecularTestFactory.withDrivers(deletionRB1, deletionTP53).molecularTests
         )
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if SCLC transformation may have occurred (RB1 inactivation detected)")
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if SCLC transformation may have occurred (RB1 and TP53 inactivation detected)")
     }
 }
