@@ -20,7 +20,6 @@ object EvaluationInterpreter {
                 EvaluationResult.WARN,
                 EvaluationResult.UNDETERMINED,
                 EvaluationResult.PASS,
-                EvaluationResult.NOT_EVALUATED
             ).flatMap { createInterpretationsOfType(evaluations, it) }
         }
     }
@@ -42,9 +41,7 @@ object EvaluationInterpreter {
 
     private fun createEvaluationInterpretationMap(evaluation: Evaluation): Map<EvaluationResult, EvaluationEntry> {
         return when (evaluation.result) {
-            EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED -> {
-                mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.passMessages)))
-            }
+            EvaluationResult.PASS -> mapOf(Pair(evaluation.result, generateEntry(evaluation, evaluation.passMessages)))
 
             EvaluationResult.WARN -> {
                 listOfNotNull(

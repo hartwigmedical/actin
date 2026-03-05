@@ -6,10 +6,11 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class CanUseAdequateAnticonceptionTest {
-    
+
+    private val function = CanUseAdequateAnticonception()
+
     @Test
-    fun canEvaluate() {
-        val function = CanUseAdequateAnticonception()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    fun `Should pass always`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

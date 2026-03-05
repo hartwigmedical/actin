@@ -7,9 +7,10 @@ import org.junit.jupiter.api.Test
 
 class CanAdhereToAttenuatedVaccineUseTest {
 
+    private val function = CanAdhereToAttenuatedVaccineUse()
+
     @Test
-    fun canEvaluate() {
-        val function = CanAdhereToAttenuatedVaccineUse()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    fun `Should pass always`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

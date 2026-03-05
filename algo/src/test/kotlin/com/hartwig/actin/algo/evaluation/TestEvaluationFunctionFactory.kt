@@ -23,10 +23,6 @@ object TestEvaluationFunctionFactory {
         return fixedEvaluation(EvaluationResult.UNDETERMINED)
     }
 
-    fun notEvaluated(): EvaluationFunction {
-        return fixedEvaluation(EvaluationResult.NOT_EVALUATED)
-    }
-
     private fun fixedEvaluation(output: EvaluationResult): EvaluationFunction {
         return object : EvaluationFunction {
             override fun evaluate(record: PatientRecord): Evaluation {

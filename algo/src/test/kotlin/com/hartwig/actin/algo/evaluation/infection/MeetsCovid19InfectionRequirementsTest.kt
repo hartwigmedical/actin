@@ -6,9 +6,11 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class MeetsCovid19InfectionRequirementsTest {
+
+    private val function = MeetsCovid19InfectionRequirements()
+
     @Test
-    fun canEvaluate() {
-        val function = MeetsCovid19InfectionRequirements()
+    fun `Should be undetermined always`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

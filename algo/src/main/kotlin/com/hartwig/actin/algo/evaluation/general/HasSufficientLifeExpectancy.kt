@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasSufficientLifeExpectancy : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated("Assumed that requested life expectancy will be met")
+        return EvaluationFactory.pass("Assumed that requested life expectancy will be met")
     }
 }

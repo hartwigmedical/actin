@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Test
 
 class IsLegallyInstitutionalizedTest {
 
+    private val function = IsLegallyInstitutionalized()
+
     @Test
-    fun canEvaluate() {
-        val function = IsLegallyInstitutionalized()
+    fun `Should fail always`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

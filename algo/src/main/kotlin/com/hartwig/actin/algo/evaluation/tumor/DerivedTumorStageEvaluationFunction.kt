@@ -62,10 +62,6 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
                 EvaluationResult.WARN -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::warn)
 
                 EvaluationResult.FAIL -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::fail)
-
-                EvaluationResult.NOT_EVALUATED -> DerivedTumorStageEvaluation.create(derived, EvaluationFactory::notEvaluated)
-
-                else -> throw IllegalArgumentException()
             }
         }
     }

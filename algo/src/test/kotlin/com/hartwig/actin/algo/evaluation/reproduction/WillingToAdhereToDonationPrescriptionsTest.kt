@@ -6,10 +6,11 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class WillingToAdhereToDonationPrescriptionsTest {
-    
+
+    private val function = WillingToAdhereToDonationPrescriptions()
+
     @Test
-    fun canEvaluate() {
-        val function = WillingToAdhereToDonationPrescriptions()
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+    fun `Should pass always`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.IcdTitleParameter
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.ManyIcdTitlesParameter
+import com.hartwig.actin.datamodel.trial.ManyStringsParameter
 import com.hartwig.actin.datamodel.trial.NyhaClassParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.medication.MedicationCategories
@@ -175,7 +176,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     IcdConstants.DEPENDENCE_ON_RENAL_DIALYSIS_CODE
                 ), "renal dialysis"
             ),
-            EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),
+            EligibilityRule.HAS_CHILD_PUGH_SCORES_X to hasChildPughScoreCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to
                     hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccessCreator(),
@@ -290,7 +291,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
     }
 
     private fun hasChildPughScoreCreator(): FunctionCreator {
-        return { HasChildPughScore(icdModel()) }
+        return { function: EligibilityFunction ->
+            val requestedScores = function.param<ManyStringsParameter>(0).value
+            HasChildPughScore(icdModel(), requestedScores)
+        }
     }
 
     private fun hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(): FunctionCreator {

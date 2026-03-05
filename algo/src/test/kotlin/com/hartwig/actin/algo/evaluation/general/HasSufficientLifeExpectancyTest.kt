@@ -7,11 +7,12 @@ import org.junit.jupiter.api.Test
 
 class HasSufficientLifeExpectancyTest {
 
+    private val function = HasSufficientLifeExpectancy()
+
     @Test
-    fun canEvaluate() {
-        val function = HasSufficientLifeExpectancy()
+    fun `Should pass always`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
+            EvaluationResult.PASS,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
