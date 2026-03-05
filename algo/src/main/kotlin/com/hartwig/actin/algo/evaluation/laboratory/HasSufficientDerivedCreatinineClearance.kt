@@ -3,13 +3,13 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions
-import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
+import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
-import java.util.Locale
 
 class HasSufficientDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
@@ -55,7 +55,7 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
             weight,
             creatinine
         )
-        val formattedCockcroftGault = String.format(Locale.ENGLISH, "%.1f", cockcroftGault)
+        val formattedCockcroftGault = String.format(ApplicationConfig.LOCALE, "%.1f", cockcroftGault)
 
         val result = evaluateVersusMinValue(cockcroftGault, creatinine.comparator, minCreatinineClearance)
         val unit = LabMeasurement.CREATININE.defaultUnit.display()

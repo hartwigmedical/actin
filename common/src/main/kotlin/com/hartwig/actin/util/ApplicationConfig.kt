@@ -8,7 +8,7 @@ import java.util.Locale
 
 object ApplicationConfig {
 
-    val LOCALE: Locale = Locale.ENGLISH
+    val LOCALE = Locale.ENGLISH
 
     fun nonOptionalDir(cmd: CommandLine, param: String): String {
         val value: String = nonOptionalValue(cmd, param)
