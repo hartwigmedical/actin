@@ -38,7 +38,7 @@ Every criterion algorithm evaluates to one of the following options:
 | FAIL          | The patient does not comply with the inclusion or exclusion criterion.                                                                   |
 | UNDETERMINED  | The data that is required to evaluate the inclusion or exclusion criterion is unavailable.                                               |
 
-#### Recoverable status 
+#### Recoverable status
 
 Each criterion algorithm is configured as 'recoverable' or 'unrecoverable', indicating whether the outcome of the criterion evaluation
 could potentially be recovered. For example, lab values may be insufficient at the moment of evaluation, leading
