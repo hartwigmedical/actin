@@ -19,6 +19,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategorie
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.knownResistant
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.preclinical
 import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidenceCategories.suspectResistant
+import com.hartwig.actin.molecular.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.pdf.util.Formats
 import kotlin.math.min
@@ -56,7 +57,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
             variant.variantCopyNumber?.let { vcn -> variant.totalCopyNumber?.let { cn -> listOf(min(vcn, cn), cn) } } ?: listOf(0.0, 0.0)
         val (variantCopyString, totalCopyString) = variantAndTotalCopies.map(::formatCopyNumberString)
 
-        val subClonalIndicator = if (ClonalityInterpreter.isPotentiallySubclonal(variant)) "*" else ""
+        val subClonalIndicator = if (ClonalityInterpreter.isSubclonal(variant)) "*" else ""
         val name = "${variant.eventDisplay()} ($variantCopyString/$totalCopyString copies)$subClonalIndicator"
 
         return driverEntryForGeneAlteration(driverType, name, variant)

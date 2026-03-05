@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.HomozygousDisruption
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.Virus
+import com.hartwig.actin.molecular.interpretation.ClonalityInterpreter
 
 class MolecularDriversInterpreter(
     private val drivers: Drivers,
@@ -39,7 +40,7 @@ class MolecularDriversInterpreter(
     }
 
     fun hasPotentiallySubClonalVariants(): Boolean {
-        return filteredVariants().any(ClonalityInterpreter::isPotentiallySubclonal)
+        return filteredVariants().any(ClonalityInterpreter::isSubclonal)
     }
 
     fun trialsForDriver(driver: Driver): List<TrialAcronymAndLocations> {

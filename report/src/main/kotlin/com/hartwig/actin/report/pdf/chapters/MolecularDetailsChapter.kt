@@ -80,13 +80,17 @@ class MolecularDetailsChapter(
                 configuration.filterOnSOCExhaustionAndTumorType
             )
 
-        val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
+        val orangeMolecularTest = listOfNotNull(MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord())
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
-        val ihcTestsReportHash = filteredIhcTests.mapNotNull { it.reportHash }
-        val filteredPathologyReports = report.patientRecord.pathologyReports?.filter { it.reportHash in ihcTestsReportHash }
+        val filteredPathologyReports = PathologyReportFunctions.filterPathologyReport(
+            orangeMolecularTest + externalPanelResults,
+            filteredIhcTests,
+            report.patientRecord.pathologyReports
+        )
+
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
-            listOfNotNull(orangeMolecularTest),
+            orangeMolecularTest,
             externalPanelResults,
             filteredIhcTests,
             filteredPathologyReports
