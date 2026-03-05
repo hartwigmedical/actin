@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.orange.DriverEventFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import org.apache.logging.log4j.LogManager
@@ -43,7 +44,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                 (coding || inSpliceRegion)
             })
         }.map { variant ->
-            val event = variant.event()
+            val event = DriverEventFactory.event(variant)
             Variant(
                 chromosome = variant.chromosome(),
                 position = variant.position(),

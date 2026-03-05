@@ -2,6 +2,7 @@ package com.hartwig.actin.molecular.findings
 
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.molecular.orange.DriverEventFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.FindingList
 import com.hartwig.hmftools.finding.datamodel.FindingsStatus
@@ -21,7 +22,7 @@ object ImmunologyExtraction {
                 tumorCopyNumber = allele.tumorCopyNumber(),
                 hasSomaticMutations = allele.hasSomaticVariants(),
                 evidence = ExtractionUtil.noEvidence(),
-                event = allele.event()
+                event = DriverEventFactory.event(allele)
             )
         }.toSet()
     }

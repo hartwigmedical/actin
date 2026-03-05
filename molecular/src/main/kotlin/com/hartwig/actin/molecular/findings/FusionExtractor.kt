@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.driver.Fusion
 import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.filter.GeneFilter
+import com.hartwig.actin.molecular.orange.DriverEventFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.DriverFindingList
 
@@ -19,7 +20,7 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
         }.map { fusion ->
             Fusion(
                 isReportable = fusion.isReported,
-                event = fusion.event(),
+                event = DriverEventFactory.event(fusion),
                 driverLikelihood = MappingUtil.determineDriverLikelihood(fusion),
                 evidence = ExtractionUtil.noEvidence(),
                 geneStart = fusion.geneStart(),
