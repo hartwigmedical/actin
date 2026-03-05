@@ -33,9 +33,7 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
                     evidence = ExtractionUtil.noEvidence(),
                     type = determineDisruptionType(disruption.breakendType()),
                     junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
-                    // TODO: FIX
-//                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, listOf())),
-                    undisruptedCopyNumber = 0.0,
+                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(disruption, breakend)),
                     regionType = determineRegionType(breakend.regionType()),
                     codingContext = determineCodingContext(breakend.codingType()),
                     clusterGroup = lookupClusterId(disruption)
@@ -141,13 +139,13 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-//    private fun correctUndisruptedCopyNumber(breakend: Breakend, drivers: List<LinxDriver>): Double {
-//        return if (breakend.type() == LinxBreakendType.DUP
-//            && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
-//        ) {
-//            (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
-//        } else {
-//            breakend.undisruptedCopyNumber()
-//        }
-//    }
+    private fun correctUndisruptedCopyNumber(disruption: com.hartwig.hmftools.finding.datamodel.Disruption, breakend: Breakend): Double {
+        return if (breakend.type() == Breakend.Type.DUP
+            && disruption.gene == breakend.gene() && disruption.type == com.hartwig.hmftools.finding.datamodel.Disruption.Type.SOMATIC_HOM_DUP_DISRUPTION
+        ) {
+            (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
+        } else {
+            breakend.undisruptedCopyNumber()
+        }
+    }
 }
