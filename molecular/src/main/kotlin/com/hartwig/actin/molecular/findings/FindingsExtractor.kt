@@ -7,8 +7,8 @@ import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.panel.PanelSpecifications
-import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.finding.datamodel.FindingRecord
+import com.hartwig.hmftools.finding.datamodel.PredictedTumorOrigin
 import com.hartwig.hmftools.finding.datamodel.SequencingScope
 import java.time.LocalDate
 
@@ -101,15 +101,10 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
     }
 
     private fun throwIfAnyCuppaPredictionClassifierMissing(record: FindingRecord) {
-//        val cuppaData = orange.cuppa()
-//        if (cuppaData != null) {
-//            for (prediction in cuppaData.predictions()) {
-//                throwIfCuppaPredictionClassifierMissing(prediction)
-//            }
-//        }
+        record.predictedTumorOrigins().findings.forEach { throwIfCuppaPredictionClassifierMissing(it) }
     }
 
-    private fun throwIfCuppaPredictionClassifierMissing(prediction: CuppaPrediction) {
+    private fun throwIfCuppaPredictionClassifierMissing(prediction: PredictedTumorOrigin) {
         val message = "Missing field %s: cuppa not run in expected configuration"
         checkNotNull(prediction.snvPairwiseClassifier()) { String.format(message, "snvPairwiseClassifer") }
         checkNotNull(prediction.genomicPositionClassifier()) { String.format(message, "genomicPositionClassifier") }
@@ -117,6 +112,6 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
     }
 
     private fun throwIfPurpleQCMissing(findings: FindingRecord) {
-        //check(findings.purple().fit().qc().status().isNotEmpty()) { "Cannot interpret purple record with empty QC states" }
+        check(findings.purityPloidyFit().qc().status().isNotEmpty()) { "Cannot interpret purple record with empty QC states" }
     }
 }
