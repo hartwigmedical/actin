@@ -1,9 +1,10 @@
 package com.hartwig.actin.molecular.findings
 
+import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.molecular.filter.GeneFilter
-import com.hartwig.hmftools.datamodel.driver.DriverInterpretation
 import com.hartwig.hmftools.finding.datamodel.Driver
+import com.hartwig.hmftools.finding.datamodel.DriverInterpretation
 
 object MappingUtil {
 
@@ -28,5 +29,17 @@ object MappingUtil {
             )
         }
         return true
+    }
+
+    fun fromRefGenomeVersion(refGenomeVersion: com.hartwig.hmftools.finding.datamodel.RefGenomeVersion): RefGenomeVersion {
+        return when (refGenomeVersion) {
+            com.hartwig.hmftools.finding.datamodel.RefGenomeVersion.V37 -> {
+                RefGenomeVersion.V37
+            }
+
+            com.hartwig.hmftools.finding.datamodel.RefGenomeVersion.V38 -> {
+                RefGenomeVersion.V38
+            }
+        }
     }
 }

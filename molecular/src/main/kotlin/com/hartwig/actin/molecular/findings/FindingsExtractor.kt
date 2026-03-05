@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.findings
 
 import com.hartwig.actin.datamodel.clinical.SequencingTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.MolecularExtractor
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
@@ -10,8 +9,7 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.finding.datamodel.FindingRecord
-import com.hartwig.hmftools.datamodel.orange.ExperimentType
-import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
+import com.hartwig.hmftools.finding.datamodel.SequencingScope
 import java.time.LocalDate
 
 const val ONCO_PANEL = "OncoPanel"
@@ -31,15 +29,15 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
             date = metaProperties.samplingDate(),
             sampleId = metaProperties.sampleId(),
             reportHash = null,
-            experimentType = determineExperimentType(metaProperties.experimentType()),
+            experimentType = determineExperimentType(metaProperties.sequencingScope),
             testTypeDisplay = null,
-            targetSpecification = if (metaProperties.experimentType() == ExperimentType.TARGETED) {
+            targetSpecification = if (metaProperties.sequencingScope() == SequencingScope.TARGETED) {
                 panelSpecifications.panelTargetSpecification(
                     SequencingTest(ONCO_PANEL),
                     TestVersion(LocalDate.of(2024, 12, 9))
                 )
             } else null,
-            refGenomeVersion = determineRefGenomeVersion(metaProperties.refGenomeVersion()),
+            refGenomeVersion = MappingUtil.fromRefGenomeVersion(metaProperties.refGenomeVersion()),
             containsTumorCells = containsTumorCells(record),
             hasSufficientPurity = hasSufficientPurity(record),
             hasSufficientQuality = hasSufficientQuality(record),
@@ -51,18 +49,6 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
         )
-    }
-
-    fun determineRefGenomeVersion(refGenomeVersion: OrangeRefGenomeVersion): RefGenomeVersion {
-        return when (refGenomeVersion) {
-            OrangeRefGenomeVersion.V37 -> {
-                RefGenomeVersion.V37
-            }
-
-            OrangeRefGenomeVersion.V38 -> {
-                RefGenomeVersion.V38
-            }
-        }
     }
 
     fun hasSufficientQuality(record: FindingRecord): Boolean {
@@ -81,17 +67,15 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
         return record.purityPloidyFit().isContaminated
     }
 
-    private fun determineExperimentType(experimentType: ExperimentType?): com.hartwig.actin.datamodel.molecular.ExperimentType {
+    private fun determineExperimentType(experimentType: SequencingScope): com.hartwig.actin.datamodel.molecular.ExperimentType {
         return when (experimentType) {
-            ExperimentType.TARGETED -> {
+            SequencingScope.TARGETED -> {
                 com.hartwig.actin.datamodel.molecular.ExperimentType.HARTWIG_TARGETED
             }
 
-            ExperimentType.WHOLE_GENOME -> {
+            SequencingScope.WHOLE_GENOME -> {
                 com.hartwig.actin.datamodel.molecular.ExperimentType.HARTWIG_WHOLE_GENOME
             }
-
-            null -> throw IllegalStateException("Experiment type is required but was null")
         }
     }
 

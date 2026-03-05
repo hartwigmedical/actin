@@ -9,11 +9,6 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.datamodel.gene.TranscriptCodingType
-import com.hartwig.hmftools.datamodel.gene.TranscriptRegionType
-import com.hartwig.hmftools.datamodel.linx.LinxBreakendType
-import com.hartwig.hmftools.datamodel.linx.LinxDriver
-import com.hartwig.hmftools.datamodel.linx.LinxDriverType
 import com.hartwig.hmftools.finding.datamodel.Breakend
 
 class DisruptionExtractor(private val geneFilter: GeneFilter) {
@@ -38,7 +33,9 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
                     evidence = ExtractionUtil.noEvidence(),
                     type = determineDisruptionType(disruption.breakendType()),
                     junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
-                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, listOf())),
+                    // TODO: FIX
+//                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, listOf())),
+                    undisruptedCopyNumber = 0.0,
                     regionType = determineRegionType(breakend.regionType()),
                     codingContext = determineCodingContext(breakend.codingType()),
                     clusterGroup = lookupClusterId(disruption)
@@ -47,7 +44,7 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
     }
 
     private fun include(disruption: com.hartwig.hmftools.finding.datamodel.Disruption, lostGenes: Set<String>): Boolean {
-        return disruption.breakendType() != LinxBreakendType.DEL || !lostGenes.contains(disruption.gene())
+        return disruption.breakendType() != Breakend.Type.DEL || !lostGenes.contains(disruption.gene())
     }
 
     private fun lookupClusterId(disruption: com.hartwig.hmftools.finding.datamodel.Disruption): Int {
@@ -56,57 +53,57 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
             ?: throw IllegalStateException("Could not find structural variant")
     }
 
-    internal fun determineDisruptionType(type: LinxBreakendType): DisruptionType {
+    internal fun determineDisruptionType(type: Breakend.Type): DisruptionType {
         return when (type) {
-            LinxBreakendType.BND -> {
+            Breakend.Type.BND -> {
                 DisruptionType.BND
             }
 
-            LinxBreakendType.DEL -> {
+            Breakend.Type.DEL -> {
                 DisruptionType.DEL
             }
 
-            LinxBreakendType.DUP -> {
+            Breakend.Type.DUP -> {
                 DisruptionType.DUP
             }
 
-            LinxBreakendType.INF -> {
+            Breakend.Type.INF -> {
                 DisruptionType.INF
             }
 
-            LinxBreakendType.INS -> {
+            Breakend.Type.INS -> {
                 DisruptionType.INS
             }
 
-            LinxBreakendType.INV -> {
+            Breakend.Type.INV -> {
                 DisruptionType.INV
             }
 
-            LinxBreakendType.SGL -> {
+            Breakend.Type.SGL -> {
                 DisruptionType.SGL
             }
         }
     }
 
-    internal fun determineRegionType(regionType: TranscriptRegionType): RegionType {
+    internal fun determineRegionType(regionType: Breakend.TranscriptRegionType): RegionType {
         return when (regionType) {
-            TranscriptRegionType.UPSTREAM -> {
+            Breakend.TranscriptRegionType.UPSTREAM -> {
                 RegionType.UPSTREAM
             }
 
-            TranscriptRegionType.EXONIC -> {
+            Breakend.TranscriptRegionType.EXONIC -> {
                 RegionType.EXONIC
             }
 
-            TranscriptRegionType.INTRONIC -> {
+            Breakend.TranscriptRegionType.INTRONIC -> {
                 RegionType.INTRONIC
             }
 
-            TranscriptRegionType.IG -> {
+            Breakend.TranscriptRegionType.IG -> {
                 RegionType.IG
             }
 
-            TranscriptRegionType.DOWNSTREAM -> {
+            Breakend.TranscriptRegionType.DOWNSTREAM -> {
                 RegionType.DOWNSTREAM
             }
 
@@ -116,25 +113,25 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    internal fun determineCodingContext(codingType: TranscriptCodingType): CodingContext {
+    internal fun determineCodingContext(codingType: Breakend.TranscriptCodingType): CodingContext {
         return when (codingType) {
-            TranscriptCodingType.CODING -> {
+            Breakend.TranscriptCodingType.CODING -> {
                 CodingContext.CODING
             }
 
-            TranscriptCodingType.UTR_5P -> {
+            Breakend.TranscriptCodingType.UTR_5P -> {
                 CodingContext.UTR_5P
             }
 
-            TranscriptCodingType.UTR_3P -> {
+            Breakend.TranscriptCodingType.UTR_3P -> {
                 CodingContext.UTR_3P
             }
 
-            TranscriptCodingType.NON_CODING -> {
+            Breakend.TranscriptCodingType.NON_CODING -> {
                 CodingContext.NON_CODING
             }
 
-            TranscriptCodingType.ENHANCER -> {
+            Breakend.TranscriptCodingType.ENHANCER -> {
                 CodingContext.ENHANCER
             }
 
@@ -144,13 +141,13 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    private fun correctUndisruptedCopyNumber(breakend: Breakend, drivers: List<LinxDriver>): Double {
-        return if (breakend.type() == LinxBreakendType.DUP
-            && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
-        ) {
-            (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
-        } else {
-            breakend.undisruptedCopyNumber()
-        }
-    }
+//    private fun correctUndisruptedCopyNumber(breakend: Breakend, drivers: List<LinxDriver>): Double {
+//        return if (breakend.type() == LinxBreakendType.DUP
+//            && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
+//        ) {
+//            (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
+//        } else {
+//            breakend.undisruptedCopyNumber()
+//        }
+//    }
 }

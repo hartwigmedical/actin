@@ -14,6 +14,7 @@ import com.hartwig.actin.molecular.evidence.EvidenceAnnotatorFactory
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
 import com.hartwig.actin.molecular.findings.FindingsExtractor
+import com.hartwig.actin.molecular.findings.MappingUtil
 import com.hartwig.actin.molecular.orange.MolecularRecordAnnotator
 import com.hartwig.actin.molecular.panel.IhcAnnotator
 import com.hartwig.actin.molecular.panel.IhcExtractor
@@ -30,7 +31,6 @@ import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.molecular.util.MolecularTestPrinter
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import com.hartwig.actin.util.DatamodelPrinter
-import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
 import kotlinx.coroutines.runBlocking
@@ -80,7 +80,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         patientGender: Gender?
     ): List<MolecularTest> {
         return if (inputData.findings != null) {
-            val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.findings.metaProperties.refGenomeVersion())
+            val orangeRefGenomeVersion = MappingUtil.fromRefGenomeVersion(inputData.findings.metaProperties.refGenomeVersion())
             val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, orangeRefGenomeVersion)
 
             LOGGER.info("Interpreting ORANGE record")
@@ -201,18 +201,6 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, refGenomeVersion: RefGenomeVersion): ServeRecord {
         return serveDatabase.records()[ServeLoader.toServeRefGenomeVersion(refGenomeVersion)]
             ?: throw IllegalStateException("No serve record for ref genome version $refGenomeVersion")
-    }
-
-    private fun fromOrangeRefGenomeVersion(orangeRefGenomeVersion: OrangeRefGenomeVersion): RefGenomeVersion {
-        return when (orangeRefGenomeVersion) {
-            OrangeRefGenomeVersion.V37 -> {
-                RefGenomeVersion.V37
-            }
-
-            OrangeRefGenomeVersion.V38 -> {
-                RefGenomeVersion.V38
-            }
-        }
     }
 
     private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefGenomeVersion {

@@ -2,8 +2,6 @@ package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
 import com.hartwig.actin.molecular.evidence.ServeLoader
 import com.hartwig.actin.util.Paths
-import com.hartwig.hmftools.datamodel.OrangeJson
-import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.finding.datamodel.FindingsJson
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.ServeRecord
@@ -68,18 +66,18 @@ class CancerAssociatedVariantComparisonApplication(private val config: CancerAss
         ).joinToString("\t")
     }
 
-    private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, orangeRefGenomeVersion: OrangeRefGenomeVersion): ServeRecord {
-        return serveDatabase.records()[toServeRefGenomeVersion(orangeRefGenomeVersion)]
-            ?: throw IllegalStateException("No serve record for orange ref genome version $orangeRefGenomeVersion")
+    private fun selectForRefGenomeVersion(serveDatabase: ServeDatabase, refGenomeVersion: com.hartwig.hmftools.finding.datamodel.RefGenomeVersion): ServeRecord {
+        return serveDatabase.records()[toServeRefGenomeVersion(refGenomeVersion)]
+            ?: throw IllegalStateException("No serve record for orange ref genome version $refGenomeVersion")
     }
 
-    private fun toServeRefGenomeVersion(orangeRefGenomeVersion: OrangeRefGenomeVersion): ServeRefGenome {
-        return when (orangeRefGenomeVersion) {
-            OrangeRefGenomeVersion.V37 -> {
+    private fun toServeRefGenomeVersion(refGenomeVersion: com.hartwig.hmftools.finding.datamodel.RefGenomeVersion): ServeRefGenome {
+        return when (refGenomeVersion) {
+            com.hartwig.hmftools.finding.datamodel.RefGenomeVersion.V37 -> {
                 ServeRefGenome.V37
             }
 
-            OrangeRefGenomeVersion.V38 -> {
+            com.hartwig.hmftools.finding.datamodel.RefGenomeVersion.V38 -> {
                 ServeRefGenome.V38
             }
         }

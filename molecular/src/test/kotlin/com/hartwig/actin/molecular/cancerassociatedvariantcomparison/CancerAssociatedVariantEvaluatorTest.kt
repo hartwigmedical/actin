@@ -2,9 +2,6 @@ package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.evidence.known.TestServeKnownFactory
-import com.hartwig.actin.molecular.orange.datamodel.TestOrangeFactory.createMinimalTestOrangeRecord
-import com.hartwig.hmftools.datamodel.purple.HotspotType
-import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.finding.datamodel.FindingsStatus
 import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import com.hartwig.hmftools.finding.datamodel.TestFindingFactory
@@ -31,42 +28,38 @@ private val SERVE_RECORD = ImmutableServeRecord.builder()
     .trials(emptyList())
     .build()
 
-private val PURPLE_VARIANT_1 = TestFindingFactory.variantBuilder()
+private val SMALL_VARIANT_1 = TestFindingFactory.variantBuilder()
     .gene("gene1")
     .chromosome("1")
     .position(1)
     .ref("ref1")
     .alt("alt1")
-    .hotspot(HotspotType.HOTSPOT)
+    .hotspot(SmallVariant.HotspotType.HOTSPOT)
     .build()
 
-private val PURPLE_VARIANT_2 = TestFindingFactory.variantBuilder()
+private val SMALL_VARIANT_2 = TestFindingFactory.variantBuilder()
     .gene("gene2")
     .chromosome("2")
     .position(2)
     .ref("ref2")
     .alt("alt2")
-    .hotspot(HotspotType.HOTSPOT)
+    .hotspot(SmallVariant.HotspotType.HOTSPOT)
     .build()
 
-private val PURPLE_VARIANT_3 = TestFindingFactory.variantBuilder()
+private val SMALL_VARIANT_3 = TestFindingFactory.variantBuilder()
     .gene("gene3")
     .chromosome("3")
     .position(3)
     .ref("ref3")
     .alt("alt3")
-    .hotspot(HotspotType.NON_HOTSPOT)
+    .hotspot(SmallVariant.HotspotType.NON_HOTSPOT)
     .build()
-
-private val PURPLE_RECORD = ImmutablePurpleRecord.builder()
-    .from(createMinimalTestOrangeRecord().purple())
-    .addAllSomaticVariants().build()
 
 private val FINDING_RECORD = TestFindingRecordFactory.createMinimalTestFindingRecordBuilder()
     .somaticSmallVariants(
-        TestFindingFactory.buildDriverFindingsList<SmallVariant>(
+        TestFindingFactory.buildDriverFindingsList(
             FindingsStatus.OK,
-            listOf(PURPLE_VARIANT_1, PURPLE_VARIANT_2, PURPLE_VARIANT_3)
+            listOf(SMALL_VARIANT_1, SMALL_VARIANT_2, SMALL_VARIANT_3)
         )
     )
     .build()

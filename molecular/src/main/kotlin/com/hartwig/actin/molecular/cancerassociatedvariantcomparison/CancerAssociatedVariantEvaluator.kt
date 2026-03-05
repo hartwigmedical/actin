@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolverFactory
-import com.hartwig.hmftools.datamodel.purple.HotspotType
 import com.hartwig.hmftools.finding.datamodel.FindingRecord
 import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import com.hartwig.serve.datamodel.ServeRecord
@@ -24,7 +23,7 @@ object CancerAssociatedVariantEvaluator {
                     KnownEventResolverFactory.create(KnownEventResolverFactory.includeKnownEvents(serveRecord.knownEvents(), true))
                 val serveVariantAlteration = knownEventResolver.resolveForVariant(criteria)
                 val isCancerAssociatedVariantServe = serveVariantAlteration.isCancerAssociatedVariant
-                val isCancerAssociatedVariantOrange = variant.hotspot() == HotspotType.HOTSPOT
+                val isCancerAssociatedVariantOrange = variant.hotspot() == SmallVariant.HotspotType.HOTSPOT
                 if (isCancerAssociatedVariantServe || isCancerAssociatedVariantOrange) {
                     AnnotatedCancerAssociatedVariant(
                         gene = variant.gene(),

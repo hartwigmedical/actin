@@ -9,28 +9,29 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.datamodel.purple.HotspotType
-import com.hartwig.hmftools.datamodel.purple.PurpleCodingEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
-import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
 import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import org.apache.logging.log4j.LogManager
 
 private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
 
 private val NONSENSE_OR_FRAMESHIFT_EFFECTS =
-    setOf(PurpleVariantEffect.FRAMESHIFT, PurpleVariantEffect.START_LOST, PurpleVariantEffect.STOP_GAINED, PurpleVariantEffect.STOP_LOST)
-private val SPLICE_EFFECTS = setOf(PurpleVariantEffect.SPLICE_ACCEPTOR, PurpleVariantEffect.SPLICE_DONOR)
+    setOf(
+        SmallVariant.VariantEffect.FRAMESHIFT,
+        SmallVariant.VariantEffect.START_LOST,
+        SmallVariant.VariantEffect.STOP_GAINED,
+        SmallVariant.VariantEffect.STOP_LOST
+    )
+private val SPLICE_EFFECTS = setOf(SmallVariant.VariantEffect.SPLICE_ACCEPTOR, SmallVariant.VariantEffect.SPLICE_DONOR)
 
 class VariantExtractor(private val geneFilter: GeneFilter) {
 
     private val logger = LogManager.getLogger(VariantExtractor::class.java)
 
     private val relevantCodingEffects = setOf(
-        PurpleCodingEffect.MISSENSE,
-        PurpleCodingEffect.SPLICE,
-        PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT,
-        PurpleCodingEffect.SYNONYMOUS
+        SmallVariant.CodingEffect.MISSENSE,
+        SmallVariant.CodingEffect.SPLICE,
+        SmallVariant.CodingEffect.NONSENSE_OR_FRAMESHIFT,
+        SmallVariant.CodingEffect.SYNONYMOUS
     )
 
     fun extract(findings: List<SmallVariant>): List<Variant> {
@@ -59,7 +60,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
                 clonalLikelihood = ExtractionUtil.keep3Digits(1 - variant.subclonalLikelihood()),
                 phaseGroups = variant.localPhaseSets()?.toSet(),
                 exonSkippingIsConfirmed = false,
-                isCancerAssociatedVariant = variant.hotspot() == HotspotType.HOTSPOT,
+                isCancerAssociatedVariant = variant.hotspot() == SmallVariant.HotspotType.HOTSPOT,
                 isReportable = variant.isReported,
                 event = event,
                 driverLikelihood = MappingUtil.determineDriverLikelihood(variant),
@@ -74,11 +75,11 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
 
     fun determineVariantType(variant: SmallVariant): VariantType {
         return when (variant.type()) {
-            PurpleVariantType.MNP -> VariantType.MNV
+            SmallVariant.VariantType.MNP -> VariantType.MNV
 
-            PurpleVariantType.SNP -> VariantType.SNV
+            SmallVariant.VariantType.SNP -> VariantType.SNV
 
-            PurpleVariantType.INDEL -> {
+            SmallVariant.VariantType.INDEL -> {
                 run {
                     if (variant.ref().length > variant.alt().length) {
                         return VariantType.DELETE
@@ -101,7 +102,12 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
     }
 
     private fun extractOtherImpacts(variant: SmallVariant): Set<TranscriptVariantImpact> {
-        return setOf(toTranscriptImpact(variant.otherImpact(), variant.gene()))
+        val otherImpact = variant.otherImpact
+        return if (otherImpact == null) {
+            emptySet()
+        } else {
+            setOf(toTranscriptImpact(otherImpact, variant.gene()))
+        }
     }
 
     fun isEnsemblTranscript(transcriptImpact: SmallVariant.TranscriptImpact): Boolean {
@@ -128,46 +134,46 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
         )
     }
 
-    private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<PurpleVariantEffect>, gene: String): Boolean =
+    private fun shouldAnnotateAsSpliceOverNonsenseOrFrameshift(effects: Set<SmallVariant.VariantEffect>, gene: String): Boolean =
         gene == "MET" && effects.any { it in SPLICE_EFFECTS } && effects.any { it in NONSENSE_OR_FRAMESHIFT_EFFECTS }
 
-    private fun toEffects(effects: Set<PurpleVariantEffect>): Set<VariantEffect> {
-        return effects.map { effect: PurpleVariantEffect -> determineVariantEffect(effect) }.toSet()
+    private fun toEffects(effects: Set<SmallVariant.VariantEffect>): Set<VariantEffect> {
+        return effects.map { effect: SmallVariant.VariantEffect -> determineVariantEffect(effect) }.toSet()
     }
 
-    fun determineVariantEffect(effect: PurpleVariantEffect): VariantEffect {
+    fun determineVariantEffect(effect: SmallVariant.VariantEffect): VariantEffect {
         return when (effect) {
-            PurpleVariantEffect.STOP_GAINED -> VariantEffect.STOP_GAINED
-            PurpleVariantEffect.STOP_LOST -> VariantEffect.STOP_LOST
-            PurpleVariantEffect.START_LOST -> VariantEffect.START_LOST
-            PurpleVariantEffect.FRAMESHIFT -> VariantEffect.FRAMESHIFT
-            PurpleVariantEffect.SPLICE_ACCEPTOR -> VariantEffect.SPLICE_ACCEPTOR
-            PurpleVariantEffect.SPLICE_DONOR -> VariantEffect.SPLICE_DONOR
-            PurpleVariantEffect.INFRAME_INSERTION -> VariantEffect.INFRAME_INSERTION
-            PurpleVariantEffect.INFRAME_DELETION -> VariantEffect.INFRAME_DELETION
-            PurpleVariantEffect.MISSENSE -> VariantEffect.MISSENSE
-            PurpleVariantEffect.PHASED_MISSENSE -> VariantEffect.PHASED_MISSENSE
-            PurpleVariantEffect.PHASED_INFRAME_INSERTION -> VariantEffect.PHASED_INFRAME_INSERTION
-            PurpleVariantEffect.PHASED_INFRAME_DELETION -> VariantEffect.PHASED_INFRAME_DELETION
-            PurpleVariantEffect.SYNONYMOUS -> VariantEffect.SYNONYMOUS
-            PurpleVariantEffect.PHASED_SYNONYMOUS -> VariantEffect.PHASED_SYNONYMOUS
-            PurpleVariantEffect.INTRONIC -> VariantEffect.INTRONIC
-            PurpleVariantEffect.FIVE_PRIME_UTR -> VariantEffect.FIVE_PRIME_UTR
-            PurpleVariantEffect.THREE_PRIME_UTR -> VariantEffect.THREE_PRIME_UTR
-            PurpleVariantEffect.UPSTREAM_GENE -> VariantEffect.UPSTREAM_GENE
-            PurpleVariantEffect.NON_CODING_TRANSCRIPT -> VariantEffect.NON_CODING_TRANSCRIPT
-            PurpleVariantEffect.OTHER -> VariantEffect.OTHER
+            SmallVariant.VariantEffect.STOP_GAINED -> VariantEffect.STOP_GAINED
+            SmallVariant.VariantEffect.STOP_LOST -> VariantEffect.STOP_LOST
+            SmallVariant.VariantEffect.START_LOST -> VariantEffect.START_LOST
+            SmallVariant.VariantEffect.FRAMESHIFT -> VariantEffect.FRAMESHIFT
+            SmallVariant.VariantEffect.SPLICE_ACCEPTOR -> VariantEffect.SPLICE_ACCEPTOR
+            SmallVariant.VariantEffect.SPLICE_DONOR -> VariantEffect.SPLICE_DONOR
+            SmallVariant.VariantEffect.INFRAME_INSERTION -> VariantEffect.INFRAME_INSERTION
+            SmallVariant.VariantEffect.INFRAME_DELETION -> VariantEffect.INFRAME_DELETION
+            SmallVariant.VariantEffect.MISSENSE -> VariantEffect.MISSENSE
+            SmallVariant.VariantEffect.PHASED_MISSENSE -> VariantEffect.PHASED_MISSENSE
+            SmallVariant.VariantEffect.PHASED_INFRAME_INSERTION -> VariantEffect.PHASED_INFRAME_INSERTION
+            SmallVariant.VariantEffect.PHASED_INFRAME_DELETION -> VariantEffect.PHASED_INFRAME_DELETION
+            SmallVariant.VariantEffect.SYNONYMOUS -> VariantEffect.SYNONYMOUS
+            SmallVariant.VariantEffect.PHASED_SYNONYMOUS -> VariantEffect.PHASED_SYNONYMOUS
+            SmallVariant.VariantEffect.INTRONIC -> VariantEffect.INTRONIC
+            SmallVariant.VariantEffect.FIVE_PRIME_UTR -> VariantEffect.FIVE_PRIME_UTR
+            SmallVariant.VariantEffect.THREE_PRIME_UTR -> VariantEffect.THREE_PRIME_UTR
+            SmallVariant.VariantEffect.UPSTREAM_GENE -> VariantEffect.UPSTREAM_GENE
+            SmallVariant.VariantEffect.NON_CODING_TRANSCRIPT -> VariantEffect.NON_CODING_TRANSCRIPT
+            SmallVariant.VariantEffect.OTHER -> VariantEffect.OTHER
         }
     }
 
-    fun determineCodingEffect(codingEffect: PurpleCodingEffect): CodingEffect? {
+    fun determineCodingEffect(codingEffect: SmallVariant.CodingEffect): CodingEffect? {
         return when (codingEffect) {
-            PurpleCodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
-            PurpleCodingEffect.SPLICE -> CodingEffect.SPLICE
-            PurpleCodingEffect.MISSENSE -> CodingEffect.MISSENSE
-            PurpleCodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
-            PurpleCodingEffect.NONE -> CodingEffect.NONE
-            PurpleCodingEffect.UNDEFINED -> null
+            SmallVariant.CodingEffect.NONSENSE_OR_FRAMESHIFT -> CodingEffect.NONSENSE_OR_FRAMESHIFT
+            SmallVariant.CodingEffect.SPLICE -> CodingEffect.SPLICE
+            SmallVariant.CodingEffect.MISSENSE -> CodingEffect.MISSENSE
+            SmallVariant.CodingEffect.SYNONYMOUS -> CodingEffect.SYNONYMOUS
+            SmallVariant.CodingEffect.NONE -> CodingEffect.NONE
+            SmallVariant.CodingEffect.UNDEFINED -> null
         }
     }
 }

@@ -4,10 +4,9 @@ import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.DriverFindingList
-import com.hartwig.hmftools.datamodel.virus.VirusBreakendQCStatus
-import com.hartwig.hmftools.datamodel.virus.VirusInterpretation
+import com.hartwig.hmftools.finding.datamodel.Virus.OncogenicVirus
 
-private val QC_PASS_STATUS = VirusBreakendQCStatus.NO_ABNORMALITIES
+private val QC_PASS_STATUS = com.hartwig.hmftools.finding.datamodel.Virus.VirusBreakendQCStatus.NO_ABNORMALITIES
 
 class VirusExtractor() {
 
@@ -15,7 +14,7 @@ class VirusExtractor() {
         return viruses.findings.map { virus ->
             Virus(
                 name = virus.name(),
-                type = determineType(virus.interpretation()),
+                type = determineType(virus.oncogenicVirus()),
                 isReliable = virus.qcStatus() == QC_PASS_STATUS,
                 integrations = virus.integrations(),
                 isReportable = virus.isReported,
@@ -26,27 +25,27 @@ class VirusExtractor() {
         }.sorted()
     }
 
-    internal fun determineType(interpretation: VirusInterpretation?): VirusType {
-        return if (interpretation == null) {
+    internal fun determineType(oncogenicVirus: OncogenicVirus?): VirusType {
+        return if (oncogenicVirus == null) {
             VirusType.OTHER
-        } else when (interpretation) {
-            VirusInterpretation.MCV -> {
+        } else when (oncogenicVirus) {
+            OncogenicVirus.MCV -> {
                 VirusType.MCV
             }
 
-            VirusInterpretation.EBV -> {
+            OncogenicVirus.EBV -> {
                 VirusType.EBV
             }
 
-            VirusInterpretation.HPV -> {
+            OncogenicVirus.HPV -> {
                 VirusType.HPV
             }
 
-            VirusInterpretation.HBV -> {
+            OncogenicVirus.HBV -> {
                 VirusType.HBV
             }
 
-            VirusInterpretation.HHV8 -> {
+            OncogenicVirus.HHV8 -> {
                 VirusType.HHV8
             }
         }

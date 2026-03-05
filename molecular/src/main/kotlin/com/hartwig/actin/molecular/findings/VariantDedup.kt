@@ -1,6 +1,5 @@
 package com.hartwig.actin.molecular.findings
 
-import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.finding.datamodel.SmallVariant
 import org.apache.logging.log4j.LogManager
 import kotlin.math.abs
@@ -10,7 +9,7 @@ object VariantDedup {
     private const val EPSILON = 1e-10
 
     private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
-    private val PHASED_EFFECTS = setOf(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
+    private val PHASED_EFFECTS = setOf(SmallVariant.VariantEffect.PHASED_INFRAME_DELETION, SmallVariant.VariantEffect.PHASED_INFRAME_INSERTION)
 
     fun apply(variants: Collection<SmallVariant>): Set<SmallVariant> {
         return variants.filter { variant: SmallVariant -> include(variant, variants) }.toSet()
