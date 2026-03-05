@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
-import com.hartwig.hmftools.datamodel.purple.CopyNumberInterpretation
 import com.hartwig.hmftools.finding.datamodel.GainDeletion
 import com.hartwig.hmftools.finding.datamodel.GainDeletion.GeneExtent
 import kotlin.math.roundToInt
