@@ -35,7 +35,7 @@ class MolecularDetailsChapterTest {
     )
 
     @Test
-    fun `DETAILED_INLINE mode shows allele details per row without table headers`() {
+    fun `Should show DETAILED_INLINE mode for inline format in rows without table headers`() {
         val generator = ImmunologyGenerator(
             testWithReliableImmunology(), ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", KEY_WIDTH, VALUE_WIDTH
         )
@@ -44,7 +44,7 @@ class MolecularDetailsChapterTest {
     }
 
     @Test
-    fun `DETAILED_TABLE mode shows tabular format with headers`() {
+    fun `Should show DETAILED_TABLE mode for tabular format with headers`() {
         val generator = ImmunologyGenerator(
             testWithReliableImmunology(), ImmunologyDisplayMode.DETAILED_TABLE, "Immunology", KEY_WIDTH, VALUE_WIDTH
         )
@@ -52,7 +52,7 @@ class MolecularDetailsChapterTest {
     }
 
     @Test
-    fun `ALLELE_ONLY mode shows comma-separated alleles on a single row`() {
+    fun `Should show ALLELE_ONLY mode as comma-separated alleles on a single row`() {
         val generator = ImmunologyGenerator(
             testWithReliableImmunology(), ImmunologyDisplayMode.ALLELE_ONLY, "Immunology", KEY_WIDTH, VALUE_WIDTH
         )
@@ -61,12 +61,12 @@ class MolecularDetailsChapterTest {
     }
 
     @Test
-    fun `Chapter can be created for STANDARD_WITH_PATHOLOGY config`() {
+    fun `Should create chapter for STANDARD_WITH_PATHOLOGY config`() {
         assertThat(createChapter(MolecularChapterType.STANDARD_WITH_PATHOLOGY)).isNotNull()
     }
 
     @Test
-    fun `Chapter can be created for STANDARD config`() {
+    fun `Should create chapter for STANDARD config`() {
         assertThat(createChapter(MolecularChapterType.STANDARD)).isNotNull()
     }
 

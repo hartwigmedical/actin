@@ -27,7 +27,7 @@ class ImmunologyGeneratorTest {
     }
 
     @Test
-    fun `Should force keep together`() {
+    fun `Should force to keep HLA results together on one page`() {
         val generator = createGenerator(displayMode = ImmunologyDisplayMode.DETAILED_TABLE)
         assertThat(generator.forceKeepTogether()).isTrue
     }
