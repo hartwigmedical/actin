@@ -2,7 +2,6 @@ package com.hartwig.actin.molecular.findings
 
 import com.hartwig.actin.datamodel.molecular.driver.Virus
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
-import com.hartwig.actin.molecular.orange.DriverEventFactory
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.DriverFindingList
 import com.hartwig.hmftools.finding.datamodel.Virus.OncogenicVirus

@@ -1,4 +1,4 @@
-package com.hartwig.actin.molecular.orange
+package com.hartwig.actin.molecular.findings
 
 import com.hartwig.actin.molecular.util.FormatFunctions
 import com.hartwig.hmftools.finding.datamodel.Disruption
