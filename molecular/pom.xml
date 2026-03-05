@@ -22,10 +22,6 @@
             <artifactId>finding-datamodel</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>orange-datamodel</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.hartwig.actin</groupId>
             <artifactId>actin-transvar</artifactId>
         </dependency>

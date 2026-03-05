@@ -28,7 +28,6 @@
 
         <actin-datamodel.version>2.5.0</actin-datamodel.version>
         <serve.version>8.6.0</serve.version>
-        <orange-datamodel.version>3.0.0-findings</orange-datamodel.version>
         <finding.version>1.0</finding.version>
         <finding-datamodel.version>1.0</finding-datamodel.version>
         <actin-transvar.version>1.2.0</actin-transvar.version>
@@ -201,11 +200,6 @@
                 <groupId>com.hartwig</groupId>
                 <artifactId>finding</artifactId>
                 <version>${finding.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>orange-datamodel</artifactId>
-                <version>${orange-datamodel.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
