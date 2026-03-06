@@ -324,7 +324,7 @@ class ImmunologyGeneratorTest {
     }
 
     @Test
-    fun `addContentsTo should add detailed inline content when mode is DETAILED_INLINE`() {
+    fun `Should add detailed inline content when mode is DETAILED_INLINE`() {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = false)
         val generator = createGenerator(ImmunologyDisplayMode.DETAILED_INLINE, hlaAlleles = listOf(hlaAllele))
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
@@ -335,7 +335,7 @@ class ImmunologyGeneratorTest {
     }
 
     @Test
-    fun `addContentsTo should add allele-only content when mode is ALLELE_ONLY`() {
+    fun `Should add allele-only content when mode is ALLELE_ONLY`() {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = false)
         val generator = createGenerator(ImmunologyDisplayMode.ALLELE_ONLY, hlaAlleles = listOf(hlaAllele))
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
@@ -348,7 +348,7 @@ class ImmunologyGeneratorTest {
     // Companion function tests
 
     @Test
-    fun `relevantAlleles should return only HLA-A alleles sorted by allele group and protein`() {
+    fun `Should return only HLA-A alleles sorted by allele group and protein`() {
         val hlaA1 = createHlaAllele("HLA-A", "02", "01")
         val hlaA2 = createHlaAllele("HLA-A", "01", "02")
         val hlaA3 = createHlaAllele("HLA-A", "01", "01")
@@ -362,42 +362,42 @@ class ImmunologyGeneratorTest {
     }
 
     @Test
-    fun `relevantAlleles should return empty list when no HLA-A alleles present`() {
+    fun `Should return empty list when no HLA-A alleles present`() {
         val immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(createHlaAllele("HLA-B", "07", "02")))
 
         assertThat(ImmunologyGenerator.relevantAlleles(immunology)).isEmpty()
     }
 
     @Test
-    fun `alleleCompactString should format as gene asterisk alleleGroup colon hlaProtein`() {
+    fun `Should format as gene asterisk alleleGroup colon hlaProtein`() {
         val allele = createHlaAllele("HLA-A", "01", "01")
 
         assertThat(ImmunologyGenerator.alleleCompactString(allele)).isEqualTo("HLA-A*01:01")
     }
 
     @Test
-    fun `alleleDetailedString should include copy number and mutation when both present`() {
+    fun `Should include copy number and mutation when both present`() {
         val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = true)
 
         assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01, tumor copy nr: 2, mutated: Yes")
     }
 
     @Test
-    fun `alleleDetailedString should omit copy number when null`() {
+    fun `Should omit copy number when null through alleleDetailedString`() {
         val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = null, hasSomaticMutations = false)
 
         assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01, mutated: No")
     }
 
     @Test
-    fun `alleleDetailedString should omit mutation when null`() {
+    fun `Should should omit mutation when null`() {
         val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 1.0, hasSomaticMutations = null)
 
         assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01, tumor copy nr: 1")
     }
 
     @Test
-    fun `alleleDetailedString should return only allele name when both copy number and mutation are null`() {
+    fun `Should return only allele name when both copy number and mutation are null`() {
         val allele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = null, hasSomaticMutations = null)
 
         assertThat(ImmunologyGenerator.alleleDetailedString(allele)).isEqualTo("HLA-A*01:01")
