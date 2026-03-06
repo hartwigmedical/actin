@@ -38,20 +38,30 @@ class HasWHOStatusTest {
     }
 
     @Test
-    fun `Should return undetermined when WHO is an at least range`() {
+    fun `Should be undetermined when WHO is an at least range below requested WHO`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(GeneralTestFactory.withWHO(1, WhoStatusPrecision.AT_LEAST))
         )
+    }
+
+    @Test
+    fun `Should fail when WHO is an at least range above requested WHO`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.FAIL,
             function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_LEAST))
         )
     }
 
     @Test
-    fun `Should return undetermined when WHO is at most`() {
-        val evaluationFor3 = function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_MOST))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationFor3)
+    fun `Should be undetermined when WHO is at most range above requested WHO`() {
+        val evaluation = function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_MOST))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+    }
+
+    @Test
+    fun `Should fail when WHO is at most range below requested WHO`() {
+        val evaluation = function.evaluate(GeneralTestFactory.withWHO(1, WhoStatusPrecision.AT_MOST))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
     }
 }
