@@ -16,7 +16,7 @@ class ServeVerifierTest {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = SINGLE_PROFILE_1)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
 
-        val database = createServeDatabase(evidence, trial)
+        val database = createServeDatabase(evidence, listOf(trial))
         assertThatCode { ServeVerifier.verifyServeDatabase(database, false) }.doesNotThrowAnyException()
     }
 
@@ -25,7 +25,7 @@ class ServeVerifierTest {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = SINGLE_PROFILE_1)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, COMBINED_PROFILE))
 
-        val database = createServeDatabase(evidence, trial)
+        val database = createServeDatabase(evidence, listOf(trial))
 
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
@@ -35,7 +35,7 @@ class ServeVerifierTest {
         val evidence = TestServeEvidenceFactory.create(molecularCriterium = COMBINED_PROFILE)
         val trial = TestServeTrialFactory.create(anyMolecularCriteria = setOf(SINGLE_PROFILE_1, SINGLE_PROFILE_2))
 
-        val database = createServeDatabase(evidence, trial)
+        val database = createServeDatabase(evidence, listOf(trial))
 
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, true) }
     }
@@ -51,7 +51,7 @@ class ServeVerifierTest {
             )
         )
 
-        val database = createServeDatabase(evidence, TestServeTrialFactory.create())
+        val database = createServeDatabase(evidence, listOf(TestServeTrialFactory.create()))
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 
@@ -69,7 +69,7 @@ class ServeVerifierTest {
             )
         )
 
-        val database = createServeDatabase(TestServeEvidenceFactory.create(), trial)
+        val database = createServeDatabase(TestServeEvidenceFactory.create(), listOf(trial))
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 
@@ -80,7 +80,7 @@ class ServeVerifierTest {
                 setOf(TestServeMolecularFactory.createHotspotCriterium(variants = emptySet()))
         )
 
-        val database = createServeDatabase(TestServeEvidenceFactory.create(), trial)
+        val database = createServeDatabase(TestServeEvidenceFactory.create(), listOf(trial))
         assertThatIllegalStateException().isThrownBy { ServeVerifier.verifyServeDatabase(database, false) }
     }
 }
