@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.report.pdf.assertHeader
 import com.hartwig.actin.report.pdf.getCellContents
 import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
+import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -320,6 +321,28 @@ class ImmunologyGeneratorTest {
         assertThat(table.numberOfRows).isEqualTo(1)
         assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("HLA-A")
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, HLA-A*02:01")
+    }
+
+    @Test
+    fun `addContentsTo should add detailed inline content when mode is DETAILED_INLINE`() {
+        val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = false)
+        val generator = createGenerator(ImmunologyDisplayMode.DETAILED_INLINE, hlaAlleles = listOf(hlaAllele))
+        val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
+        generator.addContentsTo(table)
+
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("HLA-A")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01, tumor copy nr: 2, mutated: No")
+    }
+
+    @Test
+    fun `addContentsTo should add allele-only content when mode is ALLELE_ONLY`() {
+        val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 2.0, hasSomaticMutations = false)
+        val generator = createGenerator(ImmunologyDisplayMode.ALLELE_ONLY, hlaAlleles = listOf(hlaAllele))
+        val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
+        generator.addContentsTo(table)
+
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("HLA-A")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("HLA-A*01:01")
     }
 
     // Companion function tests

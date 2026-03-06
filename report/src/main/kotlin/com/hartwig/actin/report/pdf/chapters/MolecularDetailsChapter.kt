@@ -129,30 +129,29 @@ class MolecularDetailsChapter(
         val orangeGenerators = orangeMolecularRecord.map {
             OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport)
         }
-        val wgsSummaryGenerators = externalPanelResults.map {
+        val wgsSummaryGenerators = externalPanelResults.map { molecularTest ->
+            val panelImmunologyGenerator = if (molecularTest.immunology != null)
+                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", keyWidth, valueWidth - 10)
+            else null
             WgsSummaryGenerator(
                 SummaryType.DETAILS,
                 report.patientRecord,
-                it,
+                molecularTest,
                 pathologyReport,
                 cohorts,
                 keyWidth,
-                valueWidth
+                valueWidth,
+                panelImmunologyGenerator
             )
         }
         val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth - 10)
-        val panelImmunologyGenerators = externalPanelResults.mapNotNull { molecularTest ->
-            if (molecularTest.immunology != null)
-                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", keyWidth, valueWidth - 10)
-            else null
-        }
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
         } else null
 
         TableGeneratorFunctions.addGenerators(
-            orangeGenerators + immunologyGenerators + wgsSummaryGenerators + panelImmunologyGenerators + listOfNotNull(ihcGenerator),
+            orangeGenerators + immunologyGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
             reportTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
