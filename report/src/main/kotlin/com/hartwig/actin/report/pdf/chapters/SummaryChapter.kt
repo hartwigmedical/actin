@@ -13,8 +13,6 @@ import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
-import com.hartwig.actin.report.pdf.tables.soc.EligibleStandardOfCareGenerator
-import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
 import com.hartwig.actin.report.pdf.tables.trial.LocalTrialsType
 import com.hartwig.actin.report.pdf.tables.trial.TrialTableGenerator
@@ -133,12 +131,6 @@ class SummaryChapter(
             configuration.molecularSummaryType != ReportContentType.NONE
         }
 
-        val standardOfCareTableGenerator = when (configuration.standardOfCareSummaryType) {
-            ReportContentType.NONE -> null
-            ReportContentType.BRIEF -> ProxyStandardOfCareGenerator(report).takeIf { it.showTable() }
-            ReportContentType.COMPREHENSIVE -> EligibleStandardOfCareGenerator(report)
-        }
-
         val trialTableGenerators = createTrialTableGenerators(
             cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
             externalTrials = trialsProvider.externalTrials(),
@@ -147,8 +139,7 @@ class SummaryChapter(
 
         return listOfNotNull(
             clinicalSummaryGenerator,
-            molecularSummaryGenerator,
-            standardOfCareTableGenerator
+            molecularSummaryGenerator
         ) + trialTableGenerators
     }
 
