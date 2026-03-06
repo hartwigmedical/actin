@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsLegallyInstitutionalized : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated("Assumed that patient is not legally institutionalized")
+        return EvaluationFactory.fail("Assumed that patient is not legally institutionalized")
     }
 }

@@ -232,7 +232,7 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 references = setOf("I-02"),
                 function = EligibilityFunction(rule = EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT.name),
-            ) to unrecoverable(EvaluationResult.NOT_EVALUATED, "Assumed that patient can give adequate informed consent")
+            ) to unrecoverable(EvaluationResult.PASS, "Assumed that patient can give adequate informed consent")
         )
     }
 
@@ -298,27 +298,13 @@ object TestTreatmentMatchFactory {
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
         return when (result) {
-            EvaluationResult.PASS -> {
-                base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.PASS -> base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
 
-            EvaluationResult.NOT_EVALUATED -> {
-                base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.WARN -> base.copy(warnMessages = setOfNotNull(message?.let { StaticMessage(it) }))
 
-            EvaluationResult.WARN -> {
-                base.copy(warnMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.UNDETERMINED -> base.copy(undeterminedMessages = setOfNotNull(message?.let { StaticMessage(it) }))
 
-            EvaluationResult.UNDETERMINED -> {
-                base.copy(
-                    undeterminedMessages = setOfNotNull(message?.let { StaticMessage(it) })
-                )
-            }
-
-            EvaluationResult.FAIL -> {
-                base.copy(failMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.FAIL -> base.copy(failMessages = setOfNotNull(message?.let { StaticMessage(it) }))
         }
     }
 }

@@ -18,7 +18,6 @@ class NotTest {
         assertEvaluation(EvaluationResult.PASS, Not(TestEvaluationFunctionFactory.fail()).evaluate(TEST_PATIENT))
         assertEvaluation(EvaluationResult.WARN, Not(TestEvaluationFunctionFactory.warn()).evaluate(TEST_PATIENT))
         assertEvaluation(EvaluationResult.UNDETERMINED, Not(TestEvaluationFunctionFactory.undetermined()).evaluate(TEST_PATIENT))
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, Not(TestEvaluationFunctionFactory.notEvaluated()).evaluate(TEST_PATIENT))
     }
 
     @Test
@@ -55,15 +54,6 @@ class NotTest {
         val result: Evaluation = Not(warnFunction).evaluate(TEST_PATIENT)
         assertMessagesAreRetained(warn, result)
         assertEventsAreFlipped(warn, result)
-    }
-
-    @Test
-    fun `Should flip messages and molecular events for not evaluated evaluation`() {
-        val notEvaluatedEvaluation = CompositeTestFactory.create(EvaluationResult.NOT_EVALUATED, includeMolecular = true)
-        val notEvaluated = notEvaluatedEvaluation.evaluate(TEST_PATIENT)
-        val result: Evaluation = Not(notEvaluatedEvaluation).evaluate(TEST_PATIENT)
-        assertMessagesAreFlipped(notEvaluated, result)
-        assertEventsAreFlipped(notEvaluated, result)
     }
 
     @Test

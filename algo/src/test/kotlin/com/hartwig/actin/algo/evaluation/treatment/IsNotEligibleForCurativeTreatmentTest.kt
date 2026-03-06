@@ -7,12 +7,10 @@ import org.junit.jupiter.api.Test
 
 class IsNotEligibleForCurativeTreatmentTest {
 
+    private val function = IsNotEligibleForCurativeTreatment()
+
     @Test
-    fun shouldAlwaysReturnNotEvaluated() {
-        val function = IsNotEligibleForCurativeTreatment()
-        assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
-            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        )
+    fun `Should pass always`() {
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

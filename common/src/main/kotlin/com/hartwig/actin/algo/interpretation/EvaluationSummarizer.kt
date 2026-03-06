@@ -20,9 +20,6 @@ object EvaluationSummarizer {
                 EvaluationResult.UNDETERMINED -> {
                     EvaluationSummary(count = 1, undeterminedCount = 1)
                 }
-                EvaluationResult.NOT_EVALUATED -> {
-                    EvaluationSummary(count = 1, notEvaluatedCount = 1)
-                }
             }
         }.fold(EvaluationSummary(), EvaluationSummary::plus)
     }
