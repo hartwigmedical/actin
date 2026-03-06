@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 class HasInTransitMetastasesTest {
 
-    val function = HasInTransitMetastases()
+    private val function = HasInTransitMetastases()
 
     @Test
     fun `Should be undetermined always`() {
