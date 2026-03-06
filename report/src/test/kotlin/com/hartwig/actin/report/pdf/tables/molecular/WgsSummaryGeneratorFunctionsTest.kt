@@ -10,15 +10,18 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
+import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
+import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
+import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class WgsSummaryGeneratorFunctionsTest {
 
@@ -125,5 +128,84 @@ class WgsSummaryGeneratorFunctionsTest {
                 )
             )
         ).isEqualTo("The date of this test (2023-09-19) is older than the date of the oldest version of the test for which we could derive which genes were tested (2024-09-19). This version is still used to determine which genes were tested. This determination is potentially not correct.")
+    }
+
+    @Test
+    fun `Should not include HLA-A row in panel summary table when no immunology generator is provided`() {
+        val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
+            SummaryType.DETAILS,
+            TestPatientFactory.createProperTestPatientRecord(),
+            TestMolecularFactory.createMinimalPanelTest(),
+            wgsMolecular = null,
+            100f,
+            200f,
+            MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(
+                TestMolecularFactory.createMinimalPanelTest().drivers, emptyList()
+            )
+        )
+
+        val hasHlaRow = (0 until table.numberOfRows).any { row ->
+            CellTestUtil.extractTextFromCell(table.getCell(row, 0)) == "HLA-A"
+        }
+        assertThat(hasHlaRow).isFalse()
+    }
+
+    @Test
+    fun `Should show no HLA-A alleles detected inline when alleles list is empty`() {
+        val panelMolecular = TestMolecularFactory.createMinimalPanelTest().copy(
+            immunology = MolecularImmunology(isReliable = true, hlaAlleles = emptySet())
+        )
+        val immunologyGenerator = ImmunologyGenerator(panelMolecular, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", 100f, 200f)
+
+        val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
+            SummaryType.DETAILS,
+            TestPatientFactory.createProperTestPatientRecord(),
+            panelMolecular,
+            wgsMolecular = null,
+            100f,
+            200f,
+            MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(panelMolecular.drivers, emptyList()),
+            immunologyGenerator
+        )
+
+        val hlaRowIndex = (0 until table.numberOfRows).first { row ->
+            CellTestUtil.extractTextFromCell(table.getCell(row, 0)) == "HLA-A"
+        }
+        assertThat(CellTestUtil.extractTextFromCell(table.getCell(hlaRowIndex, 1)))
+            .isEqualTo("No HLA-A alleles detected")
+    }
+
+    @Test
+    fun `Should include HLA-A content inline in panel summary table when immunology generator is provided`() {
+        val allele = HlaAllele(
+            gene = "HLA-A",
+            alleleGroup = "01",
+            hlaProtein = "01",
+            tumorCopyNumber = 2.0,
+            hasSomaticMutations = false,
+            evidence = ClinicalEvidence(treatmentEvidence = emptySet(), eligibleTrials = emptySet()),
+            event = "HLA-A*01:01"
+        )
+        val panelMolecular = TestMolecularFactory.createMinimalPanelTest().copy(
+            immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(allele))
+        )
+        val immunologyGenerator = ImmunologyGenerator(panelMolecular, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", 100f, 200f)
+
+        val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
+            SummaryType.DETAILS,
+            TestPatientFactory.createProperTestPatientRecord(),
+            panelMolecular,
+            wgsMolecular = null,
+            100f,
+            200f,
+            MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(panelMolecular.drivers, emptyList()),
+            immunologyGenerator
+        )
+
+        val hlaRowIndex = (0 until table.numberOfRows).first { row ->
+            CellTestUtil.extractTextFromCell(table.getCell(row, 0)) == "HLA-A"
+        }
+        assertThat(CellTestUtil.extractTextFromCell(table.getCell(hlaRowIndex, 1)))
+            .isEqualTo("HLA-A*01:01, tumor copy nr: 2, mutated: No")
     }
 }

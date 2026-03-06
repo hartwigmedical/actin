@@ -53,7 +53,10 @@ class ImmunologyGenerator(
     }
 
     fun addContentsTo(table: Table) {
-        addAlleleOnlyContent(table)
+        when (displayMode) {
+            ImmunologyDisplayMode.DETAILED_INLINE -> addHlaAllelesDetailedInline(table)
+            else -> addAlleleOnlyContent(table)
+        }
     }
 
     private fun createAlleleOnlyTable(): Table {
@@ -141,7 +144,7 @@ class ImmunologyGenerator(
         fun relevantAlleles(immunology: MolecularImmunology): List<HlaAllele> =
             immunology.hlaAlleles
                 .filter { it.gene == "HLA-A" }
-                .sortedBy { "${it.alleleGroup}:${it.hlaProtein}" }
+                .sortedWith(compareBy({ it.alleleGroup }, { it.hlaProtein }))
 
         fun alleleCompactString(allele: HlaAllele): String =
             "${allele.gene}*${allele.alleleGroup}:${allele.hlaProtein}"
