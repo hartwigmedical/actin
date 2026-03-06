@@ -18,7 +18,8 @@ import org.junit.jupiter.api.Test
 
 class HasKnownSclcTransformationTest {
 
-    private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
+    private val doidModel =
+        TestDoidModelFactory.createWithOneParentChild(DoidConstants.LUNG_CANCER_DOID, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
     private val function = HasKnownSclcTransformation(doidModel)
 
     @Test
@@ -114,5 +115,24 @@ class HasKnownSclcTransformationTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if SCLC transformation may have occurred (RB1 and TP53 inactivation detected)")
+    }
+
+    @Test
+    fun `Should fail if tumor has only partial small cell molecular profile with right message`() {
+        val deletionRB1 = TestCopyNumberFactory.createMinimal().copy(
+            gene = "RB1",
+            isReportable = true,
+            geneRole = GeneRole.TSG,
+            proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
+            canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
+        )
+        val base = TestPatientFactory.createMinimalTestWGSPatientRecord()
+        val record = base.copy(
+            tumor = base.tumor.copy(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            molecularTests = MolecularTestFactory.withDrivers(deletionRB1).molecularTests
+        )
+        val evaluation = function.evaluate(record)
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly("No indication of SCLC transformation in molecular or tumor type data")
     }
 }

@@ -28,7 +28,7 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationF
             listOf("SCLC transformation", "small cell transformation").map { IhcTestEvaluation.create(it, record.ihcTests) }
 
         val indicativeGenes = setOf("TP53", "RB1")
-        val inactivatedGenes = indicativeGenes.filter { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record) }
+        val allIndicativeGenesInactivated = indicativeGenes.all { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record) }
 
         return when {
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
@@ -43,8 +43,8 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationF
                 EvaluationFactory.undetermined("Has NSCLC with small cell component - undetermined if this is considered SCLC transformation")
             }
 
-            isNsclc && inactivatedGenes.size == indicativeGenes.size -> {
-                EvaluationFactory.undetermined("Undetermined if SCLC transformation may have occurred (${Format.concat(inactivatedGenes)} inactivation detected)")
+            isNsclc && allIndicativeGenesInactivated -> {
+                EvaluationFactory.undetermined("Undetermined if SCLC transformation may have occurred (${Format.concat(indicativeGenes)} inactivation detected)")
             }
 
             isOfUncertainLungCancerType -> {
