@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -8,6 +9,9 @@ import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
+import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -306,6 +310,31 @@ internal object TumorTestFactory {
         return base.copy(
             tumor = base.tumor.copy(doids = doids),
             ihcTests = ihcTests
+        )
+    }
+
+    fun withCupAndCuppaPrediction(cancerType: String, likelihood: Double): PatientRecord {
+        val cupName = "Cancer (CUP)"
+        return base.copy(
+            tumor = TumorDetails(doids = setOf(DoidConstants.CANCER_DOID), name = cupName),
+            molecularTests = listOf(
+                baseMolecular.copy(
+                    characteristics = baseMolecular.characteristics.copy(
+                        predictedTumorOrigin = PredictedTumorOrigin(
+                            predictions = listOf(
+                                CupPrediction(
+                                    cancerType = cancerType,
+                                    likelihood = likelihood,
+                                    snvPairwiseClassifier = 0.0,
+                                    genomicPositionClassifier = 0.0,
+                                    featureClassifier = 0.0,
+                                    cuppaMode = CuppaMode.WGS
+                                )
+                            )
+                        )
+                    )
+                )
+            )
         )
     }
 }
