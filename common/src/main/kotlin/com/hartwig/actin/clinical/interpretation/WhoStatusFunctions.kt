@@ -31,8 +31,7 @@ fun WhoStatus.isEqualTo(requestedWho: Int): EvaluationResult {
 fun WhoStatus.isAtMost(requestedWho: Int): EvaluationResult {
     return when {
         precision in setOf(WhoStatusPrecision.EXACT, WhoStatusPrecision.AT_MOST) && status <= requestedWho -> EvaluationResult.PASS
-        precision == WhoStatusPrecision.AT_LEAST && status > requestedWho -> EvaluationResult.FAIL
-        precision == WhoStatusPrecision.EXACT -> EvaluationResult.FAIL
+        precision == WhoStatusPrecision.EXACT || (precision == WhoStatusPrecision.AT_LEAST && status > requestedWho) -> EvaluationResult.FAIL
         precision in setOf(WhoStatusPrecision.AT_MOST, WhoStatusPrecision.AT_LEAST) -> EvaluationResult.UNDETERMINED
         else -> throw IllegalStateException("Illegal evaluation of isAtMost")
     }
@@ -41,8 +40,7 @@ fun WhoStatus.isAtMost(requestedWho: Int): EvaluationResult {
 fun WhoStatus.isAtLeast(requestedWho: Int): EvaluationResult {
     return when {
         precision in setOf(WhoStatusPrecision.EXACT, WhoStatusPrecision.AT_LEAST) && status >= requestedWho -> EvaluationResult.PASS
-        precision == WhoStatusPrecision.AT_MOST && status < requestedWho -> EvaluationResult.FAIL
-        precision == WhoStatusPrecision.EXACT -> EvaluationResult.FAIL
+        precision == WhoStatusPrecision.EXACT || (precision == WhoStatusPrecision.AT_MOST && status < requestedWho) -> EvaluationResult.FAIL
         precision in setOf(WhoStatusPrecision.AT_MOST, WhoStatusPrecision.AT_LEAST) -> EvaluationResult.UNDETERMINED
         else -> throw IllegalStateException("Illegal evaluation of isAtLeast")
     }
