@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasInTransitMetastases: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has in transit metastases")
+        return EvaluationFactory.undetermined("Undetermined if patient has in-transit metastases")
     }
 }
