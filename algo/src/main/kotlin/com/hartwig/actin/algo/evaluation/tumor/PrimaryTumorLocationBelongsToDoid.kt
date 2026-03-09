@@ -8,9 +8,9 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
 
 
 class PrimaryTumorLocationBelongsToDoid(
@@ -67,11 +67,9 @@ class PrimaryTumorLocationBelongsToDoid(
         if (!TumorEvaluationFunctions.hasCancerOfUnknownPrimary(record.tumor.name) || specificQuery != null) {
             return null
         }
-
-        return MolecularHistory(record.molecularTests).latestOrangeMolecularRecord()
-            ?.takeIf { it.hasSufficientQuality }
-            ?.characteristics?.predictedTumorOrigin
-            ?.takeIf { it.likelihood() >= CUPPA_CONFIDENCE_THRESHOLD }
+        return TumorOriginInterpreter.create(record.molecularTests)
+            .takeIf { it.hasConfidentPrediction() }
+            ?.predictedTumorOrigin
             ?.let { predictedTumorOrigin ->
                 val cancerType = predictedTumorOrigin.cancerType()
                 val cuppaDoids = cuppaToDoidMapping.doidsForCuppaType(cancerType)
@@ -87,10 +85,6 @@ class PrimaryTumorLocationBelongsToDoid(
                         EvaluationFactory.warn("Tumor type unknown, but CUPPA predicts $cancerType ($likelihoodPct%)")
                     }
             }
-    }
-
-    companion object {
-        private const val CUPPA_CONFIDENCE_THRESHOLD = 0.8
     }
 
     private fun isPotentialAdenoSquamousMatch(tumorDoids: Set<String>, doidsToMatch: Set<String>): Set<String> {

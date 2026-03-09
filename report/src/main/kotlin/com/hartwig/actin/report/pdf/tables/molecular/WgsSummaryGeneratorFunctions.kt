@@ -11,7 +11,8 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
+import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
+import com.hartwig.actin.report.interpretation.generateSummaryString
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
