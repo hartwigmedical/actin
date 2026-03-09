@@ -55,6 +55,9 @@ object TestDoidModelFactory {
         doidPerLowerCaseTermMap: Map<String, String> = emptyMap(),
         config: DoidManualConfig = createMinimalTestDoidManualConfig()
     ): DoidModel {
-        return DoidModel(childToParentsMap, termPerDoidMap, doidPerLowerCaseTermMap, config)
+        val parentToChildrenMap = childToParentsMap.entries
+            .flatMap { (child, parents) -> parents.map { parent -> parent to child } }
+            .groupBy({ it.first }, { it.second })
+        return DoidModel(childToParentsMap, parentToChildrenMap, termPerDoidMap, doidPerLowerCaseTermMap, config)
     }
 }

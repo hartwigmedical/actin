@@ -18,11 +18,11 @@ object DoidEvaluationFunctions {
     }
 
     fun isOfAtLeastOneDoidType(doidModel: DoidModel, tumorDoids: Set<String>?, doidsToMatch: Set<String>): Boolean {
-        return setsIntersect(createFullExpandedDoidTree(doidModel, tumorDoids), doidsToMatch)
+        return setsIntersect(createFullExpandedParentsDoidTree(doidModel, tumorDoids), doidsToMatch)
     }
 
     fun isOfAtLeastOneDoidTerm(doidModel: DoidModel, tumorDoids: Set<String>?, doidTermsToMatch: Set<String>): Boolean {
-        return createFullExpandedDoidTree(doidModel, tumorDoids).any { doid ->
+        return createFullExpandedParentsDoidTree(doidModel, tumorDoids).any { doid ->
             val term = doidModel.resolveTermForDoid(doid)
             if (term == null) {
                 LOGGER.warn("Could not resolve term for doid '{}'", doid)
@@ -73,8 +73,12 @@ object DoidEvaluationFunctions {
         return tumorDoids != null && validDoidCombinations.any(tumorDoids::containsAll)
     }
 
-    fun createFullExpandedDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {
+    fun createFullExpandedParentsDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?): Set<String> {
         return doidsToExpand?.flatMap(doidModel::doidWithParents)?.toSet() ?: emptySet()
+    }
+
+    fun createFullExpandedChildrenDoidTree(doidModel: DoidModel, doidsToExpand: Set<String>?, doidsToExclude: Set<String> = emptySet()): Set<String> {
+        return doidsToExpand?.flatMap { doid -> doidModel.doidWithChildren(doid, doidsToExclude) }?.toSet() ?: emptySet()
     }
 
     private fun <T> setsIntersect(setA: Set<T>, setB: Set<T>): Boolean {
