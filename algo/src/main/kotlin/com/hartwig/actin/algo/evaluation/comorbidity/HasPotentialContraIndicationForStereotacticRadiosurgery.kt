@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasPotentialContraIndicationForStereotacticRadiosurgery : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.fail("Assumed no contra-indications for stereotactic radiosurgery")
+        return EvaluationFactory.fail("Assumed patient has no contra-indications for stereotactic radiosurgery")
     }
 }

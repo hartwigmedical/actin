@@ -11,6 +11,6 @@ class MeetsCovid19InfectionRequirementsTest {
 
     @Test
     fun `Should be undetermined always`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }

@@ -21,25 +21,25 @@ class WhoStatusFunctionsTest {
 
     @Test
     fun `Should convert WHO status to text`() {
-        assertThat(whoStatus(1, WhoStatusPrecision.EXACT).asText()).isEqualTo("1")
-        assertThat(whoStatus(1, WhoStatusPrecision.AT_LEAST).asText()).isEqualTo(">=1")
-        assertThat(whoStatus(1, WhoStatusPrecision.AT_MOST).asText()).isEqualTo("<=1")
+        assertThat(whoExact1.asText()).isEqualTo("1")
+        assertThat(whoAtLeast1.asText()).isEqualTo(">=1")
+        assertThat(whoAtMost1.asText()).isEqualTo("<=1")
     }
 
     @Test
     fun `Should convert WHO status to range`() {
-        assertThat(whoStatus(1, WhoStatusPrecision.EXACT).asRange()).isEqualTo(1..1)
-        assertThat(whoStatus(1, WhoStatusPrecision.AT_LEAST).asRange()).isEqualTo(1..5)
-        assertThat(whoStatus(1, WhoStatusPrecision.AT_MOST).asRange()).isEqualTo(0..1)
+        assertThat(whoExact1.asRange()).isEqualTo(1..1)
+        assertThat(whoAtLeast1.asRange()).isEqualTo(1..5)
+        assertThat(whoAtMost1.asRange()).isEqualTo(0..1)
     }
 
     @Test
-    fun `Should pass for expected who inputs for isEqualTo function`() {
+    fun `Should pass for WHO inputs that equal the requested value`() {
         assertThat(whoExact2.isEqualTo(requestedWho)).isEqualTo(EvaluationResult.PASS)
     }
 
     @Test
-    fun `Should fail for expected who inputs for isEqualTo function`() {
+    fun `Should fail for WHO inputs that for certain do not equal the requested value`() {
         assertThat(whoExact1.isEqualTo(requestedWho)).isEqualTo(EvaluationResult.FAIL)
         assertThat(whoExact3.isEqualTo(requestedWho)).isEqualTo(EvaluationResult.FAIL)
         assertThat(whoAtLeast3.isEqualTo(requestedWho)).isEqualTo(EvaluationResult.FAIL)
@@ -47,45 +47,45 @@ class WhoStatusFunctionsTest {
     }
 
     @Test
-    fun `Should be undetermined for expected who inputs for isEqualTo function`() {
+    fun `Should be undetermined for WHO inputs that may equal the requested value`() {
         assertThat(whoAtLeast1.isEqualTo(requestedWho)).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(whoAtMost3.isEqualTo(requestedWho)).isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     @Test
-    fun `Should pass for expected who inputs for isAtMost function `() {
+    fun `Should pass for WHO inputs that cannot exceed the requested value for isAtMost function`() {
         assertThat(whoExact1.isAtMost(requestedWho)).isEqualTo(EvaluationResult.PASS)
         assertThat(whoExact2.isAtMost(requestedWho)).isEqualTo(EvaluationResult.PASS)
         assertThat(whoAtMost1.isAtMost(requestedWho)).isEqualTo(EvaluationResult.PASS)
     }
 
     @Test
-    fun `Should fail for expected who inputs for isAtMost function `() {
+    fun `Should fail for WHO inputs that for certain exceed the requested value for isAtMost function`() {
         assertThat(whoExact3.isAtMost(requestedWho)).isEqualTo(EvaluationResult.FAIL)
         assertThat(whoAtLeast3.isAtMost(requestedWho)).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
-    fun `Should be undetermined for expected who inputs for isAtMost function `() {
+    fun `Should be undetermined for WHO inputs that may exceed the requested value for isAtMost function`() {
         assertThat(whoAtLeast1.isAtMost(requestedWho)).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(whoAtMost3.isAtMost(requestedWho)).isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     @Test
-    fun `Should pass for expected who inputs for isAtLeast function `() {
+    fun `Should pass for WHO inputs that are above the requested value for isAtLeast function`() {
         assertThat(whoExact2.isAtLeast(requestedWho)).isEqualTo(EvaluationResult.PASS)
         assertThat(whoExact3.isAtLeast(requestedWho)).isEqualTo(EvaluationResult.PASS)
         assertThat(whoAtLeast3.isAtLeast(requestedWho)).isEqualTo(EvaluationResult.PASS)
     }
 
     @Test
-    fun `Should fail for expected who inputs for isAtLeast function `() {
+    fun `Should fail for WHO inputs that are below the requested value for isAtLeast function`() {
         assertThat(whoExact1.isAtLeast(requestedWho)).isEqualTo(EvaluationResult.FAIL)
         assertThat(whoAtMost1.isAtLeast(requestedWho)).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
-    fun `Should be undetermined for expected who inputs for isAtLeast function `() {
+    fun `Should be undetermined for WHO inputs that can be above or below the requested value for isAtLeast function`() {
         assertThat(whoAtLeast1.isAtLeast(requestedWho)).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(whoAtMost3.isAtLeast(requestedWho)).isEqualTo(EvaluationResult.UNDETERMINED)
     }

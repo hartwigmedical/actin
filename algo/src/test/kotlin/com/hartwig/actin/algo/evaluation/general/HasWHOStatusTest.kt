@@ -11,7 +11,7 @@ class HasWHOStatusTest {
     private val function = HasWHOStatus(2)
 
     @Test
-    fun `Should return undetermined when WHO is null`() {
+    fun `Should be undetermined when WHO is null`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(GeneralTestFactory.withWHO(null)))
     }
 
@@ -22,7 +22,7 @@ class HasWHOStatusTest {
     }
 
     @Test
-    fun `Should return recoverable fail when WHO difference is exactly one`() {
+    fun `Should be recoverable fail when WHO difference is exactly one`() {
         val evaluationFor1 = function.evaluate(GeneralTestFactory.withWHO(1))
         assertEvaluation(EvaluationResult.FAIL, evaluationFor1)
         assertThat(evaluationFor1.recoverable).isTrue()

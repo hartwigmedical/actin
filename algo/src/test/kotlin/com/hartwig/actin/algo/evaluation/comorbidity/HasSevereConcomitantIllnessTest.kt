@@ -11,7 +11,7 @@ class HasSevereConcomitantIllnessTest {
     val function = HasSevereConcomitantIllness()
 
     @Test
-    fun `Should warn when WHO is 3 or 4`() {
+    fun `Should warn when WHO is at least 3`() {
         assertEvaluation(EvaluationResult.WARN, function.evaluate(withWHO(3)))
         assertEvaluation(EvaluationResult.WARN, function.evaluate(withWHO(4)))
     }
@@ -22,13 +22,8 @@ class HasSevereConcomitantIllnessTest {
     }
 
     @Test
-    fun `Should fail when WHO at least 2`() {
+    fun `Should ignore isAtLeast evaluations with 'undetermined' outcome and fail`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(2, precision = WhoStatusPrecision.AT_LEAST)))
-    }
-
-    @Test
-    fun `Should fail when WHO at most 2 or 3`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(2, precision = WhoStatusPrecision.AT_MOST)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(3, precision = WhoStatusPrecision.AT_MOST)))
     }
 

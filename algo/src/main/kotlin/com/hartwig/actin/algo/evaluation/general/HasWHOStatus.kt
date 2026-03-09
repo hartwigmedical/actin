@@ -19,17 +19,17 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
 
         return when {
             who == null -> {
-                EvaluationFactory.undetermined("Undetermined if WHO status is required WHO $requiredWHO (WHO data missing)")
+                EvaluationFactory.undetermined("Undetermined if WHO status is equal to requested WHO $requiredWHO (WHO data missing)")
             }
 
-            evaluation == EvaluationResult.PASS -> EvaluationFactory.pass("Has WHO status $requiredWHO")
+            evaluation == EvaluationResult.PASS -> EvaluationFactory.pass("WHO $patientWho is exactly requested WHO $requiredWHO")
 
             evaluation == EvaluationResult.FAIL && who.precision == WhoStatusPrecision.EXACT && abs(who.status - requiredWHO) == 1 -> {
-                EvaluationFactory.recoverableFail("WHO status is $patientWho but should be exactly WHO $requiredWHO")
+                EvaluationFactory.recoverableFail("Patient WHO is $patientWho but should be exactly WHO $requiredWHO")
             }
 
             evaluation == EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("WHO status is $patientWho but should be exactly WHO $requiredWHO")
+                EvaluationFactory.fail("Patient WHO is $patientWho but should be exactly WHO $requiredWHO")
             }
 
             evaluation == EvaluationResult.UNDETERMINED -> {

@@ -20,28 +20,25 @@ fun WhoStatus.asRange(): IntRange {
 }
 
 fun WhoStatus.isEqualTo(requestedWho: Int): EvaluationResult {
-    return when {
-        precision == WhoStatusPrecision.EXACT && status == requestedWho -> EvaluationResult.PASS
-        precision == WhoStatusPrecision.AT_LEAST && status <= requestedWho -> EvaluationResult.UNDETERMINED
-        precision == WhoStatusPrecision.AT_MOST && status >= requestedWho -> EvaluationResult.UNDETERMINED
-        else -> EvaluationResult.FAIL
+    return when (precision) {
+        WhoStatusPrecision.EXACT -> if (status == requestedWho) EvaluationResult.PASS else EvaluationResult.FAIL
+        WhoStatusPrecision.AT_LEAST -> if (status <= requestedWho) EvaluationResult.UNDETERMINED else EvaluationResult.FAIL
+        WhoStatusPrecision.AT_MOST -> if (status >= requestedWho) EvaluationResult.UNDETERMINED else EvaluationResult.FAIL
     }
 }
 
 fun WhoStatus.isAtMost(requestedWho: Int): EvaluationResult {
-    return when {
-        precision in setOf(WhoStatusPrecision.EXACT, WhoStatusPrecision.AT_MOST) && status <= requestedWho -> EvaluationResult.PASS
-        precision == WhoStatusPrecision.EXACT || (precision == WhoStatusPrecision.AT_LEAST && status > requestedWho) -> EvaluationResult.FAIL
-        precision in setOf(WhoStatusPrecision.AT_MOST, WhoStatusPrecision.AT_LEAST) -> EvaluationResult.UNDETERMINED
-        else -> throw IllegalStateException("Illegal evaluation of isAtMost")
+    return when (precision) {
+        WhoStatusPrecision.EXACT -> if (status <= requestedWho) EvaluationResult.PASS else EvaluationResult.FAIL
+        WhoStatusPrecision.AT_MOST -> if (status <= requestedWho) EvaluationResult.PASS else EvaluationResult.UNDETERMINED
+        WhoStatusPrecision.AT_LEAST -> if (status > requestedWho) EvaluationResult.FAIL else EvaluationResult.UNDETERMINED
     }
 }
 
 fun WhoStatus.isAtLeast(requestedWho: Int): EvaluationResult {
-    return when {
-        precision in setOf(WhoStatusPrecision.EXACT, WhoStatusPrecision.AT_LEAST) && status >= requestedWho -> EvaluationResult.PASS
-        precision == WhoStatusPrecision.EXACT || (precision == WhoStatusPrecision.AT_MOST && status < requestedWho) -> EvaluationResult.FAIL
-        precision in setOf(WhoStatusPrecision.AT_MOST, WhoStatusPrecision.AT_LEAST) -> EvaluationResult.UNDETERMINED
-        else -> throw IllegalStateException("Illegal evaluation of isAtLeast")
+    return when (precision) {
+        WhoStatusPrecision.EXACT -> if (status >= requestedWho) EvaluationResult.PASS else EvaluationResult.FAIL
+        WhoStatusPrecision.AT_MOST -> if (status < requestedWho) EvaluationResult.FAIL else EvaluationResult.UNDETERMINED
+        WhoStatusPrecision.AT_LEAST -> if (status >= requestedWho) EvaluationResult.PASS else EvaluationResult.UNDETERMINED
     }
 }
