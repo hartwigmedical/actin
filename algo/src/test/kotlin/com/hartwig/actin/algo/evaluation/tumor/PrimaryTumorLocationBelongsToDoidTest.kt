@@ -4,6 +4,10 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
+import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
+import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
+import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.doid.CuppaDoids
 import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.doid.DoidModel
@@ -210,13 +214,13 @@ class PrimaryTumorLocationBelongsToDoidTest {
         val function =
             PrimaryTumorLocationBelongsToDoid(simpleDoidModel, testCuppaToDoidMapping, setOf(PARENT_DOID_1, PARENT_DOID_2), null)
         val warn = function.evaluate(TumorTestFactory.withCupAndCuppaPrediction(CUPPA_RESULT_CHILD_1, 0.95))
-        assertThat(warn.warnMessagesStrings()).containsExactly("Tumor type unknown, but CUPPA predicts $CUPPA_RESULT_CHILD_1 (95%)")
+        assertThat(warn.warnMessagesStrings()).containsExactly("Tumor type unknown but CUPPA predicts $CUPPA_RESULT_CHILD_1 (95%)")
     }
 
     @Test
     fun `Should warn for CUP tumor with conclusive CUPPA prediction matching child doid`() {
         val warn = childMatchingFunction.evaluate(TumorTestFactory.withCupAndCuppaPrediction(CUPPA_RESULT_PARENT_1, 0.95))
-        assertThat(warn.warnMessagesStrings()).containsExactly("Tumor type unknown, but CUPPA predicts $CUPPA_RESULT_PARENT_1 (95%)")
+        assertThat(warn.warnMessagesStrings()).containsExactly("Tumor type unknown but CUPPA predicts $CUPPA_RESULT_PARENT_1 (95%)")
     }
 
     @Test
@@ -244,8 +248,14 @@ class PrimaryTumorLocationBelongsToDoidTest {
 
     @Test
     fun `Should fail when CUPPA matches but the tumor is not a CUP`() {
-        val record = TumorTestFactory.withCupAndCuppaPrediction(CUPPA_RESULT_CHILD_1, 0.95).copy(
-            tumor = TumorDetails(name = "another", doids = setOf(UNMATCHED_DOID))
+        val record = TumorTestFactory.withDoidAndName(UNMATCHED_DOID, "another").copy(
+            molecularTests = listOf(TestMolecularFactory.createMinimalWholeGenomeTest().run {
+                copy(
+                    characteristics = characteristics.copy(
+                        predictedTumorOrigin = TestMolecularFactory.createHighConfidenceCupPrediction()
+                    )
+                )
+            })
         )
         val function = parentMatchingFunction
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))

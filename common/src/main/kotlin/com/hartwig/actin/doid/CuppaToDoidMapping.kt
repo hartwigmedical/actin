@@ -11,7 +11,6 @@ private data class CuppaDoidRow(
     @param:JsonProperty("cuppa_cancer_type") val cuppaCancerType: String = "",
     @param:JsonProperty("doid_ids") val doidIds: String = "",
     @param:JsonProperty("excluded_doid_ids") val excludedDoidIds: String? = null,
-    @param:JsonProperty("doid_labels") val doidLabels: String? = null,
     @param:JsonProperty("notes") val notes: String? = null
 )
 

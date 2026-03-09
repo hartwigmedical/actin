@@ -314,9 +314,8 @@ internal object TumorTestFactory {
     }
 
     fun withCupAndCuppaPrediction(cancerType: String, likelihood: Double): PatientRecord {
-        val cupName = "Cancer (CUP)"
         return base.copy(
-            tumor = TumorDetails(doids = setOf(DoidConstants.CANCER_DOID), name = cupName),
+            tumor = TumorDetails(doids = setOf(DoidConstants.CANCER_DOID), name = "Cancer (CUP)"),
             molecularTests = listOf(
                 baseMolecular.copy(
                     characteristics = baseMolecular.characteristics.copy(

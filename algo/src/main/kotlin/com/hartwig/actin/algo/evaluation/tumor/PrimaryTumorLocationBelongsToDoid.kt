@@ -57,13 +57,13 @@ class PrimaryTumorLocationBelongsToDoid(
                 }
 
                 else -> {
-                    evaluateCuppaForCup(record) ?: EvaluationFactory.fail("No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}")
+                    evaluateCuppaPrediction(record) ?: EvaluationFactory.fail("No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}")
                 }
             }
         }
     }
 
-    private fun evaluateCuppaForCup(record: PatientRecord): Evaluation? {
+    private fun evaluateCuppaPrediction(record: PatientRecord): Evaluation? {
         if (!TumorEvaluationFunctions.hasCancerOfUnknownPrimary(record.tumor.name) || specificQuery != null) {
             return null
         }
@@ -82,7 +82,7 @@ class PrimaryTumorLocationBelongsToDoid(
                     .firstOrNull()
                     ?.let {
                         val likelihoodPct = (predictedTumorOrigin.likelihood() * 100).toInt()
-                        EvaluationFactory.warn("Tumor type unknown, but CUPPA predicts $cancerType ($likelihoodPct%)")
+                        EvaluationFactory.warn("Tumor type unknown but CUPPA predicts $cancerType ($likelihoodPct%)")
                     }
             }
     }
@@ -108,8 +108,8 @@ class PrimaryTumorLocationBelongsToDoid(
     }
 
     private fun hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids: Set<String>, fullDoidToMatchTree: Set<String>): Boolean {
-        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS)
-            .isNotEmpty() && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
+        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isNotEmpty()
+                && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
     }
 
     private fun doidsToTerms(doids: Set<String>): Set<String> {
