@@ -10,7 +10,7 @@ class MeetsCovid19InfectionRequirementsTest {
     private val function = MeetsCovid19InfectionRequirements()
 
     @Test
-    fun `Should be undetermined always`() {
+    fun `Should pass always`() {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }
 }
