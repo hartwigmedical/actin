@@ -39,7 +39,7 @@ class ImmunologyGeneratorTest {
             displayMode = ImmunologyDisplayMode.DETAILED_TABLE,
             hlaAlleles = listOf(createHlaAllele("HLA-A", "01", "01"))
         )
-        assertHeader(generator, "HLA gene", "Type", "Tumor copy number", "Mutated in tumor")
+        assertHeader(generator, "HLA gene", "", "Type", "Tumor copy number", "Mutated in tumor")
     }
 
     @Test
@@ -48,9 +48,9 @@ class ImmunologyGeneratorTest {
         val table = createGenerator(ImmunologyDisplayMode.DETAILED_TABLE, hlaAlleles = listOf(hlaAllele)).contents()
 
         assertThat(getCellContents(table, 0, 0)).isEqualTo("HLA-A")
-        assertThat(getCellContents(table, 0, 1)).isEqualTo("HLA-A*01:01")
-        assertThat(getCellContents(table, 0, 2)).isEqualTo("1.0")
-        assertThat(getCellContents(table, 0, 3)).isEqualTo("No")
+        assertThat(getCellContents(table, 0, 2)).isEqualTo("HLA-A*01:01")
+        assertThat(getCellContents(table, 0, 3)).isEqualTo("1.0")
+        assertThat(getCellContents(table, 0, 4)).isEqualTo("No")
     }
 
     @Test
@@ -58,7 +58,7 @@ class ImmunologyGeneratorTest {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 1.0, hasSomaticMutations = true)
         val table = createGenerator(ImmunologyDisplayMode.DETAILED_TABLE, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(getCellContents(table, 0, 3)).isEqualTo("Yes")
+        assertThat(getCellContents(table, 0, 4)).isEqualTo("Yes")
     }
 
     @Test
@@ -66,7 +66,7 @@ class ImmunologyGeneratorTest {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", hasSomaticMutations = null)
         val table = createGenerator(ImmunologyDisplayMode.DETAILED_TABLE, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(getCellContents(table, 0, 3)).isEqualTo("-")
+        assertThat(getCellContents(table, 0, 4)).isEqualTo("-")
     }
 
     @Test
@@ -74,7 +74,7 @@ class ImmunologyGeneratorTest {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = null)
         val table = createGenerator(ImmunologyDisplayMode.DETAILED_TABLE, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(getCellContents(table, 0, 2)).isEqualTo("-")
+        assertThat(getCellContents(table, 0, 3)).isEqualTo("-")
     }
 
     @Test
@@ -82,7 +82,7 @@ class ImmunologyGeneratorTest {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 0.5)
         val table = createGenerator(ImmunologyDisplayMode.DETAILED_TABLE, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(getCellContents(table, 0, 2)).isEqualTo("0.5")
+        assertThat(getCellContents(table, 0, 3)).isEqualTo("0.5")
     }
 
     @Test
@@ -90,7 +90,7 @@ class ImmunologyGeneratorTest {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = 0.0)
         val table = createGenerator(ImmunologyDisplayMode.DETAILED_TABLE, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(getCellContents(table, 0, 2)).isEqualTo("0.0")
+        assertThat(getCellContents(table, 0, 3)).isEqualTo("0.0")
     }
 
     @Test
@@ -98,7 +98,7 @@ class ImmunologyGeneratorTest {
         val hlaAllele = createHlaAllele("HLA-A", "01", "01", tumorCopyNumber = -1.0)
         val table = createGenerator(ImmunologyDisplayMode.DETAILED_TABLE, hlaAlleles = listOf(hlaAllele)).contents()
 
-        assertThat(getCellContents(table, 0, 2)).isEqualTo("0.0")
+        assertThat(getCellContents(table, 0, 3)).isEqualTo("0.0")
     }
 
     @Test
@@ -130,7 +130,7 @@ class ImmunologyGeneratorTest {
         // Only HLA-A is displayed, so just one data row
         assertThat(table.numberOfRows).isEqualTo(1)
         assertThat(getCellContents(table, 0, 0)).isEqualTo("HLA-A")
-        assertThat(getCellContents(table, 0, 1)).isEqualTo("HLA-A*01:01")
+        assertThat(getCellContents(table, 0, 2)).isEqualTo("HLA-A*01:01")
     }
 
     @Test
@@ -154,9 +154,9 @@ class ImmunologyGeneratorTest {
         ).contents()
 
         // Sorted order: 01:01, 01:02, 02:01
-        assertThat(getCellContents(table, 0, 1)).isEqualTo("HLA-A*01:01")
-        assertThat(getCellContents(table, 1, 1)).isEqualTo("HLA-A*01:02")
-        assertThat(getCellContents(table, 2, 1)).isEqualTo("HLA-A*02:01")
+        assertThat(getCellContents(table, 0, 2)).isEqualTo("HLA-A*01:01")
+        assertThat(getCellContents(table, 1, 2)).isEqualTo("HLA-A*01:02")
+        assertThat(getCellContents(table, 2, 2)).isEqualTo("HLA-A*02:01")
     }
 
     @Test
