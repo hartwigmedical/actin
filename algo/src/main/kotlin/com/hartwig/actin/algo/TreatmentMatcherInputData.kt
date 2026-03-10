@@ -2,8 +2,6 @@ package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
@@ -17,6 +15,8 @@ import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.treatment.database.TreatmentDatabase
+import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson

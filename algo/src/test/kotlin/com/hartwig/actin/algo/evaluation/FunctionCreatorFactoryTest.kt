@@ -43,7 +43,7 @@ class FunctionCreatorFactoryTest {
         val map = create(RuleMappingResourcesTestFactory.create(doidModel = doidModel, icdModel = icdModel))
         val treatment = TreatmentTestFactory.treatment("Treatment", true, setOf(TreatmentCategory.CHEMOTHERAPY))
         val systemicTreatment = TreatmentTestFactory.treatment("Systemic treatment", true, setOf(TreatmentCategory.CHEMOTHERAPY))
-        val drug = Drug("Drug", setOf(DrugType.ANTI_PD_1), TreatmentCategory.IMMUNOTHERAPY, "")
+        val drug = Drug("Drug", emptySet(), setOf(DrugType.ANTI_PD_1), TreatmentCategory.IMMUNOTHERAPY, "")
         EligibilityRule.entries.forEach { rule ->
             if (!CompositeRules.isComposite(rule)) {
                 val function = EligibilityFunction(
