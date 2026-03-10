@@ -12,7 +12,7 @@ class HasMaximumWHOStatusTest {
     private val function: HasMaximumWHOStatus = HasMaximumWHOStatus(2)
 
     @Test
-    fun `Should return undetermined when WHO is null`() {
+    fun `Should be undetermined when WHO is null`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withWHO(null)))
     }
 
@@ -31,35 +31,35 @@ class HasMaximumWHOStatusTest {
     }
 
     @Test
-    fun `Should return undetermined when WHO is at most and exceeding maximum`() {
-        val evaluation = function.evaluate(withWHO(3, WhoStatusPrecision.AT_MOST))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessages.first().toString()).isEqualTo("Undetermined if WHO <=3 exceeds WHO 2")
-    }
-
-    @Test
     fun `Should fail when WHO difference is greater than one`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(4)))
     }
 
     @Test
-    fun `Should return undetermined when precision is at least`() {
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(withWHO(4, WhoStatusPrecision.AT_LEAST))
-        )
+    fun `Should be undetermined when precision is at most and WHO above maximum`() {
+        val evaluation = function.evaluate(withWHO(3, WhoStatusPrecision.AT_MOST))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessages.first().toString()).isEqualTo("Undetermined if patient WHO <=3 is below requested max WHO 2")
     }
 
     @Test
-    fun `Should pass when WHO at most value is less than or equal to maximum`() {
-        assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(withWHO(2, WhoStatusPrecision.AT_MOST))
-        )
-    }
-
-    @Test
-    fun `Should result in pass when WHO with at most range below maximum`() {
+    fun `Should pass when precision is at most and WHO below maximum`() {
         val evaluation = function.evaluate(withWHO(1, WhoStatusPrecision.AT_MOST))
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessages.first().toString()).isEqualTo("WHO <=1 is below WHO 2")
+        assertThat(evaluation.passMessages.first().toString()).isEqualTo("WHO <=1 is below requested max WHO 2")
+    }
+
+    @Test
+    fun `Should fail when precision is at least and WHO above maximum`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(withWHO(4, WhoStatusPrecision.AT_LEAST))
+        )
+    }
+
+    @Test
+    fun `Should be undetermined when precision is at least and WHO below maximum`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(withWHO(0, WhoStatusPrecision.AT_LEAST))
+        )
     }
 }

@@ -81,7 +81,6 @@ object EvaluationComparison {
     private fun getMessagesForEvaluation(evaluation: Evaluation): Set<EvaluationMessage> {
         return when (evaluation.result) {
             EvaluationResult.PASS -> evaluation.passMessages
-            EvaluationResult.NOT_EVALUATED -> evaluation.passMessages
             EvaluationResult.WARN -> evaluation.warnMessages
             EvaluationResult.UNDETERMINED -> evaluation.undeterminedMessages
             EvaluationResult.FAIL -> evaluation.failMessages

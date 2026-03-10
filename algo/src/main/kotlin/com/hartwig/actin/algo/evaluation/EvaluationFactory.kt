@@ -63,14 +63,6 @@ object EvaluationFactory {
         )
     }
 
-    fun notEvaluated(message: String): Evaluation {
-        return Evaluation(
-            recoverable = false,
-            result = EvaluationResult.NOT_EVALUATED,
-            passMessages = messages(message)
-        )
-    }
-
     private fun messages(message: String) = setOf(StaticMessage(message))
 }
 

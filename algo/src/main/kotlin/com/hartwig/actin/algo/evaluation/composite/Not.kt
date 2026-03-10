@@ -13,7 +13,6 @@ class Not(private val function: EvaluationFunction) : EvaluationFunction {
         return when (evaluation.result) {
             EvaluationResult.PASS -> swapEvaluationMessagesAndMolecularEventsWithResult(evaluation, EvaluationResult.FAIL)
             EvaluationResult.FAIL -> swapEvaluationMessagesAndMolecularEventsWithResult(evaluation, EvaluationResult.PASS)
-            EvaluationResult.NOT_EVALUATED -> swapEvaluationMessagesAndMolecularEventsWithResult(evaluation, EvaluationResult.NOT_EVALUATED)
             else -> {
                 evaluation.copy(
                     inclusionMolecularEvents = evaluation.exclusionMolecularEvents,

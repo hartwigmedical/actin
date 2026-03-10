@@ -8,9 +8,9 @@ import org.junit.jupiter.api.Test
 class AdheresToBloodDonationPrescriptionsTest {
 
     @Test
-    fun `Should return not evaluated`() {
+    fun `Should return pass always`() {
         assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
+            EvaluationResult.PASS,
             AdheresToBloodDonationPrescriptions().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
