@@ -28,8 +28,8 @@ class CopyNumberExtractor(private val geneFilter: GeneFilter) {
                     canonicalImpact = TranscriptCopyNumberImpact(
                         gainDeletion.transcript(),
                         determineType(gainDeletion),
-                        gainDeletion.tumorMinCopies().roundToInt(),
-                        gainDeletion.tumorMaxCopies().roundToInt()
+                        gainDeletion.tumorMinCopyNumber().roundToInt(),
+                        gainDeletion.tumorMaxCopyNumber().roundToInt()
                     ),
                     otherImpacts = setOf(),
                 )

@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.Breakend
+import com.hartwig.hmftools.finding.datamodel.DriverSource
 
 class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
@@ -42,7 +43,9 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
     }
 
     private fun include(disruption: com.hartwig.hmftools.finding.datamodel.Disruption, lostGenes: Set<String>): Boolean {
-        return disruption.breakendType() != Breakend.Type.DEL || !lostGenes.contains(disruption.gene())
+        return disruption.breakendType() != com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.DEL || !lostGenes.contains(
+            disruption.gene()
+        )
     }
 
     private fun lookupClusterId(disruption: com.hartwig.hmftools.finding.datamodel.Disruption): Int {
@@ -51,33 +54,33 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
             ?: throw IllegalStateException("Could not find structural variant")
     }
 
-    internal fun determineDisruptionType(type: Breakend.Type): DisruptionType {
+    internal fun determineDisruptionType(type: com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType): DisruptionType {
         return when (type) {
-            Breakend.Type.BND -> {
+            com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.BND -> {
                 DisruptionType.BND
             }
 
-            Breakend.Type.DEL -> {
+            com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.DEL -> {
                 DisruptionType.DEL
             }
 
-            Breakend.Type.DUP -> {
+            com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.DUP -> {
                 DisruptionType.DUP
             }
 
-            Breakend.Type.INF -> {
+            com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.INF -> {
                 DisruptionType.INF
             }
 
-            Breakend.Type.INS -> {
+            com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.INS -> {
                 DisruptionType.INS
             }
 
-            Breakend.Type.INV -> {
+            com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.INV -> {
                 DisruptionType.INV
             }
 
-            Breakend.Type.SGL -> {
+            com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.SGL -> {
                 DisruptionType.SGL
             }
         }
@@ -140,12 +143,12 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
     }
 
     private fun correctUndisruptedCopyNumber(disruption: com.hartwig.hmftools.finding.datamodel.Disruption, breakend: Breakend): Double {
-        return if (breakend.type() == Breakend.Type.DUP
-            && disruption.gene == breakend.gene() && disruption.type == com.hartwig.hmftools.finding.datamodel.Disruption.Type.SOMATIC_HOM_DUP_DISRUPTION
+        return if (disruption.breakendType == com.hartwig.hmftools.finding.datamodel.Disruption.BreakendType.DUP
+            && disruption.gene == disruption.gene() && disruption.type == com.hartwig.hmftools.finding.datamodel.Disruption.Type.HOM_DUP_DISRUPTION && disruption.driverSource() == DriverSource.SOMATIC
         ) {
-            (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
+            (disruption.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
         } else {
-            breakend.undisruptedCopyNumber()
+            disruption.undisruptedCopyNumber()
         }
     }
 }

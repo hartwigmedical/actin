@@ -45,7 +45,7 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
             characteristics = CharacteristicsExtraction.extract(record),
             drivers = driverExtractor.extract(record),
             immunology = ImmunologyExtraction.extract(record.hlaAlleles()),
-            pharmaco = PharmacoExtraction.extract(record.pharmocoGenotypes()),
+            pharmaco = PharmacoExtraction.extract(record.pharmacoGenotypes()),
             evidenceSource = ActionabilityConstants.EVIDENCE_SOURCE.display(),
             externalTrialSource = ActionabilityConstants.EXTERNAL_TRIAL_SOURCE.display(),
         )
@@ -56,15 +56,15 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
     }
 
     fun hasSufficientPurity(record: FindingRecord): Boolean {
-        return record.purityPloidyFit().containsTumorCells() && !record.purityPloidyFit().isLowPurity
+        return record.qc.containsTumorCells() && !record.qc.isLowPurity
     }
 
     private fun containsTumorCells(record: FindingRecord): Boolean {
-        return record.purityPloidyFit().containsTumorCells()
+        return record.qc.containsTumorCells()
     }
 
     private fun isContaminated(record: FindingRecord): Boolean {
-        return record.purityPloidyFit().isContaminated
+        return record.qc.isContaminated
     }
 
     private fun determineExperimentType(experimentType: SequencingScope): com.hartwig.actin.datamodel.molecular.ExperimentType {
@@ -112,6 +112,6 @@ class FindingsExtractor(private val geneFilter: GeneFilter, private val panelSpe
     }
 
     private fun throwIfPurpleQCMissing(findings: FindingRecord) {
-        check(findings.purityPloidyFit().qc().status().isNotEmpty()) { "Cannot interpret purple record with empty QC states" }
+        check(findings.qc().status().isNotEmpty()) { "Cannot interpret purple record with empty QC states" }
     }
 }

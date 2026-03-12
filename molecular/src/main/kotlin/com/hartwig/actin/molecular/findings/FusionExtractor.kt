@@ -7,10 +7,6 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.hmftools.finding.datamodel.DriverFindingList
 
-fun domainsAsList(domains: String): List<String> {
-    return domains.split(";").filter { it.isNotEmpty() }
-}
-
 class FusionExtractor(private val geneFilter: GeneFilter) {
 
     fun extract(fusions: DriverFindingList<com.hartwig.hmftools.finding.datamodel.Fusion>): List<Fusion> {
@@ -31,8 +27,8 @@ class FusionExtractor(private val geneFilter: GeneFilter) {
                 geneTranscriptEnd = fusion.geneTranscriptEnd(),
                 fusedExonUp = fusion.fusedExonUp(),
                 fusedExonDown = fusion.fusedExonDown(),
-                domainsKept = domainsAsList(fusion.domainsKept()),
-                domainsLost = domainsAsList(fusion.domainsLost()),
+                domainsKept = fusion.domainsKept(),
+                domainsLost = fusion.domainsLost(),
             )
         }.sorted()
     }

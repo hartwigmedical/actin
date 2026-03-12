@@ -14,7 +14,6 @@ import com.hartwig.hmftools.finding.datamodel.FindingItem
 import com.hartwig.hmftools.finding.datamodel.FindingList
 import com.hartwig.hmftools.finding.datamodel.FindingRecord
 import com.hartwig.hmftools.finding.datamodel.FindingsStatus
-import com.hartwig.hmftools.finding.datamodel.TumorMutationStatus
 
 object CharacteristicsExtraction {
 
@@ -27,8 +26,8 @@ object CharacteristicsExtraction {
             predictedTumorOrigin = determinePredictedTumorOrigin(record.predictedTumorOrigins),
             microsatelliteStability = determineMicrosatelliteStability(record.microsatelliteStability),
             homologousRecombination = determineHomologousRecombination(record.homologousRecombination),
-            tumorMutationalBurden = determineTumorMutationalBurden(record.tumorMutationStatus()),
-            tumorMutationalLoad = determineTumorMutationalLoad(record.tumorMutationStatus())
+            tumorMutationalBurden = determineTumorMutationalBurden(record.tumorMutationalBurden()),
+            tumorMutationalLoad = determineTumorMutationalLoad(record.tumorMutationalLoad())
         )
     }
 
@@ -39,89 +38,60 @@ object CharacteristicsExtraction {
     }
 
     private fun determineMicrosatelliteStability(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability>): MicrosatelliteStability? {
-        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()?.let { microsatelliteStability ->
-            isMicrosatelliteUnstable(microsatelliteStability.microsatelliteStatus)?.let { isUnstable ->
-                MicrosatelliteStability(
-                    microsatelliteIndelsPerMb = microsatelliteStability.microsatelliteIndelsPerMb,
-                    isUnstable = isUnstable,
-                    evidence = ExtractionUtil.noEvidence()
-                )
-            }
+        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()?.let {
+            MicrosatelliteStability(
+                microsatelliteIndelsPerMb = it.indelsPerMb,
+                isUnstable = isMicrosatelliteUnstable(it.status),
+                evidence = ExtractionUtil.noEvidence()
+            )
         }
     }
+
 
     private fun determineHomologousRecombination(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.HomologousRecombination>): HomologousRecombination? {
-        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()
-            ?.takeIf {
-                it.hrStatus() in setOf(
-                    com.hartwig.hmftools.finding.datamodel.HomologousRecombination.HrStatus.HR_DEFICIENT,
-                    com.hartwig.hmftools.finding.datamodel.HomologousRecombination.HrStatus.HR_PROFICIENT
-                )
-            }?.let {
-                HomologousRecombination(
-                    isDeficient = isHomologousRecombinationDeficient(it.hrStatus()),
-                    score = it.hrdValue(),
-                    type = HomologousRecombinationType.valueOf(it.hrdType().uppercase()),
-                    brca1Value = it.brca1Value(),
-                    brca2Value = it.brca2Value(),
-                    evidence = ExtractionUtil.noEvidence()
-                )
-            }
-    }
-
-    private fun determineTumorMutationalBurden(finding: FindingItem<TumorMutationStatus>): TumorMutationalBurden? {
-        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()?.let { tumorMutationStatus ->
-            hasHighStatus(tumorMutationStatus.tumorMutationalBurdenStatus())?.let { isHigh ->
-                TumorMutationalBurden(
-                    score = tumorMutationStatus.tumorMutationalBurdenPerMb(),
-                    isHigh = isHigh,
-                    evidence = ExtractionUtil.noEvidence()
-                )
-            }
+        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()?.let {
+            HomologousRecombination(
+                isDeficient = isHomologousRecombinationDeficient(it.status()),
+                score = it.hrdValue(),
+                type = HomologousRecombinationType.valueOf(it.hrdType().uppercase()),
+                brca1Value = it.brca1Value(),
+                brca2Value = it.brca2Value(),
+                evidence = ExtractionUtil.noEvidence()
+            )
         }
     }
 
-    private fun determineTumorMutationalLoad(finding: FindingItem<TumorMutationStatus>): TumorMutationalLoad? {
-        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()?.let { tumorMutationStatus ->
-            hasHighStatus(tumorMutationStatus.tumorMutationalLoadStatus())?.let { isHigh ->
-                TumorMutationalLoad(
-                    score = tumorMutationStatus.tumorMutationalLoad(),
-                    isHigh = isHigh,
-                    evidence = ExtractionUtil.noEvidence()
-                )
-            }
+    private fun determineTumorMutationalBurden(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.TumorMutationalBurden>): TumorMutationalBurden? {
+        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()?.let {
+            TumorMutationalBurden(
+                score = it.burdenPerMb(),
+                isHigh = it.status() == com.hartwig.hmftools.finding.datamodel.TumorMutationalBurden.Status.HIGH,
+                evidence = ExtractionUtil.noEvidence()
+            )
         }
     }
 
-    private fun isMicrosatelliteUnstable(microsatelliteStatus: com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability.MicrosatelliteStatus): Boolean? {
+    private fun determineTumorMutationalLoad(finding: FindingItem<com.hartwig.hmftools.finding.datamodel.TumorMutationalLoad>): TumorMutationalLoad? {
+        return finding.takeIf { it.status() == FindingsStatus.OK }?.finding()?.let {
+            TumorMutationalLoad(
+                score = it.load(),
+                isHigh = it.status() == com.hartwig.hmftools.finding.datamodel.TumorMutationalLoad.Status.HIGH,
+                evidence = ExtractionUtil.noEvidence()
+            )
+        }
+    }
+
+    private fun isMicrosatelliteUnstable(microsatelliteStatus: com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability.Status): Boolean {
         return when (microsatelliteStatus) {
-            com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability.MicrosatelliteStatus.MSI -> true
-            com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability.MicrosatelliteStatus.MSS -> false
-            com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability.MicrosatelliteStatus.UNKNOWN -> null
+            com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability.Status.MSI -> true
+            com.hartwig.hmftools.finding.datamodel.MicrosatelliteStability.Status.MSS -> false
         }
     }
 
-    private fun isHomologousRecombinationDeficient(hrStatus: com.hartwig.hmftools.finding.datamodel.HomologousRecombination.HrStatus): Boolean {
+    private fun isHomologousRecombinationDeficient(hrStatus: com.hartwig.hmftools.finding.datamodel.HomologousRecombination.Status): Boolean {
         return when (hrStatus) {
-            com.hartwig.hmftools.finding.datamodel.HomologousRecombination.HrStatus.HR_DEFICIENT -> true
-            com.hartwig.hmftools.finding.datamodel.HomologousRecombination.HrStatus.HR_PROFICIENT -> false
-            else -> throw IllegalStateException("HR status must be deficient or proficient")
-        }
-    }
-
-    private fun hasHighStatus(tumorMutationStatus: TumorMutationStatus.Status): Boolean? {
-        return when (tumorMutationStatus) {
-            TumorMutationStatus.Status.HIGH -> {
-                true
-            }
-
-            TumorMutationStatus.Status.LOW -> {
-                false
-            }
-
-            TumorMutationStatus.Status.UNKNOWN -> {
-                null
-            }
+            com.hartwig.hmftools.finding.datamodel.HomologousRecombination.Status.HR_DEFICIENT -> true
+            com.hartwig.hmftools.finding.datamodel.HomologousRecombination.Status.HR_PROFICIENT -> false
         }
     }
 

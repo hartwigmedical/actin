@@ -5,17 +5,17 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.HaplotypeFunction
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import com.hartwig.hmftools.finding.datamodel.FindingList
-import com.hartwig.hmftools.finding.datamodel.PharmocoGenotype
+import com.hartwig.hmftools.finding.datamodel.PharmacoGenotype
 
 object PharmacoExtraction {
 
-    fun extract(pharmocoGenoTypes: FindingList<PharmocoGenotype>): Set<PharmacoEntry> {
-        return pharmocoGenoTypes.findings.groupBy(PharmocoGenotype::gene).map { (gene, genotypes) ->
+    fun extract(PharmacoGenotypes: FindingList<PharmacoGenotype>): Set<PharmacoEntry> {
+        return PharmacoGenotypes.findings.groupBy(PharmacoGenotype::gene).map { (gene, genotypes) ->
             createPharmacoEntryForGeneAndPeachGenotypes(gene, genotypes)
         }.filterNot { it.gene == PharmacoGene.UGT1A1 }.toSet()
     }
 
-    private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: List<PharmocoGenotype>): PharmacoEntry {
+    private fun createPharmacoEntryForGeneAndPeachGenotypes(gene: String, peachGenotypes: List<PharmacoGenotype>): PharmacoEntry {
         return PharmacoEntry(
             gene = determineGene(gene),
             haplotypes = peachGenotypes.map {
