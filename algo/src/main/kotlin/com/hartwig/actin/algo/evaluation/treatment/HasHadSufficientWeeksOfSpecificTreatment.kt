@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
-class HasHadSufficientWeeksOfSpecificTreatment(private val treatmentToFind: Treatment, private val minWeeks: Int?) : EvaluationFunction {
+class HasHadSufficientWeeksOfSpecificTreatment(private val treatmentToFind: Treatment, private val minWeeks: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return TreatmentDurationEvaluator(
