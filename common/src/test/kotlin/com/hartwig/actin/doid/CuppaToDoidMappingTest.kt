@@ -2,7 +2,7 @@ package com.hartwig.actin.doid
 
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CuppaToDoidMappingTest {
 
