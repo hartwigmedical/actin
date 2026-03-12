@@ -14,7 +14,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigi
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter.CUP_STRING
 import com.hartwig.actin.report.pdf.getCellContents
-import com.hartwig.actin.report.pdf.tables.soc.ProxyStandardOfCareGenerator
+import com.hartwig.actin.report.pdf.tables.soc.EligibleStandardOfCareGenerator
 import com.itextpdf.layout.element.Table
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,40 +22,9 @@ import org.junit.jupiter.api.Test
 class EligibleApprovedTreatmentGeneratorTest {
 
     @Test
-    fun `Should return Potential SoC if it is a cancer of unknown primary`() {
-        val cupTumor = TumorDetails(name = "Some $CUP_STRING")
-        val clinicalRecord = TestClinicalFactory.createProperTestClinicalRecord().copy(tumor = cupTumor)
-
-        val molecularTests =
-            listOf(
-                TestMolecularFactory.createMinimalWholeGenomeTest().copy(
-                    characteristics = TestMolecularFactory.createMinimalTestCharacteristics().copy(
-                        predictedTumorOrigin = PredictedTumorOrigin(
-                            listOf(
-                                CupPrediction(
-                                    "colorectal",
-                                    0.99,
-                                    0.98,
-                                    0.96,
-                                    0.84,
-                                    0.82,
-                                    0.93,
-                                    CuppaMode.WGTS
-                                )
-                            )
-                        )
-                    )
-                )
-            )
-
-        val contents = eligibleTreatmentsTable(clinicalRecord, molecularTests)
-        assertThat(getCellContents(contents, 0, 0)).isEqualTo("Potential SOC for colorectal")
-    }
-
-    @Test
-    fun `Should return Not Yet Determined if there are no approved treatments or cancer of unknown primary`() {
+    fun `Should return no treatment options if there are no treatments`() {
         val contents = eligibleTreatmentsTable()
-        assertThat(getCellContents(contents, 0, 0)).isEqualTo("Not yet determined")
+        assertThat(getCellContents(contents, 0, 0)).isEqualTo("There are no standard of care treatment options for this patient")
     }
 
     private fun eligibleTreatmentsTable(
@@ -68,7 +37,7 @@ class EligibleApprovedTreatmentGeneratorTest {
             treatmentMatch = treatmentMatch
         )
 
-        return ProxyStandardOfCareGenerator(report).contents()
+        return EligibleStandardOfCareGenerator(report).contents()
     }
 }
 
