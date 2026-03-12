@@ -219,7 +219,7 @@ internal object MolecularTestFactory {
         )
     }
 
-    fun withHomologousRecombination(isHrDeficient: Boolean): PatientRecord {
+    fun withHomologousRecombination(isHrDeficient: Boolean?): PatientRecord {
         return withMolecularTest(
             baseMolecular.copy(
                 characteristics = baseMolecular.characteristics.copy(
@@ -370,15 +370,17 @@ internal object MolecularTestFactory {
         }
     }
 
-    private fun createTestHomologousRecombination(isDeficient: Boolean): HomologousRecombination {
-        return HomologousRecombination(
-            isDeficient = isDeficient,
-            score = if (isDeficient) 1.0 else 0.0,
-            type = if (isDeficient) HomologousRecombinationType.BRCA1_TYPE else HomologousRecombinationType.NONE,
-            brca1Value = if (isDeficient) 1.0 else 0.0,
-            brca2Value = 0.0,
-            evidence = TestClinicalEvidenceFactory.createEmpty()
-        )
+    private fun createTestHomologousRecombination(isDeficient: Boolean?): HomologousRecombination? {
+        return isDeficient?.let {
+            HomologousRecombination(
+                isDeficient = isDeficient,
+                score = if (isDeficient) 1.0 else 0.0,
+                type = if (isDeficient) HomologousRecombinationType.BRCA1_TYPE else HomologousRecombinationType.NONE,
+                brca1Value = if (isDeficient) 1.0 else 0.0,
+                brca2Value = 0.0,
+                evidence = TestClinicalEvidenceFactory.createEmpty()
+            )
+        }
     }
 
     private fun createTestTumorMutationalBurden(score: Double = 0.0, isHigh: Boolean? = false): TumorMutationalBurden? {
