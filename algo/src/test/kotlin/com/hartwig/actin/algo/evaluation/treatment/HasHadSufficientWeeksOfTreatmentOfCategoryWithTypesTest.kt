@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)

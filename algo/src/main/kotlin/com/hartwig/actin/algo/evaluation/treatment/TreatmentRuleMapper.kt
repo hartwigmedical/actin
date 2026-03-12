@@ -76,6 +76,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X to hasHadSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_WITHIN_Y_WEEKS to hasHadSpecificTreatmentWithinWeeksCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_NAME_X_FOR_AT_MOST_Y_WEEKS to hasHadLimitedWeeksOfSpecificTreatmentCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_NAME_X_FOR_AT_LEAST_Y_WEEKS to hasHadSufficientWeeksOfSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_DOSE_REDUCTION_DURING_TREATMENT_NAME_X to hasHadSpecificTreatmentAndDoseReductionCreator(),
             EligibilityRule.HAS_HAD_DOSE_REDUCTION_DURING_TREATMENT_WITH_DRUG_X to hasHadTreatmentWithDrugAndDoseReductionCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X to hasHadFirstLineSystemicTreatmentNameCreator(),
@@ -340,6 +341,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val treatment = function.param<TreatmentParameter>(0).value
             val weeks = function.param<IntegerParameter>(1).value
             HasHadLimitedWeeksOfSpecificTreatment(treatment, weeks)
+        }
+    }
+
+    private fun hasHadSufficientWeeksOfSpecificTreatmentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val treatment = function.param<TreatmentParameter>(0).value
+            val weeks = function.param<IntegerParameter>(1).value
+            HasHadSufficientWeeksOfSpecificTreatment(treatment, weeks)
         }
     }
 
