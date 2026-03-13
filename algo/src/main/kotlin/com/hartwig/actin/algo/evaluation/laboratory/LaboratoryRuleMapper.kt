@@ -109,6 +109,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_CORRECTED_CALCIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.CORRECTED_CALCIUM
             ),
+            EligibilityRule.HAS_CORRECTED_CALCIUM_MG_PER_DL_OF_AT_LEAST_X to hasSufficientLabValueCreator(
+                LabMeasurement.CORRECTED_CALCIUM,
+                LabUnit.MILLIGRAMS_PER_DECILITER
+            ),
             EligibilityRule.HAS_MAGNESIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
                 LabMeasurement.MAGNESIUM
             ),
@@ -123,6 +127,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabMeasurement.POTASSIUM
             ),
             EligibilityRule.HAS_CORRECTED_POTASSIUM_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to undeterminedLabValueCreator("corrected potassium"),
+            EligibilityRule.HAS_SODIUM_MMOL_PER_L_OF_AT_LEAST_X to hasSufficientLabValueCreator(
+                LabMeasurement.SODIUM,
+                LabUnit.MILLIMOLES_PER_LITER
+            ),
             EligibilityRule.HAS_POTENTIAL_HYPOKALEMIA to hasPotentialHypokalemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOMAGNESEMIA to hasPotentialHypomagnesemiaCreator(),
             EligibilityRule.HAS_POTENTIAL_HYPOCALCEMIA to hasPotentialHypocalcemiaCreator(),

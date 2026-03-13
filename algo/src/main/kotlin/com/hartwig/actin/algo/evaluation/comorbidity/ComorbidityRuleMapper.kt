@@ -112,8 +112,15 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_SET,
                 "Arterial thrombo-embolic event"
             ),
+            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
+                IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
+                "Arterial thrombo-embolic event"
+            ),
             EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasHadComorbiditiesWithIcdCodeCreator(
                 IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_SET, "Venous thrombo-embolic event"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
+                IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(), "Venous thrombo-embolic event"
             ),
             EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
                 setOf(
