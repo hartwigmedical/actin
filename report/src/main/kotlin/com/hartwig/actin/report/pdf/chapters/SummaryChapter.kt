@@ -113,34 +113,41 @@ class SummaryChapter(
         val keyWidth = Formats.STANDARD_KEY_WIDTH
         val valueWidth = contentWidth() - keyWidth
 
-        val clinicalSummaryGenerator =
-            ClinicalSummaryGenerator(
-                report = report,
-                includeAdditionalFields = configuration.clinicalSummaryType == ReportContentType.COMPREHENSIVE,
-                keyWidth = keyWidth,
-                valueWidth = valueWidth
-            ).takeIf {
-                configuration.clinicalSummaryType != ReportContentType.NONE
+        val clinicalSummaryGenerator = configuration.clinicalSummaryType
+            .takeIf { it != ReportContentType.NONE }
+            ?.let {
+                ClinicalSummaryGenerator(
+                    report = report,
+                    includeAdditionalFields = it == ReportContentType.COMPREHENSIVE,
+                    keyWidth = keyWidth,
+                    valueWidth = valueWidth
+                )
             }
 
-        val molecularSummaryGenerator = MolecularSummaryGenerator(
-            patientRecord = report.patientRecord,
-            cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
-            keyWidth = keyWidth,
-            valueWidth = valueWidth
-        ).takeIf {
-            configuration.molecularSummaryType != ReportContentType.NONE
-        }
+        val molecularSummaryGenerator = configuration.molecularSummaryType
+            .takeIf { it != ReportContentType.NONE }
+            ?.let {
+                MolecularSummaryGenerator(
+                    patientRecord = report.patientRecord,
+                    cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
+                    keyWidth = keyWidth,
+                    valueWidth = valueWidth
+                )
+            }
 
-        val standardOfCareTableGenerator = EligibleStandardOfCareGenerator(report).takeIf {
-            configuration.standardOfCareSummaryType != ReportContentType.NONE
-        }
+        val standardOfCareTableGenerator = configuration.standardOfCareSummaryType
+            .takeIf { it != ReportContentType.NONE }
+            ?.let { EligibleStandardOfCareGenerator(report) }
 
-        val trialTableGenerators = createTrialTableGenerators(
-            cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
-            externalTrials = trialsProvider.externalTrials(),
-            requestingSource = TrialSource.fromDescription(configuration.hospitalOfReference)
-        ).takeIf { configuration.trialMatchingSummaryType != ReportContentType.NONE } ?: emptyList()
+        val trialTableGenerators = configuration.trialMatchingSummaryType
+            .takeIf { it != ReportContentType.NONE }
+            ?.let {
+                createTrialTableGenerators(
+                    cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
+                    externalTrials = trialsProvider.externalTrials(),
+                    requestingSource = TrialSource.fromDescription(configuration.hospitalOfReference)
+                )
+            } ?: emptyList()
 
         return listOfNotNull(
             clinicalSummaryGenerator,
