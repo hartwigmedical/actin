@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 
 enum class ReportContentType {
     NONE,
+    BRIEF,
     COMPREHENSIVE
 }
 

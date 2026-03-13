@@ -132,9 +132,8 @@ class SummaryChapter(
             configuration.molecularSummaryType != ReportContentType.NONE
         }
 
-        val standardOfCareTableGenerator = when (configuration.standardOfCareSummaryType) {
-            ReportContentType.NONE -> null
-            ReportContentType.COMPREHENSIVE -> EligibleStandardOfCareGenerator(report)
+        val standardOfCareTableGenerator = EligibleStandardOfCareGenerator(report).takeIf {
+            configuration.standardOfCareSummaryType != ReportContentType.NONE
         }
 
         val trialTableGenerators = createTrialTableGenerators(

@@ -48,7 +48,7 @@ fun main() {
     val writer = createProductionReportWriter(WORK_DIRECTORY)
     val reportConfiguration = ReportConfiguration().copy(
         patientDetailsType = ReportContentType.COMPREHENSIVE,
-        clinicalSummaryType = ReportContentType.COMPREHENSIVE,
+        clinicalSummaryType = ReportContentType.BRIEF,
         molecularSummaryType = ReportContentType.COMPREHENSIVE,
         standardOfCareSummaryType = ReportContentType.NONE,
         trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,

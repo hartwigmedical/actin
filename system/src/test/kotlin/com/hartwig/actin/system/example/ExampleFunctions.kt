@@ -69,7 +69,7 @@ object ExampleFunctions {
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
             patientDetailsType = ReportContentType.COMPREHENSIVE,
-            clinicalSummaryType = ReportContentType.COMPREHENSIVE,
+            clinicalSummaryType = ReportContentType.BRIEF,
             molecularSummaryType = ReportContentType.COMPREHENSIVE,
             standardOfCareSummaryType = ReportContentType.NONE,
             trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
@@ -88,7 +88,7 @@ object ExampleFunctions {
             clinicalSummaryType = ReportContentType.COMPREHENSIVE,
             molecularSummaryType = ReportContentType.NONE,
             standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
-            trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
+            trialMatchingSummaryType = ReportContentType.BRIEF,
             molecularChapterType = MolecularChapterType.STANDARD_WITH_PATHOLOGY,
             efficacyEvidenceChapterType = EfficacyEvidenceChapterType.STANDARD_OF_CARE_ONLY,
             clinicalChapterType = ClinicalChapterType.COMPLETE,
