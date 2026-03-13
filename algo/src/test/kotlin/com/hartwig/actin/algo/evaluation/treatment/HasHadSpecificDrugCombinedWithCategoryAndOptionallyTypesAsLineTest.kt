@@ -115,7 +115,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if single type is requested and treatment is of multiple types of which one is the requested and line is requested`() {
+    fun `Should evaluate to undetermined if patient received drug combined with requested category and type but line is requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 MATCHING_DRUG_TREATMENT, drugTreatment(
