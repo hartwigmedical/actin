@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
 class SpecificDrugCombinedWithCategoryAndTypesEvaluator(
     val drugToFind: Drug,
@@ -15,10 +14,8 @@ class SpecificDrugCombinedWithCategoryAndTypesEvaluator(
     val types: Set<TreatmentType>?
 ) {
 
-    fun relevantHistory(record: PatientRecord): List<TreatmentHistoryEntry> {
-        return record.oncologicalHistory.filter { history ->
-            history.allTreatments().any { (it as? DrugTreatment)?.drugs?.contains(drugToFind) == true }
-        }
+    fun relevantHistory(record: PatientRecord) = record.oncologicalHistory.filter { history ->
+        history.allTreatments().any { (it as? DrugTreatment)?.drugs?.contains(drugToFind) == true }
     }
 
     fun treatmentWithoutDrugMatchesCategoryAndType(pastTreatment: Treatment): Boolean {
@@ -27,6 +24,6 @@ class SpecificDrugCombinedWithCategoryAndTypesEvaluator(
         return treatmentWithoutDrug.categories().contains(category) && treatmentWithoutDrug.types().containsAll(types ?: emptySet())
     }
 
-    fun treatmentString(): String =
+    fun treatmentString() =
         "combined therapy with ${drugToFind.display()} and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
 }
