@@ -9,13 +9,27 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
+private val MATCHING_CATEGORY = TreatmentCategory.CHEMOTHERAPY
+private val DIFFERENT_CATEGORY = TreatmentCategory.IMMUNOTHERAPY
+private val MATCHING_TYPES = setOf(DrugType.HER2_ANTIBODY, DrugType.HER3_ANTIBODY)
+private val DIFFERENT_TYPES = setOf(DrugType.ABL_INHIBITOR)
+private val MATCHING_DRUG_TREATMENT = drugTreatment("Target drug", MATCHING_CATEGORY, MATCHING_TYPES)
+
+class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
+
+    private val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
+        MATCHING_DRUG_TREATMENT.drugs.first(),
+        MATCHING_CATEGORY,
+        MATCHING_TYPES,
+        null
+    )
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
@@ -27,7 +41,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
                     treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
                 )
             )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(treatmentHistory))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(treatmentHistory))
     }
 
     @Test
@@ -38,14 +52,14 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
                 drugTreatment("wrong name", DIFFERENT_CATEGORY)
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
     fun `Should pass if combination of target drug and treatment with target category in history if function requires no types`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)))
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet()
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -60,8 +74,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
                 )
             )
         )
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first())
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), null
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -71,8 +85,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, MATCHING_TYPES))
         )
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -87,7 +101,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 
@@ -96,15 +110,33 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if single type is requested and treatment is of multiple types of which one is the requested and line is requested`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(
+                MATCHING_DRUG_TREATMENT, drugTreatment(
+                    "combined", MATCHING_CATEGORY,
+                    setOf(MATCHING_TYPES.first(), DrugType.EGFR_ANTIBODY)
+                )
+            )
+        )
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 2
+        )
+        val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly("Has received combined therapy with target drug and HER2 antibody chemotherapy but unknown if in line 2")
     }
 
     @Test
     fun `Should fail if types required but none match treatment history`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -113,18 +145,6 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesTest {
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT)),
             treatmentHistoryEntry(setOf(drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES))),
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(treatmentHistory)))
-    }
-
-    companion object {
-        private val MATCHING_CATEGORY = TreatmentCategory.CHEMOTHERAPY
-        private val DIFFERENT_CATEGORY = TreatmentCategory.IMMUNOTHERAPY
-        private val MATCHING_TYPES = setOf(DrugType.HER2_ANTIBODY, DrugType.HER3_ANTIBODY)
-        private val DIFFERENT_TYPES = setOf(DrugType.ABL_INHIBITOR)
-        private val MATCHING_DRUG_TREATMENT = drugTreatment("Target drug", MATCHING_CATEGORY, MATCHING_TYPES)
-
-        private val FUNCTION = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES
-        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 }
