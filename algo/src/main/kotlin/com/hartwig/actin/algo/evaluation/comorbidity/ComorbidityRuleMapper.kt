@@ -88,7 +88,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
                     IcdConstants.IDIOPATHIC_INTERSTITIAL_PNEUMONITIS_CODE,
                     IcdConstants.IDIOPATHIC_EOSINOPHILIC_PNEUMONITIS_CODE,
-                    IcdConstants.RADIATION_PNEUMONITIS_CODE
+                    IcdConstants.ACUTE_RADIATION_PNEUMONITIS_CODE
                 ),
                 "pneumonitis"
             ),
