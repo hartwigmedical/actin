@@ -10,7 +10,7 @@ class InterpretedCohortFunctionsTest {
     fun `Should return true when source matches requestingSource`() {
         assertThat(
             InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
-                source = TrialSource.EXAMPLE,
+                sources = setOf(TrialSource.EXAMPLE),
                 locations = emptySet(),
                 requestingSource = TrialSource.EXAMPLE
             )
@@ -22,7 +22,7 @@ class InterpretedCohortFunctionsTest {
         listOf(TrialSource.NKI, null).forEach {
             assertThat(
                 InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
-                    source = it,
+                    sources = it?.let { setOf(it) } ?: emptySet(),
                     locations = setOf(TrialSource.NKI.description, TrialSource.EXAMPLE.description),
                     requestingSource = TrialSource.EXAMPLE
                 )
@@ -35,7 +35,7 @@ class InterpretedCohortFunctionsTest {
         listOf(TrialSource.NKI, null).forEach {
             assertThat(
                 InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
-                    source = it,
+                    sources = it?.let { setOf(it) } ?: emptySet(),
                     locations = setOf(TrialSource.EMC.description),
                     requestingSource = TrialSource.EXAMPLE
                 )

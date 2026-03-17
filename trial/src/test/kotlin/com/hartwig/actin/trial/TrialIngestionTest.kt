@@ -32,13 +32,37 @@ const val LOCATION = "location"
 class TrialIngestionTest {
 
     @Test
+    fun `Should create LKO url when single source is LKO`() {
+        val ingestion = TrialIngestion(EligibilityFactory(TestTreatmentDatabaseFactory.createProper()))
+        val result = ingestion.ingest(
+            listOf(
+                TrialConfig(
+                    trialId = TRIAL_ID,
+                    sources = setOf(TrialSource.LKO),
+                    sourceId = SOURCE_ID,
+                    nctId = NCT_ID,
+                    open = true,
+                    acronym = ACRONYM,
+                    title = TITLE,
+                    phase = TrialPhase.PHASE_1,
+                    inclusionCriterion = emptyList(),
+                    cohorts = emptyList(),
+                    locations = emptyList()
+                )
+            )
+        ) as Either.Right
+        assertThat(result.value.single().identification.url)
+            .isEqualTo("https://longkankeronderzoek.nl/studies/$SOURCE_ID")
+    }
+
+    @Test
     fun `Should map trial config to internal trial model and eligibility criteria`() {
         val ingestion = TrialIngestion(EligibilityFactory(TestTreatmentDatabaseFactory.createProper()))
         val result = ingestion.ingest(
             listOf(
                 TrialConfig(
                     trialId = TRIAL_ID,
-                    source = TrialSource.NKI,
+                    sources = setOf(TrialSource.NKI),
                     sourceId = SOURCE_ID,
                     nctId = NCT_ID,
                     open = true,
@@ -76,8 +100,7 @@ class TrialIngestionTest {
                     title = TITLE,
                     nctId = NCT_ID,
                     phase = TrialPhase.PHASE_1,
-                    source = TrialSource.NKI,
-                    sourceId = SOURCE_ID,
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf(LOCATION),
                     url = "https://clinicaltrials.gov/study/$NCT_ID"
                 ),

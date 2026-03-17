@@ -59,8 +59,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                         title = trialState.title,
                         nctId = trialState.nctId,
                         phase = trialState.phase,
-                        source = trialState.source,
-                        sourceId = trialState.sourceId,
+                        sources = trialState.sources,
                         locations = trialState.locations.toSet(),
                         url = createTrialUrl(trialState)
                     ),
@@ -95,7 +94,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
         }
 
     private fun createTrialUrl(trialConfig: TrialConfig): String? {
-        return if (trialConfig.source == TrialSource.LKO) {
+        return if (trialConfig.sources.size == 1 && trialConfig.sources.first() == TrialSource.LKO) {
             trialConfig.sourceId?.let { "https://longkankeronderzoek.nl/studies/$it" }
         } else {
             trialConfig.nctId?.let { "https://clinicaltrials.gov/study/$it" }

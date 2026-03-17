@@ -52,7 +52,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.ignore).isFalse
         assertThat(trial1cohortA.warnings).isEmpty()
         assertThat(trial1cohortA.fails).isNotEmpty()
-        assertThat(trial1cohortA.source).isEqualTo(TrialSource.NKI)
+        assertThat(trial1cohortA.sources).containsExactly(TrialSource.NKI)
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
@@ -64,7 +64,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortB.ignore).isFalse
         assertThat(trial1cohortB.warnings).isEmpty()
         assertThat(trial1cohortB.fails).isNotEmpty()
-        assertThat(trial1cohortA.source).isEqualTo(TrialSource.NKI)
+        assertThat(trial1cohortA.sources).containsExactly(TrialSource.NKI)
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortC = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort C")
@@ -76,7 +76,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortC.ignore).isFalse
         assertThat(trial1cohortC.warnings).isEmpty()
         assertThat(trial1cohortC.fails).isNotEmpty
-        assertThat(trial1cohortA.source).isEqualTo(TrialSource.NKI)
+        assertThat(trial1cohortA.sources).containsExactly(TrialSource.NKI)
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
@@ -89,7 +89,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial2cohortA.ignore).isFalse
         assertThat(trial2cohortA.warnings).isEmpty()
         assertThat(trial2cohortA.fails).isEmpty()
-        assertThat(trial2cohortA.source).isEqualTo(TrialSource.NKI)
+        assertThat(trial2cohortA.sources).containsExactly(TrialSource.NKI)
         assertThat(trial2cohortA.locations).containsExactly("Antoni van Leeuwenhoek")
     }
 
@@ -119,8 +119,7 @@ class InterpretedCohortFactoryTest {
                 title = "Example test trial 1",
                 nctId = null,
                 phase = null,
-                source = null,
-                sourceId = null,
+                sources = emptySet(),
                 locations = emptySet(),
                 url = null
             ),
@@ -215,8 +214,7 @@ class InterpretedCohortFactoryTest {
                 title = "Example test trial 1",
                 nctId = "NCT00000010",
                 phase = TrialPhase.PHASE_1,
-                source = null,
-                sourceId = null,
+                sources = emptySet(),
                 locations = emptySet(),
                 url = null
             ),

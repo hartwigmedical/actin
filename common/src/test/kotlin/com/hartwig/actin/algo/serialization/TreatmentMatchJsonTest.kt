@@ -59,7 +59,7 @@ class TreatmentMatchJsonTest {
                 {
                     "identification":{
                         "trialId":"Test Trial 1","open":true,"acronym":"TEST-1","title":"Example test trial 1","nctId":"NCT00000010",
-                        "phase":"PHASE_1","source":"NKI","sourceId":"Source ID 1","locations":["Antoni van Leeuwenhoek"],"url":null},
+                        "phase":"PHASE_1","sources":["NKI"],"locations":["Antoni van Leeuwenhoek"],"url":null},
                     "isPotentiallyEligible":true,
                     "evaluations":[
                         [{"references":["I-01"],

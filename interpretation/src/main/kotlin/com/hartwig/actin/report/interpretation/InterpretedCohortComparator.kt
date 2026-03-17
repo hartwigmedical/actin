@@ -10,7 +10,7 @@ class InterpretedCohortComparator(private val requestingSource: TrialSource? = n
         return compareBy<InterpretedCohort> { it.molecularInclusionEvents.isEmpty() }
             .thenByDescending { cohort ->
                 requestingSource?.let {
-                    InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(cohort.source, cohort.locations, requestingSource)
+                    InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(cohort.sources, cohort.locations, requestingSource)
                 } ?: true
             }
             .thenByDescending(InterpretedCohort::hasSlotsAvailable)

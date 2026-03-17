@@ -4,9 +4,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 
 object InterpretedCohortFunctions {
 
-    //TODO("Support multiple sources per trial in trial API")
-
-    fun sourceOrLocationMatchesRequestingSource(source: TrialSource?, locations: Set<String>, requestingSource: TrialSource): Boolean {
-        return source == requestingSource || locations.any { location -> TrialSource.fromDescription(location) == requestingSource }
+    fun sourceOrLocationMatchesRequestingSource(sources: Set<TrialSource>, locations: Set<String>, requestingSource: TrialSource): Boolean {
+        return requestingSource in sources || locations.any { location -> TrialSource.fromDescription(location) == requestingSource }
     }
 }
