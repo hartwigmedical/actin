@@ -10,4 +10,7 @@ class StandardOfCareEvaluation(val evaluatedTreatments: List<EvaluatedTreatment>
     fun isMissingMolecularResultForEvaluation() = evaluatedTreatments.any { evaluatedTreatment ->
         evaluatedTreatment.evaluations.any(Evaluation::isMissingMolecularResultForEvaluation)
     }
+
+    fun isMissingPotentiallyIntolerantTreatmentsOnly() =
+        evaluatedTreatments.all { evaluatedTreatment -> evaluatedTreatment.treatmentCandidate.potentialIntolerant }
 }
