@@ -3,9 +3,15 @@ package com.hartwig.actin.database.dao
 import com.hartwig.actin.database.Tables
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.trial.input.composite.CompositeRules
+import com.hartwig.actin.trial.input.ruleAsEnum
 import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
 import org.jooq.DSLContext
 
@@ -46,7 +52,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
             .returning(Tables.TREATMENTMATCH.ID)
             .fetchOne()!!
             .getValue(Tables.TREATMENTMATCH.ID)
-        
+
         for (trialMatch in treatmentMatch.trialMatches) {
             val trialMatchId = writeTrialMatch(treatmentMatchId, trialMatch)
             writeEvaluations(trialMatchId, null, trialMatch.evaluations)
@@ -109,36 +115,79 @@ class TreatmentMatchDAO(private val context: DSLContext) {
 
     private fun writeEvaluations(trialMatchId: Int, cohortMatchId: Int?, evaluations: Map<Eligibility, Evaluation>) {
         for ((key, evaluation) in evaluations) {
-            val eligibility = EligibilityFunctionDisplay.format(key.function)
-            context.insertInto(
-                Tables.EVALUATION,
-                Tables.EVALUATION.TRIALMATCHID,
-                Tables.EVALUATION.COHORTMATCHID,
-                Tables.EVALUATION.ELIGIBILITY,
-                Tables.EVALUATION.RESULT,
-                Tables.EVALUATION.RECOVERABLE,
-                Tables.EVALUATION.INCLUSIONMOLECULAREVENTS,
-                Tables.EVALUATION.EXCLUSIONMOLECULAREVENTS,
-                Tables.EVALUATION.PASSMESSAGES,
-                Tables.EVALUATION.WARNMESSAGES,
-                Tables.EVALUATION.UNDETERMINEDMESSAGES,
-                Tables.EVALUATION.FAILMESSAGES
-            )
-                .values(
-                    trialMatchId,
-                    cohortMatchId,
-                    eligibility,
-                    evaluation.result.toString(),
-                    evaluation.recoverable,
-                    DataUtil.concat(evaluation.inclusionMolecularEvents),
-                    DataUtil.concat(evaluation.exclusionMolecularEvents),
-                    DataUtil.concat(evaluation.passMessages.map { it.toString() }),
-                    DataUtil.concat(evaluation.warnMessages.map { it.toString() }),
-                    DataUtil.concat(evaluation.undeterminedMessages.map { it.toString() }),
-                    DataUtil.concat(evaluation.failMessages.map { it.toString() })
-                )
-                .execute()
+            writeEvaluationTree(trialMatchId, cohortMatchId, key.function, evaluation, parentEvaluationId = null)
         }
     }
-    
+
+    private fun writeEvaluationTree(
+        trialMatchId: Int,
+        cohortMatchId: Int?,
+        function: EligibilityFunction,
+        evaluation: Evaluation,
+        parentEvaluationId: Int?
+    ) {
+        val eligibility = EligibilityFunctionDisplay.format(function)
+        val evaluationId = context.insertInto(
+            Tables.EVALUATION,
+            Tables.EVALUATION.TRIALMATCHID,
+            Tables.EVALUATION.COHORTMATCHID,
+            Tables.EVALUATION.PARENTEVALUATIONID,
+            Tables.EVALUATION.ELIGIBILITY,
+            Tables.EVALUATION.RESULT,
+            Tables.EVALUATION.RECOVERABLE,
+            Tables.EVALUATION.INCLUSIONMOLECULAREVENTS,
+            Tables.EVALUATION.EXCLUSIONMOLECULAREVENTS,
+            Tables.EVALUATION.PASSMESSAGES,
+            Tables.EVALUATION.WARNMESSAGES,
+            Tables.EVALUATION.UNDETERMINEDMESSAGES,
+            Tables.EVALUATION.FAILMESSAGES
+        )
+            .values(
+                trialMatchId,
+                cohortMatchId,
+                parentEvaluationId,
+                eligibility,
+                evaluation.result.toString(),
+                evaluation.recoverable,
+                DataUtil.concat(evaluation.inclusionMolecularEvents),
+                DataUtil.concat(evaluation.exclusionMolecularEvents),
+                DataUtil.concat(evaluation.passMessages.map { it.toString() }),
+                DataUtil.concat(evaluation.warnMessages.map { it.toString() }),
+                DataUtil.concat(evaluation.undeterminedMessages.map { it.toString() }),
+                DataUtil.concat(evaluation.failMessages.map { it.toString() })
+            )
+            .returning(Tables.EVALUATION.ID)
+            .fetchOne()!!
+            .getValue(Tables.EVALUATION.ID)
+
+        val rule = function.ruleAsEnum()
+        if (CompositeRules.isComposite(rule)) {
+            val childFunctions = function.parameters.map { (it as FunctionParameter).value }
+            for (childFunction in childFunctions) {
+                val childResult = inferChildResult(rule, evaluation.result)
+                val childEvaluation = Evaluation(result = childResult, recoverable = evaluation.recoverable)
+                writeEvaluationTree(trialMatchId, cohortMatchId, childFunction, childEvaluation, evaluationId)
+            }
+        }
+    }
+
+    companion object {
+        fun inferChildResult(compositeRule: EligibilityRule, parentResult: EvaluationResult): EvaluationResult {
+            return when (compositeRule) {
+                EligibilityRule.AND -> parentResult
+                EligibilityRule.OR -> parentResult
+                EligibilityRule.NOT -> when (parentResult) {
+                    EvaluationResult.PASS -> EvaluationResult.FAIL
+                    EvaluationResult.FAIL -> EvaluationResult.PASS
+                    else -> parentResult
+                }
+                EligibilityRule.WARN_IF -> when (parentResult) {
+                    EvaluationResult.WARN -> EvaluationResult.PASS
+                    EvaluationResult.PASS -> EvaluationResult.FAIL
+                    else -> parentResult
+                }
+                else -> parentResult
+            }
+        }
+    }
 }
