@@ -92,10 +92,6 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
             LinxBreakendType.SGL -> {
                 DisruptionType.SGL
             }
-
-            else -> {
-                throw IllegalStateException("Cannot determine disruption type for linx disruption type: $type")
-            }
         }
     }
 
@@ -156,12 +152,16 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
     }
 
     private fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double {
+        val undisruptedCopyNumber = breakend.undisruptedCopyNumber()
+        if (undisruptedCopyNumber.isNaN()) {
+            return 0.0
+        }
         return if (breakend.type() == LinxBreakendType.DUP
             && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
         ) {
-            (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
+            (undisruptedCopyNumber - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
         } else {
-            breakend.undisruptedCopyNumber()
+            undisruptedCopyNumber
         }
     }
 }

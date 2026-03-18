@@ -201,6 +201,30 @@ class DisruptionExtractorTest {
         assertThat(disruption.undisruptedCopyNumber).isEqualTo(0.2, Offset.offset(EPSILON))
     }
 
+    @Test
+    fun `Should handle NaN undisrupted copy number by substituting 0`() {
+        val linxBreakend = breakendBuilder()
+            .gene("gene")
+            .reported(false)
+            .isCanonical(true)
+            .disruptive(true)
+            .type(LinxBreakendType.INS)
+            .junctionCopyNumber(0.0)
+            .undisruptedCopyNumber(Double.NaN)
+            .svId(1)
+            .build()
+        val structuralVariant = structuralVariantBuilder().svId(1).clusterId(2).build()
+        val linx = ImmutableLinxRecord.builder()
+            .from(createMinimalTestOrangeRecord().linx())
+            .addAllSomaticStructuralVariants(structuralVariant)
+            .addAllSomaticBreakends(linxBreakend)
+            .build()
+
+        val disruptions = extractor.extractDisruptions(linx, emptySet(), emptyList())
+        assertThat(disruptions).hasSize(1)
+        assertThat(disruptions.first().undisruptedCopyNumber).isEqualTo(0.0, Offset.offset(EPSILON))
+    }
+
     private fun withBreakend(breakend: LinxBreakend): LinxRecord {
         return ImmutableLinxRecord.builder()
             .from(createMinimalTestOrangeRecord().linx())
