@@ -3,13 +3,11 @@ package com.hartwig.actin.database.dao
 import com.hartwig.actin.database.Tables
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.FunctionParameter
-import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.input.composite.CompositeRules
 import com.hartwig.actin.trial.input.ruleAsEnum
 import com.hartwig.actin.trial.util.EligibilityFunctionDisplay
@@ -163,30 +161,9 @@ class TreatmentMatchDAO(private val context: DSLContext) {
         val rule = function.ruleAsEnum()
         if (CompositeRules.isComposite(rule)) {
             val childFunctions = function.parameters.map { (it as FunctionParameter).value }
-            for (childFunction in childFunctions) {
-                val childResult = inferChildResult(rule, evaluation.result)
-                val childEvaluation = Evaluation(result = childResult, recoverable = evaluation.recoverable)
+            val childEvaluations = evaluation.childEvaluations
+            for ((childFunction, childEvaluation) in childFunctions.zip(childEvaluations)) {
                 writeEvaluationTree(trialMatchId, cohortMatchId, childFunction, childEvaluation, evaluationId)
-            }
-        }
-    }
-
-    companion object {
-        fun inferChildResult(compositeRule: EligibilityRule, parentResult: EvaluationResult): EvaluationResult {
-            return when (compositeRule) {
-                EligibilityRule.AND -> parentResult
-                EligibilityRule.OR -> parentResult
-                EligibilityRule.NOT -> when (parentResult) {
-                    EvaluationResult.PASS -> EvaluationResult.FAIL
-                    EvaluationResult.FAIL -> EvaluationResult.PASS
-                    else -> parentResult
-                }
-                EligibilityRule.WARN_IF -> when (parentResult) {
-                    EvaluationResult.WARN -> EvaluationResult.PASS
-                    EvaluationResult.PASS -> EvaluationResult.FAIL
-                    else -> parentResult
-                }
-                else -> parentResult
             }
         }
     }
