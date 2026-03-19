@@ -161,7 +161,7 @@ class TreatmentMatchDAO(private val context: DSLContext) {
         val rule = function.ruleAsEnum()
         if (CompositeRules.isComposite(rule)) {
             val childFunctions = function.parameters.map { (it as FunctionParameter).value }
-            val childEvaluations = evaluation.childEvaluations
+            val childEvaluations = evaluation.childEvaluations ?: emptyList()
             for ((childFunction, childEvaluation) in childFunctions.zip(childEvaluations)) {
                 writeEvaluationTree(trialMatchId, cohortMatchId, childFunction, childEvaluation, evaluationId)
             }
