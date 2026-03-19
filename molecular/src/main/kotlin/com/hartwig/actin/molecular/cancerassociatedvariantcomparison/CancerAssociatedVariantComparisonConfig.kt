@@ -11,7 +11,8 @@ import org.apache.logging.log4j.core.config.Configurator
 data class CancerAssociatedVariantComparisonConfig(
     val orangeJson: String,
     val serveDirectory: String,
-    val outputDirectory: String
+    val outputDirectory: String,
+    val filterServeTrialsByCountry: String,
 ) {
 
     companion object {
@@ -20,6 +21,7 @@ data class CancerAssociatedVariantComparisonConfig(
         private const val ORANGE_JSON: String = "orange_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
         private const val OUTPUT_DIRECTORY: String = "output_directory"
+        private const val FILTER_SERVE_TRIALS_BY_COUNTRY: String = "filter_serve_trials_by_country"
         private const val LOG_DEBUG: String = "log_debug"
 
         fun createOptions(): Options {
@@ -39,7 +41,8 @@ data class CancerAssociatedVariantComparisonConfig(
             return CancerAssociatedVariantComparisonConfig(
                 orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
                 serveDirectory = ApplicationConfig.nonOptionalDir(cmd, SERVE_DIRECTORY),
-                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY)
+                outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
+                filterServeTrialsByCountry = cmd.getOptionValue(FILTER_SERVE_TRIALS_BY_COUNTRY)
             )
         }
     }
