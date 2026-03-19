@@ -154,6 +154,9 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
     private fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double {
         val undisruptedCopyNumber = breakend.undisruptedCopyNumber()
         if (undisruptedCopyNumber.isNaN()) {
+            // NaN only occurs on unreported breakends where CN cannot be computed.
+            // Return 0.0 to avoid arithmetic exceptions downstream; the value is unused.
+            // If value is to be used in the future, update datamodel to handle N/A
             return 0.0
         }
         return if (breakend.type() == LinxBreakendType.DUP
