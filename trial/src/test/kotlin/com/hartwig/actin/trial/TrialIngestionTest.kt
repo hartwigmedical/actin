@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test
 
 const val TRIAL_ID = "trialId"
 const val NCT_ID = "nctId"
-const val SOURCE_ID = "sourceId"
+const val DEFAULT_URL = "https://clinicaltrials.gov/study/$NCT_ID"
 const val ACRONYM = "acronym"
 const val TITLE = "title"
 const val IS_MALE = "IS_MALE"
@@ -32,30 +32,6 @@ const val LOCATION = "location"
 class TrialIngestionTest {
 
     @Test
-    fun `Should create LKO url when single source is LKO`() {
-        val ingestion = TrialIngestion(EligibilityFactory(TestTreatmentDatabaseFactory.createProper()))
-        val result = ingestion.ingest(
-            listOf(
-                TrialConfig(
-                    trialId = TRIAL_ID,
-                    sources = setOf(TrialSource.LKO),
-                    sourceId = SOURCE_ID,
-                    nctId = NCT_ID,
-                    open = true,
-                    acronym = ACRONYM,
-                    title = TITLE,
-                    phase = TrialPhase.PHASE_1,
-                    inclusionCriterion = emptyList(),
-                    cohorts = emptyList(),
-                    locations = emptyList()
-                )
-            )
-        ) as Either.Right
-        assertThat(result.value.single().identification.url)
-            .isEqualTo("https://longkankeronderzoek.nl/studies/$SOURCE_ID")
-    }
-
-    @Test
     fun `Should map trial config to internal trial model and eligibility criteria`() {
         val ingestion = TrialIngestion(EligibilityFactory(TestTreatmentDatabaseFactory.createProper()))
         val result = ingestion.ingest(
@@ -63,13 +39,13 @@ class TrialIngestionTest {
                 TrialConfig(
                     trialId = TRIAL_ID,
                     sources = setOf(TrialSource.NKI),
-                    sourceId = SOURCE_ID,
                     nctId = NCT_ID,
                     open = true,
                     acronym = ACRONYM,
                     title = TITLE,
                     phase = TrialPhase.PHASE_1,
                     inclusionCriterion = listOf(InclusionCriterionConfig(IS_MALE, listOf(REFERENCE_ID))),
+                    url = DEFAULT_URL,
                     cohorts = listOf(
                         CohortConfig(
                             cohortId = COHORT_ID,
