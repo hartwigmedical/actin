@@ -32,8 +32,8 @@ private enum class TreatmentEvaluation {
         ) = when {
             hadTreatment == true && correctNumberOfWeeks -> HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS
             hadTreatment == true && hadUnclearWeeks -> HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS
-            hadTreatment == null && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT
             hadTrial && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_POTENTIALLY_MATCHING_TRIAL
+            hadTreatment == null && (correctNumberOfWeeks || hadUnclearWeeks) -> HAS_HAD_UNCLEAR_TREATMENT
             hadTreatment == true -> HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS
             else -> NO_MATCH
         }
@@ -80,6 +80,7 @@ class TreatmentDurationEvaluator(
                 )
         }
 
+        val weeksString = if (weeks != null) " for ${durationMessageParts.acceptable} $weeks weeks" else ""
         return when {
             treatmentDurationType == TreatmentDurationType.LIMITED && TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS in treatmentEvaluations -> {
                 EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $weeks weeks")
@@ -90,7 +91,6 @@ class TreatmentDurationEvaluator(
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS in treatmentEvaluations -> {
-                val weeksString = if (weeks != null) " for ${durationMessageParts.acceptable} $weeks weeks" else ""
                 EvaluationFactory.pass("Has received $treatmentMessage$weeksString")
 
             }
@@ -100,11 +100,11 @@ class TreatmentDurationEvaluator(
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received contained $treatmentMessage for ${durationMessageParts.acceptable} $weeks weeks")
+                EvaluationFactory.undetermined("Undetermined if treatment received contained $treatmentMessage$weeksString")
             }
 
             TreatmentEvaluation.HAS_HAD_POTENTIALLY_MATCHING_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage for ${durationMessageParts.acceptable} $weeks weeks")
+                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage$weeksString")
             }
 
             else -> {
