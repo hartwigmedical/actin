@@ -162,7 +162,7 @@ SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialI
         inclusionMolecularEvents, exclusionMolecularEvents
     FROM trialMatch
     INNER JOIN treatmentMatch ON treatmentMatch.id = trialMatch.treatmentMatchId
-    LEFT JOIN evaluation ON trialMatch.id = evaluation.trialMatchId
+    LEFT JOIN evaluation ON trialMatch.id = evaluation.trialMatchId AND evaluation.parentEvaluationId IS NULL
     LEFT JOIN cohortMatch ON trialMatch.id = cohortMatch.trialMatchId AND cohortMatch.Id = evaluation.cohortMatchId
 UNION
 SELECT  referenceDate, referenceDateIsLive, patientId, trialMatch.code AS trialId, trialMatch.acronym AS trialAcronym, trialMatch.open AS trialOpen,

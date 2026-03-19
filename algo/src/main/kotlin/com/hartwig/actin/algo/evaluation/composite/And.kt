@@ -8,7 +8,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 class And(private val functions: List<EvaluationFunction>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluationsByResult = functions.map { it.evaluate(record) }.distinct().groupBy(Evaluation::result)
+        val childEvaluations = functions.map { it.evaluate(record) }
+        val evaluationsByResult = childEvaluations.distinct().groupBy(Evaluation::result)
         val worstResult = evaluationsByResult.keys.minOrNull()
             ?: throw IllegalStateException("Could not determine AND result for functions: $functions")
 
@@ -24,7 +25,8 @@ class And(private val functions: List<EvaluationFunction>) : EvaluationFunction 
         return evaluations.fold(Evaluation(worstResult, recoverable), Evaluation::addMessagesAndEvents).let { result ->
             result.copy(
                 inclusionMolecularEvents = result.inclusionMolecularEvents + additionalEvaluations.flatMap { it.inclusionMolecularEvents },
-                exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents }
+                exclusionMolecularEvents = result.exclusionMolecularEvents + additionalEvaluations.flatMap { it.exclusionMolecularEvents },
+                childEvaluations = childEvaluations
             )
         }
     }

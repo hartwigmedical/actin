@@ -8,24 +8,30 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluation = function.evaluate(record)
-        return when (evaluation.result) {
+        val childEvaluation = function.evaluate(record)
+        return when (childEvaluation.result) {
             EvaluationResult.PASS -> {
                 Evaluation(
                     result = EvaluationResult.WARN,
-                    recoverable = evaluation.recoverable,
-                    warnMessages = evaluation.passMessages
+                    recoverable = childEvaluation.recoverable,
+                    warnMessages = childEvaluation.passMessages,
+                    childEvaluations = listOf(childEvaluation)
                 )
             }
 
-            EvaluationResult.WARN -> evaluation.copy(inclusionMolecularEvents = emptySet(), exclusionMolecularEvents = emptySet())
+            EvaluationResult.WARN -> childEvaluation.copy(
+                inclusionMolecularEvents = emptySet(),
+                exclusionMolecularEvents = emptySet(),
+                childEvaluations = listOf(childEvaluation)
+            )
 
             else -> {
                 Evaluation(
                     result = EvaluationResult.PASS,
-                    recoverable = evaluation.recoverable,
-                    passMessages = (evaluation.passMessages + evaluation.warnMessages + evaluation.undeterminedMessages + evaluation.failMessages),
-                    isMissingMolecularResultForEvaluation = evaluation.isMissingMolecularResultForEvaluation
+                    recoverable = childEvaluation.recoverable,
+                    passMessages = (childEvaluation.passMessages + childEvaluation.warnMessages + childEvaluation.undeterminedMessages + childEvaluation.failMessages),
+                    isMissingMolecularResultForEvaluation = childEvaluation.isMissingMolecularResultForEvaluation,
+                    childEvaluations = listOf(childEvaluation)
                 )
             }
         }
