@@ -19,11 +19,9 @@ class HasHadOncologicalSurgeryInSpecificBodyLocation(private val bodyLocations: 
 
         return when {
             surgeriesInTargetLocation.isNotEmpty() -> {
-                EvaluationFactory.pass(
-                    "Has had oncological surgery in location(s) " + surgeriesInTargetLocation.joinToString(", ") {
-                        it.treatmentHistoryDetails?.bodyLocationCategories?.joinToString(", ") ?: ""
-                    }
-                )
+                val locations =
+                    surgeriesInTargetLocation.flatMap { it.treatmentHistoryDetails?.bodyLocationCategories ?: emptySet() }.toSet()
+                EvaluationFactory.pass("Has had oncological surgery in location(s) " + Format.concatItemsWithAnd(locations))
             }
 
             surgeries.any { it.treatmentHistoryDetails?.bodyLocationCategories == null } -> {
