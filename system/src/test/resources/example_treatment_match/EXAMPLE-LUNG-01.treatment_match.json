@@ -11,8 +11,7 @@
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
         "phase": "PHASE_1",
-        "source": null,
-        "sourceId": null,
+        "sources": [],
         "locations": [],
         "url": null
       },
@@ -324,8 +323,7 @@
         "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
         "nctId": "NCT00000002",
         "phase": "PHASE_1_2",
-        "source": null,
-        "sourceId": null,
+        "sources": [],
         "locations": [
           "Erasmus MC"
         ],
@@ -652,8 +650,7 @@
         "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR with C797 mutations but not C797S in solid tumors",
         "nctId": "NCT00000003",
         "phase": null,
-        "source": null,
-        "sourceId": null,
+        "sources": [],
         "locations": [],
         "url": null
       },
@@ -866,8 +863,7 @@
         "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
         "nctId": "NCT00000004",
         "phase": "PHASE_2",
-        "source": null,
-        "sourceId": null,
+        "sources": [],
         "locations": [
           "NKI-AvL"
         ],
@@ -1071,8 +1067,7 @@
         "title": "A phase 1/2 trial of ABC123 +/- platinum doublet in PIK3CA-mutated solid cancer",
         "nctId": "NCT00000020",
         "phase": null,
-        "source": null,
-        "sourceId": null,
+        "sources": [],
         "locations": [],
         "url": null
       },

@@ -11,8 +11,7 @@
         "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
         "nctId": "NCT00000002",
         "phase": null,
-        "source": null,
-        "sourceId": null,
+        "sources": [],
         "locations": [
           "Erasmus MC"
         ],
@@ -339,8 +338,7 @@
         "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
         "nctId": "NCT00000001",
         "phase": null,
-        "source": null,
-        "sourceId": null,
+        "sources": [],
         "locations": [],
         "url": null
       },

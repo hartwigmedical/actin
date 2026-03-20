@@ -1,6 +1,7 @@
 package com.hartwig.actin.trial.sort
 
 import com.hartwig.actin.datamodel.trial.TrialIdentification
+import com.hartwig.actin.datamodel.trial.TrialSource
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -29,8 +30,7 @@ class TrialIdentificationComparatorTest {
             title = title,
             nctId = null,
             phase = null,
-            source = null,
-            sourceId = null,
+            sources = emptySet(),
             locations = emptySet(),
             url = null
         )
