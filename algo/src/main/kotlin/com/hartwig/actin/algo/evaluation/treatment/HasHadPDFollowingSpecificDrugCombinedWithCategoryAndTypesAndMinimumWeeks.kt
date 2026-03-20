@@ -83,7 +83,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
 
         return when {
             treatmentEvaluations.size > 1 -> {
-                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentDesc is counted as received for more than $minWeeks weeks")
+                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentDesc is counted as received for at least $minWeeks weeks")
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_PD_AND_SUFFICIENT_WEEKS in treatmentEvaluations -> {

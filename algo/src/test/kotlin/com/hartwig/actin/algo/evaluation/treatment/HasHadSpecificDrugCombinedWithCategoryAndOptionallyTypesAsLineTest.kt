@@ -56,7 +56,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     }
 
     @Test
-    fun `Should pass if combination of target drug and treatment with target category in history if function requires no types`() {
+    fun `Should pass if combination of target drug and treatment with target category in history if function requires no types and line`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)))
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null
@@ -65,7 +65,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     }
 
     @Test
-    fun `Should pass if single type is requested and treatment is of multiple types of which one is the requested`() {
+    fun `Should pass if single type is requested and treatment is of multiple types of which one is the requested and no line requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(
                 MATCHING_DRUG_TREATMENT, drugTreatment(
@@ -81,7 +81,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     }
 
     @Test
-    fun `Should pass requested drug and requested combination treatment are both of same type and category`() {
+    fun `Should pass requested drug and requested combination treatment are both of same type and category and no line requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, MATCHING_TYPES))
         )

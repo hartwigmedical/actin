@@ -35,24 +35,18 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
 
     @Test
     fun `Should fail if history contains treatment with right category and type but not combined with target drug`() {
-        val treatmentHistory =
-            withTreatmentHistory(
-                listOf(
-                    treatmentHistoryEntry(setOf(drugTreatment("wrong drug", MATCHING_CATEGORY, emptySet()))),
-                    treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
-                )
+        val treatmentHistory = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(setOf(drugTreatment("wrong drug", MATCHING_CATEGORY, emptySet()))),
+                treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
             )
+        )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(treatmentHistory))
     }
 
     @Test
     fun `Should fail if treatment history contains treatment with target drug but not combined with treatment with required category`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(
-                MATCHING_DRUG_TREATMENT,
-                drugTreatment("wrong name", DIFFERENT_CATEGORY)
-            )
-        )
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("wrong name", DIFFERENT_CATEGORY)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
@@ -133,10 +127,8 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
     @Test
     fun `Should return undetermined if requested drug in history combined with trial without treatments configured`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
-            setOf(
-                MATCHING_DRUG_TREATMENT,
-                TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)
-            ), isTrial = true
+            setOf(MATCHING_DRUG_TREATMENT, TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)),
+            isTrial = true
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,

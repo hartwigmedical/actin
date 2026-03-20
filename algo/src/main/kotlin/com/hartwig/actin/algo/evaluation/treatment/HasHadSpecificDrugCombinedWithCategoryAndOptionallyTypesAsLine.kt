@@ -36,9 +36,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
                 EvaluationFactory.undetermined("Undetermined if received $treatmentDesc")
             }
 
-            else -> {
-                EvaluationFactory.fail("Has not received $treatmentDesc")
-            }
+            else -> EvaluationFactory.fail("Has not received $treatmentDesc")
         }
     }
 }

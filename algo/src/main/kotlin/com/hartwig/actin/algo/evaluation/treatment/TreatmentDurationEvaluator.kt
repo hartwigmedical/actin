@@ -102,8 +102,8 @@ class TreatmentDurationEvaluator(
                 } ?: TreatmentEvaluation.create(
                     hadTreatment = if (specificMatchCannotBeDetermined(treatmentHistoryEntry)) null else false,
                     hadTrial = mayMatchAsTrial,
-                correctNumberOfWeeks = correctNumberOfWeeks(durationWeeks, durationWeeksMax, treatmentDurationType, weeks),
-                hadUnclearWeeks = hadUnclearWeeks(durationWeeks, durationWeeksMax, treatmentDurationType, weeks)
+                    correctNumberOfWeeks = correctNumberOfWeeks(durationWeeks, durationWeeksMax, treatmentDurationType, weeks),
+                    hadUnclearWeeks = hadUnclearWeeks(durationWeeks, durationWeeksMax, treatmentDurationType, weeks)
                 )
         }
 
