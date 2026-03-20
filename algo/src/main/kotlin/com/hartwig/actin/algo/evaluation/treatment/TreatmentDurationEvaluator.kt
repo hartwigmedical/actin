@@ -40,6 +40,23 @@ private enum class TreatmentEvaluation {
     }
 }
 
+fun correctNumberOfWeeks(
+    durationWeeks: Long?,
+    durationWeeksMax: Long?,
+    treatmentDurationType: TreatmentDurationType,
+    weeks: Int?
+): Boolean =
+    when (treatmentDurationType) {
+        TreatmentDurationType.LIMITED -> weeks == null || (durationWeeksMax != null && durationWeeksMax <= weeks)
+        TreatmentDurationType.SUFFICIENT -> weeks == null || (durationWeeks != null && durationWeeks >= weeks)
+    }
+
+fun hadUnclearWeeks(durationWeeks: Long?, durationWeeksMax: Long?, treatmentDurationType: TreatmentDurationType, weeks: Int?): Boolean =
+    when (treatmentDurationType) {
+        TreatmentDurationType.LIMITED -> weeks != null && durationWeeks == null && (durationWeeksMax == null || durationWeeksMax > weeks)
+        TreatmentDurationType.SUFFICIENT -> weeks != null && durationWeeks == null
+    }
+
 class TreatmentDurationEvaluator(
     private val matchesTreatment: (Treatment) -> Boolean?,
     private val specificMatchCannotBeDetermined: (TreatmentHistoryEntry) -> Boolean,
@@ -69,14 +86,24 @@ class TreatmentDurationEvaluator(
                     TreatmentEvaluation.create(
                         hadTreatment = true,
                         hadTrial = mayMatchAsTrial,
-                        correctNumberOfWeeks = correctNumberOfWeeks(durationWeeksMatchingPortion, durationWeeksMaxMatchingPortion),
-                        hadUnclearWeeks = hadUnclearWeeks(durationWeeksMatchingPortion, durationWeeksMaxMatchingPortion)
+                        correctNumberOfWeeks = correctNumberOfWeeks(
+                            durationWeeksMatchingPortion,
+                            durationWeeksMaxMatchingPortion,
+                            treatmentDurationType,
+                            weeks
+                        ),
+                        hadUnclearWeeks = hadUnclearWeeks(
+                            durationWeeksMatchingPortion,
+                            durationWeeksMaxMatchingPortion,
+                            treatmentDurationType,
+                            weeks
+                        )
                     )
                 } ?: TreatmentEvaluation.create(
                     hadTreatment = if (specificMatchCannotBeDetermined(treatmentHistoryEntry)) null else false,
                     hadTrial = mayMatchAsTrial,
-                correctNumberOfWeeks = correctNumberOfWeeks(durationWeeks, durationWeeksMax),
-                    hadUnclearWeeks = hadUnclearWeeks(durationWeeks, durationWeeksMax)
+                    correctNumberOfWeeks = correctNumberOfWeeks(durationWeeks, durationWeeksMax, treatmentDurationType, weeks),
+                    hadUnclearWeeks = hadUnclearWeeks(durationWeeks, durationWeeksMax, treatmentDurationType, weeks)
                 )
         }
 
@@ -112,16 +139,4 @@ class TreatmentDurationEvaluator(
             }
         }
     }
-
-    private fun correctNumberOfWeeks(durationWeeks: Long?, durationWeeksMax: Long?): Boolean =
-        when (treatmentDurationType) {
-            TreatmentDurationType.LIMITED -> weeks == null || (durationWeeksMax != null && durationWeeksMax <= weeks)
-            TreatmentDurationType.SUFFICIENT -> weeks == null || (durationWeeks != null && durationWeeks >= weeks)
-        }
-
-    private fun hadUnclearWeeks(durationWeeks: Long?, durationWeeksMax: Long?): Boolean =
-        when (treatmentDurationType) {
-            TreatmentDurationType.LIMITED -> weeks != null && durationWeeks == null && (durationWeeksMax == null || durationWeeksMax > weeks)
-            TreatmentDurationType.SUFFICIENT -> weeks != null && durationWeeks == null
-        }
 }
