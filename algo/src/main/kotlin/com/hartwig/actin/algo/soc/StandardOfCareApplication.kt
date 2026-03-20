@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.doid.CuppaToDoidMapping
@@ -15,6 +14,7 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options

@@ -84,7 +84,7 @@ class TreatmentMatchJsonTest {
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",
                         "treatments":[
                             {"name":"PEMBROLIZUMAB",
-                            "drugs":[{"name":"PEMBROLIZUMAB","drugTypes":["TOPO1_INHIBITOR"],"category":"CHEMOTHERAPY",
+                            "drugs":[{"name":"PEMBROLIZUMAB","synonyms":[],"drugTypes":["TOPO1_INHIBITOR"],"category":"CHEMOTHERAPY",
                             "displayOverride":null}],"synonyms":[],"displayOverride":null,"isSystemic":true,"maxCycles":null,
                             "treatmentClass":"DRUG_TREATMENT"}],
                         "therapeuticSetting":"ADJUVANT",
@@ -99,7 +99,7 @@ class TreatmentMatchJsonTest {
                             "patientsWithPrimaryTumorRemovedComplete":50,"patientsWithPrimaryTumorRemovedPartial":25,
                             "patientsWithPrimaryTumorRemoved":25,"patientsPerMetastaticSites":
                             {"Lung":{"value":100,"percentage":100.0}},"timeOfMetastases":"BOTH","treatment":
-                            {"name":"PEMBROLIZUMAB","drugs":[{"name":"PEMBROLIZUMAB","drugTypes":["TOPO1_INHIBITOR"],
+                            {"name":"PEMBROLIZUMAB","drugs":[{"name":"PEMBROLIZUMAB","synonyms":[],"drugTypes":["TOPO1_INHIBITOR"],
                             "category":"CHEMOTHERAPY","displayOverride":null}],"synonyms":[],"displayOverride":null,
                             "isSystemic":true,"maxCycles":null,"treatmentClass":"DRUG_TREATMENT"},
                             "priorSystemicTherapy":"Chemo","patientsWithMSI":33,

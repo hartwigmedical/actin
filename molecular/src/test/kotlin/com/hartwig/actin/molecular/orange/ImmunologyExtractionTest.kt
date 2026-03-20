@@ -36,11 +36,20 @@ class ImmunologyExtractionTest {
             .somaticNonsenseOrFrameshift(0.0)
             .build()
 
-        val orange = withLilacData(allele1, allele2)
+        val allele3 = TestLilacFactory.builder()
+            .allele("C*07:1153")
+            .tumorCopyNumber(1.4)
+            .somaticMissense(0.0)
+            .somaticInframeIndel(0.0)
+            .somaticSplice(0.0)
+            .somaticNonsenseOrFrameshift(0.0)
+            .build()
+
+        val orange = withLilacData(allele1, allele2, allele3)
 
         val immunology = ImmunologyExtraction.extract(orange)
         assertThat(immunology.isReliable).isTrue
-        assertThat(immunology.hlaAlleles).hasSize(2)
+        assertThat(immunology.hlaAlleles).hasSize(3)
 
         val hlaAllele1 = findByName(immunology.hlaAlleles, "HLA-A", "02", "01")
         assertThat(hlaAllele1.tumorCopyNumber).isEqualTo(1.2, Offset.offset(EPSILON))
@@ -49,6 +58,10 @@ class ImmunologyExtractionTest {
         val hlaAllele2 = findByName(immunology.hlaAlleles, "HLA-B", "01", "101")
         assertThat(hlaAllele2.tumorCopyNumber).isEqualTo(1.3, Offset.offset(EPSILON))
         assertThat(hlaAllele2.hasSomaticMutations).isFalse
+
+        val hlaAllele3 = findByName(immunology.hlaAlleles, "HLA-C", "07", "1153")
+        assertThat(hlaAllele3.tumorCopyNumber).isEqualTo(1.4, Offset.offset(EPSILON))
+        assertThat(hlaAllele3.hasSomaticMutations).isFalse
     }
 
     @Test

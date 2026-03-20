@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test
 
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
-private val DRUG_TO_IGNORE = Drug("drug to ignore", emptySet(), TreatmentCategory.CHEMOTHERAPY)
-private val OTHER_MATCHING_DRUG = Drug("other drug", emptySet(), TreatmentCategory.CHEMOTHERAPY)
-private val OTHER_NON_MATCHING_DRUG = Drug("other drug", emptySet(), TreatmentCategory.IMMUNOTHERAPY)
+private val DRUG_TO_IGNORE = Drug("drug to ignore", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_MATCHING_DRUG = Drug("other drug", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_NON_MATCHING_DRUG = Drug("other drug", emptySet(), emptySet(), TreatmentCategory.IMMUNOTHERAPY)
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 

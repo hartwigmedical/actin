@@ -72,6 +72,16 @@
             <scope>test</scope>
             <type>test-jar</type>
         </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin.treatment-database</groupId>
+            <artifactId>treatment-database</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin.treatment-database</groupId>
+            <artifactId>treatment-database</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
     </dependencies>
 
     <build>
