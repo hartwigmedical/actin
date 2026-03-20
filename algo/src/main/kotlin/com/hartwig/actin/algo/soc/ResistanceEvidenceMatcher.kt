@@ -89,10 +89,7 @@ class ResistanceEvidenceMatcher(
         matches[it]?.evidenceMatches?.contains(evidence) == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
-        return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))
-            .mapNotNull(treatmentDatabase::findTreatmentByName)
-            .distinct()
-            .singleOrNull()
+        return treatmentDatabase.findTreatmentByName(treatment.name())
             ?.takeIf { drugsInOtherTreatment(treatmentToFind, it) }
             ?.name
     }
