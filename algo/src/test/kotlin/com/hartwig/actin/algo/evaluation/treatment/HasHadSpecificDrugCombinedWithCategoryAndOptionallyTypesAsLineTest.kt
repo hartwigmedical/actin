@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -29,7 +29,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
@@ -41,7 +41,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
                     treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
                 )
             )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(treatmentHistory))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(treatmentHistory))
     }
 
     @Test
@@ -52,7 +52,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
                 drugTreatment("wrong name", DIFFERENT_CATEGORY)
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -61,7 +61,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -77,7 +77,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), null
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -88,7 +88,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -99,7 +99,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
                 TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)
             ), isTrial = true
         )
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
@@ -108,7 +108,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     @Test
     fun `Should evaluate to undetermined if treatment history entry does not have any treatments specified`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
-        EvaluationAssert.assertEvaluation(
+        assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
@@ -128,7 +128,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 2
         )
         val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertEvaluation(EvaluationResult.UNDETERMINED, result)
         assertThat(result.undeterminedMessagesStrings()).containsExactly("Has received combined therapy with target drug and HER2 antibody chemotherapy but unknown if in line 2")
     }
 
@@ -136,7 +136,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     fun `Should fail if types required but none match treatment history`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -145,6 +145,6 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT)),
             treatmentHistoryEntry(setOf(drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES))),
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 }
