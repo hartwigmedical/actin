@@ -32,6 +32,13 @@ steps:
     waitFor:
       - 'Build and push the molecular image with tag'
 
+  - id: 'Build and push the database image with tag'
+    name: 'europe-west4-docker.pkg.dev/hmf-build/hmf-docker/docker-tag'
+    dir: 'database'
+    args: [ 'europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-database', '$TAG_NAME', 'Dockerfile', '--build-arg', 'VERSION=$TAG_NAME' ]
+    waitFor:
+      - 'Build and push the molecular image with tag'
+
   - name: 'gcr.io/cloud-builders/gcloud'
     args: [ 'pubsub', 'topics', 'publish', 'actin-upgrade.pending', '--project', 'actin-build', '--message', '{ "tag": "$TAG_NAME", "repository": "actin", "is_version_property": "true"}' ]
 
@@ -41,3 +48,4 @@ images:
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-molecular
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-algo
   - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-report
+  - europe-west4-docker.pkg.dev/actin-build/build-registry-docker/actin-database
