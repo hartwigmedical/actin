@@ -37,7 +37,6 @@ class ImmunologyGenerator(
         val table = Tables.createRelativeWidthCols(2f, 3f, 2f, 2f, 5f)
 
         table.addHeaderCell(Cells.createHeaderWithBorder("HLA gene"))
-        table.addHeaderCell(Cells.createHeaderWithBorder(""))
         table.addHeaderCell(Cells.createHeaderWithBorder("Type"))
         table.addHeaderCell(Cells.createHeaderWithBorder("Tumor copy number"))
         table.addHeaderCell(Cells.createHeaderWithBorder("Mutated in tumor"))
@@ -89,8 +88,6 @@ class ImmunologyGenerator(
                 alleles.forEachIndexed { index, hlaAllele ->
                     if (index == 0) {
                         table.addCell(Cells.createContentNoBorder("HLA-A"))
-                        table.addCell(Cells.createContentNoBorder(""))
-
                     } else {
                         table.addCell(Cells.createContentNoBorder(""))
                         table.addCell(Cells.createContentNoBorder(""))
@@ -115,12 +112,10 @@ class ImmunologyGenerator(
                 table.addCell(Cells.createContentNoBorder("No HLA-A alleles detected"))
                 table.addCell(Cells.createContentNoBorder(""))
                 table.addCell(Cells.createContentNoBorder(""))
-                table.addCell(Cells.createContentNoBorder(""))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
             table.addCell(Cells.createContentNoBorder("HLA typing not available"))
-            table.addCell(Cells.createContentNoBorder(""))
             table.addCell(Cells.createContentNoBorder(""))
             table.addCell(Cells.createContentNoBorder(""))
         }
