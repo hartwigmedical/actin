@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.ckb
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
@@ -25,6 +24,7 @@ import com.hartwig.actin.datamodel.efficacy.TimeOfMetastases
 import com.hartwig.actin.datamodel.efficacy.TrialReference
 import com.hartwig.actin.datamodel.efficacy.ValuePercentage
 import com.hartwig.actin.datamodel.efficacy.VariantRequirement
+import com.hartwig.actin.treatment.database.TreatmentDatabase
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 

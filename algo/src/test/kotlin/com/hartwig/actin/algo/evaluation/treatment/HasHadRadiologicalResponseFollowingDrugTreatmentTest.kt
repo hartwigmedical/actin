@@ -20,7 +20,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
 
     private val function = HasHadRadiologicalResponseFollowingDrugTreatment(drug(MATCHING_DRUG_NAME))
 
-    private fun drug(name: String): Drug = Drug(name, emptySet(), TREATMENT_CATEGORY)
+    private fun drug(name: String): Drug = Drug(name, emptySet(), emptySet(), TREATMENT_CATEGORY)
 
     private fun drugTreatmentHistoryEntry(drugName: String, bestResponse: TreatmentResponse? = null): TreatmentHistoryEntry =
         treatmentHistoryEntry(

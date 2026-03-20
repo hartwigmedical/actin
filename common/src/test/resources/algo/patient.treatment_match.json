@@ -134,6 +134,7 @@
           "drugs": [
             {
               "name": "CAPECITABINE",
+              "synonyms": [],
               "drugTypes": [
                 "ANTIMETABOLITE",
                 "FLUOROPYRIMIDINE"
@@ -142,6 +143,7 @@
             },
             {
               "name": "OXALIPLATIN",
+              "synonyms": [],
               "drugTypes": [
                 "PLATINUM_COMPOUND"
               ],

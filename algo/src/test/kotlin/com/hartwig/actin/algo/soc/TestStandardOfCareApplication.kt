@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientPrinter
-import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.datamodel.PatientRecord
@@ -16,6 +14,8 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.treatment.database.TreatmentDatabase
+import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import java.io.File
 import java.time.LocalDate
 import kotlin.system.exitProcess
