@@ -202,7 +202,7 @@ class DisruptionExtractorTest {
     }
 
     @Test
-    fun `Should handle NaN undisrupted copy number by substituting 0`() {
+    fun `Should handle NaN undisrupted copy number by returning null`() {
         val linxBreakend = breakendBuilder()
             .gene("gene")
             .reported(false)
@@ -222,7 +222,7 @@ class DisruptionExtractorTest {
 
         val disruptions = extractor.extractDisruptions(linx, emptySet(), emptyList())
         assertThat(disruptions).hasSize(1)
-        assertThat(disruptions.first().undisruptedCopyNumber).isEqualTo(0.0, Offset.offset(EPSILON))
+        assertThat(disruptions.first().undisruptedCopyNumber).isNull()
     }
 
     private fun withBreakend(breakend: LinxBreakend): LinxRecord {
