@@ -46,7 +46,7 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
                     evidence = ExtractionUtil.noEvidence(),
                     type = determineDisruptionType(breakend.type()),
                     junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
-                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)),
+                    undisruptedCopyNumber = correctUndisruptedCopyNumber(breakend, drivers)?.let { ExtractionUtil.keep3Digits(it) },
                     regionType = determineRegionType(breakend.regionType()),
                     codingContext = determineCodingContext(breakend.codingType()),
                     clusterGroup = lookupClusterId(breakend, linx.allSomaticStructuralVariants())
@@ -151,13 +151,10 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    private fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double {
+    private fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double? {
         val undisruptedCopyNumber = breakend.undisruptedCopyNumber()
         if (undisruptedCopyNumber.isNaN()) {
-            // NaN only occurs on unreported breakends where CN cannot be computed.
-            // Return 0.0 to avoid arithmetic exceptions downstream; the value is unused.
-            // If value is to be used in the future, update datamodel to handle N/A
-            return 0.0
+            return null
         }
         return if (breakend.type() == LinxBreakendType.DUP
             && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
