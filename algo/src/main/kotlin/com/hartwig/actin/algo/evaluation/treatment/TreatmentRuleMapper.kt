@@ -23,7 +23,6 @@ import com.hartwig.actin.datamodel.trial.ManyTreatmentTypesParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.StringParameter
-import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
 import com.hartwig.actin.datamodel.trial.TreatmentCategoryOrTypeParameter
 import com.hartwig.actin.datamodel.trial.TreatmentCategoryParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
@@ -380,8 +379,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadFirstLineSystemicTreatmentNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = function.param<SystemicTreatmentParameter>(0).value
-            require(treatment.isSystemic) { "Not a systemic treatment: ${treatment.display()}" }
+            val treatment = function.param<TreatmentParameter>(0).value
             HasHadSpecificFirstLineSystemicTreatment(treatment)
         }
     }
