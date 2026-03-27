@@ -12,5 +12,5 @@ class StandardOfCareEvaluation(val evaluatedTreatments: List<EvaluatedTreatment>
     }
 
     fun isMissingPotentiallyIntolerantTreatmentsOnly() =
-        evaluatedTreatments.all { evaluatedTreatment -> evaluatedTreatment.treatmentCandidate.potentialIntolerant }
+        evaluatedTreatments.all { evaluatedTreatment -> evaluatedTreatment.treatmentCandidate.potentialIntolerance }
 }

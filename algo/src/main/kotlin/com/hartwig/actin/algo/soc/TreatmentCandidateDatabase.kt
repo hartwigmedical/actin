@@ -99,7 +99,7 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
         return TreatmentCandidate(
             treatment = treatment,
             optional = optional,
-            potentialIntolerant = treatmentName in potentiallyIntolerantTherapies,
+            potentialIntolerance = treatmentName in potentiallyIntolerantTherapies,
             eligibilityFunctions = treatmentLineFunctions + drugBasedEligibility,
             additionalCriteriaForRequirement = drugBasedCriteriaForRequirement
         )
