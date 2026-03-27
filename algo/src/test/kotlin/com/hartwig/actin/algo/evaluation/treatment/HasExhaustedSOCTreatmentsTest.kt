@@ -36,8 +36,10 @@ class HasExhaustedSOCTreatmentsTest {
     private val nonEmptyTreatmentList = listOf(
         EvaluatedTreatment(
             TreatmentCandidate(
-                TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
+                TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY),
+                optional = false,
+                potentialIntolerance = false,
+                eligibilityFunctions = setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
             ), listOf(EvaluationFactory.pass("Has MSI"))
         )
     )
@@ -235,8 +237,10 @@ class HasExhaustedSOCTreatmentsTest {
         val treatments = listOf(
             EvaluatedTreatment(
                 TreatmentCandidate(
-                    TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                    setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
+                    TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY),
+                    optional = false,
+                    potentialIntolerance = false,
+                    eligibilityFunctions = setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
                 ),
                 listOf(EvaluationFactory.undetermined("Cannot determine if MSI", isMissingMolecularResultForEvaluation = true))
             )

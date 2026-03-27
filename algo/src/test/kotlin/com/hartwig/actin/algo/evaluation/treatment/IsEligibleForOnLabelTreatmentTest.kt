@@ -204,7 +204,9 @@ class IsEligibleForOnLabelTreatmentTest {
     fun `Should return undetermined for colorectal cancer patient eligible for on label treatment pembrolizumab`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList())
         val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false, setOf(eligibilityFunction)
+            TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
+            potentialIntolerance = false,
+            eligibilityFunctions = setOf(eligibilityFunction)
         )
         val expectedSocTreatments = listOf(EvaluatedTreatment(treatmentCandidate, listOf(EvaluationFactory.pass("Has MSI"))))
 

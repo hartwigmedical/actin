@@ -124,7 +124,10 @@ class SoCGeneratorFunctionsTest {
 
     private fun annotatedTreatmentMatch(name: String, evaluations: List<Evaluation>): AnnotatedTreatmentMatch {
         return AnnotatedTreatmentMatch(
-            TreatmentCandidate(treatment(name, true), false, emptySet()), evaluations, emptyList(), emptyList()
+            TreatmentCandidate(treatment(name, true), false, potentialIntolerance = false, eligibilityFunctions = emptySet()),
+            evaluations,
+            emptyList(),
+            emptyList()
         )
     }
 
