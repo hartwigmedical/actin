@@ -26,9 +26,9 @@ class HasExhaustedSOCTreatments(
                         EvaluationFactory.pass("Has exhausted SOC")
                     }
 
-                    treatmentEvaluation.isMissingPotentiallyIntolerantTreatmentsOnly() -> {
+                    treatmentEvaluation.isMissingTreatmentsWithPotentialIntoleranceOnly() -> {
                         EvaluationFactory.warn(
-                            "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) due to drug intolerance"
+                            "Has potentially exhausted SOC (remaining options: $remainingNonOptionalTreatments) due to drug intolerance"
                         )
                     }
 
