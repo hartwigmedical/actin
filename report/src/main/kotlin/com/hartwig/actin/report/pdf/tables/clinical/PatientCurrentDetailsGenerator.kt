@@ -107,8 +107,9 @@ class PatientCurrentDetailsGenerator(
     }
 
     private fun surgeries(surgeries: List<Surgery>): String {
+        val recentSurgeries = surgeries.filter { it.endDate?.let { endDate -> endDate >= referenceDate.minusMonths(2) } ?: true }
         return Formats.valueOrDefault(
-            surgeries.sortedWith(SurgeryDescendingDateComparator())
+            recentSurgeries.sortedWith(SurgeryDescendingDateComparator())
                 .joinToString(Formats.COMMA_SEPARATOR) { date(it.endDate) + if (it.name?.isNotEmpty() == true) " ${it.name}" else "" },
             "None"
         )

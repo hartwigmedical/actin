@@ -46,7 +46,7 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
                     evidence = ExtractionUtil.noEvidence(),
                     type = determineDisruptionType(breakend.type()),
                     junctionCopyNumber = ExtractionUtil.keep3Digits(breakend.junctionCopyNumber()),
-                    undisruptedCopyNumber = ExtractionUtil.keep3Digits(correctUndisruptedCopyNumber(breakend, drivers)),
+                    undisruptedCopyNumber = correctUndisruptedCopyNumber(breakend, drivers)?.let { ExtractionUtil.keep3Digits(it) },
                     regionType = determineRegionType(breakend.regionType()),
                     codingContext = determineCodingContext(breakend.codingType()),
                     clusterGroup = lookupClusterId(breakend, linx.allSomaticStructuralVariants())
@@ -91,10 +91,6 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
 
             LinxBreakendType.SGL -> {
                 DisruptionType.SGL
-            }
-
-            else -> {
-                throw IllegalStateException("Cannot determine disruption type for linx disruption type: $type")
             }
         }
     }
@@ -155,13 +151,17 @@ class DisruptionExtractor(private val geneFilter: GeneFilter) {
         }
     }
 
-    private fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double {
+    private fun correctUndisruptedCopyNumber(breakend: LinxBreakend, drivers: List<LinxDriver>): Double? {
+        val undisruptedCopyNumber = breakend.undisruptedCopyNumber()
+        if (undisruptedCopyNumber.isNaN()) {
+            return null
+        }
         return if (breakend.type() == LinxBreakendType.DUP
             && drivers.any { driver -> driver.gene() == breakend.gene() && driver.type() == LinxDriverType.HOM_DUP_DISRUPTION }
         ) {
-            (breakend.undisruptedCopyNumber() - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
+            (undisruptedCopyNumber - breakend.junctionCopyNumber()).coerceAtLeast(0.0)
         } else {
-            breakend.undisruptedCopyNumber()
+            undisruptedCopyNumber
         }
     }
 }

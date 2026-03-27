@@ -25,7 +25,7 @@ class IsNotParticipatingInAnotherInterventionalTrial(
                 EvaluationFactory.warn("Recent trial treatment - undetermined if patient is participating in another interventional trial")
             }
 
-            else -> EvaluationFactory.notEvaluated("Assumed that patient is not participating in another interventional trial")
+            else -> EvaluationFactory.pass("Assumed that patient is not participating in another interventional trial")
         }
     }
 }

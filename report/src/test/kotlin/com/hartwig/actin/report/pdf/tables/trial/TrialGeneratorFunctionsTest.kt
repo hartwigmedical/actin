@@ -16,8 +16,7 @@ class TrialGeneratorFunctionsTest {
         nctId = "nct01",
         title = "title1",
         phase = null,
-        source = null,
-        sourceId = null,
+        sources = emptySet(),
         locations = emptySet(),
         url = null,
         name = "cohort1",
@@ -39,8 +38,7 @@ class TrialGeneratorFunctionsTest {
         name = "cohort2",
         hasSlotsAvailable = true,
         warnings = setOf("warning1", "warning2"),
-        source = TrialSource.LKO,
-        sourceId = "123",
+        sources = setOf(TrialSource.LKO),
         molecularInclusionEvents = emptySet()
     )
 

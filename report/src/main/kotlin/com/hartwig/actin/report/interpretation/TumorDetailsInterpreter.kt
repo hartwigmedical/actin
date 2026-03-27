@@ -32,18 +32,13 @@ object TumorDetailsInterpreter {
         val allCategorizedLesions = with(tumor) {
             listOf(
                 Lesion(
-                    TumorDetails.CNS + if (hasCnsLesions == true && hasActiveCnsLesions == true) " (active)" else "",
+                    TumorDetails.CNS + if (hasCnsLesions == true) " (${activeString(hasActiveCnsLesions)})" else "",
                     hasCnsLesions,
                     hasSuspectedCnsLesions
                 ),
                 Lesion(
-                    TumorDetails.BRAIN + if (hasBrainLesions == true && hasActiveBrainLesions == true) " (active)" else "",
-                    when {
-                        hasBrainLesions == true -> true
-                        name.contains("brain", ignoreCase = true) || name.contains("glioma", ignoreCase = true) -> true
-                        hasBrainLesions == null -> null
-                        else -> false
-                    },
+                    TumorDetails.BRAIN + additionalBrainString(hasBrainLesions, hasActiveBrainLesions, hasSymptomaticBrainLesions),
+                    if (setOf("brain", "glioma").any { name.contains(it, ignoreCase = true) }) true else hasBrainLesions,
                     hasSuspectedBrainLesions
                 ),
                 Lesion(TumorDetails.LIVER, hasLiverLesions, hasSuspectedLiverLesions),
@@ -80,6 +75,30 @@ object TumorDetailsInterpreter {
             nonLymphSuspected.plus(if (lymphSuspected.isNotEmpty()) listOf("Lymph nodes (suspected)") else emptyList()),
             negativeCategorizedLesions
         )
+    }
+
+    private fun activeString(hasActiveLesions: Boolean?): String {
+        return when (hasActiveLesions) {
+            true -> "active"
+            false -> "inactive"
+            null -> "active status unknown"
+        }
+    }
+
+    private fun additionalBrainString(
+        hasBrainLesions: Boolean?,
+        hasActiveBrainLesions: Boolean?,
+        hasSymptomaticBrainLesions: Boolean?
+    ): String {
+        return if (hasBrainLesions == true) {
+            val activeString = activeString(hasActiveBrainLesions)
+            val symptomaticString = when (hasSymptomaticBrainLesions) {
+                true -> "symptomatic"
+                false -> "asymptomatic"
+                null -> "symptomatic status unknown"
+            }
+            " ($activeString, $symptomaticString)"
+        } else ""
     }
 
     private fun lymphNodeLesionsString(lymphNodeLesions: List<String>): List<String> {

@@ -445,7 +445,7 @@ CREATE TABLE `disruption`
     `isAssociatedWithDrugResistance` BOOLEAN,
     `type` varchar(50) NOT NULL,
     `junctionCopyNumber` double precision NOT NULL,
-    `undisruptedCopyNumber` double precision NOT NULL,
+    `undisruptedCopyNumber` double precision,
     `regionType` varchar(50) NOT NULL,
     `codingContext` varchar(50) NOT NULL,
     `clusterGroup` int NOT NULL,

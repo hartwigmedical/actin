@@ -70,9 +70,7 @@ class HasExhaustedSOCTreatments(
                 EvaluationFactory.undetermined("Exhaustion of SOC undetermined (no prior cancer treatment)")
             }
 
-            else -> {
-                EvaluationFactory.notEvaluated("Assumed that SOC is exhausted (had prior cancer treatment)")
-            }
+            else -> EvaluationFactory.pass("Assumed that SOC is exhausted (had prior cancer treatment)")
         }
     }
 }

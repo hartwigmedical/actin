@@ -2,9 +2,9 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
@@ -14,6 +14,7 @@ import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
+import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
@@ -44,6 +45,8 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
+        val cuppaToDoidMapping = CuppaToDoidMapping.createFromFile(config.cuppaDoidMappingTsv)
+
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
@@ -52,6 +55,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = doidModel,
+            cuppaToDoidMapping = cuppaToDoidMapping,
             icdModel = icdModel,
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,

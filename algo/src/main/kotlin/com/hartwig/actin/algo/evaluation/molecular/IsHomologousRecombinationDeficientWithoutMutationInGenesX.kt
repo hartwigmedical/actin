@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.molecular.util.GeneConstants
 
 class IsHomologousRecombinationDeficientWithoutMutationInGenesX(private val genesToFind: Set<String>) :
     MolecularEvaluationFunction() {
@@ -43,7 +44,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesX(private val gene
                     EvaluationFactory.warn("Tumor is HRD but with only non-biallelic drivers in HR genes")
                 }
 
-                hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
+                hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() && !genesToFind.containsAll(GeneConstants.HR_GENES) -> {
                     EvaluationFactory.warn("Tumor is HRD but without drivers in HR genes")
                 }
 

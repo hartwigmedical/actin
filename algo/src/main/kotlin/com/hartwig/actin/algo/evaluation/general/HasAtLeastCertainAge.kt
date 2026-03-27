@@ -10,16 +10,14 @@ class HasAtLeastCertainAge(private val referenceYear: Int, private val minAge: I
     override fun evaluate(record: PatientRecord): Evaluation {
         val age = referenceYear - record.patient.birthYear
         return when {
-            age > minAge ->
-                EvaluationFactory.pass("Patient is at least $minAge years old")
+            age > minAge -> EvaluationFactory.pass("Patient is at least $minAge years old")
 
             age == minAge -> EvaluationFactory.undetermined(
                 "Undetermined if patient with birth year ${record.patient.birthYear})"
                         + " is above $minAge years old"
             )
 
-            else ->
-                EvaluationFactory.fail("Patient is younger than $minAge years old")
+            else -> EvaluationFactory.fail("Patient is younger than $minAge years old")
         }
     }
 }

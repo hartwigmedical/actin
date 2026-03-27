@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 

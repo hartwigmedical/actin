@@ -46,8 +46,7 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 1",
                     nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1,
-                    source = TrialSource.NKI,
-                    sourceId = "Source ID 1",
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf("Antoni van Leeuwenhoek"),
                     url = null
                 ),
@@ -64,8 +63,7 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 2",
                     nctId = "NCT00000002",
                     phase = TrialPhase.PHASE_2,
-                    source = TrialSource.NKI,
-                    sourceId = "Source ID 2",
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf("Antoni van Leeuwenhoek"),
                     url = "https://hartwigmedicalfoundation.nl"
                 ),
@@ -82,8 +80,7 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 3",
                     nctId = "NCT00000013",
                     phase = TrialPhase.PHASE_1_2,
-                    source = TrialSource.NKI,
-                    sourceId = "Source ID 3",
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf("Antoni van Leeuwenhoek"),
                     url = null
                 ),
@@ -232,7 +229,7 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 references = setOf("I-02"),
                 function = EligibilityFunction(rule = EligibilityRule.CAN_GIVE_ADEQUATE_INFORMED_CONSENT.name),
-            ) to unrecoverable(EvaluationResult.NOT_EVALUATED, "Assumed that patient can give adequate informed consent")
+            ) to unrecoverable(EvaluationResult.PASS, "Assumed that patient can give adequate informed consent")
         )
     }
 
@@ -298,27 +295,13 @@ object TestTreatmentMatchFactory {
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
         return when (result) {
-            EvaluationResult.PASS -> {
-                base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.PASS -> base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
 
-            EvaluationResult.NOT_EVALUATED -> {
-                base.copy(passMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.WARN -> base.copy(warnMessages = setOfNotNull(message?.let { StaticMessage(it) }))
 
-            EvaluationResult.WARN -> {
-                base.copy(warnMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.UNDETERMINED -> base.copy(undeterminedMessages = setOfNotNull(message?.let { StaticMessage(it) }))
 
-            EvaluationResult.UNDETERMINED -> {
-                base.copy(
-                    undeterminedMessages = setOfNotNull(message?.let { StaticMessage(it) })
-                )
-            }
-
-            EvaluationResult.FAIL -> {
-                base.copy(failMessages = setOfNotNull(message?.let { StaticMessage(it) }))
-            }
+            EvaluationResult.FAIL -> base.copy(failMessages = setOfNotNull(message?.let { StaticMessage(it) }))
         }
     }
 }

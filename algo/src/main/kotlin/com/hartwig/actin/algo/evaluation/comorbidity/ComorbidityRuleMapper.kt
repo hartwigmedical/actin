@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.IcdTitleParameter
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.ManyIcdTitlesParameter
+import com.hartwig.actin.datamodel.trial.ManyStringsParameter
 import com.hartwig.actin.datamodel.trial.NyhaClassParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.medication.MedicationCategories
@@ -87,7 +88,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
                     IcdConstants.IDIOPATHIC_INTERSTITIAL_PNEUMONITIS_CODE,
                     IcdConstants.IDIOPATHIC_EOSINOPHILIC_PNEUMONITIS_CODE,
-                    IcdConstants.RADIATION_PNEUMONITIS_CODE
+                    IcdConstants.ACUTE_RADIATION_PNEUMONITIS_CODE
                 ),
                 "pneumonitis"
             ),
@@ -111,8 +112,16 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_SET,
                 "Arterial thrombo-embolic event"
             ),
+            EligibilityRule.HAS_HISTORY_OF_ARTERIAL_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
+                IcdConstants.ARTERIAL_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
+                "Arterial thrombo-embolic event"
+            ),
             EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT to hasHadComorbiditiesWithIcdCodeCreator(
                 IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_SET, "Venous thrombo-embolic event"
+            ),
+            EligibilityRule.HAS_HISTORY_OF_VENOUS_THROMBOEMBOLIC_EVENT_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
+                IcdConstants.VENOUS_THROMBOEMBOLIC_EVENT_SET.map { IcdCode(it) }.toSet(),
+                "Venous thrombo-embolic event"
             ),
             EligibilityRule.HAS_HISTORY_OF_VASCULAR_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
                 setOf(
@@ -175,7 +184,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                     IcdConstants.DEPENDENCE_ON_RENAL_DIALYSIS_CODE
                 ), "renal dialysis"
             ),
-            EligibilityRule.HAS_CHILD_PUGH_SCORE_X to hasChildPughScoreCreator(),
+            EligibilityRule.HAS_CHILD_PUGH_SCORES_X to hasChildPughScoreCreator(),
             EligibilityRule.HAS_POTENTIAL_CONTRAINDICATION_FOR_STEREOTACTIC_RADIOSURGERY to
                     hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(),
             EligibilityRule.HAS_ADEQUATE_VENOUS_ACCESS to hasAdequateVenousAccessCreator(),
@@ -290,7 +299,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
     }
 
     private fun hasChildPughScoreCreator(): FunctionCreator {
-        return { HasChildPughScore(icdModel()) }
+        return { function: EligibilityFunction ->
+            val requestedScores = function.param<ManyStringsParameter>(0).value
+            HasChildPughScore(icdModel(), requestedScores)
+        }
     }
 
     private fun hasPotentialContraIndicationForStereotacticRadiosurgeryCreator(): FunctionCreator {

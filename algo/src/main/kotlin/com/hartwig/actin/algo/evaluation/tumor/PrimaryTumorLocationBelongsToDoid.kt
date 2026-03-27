@@ -8,10 +8,14 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.doid.DoidModel
+import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
+
 
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
+    private val cuppaToDoidMapping: CuppaToDoidMapping,
     private val doidsToMatch: Set<String>,
     private val specificQuery: String?
 ) : EvaluationFunction {
@@ -22,7 +26,7 @@ class PrimaryTumorLocationBelongsToDoid(
             EvaluationFactory.undetermined("Unknown tumor type")
         } else {
             val doidsTumorBelongsTo =
-                DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, tumorDoids).intersect(doidsToMatch.toSet())
+                DoidEvaluationFunctions.createFullExpandedParentsDoidTree(doidModel, tumorDoids).intersect(doidsToMatch.toSet())
             val doidTermsTumorBelongsTo = Format.concat(doidsToTerms(doidsTumorBelongsTo))
             val potentialAdenoSquamousMatches = isPotentialAdenoSquamousMatch(tumorDoids!!, doidsToMatch)
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
@@ -52,9 +56,35 @@ class PrimaryTumorLocationBelongsToDoid(
                     EvaluationFactory.undetermined("Undetermined if $terms")
                 }
 
-                else -> EvaluationFactory.fail("No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}")
+                else -> {
+                    evaluateCuppaPrediction(record) ?: EvaluationFactory.fail("No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}")
+                }
             }
         }
+    }
+
+    private fun evaluateCuppaPrediction(record: PatientRecord): Evaluation? {
+        if (!TumorEvaluationFunctions.hasCancerOfUnknownPrimary(record.tumor.name) || specificQuery != null) {
+            return null
+        }
+        return TumorOriginInterpreter.create(record.molecularTests)
+            .takeIf { it.hasConfidentPrediction() }
+            ?.predictedTumorOrigin
+            ?.let { predictedTumorOrigin ->
+                val cancerType = predictedTumorOrigin.cancerType()
+                val cuppaDoids = cuppaToDoidMapping.doidsForCuppaType(cancerType)
+                    ?: throw IllegalArgumentException("CUPPA cancer type $cancerType not found in mapping")
+
+                val parents = DoidEvaluationFunctions.createFullExpandedParentsDoidTree(doidModel, cuppaDoids.included)
+                val children = DoidEvaluationFunctions.createFullExpandedChildrenDoidTree(doidModel, cuppaDoids.included, cuppaDoids.excluded ?: emptySet())
+
+                (parents + children).intersect(doidsToMatch)
+                    .firstOrNull()
+                    ?.let {
+                        val likelihoodPct = (predictedTumorOrigin.likelihood() * 100).toInt()
+                        EvaluationFactory.warn("Tumor type unknown but CUPPA predicts $cancerType ($likelihoodPct%)")
+                    }
+            }
     }
 
     private fun isPotentialAdenoSquamousMatch(tumorDoids: Set<String>, doidsToMatch: Set<String>): Set<String> {
@@ -78,7 +108,8 @@ class PrimaryTumorLocationBelongsToDoid(
     }
 
     private fun hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids: Set<String>, fullDoidToMatchTree: Set<String>): Boolean {
-        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isNotEmpty() && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
+        return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isNotEmpty()
+                && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
     }
 
     private fun doidsToTerms(doids: Set<String>): Set<String> {

@@ -187,7 +187,7 @@ class EligibleTrialGenerator(
             val title = "$nationalString trials that are open and potentially eligible $cohortsFromTrialsString"
 
             val footNote =
-                if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG) {
+                if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG && isNational) {
                     externalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
                         "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
                     }

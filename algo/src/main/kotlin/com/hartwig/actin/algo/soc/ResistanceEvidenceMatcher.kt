@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.datamodel.algo.ResistanceEvidence
@@ -11,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
+import com.hartwig.actin.treatment.database.TreatmentDatabase
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
@@ -167,7 +167,7 @@ class ResistanceEvidenceMatcher(
         }
 
         private fun expandDoids(doidModel: DoidModel, doids: Set<String>): Set<String> {
-            return DoidEvaluationFunctions.createFullExpandedDoidTree(doidModel, doids)
+            return DoidEvaluationFunctions.createFullExpandedParentsDoidTree(doidModel, doids)
         }
 
         private fun hasNoPositiveResponse(resistanceEvent: EfficacyEvidence): Boolean {

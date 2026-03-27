@@ -10,7 +10,7 @@ class InterpretedCohortFunctionsTest {
     fun `Should return true when source matches requestingSource`() {
         assertThat(
             InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
-                source = TrialSource.EXAMPLE,
+                sources = setOf(TrialSource.EXAMPLE),
                 locations = emptySet(),
                 requestingSource = TrialSource.EXAMPLE
             )
@@ -22,7 +22,7 @@ class InterpretedCohortFunctionsTest {
         listOf(TrialSource.NKI, null).forEach {
             assertThat(
                 InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
-                    source = it,
+                    sources = it?.let { setOf(it) } ?: emptySet(),
                     locations = setOf(TrialSource.NKI.description, TrialSource.EXAMPLE.description),
                     requestingSource = TrialSource.EXAMPLE
                 )
@@ -31,11 +31,37 @@ class InterpretedCohortFunctionsTest {
     }
 
     @Test
+    fun `Should return true when one of multiple sources matches requestingSource`() {
+        val sources = setOf(TrialSource.EMC, TrialSource.NKI)
+        assertThat(
+            InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
+                sources = sources,
+                locations = emptySet(),
+                requestingSource = TrialSource.EMC
+            )
+        ).isTrue()
+        assertThat(
+            InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
+                sources = sources,
+                locations = emptySet(),
+                requestingSource = TrialSource.NKI
+            )
+        ).isTrue()
+        assertThat(
+            InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
+                sources = sources,
+                locations = emptySet(),
+                requestingSource = TrialSource.EXAMPLE
+            )
+        ).isFalse()
+    }
+
+    @Test
     fun `Should return false when source and location do not match requestingSource`() {
         listOf(TrialSource.NKI, null).forEach {
             assertThat(
                 InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(
-                    source = it,
+                    sources = it?.let { setOf(it) } ?: emptySet(),
                     locations = setOf(TrialSource.EMC.description),
                     requestingSource = TrialSource.EXAMPLE
                 )

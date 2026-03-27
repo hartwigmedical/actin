@@ -2,7 +2,6 @@ package com.hartwig.actin.algo
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -12,6 +11,7 @@ import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
+import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.EligibilityFactory
 import com.hartwig.actin.trial.TrialIngestion
 import com.hartwig.actin.trial.getOrNull
@@ -46,6 +46,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
             doidModel = inputData.doidModel,
+            cuppaToDoidMapping = inputData.cuppaToDoidMapping,
             icdModel = inputData.icdModel,
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,

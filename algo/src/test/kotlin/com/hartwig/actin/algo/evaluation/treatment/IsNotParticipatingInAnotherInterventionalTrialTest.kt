@@ -45,18 +45,18 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
     }
 
     @Test
-    fun `Should return not evaluated when patient received non recent trial medication`() {
+    fun `Should pass when patient received non recent trial medication`() {
         val alwaysStoppedMedicationFunction =
             IsNotParticipatingInAnotherInterventionalTrial(MedicationTestFactory.alwaysStopped(), referenceDate)
         val medications = listOf(medication(isTrialMedication = true))
         assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
+            EvaluationResult.PASS,
             alwaysStoppedMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications))
         )
     }
 
     @Test
-    fun `Should return not evaluated when patient received non recent trial treatment`() {
+    fun `Should pass when patient received non recent trial treatment`() {
         val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
@@ -66,15 +66,15 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
             )
         )
         assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
+            EvaluationResult.PASS,
             alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
         )
     }
 
     @Test
-    fun `Should return not evaluated when patient received no trial treatment or medication`() {
+    fun `Should pass when patient received no trial treatment or medication`() {
         assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
+            EvaluationResult.PASS,
             alwaysActiveMedicationFunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }

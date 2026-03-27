@@ -70,7 +70,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when trial entries without treatment when trial duration more than max weeks`() {
+    fun `Should fail when trial entries without treatment when trial duration more than max weeks`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(emptySet(), isTrial = true, startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 6)
         assertEvaluation(EvaluationResult.FAIL, functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))

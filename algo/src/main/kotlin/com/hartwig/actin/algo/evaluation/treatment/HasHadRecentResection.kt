@@ -5,8 +5,9 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
+
+val RESECTION_KEYWORDS = setOf("resection", "ectomy")
 
 class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction {
 
@@ -19,11 +20,11 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
             val isPastMinDate = isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
             val isPastMoreLenientMinDate =
                 isAfterDate(minDate.minusWeeks(2), treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
-            val isResection =
-                treatmentHistoryEntry.treatments.any { it.name.lowercase().contains(RESECTION_KEYWORD) }
-            val isPotentialResection = treatmentHistoryEntry.treatments.any {
-                it.categories().contains(TreatmentCategory.SURGERY) && it.name.isEmpty()
-            }
+            val isResection = treatmentHistoryEntry.treatments.flatMap { it.synonyms + it.name }.map(String::lowercase)
+                .any { RESECTION_KEYWORDS.any(it::contains) }
+
+            val isPotentialResection = treatmentHistoryEntry.treatments.any { it.name.lowercase() == SURGERY }
+
             if (isResection) {
                 if (isPastMinDate == null) {
                     mayHaveHadResectionAfterMinDate = true
@@ -40,25 +41,13 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
         }
 
         return when {
-            hasHadResectionAfterMinDate -> {
-                EvaluationFactory.pass("Has had recent resection")
-            }
+            hasHadResectionAfterMinDate -> EvaluationFactory.pass("Has had recent resection")
 
-            hasHadResectionAfterMoreLenientMinDate -> {
-                EvaluationFactory.warn("Has had reasonably recent resection")
-            }
+            hasHadResectionAfterMoreLenientMinDate -> EvaluationFactory.warn("Has had reasonably recent resection")
 
-            mayHaveHadResectionAfterMinDate -> {
-                EvaluationFactory.undetermined("May have had a recent resection")
-            }
+            mayHaveHadResectionAfterMinDate -> EvaluationFactory.undetermined("May have had a recent resection")
 
-            else -> {
-                EvaluationFactory.fail("Has not had recent resection")
-            }
+            else -> EvaluationFactory.fail("Has not had recent resection")
         }
-    }
-
-    companion object {
-        const val RESECTION_KEYWORD = "resection"
     }
 }

@@ -80,13 +80,17 @@ class MolecularDetailsChapter(
                 configuration.filterOnSOCExhaustionAndTumorType
             )
 
-        val orangeMolecularTest = MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord()
+        val orangeMolecularTest = listOfNotNull(MolecularHistory(report.patientRecord.molecularTests).latestOrangeMolecularRecord())
         val externalPanelResults = report.patientRecord.molecularTests.filter { it.experimentType == ExperimentType.PANEL }
         val filteredIhcTests = IhcTestFilter.mostRecentAndUnknownDateIhcTests(report.patientRecord.ihcTests).toList()
-        val ihcTestsReportHash = filteredIhcTests.mapNotNull { it.reportHash }
-        val filteredPathologyReports = report.patientRecord.pathologyReports?.filter { it.reportHash in ihcTestsReportHash }
+        val filteredPathologyReports = PathologyReportFunctions.filterPathologyReport(
+            orangeMolecularTest + externalPanelResults,
+            filteredIhcTests,
+            report.patientRecord.pathologyReports
+        )
+
         val groupedByPathologyReport = PathologyReportFunctions.groupTestsByPathologyReport(
-            listOfNotNull(orangeMolecularTest),
+            orangeMolecularTest,
             externalPanelResults,
             filteredIhcTests,
             filteredPathologyReports
@@ -125,32 +129,47 @@ class MolecularDetailsChapter(
         val orangeGenerators = orangeMolecularRecord.map {
             OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport)
         }
-        val wgsSummaryGenerators = externalPanelResults.map {
+        val wgsSummaryGenerators = externalPanelResults.map { molecularTest ->
+            val panelImmunologyGenerator = if (molecularTest.immunology != null)
+                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", keyWidth, valueWidth - 10)
+            else null
             WgsSummaryGenerator(
                 SummaryType.DETAILS,
                 report.patientRecord,
-                it,
+                molecularTest,
                 pathologyReport,
                 cohorts,
                 keyWidth,
-                valueWidth
+                valueWidth,
+                panelImmunologyGenerator
             )
         }
-        val immunologyGenerators = orangeMolecularRecord.mapNotNull { molecularTest ->
-            if (molecularTest.immunology != null) {
-                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED, "Immunology", keyWidth, valueWidth)
-            } else null
-        }
+        val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth - 10)
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
             IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
         } else null
 
         TableGeneratorFunctions.addGenerators(
-            orangeGenerators + wgsSummaryGenerators + immunologyGenerators + listOfNotNull(ihcGenerator),
+            orangeGenerators + immunologyGenerators + wgsSummaryGenerators + listOfNotNull(ihcGenerator),
             reportTable,
             overrideTitleFormatToSubtitle = (pathologyReport != null)
         )
+    }
+
+    private fun createImmunologyGenerators(
+        molecularTests: List<MolecularTest>,
+        keyWidth: Float,
+        valueWidth: Float
+    ): List<ImmunologyGenerator> {
+        val isStandardWithPathology = configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY
+        return molecularTests.mapNotNull { molecularTest ->
+            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null
+            if (showImmunology) {
+                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.DETAILED_INLINE else ImmunologyDisplayMode.DETAILED_TABLE
+                ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
+            } else null
+        }
     }
 
     private fun addPathologyReport(document: Document) {

@@ -78,7 +78,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
     }
 
     companion object {
-        private val MATCHING_DRUGS = setOf(Drug("drug", emptySet(), TreatmentCategory.CHEMOTHERAPY))
+        private val MATCHING_DRUGS = setOf(Drug("drug", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY))
         private val MATCHING_TREATMENTS = listOf(DrugTreatment("treatment", MATCHING_DRUGS))
         private val NON_MATCHING_TREATMENTS = setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY))
         private val FUNCTION = HasHadPDFollowingTreatmentWithAnyDrug(MATCHING_DRUGS)

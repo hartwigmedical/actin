@@ -44,7 +44,7 @@ data class ReportConfiguration(
     val patientDetailsType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val clinicalSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val molecularSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
-    val standardOfCareSummaryType: ReportContentType = ReportContentType.BRIEF,
+    val standardOfCareSummaryType: ReportContentType = ReportContentType.NONE,
     val trialMatchingSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val molecularChapterType: MolecularChapterType = MolecularChapterType.STANDARD,
     val efficacyEvidenceChapterType: EfficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,

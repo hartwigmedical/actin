@@ -11,7 +11,8 @@ import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
-import com.hartwig.actin.report.interpretation.TumorOriginInterpreter
+import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
+import com.hartwig.actin.report.interpretation.generateSummaryString
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -31,7 +32,8 @@ object WgsSummaryGeneratorFunctions {
         wgsMolecular: MolecularTest?,
         keyWidth: Float,
         valueWidth: Float,
-        summarizer: MolecularDriversSummarizer
+        summarizer: MolecularDriversSummarizer,
+        immunologyGenerator: ImmunologyGenerator? = null
     ): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
         val isLongSummaryType = summaryType == SummaryType.LONG_SUMMARY
@@ -65,6 +67,8 @@ object WgsSummaryGeneratorFunctions {
             if (filteredContents.isNotEmpty() || hasTmbData) {
                 filteredContents.forEach(table::addCell)
             }
+
+            immunologyGenerator?.addContentsTo(table)
 
             val (actionableEventsWithUnknownDriver, actionableEventsWithLowOrMediumDriver) =
                 summarizer.actionableEventsThatAreNotKeyDrivers().partition { it.driverLikelihood == null }

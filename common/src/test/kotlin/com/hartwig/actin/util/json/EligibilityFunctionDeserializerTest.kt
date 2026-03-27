@@ -1,7 +1,6 @@
 package com.hartwig.actin.util.json
 
 import com.google.gson.GsonBuilder
-import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.clinical.serialization.TreatmentAdapter
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.DrugParameter
@@ -11,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
 import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
+import com.hartwig.actin.treatment.database.TestTreatmentDatabaseFactory
 import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

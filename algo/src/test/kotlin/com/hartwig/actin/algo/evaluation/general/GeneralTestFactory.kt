@@ -16,7 +16,7 @@ internal object GeneralTestFactory {
         return withPatientDetails(TestClinicalFactory.createMinimalTestClinicalRecord().patient.copy(birthYear = birthYear))
     }
 
-    fun withGender(gender: Gender): PatientRecord {
+    fun withGender(gender: Gender?): PatientRecord {
         return withPatientDetails(TestClinicalFactory.createMinimalTestClinicalRecord().patient.copy(gender = gender))
     }
 

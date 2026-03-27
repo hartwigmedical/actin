@@ -44,8 +44,7 @@ object TestReportFactory {
                 title = "Example test trial 3",
                 nctId = "NCT00000003",
                 phase = TrialPhase.PHASE_1,
-                source = TrialSource.LKO,
-                sourceId = "LKO-3",
+                sources = setOf(TrialSource.LKO),
                 locations = setOf("Radboud UMC", "UMC Groningen"),
                 url = "https://hartwigmedicalfoundation.nl"
             )
@@ -58,8 +57,7 @@ object TestReportFactory {
                 title = "Example test trial 4",
                 nctId = "NCT00000003",
                 phase = TrialPhase.PHASE_2,
-                source = TrialSource.LKO,
-                sourceId = "LKO-4",
+                sources = setOf(TrialSource.LKO),
                 locations = setOf("LUMC"),
                 url = "https://hartwigmedicalfoundation.nl"
             )
@@ -72,8 +70,7 @@ object TestReportFactory {
                 title = "Example test trial 5",
                 nctId = "NCT00000005",
                 phase = TrialPhase.PHASE_1,
-                source = TrialSource.LKO,
-                sourceId = "LKO-5",
+                sources = setOf(TrialSource.LKO),
                 locations = setOf("LUMC"),
                 url = "https://hartwigmedicalfoundation.nl"
             ),

@@ -73,6 +73,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LYMPH_NODE_METASTASES to hasLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_LUNG_AND_OR_LUNG_LYMPH_NODE_METASTASES_ONLY to hasOnlyLungAndOrLungLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
+            EligibilityRule.HAS_IN_TRANSIT_METASTASES to hasInTransitMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
             EligibilityRule.HAS_LESIONS_INFILTRATING_BLOOD_VESSEL to { HasLesionsInfiltratingBloodVessel() },
@@ -118,7 +119,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { function: EligibilityFunction ->
             val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
             val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, null)
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, null)
         }
     }
 
@@ -126,7 +127,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { function: EligibilityFunction ->
             val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
             val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), doidTermsResolved, "distal")
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, "distal")
         }
     }
 
@@ -352,6 +353,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {
         return { HasVisceralMetastases() }
+    }
+
+    private fun hasInTransitMetastasesCreator(): FunctionCreator {
+        return { HasInTransitMetastases() }
     }
 
     private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {

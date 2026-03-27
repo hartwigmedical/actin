@@ -14,7 +14,7 @@ class HasHadSomeSpecificTreatmentsWithDoseReduction(private val treatment: Treat
         val treatmentName = treatment.name.lowercase()
 
         return when (hasHadSpecificTreatmentResult) {
-            EvaluationResult.PASS, EvaluationResult.NOT_EVALUATED, EvaluationResult.WARN -> {
+            EvaluationResult.PASS, EvaluationResult.WARN -> {
                 EvaluationFactory.undetermined("Has received $treatmentName but unknown if there may have been a dose reduction")
             }
 

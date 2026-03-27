@@ -2,8 +2,7 @@ package com.hartwig.actin.algo
 
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.TreatmentDatabaseFactory
+import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
@@ -16,6 +15,8 @@ import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.molecular.evidence.ServeLoader
+import com.hartwig.actin.treatment.database.TreatmentDatabase
+import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.serialization.TrialJson
 import com.hartwig.serve.datamodel.ServeRecord
 import com.hartwig.serve.datamodel.serialization.ServeJson
@@ -29,6 +30,7 @@ import org.apache.logging.log4j.Logger
 data class TreatmentMatcherInputData(
     val patient: PatientRecord,
     val doidModel: DoidModel,
+    val cuppaToDoidMapping: CuppaToDoidMapping,
     val icdModel: IcdModel,
     val trials: List<Trial>?,
     val atcTree: AtcTree,
@@ -104,6 +106,7 @@ object InputDataLoader {
         val serveDatabase = deferredServeDatabase.await()
 
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
+        val cuppaToDoidMapping = CuppaToDoidMapping.createFromFile(config.cuppaDoidMappingTsv)
         val icdModel = IcdModel.create(icdNodes)
 
         val refGenomeVersion =
@@ -117,6 +120,7 @@ object InputDataLoader {
         TreatmentMatcherInputData(
             patient = patient,
             doidModel = doidModel,
+            cuppaToDoidMapping = cuppaToDoidMapping,
             icdModel = icdModel,
             trials = trials,
             atcTree = atcTree,

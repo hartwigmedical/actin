@@ -6,11 +6,13 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class CanGiveAdequateInformedConsentTest {
+
+    private val function = CanGiveAdequateInformedConsent()
+
     @Test
-    fun canEvaluate() {
-        val function = CanGiveAdequateInformedConsent()
+    fun `Should pass always`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.NOT_EVALUATED,
+            EvaluationResult.PASS,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }

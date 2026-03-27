@@ -10,14 +10,15 @@ import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import com.hartwig.actin.util.ApplicationConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f
-private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
+private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy", ApplicationConfig.LOCALE)
 
 class PatientCurrentDetailsGeneratorTest {
 

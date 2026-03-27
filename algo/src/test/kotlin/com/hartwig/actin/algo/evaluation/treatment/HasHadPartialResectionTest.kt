@@ -11,30 +11,28 @@ import org.junit.jupiter.api.Test
 
 class HasHadPartialResectionTest {
 
+    private val function = HasHadPartialResection()
+
     @Test
-    fun shouldFailWithNoTreatmentHistory() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+    fun `Should fail with no treatment history`() {
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
-    fun shouldPassOnPartialResection() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(HasHadPartialResection.PARTIAL_RESECTION, false)))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    fun `Should pass with partial resection`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(PARTIAL_RESECTION, false)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
-    fun shouldReturnUndeterminedForUnspecifiedResection() {
-        val treatments = setOf(treatment("some form of " + HasHadPartialResection.RESECTION_KEYWORD, false))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
+    fun `Should be undetermined for unspecified resection`() {
+        val treatments = setOf(treatment("some form of " + RESECTION_KEYWORDS.last() + " surgery", false))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }
 
     @Test
-    fun shouldReturnUndeterminedForUnspecifiedSurgery() {
-        val treatments = setOf(treatment("", false, categories = setOf(TreatmentCategory.SURGERY)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
-    }
-
-    companion object {
-        private val FUNCTION = HasHadPartialResection()
+    fun `Should be undetermined for unspecified surgery`() {
+        val treatments = setOf(treatment("SURGERY", false, categories = setOf(TreatmentCategory.SURGERY)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
     }
 }

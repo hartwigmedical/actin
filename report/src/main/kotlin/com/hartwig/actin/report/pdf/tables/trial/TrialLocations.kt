@@ -12,9 +12,9 @@ const val MANY_LOCATIONS_SEE_LINK = "$MANY_LOCATIONS$SEE_LINK"
 
 object TrialLocations {
 
-    fun actinTrialLocation(trialSource: TrialSource?, requestingSource: TrialSource?, locations: Set<String>, showLinks: Boolean): String {
+    fun actinTrialLocation(trialSources: Set<TrialSource>, requestingSource: TrialSource?, locations: Set<String>, showLinks: Boolean): String {
         val showRequestingSite = requestingSource != null &&
-                InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(trialSource, locations, requestingSource)
+                InterpretedCohortFunctions.sourceOrLocationMatchesRequestingSource(trialSources, locations, requestingSource)
 
         return when {
             showRequestingSite && locations.size > MAX_TO_DISPLAY - 1 -> {

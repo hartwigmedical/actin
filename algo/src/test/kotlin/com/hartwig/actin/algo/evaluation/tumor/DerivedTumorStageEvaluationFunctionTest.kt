@@ -52,17 +52,6 @@ class DerivedTumorStageEvaluationFunctionTest {
     }
 
     @Test
-    fun `Should be not evaluated when multiple derived stages all evaluate not evaluated`() {
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
-        every {
-            evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
-        } returns EvaluationTestFactory.withResult(EvaluationResult.NOT_EVALUATED)
-        assertEvaluation(EvaluationResult.NOT_EVALUATED, derivedFunction.evaluate(withStageAndDerivedStages()))
-    }
-
-    @Test
     fun `Should be undetermined when multiple derived stages all evaluate undetermined`() {
         every {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I))

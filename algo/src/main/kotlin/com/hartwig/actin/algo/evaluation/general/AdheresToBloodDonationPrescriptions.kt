@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class AdheresToBloodDonationPrescriptions: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.notEvaluated("Assumed that patient adheres to blood donation prescriptions")
+        return EvaluationFactory.pass("Assumed that patient adheres to blood donation prescriptions")
     }
 }

@@ -3,17 +3,17 @@ package com.hartwig.actin.molecular.util
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.util.ApplicationConfig
 import com.hartwig.actin.util.DatamodelPrinter
 import org.apache.logging.log4j.LogManager
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy")
-private val NUMBER_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
-private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(Locale.ENGLISH))
+private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy", ApplicationConfig.LOCALE)
+private val NUMBER_FORMAT = DecimalFormat("#.##", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
+private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DecimalFormatSymbols.getInstance(ApplicationConfig.LOCALE))
 
 class MolecularTestPrinter(private val printer: DatamodelPrinter) {
 

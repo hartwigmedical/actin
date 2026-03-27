@@ -1,7 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import com.hartwig.actin.report.interpretation.ClonalityInterpreter
+import com.hartwig.actin.molecular.interpretation.ClonalityInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
@@ -64,7 +64,7 @@ class MolecularDriversGenerator(
             "${it.trialAcronym} ${
                 if (it.locations.isNotEmpty()) "(${
                     TrialLocations.actinTrialLocation(
-                        null,
+                        emptySet(),
                         null,
                         it.locations,
                         false
