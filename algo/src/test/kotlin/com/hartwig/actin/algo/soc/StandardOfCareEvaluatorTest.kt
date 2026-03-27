@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
@@ -25,6 +24,7 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactF
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
+import com.hartwig.actin.treatment.database.TreatmentDatabase
 import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
@@ -497,7 +497,7 @@ class StandardOfCareEvaluatorTest {
         } else {
             TreatmentCategory.CHEMOTHERAPY
         }
-        return Drug(name, emptySet(), category)
+        return Drug(name, emptySet(), emptySet(), category)
     }
 
     private fun resultsForPatient(patientRecord: PatientRecord): List<TreatmentCandidate> {

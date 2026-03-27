@@ -186,7 +186,7 @@ object TrialGeneratorFunctions {
                     "${Formats.ITALIC_TEXT_MARKER}Applies to all cohorts below${Formats.ITALIC_TEXT_MARKER}",
                     concat(commonEvents, allEventsEmpty && includeFeedback),
                     if (includeSites) TrialLocations.actinTrialLocation(
-                        cohortsForTrial.first().source,
+                        cohortsForTrial.first().sources,
                         requestingSource,
                         commonLocations,
                         true
@@ -207,7 +207,7 @@ object TrialGeneratorFunctions {
                 cohortString,
                 concat(cohort.molecularInclusionEvents - commonEvents, commonEvents.isEmpty() && (!allEventsEmpty || hidePrefix)),
                 if (includeSites) TrialLocations.actinTrialLocation(
-                    cohort.source,
+                    cohort.sources,
                     requestingSource,
                     cohort.locations - commonLocations,
                     true

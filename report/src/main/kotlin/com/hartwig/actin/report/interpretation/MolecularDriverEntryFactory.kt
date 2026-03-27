@@ -134,7 +134,7 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
 
     private fun fromDisruption(disruption: Disruption): MolecularDriverEntry {
         val disruptionCopyNumber = Formats.singleDigitNumber(disruption.junctionCopyNumber)
-        val undisruptedCopyNumber = Formats.singleDigitNumber(disruption.undisruptedCopyNumber)
+        val undisruptedCopyNumber = disruption.undisruptedCopyNumber?.let { Formats.singleDigitNumber(it) } ?: "N/A"
         val name = "${disruption.gene}, ${disruption.type} ($disruptionCopyNumber disr. / $undisruptedCopyNumber undisr. copies)"
 
         return driverEntryForGeneAlteration("Disruption (not biallelic)", name, disruption)

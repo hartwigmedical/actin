@@ -47,8 +47,8 @@ class ReportContentProviderTest {
     @Test
     fun `Should match total cohort size between summary and trial matching details when there are multiple locations`() {
         val matches = TestTreatmentMatchFactory.createProperTreatmentMatch().trialMatches
-        val trialMatch1 = matches[0].copy(identification = matches[0].identification.copy(source = TrialSource.LKO))
-        val trialMatch2 = matches[1].copy(identification = matches[1].identification.copy(source = TrialSource.NKI))
+        val trialMatch1 = matches[0].copy(identification = matches[0].identification.copy(sources = setOf(TrialSource.LKO)))
+        val trialMatch2 = matches[1].copy(identification = matches[1].identification.copy(sources = setOf(TrialSource.NKI)))
         val report = TestReportFactory.createExhaustiveTestReport().copy(
             treatmentMatch = TestTreatmentMatchFactory.createProperTreatmentMatch().copy(trialMatches = listOf(trialMatch1, trialMatch2))
         )

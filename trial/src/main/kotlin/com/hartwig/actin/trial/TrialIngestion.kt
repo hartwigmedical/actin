@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.trial.InclusionCriterionConfig
 import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.datamodel.trial.TrialSource
 
 data class UnmappableTrial(
     val trialId: String,
@@ -59,10 +58,9 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                         title = trialState.title,
                         nctId = trialState.nctId,
                         phase = trialState.phase,
-                        source = trialState.source,
-                        sourceId = trialState.sourceId,
+                        sources = trialState.sources,
                         locations = trialState.locations.toSet(),
-                        url = createTrialUrl(trialState)
+                        url = trialState.url,
                     ),
                     generalEligibility = criteria,
                     cohorts = mappedCohorts
@@ -93,12 +91,4 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
         } catch (e: Exception) {
             EligibilityMappingError(inclusionCriterion.inclusionRule, e.message ?: "Unknown").left()
         }
-
-    private fun createTrialUrl(trialConfig: TrialConfig): String? {
-        return if (trialConfig.source == TrialSource.LKO) {
-            trialConfig.sourceId?.let { "https://longkankeronderzoek.nl/studies/$it" }
-        } else {
-            trialConfig.nctId?.let { "https://clinicaltrials.gov/study/$it" }
-        }
-    }
 }

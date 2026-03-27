@@ -1,8 +1,6 @@
 package com.hartwig.actin.system.example
 
 import com.hartwig.actin.PatientRecordJson
-import com.hartwig.actin.TreatmentDatabase
-import com.hartwig.actin.TreatmentDatabaseFactory
 import com.hartwig.actin.algo.TreatmentMatcher
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
@@ -21,6 +19,8 @@ import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
+import com.hartwig.actin.treatment.database.TreatmentDatabase
+import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.serialization.TrialJson
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager

@@ -25,6 +25,12 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.hartwig.actin.treatment-database</groupId>
+            <artifactId>treatment-database</artifactId>
+            <scope>test</scope>
+            <type>test-jar</type>
+        </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>

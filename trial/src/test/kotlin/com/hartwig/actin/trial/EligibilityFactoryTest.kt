@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial
 
-import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.trial.DrugParameter
@@ -12,6 +11,7 @@ import com.hartwig.actin.datamodel.trial.ManyTreatmentTypesParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
 import com.hartwig.actin.datamodel.trial.TreatmentCategoryParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
+import com.hartwig.actin.treatment.database.TestTreatmentDatabaseFactory
 import com.hartwig.actin.trial.input.EligibilityRule
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

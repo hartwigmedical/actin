@@ -6,6 +6,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.util.json.DrugDeserializer
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.EvaluationMessageAdapter
 import com.hartwig.actin.util.json.GsonSerializer
@@ -50,6 +52,7 @@ object TreatmentMatchJson {
     private fun gson(): Gson {
         val gsonBuilder = GsonSerializer.createBuilder()
         return gsonBuilder.registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
+            .registerTypeAdapter(Drug::class.java, DrugDeserializer())
             .registerTypeAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
             .registerTypeHierarchyAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
             .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())

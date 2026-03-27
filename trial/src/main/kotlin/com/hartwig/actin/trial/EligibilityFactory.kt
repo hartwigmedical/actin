@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial
 
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.DrugParameter
@@ -10,6 +9,7 @@ import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
+import com.hartwig.actin.treatment.database.TreatmentDatabase
 import com.hartwig.actin.trial.input.EligibilityRule
 
 private const val COMPOSITE_START = '('

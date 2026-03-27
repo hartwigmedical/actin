@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
@@ -11,6 +10,7 @@ import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
 import com.hartwig.actin.datamodel.trial.ManyIntegersParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
+import com.hartwig.actin.treatment.database.TreatmentDatabase
 import com.hartwig.actin.trial.input.EligibilityRule
 
 const val BEVACIZUMAB = "BEVACIZUMAB"

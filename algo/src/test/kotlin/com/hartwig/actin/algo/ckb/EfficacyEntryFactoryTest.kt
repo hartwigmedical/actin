@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.ckb
 
-import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.ckb.json.CkbMolecularProfile
@@ -16,6 +15,7 @@ import com.hartwig.actin.datamodel.efficacy.DerivedMetric
 import com.hartwig.actin.datamodel.efficacy.TimeOfMetastases
 import com.hartwig.actin.datamodel.efficacy.ValuePercentage
 import com.hartwig.actin.datamodel.efficacy.VariantRequirement
+import com.hartwig.actin.treatment.database.TestTreatmentDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test

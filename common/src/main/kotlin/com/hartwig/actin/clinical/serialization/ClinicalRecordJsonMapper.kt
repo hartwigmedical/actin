@@ -19,6 +19,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
+import com.hartwig.actin.util.json.DrugDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
 import com.hartwig.actin.util.json.StrictEnumDeserializer
 import java.lang.reflect.Type
@@ -38,6 +39,7 @@ object ClinicalRecordJsonMapper {
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
             .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
             .registerTypeAdapter(WhoStatus::class.java, WhoStatusAdapter())
+            .registerTypeAdapter(Drug::class.java, DrugDeserializer())
             .registerTypeAdapter(DrugType::class.java, StrictEnumDeserializer(DrugType::class.java))
             .registerTypeAdapter(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))
             .registerTypeAdapter(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))

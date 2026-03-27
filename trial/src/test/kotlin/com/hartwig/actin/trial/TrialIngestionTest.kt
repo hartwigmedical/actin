@@ -1,6 +1,5 @@
 package com.hartwig.actin.trial
 
-import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortAvailabilityConfig
@@ -14,12 +13,13 @@ import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.datamodel.trial.TrialIdentification
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
+import com.hartwig.actin.treatment.database.TestTreatmentDatabaseFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 const val TRIAL_ID = "trialId"
 const val NCT_ID = "nctId"
-const val SOURCE_ID = "sourceId"
+const val DEFAULT_URL = "https://clinicaltrials.gov/study/$NCT_ID"
 const val ACRONYM = "acronym"
 const val TITLE = "title"
 const val IS_MALE = "IS_MALE"
@@ -38,14 +38,14 @@ class TrialIngestionTest {
             listOf(
                 TrialConfig(
                     trialId = TRIAL_ID,
-                    source = TrialSource.NKI,
-                    sourceId = SOURCE_ID,
+                    sources = setOf(TrialSource.NKI),
                     nctId = NCT_ID,
                     open = true,
                     acronym = ACRONYM,
                     title = TITLE,
                     phase = TrialPhase.PHASE_1,
                     inclusionCriterion = listOf(InclusionCriterionConfig(IS_MALE, listOf(REFERENCE_ID))),
+                    url = DEFAULT_URL,
                     cohorts = listOf(
                         CohortConfig(
                             cohortId = COHORT_ID,
@@ -76,8 +76,7 @@ class TrialIngestionTest {
                     title = TITLE,
                     nctId = NCT_ID,
                     phase = TrialPhase.PHASE_1,
-                    source = TrialSource.NKI,
-                    sourceId = SOURCE_ID,
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf(LOCATION),
                     url = "https://clinicaltrials.gov/study/$NCT_ID"
                 ),
