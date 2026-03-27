@@ -23,7 +23,6 @@ class HasMinimumSitesWithLesionsTest {
         hasSuspectedLymphNodeLesions = false,
         otherLesions = listOf("Prostate", "Subcutaneous"),
         otherSuspectedLesions = emptyList(),
-        biopsyLocation = null
     )
 
     @Test
@@ -36,7 +35,6 @@ class HasMinimumSitesWithLesionsTest {
                     suspectedLesionFlag = false,
                     otherLesions = emptyList(),
                     otherSuspectedLesions = emptyList(),
-                    biopsyLocation = null
                 )
             )
         )
@@ -82,25 +80,10 @@ class HasMinimumSitesWithLesionsTest {
     }
 
     @Test
-    fun `Should not count additional lesion details or biopsy location containing lymph when lymph node lesions present`() {
-        val patient = TumorTestFactory.withTumorDetails(
-            testPatient.tumor.copy(otherLesions = listOf("lymph node"), biopsyLocation = "lymph")
-        )
-        assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(6).evaluate(patient))
-    }
-
-    @Test
     fun `Should not count null boolean fields or empty other lesions as sites`() {
-        val patient = patientWithConsistentLesionFlags(null, null, emptyList(), emptyList(), null)
+        val patient = patientWithConsistentLesionFlags(null, null, emptyList(), emptyList())
         assertEvaluation(EvaluationResult.UNDETERMINED, HasMinimumSitesWithLesions(1).evaluate(patient))
         assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(2).evaluate(patient))
-    }
-
-    @Test
-    fun `Should count biopsy location towards upper limit of lesion site count`() {
-        val patient = patientWithConsistentLesionFlags(null, null, emptyList(), emptyList(), "Kidney")
-        assertEvaluation(EvaluationResult.UNDETERMINED, HasMinimumSitesWithLesions(2).evaluate(patient))
-        assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(3).evaluate(patient))
     }
 
     companion object {
@@ -109,7 +92,6 @@ class HasMinimumSitesWithLesionsTest {
             suspectedLesionFlag: Boolean?,
             otherLesions: List<String>?,
             otherSuspectedLesions: List<String>?,
-            biopsyLocation: String?
         ): PatientRecord {
             return patient(
                 lesionFlag,
@@ -126,7 +108,6 @@ class HasMinimumSitesWithLesionsTest {
                 suspectedLesionFlag,
                 otherLesions,
                 otherSuspectedLesions,
-                biopsyLocation
             )
         }
 
@@ -145,7 +126,6 @@ class HasMinimumSitesWithLesionsTest {
             hasSuspectedLymphNodeLesions: Boolean?,
             otherLesions: List<String>?,
             otherSuspectedLesions: List<String>?,
-            biopsyLocation: String?
         ): PatientRecord {
             return TumorTestFactory.withTumorDetails(
                 TumorDetails(
@@ -163,7 +143,6 @@ class HasMinimumSitesWithLesionsTest {
                     hasSuspectedLymphNodeLesions = hasSuspectedLymphNodeLesions,
                     otherLesions = otherLesions,
                     otherSuspectedLesions = otherSuspectedLesions,
-                    biopsyLocation = biopsyLocation
                 )
             )
         }
