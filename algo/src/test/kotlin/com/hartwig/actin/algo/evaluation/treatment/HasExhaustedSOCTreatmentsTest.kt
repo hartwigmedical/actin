@@ -36,8 +36,10 @@ class HasExhaustedSOCTreatmentsTest {
     private val nonEmptyTreatmentList = listOf(
         EvaluatedTreatment(
             TreatmentCandidate(
-                TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
+                TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY),
+                optional = false,
+                potentialIntolerance = false,
+                eligibilityFunctions = setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
             ), listOf(EvaluationFactory.pass("Has MSI"))
         )
     )
@@ -209,10 +211,6 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
     }
 
-    private fun setStandardOfCareCanBeEvaluatedForPatient(canBeEvaluated: Boolean) {
-        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(any()) } returns canBeEvaluated
-    }
-
     @Test
     fun `Should pass when patient is known to have exhausted SOC`() {
         setStandardOfCareCanBeEvaluatedForPatient(true)
@@ -235,8 +233,10 @@ class HasExhaustedSOCTreatmentsTest {
         val treatments = listOf(
             EvaluatedTreatment(
                 TreatmentCandidate(
-                    TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY), false,
-                    setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
+                    TreatmentTestFactory.drugTreatment("PEMBROLIZUMAB", TreatmentCategory.IMMUNOTHERAPY),
+                    optional = false,
+                    potentialIntolerance = false,
+                    eligibilityFunctions = setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
                 ),
                 listOf(EvaluationFactory.undetermined("Cannot determine if MSI", isMissingMolecularResultForEvaluation = true))
             )
@@ -248,6 +248,30 @@ class HasExhaustedSOCTreatmentsTest {
         assertThat(evaluation.warnMessagesStrings())
             .containsExactly("Has potentially not exhausted SOC (Pembrolizumab) but some corresponding molecular results are missing")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
+    }
+
+    @Test
+    fun `Should warn when SOC not exhausted but potentially due to drug intolerance`() {
+        setStandardOfCareCanBeEvaluatedForPatient(true)
+        val treatments = listOf(
+            EvaluatedTreatment(
+                TreatmentCandidate(
+                    TreatmentTestFactory.drugTreatment("CAPECITABINE+OXALIPLATIN", TreatmentCategory.CHEMOTHERAPY),
+                    optional = false,
+                    potentialIntolerance = true,
+                    eligibilityFunctions = emptySet()
+                ), emptyList()
+            )
+        )
+        every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(treatments)
+
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnMessagesStrings()).containsExactly("Has potentially exhausted SOC (remaining options: Capecitabine+Oxaliplatin) due to drug intolerance")
+    }
+
+    private fun setStandardOfCareCanBeEvaluatedForPatient(canBeEvaluated: Boolean) {
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(any()) } returns canBeEvaluated
     }
 
     private fun createHistoryWithNSCLCAndTreatmentWithIntents(drugTreatment: Treatment?, intents: Set<Intent>? = null): PatientRecord {

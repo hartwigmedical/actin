@@ -45,7 +45,10 @@ class EvaluatedTreatmentAnnotatorTest {
     fun `Should annotate SoC treatments with efficacy evidence`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList())
         val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.IMMUNOTHERAPY), false, setOf(eligibilityFunction)
+            TreatmentTestFactory.drugTreatment("pembrolizumab", TreatmentCategory.IMMUNOTHERAPY),
+            optional = false,
+            potentialIntolerance = false,
+            eligibilityFunctions = setOf(eligibilityFunction)
         )
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 
@@ -61,8 +64,9 @@ class EvaluatedTreatmentAnnotatorTest {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList())
         val treatmentCandidate = TreatmentCandidate(
             TreatmentTestFactory.drugTreatment("capecitabine+oxaliplatin", TreatmentCategory.CHEMOTHERAPY),
-            false,
-            setOf(eligibilityFunction)
+            optional = false,
+            potentialIntolerance = true,
+            eligibilityFunctions = setOf(eligibilityFunction)
         )
         val socTreatments = listOf(EvaluatedTreatment(treatmentCandidate, evaluations))
 

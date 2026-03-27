@@ -87,6 +87,7 @@ class DecisionTreeNodeTest {
         return TreatmentCandidate(
             treatment = treatment,
             optional = false,
+            potentialIntolerance = false,
             eligibilityFunctions = setOf(
                 EligibilityFunction(EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X.name, listOf(TreatmentParameter(treatment)))
             ) + additionalCriteria

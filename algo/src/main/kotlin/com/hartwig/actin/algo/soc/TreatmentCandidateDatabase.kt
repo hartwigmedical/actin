@@ -44,6 +44,8 @@ private const val RECENT_TREATMENT_THRESHOLD_WEEKS = 26
 private val drugExclusionExceptions = setOf(FLUOROURACIL, CAPECITABINE, FOLINIC_ACID)
 private val antiEgfrDrugs = setOf(CETUXIMAB, PANITUMUMAB)
 private val mutuallyExclusiveMonotherapies = setOf(CAPECITABINE, FLUOROURACIL)
+private val potentiallyIntolerantTherapies =
+    setOf(CAPOX, FOLFOX, FOLFIRI, FOLFIRI_CETUXIMAB, FOLFIRI_PANITUMUMAB, FOLFOX_CETUXIMAB, FOLFOX_PANITUMUMAB, FOLFOXIRI, OXALIPLATIN)
 
 class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
 
@@ -97,6 +99,7 @@ class TreatmentCandidateDatabase(val treatmentDatabase: TreatmentDatabase) {
         return TreatmentCandidate(
             treatment = treatment,
             optional = optional,
+            potentialIntolerance = treatmentName in potentiallyIntolerantTherapies,
             eligibilityFunctions = treatmentLineFunctions + drugBasedEligibility,
             additionalCriteriaForRequirement = drugBasedCriteriaForRequirement
         )
