@@ -211,10 +211,6 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
     }
 
-    private fun setStandardOfCareCanBeEvaluatedForPatient(canBeEvaluated: Boolean) {
-        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(any()) } returns canBeEvaluated
-    }
-
     @Test
     fun `Should pass when patient is known to have exhausted SOC`() {
         setStandardOfCareCanBeEvaluatedForPatient(true)
@@ -252,6 +248,30 @@ class HasExhaustedSOCTreatmentsTest {
         assertThat(evaluation.warnMessagesStrings())
             .containsExactly("Has potentially not exhausted SOC (Pembrolizumab) but some corresponding molecular results are missing")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
+    }
+
+    @Test
+    fun `Should warn when SOC not exhausted but potentially due to drug intolerance`() {
+        setStandardOfCareCanBeEvaluatedForPatient(true)
+        val treatments = listOf(
+            EvaluatedTreatment(
+                TreatmentCandidate(
+                    TreatmentTestFactory.drugTreatment("OXALIPLATIN", TreatmentCategory.CHEMOTHERAPY),
+                    optional = false,
+                    potentialIntolerance = true,
+                    eligibilityFunctions = emptySet()
+                ), emptyList()
+            )
+        )
+        every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(treatments)
+
+        val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(evaluation.warnMessagesStrings()).containsExactly("Has potentially not exhausted SOC (Oxaliplatin) due to drug intolerance")
+    }
+
+    private fun setStandardOfCareCanBeEvaluatedForPatient(canBeEvaluated: Boolean) {
+        every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(any()) } returns canBeEvaluated
     }
 
     private fun createHistoryWithNSCLCAndTreatmentWithIntents(drugTreatment: Treatment?, intents: Set<Intent>? = null): PatientRecord {
