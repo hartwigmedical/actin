@@ -86,7 +86,8 @@ class TreatmentMatcherTest {
     fun `Should include SOC evaluations for patient when SOC evaluation is available`() {
         val eligibilityFunction = EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList())
         val treatmentCandidate = TreatmentCandidate(
-            TreatmentTestFactory.drugTreatment("test", TreatmentCategory.CHEMOTHERAPY), false,
+            TreatmentTestFactory.drugTreatment("test", TreatmentCategory.CHEMOTHERAPY),
+            optional = false,
             potentialIntolerance = false,
             eligibilityFunctions = setOf(eligibilityFunction)
         )
