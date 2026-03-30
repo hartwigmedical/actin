@@ -625,6 +625,7 @@ CREATE TABLE `evaluation`
 (   `id` int NOT NULL AUTO_INCREMENT,
     `trialMatchId` int NOT NULL,
     `cohortMatchId` int,
+    `parentEvaluationId` int,
     `eligibility` varchar(5000) NOT NULL,
     `result` varchar(50) NOT NULL,
     `recoverable` BOOLEAN NOT NULL,

@@ -8,18 +8,18 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 class Not(private val function: EvaluationFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val evaluation = function.evaluate(record)
+        val childEvaluation = function.evaluate(record)
 
-        return when (evaluation.result) {
-            EvaluationResult.PASS -> swapEvaluationMessagesAndMolecularEventsWithResult(evaluation, EvaluationResult.FAIL)
-            EvaluationResult.FAIL -> swapEvaluationMessagesAndMolecularEventsWithResult(evaluation, EvaluationResult.PASS)
+        return when (childEvaluation.result) {
+            EvaluationResult.PASS -> swapEvaluationMessagesAndMolecularEventsWithResult(childEvaluation, EvaluationResult.FAIL)
+            EvaluationResult.FAIL -> swapEvaluationMessagesAndMolecularEventsWithResult(childEvaluation, EvaluationResult.PASS)
             else -> {
-                evaluation.copy(
-                    inclusionMolecularEvents = evaluation.exclusionMolecularEvents,
-                    exclusionMolecularEvents = evaluation.inclusionMolecularEvents
+                childEvaluation.copy(
+                    inclusionMolecularEvents = childEvaluation.exclusionMolecularEvents,
+                    exclusionMolecularEvents = childEvaluation.inclusionMolecularEvents
                 )
             }
-        }
+        }.copy(childEvaluations = listOf(childEvaluation))
     }
 
     private fun swapEvaluationMessagesAndMolecularEventsWithResult(evaluation: Evaluation, negatedResult: EvaluationResult): Evaluation {
