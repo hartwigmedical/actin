@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.ckb.tools
 
-import com.hartwig.actin.TestTreatmentDatabaseFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceEntry
 import com.hartwig.actin.algo.ckb.serialization.CkbExtendedEvidenceJson
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
+import com.hartwig.actin.treatment.database.TestTreatmentDatabaseFactory
 import java.io.File
 
 class CkbExtendedEfficacyDatabasePrinterTestApplication {

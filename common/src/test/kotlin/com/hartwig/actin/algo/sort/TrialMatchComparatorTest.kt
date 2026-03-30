@@ -25,8 +25,7 @@ class TrialMatchComparatorTest {
                 title = "",
                 nctId = null,
                 phase = null,
-                source = null,
-                sourceId = null,
+                sources = emptySet(),
                 locations = emptySet(),
                 url = null
             ),

@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.ckb
 
 import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
@@ -25,6 +24,7 @@ import com.hartwig.actin.datamodel.efficacy.TimeOfMetastases
 import com.hartwig.actin.datamodel.efficacy.TrialReference
 import com.hartwig.actin.datamodel.efficacy.ValuePercentage
 import com.hartwig.actin.datamodel.efficacy.VariantRequirement
+import com.hartwig.actin.treatment.database.TreatmentDatabase
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
@@ -48,32 +48,10 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
     }
 
     private fun findTreatmentInDatabase(therapyName: String, therapySynonyms: String?): Treatment {
-        return generateOptions((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
+        return ((therapySynonyms?.split("|") ?: emptyList()) + therapyName)
             .mapNotNull(treatmentDatabase::findTreatmentByName)
             .distinct().singleOrNull()
             ?: throw IllegalStateException("Multiple or no matches found in treatment.json for therapy: $therapyName")
-    }
-
-    fun generateOptions(therapies: List<String>): List<String> {
-        return therapies.flatMap { therapy ->
-            if (therapy.contains(" + ")) {
-                permutations(therapy.uppercase().split(" + ")).map { it.joinToString("+") }
-            } else {
-                listOf(therapy.uppercase())
-            }
-        }
-    }
-
-    fun permutations(drugs: List<String>): Set<List<String>> {
-        if (drugs.isEmpty()) return setOf(emptyList())
-
-        val result: MutableSet<List<String>> = mutableSetOf()
-        for (i in drugs.indices) {
-            permutations(drugs - drugs[i]).forEach { item ->
-                result.add(item + drugs[i])
-            }
-        }
-        return result
     }
 
     fun extractTherapeuticSettingFromString(therapeuticSetting: String): Intent {

@@ -46,8 +46,7 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 1",
                     nctId = "NCT00000010",
                     phase = TrialPhase.PHASE_1,
-                    source = TrialSource.NKI,
-                    sourceId = "Source ID 1",
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf("Antoni van Leeuwenhoek"),
                     url = null
                 ),
@@ -64,8 +63,7 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 2",
                     nctId = "NCT00000002",
                     phase = TrialPhase.PHASE_2,
-                    source = TrialSource.NKI,
-                    sourceId = "Source ID 2",
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf("Antoni van Leeuwenhoek"),
                     url = "https://hartwigmedicalfoundation.nl"
                 ),
@@ -82,8 +80,7 @@ object TestTreatmentMatchFactory {
                     title = "Example test trial 3",
                     nctId = "NCT00000013",
                     phase = TrialPhase.PHASE_1_2,
-                    source = TrialSource.NKI,
-                    sourceId = "Source ID 3",
+                    sources = setOf(TrialSource.NKI),
                     locations = setOf("Antoni van Leeuwenhoek"),
                     url = null
                 ),

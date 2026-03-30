@@ -24,8 +24,7 @@ object TestTrialFactory {
                 title = "",
                 nctId = null,
                 phase = null,
-                source = TrialSource.EMC,
-                sourceId = null,
+                sources = setOf(TrialSource.EMC),
                 locations = emptySet(),
                 url = null
             ),

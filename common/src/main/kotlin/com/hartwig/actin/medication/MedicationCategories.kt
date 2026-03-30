@@ -24,7 +24,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
     }
 
     companion object {
-        val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "H01CC", "H01CA", "G03XA")
+        val ANTI_CANCER_ATC_CODES = setOf("L01", "L02", "H01CC", "H01CA")
 
         val MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY = mapOf(
             "Chemotherapy" to setOf(TreatmentCategory.CHEMOTHERAPY),
@@ -35,8 +35,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
         )
 
         val MEDICATION_CATEGORIES_TO_DRUG_TYPES = mapOf(
-            "Gonadotropin agonists" to setOf(DrugType.GONADOTROPIN_AGONIST),
-            "Gonadotropin antagonists" to setOf(DrugType.GONADOTROPIN_ANTAGONIST),
+            "Gonadorelin agonists" to setOf(DrugType.GONADORELIN_AGONIST),
+            "Gonadorelin antagonists" to setOf(DrugType.GONADORELIN_ANTAGONIST),
             "Hypomethylating agents" to setOf(DrugType.DNMT_INHIBITOR),
             "Monoclonal antibodies and antibody drug conjugates" to setOf(
                 DrugType.MONOCLONAL_ANTIBODY_TARGETED_THERAPY,
@@ -49,11 +49,12 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "PARP inhibitors" to setOf(DrugType.PARP_INHIBITOR),
             "L01CD" to setOf(DrugType.TAXANE),
             "L02BB" to setOf(DrugType.ANTI_ANDROGEN),
-            "L02BX" to setOf(DrugType.ANTI_ANDROGEN, DrugType.GONADOTROPIN_ANTAGONIST),
+            "L02BX" to setOf(DrugType.ANTI_ANDROGEN, DrugType.GONADORELIN_ANTAGONIST),
             "L01A" to setOf(DrugType.ALKYLATING_AGENT),
             "L01XL" to setOf(DrugType.ANTI_CLDN6_CAR_T, DrugType.HER2_CAR_T),
             "L01E" to setOf(DrugType.TYROSINE_KINASE_INHIBITOR),
             "L01EB" to setOf(DrugType.EGFR_TYROSINE_KINASE_INHIBITOR),
+            "L01EC" to setOf(DrugType.BRAF_INHIBITOR),
             "L01FE" to setOf(DrugType.EGFR_INHIBITOR),
             "L04AG" to setOf(DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY),
             "Nitrosoureas" to setOf(DrugType.NITROSOUREAS)
@@ -86,8 +87,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
                     "Colony stimulating factors" to convertToAtcLevel(setOf("L03AA"), atcTree),
                     "Coumarin derivative" to convertToAtcLevel(setOf("B01AA"), atcTree),
                     "Endocrine therapy" to convertToAtcLevel(setOf("L02"), atcTree),
-                    "Gonadotropin agonists" to convertToAtcLevel(setOf("H01CA", "L02AE"), atcTree),
-                    "Gonadotropin antagonists" to convertToAtcLevel(setOf("H01CC", "G03XA"), atcTree),
+                    "Gonadorelin agonists" to convertToAtcLevel(setOf("H01CA", "L02AE"), atcTree),
+                    "Gonadorelin antagonists" to convertToAtcLevel(setOf("H01CC", "L02BX"), atcTree),
                     "Hypomethylating agents" to convertToAtcLevel(setOf("L01BC07", "L01BC08"), atcTree),
                     "Immunostimulants" to convertToAtcLevel(setOf("L03"), atcTree),
                     "Immunosuppressants" to convertToAtcLevel(setOf("L04"), atcTree),

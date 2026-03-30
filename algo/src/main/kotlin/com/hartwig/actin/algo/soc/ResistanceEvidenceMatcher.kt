@@ -1,6 +1,5 @@
 package com.hartwig.actin.algo.soc
 
-import com.hartwig.actin.TreatmentDatabase
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.datamodel.algo.ResistanceEvidence
@@ -11,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcher
 import com.hartwig.actin.molecular.evidence.actionability.MatchesForActionable
+import com.hartwig.actin.treatment.database.TreatmentDatabase
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.efficacy.EvidenceLevel
 import com.hartwig.serve.datamodel.efficacy.Treatment as ServeTreatment
@@ -89,10 +89,7 @@ class ResistanceEvidenceMatcher(
         matches[it]?.evidenceMatches?.contains(evidence) == true
 
     private fun findTreatmentInDatabase(treatment: ServeTreatment, treatmentToFind: Treatment): String? {
-        return EfficacyEntryFactory(treatmentDatabase).generateOptions(listOf(treatment.name()))
-            .mapNotNull(treatmentDatabase::findTreatmentByName)
-            .distinct()
-            .singleOrNull()
+        return treatmentDatabase.findTreatmentByName(treatment.name())
             ?.takeIf { drugsInOtherTreatment(treatmentToFind, it) }
             ?.name
     }

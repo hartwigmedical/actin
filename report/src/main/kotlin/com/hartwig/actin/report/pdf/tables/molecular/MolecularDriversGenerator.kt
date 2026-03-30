@@ -64,7 +64,7 @@ class MolecularDriversGenerator(
             "${it.trialAcronym} ${
                 if (it.locations.isNotEmpty()) "(${
                     TrialLocations.actinTrialLocation(
-                        null,
+                        emptySet(),
                         null,
                         it.locations,
                         false

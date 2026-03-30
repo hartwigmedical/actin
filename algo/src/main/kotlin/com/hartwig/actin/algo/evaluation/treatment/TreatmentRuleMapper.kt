@@ -23,7 +23,6 @@ import com.hartwig.actin.datamodel.trial.ManyTreatmentTypesParameter
 import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.StringParameter
-import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
 import com.hartwig.actin.datamodel.trial.TreatmentCategoryOrTypeParameter
 import com.hartwig.actin.datamodel.trial.TreatmentCategoryParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
@@ -82,6 +81,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X to hasHadFirstLineSystemicTreatmentNameCreator(),
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
+            EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_AS_A_LINE to hasHadSpecificDrugCombinedWithCategoryAndTypesAsLineCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(),
@@ -156,7 +156,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_CYCLES to hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCyclesCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X to hasProgressiveDiseaseFollowingTreatmentWithAnyDrugCreator(),
-            EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_FIRST_LINE_CATEGORY_X_OF_TYPES_Y_TREATMENT to hasProgressiveDiseaseFollowingFirstLineTreatmentWithCategoryOfTypes(),
+            EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_FIRST_LINE_CATEGORY_X_OF_TYPES_Y_TREATMENT to hasProgressiveDiseaseFollowingFirstLineTreatmentWithCategoryOfTypesCreator(),
+            EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_FOR_AT_LEAST_A_WEEKS to hasProgressiveDiseaseFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksCreator(),
             EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_ANY_DRUG_X to hasAcquiredResistanceToSomeDrugCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_AFTER_LATEST_TREATMENT_LINE to
@@ -378,8 +379,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadFirstLineSystemicTreatmentNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val treatment = function.param<SystemicTreatmentParameter>(0).value
-            require(treatment.isSystemic) { "Not a systemic treatment: ${treatment.display()}" }
+            val treatment = function.param<TreatmentParameter>(0).value
             HasHadSpecificFirstLineSystemicTreatment(treatment)
         }
     }
@@ -403,7 +403,23 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val drug = function.param<DrugParameter>(0).value
             val category = function.param<TreatmentCategoryParameter>(1).value
             val types = function.param<ManyTreatmentTypesParameter>(2).value
-            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypes(drug, category, types)
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(drug, category, types, null)
+        }
+    }
+
+    private fun hasHadSpecificDrugCombinedWithCategoryAndTypesAsLineCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.DRUG,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val drug = function.param<DrugParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            val types = function.param<ManyTreatmentTypesParameter>(2).value
+            val line = function.param<IntegerParameter>(3).value
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(drug, category, types, line)
         }
     }
 
@@ -944,12 +960,28 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasProgressiveDiseaseFollowingFirstLineTreatmentWithCategoryOfTypes(): FunctionCreator {
+    private fun hasProgressiveDiseaseFollowingFirstLineTreatmentWithCategoryOfTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
             val category = function.param<TreatmentCategoryParameter>(0).value
             val types = function.param<ManyTreatmentTypesParameter>(1).value
             HasHadPDFollowingFirstLineTreatmentCategoryOfTypes(category, types)
+        }
+    }
+
+    private fun hasProgressiveDiseaseFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.DRUG,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val drug = function.param<DrugParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            val types = function.param<ManyTreatmentTypesParameter>(2).value
+            val weeks = function.param<IntegerParameter>(3).value
+            HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(drug, category, types, weeks)
         }
     }
 
