@@ -56,6 +56,7 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "L01EB" to setOf(DrugType.EGFR_TYROSINE_KINASE_INHIBITOR),
             "L01EC" to setOf(DrugType.BRAF_INHIBITOR),
             "L01FE" to setOf(DrugType.EGFR_INHIBITOR),
+            "L01FF" to setOf(DrugType.PD_1_PD_L1_ANTIBODY),
             "L04AG" to setOf(DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY),
             "Nitrosoureas" to setOf(DrugType.NITROSOUREAS)
         )
