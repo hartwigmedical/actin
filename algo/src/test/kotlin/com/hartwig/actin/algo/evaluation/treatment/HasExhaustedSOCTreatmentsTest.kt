@@ -267,7 +267,7 @@ class HasExhaustedSOCTreatmentsTest {
 
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).containsExactly("Has potentially exhausted SOC (remaining options: Capecitabine+Oxaliplatin) due to drug intolerance")
+        assertThat(evaluation.warnMessagesStrings()).containsExactly("Has potentially exhausted SOC - remaining options (Capecitabine+Oxaliplatin) may not have been given due to drug intolerance")
     }
 
     private fun setStandardOfCareCanBeEvaluatedForPatient(canBeEvaluated: Boolean) {
