@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
@@ -17,23 +16,15 @@ class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val latestStart = record.oncologicalHistory.map { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
+        val treatmentHistoryEntries = record.oncologicalHistory
+        val latestStart = treatmentHistoryEntries.map { LocalDate.of(it.startYear ?: 0, it.startMonth ?: 1, 1) }
             .sortedDescending()
             .firstOrNull { !it.isAfter(referenceDate) }
 
-        val treatmentMatches = record.oncologicalHistory.groupBy {
-            val matchingCategories = it.categories().containsAll(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.RADIOTHERAPY))
-
-            val enoughCyclesAndOngoingTreatment = enoughCyclesAndOngoingTreatment(it, latestStart)
-
-            when {
-                matchingCategories && it.isOfType(type) == true && enoughCyclesAndOngoingTreatment == true -> true
-                !matchingCategories && it.categories().isNotEmpty() ||
-                        it.isOfType(type) == false || enoughCyclesAndOngoingTreatment == false -> false
-
-                else -> null
-            }
-        }
+        val treatmentMatches = ChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesEvaluator.treatmentmatches(
+            treatmentHistoryEntries,
+            type,
+            { enoughCyclesAndOngoingTreatment(it, latestStart) })
 
         val typeString = type.display()
         return when {

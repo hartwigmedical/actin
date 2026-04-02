@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test
 class CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
     
     private val minCycles = 5
-    private val matchingType = DrugType.ALK_INHIBITOR
-    private val radiotherapy = Radiotherapy("Radiotherapy", radioType = RadiotherapyType.STEREOTACTIC)
-    private val chemotherapy = TreatmentTestFactory.drugTreatment("Alk inhibitor", TreatmentCategory.CHEMOTHERAPY, setOf(matchingType))
+    private val matchingType = DrugType.PLATINUM_COMPOUND
+    private val radiotherapy = Radiotherapy("Radiotherapy")
+    private val chemotherapy = TreatmentTestFactory.drugTreatment("Platinum", TreatmentCategory.CHEMOTHERAPY, setOf(matchingType))
     private val referenceYear = 2024
 
     @Test
