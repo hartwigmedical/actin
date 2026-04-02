@@ -114,7 +114,6 @@ class ClinicalDAO(private val context: DSLContext) {
             Tables.TUMOR.HASSUSPECTEDLYMPHNODELESIONS,
             Tables.TUMOR.OTHERLESIONS,
             Tables.TUMOR.OTHERSUSPECTEDLESIONS,
-            Tables.TUMOR.BIOPSYLOCATION
         )
             .values(
                 patientId,
@@ -138,7 +137,6 @@ class ClinicalDAO(private val context: DSLContext) {
                 tumor.hasSuspectedLymphNodeLesions,
                 DataUtil.concat(tumor.otherLesions),
                 DataUtil.concat(tumor.otherSuspectedLesions),
-                tumor.biopsyLocation
             )
             .execute()
     }

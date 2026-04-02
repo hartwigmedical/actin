@@ -23,8 +23,7 @@
     "hasLiverLesions": false,
     "hasLungLesions": true,
     "hasLymphNodeLesions": true,
-    "otherLesions": [],
-    "biopsyLocation": "Lung"
+    "otherLesions": []
   },
   "clinicalStatus": {
     "infectionStatus": {
