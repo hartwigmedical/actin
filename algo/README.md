@@ -698,8 +698,8 @@ Bisphosphonates ("M05BA" or "M05BB") <br>
 Bone resorptive ("M05B" or "H05") <br>
 Colony stimulating factors ("L03AA") <br>
 Coumarin derivative ("B01AA") <br>
-Gonadotropin agonists ("H01CA" or "L02AE") <br>
-Gonadotropin antagonists ("H01CC" or "G03XA") <br>
+Gonadorelin agonists ("H01CA" or "L02AE") <br>
+Gonadorelin antagonists ("H01CC" or "L02BX") <br>
 Immunostimulants ("L03") <br>
 Immunosuppressants ("L04") <br>
 Nitrosoureas ("L01AD") <br>
@@ -738,13 +738,13 @@ Systemic corticosteroids ("H02" or "M01BA") <br>
 *Where <atcLevel> is a level defined above in 3] and <category> is X OR a member of the set of ATC codes derived from X using the table
 below in 5]
 **Where <atcLevel> is a level defined above in 3] and <category> is equal to "L01", "L02", "L04" OR a member of the set of ATC codes derived
-from "Gonadotropin agonists" or "Gonadotropin antagonists" using the table below in 5]
+from "Gonadorelin agonists" or "Gonadorelin antagonists" using the table below in 5]
 ***Categories are mapped to corresponding Treatment 'Categories' and 'Types'
 
 5] Cancer therapy list (with corresponding ATC level codes between brackets): <br>
 Chemotherapy ("L01XA", "L01BC", "L01CD" or "L01A") <br>
 Endocrine therapy ("L02") <br>
-Gonadotropin agonists + Gonadotropin antagonists ("H01CC", "H01CA", "G03XA" or "L02AE") <br>
+Gonadorelin agonists + Gonadorelin antagonists ("H01CC", "H01CA") <br>
 Hypomethylating agents ("L01BC07" (Azacitidine) or "L01BC08" (Decitabine)) <br>
 Immunotherapy ("L01FF" or "L01FX04" (Ipilimumab)) <br>
 Monoclonal antibodies and antibody drug conjugates ("L01F") <br>
