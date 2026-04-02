@@ -34,8 +34,7 @@
     "otherLesions": [
       "Peritoneal"
     ],
-    "otherSuspectedLesions": [],
-    "biopsyLocation": "Lung"
+    "otherSuspectedLesions": []
   },
   "clinicalStatus": {
     "infectionStatus": null,
