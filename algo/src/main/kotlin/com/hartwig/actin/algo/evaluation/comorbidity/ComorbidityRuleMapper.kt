@@ -34,6 +34,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 setOf(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER),
                 "cardiovascular disease"
             ),
+            EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
+                setOf(IcdCode(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER)),
+                "cardiovascular disease"
+            ),
             EligibilityRule.HAS_HISTORY_OF_CONGESTIVE_HEART_FAILURE_WITH_AT_LEAST_NYHA_CLASS_X to hasHistoryOfCongestiveHeartFailureWithNYHACreator(),
             EligibilityRule.HAS_HISTORY_OF_CENTRAL_NERVOUS_SYSTEM_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
                 setOf(IcdConstants.NERVOUS_SYSTEM_DISEASE_CHAPTER),
