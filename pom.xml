@@ -26,8 +26,8 @@
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
 
-        <actin-datamodel.version>2.14.0-beta.1</actin-datamodel.version>
-        <actin-treatment-database.version>0.3.0</actin-treatment-database.version>
+        <actin-datamodel.version>2.17.0</actin-datamodel.version>
+        <actin-treatment-database.version>0.3.2</actin-treatment-database.version>
         <serve.version>8.6.0</serve.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.2.0</actin-transvar.version>
