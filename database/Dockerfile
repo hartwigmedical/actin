@@ -1,0 +1,7 @@
+FROM eclipse-temurin:17-jre
+
+ARG VERSION=local-SNAPSHOT
+
+COPY target/database-${VERSION}-jar-with-dependencies.jar /usr/local/actin.jar
+
+ENTRYPOINT ["java", "-XX:MaxRAMPercentage=95", "-cp", "/usr/local/actin.jar"]
