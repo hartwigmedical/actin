@@ -97,8 +97,14 @@ object TestTreatmentMatchFactory {
             AnnotatedTreatmentMatch(
                 treatmentCandidate = TreatmentCandidate(
                     TreatmentTestFactory.treatment("Pembrolizumab", true),
-                    true,
-                    setOf(EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_CNS_METASTASES.name, parameters = emptyList()))
+                    optional = true,
+                    potentialIntolerance = false,
+                    eligibilityFunctions = setOf(
+                        EligibilityFunction(
+                            rule = EligibilityRule.HAS_ACTIVE_CNS_METASTASES.name,
+                            parameters = emptyList()
+                        )
+                    )
                 ),
                 evaluations = listOf(
                     Evaluation(

@@ -39,7 +39,8 @@ class PathologyReportFunctionsTest {
                             "Authorization date: ${df.format(authorisationDate)}, " +
                             "Report date: ${df.format(reportDate)}, " +
                             "Data retrieval date: ${df.format(extractionDate)}, " +
-                            "Diagnosis: $diagnosis)"
+                            "Diagnosis: $diagnosis, " +
+                            "Biopsy location: $biopsyLocation)"
                 )
         }
     }
@@ -54,6 +55,7 @@ class PathologyReportFunctionsTest {
             extractionDate = null,
             lab = null,
             diagnosis = null,
+            biopsyLocation = null
         )
 
         val cell = PathologyReportFunctions.createPathologyReportSummaryCell(pathologyReport = pathologyReport)
@@ -166,7 +168,8 @@ class PathologyReportFunctionsTest {
         tissueDate = date,
         authorisationDate = null,
         extractionDate = date,
-        report = "Report$idx"
+        report = "Report$idx",
+        biopsyLocation = "Location$idx",
     )
 
     private fun ihcTest(item: String = "", measure: String? = null, measureDate: LocalDate? = null, reportHash: String? = null): IhcTest {

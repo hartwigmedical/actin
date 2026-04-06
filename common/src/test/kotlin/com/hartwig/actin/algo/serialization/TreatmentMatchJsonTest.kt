@@ -74,7 +74,7 @@ class TreatmentMatchJsonTest {
                     {"treatmentCandidate":
                         {"treatment":{"name":"Pembrolizumab","isSystemic":true,
                         "synonyms":[],"displayOverride":null,"categories":[],"types":[],"treatmentClass":"OTHER_TREATMENT"},
-                        "optional":true,"eligibilityFunctions":[
+                        "optional":true,"potentialIntolerance":false,"eligibilityFunctions":[
                         {"rule":"HAS_ACTIVE_CNS_METASTASES","parameters":[]}],"additionalCriteriaForRequirement":[]},
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
