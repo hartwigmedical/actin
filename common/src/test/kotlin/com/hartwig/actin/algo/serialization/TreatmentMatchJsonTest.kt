@@ -66,7 +66,7 @@ class TreatmentMatchJsonTest {
                         "function":{"rule":"IS_AT_LEAST_X_YEARS_OLD","parameters":[{"type":"INTEGER","value":"18"}]}},
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],"exclusionMolecularEvents":[],
                         "passMessages":[{"message":"msg 1"},{"message":"msg 2"},{"message":"msg 3"}],"warnMessages":[],"undeterminedMessages":[],
-                        "failMessages":[],"isMissingMolecularResultForEvaluation":false,"childEvaluations":[]}]],
+                        "failMessages":[],"isMissingMolecularResultForEvaluation":false}]],
                     "cohorts":[],
                     "nonEvaluableCohorts":[]
                 }],
@@ -127,7 +127,7 @@ class TreatmentMatchJsonTest {
         val match = read(treatmentMatchJson)
         assertThat(match.patientId).isEqualTo("ACTN01029999")
         assertThat(match.trialMatches).hasSize(1)
-        
+
         val trialMatch = match.trialMatches[0]
         assertThat(trialMatch.evaluations).hasSize(1)
         assertThat(trialMatch.cohorts).hasSize(3)

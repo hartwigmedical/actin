@@ -1,27 +1,20 @@
 package com.hartwig.actin.algo.serialization
 
 import com.google.gson.Gson
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
 import com.hartwig.actin.clinical.serialization.TreatmentAdapter
-import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
-import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.util.json.DrugDeserializer
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.EvaluationMessageAdapter
 import com.hartwig.actin.util.json.GsonSerializer
-import com.hartwig.actin.util.json.Json
-import org.apache.logging.log4j.LogManager
 import java.io.File
-import java.lang.reflect.Type
 import java.nio.file.Files
 import java.nio.file.Path
+import org.apache.logging.log4j.LogManager
 
 object TreatmentMatchJson {
 
