@@ -41,8 +41,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.CURRENTLY_GETS_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES to
-                    getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(),
             EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to { IsNotEligibleForCurativeTreatment() },
             EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_RADIOTHERAPY to { IsEligibleForRadiotherapy() },
@@ -186,15 +184,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_PLATINUM_SENSITIVE to { IsPlatinumSensitive(referenceDate) },
             EligibilityRule.IS_PRIMARY_PLATINUM_REFRACTORY_WITHIN_X_MONTHS to isPrimaryPlatinumRefractoryWithinMonthsCreator(),
         )
-    }
-
-    private fun getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            function.expectTypes(Parameter.Type.TREATMENT_TYPE, Parameter.Type.INTEGER)
-            val chemotherapyType = function.param<TreatmentTypeParameter>(0).value
-            val minCycles = function.param<IntegerParameter>(1).value
-            CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(chemotherapyType, minCycles, referenceDate)
-        }
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
