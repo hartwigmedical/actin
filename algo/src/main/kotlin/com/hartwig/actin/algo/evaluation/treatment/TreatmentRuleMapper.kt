@@ -41,8 +41,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.CURRENTLY_GETS_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES to
-                    getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(),
             EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to { IsNotEligibleForCurativeTreatment() },
             EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_RADIOTHERAPY to { IsEligibleForRadiotherapy() },
@@ -149,6 +147,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X to hasHadRadiotherapyToSomeBodyLocationCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ONLY_TYPES_Y_FOR_AT_LEAST_Z_MONTHS_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_WITH_ANY_DRUG_X_AND_AT_LEAST_Y_CYCLES to hasHadChemoradiotherapyWithAnyDrugAndMinimumCyclesCreator(),
+            EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES to hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentNameCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentCategoryCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryCreator(),
@@ -185,15 +184,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.IS_PLATINUM_SENSITIVE to { IsPlatinumSensitive(referenceDate) },
             EligibilityRule.IS_PRIMARY_PLATINUM_REFRACTORY_WITHIN_X_MONTHS to isPrimaryPlatinumRefractoryWithinMonthsCreator(),
         )
-    }
-
-    private fun getsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            function.expectTypes(Parameter.Type.TREATMENT_TYPE, Parameter.Type.INTEGER)
-            val chemotherapyType = function.param<TreatmentTypeParameter>(0).value
-            val minCycles = function.param<IntegerParameter>(1).value
-            CurrentlyGetsChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(chemotherapyType, minCycles, referenceDate)
-        }
     }
 
     private fun isEligibleForOnLabelTreatmentCreator(): FunctionCreator {
@@ -884,6 +874,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val drugs = function.param<ManyDrugsParameter>(0).value
             val cycles = function.param<IntegerParameter>(1).value
             HasHadChemoradiotherapyWithDrugAndCycles(drugs, cycles)
+        }
+    }
+
+    private fun hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.TREATMENT_TYPE, Parameter.Type.INTEGER)
+            val chemotherapyType = function.param<TreatmentTypeParameter>(0).value
+            val minCycles = function.param<IntegerParameter>(1).value
+            HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(chemotherapyType, minCycles)
         }
     }
 
