@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.immunology.TestHlaAlleleFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -53,7 +54,7 @@ class HasAnyHLATypeTest {
         val record = MolecularTestFactory.withHlaAlleleAndInsufficientQuality(CORRECT_HLA)
         evaluateFunctions(EvaluationResult.WARN, record)
         val evaluation = functionWithSpecificMatch.evaluate(record)
-        assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("HLA-A*02:01"))
+        assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("HLA-A*02:01")))
     }
 
     @Test

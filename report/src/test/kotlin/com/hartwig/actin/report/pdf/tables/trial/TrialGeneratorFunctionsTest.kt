@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.util.Formats
@@ -24,7 +25,7 @@ class TrialGeneratorFunctionsTest {
         hasSlotsAvailable = false,
         ignore = false,
         isEvaluable = false,
-        molecularInclusionEvents = setOf("MSI"),
+        molecularInclusionEvents = setOf(MolecularEvent("MSI")),
         molecularExclusionEvents = emptySet(),
         isPotentiallyEligible = true,
         isMissingMolecularResultForEvaluation = false,

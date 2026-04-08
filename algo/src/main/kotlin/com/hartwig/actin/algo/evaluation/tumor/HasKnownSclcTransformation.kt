@@ -8,6 +8,7 @@ import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.doid.DoidModel
 
 class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationFunction {
@@ -32,7 +33,7 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationF
 
         return when {
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
-                EvaluationFactory.pass("Has SCLC transformation", inclusionEvents = setOf("small cell transformation"))
+                EvaluationFactory.pass("Has SCLC transformation", inclusionEvents = setOf(MolecularEvent("small cell transformation")))
             }
 
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasPossiblePositiveResultsForItem) -> {

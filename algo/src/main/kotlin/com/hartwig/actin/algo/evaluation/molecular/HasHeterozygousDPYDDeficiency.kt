@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.isHomozygousDeficient
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.isProficient
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 
@@ -27,7 +28,7 @@ class HasHeterozygousDPYDDeficiency: MolecularEvaluationFunction(true) {
             !isHomozygousDeficient(pharmaco) && !isProficient(pharmaco) -> {
                 EvaluationFactory.pass(
                     "Heterozygous DPYD deficiency detected",
-                    inclusionEvents = setOf("DPYD heterozygous deficient")
+                    inclusionEvents = setOf(MolecularEvent("DPYD heterozygous deficient"))
                 )
             }
 

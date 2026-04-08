@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 
@@ -17,8 +18,8 @@ data class InterpretedCohort(
     val hasSlotsAvailable: Boolean,
     val ignore: Boolean,
     val isEvaluable: Boolean,
-    val molecularInclusionEvents: Set<String>,
-    val molecularExclusionEvents: Set<String>,
+    val molecularInclusionEvents: Set<MolecularEvent>,
+    val molecularExclusionEvents: Set<MolecularEvent>,
     val isPotentiallyEligible: Boolean,
     val isMissingMolecularResultForEvaluation: Boolean,
     val warnings: Set<String>,

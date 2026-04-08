@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 
 private const val MTAP = "MTAP"
@@ -17,6 +18,8 @@ class HasMtapDeletion : EvaluationFunction {
         val mtapTested =
             record.molecularTests.any { test -> test.testsGene(MTAP) { it.contains(MolecularTestTarget.DELETION) } }
                     || IhcTestEvaluation.create(MTAP, record.ihcTests).filteredTests.isNotEmpty()
+
+        val cdkn2aEvaluation = GeneIsInactivated(CDKN2A, onlyDeletions = true).evaluate(record)
 
         return when {
             mtapTested -> {
@@ -32,10 +35,11 @@ class HasMtapDeletion : EvaluationFunction {
                     ?: EvaluationFactory.fail("No $MTAP deletion")
             }
 
-            isPassOrWarn(GeneIsInactivated(CDKN2A, onlyDeletions = true).evaluate(record)) -> {
+            isPassOrWarn(cdkn2aEvaluation) -> {
+                val events = cdkn2aEvaluation.inclusionMolecularEvents
                 EvaluationFactory.warn(
                     "$MTAP deletion not tested but $CDKN2A deletion detected (highly correlated)",
-                    setOf("Potential $MTAP deletion"),
+                    events.map { event -> MolecularEvent(event.originalEvent, "Potential $MTAP deletion") }.toSet(),
                     isMissingMolecularResultForEvaluation = true
                 )
             }

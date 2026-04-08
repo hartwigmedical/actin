@@ -78,7 +78,7 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
                 EvaluationFactory.pass(
                     "Variant(s) ${concatVariants(canonicalReportableVariantMatches, gene)} in codon(s) " +
                             "${concat(canonicalCodonMatches)} in $gene in canonical transcript",
-                    inclusionEvents = canonicalReportableVariantMatches
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(canonicalReportableVariantMatches)
                 )
             }
 
@@ -95,7 +95,7 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
                             canonicalCodonMatches
                         )
                     } in $gene in canonical transcript together with " + extension,
-                    inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalReportableSubclonalVariantMatches,
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalReportableSubclonalVariantMatches)
                 )
             }
 

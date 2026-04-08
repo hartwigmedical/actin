@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 
@@ -21,7 +22,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
         val breastCancerReceptorEvaluation = BreastCancerReceptorsEvaluator(doidModel).evaluate(tumorDoids!!, record.ihcTests, receptorType)
         val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record)
 
-        val warnInclusionEvents = setOf("Potential IHC ${receptorType.display()} positive")
+        val warnInclusionEvents = setOf(MolecularEvent("Potential IHC ${receptorType.display()} positive"))
 
         return when (breastCancerReceptorEvaluation) {
             BreastCancerReceptorEvaluation.NOT_BREAST_CANCER -> EvaluationFactory.fail("No breast cancer")
@@ -43,7 +44,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             BreastCancerReceptorEvaluation.POSITIVE -> {
                 EvaluationFactory.pass(
                     "Has ${receptorType.display()}-positive breast cancer",
-                    inclusionEvents = setOf("IHC ${receptorType.display()} positive")
+                    inclusionEvents = setOf(MolecularEvent("IHC ${receptorType.display()} positive"))
                 )
             }
 

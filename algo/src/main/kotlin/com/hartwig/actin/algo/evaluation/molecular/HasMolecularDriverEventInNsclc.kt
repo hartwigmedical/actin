@@ -53,13 +53,13 @@ class HasMolecularDriverEventInNsclc(
 
     private fun hasPositiveEvaluationEventInGenes(evaluation: Evaluation, genesList: List<String>): Boolean {
         return genesList.any { gene ->
-            evaluation.inclusionMolecularEvents.any { string -> string.contains(gene) }
+            evaluation.inclusionMolecularEvents.any { string -> string.originalEvent.contains(gene) }
         } && (evaluation.result == EvaluationResult.PASS || evaluation.result == EvaluationResult.WARN)
     }
 
     private fun clearMolecularEventsAndConfigureMessages(evaluation: Evaluation, mustWarn: Boolean = false): Evaluation {
         val soc = if (withAvailableSoc) " with available SOC" else ""
-        val message = "NSCLC driver event(s)$soc detected: ${Format.concat(evaluation.inclusionMolecularEvents)}"
+        val message = "NSCLC driver event(s)$soc detected: ${Format.concat(evaluation.inclusionMolecularEvents.map { it.display() })}"
         return evaluation.copy(
             result = if (mustWarn) EvaluationResult.WARN else evaluation.result,
             passMessages = writePassMessage(evaluation.passMessagesStrings(), mustWarn, message),

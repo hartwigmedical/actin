@@ -75,19 +75,22 @@ class GeneHasVariantInExonRangeOfType(
             !highDriverEvents.isNullOrEmpty() && reportableOtherVariantMatches.isNullOrEmpty() -> {
                 EvaluationFactory.pass(
                     "Variant(s) $baseMessage in canonical transcript",
-                    inclusionEvents = highDriverEvents
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(highDriverEvents)
                 )
             }
 
             highDriverExonSkipEvents.isNotEmpty() && reportableOtherVariantMatches.isNullOrEmpty() -> {
-                EvaluationFactory.pass("Exon(s) skipped $baseMessage", inclusionEvents = highDriverExonSkipEvents)
+                EvaluationFactory.pass(
+                    "Exon(s) skipped $baseMessage",
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(highDriverExonSkipEvents)
+                )
             }
 
             !highDriverEvents.isNullOrEmpty() -> {
                 EvaluationFactory.warn(
                     "Variant(s) ${concat(highDriverEvents)} $baseMessage in canonical transcript together with " +
                             "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches!!)}",
-                    inclusionEvents = highDriverEvents + reportableOtherVariantMatches
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(highDriverEvents + reportableOtherVariantMatches)
                 )
             }
 
@@ -95,7 +98,7 @@ class GeneHasVariantInExonRangeOfType(
                 EvaluationFactory.warn(
                     "Exon(s) skipped $baseMessage due to ${concat(highDriverExonSkipEvents)} together with variant(s) in " +
                             "non-canonical transcript: ${concat(reportableOtherVariantMatches!!)}",
-                    inclusionEvents = highDriverExonSkipEvents + reportableOtherVariantMatches
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(highDriverExonSkipEvents + reportableOtherVariantMatches)
                 )
             }
 

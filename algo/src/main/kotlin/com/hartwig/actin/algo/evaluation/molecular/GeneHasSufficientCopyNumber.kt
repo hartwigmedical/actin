@@ -75,19 +75,21 @@ class GeneHasSufficientCopyNumber(override val gene: String, private val request
             eligibleSufficientCopyNumber != null -> {
                 EvaluationFactory.pass(
                     "$gene copy number is above $requestedMinCopyNumber",
-                    inclusionEvents = eligibleSufficientCopyNumber
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(eligibleSufficientCopyNumber)
                 )
             }
 
             fullAmplificationWithUnknownCopyNumber != null -> {
+                val fullAmplificationWithUnknownCopyNumberEvents =
+                    EvaluationFactory.toMolecularEvent(fullAmplificationWithUnknownCopyNumber)
                 if (requestedMinCopyNumber <= ASSUMED_AMP_MIN_COPY_NR)
                     EvaluationFactory.pass(
                         "$gene is amplified hence assumed gene has a copy number >= $requestedMinCopyNumber copies",
-                        inclusionEvents = fullAmplificationWithUnknownCopyNumber
+                        inclusionEvents = fullAmplificationWithUnknownCopyNumberEvents
                     ) else
                     EvaluationFactory.warn(
                         "$gene is amplified but undetermined if gene has a copy number >= $requestedMinCopyNumber copies",
-                        inclusionEvents = fullAmplificationWithUnknownCopyNumber
+                        inclusionEvents = fullAmplificationWithUnknownCopyNumberEvents
                     )
             }
 

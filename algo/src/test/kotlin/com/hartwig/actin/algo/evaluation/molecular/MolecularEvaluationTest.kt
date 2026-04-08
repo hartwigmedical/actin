@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import java.time.LocalDate
@@ -9,12 +10,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val ORANGE_EVENT = "orange event"
-private val PASS_ORANGE = EvaluationFactory.pass("pass orange", inclusionEvents = setOf(ORANGE_EVENT))
-private val WARN_ORANGE = EvaluationFactory.warn("warn orange", inclusionEvents = setOf(ORANGE_EVENT))
+private val PASS_ORANGE = EvaluationFactory.pass("pass orange", inclusionEvents = setOf(MolecularEvent(ORANGE_EVENT)))
+private val WARN_ORANGE = EvaluationFactory.warn("warn orange", inclusionEvents = setOf(MolecularEvent(ORANGE_EVENT)))
 private val UNDETERMINED_ORANGE = EvaluationFactory.undetermined("undetermined orange")
 private val FAIL_ORANGE = EvaluationFactory.undetermined("fail orange")
 private const val PANEL_EVENT = "panel event"
-private val PASS_PANEL = EvaluationFactory.pass("pass panel", inclusionEvents = setOf(PANEL_EVENT))
+private val PASS_PANEL = EvaluationFactory.pass("pass panel", inclusionEvents = setOf(MolecularEvent(PANEL_EVENT)))
 
 class MolecularEvaluationTest {
 
@@ -30,11 +31,11 @@ class MolecularEvaluationTest {
     fun `Should only return most recent WGS results when rule passes`() {
         val oldTest = MolecularEvaluation(
             TestMolecularFactory.createMinimalWholeGenomeTest().copy(date = LocalDate.now().minusDays(1)),
-            PASS_ORANGE.copy(inclusionMolecularEvents = setOf("old"))
+            PASS_ORANGE.copy(inclusionMolecularEvents = setOf(MolecularEvent("old")))
         )
         val recentTest = MolecularEvaluation(
             TestMolecularFactory.createMinimalWholeGenomeTest().copy(date = LocalDate.now()),
-            PASS_ORANGE.copy(inclusionMolecularEvents = setOf("recent"))
+            PASS_ORANGE.copy(inclusionMolecularEvents = setOf(MolecularEvent("recent")))
         )
         combineAndAssert(
             recentTest.evaluation, oldTest, recentTest
@@ -45,7 +46,7 @@ class MolecularEvaluationTest {
     fun `Should return combined panel results when panel passes and WGS fails`() {
         val panelEvent2 = "panel event 2"
         combineAndAssert(
-            EvaluationFactory.pass("pass combined", inclusionEvents = setOf(PANEL_EVENT, panelEvent2)),
+            EvaluationFactory.pass("pass combined", inclusionEvents = setOf(MolecularEvent(PANEL_EVENT), MolecularEvent(panelEvent2))),
             MolecularEvaluation(TestMolecularFactory.createMinimalWholeGenomeTest(), FAIL_ORANGE),
             MolecularEvaluation(
                 TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL),
@@ -53,7 +54,7 @@ class MolecularEvaluationTest {
             ),
             MolecularEvaluation(
                 TestMolecularFactory.createMinimalPanelTest().copy(experimentType = ExperimentType.PANEL),
-                PASS_PANEL.copy(inclusionMolecularEvents = setOf(panelEvent2))
+                PASS_PANEL.copy(inclusionMolecularEvents = setOf(MolecularEvent(panelEvent2)))
             )
         )
     }

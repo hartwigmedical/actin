@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 
@@ -29,12 +30,12 @@ class HasTumorMutationalLoadWithinRange(
             return if (maxTumorMutationalLoad == null) {
                 EvaluationFactory.pass(
                     "TML is $message",
-                    inclusionEvents = setOf(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD)
+                    inclusionEvents = setOf(MolecularEvent(MolecularCharacteristicEvents.HIGH_TUMOR_MUTATIONAL_LOAD))
                 )
             } else {
                 EvaluationFactory.pass(
                     "TML is $message",
-                    inclusionEvents = setOf(MolecularCharacteristicEvents.ADEQUATE_TUMOR_MUTATIONAL_LOAD)
+                    inclusionEvents = setOf(MolecularEvent(MolecularCharacteristicEvents.ADEQUATE_TUMOR_MUTATIONAL_LOAD))
                 )
             }
         }
@@ -43,7 +44,7 @@ class HasTumorMutationalLoadWithinRange(
             EvaluationFactory.warn(
                 "TML $tumorMutationalLoad almost $message" +
                         " while purity is low - perhaps a few mutations are missed",
-                inclusionEvents = setOf(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD)
+                inclusionEvents = setOf(MolecularEvent(MolecularCharacteristicEvents.ALMOST_SUFFICIENT_TUMOR_MUTATIONAL_LOAD))
             )
         } else EvaluationFactory.fail("TML $tumorMutationalLoad is not $message")
     }

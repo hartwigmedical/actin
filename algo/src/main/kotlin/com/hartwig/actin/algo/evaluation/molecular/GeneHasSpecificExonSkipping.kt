@@ -34,7 +34,7 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
             exonSkippingFusionEvents.isNotEmpty() && exonSplicingVariants.isEmpty() && potentialExonSplicingVariantEvents.isEmpty() -> {
                 EvaluationFactory.pass(
                     "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)}",
-                    inclusionEvents = exonSkippingFusionEvents
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(exonSkippingFusionEvents)
                 )
             }
 
@@ -43,13 +43,13 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
                     EvaluationFactory.pass(
                         "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)} " +
                                 "together with confirmed additional exon $exonToSkip skipping variant(s) (${concat(confirmedExonSkippingEvents)})",
-                        inclusionEvents = exonSkippingFusionEvents + confirmedExonSkippingEvents
+                        inclusionEvents = EvaluationFactory.toMolecularEvent(exonSkippingFusionEvents + confirmedExonSkippingEvents)
                     )
                 } else {
                     EvaluationFactory.warn(
                         "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)} " +
                                 "together with potential additional exon $exonToSkip skipping variant(s) (${concat(exonSplicingVariantEvents)})",
-                        inclusionEvents = exonSkippingFusionEvents + exonSplicingVariantEvents
+                        inclusionEvents = EvaluationFactory.toMolecularEvent(exonSkippingFusionEvents + exonSplicingVariantEvents)
                     )
                 }
             }
@@ -57,14 +57,14 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
             confirmedExonSkippingEvents.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     "Confirmed $gene exon $exonToSkip skipping detected: ${concat(confirmedExonSkippingEvents)}",
-                    inclusionEvents = confirmedExonSkippingEvents
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(confirmedExonSkippingEvents)
                 )
             }
 
             exonSplicingVariants.isNotEmpty() -> {
                 EvaluationFactory.warn(
                     "Potential $gene exon $exonToSkip skipping detected: ${concat(exonSplicingVariantEvents)}",
-                    inclusionEvents = exonSplicingVariantEvents
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(exonSplicingVariantEvents)
                 )
             }
 
@@ -72,7 +72,7 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
                 EvaluationFactory.warn(
                     "Potential $gene exon $exonToSkip skipping: variant(s) ${concat(potentialExonSplicingVariantEvents)} detected in " +
                             "splice region of exon $exonToSkip although unknown relevance (not annotated with splice coding effect)",
-                    inclusionEvents = potentialExonSplicingVariantEvents
+                    inclusionEvents = EvaluationFactory.toMolecularEvent(potentialExonSplicingVariantEvents)
                 )
             }
 

@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 
 class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction {
 
@@ -22,7 +23,7 @@ class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction 
             ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() -> {
                 EvaluationFactory.pass(
                     "$protein has expression by IHC",
-                    inclusionEvents = setOf("IHC $protein expression")
+                    inclusionEvents = setOf(MolecularEvent("IHC $protein expression"))
                 )
             }
 
@@ -31,7 +32,7 @@ class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction 
             else -> {
                 EvaluationFactory.warn(
                     "Undetermined if $protein IHC result indicates $protein expression by IHC",
-                    inclusionEvents = setOf("Potential IHC $protein expression")
+                    inclusionEvents = setOf(MolecularEvent("Potential IHC $protein expression"))
                 )
             }
         }

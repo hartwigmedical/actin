@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 
 class ProteinIsLostByIhc(private val protein: String) : EvaluationFunction {
 
@@ -22,7 +23,7 @@ class ProteinIsLostByIhc(private val protein: String) : EvaluationFunction {
             ihcTestEvaluation.hasCertainNegativeResultsForItem() -> {
                 EvaluationFactory.pass(
                     "$protein is lost by IHC",
-                    inclusionEvents = setOf("IHC $protein loss")
+                    inclusionEvents = setOf(MolecularEvent("IHC $protein loss"))
                 )
             }
 
@@ -30,7 +31,7 @@ class ProteinIsLostByIhc(private val protein: String) : EvaluationFunction {
 
             else -> EvaluationFactory.warn(
                 "Undetermined if $protein IHC result indicates $protein loss by IHC",
-                inclusionEvents = setOf("Potential IHC $protein loss")
+                inclusionEvents = setOf(MolecularEvent("Potential IHC $protein loss"))
             )
         }
     }

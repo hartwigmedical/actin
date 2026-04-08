@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
@@ -43,7 +44,15 @@ class DriversInterpreterTest {
         assertCountForMolecularTestAndCohorts(
             1,
             test,
-            createCohortsForEvents(listOf(EVENT_VARIANT, EVENT_CN, EVENT_HD, EVENT_DISRUPTION, EVENT_FUSION, EVENT_VIRUS))
+            createCohortsForEvents(
+                listOf(
+                    EVENT_VARIANT,
+                    EVENT_CN,
+                    EVENT_HD,
+                    EVENT_DISRUPTION,
+                    EVENT_FUSION,
+                    EVENT_VIRUS
+                ).map { MolecularEvent(it) })
         )
     }
 
@@ -107,7 +116,7 @@ class DriversInterpreterTest {
         )
     }
 
-    private fun createCohortsForEvents(events: List<String>): List<InterpretedCohort> {
+    private fun createCohortsForEvents(events: List<MolecularEvent>): List<InterpretedCohort> {
         return listOf(
             interpretedCohort(acronym = "trial 1", molecularInclusionEvents = events, isPotentiallyEligible = true, isOpen = true),
             interpretedCohort(acronym = "trial 2", molecularInclusionEvents = events, isPotentiallyEligible = true, isOpen = false)

@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
@@ -64,15 +65,17 @@ class GeneHasActivatingMutation(
         val variantsString = concatVariants(activatingVariants, gene)
         val inKinaseDomainString = if (inKinaseDomain) " but undetermined if in kinase domain" else ""
 
+        val activatingVariantsMolecularEvents = EvaluationFactory.toMolecularEvent(activatingVariants)
+
         return when {
             activatingVariants.isNotEmpty() && potentiallyActivatingWarnings.isEmpty() -> {
                 if (!inKinaseDomain)
                     EvaluationFactory.pass(
                         "$gene activating mutation(s): $variantsString",
-                        inclusionEvents = activatingVariants
+                        inclusionEvents = activatingVariantsMolecularEvents
                     ) else EvaluationFactory.warn(
                     "$gene activating mutation(s): $variantsString$inKinaseDomainString",
-                    inclusionEvents = activatingVariants
+                    inclusionEvents = activatingVariantsMolecularEvents
                 )
             }
 
@@ -81,7 +84,11 @@ class GeneHasActivatingMutation(
                     "$gene activating mutation(s): $variantsString " +
                             "together with potentially activating mutation(s) " +
                             concat(potentiallyActivatingWarnings.map { (event, type) -> "$event (${type.description})$inKinaseDomainString" }),
-                    inclusionEvents = activatingVariants + potentiallyActivatingWarnings.map { (event, _) -> event }
+                    inclusionEvents = activatingVariantsMolecularEvents + potentiallyActivatingWarnings.map { (event, _) ->
+                        MolecularEvent(
+                            event
+                        )
+                    }
                 )
             }
 

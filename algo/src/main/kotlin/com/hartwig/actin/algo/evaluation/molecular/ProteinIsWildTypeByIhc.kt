@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 
 class ProteinIsWildTypeByIhc(private val protein: String) : EvaluationFunction {
 
@@ -22,13 +23,13 @@ class ProteinIsWildTypeByIhc(private val protein: String) : EvaluationFunction {
             ihcTestEvaluation.hasCertainWildtypeResultsForItem() -> {
                 EvaluationFactory.pass(
                     "$protein is wild type by IHC",
-                    inclusionEvents = setOf("IHC $protein wildtype")
+                    inclusionEvents = setOf(MolecularEvent("IHC $protein wildtype"))
                 )
             }
 
             else -> EvaluationFactory.warn(
                 "Undetermined if $protein IHC result indicates wild type status",
-                inclusionEvents = setOf("Potential IHC $protein wildtype")
+                inclusionEvents = setOf(MolecularEvent("Potential IHC $protein wildtype"))
             )
         }
     }

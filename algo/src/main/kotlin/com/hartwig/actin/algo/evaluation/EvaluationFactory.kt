@@ -2,11 +2,12 @@ package com.hartwig.actin.algo.evaluation
 
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.algo.StaticMessage
 
 object EvaluationFactory {
 
-    fun pass(message: String, recoverable: Boolean = false, inclusionEvents: Set<String> = emptySet()): Evaluation {
+    fun pass(message: String, recoverable: Boolean = false, inclusionEvents: Set<MolecularEvent> = emptySet()): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.PASS,
@@ -51,7 +52,7 @@ object EvaluationFactory {
 
     fun warn(
         message: String,
-        inclusionEvents: Set<String> = emptySet(),
+        inclusionEvents: Set<MolecularEvent> = emptySet(),
         isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
@@ -62,6 +63,8 @@ object EvaluationFactory {
             isMissingMolecularResultForEvaluation = isMissingMolecularResultForEvaluation
         )
     }
+
+    fun toMolecularEvent(events: Set<String>) = events.map(::MolecularEvent).toSet()
 
     private fun messages(message: String) = setOf(StaticMessage(message))
 }
