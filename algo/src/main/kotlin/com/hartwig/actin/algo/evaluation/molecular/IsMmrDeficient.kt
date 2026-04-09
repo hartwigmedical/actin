@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
@@ -39,7 +38,7 @@ class IsMmrDeficient: EvaluationFunction {
         val msiGenesWithNonBiallelicDriver = genesFrom(msiVariants[false] ?: emptyList(), msiDisruptions)
         val msiGenesWithUnknownBiallelicDriver = genesFrom(msiVariants[null] ?: emptyList())
 
-        val inclusionMolecularEvents = setOf(MolecularEvent(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE))
+        val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.MICROSATELLITE_UNSTABLE)
 
         return when {
             test == null && mmrIhcTestEvaluation.filteredTests.isEmpty() && mmrGeneIhcTestEvaluations.isEmpty() ->
@@ -57,12 +56,9 @@ class IsMmrDeficient: EvaluationFunction {
                 evaluateMsiWithDrivers(msiGenesWithBiallelicDriver, msiGenesWithNonBiallelicDriver, inclusionMolecularEvents)
 
             isMmrDeficientIhcResult && test.characteristics.microsatelliteStability?.isUnstable == false ->
-                EvaluationFactory.warn(
-                    "Tumor is dMMR by IHC but MSS by molecular test",
-                    inclusionEvents = setOf(MolecularEvent("MMR deficient"))
-                )
+                EvaluationFactory.warn("Tumor is dMMR by IHC but MSS by molecular test", inclusionEvents = setOf("MMR deficient"))
 
-            isMmrDeficientIhcResult -> EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf(MolecularEvent("MMR deficient")))
+            isMmrDeficientIhcResult -> EvaluationFactory.pass("dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
 
             isMmrProficientIhcResult || test.characteristics.microsatelliteStability?.isUnstable == false ->
                 EvaluationFactory.fail("Tumor is not dMMR")
@@ -95,10 +91,7 @@ class IsMmrDeficient: EvaluationFunction {
         hasMmrDeficiencyGeneLoss: Boolean
     ): Evaluation =
         when {
-            isMmrDeficientIhcResult -> EvaluationFactory.pass(
-                "Tumor is dMMR by IHC",
-                inclusionEvents = setOf(MolecularEvent("MMR deficient"))
-            )
+            isMmrDeficientIhcResult -> EvaluationFactory.pass("Tumor is dMMR by IHC", inclusionEvents = setOf("MMR deficient"))
             isMmrProficientIhcResult -> EvaluationFactory.fail("Tumor is not dMMR by IHC")
             hasMmrDeficiencyGeneLoss -> {
                 EvaluationFactory.undetermined(
@@ -113,7 +106,7 @@ class IsMmrDeficient: EvaluationFunction {
     private fun evaluateMsiWithDrivers(
         msiGenesWithBiallelicDriver: String,
         msiGenesWithNonBiallelicDriver: String,
-        inclusionMolecularEvents: Set<MolecularEvent>
+        inclusionMolecularEvents: Set<String>
     ): Evaluation =
         when {
             msiGenesWithBiallelicDriver.isNotEmpty() -> EvaluationFactory.pass(

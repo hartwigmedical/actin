@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.doid.DoidModel
 import kotlin.math.roundToInt
@@ -53,7 +52,7 @@ object PDL1EvaluationFunctions {
             EvaluationResult.PASS in testEvaluations -> {
                 EvaluationFactory.pass(
                     "PD-L1 expression $comparatorMessage $pdl1Reference",
-                    inclusionEvents = setOf(MolecularEvent("PD-L1 $comparatorSign $pdl1Reference"))
+                    inclusionEvents = setOf("PD-L1 $comparatorSign $pdl1Reference")
                 )
             }
 

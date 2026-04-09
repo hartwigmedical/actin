@@ -10,12 +10,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val ORANGE_EVENT = "orange event"
-private val PASS_ORANGE = EvaluationFactory.pass("pass orange", inclusionEvents = setOf(MolecularEvent(ORANGE_EVENT)))
-private val WARN_ORANGE = EvaluationFactory.warn("warn orange", inclusionEvents = setOf(MolecularEvent(ORANGE_EVENT)))
+private val PASS_ORANGE = EvaluationFactory.pass("pass orange", inclusionEvents = setOf(ORANGE_EVENT))
+private val WARN_ORANGE = EvaluationFactory.warn("warn orange", inclusionEvents = setOf(ORANGE_EVENT))
 private val UNDETERMINED_ORANGE = EvaluationFactory.undetermined("undetermined orange")
 private val FAIL_ORANGE = EvaluationFactory.undetermined("fail orange")
 private const val PANEL_EVENT = "panel event"
-private val PASS_PANEL = EvaluationFactory.pass("pass panel", inclusionEvents = setOf(MolecularEvent(PANEL_EVENT)))
+private val PASS_PANEL = EvaluationFactory.pass("pass panel", inclusionEvents = setOf(PANEL_EVENT))
 
 class MolecularEvaluationTest {
 

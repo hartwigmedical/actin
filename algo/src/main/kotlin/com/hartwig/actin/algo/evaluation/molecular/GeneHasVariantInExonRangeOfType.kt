@@ -80,10 +80,7 @@ class GeneHasVariantInExonRangeOfType(
             }
 
             highDriverExonSkipEvents.isNotEmpty() && reportableOtherVariantMatches.isNullOrEmpty() -> {
-                EvaluationFactory.pass(
-                    "Exon(s) skipped $baseMessage",
-                    inclusionEvents = highDriverExonSkipEvents
-                )
+                EvaluationFactory.pass("Exon(s) skipped $baseMessage", inclusionEvents = highDriverExonSkipEvents)
             }
 
             !highDriverEvents.isNullOrEmpty() -> {

@@ -8,7 +8,6 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinV
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import kotlin.math.roundToInt
 
@@ -46,14 +45,14 @@ class ProteinExpressionByIhcFunctions(
             EvaluationResult.PASS in evaluationsVersusReference -> {
                 EvaluationFactory.pass(
                     "$protein has expression of $comparisonText $referenceExpressionLevel by IHC",
-                    inclusionEvents = setOf(MolecularEvent("IHC $protein expression"))
+                    inclusionEvents = setOf("IHC $protein expression")
                 )
             }
 
             EvaluationResult.UNDETERMINED in evaluationsVersusReference || hasPositiveOrNegativeResult -> {
                 EvaluationFactory.warn(
                     "Undetermined if $protein expression is $comparisonText $referenceExpressionLevel by IHC",
-                    inclusionEvents = setOf(MolecularEvent("Potential IHC $protein expression"))
+                    inclusionEvents = setOf("Potential IHC $protein expression")
                 )
             }
 

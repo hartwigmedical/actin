@@ -20,13 +20,13 @@ class AnyGeneFromSetIsOverexpressedTest {
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
         every { evaluate(any<MolecularTest>(), any<List<IhcTest>>()) } returns EvaluationFactory.pass(
             "",
-            inclusionEvents = setOf(MolecularEvent(PASS_INCLUSION_EVENT))
+            inclusionEvents = setOf(PASS_INCLUSION_EVENT)
         )
     }
     private val alwaysWarnGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
         every { evaluate(any<MolecularTest>(), any<List<IhcTest>>()) } returns EvaluationFactory.warn(
             "",
-            inclusionEvents = setOf(MolecularEvent(WARN_INCLUSION_EVENT))
+            inclusionEvents = setOf(WARN_INCLUSION_EVENT)
         )
     }
     private val alwaysFailGeneAmplificationEvaluation = mockk<GeneIsAmplified> {

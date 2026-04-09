@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
@@ -52,7 +51,7 @@ class HasAnyHLAType(
 
     private fun evaluateMatchingAllelesInSufficientQualityTest(matchingHlaAlleles: List<HlaAllele>): Evaluation {
         val matchingAllelesString = Format.concatLowercaseWithCommaAndAnd(matchingHlaAlleles.map(HlaAllele::event))
-        val inclusionEvents = matchingHlaAlleles.map { hlaAllele -> MolecularEvent(hlaAllele.event) }.toSet()
+        val inclusionEvents = matchingHlaAlleles.map(HlaAllele::event).toSet()
 
         return when {
             matchingHlaAlleles.any { allele ->

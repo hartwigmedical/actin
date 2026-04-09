@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
@@ -21,7 +20,7 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String) : MolecularEvaluat
             ?: return EvaluationFactory.undetermined("UGT1A1 haplotype undetermined", isMissingMolecularResultForEvaluation = true)
 
         return if (hasUGT1A1Type(pharmaco, haplotypeToFind)) {
-            EvaluationFactory.pass("Has UGT1A1 type $haplotypeToFind", inclusionEvents = setOf(MolecularEvent(haplotypeToFind)))
+            EvaluationFactory.pass("Has UGT1A1 type $haplotypeToFind", inclusionEvents = setOf(haplotypeToFind))
         } else {
             EvaluationFactory.fail("Does not have required UGT1A1 type $haplotypeToFind")
         }

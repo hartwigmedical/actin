@@ -64,10 +64,7 @@ class HasFusionInGene(override val gene: String) :
                 fusionsWithNoHighDriverLikelihood,
                 unreportableFusionsWithGainOfFunction
             ).all { it.isEmpty() } -> {
-                EvaluationFactory.pass(
-                    "Fusion(s) ${concatFusions(matchingFusions)} in $gene",
-                    inclusionEvents = matchingFusions
-                )
+                EvaluationFactory.pass("Fusion(s) ${concatFusions(matchingFusions)} in $gene", inclusionEvents = matchingFusions)
             }
 
             matchingFusions.isNotEmpty() -> {

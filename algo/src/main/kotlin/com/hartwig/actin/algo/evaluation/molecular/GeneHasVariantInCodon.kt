@@ -95,7 +95,7 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
                             canonicalCodonMatches
                         )
                     } in $gene in canonical transcript together with " + extension,
-                    inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalReportableSubclonalVariantMatches
+                    inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalReportableSubclonalVariantMatches,
                 )
             }
 

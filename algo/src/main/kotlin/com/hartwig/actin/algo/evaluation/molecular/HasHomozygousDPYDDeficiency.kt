@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.DPYDDeficiencyEvaluationFunctions.isHomozygousDeficient
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 
@@ -24,7 +23,7 @@ class HasHomozygousDPYDDeficiency: MolecularEvaluationFunction(true) {
             isHomozygousDeficient(pharmaco) -> {
                 EvaluationFactory.pass(
                     "Homozygous DPYD deficiency detected",
-                    inclusionEvents = setOf(MolecularEvent("DPYD homozygous deficient"))
+                    inclusionEvents = setOf("DPYD homozygous deficient")
                 )
             }
 

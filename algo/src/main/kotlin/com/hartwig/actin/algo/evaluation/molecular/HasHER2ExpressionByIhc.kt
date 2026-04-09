@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.evaluation.molecular.IhcTestClassificationFunction
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.IhcTestResult
 
 class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : EvaluationFunction {
@@ -24,7 +23,7 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : Evalu
         val her2TestResults = ihcTestEvaluation.filteredTests.map(::classifyHer2Test).toSet()
 
         val ihcResultString = ihcResultToFind.toString().lowercase()
-        val warnInclusionEvent = setOf(MolecularEvent("Potential IHC HER2 $ihcResultString"))
+        val warnInclusionEvent = setOf("Potential IHC HER2 $ihcResultString")
         val erbb2AmplifiedMessage = if (geneERBB2IsAmplified) " (but ERBB2 amplification detected)" else ""
 
         return when {
@@ -55,7 +54,7 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : Evalu
                 } else {
                     EvaluationFactory.pass(
                         "Has $ihcResultString HER2 IHC result",
-                        inclusionEvents = setOf(MolecularEvent("IHC HER2 $ihcResultString"))
+                        inclusionEvents = setOf("IHC HER2 $ihcResultString")
                     )
                 }
             }

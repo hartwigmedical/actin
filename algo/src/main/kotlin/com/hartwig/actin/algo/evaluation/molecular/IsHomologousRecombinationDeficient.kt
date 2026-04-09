@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import com.hartwig.actin.molecular.util.GeneConstants
@@ -71,7 +70,7 @@ class IsHomologousRecombinationDeficient: MolecularEvaluationFunction() {
             }
 
             true -> {
-                val inclusionMolecularEvents = setOf(MolecularEvent(MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT))
+                val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
                         "Tumor is HRD with biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithBiallelicDriver)})",

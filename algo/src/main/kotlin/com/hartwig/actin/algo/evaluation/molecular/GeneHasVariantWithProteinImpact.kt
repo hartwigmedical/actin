@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.percentage
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
@@ -62,7 +61,7 @@ class GeneHasVariantWithProteinImpact(
                 val impactString = concat(canonicalReportableImpactMatches.map { it.proteinImpact })
                 EvaluationFactory.pass(
                     "$impactString in $gene in canonical transcript",
-                    inclusionEvents = canonicalReportableImpactMatches.map { MolecularEvent(it.variant.event) }.toSet()
+                    inclusionEvents = canonicalReportableImpactMatches.map { it.variant.event }.toSet()
                 )
             }
             ?: evaluatePotentialWarns(

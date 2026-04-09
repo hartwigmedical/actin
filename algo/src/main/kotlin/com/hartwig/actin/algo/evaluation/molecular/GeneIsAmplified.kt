@@ -110,10 +110,7 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
 
         return when {
             eligibleAmplification != null -> {
-                EvaluationFactory.pass(
-                    "$gene is amplified$requestedCopiesMessage",
-                    inclusionEvents = eligibleAmplification
-                )
+                EvaluationFactory.pass("$gene is amplified$requestedCopiesMessage", inclusionEvents = eligibleAmplification)
             }
 
             fullAmplificationWithUnknownCopyNumber != null -> {

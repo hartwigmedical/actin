@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
@@ -76,10 +75,10 @@ class GeneIsWildType(override val gene: String) :
             test.hasSufficientQualityButLowPurity() ->
                 EvaluationFactory.warn(
                     "$gene is wild-type although tumor purity is low",
-                    inclusionEvents = setOf(MolecularEvent("$gene wild-type"))
+                    inclusionEvents = setOf("$gene wild-type")
                 )
 
-            else -> EvaluationFactory.pass("$gene is wild-type", inclusionEvents = setOf(MolecularEvent("$gene wild-type")))
+            else -> EvaluationFactory.pass("$gene is wild-type", inclusionEvents = setOf("$gene wild-type"))
         }
     }
 
