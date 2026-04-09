@@ -16,20 +16,16 @@ class AnyGeneFromSetIsOverexpressed(
     private val genesToAmplification: Map<String, GeneIsAmplified> = genes.associateWith { geneIsAmplifiedCreator(it) }
 
     override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
-        val amplifiedGenesWithEvents = genesToAmplification.mapValues { (_, geneIsAmplified) ->
-            geneIsAmplified.evaluate(test, ihcTests)
-        }.filter { (_, eval) ->
-            eval.result == EvaluationResult.PASS || eval.result == EvaluationResult.WARN
-        }.mapValues { (_, eval) ->
-            eval.inclusionMolecularEvents
-        }
+        val amplifiedGenesWithEvents = genesToAmplification.mapValues { (_, geneIsAmplified) -> geneIsAmplified.evaluate(test, ihcTests) }
+            .filterValues { it.result == EvaluationResult.PASS || it.result == EvaluationResult.WARN }
+            .mapValues { it.value.inclusionMolecularEvents }
 
         return if (amplifiedGenesWithEvents.isNotEmpty()) {
             EvaluationFactory.warn(
                 "(Possible) amplification of ${concat(amplifiedGenesWithEvents.keys)} detected and therefore possible overexpression in RNA",
                 isMissingMolecularResultForEvaluation = true,
                 inclusionEvents = amplifiedGenesWithEvents.flatMap { (gene, events) ->
-                    events.map { MolecularEvent(it.originalEvent, "Potential $gene overexpression") }
+                    events.map { MolecularEvent(it.event, "Potential $gene overexpression") }
                 }.toSet()
             )
         } else {

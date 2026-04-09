@@ -37,7 +37,7 @@ class GeneHasUTR3Loss(override val gene: String): MolecularEvaluationFunction(
         if (cavsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
                 "3' UTR cancer-associated variant(s) ${concatVariants(cavsIn3UTR, gene)} in " + gene + " should lead to 3' UTR loss",
-                inclusionEvents = EvaluationFactory.toMolecularEvent(cavsIn3UTR)
+                inclusionEvents = cavsIn3UTR
             )
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(cavsIn3UTRUnreportable, vusIn3UTR, disruptionsIn3UTR)

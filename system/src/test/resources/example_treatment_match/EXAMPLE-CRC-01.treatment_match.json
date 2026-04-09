@@ -150,7 +150,7 @@
             "recoverable": false,
             "inclusionMolecularEvents": [
               {
-                "originalEvent": "KRAS G12D"
+                "event": "KRAS G12D"
               }
             ],
             "exclusionMolecularEvents": [],
@@ -186,7 +186,7 @@
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [
               {
-                "originalEvent": "PD-L1 < 50.0"
+                "event": "PD-L1 < 50.0"
               }
             ],
             "passMessages": [],

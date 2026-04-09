@@ -53,7 +53,7 @@ class HasMolecularDriverEventInNsclc(
 
     private fun hasPositiveEvaluationEventInGenes(evaluation: Evaluation, genesList: List<String>): Boolean {
         return genesList.any { gene ->
-            evaluation.inclusionMolecularEvents.any { string -> string.originalEvent.contains(gene) }
+            evaluation.inclusionMolecularEvents.any { string -> string.event.contains(gene) }
         } && (evaluation.result == EvaluationResult.PASS || evaluation.result == EvaluationResult.WARN)
     }
 

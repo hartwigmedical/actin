@@ -144,7 +144,7 @@ class GeneIsInactivated(override val gene: String, private val onlyDeletions: Bo
             val inclusionEvents = inactivationEvents + ihcLossEvents
             return EvaluationFactory.pass(
                 "$gene $messageSubject (${concat(inclusionEvents)})",
-                inclusionEvents = EvaluationFactory.toMolecularEvent(inclusionEvents)
+                inclusionEvents = inclusionEvents
             )
         }
 

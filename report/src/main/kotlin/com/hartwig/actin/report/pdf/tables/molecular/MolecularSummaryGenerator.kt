@@ -38,7 +38,7 @@ class MolecularSummaryGenerator(
         val table = Tables.createSingleCol()
         val nonIhcTestsIncludedInTrialMatching = patientRecord.molecularTests.filterNot { it.experimentType == ExperimentType.IHC }
         val trialRelevantEvents =
-            cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.map { it.originalEvent }.distinct()
+            cohorts.flatMap { it.molecularInclusionEvents + it.molecularExclusionEvents }.map { it.event }.distinct()
 
         val ihcTestsFiltered = IhcTestFilter.mostRecentAndUnknownDateIhcTests(patientRecord.ihcTests)
             .filter { ihc -> trialRelevantEvents.any { it.contains(ihc.item, ignoreCase = true) } }

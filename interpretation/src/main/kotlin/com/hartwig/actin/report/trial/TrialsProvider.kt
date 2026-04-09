@@ -226,7 +226,7 @@ fun Set<ActionableWithExternalTrial>.filterInternalTrials(internalTrialIds: Set<
 fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInInterpretedCohorts(
     internalEvaluatedCohorts: List<InterpretedCohort>
 ): Set<ActionableWithExternalTrial> {
-    return filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts.flatMap { cohort -> cohort.molecularInclusionEvents.map { it.originalEvent } }
+    return filterMolecularCriteriaAlreadyPresent(internalEvaluatedCohorts.flatMap { cohort -> cohort.molecularInclusionEvents.map { it.event } }
         .toSet())
 }
 

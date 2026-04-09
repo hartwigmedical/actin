@@ -112,27 +112,25 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
             eligibleAmplification != null -> {
                 EvaluationFactory.pass(
                     "$gene is amplified$requestedCopiesMessage",
-                    inclusionEvents = EvaluationFactory.toMolecularEvent(eligibleAmplification)
+                    inclusionEvents = eligibleAmplification
                 )
             }
 
             fullAmplificationWithUnknownCopyNumber != null -> {
-                val fullAmplificationWithUnknownCopyNumberEvents =
-                    EvaluationFactory.toMolecularEvent(fullAmplificationWithUnknownCopyNumber)
                 when {
                     requestedMinCopyNumber == null ->
-                        EvaluationFactory.pass("$gene is amplified", inclusionEvents = fullAmplificationWithUnknownCopyNumberEvents)
+                        EvaluationFactory.pass("$gene is amplified", inclusionEvents = fullAmplificationWithUnknownCopyNumber)
 
                     requestedMinCopyNumber <= ASSUMED_AMP_MIN_COPY_NR ->
                         EvaluationFactory.pass(
                             "$gene is amplified hence assumed gene is amplified$requestedCopiesMessage",
-                            inclusionEvents = fullAmplificationWithUnknownCopyNumberEvents
+                            inclusionEvents = fullAmplificationWithUnknownCopyNumber
                         )
 
                     else ->
                         EvaluationFactory.warn(
                             "$gene is amplified but undetermined if$requestedCopiesMessage",
-                            inclusionEvents = fullAmplificationWithUnknownCopyNumberEvents
+                            inclusionEvents = fullAmplificationWithUnknownCopyNumber
                         )
                 }
             }

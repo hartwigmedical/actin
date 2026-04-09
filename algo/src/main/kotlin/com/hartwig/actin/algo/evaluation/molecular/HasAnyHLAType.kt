@@ -42,7 +42,7 @@ class HasAnyHLAType(
                 val matchedEvents = matchingHlaAlleles.map(HlaAllele::event).toSet()
                 EvaluationFactory.warn(
                     "Has required HLA type ${Format.concatLowercaseWithCommaAndAnd(matchedEvents)} however undetermined whether allele is present in tumor",
-                    inclusionEvents = EvaluationFactory.toMolecularEvent(matchedEvents)
+                    inclusionEvents = matchedEvents
                 )
             }
 

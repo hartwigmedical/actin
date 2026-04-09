@@ -66,7 +66,7 @@ class HasFusionInGene(override val gene: String) :
             ).all { it.isEmpty() } -> {
                 EvaluationFactory.pass(
                     "Fusion(s) ${concatFusions(matchingFusions)} in $gene",
-                    inclusionEvents = EvaluationFactory.toMolecularEvent(matchingFusions)
+                    inclusionEvents = matchingFusions
                 )
             }
 
@@ -83,7 +83,7 @@ class HasFusionInGene(override val gene: String) :
 
                 EvaluationFactory.warn(
                     "Fusion(s) ${concatFusions(matchingFusions)} in $gene together with other fusion events(s): " + eventWarningDescriptions,
-                    inclusionEvents = EvaluationFactory.toMolecularEvent(matchingFusions + fusionsWithNoEffect + fusionsWithNoHighDriverLikelihood + unreportableFusionsWithGainOfFunction + ihcEventsThatQualify + ihcEventsThatAreIndeterminate)
+                    inclusionEvents = matchingFusions + fusionsWithNoEffect + fusionsWithNoHighDriverLikelihood + unreportableFusionsWithGainOfFunction + ihcEventsThatQualify + ihcEventsThatAreIndeterminate
                 )
             }
 

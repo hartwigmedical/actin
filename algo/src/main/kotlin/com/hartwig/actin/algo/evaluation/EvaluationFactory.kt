@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation
 
+import com.hartwig.actin.algo.evaluation.molecular.toMolecularEvents
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.MolecularEvent
@@ -7,6 +8,7 @@ import com.hartwig.actin.datamodel.algo.StaticMessage
 
 object EvaluationFactory {
 
+    @JvmName("passWithMolecularEvents")
     fun pass(message: String, recoverable: Boolean = false, inclusionEvents: Set<MolecularEvent> = emptySet()): Evaluation {
         return Evaluation(
             recoverable = recoverable,
@@ -16,8 +18,17 @@ object EvaluationFactory {
         )
     }
 
+    @JvmName("passWithStringEvents")
+    fun pass(message: String, recoverable: Boolean = false, inclusionEvents: Set<String> = emptySet()): Evaluation {
+        return pass(message, recoverable, inclusionEvents.toMolecularEvents())
+    }
+
+    fun pass(message: String, recoverable: Boolean = false): Evaluation {
+        return pass(message, recoverable, emptySet<MolecularEvent>())
+    }
+
     fun recoverablePass(message: String): Evaluation {
-        return pass(message, true)
+        return pass(message, true, emptySet<MolecularEvent>())
     }
 
     fun fail(message: String, recoverable: Boolean = false, isMissingMolecularResultForEvaluation: Boolean = false): Evaluation {
@@ -50,6 +61,7 @@ object EvaluationFactory {
         return undetermined(message, true)
     }
 
+    @JvmName("warnWithMolecularEvents")
     fun warn(
         message: String,
         inclusionEvents: Set<MolecularEvent> = emptySet(),
@@ -64,7 +76,21 @@ object EvaluationFactory {
         )
     }
 
-    fun toMolecularEvent(events: Set<String>) = events.map(::MolecularEvent).toSet()
+    @JvmName("passWithStringEvents")
+    fun warn(
+        message: String,
+        inclusionEvents: Set<String> = emptySet(),
+        isMissingMolecularResultForEvaluation: Boolean = false
+    ): Evaluation {
+        return warn(message, inclusionEvents.toMolecularEvents(), isMissingMolecularResultForEvaluation)
+    }
+
+    fun warn(
+        message: String,
+        isMissingMolecularResultForEvaluation: Boolean = false
+    ): Evaluation {
+        return warn(message, emptySet<MolecularEvent>(), isMissingMolecularResultForEvaluation)
+    }
 
     private fun messages(message: String) = setOf(StaticMessage(message))
 }

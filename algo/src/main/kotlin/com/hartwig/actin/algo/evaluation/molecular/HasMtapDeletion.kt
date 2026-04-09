@@ -39,7 +39,7 @@ class HasMtapDeletion : EvaluationFunction {
                 val events = cdkn2aEvaluation.inclusionMolecularEvents
                 EvaluationFactory.warn(
                     "$MTAP deletion not tested but $CDKN2A deletion detected (highly correlated)",
-                    events.map { event -> MolecularEvent(event.originalEvent, "Potential $MTAP deletion") }.toSet(),
+                    events.map { event -> MolecularEvent(event.event, "Potential $MTAP deletion") }.toSet(),
                     isMissingMolecularResultForEvaluation = true
                 )
             }

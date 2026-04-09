@@ -3,9 +3,12 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.algo.StaticMessage
 
 data class EventsWithMessages(val events: Collection<String>?, val message: String)
+
+fun Collection<String>.toMolecularEvents() = map(::MolecularEvent).toSet()
 
 object MolecularEventUtil {
 
@@ -23,7 +26,7 @@ object MolecularEventUtil {
                 result = EvaluationResult.WARN,
                 recoverable = false,
                 warnMessages = warnMessages.map { StaticMessage(it) }.toSet(),
-                inclusionMolecularEvents = EvaluationFactory.toMolecularEvent(warnEvents)
+                inclusionMolecularEvents = warnEvents.toMolecularEvents()
             )
         } else null
     }

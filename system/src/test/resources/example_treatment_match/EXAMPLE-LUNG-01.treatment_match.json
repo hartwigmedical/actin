@@ -462,7 +462,7 @@
             "recoverable": false,
             "inclusionMolecularEvents": [
               {
-                "originalEvent": "KRAS G12D"
+                "event": "KRAS G12D"
               }
             ],
             "exclusionMolecularEvents": [],
@@ -497,7 +497,7 @@
             "recoverable": false,
             "inclusionMolecularEvents": [
               {
-                "originalEvent": "PD-L1 >= 50.0"
+                "event": "PD-L1 >= 50.0"
               }
             ],
             "exclusionMolecularEvents": [],
@@ -788,12 +788,12 @@
             "recoverable": false,
             "inclusionMolecularEvents": [
               {
-                "originalEvent": "EGFR C797S"
+                "event": "EGFR C797S"
               }
             ],
             "exclusionMolecularEvents": [
               {
-                "originalEvent": "EGFR C797S"
+                "event": "EGFR C797S"
               }
             ],
             "passMessages": [],
@@ -998,7 +998,7 @@
             "recoverable": false,
             "inclusionMolecularEvents": [
               {
-                "originalEvent": "EGFR C797S"
+                "event": "EGFR C797S"
               }
             ],
             "exclusionMolecularEvents": [],
