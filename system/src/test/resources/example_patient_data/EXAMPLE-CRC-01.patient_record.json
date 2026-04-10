@@ -140,8 +140,8 @@
       "item": "Ki67",
       "measure": null,
       "scoreText": "Positive",
-      "scoreValuePrefix": null,
-      "scoreValue": 90,
+      "scoreLowerBound": 90,
+      "scoreUpperBound": 90,
       "scoreValueUnit": "%",
       "impliesPotentialIndeterminateStatus": false
     },
@@ -149,8 +149,8 @@
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,
-      "scoreValuePrefix": "<",
-      "scoreValue": 50,
+      "scoreLowerBound": null,
+      "scoreUpperBound": 50,
       "scoreValueUnit": "%",
       "impliesPotentialIndeterminateStatus": false
     }

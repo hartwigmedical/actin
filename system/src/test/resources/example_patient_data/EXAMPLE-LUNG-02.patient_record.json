@@ -207,8 +207,8 @@
       "item": "PD-L1",
       "measure": null,
       "scoreText": null,
-      "scoreValuePrefix": "<",
-      "scoreValue": 1,
+      "scoreLowerBound": null,
+      "scoreUpperBound": 1,
       "scoreValueUnit": "%",
       "impliesPotentialIndeterminateStatus": false
     }
