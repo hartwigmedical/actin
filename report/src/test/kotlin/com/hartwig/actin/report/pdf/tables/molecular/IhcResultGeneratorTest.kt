@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test
 class IhcResultGeneratorTest {
 
     private val testDate = LocalDate.of(2024, 5, 10)
-    private val ihcTest1 = IhcTest("PD-L1", "TPS", testDate, null, null, 2.0, "%", false)
+    private val ihcTest1 = IhcTest("PD-L1", "TPS", testDate, null, 2.0, 2.0, "%", false)
     private val ihcTest2 = IhcTest("ALK", null, testDate, "Negative", null, null, null, false)
     private val ihcTest3 = IhcTest("NTRK1", null, testDate, "Negative", null, null, null, false)
     private val ihcTest4 = IhcTest("NTRK2", null, testDate, "Negative", null, null, null, false)
