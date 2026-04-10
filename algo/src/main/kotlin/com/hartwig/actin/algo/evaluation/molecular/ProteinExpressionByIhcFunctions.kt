@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateBoundsVersusMaxValue
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateBoundsVersusMinValue
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -25,7 +25,7 @@ class ProteinExpressionByIhcFunctions(
         val ihcTestEvaluation = IhcTestEvaluation.create(protein, record.ihcTests)
 
         val evaluationsVersusReference = ihcTestEvaluation.filteredTests.mapNotNull { ihcTest ->
-            ihcTest.scoreValue?.let { scoreValue -> evaluateValue(ihcTest, scoreValue) }
+            if (ihcTest.scoreLowerBound != null || ihcTest.scoreUpperBound != null) evaluateValue(ihcTest) else null
         }.toSet()
 
         val hasPositiveOrNegativeResult =
@@ -60,21 +60,23 @@ class ProteinExpressionByIhcFunctions(
         }
     }
 
-    private fun evaluateValue(ihcTest: IhcTest, scoreValue: Double): EvaluationResult {
+    private fun evaluateValue(ihcTest: IhcTest): EvaluationResult {
+        val roundedScoreLowerBound = ihcTest.scoreLowerBound?.roundToInt()
+        val roundedScoreUpperBound = ihcTest.scoreUpperBound?.roundToInt()
         return when (comparisonType) {
             IhcExpressionComparisonType.SUFFICIENT -> {
-                evaluateVersusMinValue(scoreValue.roundToInt().toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
+                evaluateBoundsVersusMinValue(roundedScoreLowerBound?.toDouble(), roundedScoreUpperBound?.toDouble(), referenceExpressionLevel.toDouble())
             }
 
             IhcExpressionComparisonType.EXACT -> {
-                when (referenceExpressionLevel == scoreValue.roundToInt() && ihcTest.scoreValuePrefix.isNullOrEmpty()) {
+                when (roundedScoreLowerBound == roundedScoreUpperBound && roundedScoreLowerBound == referenceExpressionLevel) {
                     true -> EvaluationResult.PASS
                     false -> EvaluationResult.FAIL
                 }
             }
 
             IhcExpressionComparisonType.LIMITED -> {
-                evaluateVersusMaxValue(scoreValue.roundToInt().toDouble(), ihcTest.scoreValuePrefix, referenceExpressionLevel.toDouble())
+                evaluateBoundsVersusMaxValue(roundedScoreLowerBound?.toDouble(), roundedScoreUpperBound?.toDouble(), referenceExpressionLevel.toDouble())
             }
         }
     }

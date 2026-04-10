@@ -1,14 +1,13 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
-import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 private const val PROTEIN = "protein 1"
 
 class ProteinHasExactExpressionByIhcTest {
-    
+
     private val function = ProteinHasExactExpressionByIhc(PROTEIN, 2)
 
     @Test
@@ -23,17 +22,17 @@ class ProteinHasExactExpressionByIhcTest {
 
     @Test
     fun `Should fail when prior test contains result that is too low`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(scoreValue = 1.0))))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = 1.0, scoreUpperBound = 1.0))))
     }
 
     @Test
     fun `Should fail when prior test contains result that is too high`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(scoreValue = 3.0))))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = 3.0, scoreUpperBound = 3.0))))
     }
 
     @Test
-    fun `Should fail when prior test contains exact result with prefix`() {
-        val priorTest = ihcTest(scoreValuePrefix = ValueComparison.LARGER_THAN, scoreValue = 2.0)
+    fun `Should fail when prior test contains value with only lower bound (not exact)`() {
+        val priorTest = ihcTest(scoreLowerBound = 2.0)
         assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(priorTest)))
     }
 
@@ -44,12 +43,17 @@ class ProteinHasExactExpressionByIhcTest {
     }
 
     @Test
-    fun `Should pass when prior test contains exact result`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(scoreValue = 2.0))))
+    fun `Should fail when prior test contains differing bounds spanning reference value`() {
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = 1.0, scoreUpperBound = 3.0))))
     }
 
-    private fun ihcTest(scoreValue: Double? = null, scoreValuePrefix: String? = null, scoreText: String? = null) =
+    @Test
+    fun `Should pass when prior test contains exact result`() {
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = 2.0, scoreUpperBound = 2.0))))
+    }
+
+    private fun ihcTest(scoreLowerBound: Double? = null, scoreUpperBound: Double? = null, scoreText: String? = null) =
         MolecularTestFactory.ihcTest(
-            item = PROTEIN, scoreValue = scoreValue, scoreValuePrefix = scoreValuePrefix, scoreText = scoreText
+            item = PROTEIN, scoreLowerBound = scoreLowerBound, scoreUpperBound = scoreUpperBound, scoreText = scoreText
         )
 }

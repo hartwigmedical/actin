@@ -35,15 +35,17 @@ internal object MolecularTestFactory {
         measure: String? = null,
         scoreText: String? = null,
         impliesIndeterminate: Boolean = false,
-        scoreValue: Double? = null,
-        scoreValuePrefix: String? = null
+        scoreLowerBound: Double? = null,
+        scoreUpperBound: Double? = null,
+        scoreValueUnit: String? = null
     ): IhcTest {
         return IhcTest(
             item = item,
             measure = measure,
             scoreText = scoreText,
-            scoreValuePrefix = scoreValuePrefix,
-            scoreValue = scoreValue,
+            scoreLowerBound = scoreLowerBound,
+            scoreUpperBound = scoreUpperBound,
+            scoreValueUnit = scoreValueUnit,
             impliesPotentialIndeterminateStatus = impliesIndeterminate
         )
     }
