@@ -141,7 +141,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(createIhcTest(item = TARGET_RECEPTOR, scoreValue = 75.0, scoreValueUnit = "%")),
+                    listOf(createIhcTest(item = TARGET_RECEPTOR, scoreLowerBound = 75.0, scoreValueUnit = "%")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -149,7 +149,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(createIhcTest(item = "HER2", scoreValue = 3.0, scoreValueUnit = "+")),
+                    listOf(createIhcTest(item = "HER2", scoreLowerBound = 3.0, scoreValueUnit = "+")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -161,7 +161,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(createIhcTest(item = "HER2", scoreValue = 1.0, scoreValueUnit = "+")),
+                    listOf(createIhcTest(item = "HER2", scoreLowerBound = 1.0, scoreValueUnit = "+")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
@@ -211,7 +211,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 TumorTestFactory.withDoidsAndAmplificationAndMolecularTest(
                     setOf(DoidConstants.BREAST_CANCER_DOID),
                     "ERBB2",
-                    listOf(createIhcTest("HER2", scoreValue = 1.0, scoreValueUnit = "+"))
+                    listOf(createIhcTest("HER2", scoreLowerBound = 1.0, scoreValueUnit = "+"))
                 )
             )
         )
@@ -221,7 +221,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     fun `Should evaluate to undetermined with specific message if target receptor is HER2 and IHC-score is 2+`() {
         val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
-                listOf(createIhcTest("HER2", scoreValue = 2.0, scoreValueUnit = "+")),
+                listOf(createIhcTest("HER2", scoreLowerBound = 2.0, scoreValueUnit = "+")),
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
@@ -237,7 +237,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     fun `Should warn with specific message if target receptor is ER or PR and IHC-score is between 1 and 10 percent`() {
         val evaluation = function.evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
-                listOf(createIhcTest(TARGET_RECEPTOR, scoreValue = 5.0, scoreValueUnit = "%")),
+                listOf(createIhcTest(TARGET_RECEPTOR, scoreLowerBound = 5.0, scoreValueUnit = "%")),
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
@@ -301,10 +301,70 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
-                    listOf(createIhcTest(TARGET_RECEPTOR, scoreValue = 0.0, scoreValueUnit = "%")),
+                    listOf(createIhcTest(TARGET_RECEPTOR, scoreLowerBound = 0.0, scoreValueUnit = "%")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             )
+        )
+    }
+
+    @Test
+    fun `Should warn if target receptor type ER or PR has score at 10 percent which is classified as low`() {
+        val evaluation = function.evaluate(
+            TumorTestFactory.withIhcTestsAndDoids(
+                listOf(createIhcTest(item = TARGET_RECEPTOR, scoreLowerBound = 10.0, scoreValueUnit = "%")),
+                setOf(DoidConstants.BREAST_CANCER_DOID)
+            )
+        )
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(
+            evaluation.warnMessagesStrings()
+        ).containsExactly(
+            "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
+        )
+    }
+
+    @Test
+    fun `Should evaluate to low if target receptor type ER or PR has score at exact low boundary of 1 percent`() {
+        val evaluation = function.evaluate(
+            TumorTestFactory.withIhcTestsAndDoids(
+                listOf(createIhcTest(item = TARGET_RECEPTOR, scoreLowerBound = 1.0, scoreValueUnit = "%")),
+                setOf(DoidConstants.BREAST_CANCER_DOID)
+            )
+        )
+        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertThat(
+            evaluation.warnMessagesStrings()
+        ).containsExactly(
+            "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
+        )
+    }
+
+    @Test
+    fun `Should evaluate to unknown if target receptor type ER or PR has score range spanning low and positive boundary`() {
+        assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(
+                TumorTestFactory.withIhcTestsAndDoids(
+                    listOf(createIhcTest(item = TARGET_RECEPTOR, scoreLowerBound = 5.0, scoreUpperBound = 15.0, scoreValueUnit = "%")),
+                    setOf(DoidConstants.BREAST_CANCER_DOID)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to borderline if HER2 has differing bounds within borderline range`() {
+        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            TumorTestFactory.withIhcTestsAndDoids(
+                listOf(createIhcTest("HER2", scoreLowerBound = 1.0, scoreUpperBound = 2.0, scoreValueUnit = "+")),
+                setOf(DoidConstants.BREAST_CANCER_DOID)
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(
+            evaluation.undeterminedMessagesStrings()
+        ).containsExactly(
+            "No HER2-positive breast cancer but HER2-score is 2+ hence FISH may be useful"
         )
     }
 
@@ -314,8 +374,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             EvaluationResult.FAIL, function.evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
                     listOf(
-                        createIhcTest("HER2", scoreValue = 50.0, scoreValueUnit = "%"),
-                        createIhcTest(TARGET_RECEPTOR, scoreValue = 0.0, scoreValueUnit = "%")
+                        createIhcTest("HER2", scoreLowerBound = 50.0, scoreValueUnit = "%"),
+                        createIhcTest(TARGET_RECEPTOR, scoreLowerBound = 0.0, scoreValueUnit = "%")
                     ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
@@ -325,8 +385,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
                     listOf(
-                        createIhcTest("HER2", scoreValue = 1.0, scoreValueUnit = "+"),
-                        createIhcTest("PR", scoreValue = 3.0, scoreValueUnit = "%")
+                        createIhcTest("HER2", scoreLowerBound = 1.0, scoreValueUnit = "+"),
+                        createIhcTest("PR", scoreLowerBound = 3.0, scoreValueUnit = "%")
                     ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
@@ -335,9 +395,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     }
 
     private fun createIhcTest(
-        item: String, scoreText: String = "Score", scoreValue: Double = 50.0, scoreValueUnit: String = "Unit"
+        item: String, scoreText: String = "Score", scoreLowerBound: Double = 50.0, scoreUpperBound: Double = scoreLowerBound, scoreValueUnit: String = "Unit"
     ) = IhcTest(
-        item = item, scoreText = scoreText, scoreValue = scoreValue,
+        item = item, scoreText = scoreText, scoreLowerBound = scoreLowerBound, scoreUpperBound = scoreUpperBound,
         scoreValueUnit = scoreValueUnit, impliesPotentialIndeterminateStatus = false
     )
 

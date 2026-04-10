@@ -75,7 +75,7 @@ class BreastCancerReceptorsEvaluatorTest {
     fun `Should return BORDERLINE when evaluating HER2 for a breast cancer patient with 2+ HER2 result`() {
         val evaluation = breastCancerReceptorsEvaluator.evaluate(
             setOf(DoidConstants.BREAST_CANCER_DOID),
-            listOf(IhcTest("HER2", scoreValue = 2.0, scoreValueUnit = "+")),
+            listOf(IhcTest("HER2", scoreLowerBound = 2.0, scoreUpperBound = 2.0, scoreValueUnit = "+")),
             ReceptorType.HER2
         )
         assertThat(evaluation).isEqualTo(BreastCancerReceptorEvaluation.BORDERLINE)
@@ -95,5 +95,55 @@ class BreastCancerReceptorsEvaluatorTest {
             ReceptorType.HER2
         )
         assertThat(evaluation).isEqualTo(BreastCancerReceptorEvaluation.INCONSISTENT_DATA)
+    }
+
+    @Test
+    fun `Should return NEGATIVE when evaluating a breast cancer patient with UNKNOWN classification from range crossing boundaries`() {
+        val evaluation = breastCancerReceptorsEvaluator.evaluate(
+            setOf(DoidConstants.BREAST_CANCER_DOID),
+            listOf(IhcTest("HER2", scoreLowerBound = 1.0, scoreUpperBound = 3.0, scoreValueUnit = "+")),
+            ReceptorType.HER2
+        )
+        assertThat(evaluation).isEqualTo(BreastCancerReceptorEvaluation.NEGATIVE)
+    }
+
+    @Test
+    fun `Should return LOW when evaluating a breast cancer patient with low ER IHC result`() {
+        val evaluation = breastCancerReceptorsEvaluator.evaluate(
+            setOf(DoidConstants.BREAST_CANCER_DOID),
+            listOf(IhcTest("HER2", scoreLowerBound = 1.0, scoreUpperBound = 1.0, scoreValueUnit = "+")),
+            ReceptorType.HER2
+        )
+        assertThat(evaluation).isEqualTo(BreastCancerReceptorEvaluation.LOW)
+    }
+
+    @Test
+    fun `Should return NEGATIVE when evaluating HER2 for a breast cancer patient with zero score bounds regardless of unit`() {
+        val evaluation = breastCancerReceptorsEvaluator.evaluate(
+            setOf(DoidConstants.BREAST_CANCER_DOID),
+            listOf(IhcTest("HER2", scoreLowerBound = 0.0, scoreUpperBound = 0.0)),
+            ReceptorType.HER2
+        )
+        assertThat(evaluation).isEqualTo(BreastCancerReceptorEvaluation.NEGATIVE)
+    }
+
+    @Test
+    fun `Should return INCONSISTENT_DATA when evaluating a breast cancer patient with estrogen negative DOID but positive IHC ER result`() {
+        val evaluation = breastCancerReceptorsEvaluator.evaluate(
+            setOf(DoidConstants.ESTROGEN_NEGATIVE_BREAST_CANCER_DOID, DoidConstants.BREAST_CANCER_DOID),
+            listOf(IhcTest("ER", scoreLowerBound = 10.0, scoreUpperBound = 30.0, scoreValueUnit = "%")),
+            ReceptorType.ER
+        )
+        assertThat(evaluation).isEqualTo(BreastCancerReceptorEvaluation.INCONSISTENT_DATA)
+    }
+
+    @Test
+    fun `Should return POSITIVE when evaluating a breast cancer patient with positive PR IHC result`() {
+        val evaluation = breastCancerReceptorsEvaluator.evaluate(
+            setOf(DoidConstants.BREAST_CANCER_DOID),
+            listOf(IhcTest("PR", scoreLowerBound = 20.0, scoreValueUnit = "%")),
+            ReceptorType.PR
+        )
+        assertThat(evaluation).isEqualTo(BreastCancerReceptorEvaluation.POSITIVE)
     }
 }

@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
-import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateBoundsVersusMaxValue
+import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateBoundsVersusMinValue
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -29,14 +29,17 @@ object PDL1EvaluationFunctions {
             measure?.let { IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, measure, isLungCancer) } ?: emptyList()
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
-            ihcTest.scoreValue?.let { scoreValue ->
-                val roundedScore = scoreValue.roundToInt().toDouble()
+            val roundedLower = ihcTest.scoreLowerBound?.roundToInt()?.toDouble()
+            val roundedUpper = ihcTest.scoreUpperBound?.roundToInt()?.toDouble()
+            if (roundedLower != null || roundedUpper != null) {
                 if (evaluateMaxPDL1) {
-                    evaluateVersusMaxValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
+                    evaluateBoundsVersusMaxValue(roundedLower, roundedUpper, pdl1Reference)
                 } else {
-                    evaluateVersusMinValue(roundedScore, ihcTest.scoreValuePrefix, pdl1Reference)
+                    evaluateBoundsVersusMinValue(roundedLower, roundedUpper, pdl1Reference)
                 }
-            } ?: evaluateNegativeOrPositiveTestScore(ihcTest, pdl1Reference, evaluateMaxPDL1, isLungCancer)
+            } else {
+                evaluateNegativeOrPositiveTestScore(ihcTest, pdl1Reference, evaluateMaxPDL1, isLungCancer)
+            }
         }.toSet()
 
         val (comparatorMessage, comparatorSign) = if (evaluateMaxPDL1) "below maximum of" to "<=" else "above minimum of" to ">="
@@ -63,14 +66,14 @@ object PDL1EvaluationFunctions {
 
             EvaluationResult.UNDETERMINED in testEvaluations -> {
                 val testMessage = pdl1TestsWithRequestedMeasurement
-                    .joinToString(", ") { "${it.scoreValuePrefix} ${it.scoreValue}" }
+                    .joinToString(", ") { formatBounds(it) }
                 EvaluationFactory.undetermined(
                     "Undetermined if PD-L1 expression ($testMessage) $comparatorMessage $pdl1Reference",
                     isMissingMolecularResultForEvaluation = true
                 )
             }
 
-            pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { test -> test.scoreValue == null } -> {
+            pdl1TestsWithRequestedMeasurement.isNotEmpty() && pdl1TestsWithRequestedMeasurement.any { it.scoreLowerBound == null && it.scoreUpperBound == null } -> {
                 val status = pdl1TestsWithRequestedMeasurement.joinToString(", ") { it.scoreText ?: "unknown" }
                 EvaluationFactory.undetermined(
                     "Unclear if IHC PD-L1 status available ($status) is considered $comparatorMessage $pdl1Reference",
@@ -124,4 +127,10 @@ object PDL1EvaluationFunctions {
             else -> TestResult.UNKNOWN
         }
     }
+
+    private fun formatBounds(test: IhcTest) = when {
+        test.scoreLowerBound == test.scoreUpperBound -> "${test.scoreLowerBound}"
+        test.scoreLowerBound != null && test.scoreUpperBound != null -> "${test.scoreLowerBound}-${test.scoreUpperBound}"
+        else -> test.scoreLowerBound?.let { "> $it" } ?: test.scoreUpperBound?.let { "< $it" }
+    } ?: ""
 }
