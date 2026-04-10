@@ -4,6 +4,8 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 class ValueComparisonTest {
 
@@ -83,6 +85,81 @@ class ValueComparisonTest {
     fun `Should return false for empty collection`() {
         assertThat(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK", emptyList())).isFalse()
     }
+
+    @ParameterizedTest
+    @CsvSource(
+        "4.0, 8.0",
+        "2.0, 2.0",
+        "3.0, NULL",
+        nullValues = ["NULL"],
+        )
+    fun `evaluateBoundsVersusMinValue should pass when lower bound is at or above min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.PASS)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0.0, 1.0",
+        "NULL, 1.0",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMinValue should fail when upper bound is below min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue should be undetermined when bounds are null`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, null, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "1.0, 3.0",
+        "NULL, 3.0",
+        "1.0, NULL",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMinValue should be undetermined when range include min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "1.0, 1.0",
+        "2.0, 2.0",
+        "NULL, 1.0",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMaxValue should pass when upper bound is at or below max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.PASS)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "4.0, 4.0",
+        "3.0, NULL",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMaxValue should fail when lower bound is above max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue should be undetermined when bounds are null`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, null, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "1.0, 3.0",
+        "NULL, 3.0",
+        "1.0, NULL",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMaxValue should be undetermined when range include max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
 
     private fun evaluateAgainstMinValue2(value: Double, comparator: String?): EvaluationResult {
         return ValueComparison.evaluateVersusMinValue(value, comparator, 2.0)
