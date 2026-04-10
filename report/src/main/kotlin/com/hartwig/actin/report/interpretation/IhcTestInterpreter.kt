@@ -26,14 +26,14 @@ class IhcTestInterpreter {
         val type = IHC_TEST_TYPE
         val date = test.measureDate
         val scoreText = test.scoreText
-        val scoreValue = test.scoreValue
+        val hasNumericScore = test.scoreLowerBound != null || test.scoreUpperBound != null
         when {
-            scoreText != null && scoreValue != null -> {
+            scoreText != null && hasNumericScore -> {
                 interpretationBuilder.addInterpretation(type, item, formatValueAndTextBasedIhcTest(test), date)
             }
 
             scoreText != null -> interpretationBuilder.addInterpretation(type, item, scoreText, date)
-            scoreValue != null -> interpretationBuilder.addInterpretation(type, item, formatValueBasedIhcTest(test), date)
+            hasNumericScore -> interpretationBuilder.addInterpretation(type, item, formatValueBasedIhcTest(test), date)
             else -> logger.error("IHC test is neither text-based nor value-based: {}", test)
         }
     }
@@ -43,10 +43,17 @@ class IhcTestInterpreter {
     }
 
     private fun formatValueBasedIhcTest(valueTest: IhcTest): String {
-        return valueTest.scoreValue?.let {
-            listOfNotNull(
-                "Score", valueTest.measure, valueTest.scoreValuePrefix, Formats.twoDigitNumber(it) + valueTest.scoreValueUnit.orEmpty()
-            ).joinToString(" ")
-        } ?: ""
+        val formattedLowerValue = valueTest.scoreLowerBound?.let(Formats::twoDigitNumber).orEmpty()
+        val formattedUpperValue = valueTest.scoreUpperBound?.let(Formats::twoDigitNumber).orEmpty()
+
+        val formattedScore = when {
+            formattedLowerValue.isNotEmpty() && formattedUpperValue.isNotEmpty() -> {
+                if (formattedLowerValue == formattedUpperValue) formattedLowerValue else "$formattedLowerValue-$formattedUpperValue"
+            }
+            formattedLowerValue.isNotEmpty() -> "> $formattedLowerValue"
+            formattedUpperValue.isNotEmpty() -> "< $formattedUpperValue"
+            else -> return ""
+        }
+        return listOfNotNull("Score", valueTest.measure, formattedScore + valueTest.scoreValueUnit.orEmpty()).joinToString(" ")
     }
 }
