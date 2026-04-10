@@ -145,8 +145,8 @@ CREATE TABLE `ihcTest`
     `measure` varchar(50),
     `measureDate` DATE,
     `scoreText` varchar(100),
-    `scoreValuePrefix` varchar(50),
-    `scoreValue` double precision,
+    `scoreLowerBound` double precision,
+    `scoreUpperBound` double precision,
     `scoreValueUnit` varchar(50),
     `impliesPotentialIndeterminateStatus` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)

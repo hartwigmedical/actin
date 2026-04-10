@@ -349,8 +349,8 @@ class ClinicalDAO(private val context: DSLContext) {
                 Tables.IHCTEST.MEASURE,
                 Tables.IHCTEST.MEASUREDATE,
                 Tables.IHCTEST.SCORETEXT,
-                Tables.IHCTEST.SCOREVALUEPREFIX,
-                Tables.IHCTEST.SCOREVALUE,
+                Tables.IHCTEST.SCORELOWERBOUND,
+                Tables.IHCTEST.SCOREUPPERBOUND,
                 Tables.IHCTEST.SCOREVALUEUNIT,
                 Tables.IHCTEST.IMPLIESPOTENTIALINDETERMINATESTATUS
             )
@@ -360,8 +360,8 @@ class ClinicalDAO(private val context: DSLContext) {
                     ihcTest.measure,
                     ihcTest.measureDate,
                     ihcTest.scoreText,
-                    ihcTest.scoreValuePrefix,
-                    ihcTest.scoreValue,
+                    ihcTest.scoreLowerBound,
+                    ihcTest.scoreUpperBound,
                     ihcTest.scoreValueUnit,
                     ihcTest.impliesPotentialIndeterminateStatus
                 )
