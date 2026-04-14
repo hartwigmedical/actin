@@ -79,6 +79,16 @@ class PDL1EvaluationFunctionsTest {
         evaluateFunctions(EvaluationResult.PASS, record, measure = "TPS")
     }
 
+    @Test
+    fun `Should assume that requested measurement is TPS if tumor type is non-small cell lung cancer and requested measurement is null`() {
+        val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            tumor = TumorDetails(
+                doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
+            ), ihcTests = listOf(pdl1Test.copy(measure = "TPS", scoreValue = 2.0))
+        )
+        evaluateFunctions(EvaluationResult.PASS, record, measure = null)
+    }
+
     // Tests specific for evaluateLimitedPDL1byIHC
     @Test
     fun `Should pass when test value is below max`() {

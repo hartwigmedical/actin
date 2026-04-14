@@ -25,8 +25,9 @@ object PDL1EvaluationFunctions {
     ): Evaluation {
         val ihcTests = record.ihcTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
+        val effectiveMeasure = measure ?: if (isLungCancer == true) "TPS" else null
         val pdl1TestsWithRequestedMeasurement =
-            measure?.let { IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, measure, isLungCancer) } ?: emptyList()
+            effectiveMeasure?.let { IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, it, isLungCancer) } ?: emptyList()
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             ihcTest.scoreValue?.let { scoreValue ->
@@ -79,7 +80,7 @@ object PDL1EvaluationFunctions {
             }
 
             IhcTestFilter.mostRecentAndUnknownDateIhcTestsForItem(ihcTests, "PD-L1").isNotEmpty() -> {
-                val message = measure?.let { "Available PD-L1 tests not in requested measure ($measure)" }
+                val message = effectiveMeasure?.let { "Available PD-L1 tests not in requested measure ($effectiveMeasure)" }
                     ?: "No specific PD-L1 measure requested - hence PD-L1 cannot be evaluated"
                 EvaluationFactory.recoverableFail(message)
             }
