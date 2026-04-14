@@ -164,7 +164,7 @@ class MolecularDetailsChapter(
     ): List<ImmunologyGenerator> {
         val isStandardWithPathology = configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY
         return molecularTests.mapNotNull { molecularTest ->
-            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null
+            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null && molecularTest.hasSufficientQuality
             if (showImmunology) {
                 val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.DETAILED_INLINE else ImmunologyDisplayMode.DETAILED_TABLE
                 ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
