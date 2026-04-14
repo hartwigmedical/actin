@@ -8,8 +8,7 @@ import com.hartwig.actin.datamodel.algo.StaticMessage
 
 object EvaluationFactory {
 
-    @JvmName("passWithMolecularEvents")
-    fun pass(message: String, recoverable: Boolean = false, inclusionEvents: Set<MolecularEvent> = emptySet()): Evaluation {
+    fun pass(message: String, inclusionEvents: Set<MolecularEvent>, recoverable: Boolean = false): Evaluation {
         return Evaluation(
             recoverable = recoverable,
             result = EvaluationResult.PASS,
@@ -18,17 +17,16 @@ object EvaluationFactory {
         )
     }
 
-    @JvmName("passWithStringEvents")
     fun pass(message: String, recoverable: Boolean = false, inclusionEvents: Set<String> = emptySet()): Evaluation {
-        return pass(message, recoverable, inclusionEvents.toMolecularEvents())
+        return pass(message, inclusionEvents.toMolecularEvents(), recoverable)
     }
 
     fun pass(message: String, recoverable: Boolean = false): Evaluation {
-        return pass(message, recoverable, emptySet<MolecularEvent>())
+        return pass(message, emptySet(), recoverable)
     }
 
     fun recoverablePass(message: String): Evaluation {
-        return pass(message, true, emptySet<MolecularEvent>())
+        return pass(message, emptySet(),true)
     }
 
     fun fail(message: String, recoverable: Boolean = false, isMissingMolecularResultForEvaluation: Boolean = false): Evaluation {
@@ -61,10 +59,9 @@ object EvaluationFactory {
         return undetermined(message, true)
     }
 
-    @JvmName("warnWithMolecularEvents")
     fun warn(
         message: String,
-        inclusionEvents: Set<MolecularEvent> = emptySet(),
+        inclusionEvents: Set<MolecularEvent>,
         isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         return Evaluation(
@@ -76,11 +73,10 @@ object EvaluationFactory {
         )
     }
 
-    @JvmName("passWithStringEvents")
     fun warn(
         message: String,
-        inclusionEvents: Set<String> = emptySet(),
-        isMissingMolecularResultForEvaluation: Boolean = false
+        isMissingMolecularResultForEvaluation: Boolean = false,
+        inclusionEvents: Set<String> = emptySet()
     ): Evaluation {
         return warn(message, inclusionEvents.toMolecularEvents(), isMissingMolecularResultForEvaluation)
     }
