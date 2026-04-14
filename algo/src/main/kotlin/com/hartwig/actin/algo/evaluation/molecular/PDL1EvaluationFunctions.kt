@@ -131,6 +131,6 @@ object PDL1EvaluationFunctions {
     private fun formatBounds(test: IhcTest) = when {
         test.scoreLowerBound == test.scoreUpperBound -> "${test.scoreLowerBound}"
         test.scoreLowerBound != null && test.scoreUpperBound != null -> "${test.scoreLowerBound}-${test.scoreUpperBound}"
-        else -> test.scoreLowerBound?.let { "> $it" } ?: test.scoreUpperBound?.let { "< $it" }
+        else -> test.scoreLowerBound?.let { ">= $it" } ?: test.scoreUpperBound?.let { "<= $it" }
     } ?: ""
 }

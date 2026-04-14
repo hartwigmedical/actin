@@ -102,7 +102,7 @@ class PDL1EvaluationFunctionsTest {
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if PD-L1 expression (> 1.0) below maximum of 2.0"
+            "Undetermined if PD-L1 expression (>= 1.0) below maximum of 2.0"
         )
     }
 
@@ -156,7 +156,7 @@ class PDL1EvaluationFunctionsTest {
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if PD-L1 expression (< 3.0) above minimum of 2.0"
+            "Undetermined if PD-L1 expression (<= 3.0) above minimum of 2.0"
         )
     }
 

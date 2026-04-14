@@ -34,7 +34,7 @@ class HasSufficientPDL1ByIhcTest {
         val evaluation = function.evaluate(record)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if PD-L1 expression (< ${minPdl1.plus(1.0)}) above minimum of 2.0"
+            "Undetermined if PD-L1 expression (<= ${minPdl1.plus(1.0)}) above minimum of 2.0"
         )
     }
 

@@ -43,15 +43,15 @@ class IhcTestInterpreter {
     }
 
     private fun formatValueBasedIhcTest(valueTest: IhcTest): String {
-        val formattedLowerValue = valueTest.scoreLowerBound?.let(Formats::twoDigitNumber).orEmpty()
-        val formattedUpperValue = valueTest.scoreUpperBound?.let(Formats::twoDigitNumber).orEmpty()
+        val formattedLowerValue = valueTest.scoreLowerBound?.let(Formats::twoDigitNumber)
+        val formattedUpperValue = valueTest.scoreUpperBound?.let(Formats::twoDigitNumber)
 
         val formattedScore = when {
-            formattedLowerValue.isNotEmpty() && formattedUpperValue.isNotEmpty() -> {
+            formattedLowerValue != null && formattedUpperValue != null -> {
                 if (formattedLowerValue == formattedUpperValue) formattedLowerValue else "$formattedLowerValue-$formattedUpperValue"
             }
-            formattedLowerValue.isNotEmpty() -> "> $formattedLowerValue"
-            formattedUpperValue.isNotEmpty() -> "< $formattedUpperValue"
+            formattedLowerValue != null -> ">= $formattedLowerValue"
+            formattedUpperValue != null -> "<= $formattedUpperValue"
             else -> return ""
         }
         return listOfNotNull("Score", valueTest.measure, formattedScore + valueTest.scoreValueUnit.orEmpty()).joinToString(" ")

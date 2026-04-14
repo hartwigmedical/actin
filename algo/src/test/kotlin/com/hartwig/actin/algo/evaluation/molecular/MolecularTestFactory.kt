@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.tumor.IhcTestFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -39,7 +40,7 @@ internal object MolecularTestFactory {
         scoreUpperBound: Double? = null,
         scoreValueUnit: String? = null
     ): IhcTest {
-        return IhcTest(
+        return IhcTestFactory.create(
             item = item,
             measure = measure,
             scoreText = scoreText,

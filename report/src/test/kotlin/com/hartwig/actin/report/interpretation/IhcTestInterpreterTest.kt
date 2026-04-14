@@ -139,7 +139,7 @@ class IhcTestInterpreterTest {
         assertThat(result).containsExactly(
             IhcTestInterpretation(
                 "IHC",
-                listOf(IhcTestResultInterpretation("PD-L1", "Score > 5%", DEFAULT_DATE, 0))
+                listOf(IhcTestResultInterpretation("PD-L1", "Score >= 5%", DEFAULT_DATE, 0))
             )
         )
     }
@@ -152,7 +152,7 @@ class IhcTestInterpreterTest {
         assertThat(result).containsExactly(
             IhcTestInterpretation(
                 "IHC",
-                listOf(IhcTestResultInterpretation("PD-L1", "Score < 15%", DEFAULT_DATE, 0))
+                listOf(IhcTestResultInterpretation("PD-L1", "Score <= 15%", DEFAULT_DATE, 0))
             )
         )
     }

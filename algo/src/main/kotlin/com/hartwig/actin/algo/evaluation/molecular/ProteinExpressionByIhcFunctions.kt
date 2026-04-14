@@ -69,9 +69,10 @@ class ProteinExpressionByIhcFunctions(
             }
 
             IhcExpressionComparisonType.EXACT -> {
-                when (roundedScoreLowerBound == roundedScoreUpperBound && roundedScoreLowerBound == referenceExpressionLevel) {
-                    true -> EvaluationResult.PASS
-                    false -> EvaluationResult.FAIL
+                if (roundedScoreLowerBound == roundedScoreUpperBound && roundedScoreLowerBound == referenceExpressionLevel) {
+                    EvaluationResult.PASS
+                } else {
+                    EvaluationResult.FAIL
                 }
             }
 

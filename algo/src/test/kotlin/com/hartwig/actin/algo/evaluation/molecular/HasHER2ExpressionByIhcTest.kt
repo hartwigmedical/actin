@@ -2,8 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
+import com.hartwig.actin.algo.evaluation.tumor.IhcTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.IhcTestResult
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -20,6 +20,8 @@ private val ERBB2_AMP = TestCopyNumberFactory.createMinimal().copy(
     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
     canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_GAIN, 20, 20)
 )
+
+private const val IHC_TEST_ITEM = "HER2"
 
 class HasHER2ExpressionByIhcTest {
 
@@ -52,8 +54,8 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = positiveFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreLowerBound = 3.0, scoreValueUnit = "+"),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first())
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 3.0, scoreValueUnit = "+"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first())
                 )
             )
         )
@@ -66,8 +68,8 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = positiveFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreLowerBound = 0.0),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
                 )
             )
         )
@@ -79,8 +81,8 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = positiveFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreLowerBound = 1.0, scoreValueUnit = "+"),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.LOW_TERMS.first())
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 1.0, scoreValueUnit = "+"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.LOW_TERMS.first())
                 )
             )
         )
@@ -91,9 +93,7 @@ class HasHER2ExpressionByIhcTest {
     fun `Should evaluate HER2 positive to undetermined if borderline result`() {
         val evaluation = positiveFunction.evaluate(
             MolecularTestFactory.withIhcTests(
-                listOf(
-                    ihcTest(scoreLowerBound = 2.0, scoreValueUnit = "+")
-                )
+                listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 2.0, scoreValueUnit = "+"))
             )
         )
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
@@ -106,8 +106,8 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = positiveFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreText = "nonsense"),
-                    ihcTest(scoreText = "more nonsense")
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = "nonsense"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = "more nonsense")
                 )
             )
         )
@@ -122,8 +122,8 @@ class HasHER2ExpressionByIhcTest {
             positiveFunction.evaluate(
                 MolecularTestFactory.withIhcTests(
                     listOf(
-                        ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first()),
-                        ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
+                        IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first()),
+                        IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
                     )
                 )
             )
@@ -137,7 +137,8 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = positiveFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(
+                    IhcTestFactory.create(
+                        item = IHC_TEST_ITEM,
                         scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first(),
                         impliesPotentialIndeterminateStatus = true
                     )
@@ -155,7 +156,8 @@ class HasHER2ExpressionByIhcTest {
             MolecularTestFactory.withCopyNumberAndIhcTests(
                 ERBB2_AMP,
                 listOf(
-                    ihcTest(
+                    IhcTestFactory.create(
+                        item = IHC_TEST_ITEM,
                         scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first(),
                         impliesPotentialIndeterminateStatus = true
                     )
@@ -169,8 +171,12 @@ class HasHER2ExpressionByIhcTest {
 
     @Test
     fun `Should fail HER2 positive if negative IHC HER2 data but HER2 amp`() {
-        val evaluation =
-            positiveFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, listOf(ihcTest(scoreLowerBound = 0.0))))
+        val evaluation = positiveFunction.evaluate(
+            MolecularTestFactory.withCopyNumberAndIhcTests(
+                ERBB2_AMP,
+                listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0))
+            )
+        )
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
     }
 
@@ -188,8 +194,8 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = negativeFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreLowerBound = 0.0),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
                 )
             )
         )
@@ -201,11 +207,11 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = negativeFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreLowerBound = 1.0, scoreValueUnit = "+"),
-                    ihcTest(scoreLowerBound = 2.0, scoreValueUnit = "+"),
-                    ihcTest(scoreLowerBound = 3.0, scoreValueUnit = "+"),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first()),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.LOW_TERMS.first())
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 1.0, scoreValueUnit = "+"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 2.0, scoreValueUnit = "+"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 3.0, scoreValueUnit = "+"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first()),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.LOW_TERMS.first())
                 )
             )
         )
@@ -214,8 +220,12 @@ class HasHER2ExpressionByIhcTest {
 
     @Test
     fun `Should evaluate HER2 negative to warn if negative IHC HER2 data but HER2 amp`() {
-        val evaluation =
-            negativeFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, listOf(ihcTest(scoreLowerBound = 0.0))))
+        val evaluation = negativeFunction.evaluate(
+            MolecularTestFactory.withCopyNumberAndIhcTests(
+                ERBB2_AMP,
+                listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0))
+            )
+        )
         assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessagesStrings()).containsExactly("Undetermined if HER2 IHC test results indicate negative HER2 status (but ERBB2 amplification detected)")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("Potential IHC HER2 negative"))
@@ -226,8 +236,8 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = lowFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreLowerBound = 1.0, scoreValueUnit = "+"),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.LOW_TERMS.first())
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 1.0, scoreValueUnit = "+"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.LOW_TERMS.first())
                 )
             )
         )
@@ -239,10 +249,10 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = lowFunction.evaluate(
             MolecularTestFactory.withIhcTests(
                 listOf(
-                    ihcTest(scoreLowerBound = 0.0),
-                    ihcTest(scoreLowerBound = 3.0, scoreValueUnit = "+"),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first()),
-                    ihcTest(scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first())
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, score = 3.0, scoreValueUnit = "+"),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first()),
+                    IhcTestFactory.create(item = IHC_TEST_ITEM, scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first())
                 )
             )
         )
@@ -251,7 +261,12 @@ class HasHER2ExpressionByIhcTest {
 
     @Test
     fun `Should evaluate HER2 low to warn if low IHC HER2 data but HER2 amp`() {
-        val evaluation = lowFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, listOf(ihcTest(scoreLowerBound = 1.0, scoreValueUnit = "+"))))
+        val evaluation = lowFunction.evaluate(
+            MolecularTestFactory.withCopyNumberAndIhcTests(
+                ERBB2_AMP,
+                listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 1.0, scoreValueUnit = "+"))
+            )
+        )
         assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
         assertThat(evaluation.warnMessagesStrings()).containsExactly("Undetermined if HER2 IHC test results indicate low HER2 status (but ERBB2 amplification detected)")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf("Potential IHC HER2 low"))
@@ -259,10 +274,13 @@ class HasHER2ExpressionByIhcTest {
 
     @Test
     fun `Should evaluate HER2 low to undetermined for borderline IHC HER2 data`() {
-        val evaluation = lowFunction.evaluate(MolecularTestFactory.withIhcTests(listOf(ihcTest(scoreLowerBound = 2.0, scoreValueUnit = "+"))))
+        val evaluation = lowFunction.evaluate(
+            MolecularTestFactory.withIhcTests(
+                listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 2.0, scoreValueUnit = "+"))
+            )
+        )
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
-
     }
 
     @Test
@@ -277,7 +295,16 @@ class HasHER2ExpressionByIhcTest {
     @Test
     fun `Should evaluate HER2 positive to warn when range crosses classification boundaries`() {
         val evaluation = positiveFunction.evaluate(
-            MolecularTestFactory.withIhcTests(listOf(ihcTest(scoreLowerBound = 1.0, scoreUpperBound = 3.0, scoreValueUnit = "+")))
+            MolecularTestFactory.withIhcTests(
+                listOf(
+                    IhcTestFactory.create(
+                        item = IHC_TEST_ITEM,
+                        scoreLowerBound = 1.0,
+                        scoreUpperBound = 3.0,
+                        scoreValueUnit = "+"
+                    )
+                )
+            )
         )
         assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
     }
@@ -285,7 +312,7 @@ class HasHER2ExpressionByIhcTest {
     @Test
     fun `Should evaluate HER2 positive to warn when unit is missing for non-zero score`() {
         val evaluation = positiveFunction.evaluate(
-            MolecularTestFactory.withIhcTests(listOf(ihcTest(scoreLowerBound = 3.0)))
+            MolecularTestFactory.withIhcTests(listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 3.0)))
         )
         assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
     }
@@ -293,25 +320,10 @@ class HasHER2ExpressionByIhcTest {
     @Test
     fun `Should classify score of zero as negative regardless of unit`() {
         val evaluation = negativeFunction.evaluate(
-            MolecularTestFactory.withIhcTests(listOf(ihcTest(scoreLowerBound = 0.0)))
+            MolecularTestFactory.withIhcTests(listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0)))
         )
         assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
     }
 
-    private fun ihcTest(
-        scoreLowerBound: Double? = null,
-        scoreUpperBound: Double? = scoreLowerBound,
-        scoreValueUnit: String? = null,
-        scoreText: String? = null,
-        impliesPotentialIndeterminateStatus: Boolean = false
-    ): IhcTest {
-        return IhcTest(
-            item = "HER2",
-            scoreLowerBound = scoreLowerBound,
-            scoreUpperBound = scoreUpperBound,
-            scoreValueUnit = scoreValueUnit,
-            scoreText = scoreText,
-            impliesPotentialIndeterminateStatus = impliesPotentialIndeterminateStatus
-        )
-    }
 }
+

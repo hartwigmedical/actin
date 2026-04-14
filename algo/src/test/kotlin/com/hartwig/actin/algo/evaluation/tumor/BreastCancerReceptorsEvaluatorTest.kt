@@ -108,7 +108,7 @@ class BreastCancerReceptorsEvaluatorTest {
     }
 
     @Test
-    fun `Should return LOW when evaluating a breast cancer patient with low ER IHC result`() {
+    fun `Should return LOW when evaluating a breast cancer patient with low HER2 IHC result`() {
         val evaluation = breastCancerReceptorsEvaluator.evaluate(
             setOf(DoidConstants.BREAST_CANCER_DOID),
             listOf(IhcTest("HER2", scoreLowerBound = 1.0, scoreUpperBound = 1.0, scoreValueUnit = "+")),
