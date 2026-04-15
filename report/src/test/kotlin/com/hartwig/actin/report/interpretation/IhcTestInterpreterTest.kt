@@ -157,18 +157,51 @@ class IhcTestInterpreterTest {
         )
     }
 
+    @Test
+    fun `Should interpret IHC test with exclusive lower bound`() {
+        val result = interpreter.interpret(
+            ihcTests = listOf(ihcMolecularTest("PD-L1", scoreLowerBound = 5.0, scoreValueUnit = "%", isLowerBoundInclusive = false))
+        )
+        assertThat(result).containsExactly(
+            IhcTestInterpretation(
+                "IHC",
+                listOf(IhcTestResultInterpretation("PD-L1", "Score > 5%", DEFAULT_DATE, 0))
+            )
+        )
+    }
+
+    @Test
+    fun `Should interpret IHC test with exclusive upper bound`() {
+        val result = interpreter.interpret(
+            ihcTests = listOf(
+                ihcMolecularTest("PD-L1", scoreLowerBound = null, scoreUpperBound = 30.0, scoreValueUnit = "%",
+                    isUpperBoundInclusive = false)
+            )
+        )
+        assertThat(result).containsExactly(
+            IhcTestInterpretation(
+                "IHC",
+                listOf(IhcTestResultInterpretation("PD-L1", "Score < 30%", DEFAULT_DATE, 0))
+            )
+        )
+    }
+
     private fun ihcMolecularTest(
         protein: String,
         scoreText: String? = null,
         scoreLowerBound: Double? = null,
-        scoreUpperBound: Double? = scoreLowerBound,
-        scoreValueUnit: String? = null
+        scoreUpperBound: Double? = null,
+        scoreValueUnit: String? = null,
+        isLowerBoundInclusive: Boolean? = null,
+        isUpperBoundInclusive: Boolean? = null
     ) = IhcTest(
         item = protein,
         measureDate = DEFAULT_DATE,
         scoreText = scoreText,
         scoreLowerBound = scoreLowerBound,
         scoreUpperBound = scoreUpperBound,
+        isLowerBoundInclusive = isLowerBoundInclusive,
+        isUpperBoundInclusive = isUpperBoundInclusive,
         scoreValueUnit = scoreValueUnit,
         impliesPotentialIndeterminateStatus = false
     )

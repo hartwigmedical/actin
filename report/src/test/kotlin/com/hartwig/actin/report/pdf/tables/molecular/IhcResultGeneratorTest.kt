@@ -10,11 +10,11 @@ import org.junit.jupiter.api.Test
 class IhcResultGeneratorTest {
 
     private val testDate = LocalDate.of(2024, 5, 10)
-    private val ihcTest1 = IhcTest("PD-L1", "TPS", testDate, null, 2.0, 2.0, "%", false)
-    private val ihcTest2 = IhcTest("ALK", null, testDate, "Negative", null, null, null, false)
-    private val ihcTest3 = IhcTest("NTRK1", null, testDate, "Negative", null, null, null, false)
-    private val ihcTest4 = IhcTest("NTRK2", null, testDate, "Negative", null, null, null, false)
-    private val ihcTest5 = IhcTest("NTRK3", null, testDate, "Negative", null, null, null, false)
+    private val ihcTest1 = IhcTest(item = "PD-L1", measure = "TPS", measureDate = testDate, scoreLowerBound = 2.0, scoreUpperBound = 2.0, scoreValueUnit = "%")
+    private val ihcTest2 = IhcTest(item = "ALK", measureDate = testDate, scoreText = "Negative")
+    private val ihcTest3 = IhcTest(item = "NTRK1", measureDate = testDate, scoreText = "Negative")
+    private val ihcTest4 = IhcTest(item = "NTRK2", measureDate = testDate, scoreText = "Negative")
+    private val ihcTest5 = IhcTest(item = "NTRK3", measureDate = testDate, scoreText = "Negative")
 
     private val ihcResultGenerator = IhcResultGenerator(emptyList(), 10.0f, 10.0f, IhcTestInterpreter())
 
@@ -59,5 +59,45 @@ class IhcResultGeneratorTest {
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Negative")
         assertThat(extractTextFromCell(table.getCell(1, 0))).isEqualTo("PD-L1 (2024-05-10)")
         assertThat(extractTextFromCell(table.getCell(1, 1))).isEqualTo("Score TPS 2%")
+    }
+
+    @Test
+    fun `Should display exclusive lower bound with greater-than operator`() {
+        val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreLowerBound = 50.0, isLowerBoundInclusive = false, scoreValueUnit = "%")
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val table = generator.contents()
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score > 50%")
+    }
+
+    @Test
+    fun `Should display exclusive upper bound with less-than operator`() {
+        val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreUpperBound = 1.0, isUpperBoundInclusive = false, scoreValueUnit = "%")
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val table = generator.contents()
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score < 1%")
+    }
+
+    @Test
+    fun `Should display inclusive lower bound with greater-than-or-equal operator`() {
+        val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreLowerBound = 50.0, isLowerBoundInclusive = true, scoreValueUnit = "%")
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val table = generator.contents()
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score >= 50%")
+    }
+
+    @Test
+    fun `Should display inclusive upper bound with less-than-or-equal operator`() {
+        val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreUpperBound = 1.0, isUpperBoundInclusive = true, scoreValueUnit = "%")
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val table = generator.contents()
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score <= 1%")
+    }
+
+    @Test
+    fun `Should default to inclusive when inclusivity flag is null`() {
+        val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreUpperBound = 5.0, scoreValueUnit = "%")
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val table = generator.contents()
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score <= 5%")
     }
 }

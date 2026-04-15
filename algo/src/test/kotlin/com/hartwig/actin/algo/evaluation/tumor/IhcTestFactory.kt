@@ -10,6 +10,8 @@ internal object IhcTestFactory {
         score: Double? = null,
         scoreLowerBound: Double? = score,
         scoreUpperBound: Double? = score,
+        isLowerBoundInclusive: Boolean? = null,
+        isUpperBoundInclusive: Boolean? = null,
         scoreValueUnit: String? = null,
         impliesPotentialIndeterminateStatus: Boolean = false,
         measure: String? = null
@@ -19,6 +21,8 @@ internal object IhcTestFactory {
         scoreText = scoreText,
         scoreLowerBound = scoreLowerBound,
         scoreUpperBound = scoreUpperBound,
+        isLowerBoundInclusive = isLowerBoundInclusive,
+        isUpperBoundInclusive = isUpperBoundInclusive,
         scoreValueUnit = scoreValueUnit,
         impliesPotentialIndeterminateStatus = impliesPotentialIndeterminateStatus
     )

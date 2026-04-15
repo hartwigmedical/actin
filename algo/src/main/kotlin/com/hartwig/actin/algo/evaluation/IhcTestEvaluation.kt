@@ -50,10 +50,12 @@ class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
         }
 
     private fun testValueAboveZero(ihcTest: IhcTest) =
-        ValueComparison.evaluateBoundsVersusMinValue(ihcTest.scoreLowerBound, ihcTest.scoreUpperBound, 0.0) == EvaluationResult.PASS
+        ValueComparison.evaluateBoundsVersusMinValue(ihcTest.scoreLowerBound, ihcTest.scoreUpperBound, 0.0,
+            ihcTest.isUpperBoundInclusive) == EvaluationResult.PASS
 
     private fun testValueZero(ihcTest: IhcTest) =
-        ValueComparison.evaluateBoundsVersusMaxValue(ihcTest.scoreLowerBound, ihcTest.scoreUpperBound, 0.0) == EvaluationResult.PASS
+        ValueComparison.evaluateBoundsVersusMaxValue(ihcTest.scoreLowerBound, ihcTest.scoreUpperBound, 0.0,
+            ihcTest.isLowerBoundInclusive) == EvaluationResult.PASS
 
     companion object {
         fun create(item: String, ihcTests: List<IhcTest>): IhcTestEvaluation {

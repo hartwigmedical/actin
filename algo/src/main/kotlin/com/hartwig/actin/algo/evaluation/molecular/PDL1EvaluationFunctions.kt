@@ -33,9 +33,11 @@ object PDL1EvaluationFunctions {
             val roundedUpper = ihcTest.scoreUpperBound?.roundToInt()?.toDouble()
             if (roundedLower != null || roundedUpper != null) {
                 if (evaluateMaxPDL1) {
-                    evaluateBoundsVersusMaxValue(roundedLower, roundedUpper, pdl1Reference)
+                    evaluateBoundsVersusMaxValue(roundedLower, roundedUpper, pdl1Reference,
+                        ihcTest.isLowerBoundInclusive)
                 } else {
-                    evaluateBoundsVersusMinValue(roundedLower, roundedUpper, pdl1Reference)
+                    evaluateBoundsVersusMinValue(roundedLower, roundedUpper, pdl1Reference,
+                        ihcTest.isUpperBoundInclusive)
                 }
             } else {
                 evaluateNegativeOrPositiveTestScore(ihcTest, pdl1Reference, evaluateMaxPDL1, isLungCancer)
@@ -131,6 +133,7 @@ object PDL1EvaluationFunctions {
     private fun formatBounds(test: IhcTest) = when {
         test.scoreLowerBound == test.scoreUpperBound -> "${test.scoreLowerBound}"
         test.scoreLowerBound != null && test.scoreUpperBound != null -> "${test.scoreLowerBound}-${test.scoreUpperBound}"
-        else -> test.scoreLowerBound?.let { ">= $it" } ?: test.scoreUpperBound?.let { "<= $it" }
+        else -> test.scoreLowerBound?.let { "${if (test.isLowerBoundInclusive ?: true) ">=" else ">"} $it" }
+            ?: test.scoreUpperBound?.let { "${if (test.isUpperBoundInclusive ?: true) "<=" else "<"} $it" }
     } ?: ""
 }

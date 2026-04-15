@@ -30,14 +30,14 @@ object ValueComparison {
         }
     }
 
-    fun evaluateBoundsVersusMinValue(lowerBound: Double?, upperBound: Double?, minValue: Double): EvaluationResult =
+    fun evaluateBoundsVersusMinValue(lowerBound: Double?, upperBound: Double?, minValue: Double, isUpperInclusive: Boolean?): EvaluationResult =
         lowerBound?.takeIf { it >= minValue }?.let { PASS }
-            ?: upperBound?.takeIf { it < minValue }?.let { FAIL }
+            ?: upperBound?.takeIf { if (isUpperInclusive ?: true) it < minValue else it <= minValue }?.let { FAIL }
             ?: UNDETERMINED
 
-    fun evaluateBoundsVersusMaxValue(lowerBound: Double?, upperBound: Double?, maxValue: Double): EvaluationResult =
+    fun evaluateBoundsVersusMaxValue(lowerBound: Double?, upperBound: Double?, maxValue: Double, isLowerInclusive: Boolean?): EvaluationResult =
         upperBound?.takeIf { it <= maxValue }?.let { PASS }
-            ?: lowerBound?.takeIf { it > maxValue }?.let { FAIL }
+            ?: lowerBound?.takeIf { if (isLowerInclusive ?: true) it > maxValue else it >= maxValue }?.let { FAIL }
             ?: UNDETERMINED
 
     fun stringCaseInsensitivelyMatchesQueryCollection(value: String, collection: Collection<String>): Boolean {

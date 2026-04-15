@@ -151,6 +151,7 @@
       "scoreText": null,
       "scoreLowerBound": null,
       "scoreUpperBound": 50,
+      "isUpperBoundInclusive": false,
       "scoreValueUnit": "%",
       "impliesPotentialIndeterminateStatus": false
     }

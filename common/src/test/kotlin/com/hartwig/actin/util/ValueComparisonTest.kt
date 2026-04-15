@@ -93,8 +93,8 @@ class ValueComparisonTest {
         "3.0, NULL",
         nullValues = ["NULL"],
         )
-    fun `evaluateBoundsVersusMinValue should pass when lower bound is at or above min value`(lower: Double?, upper: Double?) {
-        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.PASS)
+    fun `evaluateBoundsVersusMinValue should pass when inclusive lower bound is at or above min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.PASS)
     }
 
     @ParameterizedTest
@@ -103,13 +103,13 @@ class ValueComparisonTest {
         "NULL, 1.0",
         nullValues = ["NULL"]
     )
-    fun `evaluateBoundsVersusMinValue should fail when upper bound is below min value`(lower: Double?, upper: Double?) {
-        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.FAIL)
+    fun `evaluateBoundsVersusMinValue should fail when inclusive upper bound is below min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
     fun `evaluateBoundsVersusMinValue should be undetermined when bounds are null`() {
-        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, null, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, null, 2.0, null)).isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     @ParameterizedTest
@@ -119,8 +119,8 @@ class ValueComparisonTest {
         "1.0, NULL",
         nullValues = ["NULL"]
     )
-    fun `evaluateBoundsVersusMinValue should be undetermined when range include min value`(lower: Double?, upper: Double?) {
-        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+    fun `evaluateBoundsVersusMinValue should be undetermined when inclusive range includes min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     @ParameterizedTest
@@ -130,8 +130,8 @@ class ValueComparisonTest {
         "NULL, 1.0",
         nullValues = ["NULL"]
     )
-    fun `evaluateBoundsVersusMaxValue should pass when upper bound is at or below max value`(lower: Double?, upper: Double?) {
-        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.PASS)
+    fun `evaluateBoundsVersusMaxValue should pass when inclusive upper bound is at or below max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.PASS)
     }
 
     @ParameterizedTest
@@ -140,13 +140,13 @@ class ValueComparisonTest {
         "3.0, NULL",
         nullValues = ["NULL"]
     )
-    fun `evaluateBoundsVersusMaxValue should fail when lower bound is above max value`(lower: Double?, upper: Double?) {
-        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.FAIL)
+    fun `evaluateBoundsVersusMaxValue should fail when inclusive lower bound is above max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.FAIL)
     }
 
     @Test
     fun `evaluateBoundsVersusMaxValue should be undetermined when bounds are null`() {
-        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, null, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, null, 2.0, null)).isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     @ParameterizedTest
@@ -156,10 +156,45 @@ class ValueComparisonTest {
         "1.0, NULL",
         nullValues = ["NULL"]
     )
-    fun `evaluateBoundsVersusMaxValue should be undetermined when range include max value`(lower: Double?, upper: Double?) {
-        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0)).isEqualTo(EvaluationResult.UNDETERMINED)
+    fun `evaluateBoundsVersusMaxValue should be undetermined when inclusive range includes max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
+    @Test
+    fun `evaluateBoundsVersusMinValue with exclusive lower bound equal to min should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(2.0, null, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue with exclusive lower bound above min should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(3.0, null, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue with exclusive upper bound equal to min should fail`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, 2.0, 2.0, false))
+            .isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with exclusive upper bound equal to max should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, 2.0, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with exclusive upper bound below max should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, 1.0, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with exclusive lower bound equal to max should fail`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(2.0, null, 2.0, false))
+            .isEqualTo(EvaluationResult.FAIL)
+    }
 
     private fun evaluateAgainstMinValue2(value: Double, comparator: String?): EvaluationResult {
         return ValueComparison.evaluateVersusMinValue(value, comparator, 2.0)

@@ -65,7 +65,8 @@ class ProteinExpressionByIhcFunctions(
         val roundedScoreUpperBound = ihcTest.scoreUpperBound?.roundToInt()
         return when (comparisonType) {
             IhcExpressionComparisonType.SUFFICIENT -> {
-                evaluateBoundsVersusMinValue(roundedScoreLowerBound?.toDouble(), roundedScoreUpperBound?.toDouble(), referenceExpressionLevel.toDouble())
+                evaluateBoundsVersusMinValue(roundedScoreLowerBound?.toDouble(), roundedScoreUpperBound?.toDouble(), referenceExpressionLevel.toDouble(),
+                    ihcTest.isUpperBoundInclusive)
             }
 
             IhcExpressionComparisonType.EXACT -> {
@@ -77,7 +78,8 @@ class ProteinExpressionByIhcFunctions(
             }
 
             IhcExpressionComparisonType.LIMITED -> {
-                evaluateBoundsVersusMaxValue(roundedScoreLowerBound?.toDouble(), roundedScoreUpperBound?.toDouble(), referenceExpressionLevel.toDouble())
+                evaluateBoundsVersusMaxValue(roundedScoreLowerBound?.toDouble(), roundedScoreUpperBound?.toDouble(), referenceExpressionLevel.toDouble(),
+                    ihcTest.isLowerBoundInclusive)
             }
         }
     }

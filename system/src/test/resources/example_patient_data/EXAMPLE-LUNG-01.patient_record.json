@@ -105,6 +105,7 @@
       "scoreText": null,
       "scoreLowerBound": 50,
       "scoreUpperBound": null,
+      "isLowerBoundInclusive": false,
       "scoreValueUnit": "%",
       "impliesPotentialIndeterminateStatus": false
     }

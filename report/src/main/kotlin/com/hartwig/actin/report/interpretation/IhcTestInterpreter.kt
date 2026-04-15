@@ -50,8 +50,8 @@ class IhcTestInterpreter {
             formattedLowerValue != null && formattedUpperValue != null -> {
                 if (formattedLowerValue == formattedUpperValue) formattedLowerValue else "$formattedLowerValue-$formattedUpperValue"
             }
-            formattedLowerValue != null -> ">= $formattedLowerValue"
-            formattedUpperValue != null -> "<= $formattedUpperValue"
+            formattedLowerValue != null -> "${if (valueTest.isLowerBoundInclusive ?: true) ">=" else ">"} $formattedLowerValue"
+            formattedUpperValue != null -> "${if (valueTest.isUpperBoundInclusive ?: true) "<=" else "<"} $formattedUpperValue"
             else -> return ""
         }
         return listOfNotNull("Score", valueTest.measure, formattedScore + valueTest.scoreValueUnit.orEmpty()).joinToString(" ")

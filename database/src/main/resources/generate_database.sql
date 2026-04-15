@@ -147,6 +147,8 @@ CREATE TABLE `ihcTest`
     `scoreText` varchar(100),
     `scoreLowerBound` double precision,
     `scoreUpperBound` double precision,
+    `isLowerBoundInclusive` BOOLEAN,
+    `isUpperBoundInclusive` BOOLEAN,
     `scoreValueUnit` varchar(50),
     `impliesPotentialIndeterminateStatus` BOOLEAN NOT NULL,
     PRIMARY KEY (`id`)
