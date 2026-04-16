@@ -129,7 +129,7 @@ class IhcTestEvaluationTest {
     @Test
     fun `Should set both positive functions to false if recent measure has score value of 0`() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first(), measureDate = date)
-        val test2 = test1.copy(scoreText = null, scoreValue = 0.0, measureDate = moreRecentDate)
+        val test2 = test1.copy(scoreText = null, scoreLowerBound = 0.0, scoreUpperBound = 0.0, measureDate = moreRecentDate)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
         assertThat(ihcEvaluation.hasCertainBroadPositiveResultsForItem()).isFalse
@@ -245,7 +245,7 @@ class IhcTestEvaluationTest {
     @Test
     fun `Should set both negative functions to false if recent measure has score value above 0 `() {
         val test1 = ihcTest(item = item, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first(), measureDate = date)
-        val test2 = test1.copy(scoreText = null, scoreValue = 2.0, measureDate = moreRecentDate)
+        val test2 = test1.copy(scoreText = null, scoreLowerBound = 2.0, scoreUpperBound = 2.0, measureDate = moreRecentDate)
         val ihcEvaluation = IhcTestEvaluation.create(item, listOf(test1, test2))
 
         assertThat(ihcEvaluation.hasCertainNegativeResultsForItem()).isFalse
@@ -326,14 +326,16 @@ class IhcTestEvaluationTest {
     private fun ihcTest(
         item: String = "",
         scoreText: String? = null,
-        scoreValue: Double? = null,
+        scoreLowerBound: Double? = null,
+        scoreUpperBound: Double? = scoreLowerBound,
         measureDate: LocalDate? = null,
         indeterminateStatus: Boolean = false
     ): IhcTest {
         return IhcTest(
             item = item,
             scoreText = scoreText,
-            scoreValue = scoreValue,
+            scoreLowerBound = scoreLowerBound,
+            scoreUpperBound = scoreUpperBound,
             measureDate = measureDate,
             impliesPotentialIndeterminateStatus = indeterminateStatus
         )

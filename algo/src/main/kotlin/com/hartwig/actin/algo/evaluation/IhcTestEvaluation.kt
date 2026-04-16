@@ -49,13 +49,15 @@ class IhcTestEvaluation(val filteredTests: Set<IhcTest>) {
             it.scoreText?.lowercase() in IhcTestEvaluationConstants.WILD_TYPE_TERMS && !it.impliesPotentialIndeterminateStatus
         }
 
-    private fun testValueAboveZero(ihcTest: IhcTest) = ihcTest.scoreValue?.let { scoreValue ->
-        ValueComparison.evaluateVersusMinValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)
-    } == EvaluationResult.PASS
+    private fun testValueAboveZero(ihcTest: IhcTest) =
+        ValueComparison.evaluateBoundsVersusMinValue(
+            ihcTest.scoreLowerBound, ihcTest.scoreUpperBound, 0.0, ihcTest.isUpperBoundInclusive
+        ) == EvaluationResult.PASS
 
-    private fun testValueZero(ihcTest: IhcTest) = ihcTest.scoreValue?.let { scoreValue ->
-        ValueComparison.evaluateVersusMaxValue(scoreValue, ihcTest.scoreValuePrefix, 0.0)
-    } == EvaluationResult.PASS
+    private fun testValueZero(ihcTest: IhcTest) =
+        ValueComparison.evaluateBoundsVersusMaxValue(
+            ihcTest.scoreLowerBound, ihcTest.scoreUpperBound, 0.0, ihcTest.isLowerBoundInclusive
+        ) == EvaluationResult.PASS
 
     companion object {
         fun create(item: String, ihcTests: List<IhcTest>): IhcTestEvaluation {

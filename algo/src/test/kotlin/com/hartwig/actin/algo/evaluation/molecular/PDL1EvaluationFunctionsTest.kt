@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.molecular.PDL1EvaluationFunctions.evaluatePDL1byIhc
-import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -27,7 +26,8 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should evaluate to undetermined if some PD-L1 tests are passing and others failing`() {
         val record = MolecularTestFactory.withIhcTests(
-            pdl1Test.copy(scoreValue = 1.0), pdl1Test.copy(scoreValue = 3.0)
+            pdl1Test.copy(scoreLowerBound = 1.0, scoreUpperBound = 1.0),
+            pdl1Test.copy(scoreLowerBound = 3.0, scoreUpperBound = 3.0)
         )
         evaluateFunctions(EvaluationResult.UNDETERMINED, record)
     }
@@ -57,7 +57,7 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should fail with specific message when requested measure is null`() {
         val record = MolecularTestFactory.withIhcTests(
-            MolecularTestFactory.ihcTest(item = "PD-L1", scoreValue = PDL1_REFERENCE, measure = "measure")
+            MolecularTestFactory.ihcTest(item = "PD-L1", scoreLowerBound = PDL1_REFERENCE, scoreUpperBound = PDL1_REFERENCE, measure = "measure")
         )
         evaluateFunctions(EvaluationResult.FAIL, record, measure = null)
         assertMessage(record, message = "No specific PD-L1 measure requested - hence PD-L1 cannot be evaluated", measure = null)
@@ -65,7 +65,7 @@ class PDL1EvaluationFunctionsTest {
 
     @Test
     fun `Should evaluate to undetermined when measure matches but score value is empty`() {
-        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = null))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = null, scoreUpperBound = null))
         evaluateFunctions(EvaluationResult.UNDETERMINED, record)
     }
 
@@ -74,7 +74,7 @@ class PDL1EvaluationFunctionsTest {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             tumor = TumorDetails(
                 doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-            ), ihcTests = listOf(pdl1Test.copy(measure = null, scoreValue = 2.0))
+            ), ihcTests = listOf(pdl1Test.copy(measure = null, scoreLowerBound = 2.0, scoreUpperBound = 2.0))
         )
         evaluateFunctions(EvaluationResult.PASS, record, measure = "TPS")
     }
@@ -82,7 +82,7 @@ class PDL1EvaluationFunctionsTest {
     // Tests specific for evaluateLimitedPDL1byIHC
     @Test
     fun `Should pass when test value is below max`() {
-        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.minus(0.5)))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.minus(0.5), scoreUpperBound = PDL1_REFERENCE.minus(0.5)))
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.inclusionMolecularEvents).containsExactly("PD-L1 <= 2.0")
@@ -91,25 +91,46 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should pass when test value is equal to maximum value`() {
         val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE))
+            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE, scoreUpperBound = PDL1_REFERENCE))
         assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
     }
 
     @Test
-    fun `Should evaluate to undetermined when it is unclear if test value is below maximum due to its comparator`() {
+    fun `Should evaluate to undetermined when it is unclear if test value is below maximum due to bounds`() {
         val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = 1.0, scoreValuePrefix = ValueComparison.LARGER_THAN))
+            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 1.0))
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if PD-L1 expression (> 1.0) below maximum of 2.0"
+            "Undetermined if PD-L1 expression (>= 1.0) below maximum of 2.0"
         )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when range crosses maximum value`() {
+        val record =
+            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 1.0, scoreUpperBound = 3.0))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+    }
+
+    @Test
+    fun `Should pass when range is entirely below maximum value`() {
+        val record =
+            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 0.0, scoreUpperBound = 1.0))
+        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+    }
+
+    @Test
+    fun `Should fail when range is entirely above maximum value`() {
+        val record =
+            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 3.0, scoreUpperBound = 5.0))
+        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
     }
 
     @Test
     fun `Should fail when test value is above maximum value`() {
         val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.plus(1.0)))
+            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.plus(1.0), scoreUpperBound = PDL1_REFERENCE.plus(1.0)))
         assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
     }
 
@@ -117,31 +138,49 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should pass when test value is above min`() {
         val record =
-            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.plus(0.5)))
+            MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.plus(0.5), scoreUpperBound = PDL1_REFERENCE.plus(0.5)))
         assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
     }
 
     @Test
     fun `Should pass when test value is equal to minimum value`() {
-        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE, scoreUpperBound = PDL1_REFERENCE))
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.inclusionMolecularEvents).containsExactly("PD-L1 >= 2.0")
     }
 
     @Test
-    fun `Should evaluate to undetermined when it is unclear if test value is above minimum due to its comparator`() {
-        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = 3.0, scoreValuePrefix = ValueComparison.SMALLER_THAN))
+    fun `Should evaluate to undetermined when it is unclear if test value is above minimum due to bounds`() {
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreUpperBound = 3.0))
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if PD-L1 expression (< 3.0) above minimum of 2.0"
+            "Undetermined if PD-L1 expression (<= 3.0) above minimum of 2.0"
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when range crosses minimum value`() {
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 1.0, scoreUpperBound = 3.0))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+        )
+    }
+
+    @Test
+    fun `Should pass when range is entirely above minimum value`() {
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 3.0, scoreUpperBound = 5.0))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         )
     }
 
     @Test
     fun `Should fail when test value is below minimum value`() {
-        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreValue = PDL1_REFERENCE.minus(1.0)))
+        val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.minus(1.0), scoreUpperBound = PDL1_REFERENCE.minus(1.0)))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
