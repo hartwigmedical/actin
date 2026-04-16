@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.trial
 
 import com.hartwig.actin.configuration.ExternalTrialTumorType
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.CountryDetails
@@ -47,7 +48,7 @@ private val EVALUABLE_COHORTS = listOf(
         isOpen = true,
         isIgnore = false,
         hasSlotsAvailable = true,
-        molecularInclusionEvents = setOf(EGFR_TARGET)
+        molecularInclusionEvents = setOf(MolecularEvent(EGFR_TARGET))
     )
 )
 
@@ -153,7 +154,7 @@ class TrialsProviderTest {
     fun `Should filter molecular criteria already matched in interpreted cohorts`() {
         val interpretedCohorts = listOf(
             InterpretedCohortTestFactory.interpretedCohort(
-                molecularInclusionEvents = setOf(EGFR_TARGET)
+                molecularInclusionEvents = setOf(MolecularEvent(EGFR_TARGET))
             )
         )
         val filtered = EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL

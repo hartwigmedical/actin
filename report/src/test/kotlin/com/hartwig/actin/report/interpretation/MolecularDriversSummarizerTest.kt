@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -168,7 +169,7 @@ class MolecularDriversSummarizerTest {
                     "expected deletion",
                     "expected key disruption",
                     "expected non-reportable fusion"
-                )
+                ).map { MolecularEvent(it) }
             )
         )
 

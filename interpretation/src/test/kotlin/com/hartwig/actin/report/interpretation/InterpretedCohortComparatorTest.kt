@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import org.assertj.core.api.Assertions.assertThat
@@ -9,14 +10,14 @@ class InterpretedCohortComparatorTest {
 
     private val matchingLocation = TrialSource.EXAMPLE.description
     private val nonMatchingLocation = TrialSource.LKO.description
-    private val cohort = create("trial 3", "cohort 1", emptySet(), true, "Event B")
+    private val cohort = create("trial 3", "cohort 1", emptySet(), true, MolecularEvent("Event B"))
 
     @Test
     fun `Should sort cohorts`() {
         val cohorts = listOf(
-            create("trial 3", "first", setOf(matchingLocation, nonMatchingLocation), true, "Event B"),
-            create("trial 3", "second", setOf(matchingLocation), false, "Event C"),
-            create("trial 5", "third", setOf(nonMatchingLocation), false, "Event D", "Event A"),
+            create("trial 3", "first", setOf(matchingLocation, nonMatchingLocation), true, MolecularEvent("Event B")),
+            create("trial 3", "second", setOf(matchingLocation), false, MolecularEvent("Event C")),
+            create("trial 5", "third", setOf(nonMatchingLocation), false, MolecularEvent("Event D", "Event A")),
             create("trial 7", "fourth", setOf(matchingLocation), true),
             create("trial 1", "fifth", setOf(nonMatchingLocation), true),
             create("trial 1", "A-sixth", setOf(nonMatchingLocation), false),
@@ -83,7 +84,7 @@ class InterpretedCohortComparatorTest {
         cohort: String?,
         locations: Set<String>,
         hasSlotsAvailable: Boolean,
-        vararg molecularEvents: String
+        vararg molecularEvents: MolecularEvent
     ): InterpretedCohort {
         return InterpretedCohortTestFactory.interpretedCohort(
             trialId = trialId,

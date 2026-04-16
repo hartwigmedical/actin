@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -62,11 +63,11 @@ class OrTest {
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true, index = 3)
         val result: Evaluation = Or(listOf(function1, function2, function3)).evaluate(TEST_PATIENT)
         assertThat(result.inclusionMolecularEvents).hasSize(2)
-        assertThat(result.inclusionMolecularEvents).contains("inclusion event 2")
-        assertThat(result.inclusionMolecularEvents).contains("inclusion event 3")
+        assertThat(result.inclusionMolecularEvents).contains(MolecularEvent("inclusion event 2"))
+        assertThat(result.inclusionMolecularEvents).contains(MolecularEvent("inclusion event 3"))
         assertThat(result.exclusionMolecularEvents).hasSize(2)
-        assertThat(result.exclusionMolecularEvents).contains("exclusion event 2")
-        assertThat(result.exclusionMolecularEvents).contains("exclusion event 3")
+        assertThat(result.exclusionMolecularEvents).contains(MolecularEvent("exclusion event 2"))
+        assertThat(result.exclusionMolecularEvents).contains(MolecularEvent("exclusion event 3"))
     }
 
     @Test
@@ -103,7 +104,7 @@ class OrTest {
                 result = EvaluationResult.WARN,
                 recoverable = true,
                 warnMessages = setOf(StaticMessage("warn 1")),
-                inclusionMolecularEvents = setOf("inclusion event")
+                inclusionMolecularEvents = setOf(MolecularEvent("inclusion event"))
             )
         }
         val undetermined = CompositeTestFactory.evaluationFunction {
@@ -125,7 +126,7 @@ class OrTest {
                 result = EvaluationResult.PASS,
                 recoverable = true,
                 passMessages = setOf(StaticMessage("pass 1")),
-                inclusionMolecularEvents = setOf("inclusion event pass")
+                inclusionMolecularEvents = setOf(MolecularEvent("inclusion event pass"))
             )
         }
         val warn = CompositeTestFactory.evaluationFunction {
@@ -133,13 +134,13 @@ class OrTest {
                 result = EvaluationResult.WARN,
                 recoverable = true,
                 warnMessages = setOf(StaticMessage("warn 1")),
-                inclusionMolecularEvents = setOf("inclusion event warn")
+                inclusionMolecularEvents = setOf(MolecularEvent("inclusion event warn"))
             )
         }
         val result: Evaluation = Or(listOf(pass, warn)).evaluate(TEST_PATIENT)
         assertEvaluation(EvaluationResult.PASS, result)
         assertThat(result.inclusionMolecularEvents).hasSize(1)
-        assertThat(result.inclusionMolecularEvents).containsOnly("inclusion event pass")
+        assertThat(result.inclusionMolecularEvents).containsOnly(MolecularEvent("inclusion event pass"))
     }
 
     @Test
@@ -149,7 +150,7 @@ class OrTest {
                 result = EvaluationResult.UNDETERMINED,
                 recoverable = true,
                 undeterminedMessages = setOf(StaticMessage("undetermined 1")),
-                inclusionMolecularEvents = setOf("inclusion event undetermined")
+                inclusionMolecularEvents = setOf(MolecularEvent("inclusion event undetermined"))
             )
         }
         val warn = CompositeTestFactory.evaluationFunction {
@@ -157,13 +158,13 @@ class OrTest {
                 result = EvaluationResult.WARN,
                 recoverable = true,
                 warnMessages = setOf(StaticMessage("warn 1")),
-                inclusionMolecularEvents = setOf("inclusion event warn")
+                inclusionMolecularEvents = setOf(MolecularEvent("inclusion event warn"))
             )
         }
         val result: Evaluation = Or(listOf(undetermined, warn)).evaluate(TEST_PATIENT)
         assertThat(result.inclusionMolecularEvents).hasSize(2)
-        assertThat(result.inclusionMolecularEvents).contains("inclusion event undetermined")
-        assertThat(result.inclusionMolecularEvents).contains("inclusion event warn")
+        assertThat(result.inclusionMolecularEvents).contains(MolecularEvent("inclusion event undetermined"))
+        assertThat(result.inclusionMolecularEvents).contains(MolecularEvent("inclusion event warn"))
     }
 
     @Test
@@ -180,7 +181,7 @@ class OrTest {
             Evaluation(
                 result = EvaluationResult.UNDETERMINED,
                 recoverable = true,
-                inclusionMolecularEvents = setOf("inclusion event"),
+                inclusionMolecularEvents = setOf(MolecularEvent("inclusion event")),
                 isMissingMolecularResultForEvaluation = true
             )
         }

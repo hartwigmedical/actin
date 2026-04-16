@@ -196,7 +196,7 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 references = setOf("I-01"),
                 function = EligibilityFunction(rule = EligibilityRule.MMR_DEFICIENT.name, parameters = emptyList())
-            ) to unrecoverable(EvaluationResult.PASS, "MSI", "MSI")
+            ) to unrecoverable(EvaluationResult.PASS, "MSI", MolecularEvent("MSI"))
         )
     }
 
@@ -208,7 +208,7 @@ object TestTreatmentMatchFactory {
                     rule = EligibilityRule.AMPLIFICATION_OF_GENE_X.name,
                     parameters = listOf(GeneParameter("EGFR"))
                 )
-            ) to unrecoverable(EvaluationResult.PASS, "EGFR amp", "EGFR amp")
+            ) to unrecoverable(EvaluationResult.PASS, "EGFR amp", MolecularEvent("EGFR amp"))
         )
     }
 
@@ -258,7 +258,7 @@ object TestTreatmentMatchFactory {
             Eligibility(
                 references = setOf("I-01"),
                 function = EligibilityFunction(rule = EligibilityRule.MMR_DEFICIENT.name, parameters = emptyList()),
-            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI with biallelic drivers in MMR genes", "MSI")
+            ) to unrecoverable(EvaluationResult.PASS, "Tumor is MSI with biallelic drivers in MMR genes", MolecularEvent("MSI"))
         )
     }
 
@@ -291,7 +291,7 @@ object TestTreatmentMatchFactory {
     private fun unrecoverable(
         result: EvaluationResult,
         message: String? = null,
-        inclusionMolecularEvent: String? = null,
+        inclusionMolecularEvent: MolecularEvent? = null,
         isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
         val base = Evaluation(

@@ -149,7 +149,9 @@
             "result": "PASS",
             "recoverable": false,
             "inclusionMolecularEvents": [
-              "KRAS G12D"
+              {
+                "event": "KRAS G12D"
+              }
             ],
             "exclusionMolecularEvents": [],
             "passMessages": [
@@ -183,7 +185,9 @@
             "recoverable": false,
             "inclusionMolecularEvents": [],
             "exclusionMolecularEvents": [
-              "PD-L1 < 50.0"
+              {
+                "event": "PD-L1 < 50.0"
+              }
             ],
             "passMessages": [],
             "warnMessages": [],

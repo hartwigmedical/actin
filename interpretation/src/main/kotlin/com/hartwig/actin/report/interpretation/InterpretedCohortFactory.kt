@@ -3,6 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.CohortMetadata
 import com.hartwig.actin.datamodel.trial.Eligibility
@@ -104,11 +105,11 @@ object InterpretedCohortFactory {
         }.sortedWith(InterpretedCohortComparator())
     }
 
-    private fun extractInclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {
+    private fun extractInclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<MolecularEvent> {
         return evaluationMap.values.flatMap(Evaluation::inclusionMolecularEvents).toSet()
     }
 
-    private fun extractExclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {
+    private fun extractExclusionEvents(evaluationMap: Map<Eligibility, Evaluation>): Set<MolecularEvent> {
         return evaluationMap.values.flatMap(Evaluation::exclusionMolecularEvents).toSet()
     }
 
