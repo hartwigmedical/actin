@@ -179,6 +179,12 @@ class ValueComparisonTest {
     }
 
     @Test
+    fun `evaluateBoundsVersusMinValue with inclusive upper bound equal to min should be undetermined`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, 2.0, 2.0, true))
+            .isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @Test
     fun `evaluateBoundsVersusMaxValue with exclusive upper bound equal to max should pass`() {
         assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, 2.0, 2.0, null))
             .isEqualTo(EvaluationResult.PASS)
@@ -194,6 +200,12 @@ class ValueComparisonTest {
     fun `evaluateBoundsVersusMaxValue with exclusive lower bound equal to max should fail`() {
         assertThat(ValueComparison.evaluateBoundsVersusMaxValue(2.0, null, 2.0, false))
             .isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with inclusive lower bound equal to max should be undetermined`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(2.0, null, 2.0, true))
+            .isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     private fun evaluateAgainstMinValue2(value: Double, comparator: String?): EvaluationResult {
