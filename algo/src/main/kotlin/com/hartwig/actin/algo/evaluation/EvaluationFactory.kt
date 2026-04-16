@@ -21,12 +21,8 @@ object EvaluationFactory {
         return pass(message, inclusionEvents.toMolecularEvents(), recoverable)
     }
 
-    fun pass(message: String, recoverable: Boolean = false): Evaluation {
-        return pass(message, emptySet(), recoverable)
-    }
-
     fun recoverablePass(message: String): Evaluation {
-        return pass(message, emptySet(),true)
+        return pass(message, true)
     }
 
     fun fail(message: String, recoverable: Boolean = false, isMissingMolecularResultForEvaluation: Boolean = false): Evaluation {
@@ -85,7 +81,7 @@ object EvaluationFactory {
         message: String,
         isMissingMolecularResultForEvaluation: Boolean = false
     ): Evaluation {
-        return warn(message, emptySet<MolecularEvent>(), isMissingMolecularResultForEvaluation)
+        return warn(message, emptySet(), isMissingMolecularResultForEvaluation)
     }
 
     private fun messages(message: String) = setOf(StaticMessage(message))
