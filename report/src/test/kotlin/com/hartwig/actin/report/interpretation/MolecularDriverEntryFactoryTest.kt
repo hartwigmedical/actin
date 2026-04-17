@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -50,7 +51,7 @@ class MolecularDriverEntryFactoryTest {
         val test = createMolecularTestWithNonReportableDriverWithEvidence(TestClinicalEvidenceFactory.createEmpty())
         val driverToFind = test.drivers.viruses.iterator().next().event
 
-        assertThat(createFactoryWithCohortsForEvent(test, driverToFind).create()).hasSize(1)
+        assertThat(createFactoryWithCohortsForEvent(test, MolecularEvent(driverToFind)).create()).hasSize(1)
     }
 
     @Test
@@ -78,7 +79,7 @@ class MolecularDriverEntryFactoryTest {
 
         val firstVariant = test.drivers.variants.iterator().next()
         val driverToFind = firstVariant.event
-        val entry = createFactoryWithCohortsForEvent(test, driverToFind).create()
+        val entry = createFactoryWithCohortsForEvent(test, MolecularEvent(driverToFind)).create()
             .find { it.description.startsWith(driverToFind) }
             ?: throw IllegalStateException(
                 "Could not find molecular driver entry starting with driver: $driverToFind"
@@ -395,7 +396,7 @@ class MolecularDriverEntryFactoryTest {
         )
     }
 
-    private fun createFactoryWithCohortsForEvent(molecular: MolecularTest, event: String): MolecularDriverEntryFactory {
+    private fun createFactoryWithCohortsForEvent(molecular: MolecularTest, event: MolecularEvent): MolecularDriverEntryFactory {
         val cohorts = listOf(
             interpretedCohort(acronym = "trial 1", molecularInclusionEvents = setOf(event), isPotentiallyEligible = true, isOpen = true),
             interpretedCohort(acronym = "trial 2", molecularInclusionEvents = setOf(event), isPotentiallyEligible = true, isOpen = false)

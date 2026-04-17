@@ -7,6 +7,7 @@ import com.hartwig.actin.algo.evaluation.molecular.PDL1EvaluationFunctions.evalu
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -85,7 +86,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.minus(0.5), scoreUpperBound = PDL1_REFERENCE.minus(0.5)))
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
         assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.inclusionMolecularEvents).containsExactly("PD-L1 <= 2.0")
+        assertThat(evaluation.inclusionMolecularEvents).containsExactly(MolecularEvent("PD-L1 <= 2.0"))
     }
 
     @Test
@@ -147,7 +148,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE, scoreUpperBound = PDL1_REFERENCE))
         val evaluation = evaluatePDL1byIhc(record, MEASURE, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
         assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.inclusionMolecularEvents).containsExactly("PD-L1 >= 2.0")
+        assertThat(evaluation.inclusionMolecularEvents).containsExactly(MolecularEvent("PD-L1 >= 2.0"))
     }
 
     @Test

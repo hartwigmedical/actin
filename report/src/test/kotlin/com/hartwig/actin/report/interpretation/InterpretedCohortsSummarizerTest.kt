@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
@@ -78,7 +79,7 @@ class InterpretedCohortsSummarizerTest {
             acronym = name,
             isPotentiallyEligible = isEligible,
             isOpen = isOpen,
-            molecularInclusionEvents = setOf(event),
+            molecularInclusionEvents = setOf(MolecularEvent(event)),
             locations = locations
         )
     }

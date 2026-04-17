@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
@@ -61,13 +62,13 @@ class AndTest {
         val function3: EvaluationFunction = CompositeTestFactory.create(EvaluationResult.PASS, includeMolecular = true, index = 3)
         val result: Evaluation = And(listOf(function1, function2, function3)).evaluate(TEST_PATIENT)
         assertThat(result.inclusionMolecularEvents).hasSize(3)
-        assertThat(result.inclusionMolecularEvents).contains("inclusion event 1")
-        assertThat(result.inclusionMolecularEvents).contains("inclusion event 2")
-        assertThat(result.inclusionMolecularEvents).contains("inclusion event 3")
+        assertThat(result.inclusionMolecularEvents).contains(MolecularEvent("inclusion event 1"))
+        assertThat(result.inclusionMolecularEvents).contains(MolecularEvent("inclusion event 2"))
+        assertThat(result.inclusionMolecularEvents).contains(MolecularEvent("inclusion event 3"))
         assertThat(result.exclusionMolecularEvents).hasSize(3)
-        assertThat(result.exclusionMolecularEvents).contains("exclusion event 1")
-        assertThat(result.exclusionMolecularEvents).contains("exclusion event 2")
-        assertThat(result.exclusionMolecularEvents).contains("exclusion event 3")
+        assertThat(result.exclusionMolecularEvents).contains(MolecularEvent("exclusion event 1"))
+        assertThat(result.exclusionMolecularEvents).contains(MolecularEvent("exclusion event 2"))
+        assertThat(result.exclusionMolecularEvents).contains(MolecularEvent("exclusion event 3"))
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.interpretation
 
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.trial.TrialPhase
 
 object InterpretedCohortTestFactory {
@@ -14,7 +15,7 @@ object InterpretedCohortTestFactory {
         locations: Set<String> = emptySet(),
         isOpen: Boolean = false,
         hasSlotsAvailable: Boolean = false,
-        molecularInclusionEvents: Iterable<String> = emptySet(),
+        molecularInclusionEvents: Iterable<MolecularEvent> = emptySet(),
         isPotentiallyEligible: Boolean = false,
         isMissingMolecularResultForEvaluation: Boolean = false,
         isIgnore: Boolean = false,

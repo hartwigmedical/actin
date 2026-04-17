@@ -3,6 +3,7 @@ package com.hartwig.actin.report.interpretation
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory.createTestCohortMetadata
 import com.hartwig.actin.datamodel.algo.TrialMatch
@@ -44,7 +45,7 @@ class InterpretedCohortFactoryTest {
 
         val trial1cohortA = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort A")
         assertThat(trial1cohortA.molecularInclusionEvents).isNotEmpty
-        assertThat(trial1cohortA.molecularInclusionEvents).containsExactly("MSI")
+        assertThat(trial1cohortA.molecularInclusionEvents).containsExactly(MolecularEvent("MSI"))
         assertThat(trial1cohortA.isPotentiallyEligible).isTrue
         assertThat(trial1cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortA.isOpen).isTrue
@@ -56,7 +57,7 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.locations).isEqualTo(setOf("Antoni van Leeuwenhoek"))
 
         val trial1cohortB = findByAcronymAndCohort(cohorts, "TEST-1", "Cohort B")
-        assertThat(trial1cohortB.molecularInclusionEvents).containsExactly("EGFR amp")
+        assertThat(trial1cohortB.molecularInclusionEvents).containsExactly(MolecularEvent("EGFR amp"))
         assertThat(trial1cohortB.isPotentiallyEligible).isTrue
         assertThat(trial1cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortB.isOpen).isTrue
@@ -81,7 +82,7 @@ class InterpretedCohortFactoryTest {
 
         val trial2cohortA = findByAcronymAndCohort(cohorts, "TEST-2", "Cohort A")
         assertThat(trial2cohortA.molecularInclusionEvents).isNotEmpty
-        assertThat(trial2cohortA.molecularInclusionEvents).containsExactly("MSI")
+        assertThat(trial2cohortA.molecularInclusionEvents).containsExactly(MolecularEvent("MSI"))
         assertThat(trial2cohortA.isPotentiallyEligible).isTrue
         assertThat(trial2cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial2cohortA.isOpen).isTrue
