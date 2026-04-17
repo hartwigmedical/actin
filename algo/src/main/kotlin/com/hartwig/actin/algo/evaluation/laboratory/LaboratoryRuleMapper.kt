@@ -90,7 +90,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD),
             EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
             EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y to hasCreatinineClearanceBetweenValuesCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
-            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientMeasuredCreatinineClearanceCreator(),
+            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.CREATININE_CLEARANCE_24H),
             EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP),
             EligibilityRule.HAS_TROPONIN_I_OR_T_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.HIGH_SENSITIVITY_TROPONIN_T),
             EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE),
@@ -306,10 +306,6 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             )
             And(listOf(minFunction, maxFunction))
         }
-    }
-
-    private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
-        return { HasSufficientMeasuredCreatinineClearance() }
     }
 
     private fun hasPotentialLeukocytosisCreator(): FunctionCreator {
