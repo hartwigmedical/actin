@@ -8,3 +8,5 @@ target
 
 # Ignore test report
 ACTN01029999.actin.pdf
+
+build-agent-docker/.m2/
