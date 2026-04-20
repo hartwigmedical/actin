@@ -160,7 +160,7 @@ class IsEligibleForOnLabelTreatmentTest {
         standardOfCareCannotBeEvaluatedForPatient()
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             tumor = nsclcTumor,
-            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreValue = 55.0, scoreValueUnit = "%")),
+            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreLowerBound = 55.0, scoreValueUnit = "%")),
             oncologicalHistory = emptyList()
         )
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingPembrolizumab.evaluate(record))
@@ -186,7 +186,7 @@ class IsEligibleForOnLabelTreatmentTest {
         standardOfCareCannotBeEvaluatedForPatient()
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             tumor = nsclcTumor,
-            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreValue = 30.0, scoreValueUnit = "%")),
+            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreLowerBound = 30.0, scoreUpperBound = 30.0, scoreValueUnit = "%")),
             oncologicalHistory = emptyList()
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))

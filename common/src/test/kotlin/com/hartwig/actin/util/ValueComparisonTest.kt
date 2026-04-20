@@ -4,6 +4,8 @@ import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.CsvSource
 
 class ValueComparisonTest {
 
@@ -82,6 +84,128 @@ class ValueComparisonTest {
     @Test
     fun `Should return false for empty collection`() {
         assertThat(ValueComparison.stringCaseInsensitivelyMatchesQueryCollection("HAYneedleSTACK", emptyList())).isFalse()
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "4.0, 8.0",
+        "2.0, 2.0",
+        "3.0, NULL",
+        nullValues = ["NULL"],
+        )
+    fun `evaluateBoundsVersusMinValue should pass when inclusive lower bound is at or above min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.PASS)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "0.0, 1.0",
+        "NULL, 1.0",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMinValue should fail when inclusive upper bound is below min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue should be undetermined when bounds are null`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, null, 2.0, null)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "1.0, 3.0",
+        "NULL, 3.0",
+        "1.0, NULL",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMinValue should be undetermined when inclusive range includes min value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "1.0, 1.0",
+        "2.0, 2.0",
+        "NULL, 1.0",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMaxValue should pass when inclusive upper bound is at or below max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.PASS)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "4.0, 4.0",
+        "3.0, NULL",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMaxValue should fail when inclusive lower bound is above max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue should be undetermined when bounds are null`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, null, 2.0, null)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @ParameterizedTest
+    @CsvSource(
+        "1.0, 3.0",
+        "NULL, 3.0",
+        "1.0, NULL",
+        nullValues = ["NULL"]
+    )
+    fun `evaluateBoundsVersusMaxValue should be undetermined when inclusive range includes max value`(lower: Double?, upper: Double?) {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(lower, upper, 2.0, true)).isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue with exclusive lower bound equal to min should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(2.0, null, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue with exclusive lower bound above min should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(3.0, null, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue with exclusive upper bound equal to min should fail`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, 2.0, 2.0, false))
+            .isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMinValue with inclusive upper bound equal to min should be undetermined`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMinValue(null, 2.0, 2.0, true))
+            .isEqualTo(EvaluationResult.UNDETERMINED)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with exclusive upper bound equal to max should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, 2.0, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with exclusive upper bound below max should pass`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(null, 1.0, 2.0, null))
+            .isEqualTo(EvaluationResult.PASS)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with exclusive lower bound equal to max should fail`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(2.0, null, 2.0, false))
+            .isEqualTo(EvaluationResult.FAIL)
+    }
+
+    @Test
+    fun `evaluateBoundsVersusMaxValue with inclusive lower bound equal to max should be undetermined`() {
+        assertThat(ValueComparison.evaluateBoundsVersusMaxValue(2.0, null, 2.0, true))
+            .isEqualTo(EvaluationResult.UNDETERMINED)
     }
 
     private fun evaluateAgainstMinValue2(value: Double, comparator: String?): EvaluationResult {

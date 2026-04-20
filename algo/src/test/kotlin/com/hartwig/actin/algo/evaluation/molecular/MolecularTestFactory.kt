@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.tumor.IhcTestFactory
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -35,15 +36,17 @@ internal object MolecularTestFactory {
         measure: String? = null,
         scoreText: String? = null,
         impliesIndeterminate: Boolean = false,
-        scoreValue: Double? = null,
-        scoreValuePrefix: String? = null
+        scoreLowerBound: Double? = null,
+        scoreUpperBound: Double? = null,
+        scoreValueUnit: String? = null
     ): IhcTest {
-        return IhcTest(
+        return IhcTestFactory.create(
             item = item,
             measure = measure,
             scoreText = scoreText,
-            scoreValuePrefix = scoreValuePrefix,
-            scoreValue = scoreValue,
+            scoreLowerBound = scoreLowerBound,
+            scoreUpperBound = scoreUpperBound,
+            scoreValueUnit = scoreValueUnit,
             impliesPotentialIndeterminateStatus = impliesIndeterminate
         )
     }

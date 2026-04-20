@@ -187,8 +187,10 @@
       "item": "ERBB2",
       "measure": null,
       "scoreText": null,
-      "scoreValuePrefix": null,
-      "scoreValue": 3,
+      "scoreLowerBound": 3,
+      "scoreUpperBound": 3,
+      "isLowerBoundInclusive": null,
+      "isUpperBoundInclusive": null,
       "scoreValueUnit": "+",
       "impliesPotentialIndeterminateStatus": false
     }

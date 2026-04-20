@@ -23,20 +23,27 @@ object IhcTestClassificationFunctions {
         positiveLowerBound: Int,
         positiveUpperBound: Int
     ): IhcTestResult {
-        val scoreValue = test.scoreValue?.toInt()
+        val scoreLowerBound = test.scoreLowerBound?.toInt()
+        val scoreUpperBound = test.scoreUpperBound?.toInt()
+        val unitMatches = test.scoreValueUnit == unit
+
+        fun bothBoundsInRange(range: IntRange): Boolean {
+            return scoreLowerBound in range && scoreUpperBound in range
+        }
+
         return when {
             test.impliesPotentialIndeterminateStatus -> IhcTestResult.UNKNOWN
 
-            test.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS || scoreValue == 0 ||
-                    (scoreValue in 0 until negativeUpperBound && test.scoreValueUnit == unit) -> IhcTestResult.NEGATIVE
+            test.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS || scoreUpperBound == 0 ||
+                    (scoreUpperBound in 0 until negativeUpperBound && unitMatches) -> IhcTestResult.NEGATIVE
 
             test.scoreText?.lowercase() in IhcTestEvaluationConstants.LOW_TERMS ||
-                    (scoreValue in lowLowerBound..lowUpperBound && test.scoreValueUnit == unit) -> IhcTestResult.LOW
+                    (bothBoundsInRange(lowLowerBound..lowUpperBound) && unitMatches) -> IhcTestResult.LOW
 
             test.scoreText?.lowercase() in IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS ||
-                    (scoreValue in positiveLowerBound..positiveUpperBound && test.scoreValueUnit == unit) -> IhcTestResult.POSITIVE
+                    (scoreLowerBound in positiveLowerBound..positiveUpperBound && unitMatches) -> IhcTestResult.POSITIVE
 
-            scoreValue in negativeUpperBound until positiveLowerBound && test.scoreValueUnit == unit -> IhcTestResult.BORDERLINE
+            bothBoundsInRange(negativeUpperBound until positiveLowerBound) && unitMatches -> IhcTestResult.BORDERLINE
 
             else -> IhcTestResult.UNKNOWN
         }
