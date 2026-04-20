@@ -1,5 +1,12 @@
 package com.hartwig.actin.trial
 
+import com.hartwig.actin.utils.monad.Either
+import com.hartwig.actin.utils.monad.flatMap
+import com.hartwig.actin.utils.monad.getOrNull
+import com.hartwig.actin.utils.monad.left
+import com.hartwig.actin.utils.monad.leftOrNull
+import com.hartwig.actin.utils.monad.partitionAndJoin
+import com.hartwig.actin.utils.monad.right
 import com.hartwig.actin.datamodel.trial.Cohort
 import com.hartwig.actin.datamodel.trial.CohortAvailability
 import com.hartwig.actin.datamodel.trial.CohortMetadata

@@ -28,6 +28,7 @@
 
         <actin-datamodel.version>3.0.0</actin-datamodel.version>
         <actin-treatment-database.version>0.3.2</actin-treatment-database.version>
+        <actin-utils.version>1.3.0</actin-utils.version>
         <serve.version>8.6.0</serve.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <actin-transvar.version>1.2.0</actin-transvar.version>
@@ -205,6 +206,11 @@
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>actin-transvar</artifactId>
                 <version>${actin-transvar.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
+                <artifactId>actin-utils</artifactId>
+                <version>${actin-utils.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig</groupId>
