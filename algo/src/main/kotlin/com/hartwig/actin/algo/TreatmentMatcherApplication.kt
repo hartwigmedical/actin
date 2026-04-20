@@ -14,10 +14,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFa
 import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.EligibilityFactory
 import com.hartwig.actin.trial.TrialIngestion
-import com.hartwig.actin.trial.getOrNull
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.system.exitProcess
+import com.hartwig.actin.utils.monad.getOrNull
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
@@ -25,6 +22,9 @@ import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
