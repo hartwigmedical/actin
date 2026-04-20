@@ -20,7 +20,6 @@ import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
-
 class ReporterApplication(private val config: ReporterConfig, private val doidModel: DoidModel) {
 
     fun run() {

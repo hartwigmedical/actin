@@ -44,8 +44,7 @@ data class ReporterConfig(
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, enables all options available in the report regardless of overrides")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(REPORT_DATE, true, "If set, sets fixed report date")
-            options.addOption(ENABLE_EXTENDED_MODE, "If set, sets enabled")
-            options.addOption(ITEXT_LICENSE_KEY, "File containing the itext license key")
+            options.addOption(ITEXT_LICENSE_KEY, "File containing the iText license key")
             return options
         }
 
