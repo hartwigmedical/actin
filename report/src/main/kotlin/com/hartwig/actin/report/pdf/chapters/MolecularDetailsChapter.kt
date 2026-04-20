@@ -160,7 +160,7 @@ class MolecularDetailsChapter(
         return molecularTests.mapNotNull { molecularTest ->
             val showImmunology = molecularTest.immunology != null && molecularTest.immunology?.isReliable == true
             if (showImmunology) {
-                val displayMode = if (molecularTest.hasSufficientQuality) ImmunologyDisplayMode.DETAILED_INLINE else ImmunologyDisplayMode.ALLELE_ONLY
+                val displayMode = if (molecularTest.hasSufficientQuality) ImmunologyDisplayMode.DETAILED_TABLE else ImmunologyDisplayMode.ALLELE_ONLY
                 ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
             } else null
         }
