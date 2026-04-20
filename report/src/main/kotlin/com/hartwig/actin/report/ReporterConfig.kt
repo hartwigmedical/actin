@@ -3,13 +3,13 @@ package com.hartwig.actin.report
 import com.hartwig.actin.configuration.OVERRIDE_YAML_ARGUMENT
 import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
+import java.time.LocalDate
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 import org.apache.logging.log4j.core.config.Configurator
-import java.time.LocalDate
 
 data class ReporterConfig(
     val patientJson: String,
@@ -18,7 +18,8 @@ data class ReporterConfig(
     val overrideYaml: String,
     val outputDirectory: String,
     val enableExtendedMode: Boolean,
-    val reportDate: LocalDate?
+    val reportDate: LocalDate?,
+    val itextLicenseKey: String?
 ) {
 
     companion object {
@@ -31,6 +32,7 @@ data class ReporterConfig(
         private const val ENABLE_EXTENDED_MODE = "enable_extended_mode"
         private const val LOG_DEBUG = "log_debug"
         private const val REPORT_DATE = "report_date"
+        private const val ITEXT_LICENSE_KEY = "itext_license_key"
 
         fun createOptions(): Options {
             val options = Options()
@@ -42,6 +44,8 @@ data class ReporterConfig(
             options.addOption(ENABLE_EXTENDED_MODE, false, "If set, enables all options available in the report regardless of overrides")
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(REPORT_DATE, true, "If set, sets fixed report date")
+            options.addOption(ENABLE_EXTENDED_MODE, "If set, sets enabled")
+            options.addOption(ITEXT_LICENSE_KEY, "File containing the itext license key")
             return options
         }
 
@@ -55,7 +59,7 @@ data class ReporterConfig(
             if (enableExtendedMode) {
                 LOGGER.info("Extended reporting mode has been enabled")
             }
-            
+
             return ReporterConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),
                 treatmentMatchJson = ApplicationConfig.nonOptionalFile(cmd, TREATMENT_MATCH_JSON),
@@ -63,7 +67,8 @@ data class ReporterConfig(
                 overrideYaml = ApplicationConfig.nonOptionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 enableExtendedMode = enableExtendedMode,
-                reportDate = cmd.getOptionValue(REPORT_DATE)?.let { LocalDate.parse(it) } 
+                reportDate = cmd.getOptionValue(REPORT_DATE)?.let { LocalDate.parse(it) },
+                itextLicenseKey = ApplicationConfig.optionalFile(cmd, ITEXT_LICENSE_KEY)
             )
         }
     }

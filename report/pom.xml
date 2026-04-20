@@ -38,6 +38,10 @@
             <artifactId>svg</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.itextpdf.licensing</groupId>
+            <artifactId>licensing-base</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jetbrains.lets-plot</groupId>
             <artifactId>lets-plot-image-export</artifactId>
         </dependency>
