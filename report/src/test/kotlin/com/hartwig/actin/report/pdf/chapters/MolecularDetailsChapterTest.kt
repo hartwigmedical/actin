@@ -61,11 +61,6 @@ class MolecularDetailsChapterTest {
     }
 
     @Test
-    fun `Should create chapter for STANDARD_WITH_PATHOLOGY config`() {
-        assertThat(createChapter(MolecularChapterType.STANDARD_WITH_PATHOLOGY)).isNotNull()
-    }
-
-    @Test
     fun `Should create chapter for STANDARD config`() {
         assertThat(createChapter(MolecularChapterType.STANDARD)).isNotNull()
     }
