@@ -90,7 +90,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
             EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD),
             EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
             EligibilityRule.HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y to hasCreatinineClearanceBetweenValuesCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
-            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.CREATININE_CLEARANCE_24H),
+            EligibilityRule.HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X to hasSufficientMeasuredCreatinineClearanceCreator(),
             EligibilityRule.HAS_BNP_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.NT_PRO_BNP),
             EligibilityRule.HAS_TROPONIN_I_OR_T_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.HIGH_SENSITIVITY_TROPONIN_T),
             EligibilityRule.HAS_TRIGLYCERIDE_MMOL_PER_L_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.TRIGLYCERIDE),
@@ -308,6 +308,30 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         }
     }
 
+    private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val minCreatinineClearance = function.param<DoubleParameter>(0).value
+
+            val directMeasuredCreatinineClearance = createLabEvaluator(
+                LabMeasurement.CREATININE_CLEARANCE_24H,
+                HasSufficientLabValue(minCreatinineClearance, LabMeasurement.CREATININE_CLEARANCE_24H, LabUnit.MILLILITERS_PER_MINUTE),
+                false
+            )
+
+            val calculatedFromDailyTotal = createMultiLabEvaluator(
+                setOf(LabMeasurement.CREATININE_24U, LabMeasurement.CREATININE),
+                HasSufficientMeasuredCreatinineClearance(minCreatinineClearance, MeasuredCreatinineClearanceMethod.DAILY_TOTAL),
+            )
+
+            val calculatedFromConcentration = createMultiLabEvaluator(
+                setOf(LabMeasurement.CREATININE_URINE, LabMeasurement.URINE_VOLUME_24H, LabMeasurement.CREATININE),
+                HasSufficientMeasuredCreatinineClearance(minCreatinineClearance, MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION),
+            )
+
+            Fallback(directMeasuredCreatinineClearance, Fallback(calculatedFromDailyTotal, calculatedFromConcentration))
+        }
+    }
+
     private fun hasPotentialLeukocytosisCreator(): FunctionCreator {
         return { createLabEvaluator(LabMeasurement.LEUKOCYTES_ABS, HasSufficientLabValueULN(1.0)) }
     }
@@ -364,6 +388,14 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         highestFirst: Boolean = true
     ): EvaluationFunction {
         return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate(), highestFirst)
+    }
+
+    private fun createMultiLabEvaluator(
+        measurements: Set<LabMeasurement>,
+        function: MultiLabEvaluationFunction,
+        requireSameDate: Boolean = true,
+    ): EvaluationFunction {
+        return MultiLabMeasurementEvaluator(measurements, function, minValidLabDate(), minPassLabDate(), requireSameDate)
     }
 
     private fun minValidLabDate(): LocalDate {
