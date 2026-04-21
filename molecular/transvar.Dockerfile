@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -fy \
     python2-dev \
     zlib1g-dev \
     libncurses5-dev \
-    openjdk-17-jre \
+    openjdk-21-jre \
     && locale-gen en_US.UTF-8 \
     && rm -rf /var/lib/apt/lists/*
 
