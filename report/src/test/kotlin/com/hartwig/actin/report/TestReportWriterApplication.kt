@@ -52,7 +52,7 @@ fun main() {
         molecularSummaryType = ReportContentType.COMPREHENSIVE,
         standardOfCareSummaryType = ReportContentType.NONE,
         trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
-        molecularChapterType = MolecularChapterType.STANDARD_WITH_PATHOLOGY,
+        molecularChapterType = MolecularChapterType.STANDARD,
         efficacyEvidenceChapterType = EfficacyEvidenceChapterType.NONE,
         clinicalChapterType = ClinicalChapterType.COMPLETE,
         trialMatchingChapterType = TrialMatchingChapterType.STANDARD_ALL_TRIALS,
