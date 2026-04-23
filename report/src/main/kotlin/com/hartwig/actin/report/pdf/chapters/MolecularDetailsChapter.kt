@@ -55,15 +55,10 @@ class MolecularDetailsChapter(
         addChapterTitle(document)
 
         if (configuration.molecularChapterType == MolecularChapterType.STANDARD ||
-            configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY ||
             configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
         ) {
             addMolecularDetails(document)
-            if (configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY ||
-                configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
-            ) {
-                addPathologyReport(document)
-            }
+            addPathologyReport(document)
         }
 
         if (configuration.molecularChapterType == MolecularChapterType.LONGITUDINAL ||
@@ -162,11 +157,10 @@ class MolecularDetailsChapter(
         keyWidth: Float,
         valueWidth: Float
     ): List<ImmunologyGenerator> {
-        val isStandardWithPathology = configuration.molecularChapterType == MolecularChapterType.STANDARD_WITH_PATHOLOGY
         return molecularTests.mapNotNull { molecularTest ->
-            val showImmunology = if (isStandardWithPathology) molecularTest.immunology?.isReliable == true else molecularTest.immunology != null && molecularTest.hasSufficientQuality
+            val showImmunology = molecularTest.immunology != null && molecularTest.immunology?.isReliable == true
             if (showImmunology) {
-                val displayMode = if (isStandardWithPathology) ImmunologyDisplayMode.DETAILED_INLINE else ImmunologyDisplayMode.DETAILED_TABLE
+                val displayMode = if (molecularTest.hasSufficientQuality) ImmunologyDisplayMode.DETAILED_TABLE else ImmunologyDisplayMode.ALLELE_ONLY
                 ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
             } else null
         }

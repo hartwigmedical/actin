@@ -11,7 +11,6 @@ enum class ReportContentType {
 
 enum class MolecularChapterType {
     STANDARD,
-    STANDARD_WITH_PATHOLOGY,
     LONGITUDINAL,
     STANDARD_AND_LONGITUDINAL
 }
