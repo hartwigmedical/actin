@@ -8,14 +8,17 @@ import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
+import com.itextpdf.licensing.base.LicenseKey
+import java.nio.file.Files
+import java.nio.file.Path
+import java.time.LocalDate
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
-import java.time.LocalDate
-import kotlin.system.exitProcess
 
 class ReporterApplication(private val config: ReporterConfig, private val doidModel: DoidModel) {
 
@@ -27,6 +30,11 @@ class ReporterApplication(private val config: ReporterConfig, private val doidMo
 
         LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
+
+        config.itextLicenseKey?.let { key ->
+            LOGGER.info("Loading iText license from {}", key)
+            LicenseKey.loadLicenseFile(Files.newInputStream(Path.of(key)))
+        }
 
         val configuration = if (config.enableExtendedMode) {
             LOGGER.info("Extended mode enabled. Using report configuration that includes all possible content")
