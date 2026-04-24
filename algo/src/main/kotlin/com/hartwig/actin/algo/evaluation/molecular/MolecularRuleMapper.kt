@@ -112,14 +112,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HER2_IHC_STATUS_IS_X to hasHER2ExpressionByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(),
-            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator("CPS"),
-            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator("CPS"),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("TPS", doidModel()),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator("TPS", doidModel()),
-            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("TAP"),
-            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator("TAP"),
-            EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("IC"),
-            EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator("TC"),
+            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(Pdl1Measure.CPS),
+            EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(Pdl1Measure.CPS),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TPS, doidModel()),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TPS, doidModel()),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TAP),
+            EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TAP),
+            EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.IC),
+            EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TC),
             EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to { HasAvailablePDL1Status() },
             EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to { HasPSMAPositivePETScan() },
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable() },
@@ -528,28 +528,28 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasSufficientPDL1ByMeasureByIhcCreator(measure: String? = null): FunctionCreator {
+    private fun hasSufficientPDL1ByMeasureByIhcCreator(measure: Pdl1Measure? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val minPDL1 = function.param<IntegerParameter>(0).value
             HasSufficientPDL1ByIhc(measure, minPDL1.toDouble())
         }
     }
 
-    private fun hasLimitedPDL1ByMeasureByIhcCreator(measure: String? = null): FunctionCreator {
+    private fun hasLimitedPDL1ByMeasureByIhcCreator(measure: Pdl1Measure? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPDL1 = function.param<IntegerParameter>(0).value
             HasLimitedPDL1ByIhc(measure, maxPDL1.toDouble())
         }
     }
 
-    private fun hasSufficientPDL1ByDoubleMeasureByIhcCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
+    private fun hasSufficientPDL1ByDoubleMeasureByIhcCreator(measure: Pdl1Measure, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val minPDL1 = function.param<DoubleParameter>(0).value
             HasSufficientPDL1ByIhc(measure, minPDL1, doidModel)
         }
     }
 
-    private fun hasLimitedPDL1ByDoubleMeasureByIhcCreator(measure: String, doidModel: DoidModel? = null): FunctionCreator {
+    private fun hasLimitedPDL1ByDoubleMeasureByIhcCreator(measure: Pdl1Measure, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPDL1 = function.param<DoubleParameter>(0).value
             HasLimitedPDL1ByIhc(measure, maxPDL1, doidModel)
