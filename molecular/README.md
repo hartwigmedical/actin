@@ -10,11 +10,18 @@ The scope of the ACTIN-Molecular interpreter application is as follows:
 
 ## Contents
 
+* [Maintenance Notes](#maintenance-notes)
 * [How to run ACTIN-molecular](#how-to-run-actin-molecular)
 * [Description of the ACTIN molecular datamodel](#actin-molecular-datamodel)
 * [Mapping of ORANGE results to ACTIN molecular test](#mapping-of-an-orange-result-to-an-actin-molecular-test)
 * [Mapping of other molecular results to ACTIN molecular test](#mapping-of-other-molecular-results-to-an-actin-molecular-test)
 * [Interpretation of drivers and annotation with treatment evidence and external trials](#interpretation-of-drivers-and-annotation-with-treatment-evidence-and-external-trials)
+
+## Maintenance Notes
+
+For production the project has a Docker container but that is based on `transvar.Dockerfile`. A typical task such as bumping the
+Java version will typically require modifications to the base `Dockerfile`, a manual push of the result and then a change of the
+`Dockerfile` to refer to the new base. The rest of the build is automated as usual.
 
 ## How to run ACTIN-Molecular
 
