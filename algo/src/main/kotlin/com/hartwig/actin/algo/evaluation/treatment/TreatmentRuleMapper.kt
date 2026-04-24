@@ -155,7 +155,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT_OF_TYPES_Y_AND_AT_LEAST_Z_CYCLES to hasProgressiveDiseaseFollowingTypedTreatmentsOfCategoryAndMinimumCyclesCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasProgressiveDiseaseFollowingSomeSystemicTreatmentsCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_TREATMENT_WITH_ANY_DRUG_X to hasProgressiveDiseaseFollowingTreatmentWithAnyDrugCreator(),
-            EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_FIRST_LINE_CATEGORY_X_OF_TYPES_Y_TREATMENT to hasProgressiveDiseaseFollowingFirstLineTreatmentWithCategoryOfTypesCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_FOR_AT_LEAST_A_WEEKS to hasProgressiveDiseaseFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksCreator(),
             EligibilityRule.HAS_ACQUIRED_RESISTANCE_TO_ANY_DRUG_X to hasAcquiredResistanceToSomeDrugCreator(),
             EligibilityRule.HAS_RADIOLOGICAL_PROGRESSIVE_DISEASE_FOLLOWING_AT_LEAST_X_TREATMENT_LINES to hasRadiologicalProgressionFollowingSomeTreatmentLinesCreator(),
@@ -956,15 +955,6 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val drugs = function.param<ManyDrugsParameter>(0).value
             HasHadPDFollowingTreatmentWithAnyDrug(drugs)
-        }
-    }
-
-    private fun hasProgressiveDiseaseFollowingFirstLineTreatmentWithCategoryOfTypesCreator(): FunctionCreator {
-        return { function: EligibilityFunction ->
-            function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
-            val category = function.param<TreatmentCategoryParameter>(0).value
-            val types = function.param<ManyTreatmentTypesParameter>(1).value
-            HasHadPDFollowingFirstLineTreatmentCategoryOfTypes(category, types)
         }
     }
 
