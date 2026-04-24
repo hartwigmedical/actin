@@ -46,9 +46,9 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
     }
 
     @Test
-    fun `Should fail when any query treatment name has all matches with known cycle count outside range`() {
+    fun `Should warn when any query treatment name has all matches with known cycle count outside range`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(
+            EvaluationResult.WARN, function.evaluate(
                 withTreatmentHistory(listOf(matchingPriorTreatment, testTreatmentWithWrongCycles, nonMatchingTreatment))
             )
         )
@@ -58,7 +58,7 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
     fun `Should fail when any query treatment name has no matching treatments in history`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
-                withTreatmentHistory(listOf(matchingPriorTreatment, testTreatmentWithWrongCycles, nonMatchingTreatment))
+                withTreatmentHistory(listOf(matchingPriorTreatment, nonMatchingTreatment))
             )
         )
     }

@@ -48,13 +48,13 @@ class HasHadTreatmentWithDrugAndCyclesTest {
     }
 
     @Test
-    fun `Should fail for therapy containing matching drug but not enough cycles`() {
+    fun `Should warn for therapy containing matching drug but not enough cycles`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT), numCycles = 1))
-        assertEvaluation(EvaluationResult.FAIL, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.WARN, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
-    fun `Should fail for maintenance and switch therapies containing matching drug but not enough cycles`() {
+    fun `Should warn for maintenance and switch therapies containing matching drug but not enough cycles`() {
         val matchingTreatmentStage = TreatmentTestFactory.treatmentStage(MATCHING_DRUG_TREATMENT, cycles = 1)
         val treatmentHistory = listOf(
             treatmentHistoryEntry(
@@ -62,7 +62,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
                 switchToTreatments = listOf(matchingTreatmentStage)
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.WARN, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 
     @Test

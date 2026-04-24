@@ -40,7 +40,7 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
         val messageEnd = " without PD and with at least $minCycles cycles"
 
         return when (evaluation) {
-            TreatmentEvaluation.FIRST_LINE_AND_MEETS_PD_AND_CYCLES -> {
+            TreatmentEvaluation.FIRST_LINE_WITHOUT_PD_AND_SUFFICIENT_CYCLES -> {
                 EvaluationFactory.pass(messageStartPositive + asFirstLine + messageEnd)
             }
 
@@ -62,6 +62,10 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
                 )
             }
 
+            TreatmentEvaluation.FIRST_LINE_WITHOUT_PD_AND_INSUFFICIENT_CYCLES -> {
+                EvaluationFactory.warn("$messageStartPositive$asFirstLine without PD but less than $minCycles cycles")
+            }
+
             TreatmentEvaluation.DOES_NOT_MEET_CRITERIA -> EvaluationFactory.fail(messageStartNegative + asFirstLine + messageEnd)
         }
     }
@@ -72,7 +76,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
         UNDETERMINED_IF_FIRST_LINE,
         UNDETERMINED_PD_STATUS,
         UNDETERMINED_CYCLES,
-        FIRST_LINE_AND_MEETS_PD_AND_CYCLES;
+        FIRST_LINE_WITHOUT_PD_AND_SUFFICIENT_CYCLES,
+        FIRST_LINE_WITHOUT_PD_AND_INSUFFICIENT_CYCLES;
 
         companion object {
             fun create(
@@ -82,11 +87,12 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
                 hasMinCycles: Boolean?
             ) = when {
                 hadUnclearFirstLineTrialTreatment -> HAS_HAD_UNCLEAR_TRIAL_TREATMENT
-                isFirstLine == false || hasPd == true || hasMinCycles == false -> DOES_NOT_MEET_CRITERIA
+                isFirstLine == false || hasPd == true -> DOES_NOT_MEET_CRITERIA
                 isFirstLine == null -> UNDETERMINED_IF_FIRST_LINE
                 hasPd == null -> UNDETERMINED_PD_STATUS
                 hasMinCycles == null -> UNDETERMINED_CYCLES
-                else -> FIRST_LINE_AND_MEETS_PD_AND_CYCLES
+                !hasMinCycles -> FIRST_LINE_WITHOUT_PD_AND_INSUFFICIENT_CYCLES
+                else -> FIRST_LINE_WITHOUT_PD_AND_SUFFICIENT_CYCLES
             }
         }
     }

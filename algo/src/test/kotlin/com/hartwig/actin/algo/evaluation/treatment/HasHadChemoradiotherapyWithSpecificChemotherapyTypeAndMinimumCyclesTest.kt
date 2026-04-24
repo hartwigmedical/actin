@@ -34,13 +34,13 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
     }
 
     @Test
-    fun `Should fail for matching treatment with insufficient cycles`() {
+    fun `Should warn for matching treatment with insufficient cycles`() {
         val matchingTreatment = TreatmentHistoryEntry(
             treatments = setOf(chemotherapy, radiotherapy),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = minCycles - 1)
         )
         val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
-        assertResultForPatient(EvaluationResult.FAIL, matchingType, record)
+        assertResultForPatient(EvaluationResult.WARN, matchingType, record)
     }
 
     @Test
