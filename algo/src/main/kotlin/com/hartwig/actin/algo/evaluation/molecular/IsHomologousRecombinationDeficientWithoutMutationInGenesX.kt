@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import com.hartwig.actin.molecular.util.GeneConstants
 
 class IsHomologousRecombinationDeficientWithoutMutationInGenesX(private val genesToFind: Set<String>) :
@@ -14,6 +15,7 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesX(private val gene
 
         with(HomologousRecombinationDeficiencyGeneSummary.createForDrivers(test.drivers)) {
             val genesToFindWithMutation = genesInGenesToFind(hrdGenesWithBiallelicDriver + hrdGenesWithNonBiallelicDriver)
+            val inclusionEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
 
             return when {
                 isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() && genesToFindWithMutation.isEmpty() -> {
@@ -41,15 +43,21 @@ class IsHomologousRecombinationDeficientWithoutMutationInGenesX(private val gene
                 }
 
                 hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn("Tumor is HRD but with only non-biallelic drivers in HR genes")
+                    EvaluationFactory.warn(
+                        "Tumor is HRD but with only non-biallelic drivers in HR genes",
+                        inclusionEvents = inclusionEvents
+                    )
                 }
 
                 hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() && !genesToFind.containsAll(GeneConstants.HR_GENES) -> {
-                    EvaluationFactory.warn("Tumor is HRD but without drivers in HR genes")
+                    EvaluationFactory.warn("Tumor is HRD but without drivers in HR genes", inclusionEvents = inclusionEvents)
                 }
 
                 else -> {
-                    EvaluationFactory.pass("Tumor is HRD without any variants in ${Format.concatWithCommaAndOr(genesToFind)}")
+                    EvaluationFactory.pass(
+                        "Tumor is HRD without any variants in ${Format.concatWithCommaAndOr(genesToFind)}",
+                        inclusionEvents = inclusionEvents
+                    )
                 }
             }
         }
