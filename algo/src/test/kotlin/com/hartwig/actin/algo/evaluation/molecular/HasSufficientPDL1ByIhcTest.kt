@@ -5,13 +5,11 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-private val MEASURE = PDL1Measure.TPS
-
 class HasSufficientPDL1ByIhcTest {
 
     private val minPdl1 = 2.0
-    private val function = HasSufficientPDL1ByIhc(MEASURE, minPdl1)
-    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = MEASURE.name)
+    private val function = HasSufficientPDL1ByIhc(Pdl1Measure.TPS, minPdl1)
+    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = "TPS")
 
     @Test
     fun `Should pass when test value is above min`() {
