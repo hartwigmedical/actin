@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 
 class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(
     private val genesToFind: Set<String>
@@ -41,6 +42,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
             addToWarnEvaluations(warnEvaluations, "homozygous disruption", genesInGenesToFind(hrdGenesWithHomozygousDisruption))
             addToWarnEvaluations(warnEvaluations, "non-homozygous disruption", genesInGenesToFind(hrdGenesWithNonHomozygousDisruption))
 
+            val inclusionEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
+
             return when {
                 isHRD == null && hrdGenesWithBiallelicDriver.isNotEmpty() -> {
                     EvaluationFactory.undetermined(
@@ -60,7 +63,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     EvaluationFactory.undetermined("Unknown HRD status", isMissingMolecularResultForEvaluation = true)
                 }
 
-                !isHRD ->  EvaluationFactory.fail("Tumor is not HRD")
+                !isHRD -> EvaluationFactory.fail("Tumor is not HRD")
 
                 genesToFindWithBiallelicCav.isNotEmpty() || genesToFindWithNonBiallelicCav.isNotEmpty() -> {
                     EvaluationFactory.fail(
@@ -74,19 +77,28 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 }
 
                 warnEvaluations.isNotEmpty() -> {
-                    warnEvaluation(warnEvaluations)
+                    warnEvaluation(warnEvaluations, inclusionEvents)
                 }
 
                 hrdGenesWithNonBiallelicDriver.isNotEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn("Tumor is HRD but with only non-biallelic drivers in HR genes")
+                    EvaluationFactory.warn(
+                        "Tumor is HRD but with only non-biallelic drivers in HR genes",
+                        inclusionEvents = inclusionEvents
+                    )
                 }
 
                 hrdGenesWithNonBiallelicDriver.isEmpty() && hrdGenesWithBiallelicDriver.isEmpty() -> {
-                    EvaluationFactory.warn("Tumor is HRD but without drivers in HR genes")
+                    EvaluationFactory.warn(
+                        "Tumor is HRD but without drivers in HR genes",
+                        inclusionEvents = inclusionEvents
+                    )
                 }
 
                 else -> {
-                    EvaluationFactory.pass("Tumor is HRD without any variants in ${concat(genesToFind)}")
+                    EvaluationFactory.pass(
+                        "Tumor is HRD without any variants in ${concat(genesToFind)}",
+                        inclusionEvents = inclusionEvents
+                    )
                 }
             }
         }
@@ -102,7 +114,10 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
         }
     }
 
-    private fun warnEvaluation(driverTypeInFoundGenes: Set<String>): Evaluation {
-        return EvaluationFactory.warn("Tumor is HRD with ${concat(driverTypeInFoundGenes)} which could be pathogenic")
+    private fun warnEvaluation(driverTypeInFoundGenes: Set<String>, inclusionEvents: Set<String>): Evaluation {
+        return EvaluationFactory.warn(
+            "Tumor is HRD with ${concat(driverTypeInFoundGenes)} which could be pathogenic",
+            inclusionEvents = inclusionEvents
+        )
     }
 }
