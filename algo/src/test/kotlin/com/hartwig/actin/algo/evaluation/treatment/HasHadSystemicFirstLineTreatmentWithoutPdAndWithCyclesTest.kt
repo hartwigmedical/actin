@@ -67,12 +67,12 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
     }
 
     @Test
-    fun `Should fail when correct treatment is first line but with insufficient cycles`() {
+    fun `Should warn when correct treatment is first line without PD but with insufficient cycles`() {
         assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.WARN,
             function.evaluate(
                 withTreatmentHistory(
-                    listOf(MATCHING_HISTORY_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(cycles = MIN_CYCLES - 1)))
+                    listOf(MATCHING_HISTORY_ENTRY.copy(treatmentHistoryDetails = MATCHING_HISTORY_DETAILS.copy(cycles = MIN_CYCLES - 1)))
                 )
             )
         )

@@ -43,6 +43,18 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 )
             }
 
+            evaluationsByResult.containsKey(EvaluationResult.WARN) -> {
+                val warnEvaluations = evaluationsByResult[EvaluationResult.WARN]!!
+                Evaluation(
+                    result = EvaluationResult.WARN,
+                    recoverable = false,
+                    warnMessages = getMessagesForEvaluations(
+                        warnEvaluations,
+                        Evaluation::warnMessages
+                    )
+                )
+            }
+
             evaluationsByResult.containsKey(EvaluationResult.PASS) && evaluationsByResult.size == 1 -> {
                 val passEvaluations = evaluationsByResult[EvaluationResult.PASS]!!
                 Evaluation(
@@ -69,7 +81,7 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 when (it.treatmentHistoryDetails?.cycles) {
                     null -> EvaluationResult.UNDETERMINED
                     in minCycles..maxCycles -> EvaluationResult.PASS
-                    else -> EvaluationResult.FAIL
+                    else -> EvaluationResult.WARN
                 }
             }
         return if (matchingHistoryEntries.isEmpty()) {
@@ -87,12 +99,12 @@ class HasHadCombinedTreatmentNamesWithCycles(
                 )
             )
         } else {
-            EvaluationFactory.fail(
+            EvaluationFactory.warn(
                 String.format(
                     "Matching treatments did not have between %d and %d cycles: %s",
                     minCycles,
                     maxCycles,
-                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.FAIL]!!, true)
+                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.WARN]!!, true)
                 )
             )
         }

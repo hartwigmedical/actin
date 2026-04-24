@@ -29,7 +29,7 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
             .mapValues { entry -> entry.value.flatten().toSet() }
 
         val (drugsMatchingCycles, drugsWithUnknownCycles, drugsNotMatchingCycles) =
-            listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED, EvaluationResult.FAIL).map(drugsByEvaluationResult::get)
+            listOf(EvaluationResult.PASS, EvaluationResult.UNDETERMINED, EvaluationResult.WARN).map(drugsByEvaluationResult::get)
 
         return when {
             drugsMatchingCycles != null -> {
@@ -49,7 +49,7 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
             }
 
             drugsNotMatchingCycles != null -> {
-                EvaluationFactory.fail(
+                EvaluationFactory.warn(
                     "Has received treatments with ${concatItemsWithAnd(drugsNotMatchingCycles)} " +
                             "but not at least $minCycles cycles"
                 )
@@ -70,7 +70,7 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
                 minCycles == null -> EvaluationResult.PASS
                 cycles == null -> EvaluationResult.UNDETERMINED
                 cycles >= minCycles -> EvaluationResult.PASS
-                else -> EvaluationResult.FAIL
+                else -> EvaluationResult.WARN
             }
         }
 

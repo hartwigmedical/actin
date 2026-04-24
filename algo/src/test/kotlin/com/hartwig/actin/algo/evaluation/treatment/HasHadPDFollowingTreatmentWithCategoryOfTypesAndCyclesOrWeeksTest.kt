@@ -112,11 +112,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     @Test
-    fun `Should fail for right category type and stop reason PD when cycles are required and insufficient`() {
+    fun `Should warn for right category type and stop reason PD when cycles are required and insufficient`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE, numCycles = 4
         )
-        assertEvaluation(EvaluationResult.FAIL, function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.WARN, function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
