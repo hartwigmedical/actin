@@ -5,13 +5,13 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-private const val MEASURE = "measure"
+private val MEASURE = PDL1Measure.TPS
 private const val MAX_PDL1 = 2.0
 
 class HasLimitedPDL1ByIhcTest {
 
     private val function = HasLimitedPDL1ByIhc(MEASURE, MAX_PDL1)
-    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = MEASURE)
+    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = MEASURE.name)
 
     @Test
     fun `Should pass when test value is below max`() {

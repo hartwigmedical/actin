@@ -18,15 +18,23 @@ private enum class TestResult {
     UNKNOWN
 }
 
+enum class PDL1Measure(val unit: String) {
+    TPS("%"),
+    CPS(""),
+    TAP("%"),
+    TC("%"),
+    IC("%")
+}
+
 object PDL1EvaluationFunctions {
 
     fun evaluatePDL1byIhc(
-        record: PatientRecord, measure: String?, pdl1Reference: Double, doidModel: DoidModel?, evaluateMaxPDL1: Boolean
+        record: PatientRecord, measure: PDL1Measure?, pdl1Reference: Double, doidModel: DoidModel?, evaluateMaxPDL1: Boolean
     ): Evaluation {
         val ihcTests = record.ihcTests
         val isLungCancer = doidModel?.let { DoidEvaluationFunctions.isOfDoidType(it, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID) }
         val pdl1TestsWithRequestedMeasurement =
-            measure?.let { IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, measure, isLungCancer) } ?: emptyList()
+            measure?.let { IhcTestFilter.allPDL1TestsByMeasureToFind(ihcTests, measure.name, isLungCancer) } ?: emptyList()
 
         val testEvaluations = pdl1TestsWithRequestedMeasurement.mapNotNull { ihcTest ->
             val roundedLower = ihcTest.scoreLowerBound?.roundToInt()?.toDouble()
@@ -43,6 +51,7 @@ object PDL1EvaluationFunctions {
         }.toSet()
 
         val (comparatorMessage, comparatorSign) = if (evaluateMaxPDL1) "below maximum of" to "<=" else "above minimum of" to ">="
+        val unit = measure?.unit ?: ""
 
         return when {
             EvaluationResult.PASS in testEvaluations && (EvaluationResult.FAIL in testEvaluations || EvaluationResult.UNDETERMINED in testEvaluations) -> {
@@ -55,13 +64,13 @@ object PDL1EvaluationFunctions {
             EvaluationResult.PASS in testEvaluations -> {
                 EvaluationFactory.pass(
                     "PD-L1 expression $comparatorMessage $pdl1Reference",
-                    inclusionEvents = setOf("PD-L1 $comparatorSign $pdl1Reference")
+                    inclusionEvents = setOf("PD-L1 $comparatorSign $pdl1Reference$unit")
                 )
             }
 
             EvaluationResult.FAIL in testEvaluations -> {
                 val messageEnding = (if (evaluateMaxPDL1) "exceeds " else "below ") + pdl1Reference
-                EvaluationFactory.fail("PD-L1 expression $messageEnding")
+                EvaluationFactory.fail("PD-L1 expression $messageEnding$unit")
             }
 
             EvaluationResult.UNDETERMINED in testEvaluations -> {

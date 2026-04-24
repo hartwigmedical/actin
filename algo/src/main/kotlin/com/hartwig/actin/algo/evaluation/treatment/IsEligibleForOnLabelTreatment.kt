@@ -11,6 +11,7 @@ import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantInExonRangeOfTy
 import com.hartwig.actin.algo.evaluation.molecular.GeneHasVariantWithProteinImpact
 import com.hartwig.actin.algo.evaluation.molecular.HasMolecularDriverEventInNsclc
 import com.hartwig.actin.algo.evaluation.molecular.HasSufficientPDL1ByIhc
+import com.hartwig.actin.algo.evaluation.molecular.PDL1Measure
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.algo.evaluation.tumor.TumorEvaluationFunctions.hasCancerOfUnknownPrimary
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
@@ -128,7 +129,7 @@ class IsEligibleForOnLabelTreatment(
             ).evaluate(record).result
             val hasNoEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult == EvaluationResult.FAIL
             val hasEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult == EvaluationResult.PASS
-            val hasPdl1Above50 = HasSufficientPDL1ByIhc("TPS", 50.0, doidModel).evaluate(record).result == EvaluationResult.PASS
+            val hasPdl1Above50 = HasSufficientPDL1ByIhc(PDL1Measure.TPS, 50.0, doidModel).evaluate(record).result == EvaluationResult.PASS
 
             return when {
                 isTreatmentNaive && hasNoEgfrOrAlkDriver && hasPdl1Above50 -> EvaluationFactory.pass("")
