@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-class HasSufficientPDL1ByIhc(private val measure: String?, private val minPDL1: Double, private val doidModel: DoidModel? = null) :
+class HasSufficientPDL1ByIhc(private val measure: Pdl1Measure?, private val minPDL1: Double, private val doidModel: DoidModel? = null) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {

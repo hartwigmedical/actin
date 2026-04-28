@@ -5,13 +5,11 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-private const val MEASURE = "measure"
-
 class HasSufficientPDL1ByIhcTest {
 
     private val minPdl1 = 2.0
-    private val function = HasSufficientPDL1ByIhc(MEASURE, minPdl1)
-    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = MEASURE)
+    private val function = HasSufficientPDL1ByIhc(Pdl1Measure.TPS, minPdl1)
+    private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = "TPS")
 
     @Test
     fun `Should pass when test value is above min`() {
@@ -34,7 +32,7 @@ class HasSufficientPDL1ByIhcTest {
         val evaluation = function.evaluate(record)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if PD-L1 expression (<= ${minPdl1.plus(1.0)}) above minimum of 2.0"
+            "Undetermined if PD-L1 expression (<= ${minPdl1.plus(1.0)}%) above minimum of 2.0%"
         )
     }
 
