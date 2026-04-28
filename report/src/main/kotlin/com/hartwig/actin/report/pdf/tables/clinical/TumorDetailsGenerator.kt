@@ -32,10 +32,8 @@ class TumorDetailsGenerator(private val record: PatientRecord, private val keyWi
         val lesions = TumorDetailsInterpreter.classifyLesions(record.tumor)
 
         with(lesions) {
-            val negative = suspectedLesions + negativeCategories
-
-            createLesionRow("Known lesions", nonLymphNodeLesions + lymphNodeLesions)
-            if (negative.isNotEmpty()) createLesionRow("No lesions present", negative)
+            createLesionRow("Lesions", nonLymphNodeLesions + lymphNodeLesions + suspectedLesions)
+            if (negativeCategories.isNotEmpty()) createLesionRow("No lesions present", negativeCategories)
         }
     }
 
