@@ -147,12 +147,11 @@ class MolecularDriverEntryFactory(private val molecularDriversInterpreter: Molec
         val knownList = listOf(FusionDriverType.KNOWN_PAIR, FusionDriverType.KNOWN_PAIR_IG, FusionDriverType.KNOWN_PAIR_DEL_DUP)
         val combined = if (fusion.driverType in knownList) driverType else driverType + driverlikelihood
 
+        val domainsKept = fusion.domainsKept?.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "-"
+        val domainsLost = fusion.domainsLost?.takeIf { it.isNotEmpty() }?.joinToString(", ") ?: "-"
+
         val fusionWithDomainInfo = if (!fusion.domainsKept.isNullOrEmpty() || !fusion.domainsLost.isNullOrEmpty()) {
-            "${fusion.event}\nDomain(s) kept: ${fusion.domainsKept?.joinToString(", ") ?: "-"}\nDomain(s) lost: ${
-                fusion.domainsLost?.joinToString(
-                    ", "
-                ) ?: "-"
-            }"
+            "${fusion.event}\nDomain(s) kept: $domainsKept\nDomain(s) lost: $domainsLost"
         } else fusion.event
 
         return driverEntry(combined, fusionWithDomainInfo, fusion, fusion.proteinEffect)
