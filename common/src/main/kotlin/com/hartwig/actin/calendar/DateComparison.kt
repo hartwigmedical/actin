@@ -35,4 +35,15 @@ object DateComparison {
             null
         }
     }
+
+    fun maxWeeksBetweenDates(startYear: Int?, startMonth: Int?, stopYear: Int?, stopMonth: Int?): Long? {
+        return if (startYear != null && stopYear != null) {
+            ChronoUnit.WEEKS.between(
+                YearMonth.of(startYear, startMonth ?: 1).atDay(1),
+                YearMonth.of(stopYear, stopMonth ?: 12).atEndOfMonth()
+            ).coerceAtLeast(0)
+        } else {
+            null
+        }
+    }
 }

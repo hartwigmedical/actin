@@ -75,12 +75,14 @@ class TreatmentDurationEvaluator(
         val treatmentEvaluations = record.oncologicalHistory.map { treatmentHistoryEntry ->
             val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, potentialTrialCategories)
 
-            val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(treatmentHistoryEntry)
-            val durationWeeksMax = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(treatmentHistoryEntry)
+            val durationWeeks =
+                TreatmentHistoryEntryFunctions.minWeeksBetweenDates(treatmentHistoryEntry) // 'real' duration when we know stopdate
+            val durationWeeksMax =
+                TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(treatmentHistoryEntry) // in case we don't know stopdate, based on next treatment
 
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) { matchesTreatment(it) == true }
                 ?.let { matchingPortionOfEntry ->
-                    val durationWeeksMatchingPortion = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
+                    val durationWeeksMatchingPortion = TreatmentHistoryEntryFunctions.minWeeksBetweenDates(matchingPortionOfEntry)
                     val durationWeeksMaxMatchingPortion = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(matchingPortionOfEntry)
 
                     TreatmentEvaluation.create(

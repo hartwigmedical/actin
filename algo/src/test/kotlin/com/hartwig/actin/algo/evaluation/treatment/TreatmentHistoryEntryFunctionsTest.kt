@@ -298,7 +298,7 @@ class TreatmentHistoryEntryFunctionsTest {
     @Test
     fun `Should return number of weeks between the start and stop date of the treatment`() {
         val entry = treatmentHistoryEntry(startYear = 2024, startMonth = 3, stopYear = 2024, stopMonth = 8)
-        assertThat(TreatmentHistoryEntryFunctions.weeksBetweenDates(entry)).isEqualTo(17)
+        assertThat(TreatmentHistoryEntryFunctions.minWeeksBetweenDates(entry)).isEqualTo(17)
     }
 
     @Test
