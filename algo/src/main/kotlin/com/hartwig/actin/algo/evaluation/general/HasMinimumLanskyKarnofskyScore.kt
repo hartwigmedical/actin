@@ -18,6 +18,7 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
         val passScore = toMinScoreForWHO(whoRange.last)
         val undeterminedScore = toMaxScoreForWHO(whoRange.first)
         val warnScore = toMaxScoreForWHO((whoRange.first - 1).coerceAtLeast(0))
+
         return when {
             passScore >= minScore -> {
                 EvaluationFactory.pass("${performanceScore.display()} score based on WHO status is at least $minScore")
@@ -28,7 +29,7 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
             }
 
             warnScore >= minScore -> {
-                EvaluationFactory.warn("${performanceScore.display()} score based on WHO status exceeds requested score of $minScore")
+                EvaluationFactory.recoverableFail("${performanceScore.display()} score based on WHO status below requested score of $minScore")
             }
 
             else -> EvaluationFactory.fail("${performanceScore.display()} score based on WHO status is below $minScore")
