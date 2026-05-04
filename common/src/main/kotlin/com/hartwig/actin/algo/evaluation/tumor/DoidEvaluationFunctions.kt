@@ -3,11 +3,11 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object DoidEvaluationFunctions {
 
-    private val LOGGER = LogManager.getLogger(DoidEvaluationFunctions::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun hasConfiguredDoids(tumorDoids: Set<String>?): Boolean {
         return !tumorDoids.isNullOrEmpty()
@@ -25,7 +25,7 @@ object DoidEvaluationFunctions {
         return createFullExpandedParentsDoidTree(doidModel, tumorDoids).any { doid ->
             val term = doidModel.resolveTermForDoid(doid)
             if (term == null) {
-                LOGGER.warn("Could not resolve term for doid '{}'", doid)
+                logger.warn { "Could not resolve term for doid '$doid'" }
                 false
             } else {
                 stringCaseInsensitivelyMatchesQueryCollection(term, doidTermsToMatch)

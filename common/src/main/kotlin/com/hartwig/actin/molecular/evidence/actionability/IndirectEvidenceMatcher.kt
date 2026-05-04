@@ -10,8 +10,7 @@ import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
 import com.hartwig.serve.datamodel.efficacy.EfficacyEvidence
 import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.hotspot.VariantAnnotation
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class GeneEffectKey(
     val gene: String,
@@ -50,7 +49,7 @@ class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<Ge
 
     companion object {
 
-        val logger: Logger = LogManager.getLogger(IndirectEvidenceMatcher::class.java)
+        val logger = KotlinLogging.logger {}
 
         fun create(evidences: List<EfficacyEvidence>, knownHotspots: Set<KnownHotspot>): IndirectEvidenceMatcher {
             val nonResistantHotspotsByCoordinates = collectNonResistantHotspotsByCoordinates(knownHotspots)
@@ -76,7 +75,7 @@ class IndirectEvidenceMatcher(private val associatedEvidenceByGeneEffect: Map<Ge
                 .filter { (_, hotspots) -> hotspots.size > 1 }
                 .forEach { (key, hotspots) ->
                     hotspots.drop(1).forEach { duplicate ->
-                        logger.warn("KnownHotspot with coordinates $key already exists in map; skipping duplicate for known hotspot $duplicate.")
+                        logger.warn { "KnownHotspot with coordinates $key already exists in map; skipping duplicate for known hotspot $duplicate." }
                     }
                 }
 

@@ -5,10 +5,10 @@ import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.core.config.Configurator
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.slf4j.LoggerFactory
 
 data class StandardOfCareConfig(
     val patientJson: String,
@@ -22,7 +22,7 @@ data class StandardOfCareConfig(
 ) {
 
     companion object {
-        private val LOGGER: Logger = LogManager.getLogger(StandardOfCareConfig::class)
+        private val logger = KotlinLogging.logger {}
 
         private const val PATIENT_JSON = "patient_json"
         private const val DOID_JSON = "doid_json"
@@ -53,12 +53,12 @@ data class StandardOfCareConfig(
 
         fun createConfig(cmd: CommandLine): StandardOfCareConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                Configurator.setRootLevel(Level.DEBUG)
-                LOGGER.debug("Switched root level logging to DEBUG")
+                (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.DEBUG
+                logger.debug { "Switched root level logging to DEBUG" }
             }
             val runHistorically = cmd.hasOption(RUN_HISTORICALLY)
             if (runHistorically) {
-                LOGGER.info("Configured to run in historic mode")
+                logger.info { "Configured to run in historic mode" }
             }
             return StandardOfCareConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),

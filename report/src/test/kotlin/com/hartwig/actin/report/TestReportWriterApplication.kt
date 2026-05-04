@@ -14,30 +14,30 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory.createProductionReportWriter
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 
 private val WORK_DIRECTORY = System.getProperty("user.dir")
 
 object TestReportWriterApplication {
 
-    private val LOGGER = LogManager.getLogger(TestReportWriterApplication::class.java)
+    private val logger = KotlinLogging.logger {}
     private val OPTIONAL_TREATMENT_MATCH_JSON = WORK_DIRECTORY + File.separator + "patient.treatment_match.json"
 
     fun createTestReport(): Report {
         val report = TestReportFactory.createExhaustiveTestReport()
-        LOGGER.info("Printing patient record")
+        logger.info { "Printing patient record" }
         PatientPrinter.printRecord(report.patientRecord)
 
         val updated = if (File(OPTIONAL_TREATMENT_MATCH_JSON).exists()) {
-            LOGGER.info("Loading treatment matches from {}", OPTIONAL_TREATMENT_MATCH_JSON)
+            logger.info { "Loading treatment matches from $OPTIONAL_TREATMENT_MATCH_JSON" }
             val match = TreatmentMatchJson.read(OPTIONAL_TREATMENT_MATCH_JSON)
             report.copy(treatmentMatch = match)
         } else {
             report
         }
 
-        LOGGER.info("Printing treatment match results")
+        logger.info { "Printing treatment match results" }
         TreatmentMatchPrinter.printMatch(updated.treatmentMatch)
         return updated
     }

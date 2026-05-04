@@ -5,10 +5,10 @@ import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.core.config.Configurator
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.slf4j.LoggerFactory
 
 data class MolecularInterpreterConfig(
     val clinicalJson: String,
@@ -30,7 +30,7 @@ data class MolecularInterpreterConfig(
 ) {
 
     companion object {
-        private val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterConfig::class.java)
+        private val logger = KotlinLogging.logger {}
 
         private const val CLINICAL_JSON: String = "clinical_json"
         private const val ORANGE_JSON: String = "orange_json"
@@ -81,8 +81,8 @@ data class MolecularInterpreterConfig(
 
         fun createConfig(cmd: CommandLine): MolecularInterpreterConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                Configurator.setRootLevel(Level.DEBUG)
-                LOGGER.debug("Switched root level logging to DEBUG")
+                (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.DEBUG
+                logger.debug { "Switched root level logging to DEBUG" }
             }
 
             return MolecularInterpreterConfig(

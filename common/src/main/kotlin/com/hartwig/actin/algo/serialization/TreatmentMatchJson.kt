@@ -14,11 +14,11 @@ import com.hartwig.actin.util.json.GsonSerializer
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object TreatmentMatchJson {
 
-    private val logger = LogManager.getLogger(TreatmentMatchJson::class.java)
+    private val logger = KotlinLogging.logger {}
     private const val TREATMENT_MATCH_EXTENSION = ".treatment_match.json"
 
     fun write(match: TreatmentMatch, directory: String) {
@@ -27,7 +27,7 @@ object TreatmentMatchJson {
 
     fun write(match: TreatmentMatch, directory: Path) {
         val jsonFile = directory.resolve(match.patientId + TREATMENT_MATCH_EXTENSION)
-        logger.info("Writing patient treatment match to {}", jsonFile)
+        logger.info { "Writing patient treatment match to $jsonFile" }
         val writer = Files.newBufferedWriter(jsonFile)
         writer.write(toJson(match))
         writer.close()

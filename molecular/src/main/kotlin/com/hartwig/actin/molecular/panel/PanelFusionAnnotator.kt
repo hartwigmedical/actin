@@ -13,7 +13,7 @@ import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
 import com.hartwig.actin.tools.ensemblcache.TranscriptData
 import com.hartwig.hmftools.common.fusion.KnownFusionCache
 import com.hartwig.hmftools.common.fusion.KnownFusionType
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class PanelFusionAnnotator(
     private val knownFusionCache: KnownFusionCache,
@@ -21,7 +21,7 @@ class PanelFusionAnnotator(
     private val molecularConfiguration: MolecularConfiguration
 ) {
 
-    private val logger = LogManager.getLogger(PanelAnnotator::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun annotate(fusions: Set<SequencedFusion>, skippedExons: Set<SequencedSkippedExons>): List<Fusion> {
         return (fusions.map { createFusion(it) } + skippedExons.map { createFusionFromExonSkip(it) })
@@ -143,7 +143,7 @@ class PanelFusionAnnotator(
         val isReportable = true
         val driverType = determineFusionDriverType(sequencedSkippedExons.gene, sequencedSkippedExons.gene)
         val transcript = sequencedSkippedExons.transcript ?: run {
-            logger.warn("No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript")
+            logger.warn { "No transcript provided for panel skipped exons in gene ${sequencedSkippedExons.gene}, using canonical transcript" }
             canonicalTranscriptForGene(sequencedSkippedExons.gene).transcriptName()
         }
 
@@ -180,7 +180,7 @@ class PanelFusionAnnotator(
     private fun exonOnCanonicalTranscript(transcript: TranscriptData, gene: String, exonEnd: Int?): Boolean {
         val numberOfExons = transcript.exons().size
         if (exonEnd !in 1..numberOfExons) {
-            logger.warn("Exon $exonEnd is out of canonical transcript range 1-$numberOfExons for gene $gene")
+            logger.warn { "Exon $exonEnd is out of canonical transcript range 1-$numberOfExons for gene $gene" }
             return false
         }
         return true

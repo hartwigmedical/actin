@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleDriver
 import com.hartwig.hmftools.datamodel.purple.PurpleRecord
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class DriverExtractor private constructor(
     private val variantExtractor: VariantExtractor,
@@ -20,28 +20,24 @@ class DriverExtractor private constructor(
 
     fun extract(record: OrangeRecord): Drivers {
         val variants = variantExtractor.extract(record.purple())
-        LOGGER.info(" Extracted {} variants of which {} reportable", variants.size, reportableCount(variants))
+        logger.info { " Extracted ${variants.size} variants of which ${reportableCount(variants)} reportable" }
 
         val copyNumbers = copyNumberExtractor.extract(record.purple())
-        LOGGER.info(" Extracted {} copy numbers of which {} reportable", copyNumbers.size, reportableCount(copyNumbers))
+        logger.info { " Extracted ${copyNumbers.size} copy numbers of which ${reportableCount(copyNumbers)} reportable" }
 
         val homozygousDisruptions = homozygousDisruptionExtractor.extractHomozygousDisruptions(record.linx())
-        LOGGER.info(
-            " Extracted {} homozygous disruptions of which {} reportable",
-            homozygousDisruptions.size,
-            reportableCount(homozygousDisruptions)
-        )
+        logger.info { " Extracted ${homozygousDisruptions.size} homozygous disruptions of which ${reportableCount(homozygousDisruptions)} reportable" }
 
         val disruptions =
             disruptionExtractor.extractDisruptions(record.linx(), reportableLostGenes(copyNumbers), record.linx().somaticDrivers())
-        LOGGER.info(" Extracted {} disruptions of which {} reportable", disruptions.size, reportableCount(disruptions))
+        logger.info { " Extracted ${disruptions.size} disruptions of which ${reportableCount(disruptions)} reportable" }
 
         val fusions = fusionExtractor.extract(record.linx())
-        LOGGER.info(" Extracted {} fusions of which {} reportable", fusions.size, reportableCount(fusions))
+        logger.info { " Extracted ${fusions.size} fusions of which ${reportableCount(fusions)} reportable" }
 
         val virusInterpreter = record.virusInterpreter()
         val viruses = if (virusInterpreter != null) virusExtractor.extract(virusInterpreter) else emptyList()
-        LOGGER.info(" Extracted {} viruses of which {} reportable", viruses.size, reportableCount(viruses))
+        logger.info { " Extracted ${viruses.size} viruses of which ${reportableCount(viruses)} reportable" }
 
         return Drivers(
             variants = variants,
@@ -67,7 +63,7 @@ class DriverExtractor private constructor(
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(DriverExtractor::class.java)
+        private val logger = KotlinLogging.logger {}
 
         fun create(geneFilter: GeneFilter): DriverExtractor {
             return DriverExtractor(

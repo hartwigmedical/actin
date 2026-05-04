@@ -20,8 +20,7 @@ import com.hartwig.serve.datamodel.molecular.hotspot.KnownHotspot
 import com.hartwig.serve.datamodel.molecular.immuno.ActionableHLA
 import com.hartwig.serve.datamodel.molecular.range.RangeAnnotation
 import com.hartwig.serve.datamodel.trial.ActionableTrial
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 typealias MatchesForActionable = Map<Actionable, ActionabilityMatch>
 
@@ -30,7 +29,7 @@ class ActionabilityMatcher(
     private val trials: List<ActionableTrial>,
     hotspots: Set<KnownHotspot>,
 ) {
-    val logger: Logger = LogManager.getLogger(ActionabilityMatcher::class.java)
+    val logger = KotlinLogging.logger {}
     private val indirectEvidenceMatcher = IndirectEvidenceMatcher.create(evidences, hotspots)
 
     fun match(molecularTest: MolecularTest): MatchesForActionable {
@@ -92,13 +91,7 @@ class ActionabilityMatcher(
                 .map { it.treatment().name() }
                 .filterNot { directTreatmentNames.contains(it) }
                 .toSet()
-            logger.info(
-                "Found {} indirect evidence matches for variant {}: {} unique treatments, {} novel treatments",
-                indirectEvidences.size,
-                variant.event,
-                uniqueTreatmentCount,
-                uniqueNovelTreatments.size
-            )
+            logger.info { "Found ${indirectEvidences.size} indirect evidence matches for variant ${variant.event}: $uniqueTreatmentCount unique treatments, ${uniqueNovelTreatments.size} novel treatments" }
         }
     }
 

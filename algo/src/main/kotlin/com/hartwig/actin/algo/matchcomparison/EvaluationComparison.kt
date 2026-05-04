@@ -7,12 +7,12 @@ import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object EvaluationComparison {
 
     private const val INDENT_WIDTH = 2
-    private val LOGGER = LogManager.getLogger(EvaluationComparison::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun determineEvaluationDifferences(
         oldEvaluations: Map<Eligibility, Evaluation>, newEvaluations: Map<Eligibility, Evaluation>, id: String, indent: Int
@@ -35,9 +35,9 @@ object EvaluationComparison {
                     oldEvaluation, newEvaluation, mapOf("result for $criteriaId" to Evaluation::result)
                 )
                 if (resultDifferences.isNotEmpty()) {
-                    resultDifferences.forEach(LOGGER::warn)
-                    LOGGER.warn("  Old function: $oldFunction")
-                    LOGGER.warn("  New function: $newFunction")
+                    resultDifferences.forEach { logger.warn { it } }
+                    logger.warn { "  Old function: $oldFunction" }
+                    logger.warn { "  New function: $newFunction" }
                 }
                 val recoverableDifferences =
                     extractDifferences(oldEvaluation, newEvaluation, mapOf("recoverable" to Evaluation::recoverable))
@@ -88,6 +88,6 @@ object EvaluationComparison {
     }
 
     private fun logDebug(message: String, indent: Int = 0) {
-        LOGGER.debug(" ".repeat(indent) + message)
+        logger.debug { " ".repeat(indent) + message }
     }
 }

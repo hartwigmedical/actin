@@ -1,38 +1,39 @@
 package com.hartwig.actin.system.regression
 
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.LogEvent
-import org.apache.logging.log4j.core.LoggerContext
-import org.apache.logging.log4j.core.appender.AbstractAppender
-import org.apache.logging.log4j.core.layout.PatternLayout
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import ch.qos.logback.classic.spi.ILoggingEvent
+import ch.qos.logback.core.AppenderBase
+import org.slf4j.LoggerFactory
 
-class LevelRecordingAppender : AbstractAppender("TestLogAppender", null, PatternLayout.createDefaultLayout(), false, emptyArray()) {
+class LevelRecordingAppender : AppenderBase<ILoggingEvent>() {
 
     private val loggedLevels: MutableSet<Level> = mutableSetOf()
 
-    override fun append(event: LogEvent) {
-        loggedLevels.add(event.level)
+    override fun append(event: ILoggingEvent) {
+        if (event.loggerName.startsWith("com.hartwig.actin")) {
+            loggedLevels.add(event.level)
+        }
     }
 
     fun levels() = loggedLevels
 }
 
 class LogLevelRecorder {
-    
+
     private val logLevel = LevelRecordingAppender()
 
     fun start() {
-        val context = LogManager.getContext(false) as LoggerContext
+        val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
+        logLevel.context = rootLogger.loggerContext
         logLevel.start()
-        context.configuration.rootLogger.addAppender(logLevel, Level.ALL, null)
-        context.updateLoggers()
+        rootLogger.addAppender(logLevel)
     }
 
     fun stop() {
-        val context = LogManager.getContext(false) as LoggerContext
-        context.configuration.rootLogger.removeAppender("LevelRecorder")
-        context.updateLoggers()
+        val rootLogger = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger
+        rootLogger.detachAppender(logLevel)
+        logLevel.stop()
     }
 
     fun levelRecorded(level: Level): Boolean {

@@ -19,30 +19,29 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.system.exitProcess
 
 class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
     fun run() {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        logger.info { "Running $APPLICATION v$VERSION" }
 
-        LOGGER.info("Loading patient record from from {}", config.patientJson)
+        logger.info { "Loading patient record from from ${config.patientJson}" }
         val patient = PatientRecordJson.read(config.patientJson)
         PatientPrinter.printRecord(patient)
 
-        LOGGER.info("Loading DOID tree from {}", config.doidJson)
+        logger.info { "Loading DOID tree from ${config.doidJson}" }
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+        logger.info { " Loaded ${doidEntry.nodes.size} nodes" }
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
+        logger.info { "Creating ICD-11 tree from file ${config.icdTsv}" }
         val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
-        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        logger.info { " Loaded ${icdNodes.size} nodes" }
         val icdModel = IcdModel.create(icdNodes)
 
-        LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
+        logger.info { "Creating ATC tree from file ${config.atcTsv}" }
         val atcTree = AtcTree.createFromFile(config.atcTsv)
 
         val cuppaToDoidMapping = CuppaToDoidMapping.createFromFile(config.cuppaDoidMappingTsv)
@@ -64,7 +63,7 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         )
         val standardOfCareEvaluator = StandardOfCareEvaluatorFactory(resources).create()
 
-        LOGGER.info(standardOfCareEvaluator.summarizeAvailableTreatments(patient))
+        logger.info { standardOfCareEvaluator.summarizeAvailableTreatments(patient) }
         val requiredTreatments = standardOfCareEvaluator.evaluateRequiredTreatments(patient).evaluatedTreatments
         requiredTreatments.forEach {
             val allMessages = it.evaluations.flatMap { evaluation ->
@@ -72,15 +71,15 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
                     passMessages + warnMessages + undeterminedMessages
                 }
             }
-            LOGGER.debug("${it.treatmentCandidate.treatment.display()}: ${allMessages.joinToString(", ")}")
+            logger.debug { "${it.treatmentCandidate.treatment.display()}: ${allMessages.joinToString(", ")}" }
         }
-        LOGGER.info("Standard of care has${if (requiredTreatments.isEmpty()) "" else " not"} been exhausted")
+        logger.info { "Standard of care has${if (requiredTreatments.isEmpty()) "" else " not"} been exhausted" }
     }
 
     companion object {
         const val APPLICATION = "ACTIN Standard of Care"
 
-        val LOGGER: Logger = LogManager.getLogger(StandardOfCareApplication::class.java)
+        val logger = KotlinLogging.logger {}
         private val VERSION = StandardOfCareApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
@@ -92,7 +91,7 @@ fun main(args: Array<String>) {
         val config = StandardOfCareConfig.createConfig(DefaultParser().parse(options, args))
         StandardOfCareApplication(config).run()
     } catch (exception: ParseException) {
-        StandardOfCareApplication.LOGGER.warn(exception)
+        StandardOfCareApplication.logger.warn(exception) { exception.message ?: "" }
         HelpFormatter().printHelp(StandardOfCareApplication.APPLICATION, options)
         exitProcess(1)
     }
