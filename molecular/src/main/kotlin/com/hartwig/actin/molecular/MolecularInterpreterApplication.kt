@@ -38,8 +38,7 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
@@ -47,17 +46,17 @@ val CLINICAL_TESTS_REF_GENOME_VERSION = RefGenomeVersion.V37
 
 class MolecularInterpreterApplication(private val config: MolecularInterpreterConfig) {
     fun run() = runBlocking {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        logger.info { "Running $APPLICATION v$VERSION" }
 
-        LOGGER.info("resource load starting")
+        logger.info { "resource load starting" }
         val inputData = InputDataLoader.load(config, CLINICAL_TESTS_REF_GENOME_VERSION)
-        LOGGER.info("resource load complete")
+        logger.info { "resource load complete" }
 
         val tumorDoids = inputData.clinical.tumor.doids.orEmpty().toSet()
         if (tumorDoids.isEmpty()) {
-            LOGGER.warn(" No tumor DOIDs configured in ACTIN clinical data for {}!", inputData.clinical.patientId)
+            logger.warn { " No tumor DOIDs configured in ACTIN clinical data for ${inputData.clinical.patientId}!" }
         } else {
-            LOGGER.info(" Tumor DOIDs determined to be: {}", tumorDoids.joinToString(", "))
+            logger.info { " Tumor DOIDs determined to be: ${tumorDoids.joinToString(", ")}" }
         }
 
         val patientGender = inputData.clinical.patient.gender
@@ -71,7 +70,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         val patientRecord = PatientRecordFactory.fromInputs(inputData.clinical, allTests)
         PatientRecordJson.write(patientRecord, config.outputDirectory)
 
-        LOGGER.info("Done!")
+        logger.info { "Done!" }
     }
 
     private fun interpretOrangeRecord(
@@ -83,7 +82,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             val orangeRefGenomeVersion = fromOrangeRefGenomeVersion(inputData.orange.refGenomeVersion())
             val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, orangeRefGenomeVersion)
 
-            LOGGER.info("Interpreting ORANGE record")
+            logger.info { "Interpreting ORANGE record" }
             MolecularInterpreter(
                 OrangeExtractor(inputData.geneFilter, inputData.panelSpecifications),
                 MolecularRecordAnnotator(KnownEventResolverFactory.create(serveRecord.knownEvents())),
@@ -100,13 +99,10 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         tumorDoids: Set<String>,
         inputData: MolecularInterpreterInputData
     ): List<MolecularTest> {
-        LOGGER.info(
-            "Creating evidence database for clinical molecular tests "
-                    + "assuming ref genome version '$CLINICAL_TESTS_REF_GENOME_VERSION'"
-        )
+        logger.info { "Creating evidence database for clinical molecular tests assuming ref genome version '$CLINICAL_TESTS_REF_GENOME_VERSION'" }
         val serveRecord = selectForRefGenomeVersion(inputData.serveDatabase, CLINICAL_TESTS_REF_GENOME_VERSION)
 
-        LOGGER.info("Interpreting {} prior sequencing test(s)", clinical.sequencingTests.size)
+        logger.info { "Interpreting ${clinical.sequencingTests.size} prior sequencing test(s)" }
         val variantAnnotator = TransvarVariantAnnotatorFactory.withRefGenome(
             toEnsemblRefGenomeVersion(CLINICAL_TESTS_REF_GENOME_VERSION), config.referenceGenomeFastaPath, inputData.ensemblDataCache
         )
@@ -116,7 +112,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
         )
 
         val configuration = MolecularConfiguration.create(config.overridesYaml)
-        LOGGER.info("Loaded molecular config: $configuration")
+        logger.info { "Loaded molecular config: $configuration" }
 
         val panelVariantAnnotator = PanelVariantAnnotator(variantAnnotator, paver, inputData.variantDecompositions)
         val panelFusionAnnotator = PanelFusionAnnotator(inputData.knownFusionCache, inputData.ensemblDataCache, configuration)
@@ -149,11 +145,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
             evidenceAnnotator
         )
 
-        LOGGER.info(
-            "Completed interpretation of {} clinical molecular test(s) and {} IHC molecular tests",
-            sequencingMolecularTests.size,
-            ihcMolecularTests.size
-        )
+        logger.info { "Completed interpretation of ${sequencingMolecularTests.size} clinical molecular test(s) and ${ihcMolecularTests.size} IHC molecular tests" }
         return sequencingMolecularTests + ihcMolecularTests
     }
 
@@ -230,7 +222,7 @@ class MolecularInterpreterApplication(private val config: MolecularInterpreterCo
     companion object {
         const val APPLICATION: String = "ACTIN Molecular Interpreter"
 
-        val LOGGER: Logger = LogManager.getLogger(MolecularInterpreterApplication::class.java)
+        val logger = KotlinLogging.logger {}
         private val VERSION = MolecularInterpreterApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
@@ -253,7 +245,7 @@ fun main(args: Array<String>) {
     try {
         config = MolecularInterpreterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        MolecularInterpreterApplication.LOGGER.warn(exception)
+        MolecularInterpreterApplication.logger.warn(exception) { exception.message ?: "" }
         HelpFormatter().printHelp(MolecularInterpreterApplication.APPLICATION, options)
         exitProcess(1)
     }

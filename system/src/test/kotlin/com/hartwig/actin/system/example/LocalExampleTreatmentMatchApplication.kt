@@ -23,8 +23,7 @@ import com.hartwig.actin.treatment.database.TreatmentDatabase
 import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.serialization.TrialJson
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -33,16 +32,16 @@ private const val EXAMPLE_TO_RUN = LUNG_01_EXAMPLE
 class LocalExampleTreatmentMatchApplication {
 
     fun run(examplePatientRecordJson: String, exampleTrialDatabaseDir: String, outputDirectory: String) {
-        LOGGER.info("Loading patient record from '$examplePatientRecordJson'")
+        logger.info { "Loading patient record from '$examplePatientRecordJson'" }
         val patient = PatientRecordJson.read(examplePatientRecordJson)
 
-        LOGGER.info("Loading trial data from '$exampleTrialDatabaseDir'")
+        logger.info { "Loading trial data from '$exampleTrialDatabaseDir'" }
         val trials = TrialJson.readFromDir(exampleTrialDatabaseDir)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, runHistorically = false)
         val resources = createExampleRuleMappingResources(referenceDateProvider)
 
-        LOGGER.info("Running treatment matcher for patient '${patient.patientId}'")
+        logger.info { "Running treatment matcher for patient '${patient.patientId}'" }
 
         val match = TreatmentMatcher
             .create(
@@ -56,7 +55,7 @@ class LocalExampleTreatmentMatchApplication {
         TreatmentMatchPrinter.printMatch(match)
         TreatmentMatchJson.write(match, outputDirectory)
 
-        LOGGER.info("Done!")
+        logger.info { "Done!" }
     }
 
     private fun createExampleRuleMappingResources(referenceDateProvider: ReferenceDateProvider): RuleMappingResources {
@@ -69,19 +68,19 @@ class LocalExampleTreatmentMatchApplication {
         val atcTreeTsv = listOf(resourceDirectory, "atc_config", "atc_tree.tsv").joinToString(File.separator)
         val treatmentDatabaseDir = listOf(resourceDirectory, "treatment_db").joinToString(File.separator)
 
-        LOGGER.info("Loading DOID tree from {}", doidJson)
+        logger.info { "Loading DOID tree from $doidJson" }
         val doidEntry = DoidJson.readDoidOwlEntry(doidJson)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+        logger.info { " Loaded ${doidEntry.nodes.size} nodes" }
         val doidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
         val cuppaToDoidMapping = CuppaToDoidMapping.createFromFile(cuppaDoidMappingTsv)
 
-        LOGGER.info("Creating ICD-11 tree from file {}", icdTsv)
+        logger.info { "Creating ICD-11 tree from file $icdTsv" }
         val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(icdTsv))
-        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        logger.info { " Loaded ${icdNodes.size} nodes" }
         val icdModel = IcdModel.create(icdNodes)
 
-        LOGGER.info("Creating ATC tree from file {}", atcTreeTsv)
+        logger.info { "Creating ATC tree from file $atcTreeTsv" }
         val atcTree = AtcTree.createFromFile(atcTreeTsv)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(treatmentDatabaseDir)
@@ -121,12 +120,12 @@ class LocalExampleTreatmentMatchApplication {
     }
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(LocalExampleTreatmentMatchApplication::class.java)
+        val logger = KotlinLogging.logger {}
     }
 }
 
 fun main() {
-    LocalExampleTreatmentMatchApplication.LOGGER.info("Running ACTIN Example Treatment Matcher")
+    LocalExampleTreatmentMatchApplication.logger.info { "Running ACTIN Example Treatment Matcher" }
 
     try {
         val examplePatientRecordJson = ExampleFunctions.resolveExamplePatientRecordJson(EXAMPLE_TO_RUN)
@@ -135,7 +134,7 @@ fun main() {
 
         LocalExampleTreatmentMatchApplication().run(examplePatientRecordJson, exampleTrialDatabaseDir, outputDirectory)
     } catch (exception: ParseException) {
-        LocalExampleTreatmentMatchApplication.LOGGER.warn(exception)
+        LocalExampleTreatmentMatchApplication.logger.warn(exception) { exception.message ?: "" }
         exitProcess(1)
     }
 }

@@ -6,31 +6,30 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.system.exitProcess
 
 class TrialLoaderApplication(private val config: TrialLoaderConfig) {
 
     fun run() {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        logger.info { "Running $APPLICATION v$VERSION" }
 
-        LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
+        logger.info { "Loading trials from ${config.trialDatabaseDirectory}" }
         val trials = TrialJson.readFromDir(config.trialDatabaseDirectory)
 
-        LOGGER.info(" Loaded {} trials", trials.size)
+        logger.info { " Loaded ${trials.size} trials" }
         val access: DatabaseAccess = DatabaseAccess.fromCredentials(config.dbUser, config.dbPass, config.dbUrl)
 
-        LOGGER.info("Writing {} trials to database", trials.size)
+        logger.info { "Writing ${trials.size} trials to database" }
         access.writeTrials(trials)
 
-        LOGGER.info("Done!")
+        logger.info { "Done!" }
     }
 
     companion object {
         const val APPLICATION = "ACTIN Trial Loader"
 
-        val LOGGER: Logger = LogManager.getLogger(TrialLoaderApplication::class.java)
+        val logger = KotlinLogging.logger {}
         private val VERSION = TrialLoaderApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
@@ -41,7 +40,7 @@ fun main(args: Array<String>) {
     try {
         config = TrialLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        TrialLoaderApplication.LOGGER.warn(exception)
+        TrialLoaderApplication.logger.warn(exception) { exception.message ?: "" }
         HelpFormatter().printHelp(TrialLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }

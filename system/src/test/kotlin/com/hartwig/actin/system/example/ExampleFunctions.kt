@@ -14,7 +14,7 @@ import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import com.hartwig.actin.testutil.ResourceLocator
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.time.LocalDate
 import kotlin.system.exitProcess
@@ -29,7 +29,7 @@ private const val EXAMPLE_NAME_ = "<example_name>"
 
 object ExampleFunctions {
 
-    private val LOGGER = LogManager.getLogger(ExampleFunctions::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private const val HOSPITAL_OF_REFERENCE = "Example"
 
@@ -106,7 +106,7 @@ object ExampleFunctions {
             val exampleTreatmentMatchJson = resolveExampleTreatmentMatchJson(exampleToRun)
             run(LocalDate.now(), examplePatientRecordJson, exampleTreatmentMatchJson, localOutputPath, reportConfigProvider())
         } catch (exception: ParseException) {
-            LOGGER.warn(exception)
+            logger.warn(exception) { exception.message ?: "" }
             exitProcess(1)
         }
     }
@@ -118,10 +118,10 @@ object ExampleFunctions {
         outputDirectory: String,
         configuration: ReportConfiguration
     ) {
-        LOGGER.info("Loading patient record from {}", examplePatientRecordJson)
+        logger.info { "Loading patient record from $examplePatientRecordJson" }
         val patient = PatientRecordJson.read(examplePatientRecordJson)
 
-        LOGGER.info("Loading treatment match results from {}", exampleTreatmentMatchJson)
+        logger.info { "Loading treatment match results from $exampleTreatmentMatchJson" }
         val treatmentMatch = TreatmentMatchJson.read(exampleTreatmentMatchJson)
 
         val report = ReportFactory.create(reportDate, patient, treatmentMatch)
@@ -140,7 +140,7 @@ object ExampleFunctions {
             addExtendedSuffix = true
         )
 
-        LOGGER.info("Done!")
+        logger.info { "Done!" }
     }
 
     private fun systemTestResourcesDirectory(): String {

@@ -2,19 +2,16 @@ package com.hartwig.actin.report.datamodel
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDate
 
 object ReportFactory {
 
-    private val LOGGER = LogManager.getLogger(ReportFactory::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun create(reportDate: LocalDate, patientRecord: PatientRecord, treatmentMatch: TreatmentMatch): Report {
         if (patientRecord.patientId != treatmentMatch.patientId) {
-            LOGGER.warn(
-                "Patient record patientId '${patientRecord.patientId}' not the same as " +
-                        "treatment match patientId '${treatmentMatch.patientId}'! Using patient record patientId"
-            )
+            logger.warn { "Patient record patientId '${patientRecord.patientId}' not the same as treatment match patientId '${treatmentMatch.patientId}'! Using patient record patientId" }
         }
 
         return Report(

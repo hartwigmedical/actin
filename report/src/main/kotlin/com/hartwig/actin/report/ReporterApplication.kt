@@ -17,27 +17,26 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class ReporterApplication(private val config: ReporterConfig, private val doidModel: DoidModel) {
 
     fun run() {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        logger.info { "${"Running {} v{}"} $APPLICATION $VERSION" }
 
-        LOGGER.info("Loading patient record from {}", config.patientJson)
+        logger.info { "${"Loading patient record from {}"} ${config.patientJson}" }
         val patient = PatientRecordJson.read(config.patientJson)
 
-        LOGGER.info("Loading treatment match results from {}", config.treatmentMatchJson)
+        logger.info { "${"Loading treatment match results from {}"} ${config.treatmentMatchJson}" }
         val treatmentMatch = TreatmentMatchJson.read(config.treatmentMatchJson)
 
         config.itextLicenseKey?.let { key ->
-            LOGGER.info("Loading iText license from {}", key)
+            logger.info { "${"Loading iText license from {}"} $key" }
             LicenseKey.loadLicenseFile(Files.newInputStream(Path.of(key)))
         }
 
         val configuration = if (config.enableExtendedMode) {
-            LOGGER.info("Extended mode enabled. Using report configuration that includes all possible content")
+            logger.info { "Extended mode enabled. Using report configuration that includes all possible content" }
             ReportConfiguration.extended()
         } else {
             ReportConfiguration.create(config.overrideYaml)
@@ -46,13 +45,13 @@ class ReporterApplication(private val config: ReporterConfig, private val doidMo
         val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
         writer.write(report, configuration, doidModel, config.enableExtendedMode)
-        LOGGER.info("Done!")
+        logger.info { "Done!" }
     }
 
     companion object {
         const val APPLICATION = "ACTIN Reporter"
 
-        val LOGGER: Logger = LogManager.getLogger(ReporterApplication::class.java)
+        val logger = KotlinLogging.logger {}
         val VERSION = ReporterApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
@@ -63,7 +62,7 @@ fun main(args: Array<String>) {
     try {
         config = ReporterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        ReporterApplication.LOGGER.warn(exception)
+        ReporterApplication.logger.warn(exception) { exception.message ?: "" }
         HelpFormatter().printHelp(ReporterApplication.APPLICATION, options)
         exitProcess(1)
     }

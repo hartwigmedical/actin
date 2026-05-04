@@ -3,16 +3,15 @@ package com.hartwig.actin
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object PatientRecordFactory {
 
-    private val LOGGER: Logger = LogManager.getLogger(PatientRecordFactory::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun fromInputs(clinical: ClinicalRecord, molecularTests: List<MolecularTest>): PatientRecord {
         if (molecularTests.isEmpty()) {
-            LOGGER.warn("No molecular data for patient '{}'", clinical.patientId)
+            logger.warn { "No molecular data for patient '${clinical.patientId}'" }
         }
     
         return PatientRecord(

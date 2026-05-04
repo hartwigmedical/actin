@@ -11,8 +11,7 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.BufferedWriter
 import java.io.FileWriter
 import kotlin.system.exitProcess
@@ -21,31 +20,26 @@ import com.hartwig.serve.datamodel.RefGenome as ServeRefGenome
 class CancerAssociatedVariantComparisonApplication(private val config: CancerAssociatedVariantComparisonConfig) {
 
     fun run() {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        logger.info { "Running $APPLICATION v$VERSION" }
 
         val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-        LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
+        logger.info { "Loading SERVE database from $serveJsonFilePath" }
         val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, false)
-        LOGGER.info("Loaded evidence and known events from SERVE version {}", serveDatabase.version())
+        logger.info { "Loaded evidence and known events from SERVE version ${serveDatabase.version()}" }
 
         val orange = OrangeJson.getInstance().read(config.orangeJson)
         val serveRecord = selectForRefGenomeVersion(serveDatabase, orange.refGenomeVersion())
         val cancerAssociatedVariants = CancerAssociatedVariantEvaluator.annotateCancerAssociatedVariants(orange, serveRecord)
 
-        LOGGER.info("Cancer-associated variant comparison DONE!")
-        LOGGER.info(
-            "{} CAV(s) according to ORANGE. {} CAV(s) according to SERVE. {} CAV(s) different",
-            cancerAssociatedVariants.count { it.isCancerAssociatedVariantOrange },
-            cancerAssociatedVariants.count { it.isCancerAssociatedVariantServe },
-            cancerAssociatedVariants.count { !(it.isCancerAssociatedVariantOrange && it.isCancerAssociatedVariantServe) }
-        )
+        logger.info { "Cancer-associated variant comparison DONE!" }
+        logger.info { "${cancerAssociatedVariants.count { it.isCancerAssociatedVariantOrange }} CAV(s) according to ORANGE. ${cancerAssociatedVariants.count { it.isCancerAssociatedVariantServe }} CAV(s) according to SERVE. ${cancerAssociatedVariants.count { !(it.isCancerAssociatedVariantOrange && it.isCancerAssociatedVariantServe) }} CAV(s) different" }
         write(config.outputDirectory, orange.sampleId(), cancerAssociatedVariants)
     }
 
     private fun write(directory: String, sampleId: String, cancerAssociatedVariants: List<AnnotatedCancerAssociatedVariant>) {
         val path = Paths.forceTrailingFileSeparator(directory)
         val file = "$path$sampleId.cancerAssociatedVariantComparison"
-        LOGGER.info("Writing cancer-associated variant comparison to {}", file)
+        logger.info { "Writing cancer-associated variant comparison to $file" }
         BufferedWriter(FileWriter(file)).use { writer ->
             writer.write("gene\tchromosome\tposition\tref\talt\tcodingImpact\tproteinImpact\tisCavOrange\tisCavServe\n")
             cancerAssociatedVariants.forEach { writer.write(toTabSeparatedString(it) + "\n") }
@@ -86,7 +80,7 @@ class CancerAssociatedVariantComparisonApplication(private val config: CancerAss
     companion object {
         const val APPLICATION: String = "ACTIN Cancer Associated Variant Comparator"
 
-        val LOGGER: Logger = LogManager.getLogger(CancerAssociatedVariantComparisonApplication::class.java)
+        val logger = KotlinLogging.logger {}
         private val VERSION =
             CancerAssociatedVariantComparisonApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
@@ -99,7 +93,7 @@ fun main(args: Array<String>) {
         val config = CancerAssociatedVariantComparisonConfig.createConfig(DefaultParser().parse(options, args))
         CancerAssociatedVariantComparisonApplication(config).run()
     } catch (exception: ParseException) {
-        CancerAssociatedVariantComparisonApplication.LOGGER.warn(exception)
+        CancerAssociatedVariantComparisonApplication.logger.warn(exception) { exception.message ?: "" }
         HelpFormatter().printHelp(CancerAssociatedVariantComparisonApplication.APPLICATION, options)
         exitProcess(1)
     }

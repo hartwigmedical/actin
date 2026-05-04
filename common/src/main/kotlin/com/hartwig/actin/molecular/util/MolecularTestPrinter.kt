@@ -5,7 +5,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigi
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
 import com.hartwig.actin.util.ApplicationConfig
 import com.hartwig.actin.util.DatamodelPrinter
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
 import java.time.LocalDate
@@ -17,10 +17,10 @@ private val PERCENTAGE_FORMAT = DecimalFormat("#'%'", DecimalFormatSymbols.getIn
 
 class MolecularTestPrinter(private val printer: DatamodelPrinter) {
 
-    private val logger = LogManager.getLogger(MolecularTestPrinter::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun print(tests: List<MolecularTest>) {
-        logger.info("Printing ${tests.size} molecular tests")
+        logger.info { "Printing ${tests.size} molecular tests" }
 
         tests.forEach { print(it) }
     }

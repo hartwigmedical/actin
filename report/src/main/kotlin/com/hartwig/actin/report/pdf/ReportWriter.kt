@@ -16,21 +16,21 @@ import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
 class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?) {
 
-    private val logger = LogManager.getLogger(ReportWriter::class.java)
+    private val logger = KotlinLogging.logger {}
 
     @Synchronized
     fun write(report: Report, configuration: ReportConfiguration, doidModel: DoidModel, addExtendedSuffix: Boolean) {
-        logger.info("Building report for patient ${report.patientId} with configuration $configuration")
+        logger.info { "Building report for patient ${report.patientId} with configuration $configuration" }
 
-        logger.debug("Extended suffix enabled: $addExtendedSuffix")
+        logger.debug { "Extended suffix enabled: $addExtendedSuffix" }
         
-        logger.debug("Initializing output styles")
+        logger.debug { "Initializing output styles" }
         Styles.initialize()
 
         val chapters = ReportContentProvider(report, configuration, doidModel).provideChapters()
@@ -69,14 +69,14 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
             val outputFilePath =
                 (Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" +
                         (if (addExtendedSuffix) ".extended" else "") + ".pdf")
-            logger.info("Writing PDF report to {}", outputFilePath)
+            logger.info { "Writing PDF report to $outputFilePath" }
             val properties = WriterProperties().setFullCompressionMode(true)
                 .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)
                 .useSmartMode()
             writer = PdfWriter(outputFilePath, properties)
             writer.compressionLevel = 9
         } else {
-            logger.info("Generating in-memory PDF report")
+            logger.info { "Generating in-memory PDF report" }
             writer = PdfWriter(ByteArrayOutputStream())
         }
 

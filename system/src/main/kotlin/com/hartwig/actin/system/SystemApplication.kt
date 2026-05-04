@@ -7,16 +7,15 @@ import com.hartwig.actin.database.molecular.MolecularLoaderApplication
 import com.hartwig.actin.database.trial.TrialLoaderApplication
 import com.hartwig.actin.molecular.MolecularInterpreterApplication
 import com.hartwig.actin.report.ReporterApplication
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object SystemApplication {
-    val LOGGER: Logger = LogManager.getLogger(SystemApplication::class.java)
+    val logger = KotlinLogging.logger {}
     val VERSION = SystemApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
 }
 
 fun main() {
-    SystemApplication.LOGGER.info("The following applications are available through ACTIN v{}", SystemApplication.VERSION)
+    SystemApplication.logger.info { "The following applications are available through ACTIN v${SystemApplication.VERSION}" }
     listOf(
         MolecularInterpreterApplication::class,
         TreatmentMatcherApplication::class,
@@ -25,5 +24,5 @@ fun main() {
         TrialLoaderApplication::class,
         TreatmentMatchLoaderApplication::class,
         ReporterApplication::class
-    ).forEach { applicationClass -> SystemApplication.LOGGER.info(" {}", applicationClass.java) }
+    ).forEach { applicationClass -> SystemApplication.logger.info { " ${applicationClass.java}" } }
 }

@@ -26,8 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class MolecularInterpreterInputData(
     val clinical: ClinicalRecord,
@@ -43,7 +42,7 @@ data class MolecularInterpreterInputData(
 )
 
 object InputDataLoader {
-    val LOGGER: Logger = LogManager.getLogger(InputDataLoader::class.java)
+    val logger = KotlinLogging.logger {}
 
     suspend fun load(config: MolecularInterpreterConfig, clinicalRefGenomeVersion: RefGenomeVersion): MolecularInterpreterInputData =
         coroutineScope {
@@ -51,14 +50,14 @@ object InputDataLoader {
 
             val clinical = async {
                 withContext(Dispatchers.IO) {
-                    LOGGER.info("Loading clinical json from {}", config.clinicalJson)
+                    logger.info { "Loading clinical json from ${config.clinicalJson}" }
                     ClinicalRecordJson.read(config.clinicalJson)
                 }
             }
             val orange = async {
                 withContext(Dispatchers.IO) {
                     if (config.orangeJson != null) {
-                        LOGGER.info("Reading ORANGE json from {}", config.orangeJson)
+                        logger.info { "Reading ORANGE json from ${config.orangeJson}" }
                         OrangeJson.getInstance().read(config.orangeJson)
                     } else {
                         null
@@ -67,39 +66,36 @@ object InputDataLoader {
             }
             val deferredServeDatabase = async {
                 withContext(Dispatchers.IO) {
-                    LOGGER.info("Loading SERVE database from {}", serveJsonFilePath)
+                    logger.info { "Loading SERVE database from $serveJsonFilePath" }
                     val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, config.removeCombinedProfilesEvidence)
-                    LOGGER.info(" Loaded evidence and known events from SERVE version {}", serveDatabase.version())
+                    logger.info { " Loaded evidence and known events from SERVE version ${serveDatabase.version()}" }
                     serveDatabase
                 }
             }
             val deferredDoidEntry = async {
                 withContext(Dispatchers.IO) {
-                    LOGGER.info("Loading DOID tree from {}", config.doidJson)
+                    logger.info { "Loading DOID tree from ${config.doidJson}" }
                     val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-                    LOGGER.info(" Loaded {} nodes from DOID tree", doidEntry.nodes.size)
+                    logger.info { " Loaded ${doidEntry.nodes.size} nodes from DOID tree" }
                     doidEntry
                 }
             }
             val deferredEnsemblDataCache = async {
                 withContext(Dispatchers.IO) {
                     val ensemblRefGenomeVersion = toEnsemblRefGenomeVersion(clinicalRefGenomeVersion)
-                    LOGGER.info("Loading ensemble cache from ${config.ensemblCachePath}")
+                    logger.info { "Loading ensemble cache from ${config.ensemblCachePath}" }
                     EnsemblDataLoader.load(config.ensemblCachePath, ensemblRefGenomeVersion)
                 }
             }
             val deferredDndsDatabase = async {
                 withContext(Dispatchers.IO) {
-                    LOGGER.info(
-                        "Loading dnds database for driver likelihood annotation from " +
-                                "${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}"
-                    )
+                    logger.info { "Loading dnds database for driver likelihood annotation from ${config.oncoDndsDatabasePath} and ${config.tsgDndsDatabasePath}" }
                     DndsDatabase.create(config.oncoDndsDatabasePath, config.tsgDndsDatabasePath)
                 }
             }
             val deferredKnownFusionCache = async {
                 withContext(Dispatchers.IO) {
-                    LOGGER.info("Loading known fusions from " + config.knownFusionsPath)
+                    logger.info { "Loading known fusions from " + config.knownFusionsPath }
                     val knownFusionCache = KnownFusionCache()
                     if (!knownFusionCache.loadFromFile(config.knownFusionsPath)) {
                         throw IllegalArgumentException("Failed to load known fusions from ${config.knownFusionsPath}")
@@ -118,7 +114,7 @@ object InputDataLoader {
             val deferredPanelSpecifications = async {
 
                 withContext(Dispatchers.IO) {
-                    LOGGER.info("Loading panel specifications from {}", config.panelSpecificationsFilePath)
+                    logger.info { "Loading panel specifications from ${config.panelSpecificationsFilePath}" }
                     config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it, deferredGeneFilter.await()) }
                         ?: PanelSpecifications(AlwaysValidFilter(), emptyMap())
                 }
@@ -129,9 +125,9 @@ object InputDataLoader {
                     val decompositionFilePath = config.variantDecompositionFilePath
                         ?: return@withContext EMPTY_VARIANT_DECOMPOSITION_TABLE
 
-                    LOGGER.info("Loading variant decompositions from {}", decompositionFilePath)
+                    logger.info { "Loading variant decompositions from $decompositionFilePath" }
                     val entries = PaveVariantDecomposition.readFromFile(decompositionFilePath)
-                    LOGGER.info("Loaded {} variant decomposition entries", entries.size)
+                    logger.info { "Loaded ${entries.size} variant decomposition entries" }
                     VariantDecompositionTable(entries)
                 }
             }

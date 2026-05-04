@@ -19,7 +19,7 @@ import com.hartwig.hmftools.datamodel.purple.PurpleTranscriptImpact
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantType
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 private const val ENSEMBL_TRANSCRIPT_IDENTIFIER: String = "ENST"
 
@@ -29,7 +29,7 @@ private val SPLICE_EFFECTS = setOf(PurpleVariantEffect.SPLICE_ACCEPTOR, PurpleVa
 
 class VariantExtractor(private val geneFilter: GeneFilter) {
 
-    private val logger = LogManager.getLogger(VariantExtractor::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private val relevantCodingEffects = setOf(
         PurpleCodingEffect.MISSENSE,
@@ -128,7 +128,7 @@ class VariantExtractor(private val geneFilter: GeneFilter) {
 
     private fun extractCanonicalImpact(variant: PurpleVariant): TranscriptVariantImpact {
         if (!isEnsemblTranscript(variant.canonicalImpact())) {
-            logger.warn("Canonical impact defined on non-ensembl transcript for variant '{}'", variant)
+            logger.warn { "Canonical impact defined on non-ensembl transcript for variant '$variant'" }
         }
         return toTranscriptImpact(variant.canonicalImpact(), variant.gene())
     }

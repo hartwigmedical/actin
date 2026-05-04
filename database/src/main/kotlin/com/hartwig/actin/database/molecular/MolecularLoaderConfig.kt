@@ -4,9 +4,10 @@ import com.hartwig.actin.database.DatabaseLoaderConfig
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.config.Configurator
+import ch.qos.logback.classic.Level
+import ch.qos.logback.classic.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.slf4j.LoggerFactory
 
 data class MolecularLoaderConfig(
     val patientJson: String,
@@ -16,7 +17,7 @@ data class MolecularLoaderConfig(
 ) : DatabaseLoaderConfig {
 
     companion object {
-        private val LOGGER = LogManager.getLogger(MolecularLoaderConfig::class.java)
+        private val logger = KotlinLogging.logger {}
 
         private const val PATIENT_JSON = "patient_json"
         private const val DB_USER = "db_user"
@@ -36,8 +37,8 @@ data class MolecularLoaderConfig(
 
         fun createConfig(cmd: CommandLine): MolecularLoaderConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                Configurator.setRootLevel(Level.DEBUG)
-                LOGGER.debug("Switched root level logging to DEBUG")
+                (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.DEBUG
+                logger.debug { "Switched root level logging to DEBUG" }
             }
             return MolecularLoaderConfig(
                 patientJson = ApplicationConfig.nonOptionalFile(cmd, PATIENT_JSON),

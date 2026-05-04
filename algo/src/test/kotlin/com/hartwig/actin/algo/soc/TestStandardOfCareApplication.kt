@@ -19,21 +19,21 @@ import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import java.io.File
 import java.time.LocalDate
 import kotlin.system.exitProcess
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class TestStandardOfCareApplication {
 
     fun run(): Int {
-        LOGGER.info("Running ACTIN Test SOC Application")
+        logger.info { "Running ACTIN Test SOC Application" }
 
-        LOGGER.info("Loading DOID tree from {}", DOID_JSON_PATH)
+        logger.info { "Loading DOID tree from $DOID_JSON_PATH" }
         val doidEntry: DoidEntry = DoidJson.readDoidOwlEntry(DOID_JSON_PATH)
-        LOGGER.info(" Loaded {} nodes", doidEntry.nodes.size)
+        logger.info { " Loaded ${doidEntry.nodes.size} nodes" }
         val doidModel: DoidModel = DoidModelFactory.createFromDoidEntry(doidEntry)
 
-        LOGGER.info("Creating ICD-11 tree from file {}", ICD_TSV_PATH)
+        logger.info { "Creating ICD-11 tree from file $ICD_TSV_PATH" }
         val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(ICD_TSV_PATH))
-        LOGGER.info(" Loaded {} nodes", icdNodes.size)
+        logger.info { " Loaded ${icdNodes.size} nodes" }
         val icdModel = IcdModel.create(icdNodes)
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(TREATMENT_JSON_PATH)
@@ -48,17 +48,17 @@ class TestStandardOfCareApplication {
         ).create()
 
         val patient = patient(treatmentDatabase)
-        LOGGER.info("Generating recommendations for patient record")
+        logger.info { "Generating recommendations for patient record" }
         PatientPrinter.printRecord(patient)
 
-        LOGGER.info(standardOfCareEvaluator.summarizeAvailableTreatments(patient))
+        logger.info { standardOfCareEvaluator.summarizeAvailableTreatments(patient) }
         val patientHasExhaustedStandardOfCare = standardOfCareEvaluator.patientHasExhaustedStandardOfCare(patient)
-        LOGGER.info("Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted")
+        logger.info { "Standard of care has${if (patientHasExhaustedStandardOfCare) "" else " not"} been exhausted" }
         return 0
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(TestStandardOfCareApplication::class.java)
+        private val logger = KotlinLogging.logger {}
 
         private val DOID_JSON_PATH = listOf(
             System.getProperty("user.home"),

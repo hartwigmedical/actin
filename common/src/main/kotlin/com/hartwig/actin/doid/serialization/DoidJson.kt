@@ -26,12 +26,12 @@ import com.hartwig.actin.util.json.Json.optionalStringList
 import com.hartwig.actin.util.json.Json.string
 import com.hartwig.actin.util.json.Json.stringList
 import com.hartwig.actin.util.json.JsonDatamodelChecker
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.FileReader
 
 object DoidJson {
 
-    private val LOGGER = LogManager.getLogger(DoidJson::class.java)
+    private val logger = KotlinLogging.logger {}
 
     const val ID_TO_READ = "http://purl.obolibrary.org/obo/doid.owl"
 
@@ -50,7 +50,7 @@ object DoidJson {
             graphsChecker.check(graph)
             val id: String = string(graph, "id")
             if (id == ID_TO_READ) {
-                LOGGER.debug(" Reading DOID entry with ID '{}'", id)
+                logger.debug { " Reading DOID entry with ID '$id'" }
                 entry = DoidEntry(
                     id = id,
                     nodes = extractNodes(array(graph, "nodes")),
@@ -61,7 +61,7 @@ object DoidJson {
             }
         }
         if (reader.peek() != JsonToken.END_DOCUMENT) {
-            LOGGER.warn("More data found in {} after reading main JSON object!", doidJson)
+            logger.warn { "More data found in $doidJson after reading main JSON object!" }
         }
         checkNotNull(entry) { "Could not read DOID entry with ID '$ID_TO_READ'" }
         return entry
@@ -199,7 +199,7 @@ object DoidJson {
                 if (parts.size == 2 && isLong(parts[1])) {
                     return parts[1]
                 } else {
-                    LOGGER.warn("Unexpected SNOMED entry found: {}", xref.`val`)
+                    logger.warn { "Unexpected SNOMED entry found: ${xref.`val`}" }
                 }
             }
         }

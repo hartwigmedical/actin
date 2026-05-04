@@ -44,8 +44,8 @@
 
         <commons.cli.version>1.5.0</commons.cli.version>
         <google.gson.version>2.10</google.gson.version>
-        <apache.log4j.version>2.25.3</apache.log4j.version>
-        <slf4j-reload4j.version>2.0.9</slf4j-reload4j.version>
+        <kotlin-logging.version>7.0.3</kotlin-logging.version>
+        <logback.version>1.5.25</logback.version>
 
         <jooq.version>3.15.5</jooq.version>
         <mysqlconnector.version>8.0.31</mysqlconnector.version>
@@ -243,9 +243,14 @@
                 <version>${google.gson.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.apache.logging.log4j</groupId>
-                <artifactId>log4j-core</artifactId>
-                <version>${apache.log4j.version}</version>
+                <groupId>io.github.oshai</groupId>
+                <artifactId>kotlin-logging-jvm</artifactId>
+                <version>${kotlin-logging.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.jooq</groupId>
@@ -331,13 +336,6 @@
                 <groupId>org.jetbrains.lets-plot</groupId>
                 <artifactId>lets-plot-kotlin-jvm</artifactId>
                 <version>${letsplot-kotlin.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-reload4j</artifactId>
-                <version>${slf4j-reload4j.version}</version>
-                <scope>runtime</scope>
             </dependency>
 
             <dependency>

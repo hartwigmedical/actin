@@ -6,12 +6,12 @@ import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object TreatmentMatchComparison {
 
     private const val INDENT_WIDTH = 2
-    private val LOGGER = LogManager.getLogger(TreatmentMatchComparison::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun determineTreatmentMatchDifferences(oldMatches: TreatmentMatch, newMatches: TreatmentMatch): EvaluationDifferences {
         val oldTrialSummary = trialMatchesById(oldMatches)
@@ -67,6 +67,6 @@ object TreatmentMatchComparison {
     }
 
     private fun logDebug(message: String, indent: Int = 0) {
-        LOGGER.debug(" ".repeat(indent) + message)
+        logger.debug { " ".repeat(indent) + message }
     }
 }

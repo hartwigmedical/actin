@@ -2,11 +2,11 @@ package com.hartwig.actin.doid
 
 import com.hartwig.actin.doid.config.DoidManualConfig
 import com.hartwig.actin.doid.datamodel.DoidEntry
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object DoidModelFactory {
 
-    private val LOGGER = LogManager.getLogger(DoidModelFactory::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun createFromDoidEntry(doidEntry: DoidEntry): DoidModel {
         val doidManualConfig = DoidManualConfig.create()
@@ -26,13 +26,13 @@ object DoidModelFactory {
         val parentToChildrenMap = parentChildRelationships
             .groupBy(Pair<String, String>::second, Pair<String, String>::first)
 
-        LOGGER.debug("Loaded {} parent-child relationships", childToParentsMap.size)
+        logger.debug { "Loaded ${childToParentsMap.size} parent-child relationships" }
 
         // Assume both doid and term are unique.
         val termPerDoidMap = doidEntry.nodes.filter { it.term != null }.associate { it.doid to it.term!! }
 
         termPerDoidMap.values.groupBy { it.lowercase() }.filter { it.value.size > 1 }.forEach { (term, _) ->
-            LOGGER.warn("DOID term (in lower-case) is not unique: '{}'", term)
+            logger.warn { "DOID term (in lower-case) is not unique: '$term'" }
         }
         val doidPerLowerCaseTermMap = termPerDoidMap.entries.associate { (doid, term) -> term.lowercase() to doid }
 

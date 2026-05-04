@@ -7,7 +7,7 @@ import com.hartwig.actin.molecular.paver.PaveQuery
 import com.hartwig.actin.molecular.paver.PaveResponse
 import com.hartwig.actin.molecular.paver.Paver
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class PanelVariantAnnotator(
     private val variantResolver: VariantAnnotator,
@@ -17,7 +17,7 @@ class PanelVariantAnnotator(
     private val phasedCollapser: PhasedDecompositionCollapser = PhasedDecompositionCollapser(variantResolver)
 ) {
 
-    private val logger = LogManager.getLogger(PanelVariantAnnotator::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun annotate(sequencedVariants: Set<SequencedVariant>): List<Variant> {
         val expanded = expander.expand(sequencedVariants)
@@ -32,16 +32,7 @@ class PanelVariantAnnotator(
             val transvar = variantResolver.resolve(variant.sequencedVariant.gene, variant.sequencedVariant.transcript, variant.queryHgvs)
                 ?: throw IllegalStateException("Unable to resolve variant '${variant.queryHgvs}' for gene '${variant.sequencedVariant.gene}'")
 
-            logger.info(
-                "Resolved {}:{} {} -> {}:{} {}>{}",
-                variant.sequencedVariant.gene,
-                variant.sequencedVariant.transcript ?: "null",
-                variant.queryHgvs,
-                transvar.chromosome(),
-                transvar.position(),
-                transvar.ref(),
-                transvar.alt()
-            )
+            logger.info { "Resolved ${variant.sequencedVariant.gene}:${variant.sequencedVariant.transcript ?: "null"} ${variant.queryHgvs} -> ${transvar.chromosome()}:${transvar.position()} ${transvar.ref()}>${transvar.alt()}" }
 
             variant.copy(transvarVariant = transvar)
         }
