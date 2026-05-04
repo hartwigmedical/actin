@@ -472,7 +472,7 @@ _Kidney function_
 | HAS_EGFR_MDRD_OF_AT_LEAST_X                     | eGFR (MDRD formula) => X.                                       | In case CrCl is measured in another unit, the value is converted                                |
 | HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X       | Creatinine clearance (Cockcroft Gault formula) => X.            | In case CrCl is measured in another unit, the value is converted                                |
 | HAS_CREATININE_CLEARANCE_BETWEEN_X_AND_Y        | Creatinine clearance (Cockcroft Gault formula) between X and Y. | In case CrCl is measured in another unit, the value is converted                                |
-| HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X | T.B.I.                                                          |                                                                                                 |
+| HAS_MEASURED_CREATININE_CLEARANCE_OF_AT_LEAST_X | Measured creatinine clearance (24h urine) >= X.                 |                                                                                                 |
 
 _Cardiac / cardiovascular function_
 
