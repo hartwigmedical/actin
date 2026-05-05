@@ -4,10 +4,8 @@ import com.hartwig.actin.database.DatabaseLoaderConfig
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
+import com.hartwig.actin.util.enableDebugLogging
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.slf4j.LoggerFactory
 
 data class ClinicalLoaderConfig(
     val clinicalDirectory: String,
@@ -29,8 +27,7 @@ data class ClinicalLoaderConfig(
 
         fun createConfig(cmd: CommandLine): ClinicalLoaderConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.DEBUG
-                logger.debug { "Switched root level logging to DEBUG" }
+                enableDebugLogging()
             }
             return ClinicalLoaderConfig(
                 clinicalDirectory = ApplicationConfig.nonOptionalDir(cmd, CLINICAL_DIRECTORY),

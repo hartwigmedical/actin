@@ -6,10 +6,8 @@ import com.hartwig.actin.util.ApplicationConfig
 import java.time.LocalDate
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import ch.qos.logback.classic.Level
-import ch.qos.logback.classic.Logger
+import com.hartwig.actin.util.enableDebugLogging
 import io.github.oshai.kotlinlogging.KotlinLogging
-import org.slf4j.LoggerFactory
 
 data class ReporterConfig(
     val patientJson: String,
@@ -50,8 +48,7 @@ data class ReporterConfig(
 
         fun createConfig(cmd: CommandLine): ReporterConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                (LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as Logger).level = Level.DEBUG
-                logger.debug { "Switched root level logging to DEBUG" }
+                enableDebugLogging()
             }
 
             val enableExtendedMode = cmd.hasOption(ENABLE_EXTENDED_MODE)
