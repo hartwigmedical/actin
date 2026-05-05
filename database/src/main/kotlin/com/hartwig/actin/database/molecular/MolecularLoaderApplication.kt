@@ -42,7 +42,7 @@ fun main(args: Array<String>) {
     try {
         config = MolecularLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        MolecularLoaderApplication.logger.warn(exception) { exception.message ?: "" }
+        MolecularLoaderApplication.logger.warn { exception.toString() }
         HelpFormatter().printHelp(MolecularLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }

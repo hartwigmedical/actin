@@ -91,7 +91,7 @@ fun main(args: Array<String>) {
         val config = StandardOfCareConfig.createConfig(DefaultParser().parse(options, args))
         StandardOfCareApplication(config).run()
     } catch (exception: ParseException) {
-        StandardOfCareApplication.logger.warn(exception) { exception.message ?: "" }
+        StandardOfCareApplication.logger.warn { exception.toString() }
         HelpFormatter().printHelp(StandardOfCareApplication.APPLICATION, options)
         exitProcess(1)
     }

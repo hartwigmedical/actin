@@ -93,7 +93,7 @@ fun main(args: Array<String>) {
         val config = CancerAssociatedVariantComparisonConfig.createConfig(DefaultParser().parse(options, args))
         CancerAssociatedVariantComparisonApplication(config).run()
     } catch (exception: ParseException) {
-        CancerAssociatedVariantComparisonApplication.logger.warn(exception) { exception.message ?: "" }
+        CancerAssociatedVariantComparisonApplication.logger.warn { exception.toString() }
         HelpFormatter().printHelp(CancerAssociatedVariantComparisonApplication.APPLICATION, options)
         exitProcess(1)
     }

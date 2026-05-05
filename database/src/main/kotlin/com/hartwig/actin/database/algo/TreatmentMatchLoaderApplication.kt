@@ -37,7 +37,7 @@ fun main(args: Array<String>) {
     try {
         config = TreatmentMatchLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        TreatmentMatchLoaderApplication.logger.warn(exception) { exception.message ?: "" }
+        TreatmentMatchLoaderApplication.logger.warn { exception.toString() }
         HelpFormatter().printHelp(TreatmentMatchLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }
