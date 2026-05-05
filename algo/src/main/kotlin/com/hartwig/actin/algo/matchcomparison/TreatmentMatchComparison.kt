@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.TrialIdentification
+import com.hartwig.actin.util.debugIndented
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 object TreatmentMatchComparison {
@@ -25,7 +26,7 @@ object TreatmentMatchComparison {
                 val eligibilityDifferences = extractDifferences(
                     oldTrialMatch, newTrialMatch, mapOf("eligibility" to TrialMatch::isPotentiallyEligible)
                 )
-                eligibilityDifferences.forEach(::logDebug)
+                eligibilityDifferences.forEach { logger.debugIndented(it) }
 
                 val evaluationDifferences = EvaluationComparison.determineEvaluationDifferences(
                     oldTrialMatch.evaluations, newTrialMatch.evaluations, key.trialId, 0
@@ -45,7 +46,7 @@ object TreatmentMatchComparison {
             val newCohortMatch = newCohortSummary[cohortId]
             if (newCohortMatch == null) EvaluationDifferences.create() else {
                 val cohortEligibilityDifferences = extractDifferences(oldCohortMatch, newCohortMatch, mapOf("eligibility" to CohortMatch::isPotentiallyEligible))
-                cohortEligibilityDifferences.forEach { logDebug(it, INDENT_WIDTH) }
+                cohortEligibilityDifferences.forEach { logger.debugIndented(it, INDENT_WIDTH) }
                 val id = "${oldTrialMatch.identification.trialId}, cohort$cohortId"
                 EvaluationComparison.determineEvaluationDifferences(
                     oldCohortMatch.evaluations,
@@ -66,7 +67,4 @@ object TreatmentMatchComparison {
         return trialMatch.cohorts.associateBy { it.metadata.cohortId }
     }
 
-    private fun logDebug(message: String, indent: Int = 0) {
-        logger.debug { " ".repeat(indent) + message }
-    }
 }

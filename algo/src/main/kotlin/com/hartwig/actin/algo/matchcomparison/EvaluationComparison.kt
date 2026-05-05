@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.util.debugIndented
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 object EvaluationComparison {
@@ -47,9 +48,9 @@ object EvaluationComparison {
                 if (resultDifferences.isNotEmpty() || recoverableDifferences.isNotEmpty() || messageDifferences.isNotEmpty()
                     || functionDifferences.isNotEmpty()
                 ) {
-                    logDebug("Differences found for $criteriaId:", indent)
+                    logger.debugIndented("Differences found for $criteriaId:", indent)
                     listOf(resultDifferences, recoverableDifferences, messageDifferences, functionDifferences.asList()).flatten()
-                        .forEach { logDebug(it, detailIndent) }
+                        .forEach { logger.debugIndented(it, detailIndent) }
                 }
                 EvaluationDifferences.create(
                     resultDifferences = resultDifferences,
@@ -87,7 +88,4 @@ object EvaluationComparison {
         }
     }
 
-    private fun logDebug(message: String, indent: Int = 0) {
-        logger.debug { " ".repeat(indent) + message }
-    }
 }
