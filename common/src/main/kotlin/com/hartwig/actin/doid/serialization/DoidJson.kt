@@ -50,7 +50,7 @@ object DoidJson {
             graphsChecker.check(graph)
             val id: String = string(graph, "id")
             if (id == ID_TO_READ) {
-                logger.debug { " Reading DOID entry with ID '$id'" }
+                logger.debug { "Reading DOID entry with ID '$id'" }
                 entry = DoidEntry(
                     id = id,
                     nodes = extractNodes(array(graph, "nodes")),
