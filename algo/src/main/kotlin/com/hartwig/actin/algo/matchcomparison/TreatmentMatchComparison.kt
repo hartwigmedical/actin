@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import com.hartwig.actin.util.debugIndented
+import com.hartwig.actin.utils.debugIndented
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 object TreatmentMatchComparison {

@@ -5,7 +5,7 @@ import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import com.hartwig.actin.util.enableDebugLogging
+import com.hartwig.actin.utils.enableDebugLogging
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class TreatmentMatcherConfig(

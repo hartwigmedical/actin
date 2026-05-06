@@ -7,7 +7,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.trial.Eligibility
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.util.debugIndented
+import com.hartwig.actin.utils.debugIndented
 import io.github.oshai.kotlinlogging.KotlinLogging
 
 object EvaluationComparison {
