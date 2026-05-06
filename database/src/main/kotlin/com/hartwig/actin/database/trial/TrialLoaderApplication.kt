@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
     try {
         config = TrialLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        TrialLoaderApplication.logger.warn { exception.toString() }
+        TrialLoaderApplication.logger.warn { exception }
         HelpFormatter().printHelp(TrialLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }

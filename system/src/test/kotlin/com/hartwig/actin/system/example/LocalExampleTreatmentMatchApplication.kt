@@ -134,7 +134,7 @@ fun main() {
 
         LocalExampleTreatmentMatchApplication().run(examplePatientRecordJson, exampleTrialDatabaseDir, outputDirectory)
     } catch (exception: ParseException) {
-        LocalExampleTreatmentMatchApplication.logger.warn { exception.toString() }
+        LocalExampleTreatmentMatchApplication.logger.warn { exception }
         exitProcess(1)
     }
 }

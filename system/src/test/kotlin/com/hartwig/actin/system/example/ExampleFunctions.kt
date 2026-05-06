@@ -106,7 +106,7 @@ object ExampleFunctions {
             val exampleTreatmentMatchJson = resolveExampleTreatmentMatchJson(exampleToRun)
             run(LocalDate.now(), examplePatientRecordJson, exampleTreatmentMatchJson, localOutputPath, reportConfigProvider())
         } catch (exception: ParseException) {
-            logger.warn { exception.toString() }
+            logger.warn { exception }
             exitProcess(1)
         }
     }

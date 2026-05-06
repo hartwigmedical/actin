@@ -40,7 +40,7 @@ fun main(args: Array<String>) {
     try {
         config = ClinicalLoaderConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        ClinicalLoaderApplication.logger.warn { exception.toString() }
+        ClinicalLoaderApplication.logger.warn { exception }
         HelpFormatter().printHelp(ClinicalLoaderApplication.APPLICATION, options)
         exitProcess(1)
     }

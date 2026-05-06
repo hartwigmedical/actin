@@ -245,7 +245,7 @@ fun main(args: Array<String>) {
     try {
         config = MolecularInterpreterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        MolecularInterpreterApplication.logger.warn { exception.toString() }
+        MolecularInterpreterApplication.logger.warn { exception }
         HelpFormatter().printHelp(MolecularInterpreterApplication.APPLICATION, options)
         exitProcess(1)
     }

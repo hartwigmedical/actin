@@ -62,7 +62,7 @@ fun main(args: Array<String>) {
     try {
         config = ReporterConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        ReporterApplication.logger.warn { exception.toString() }
+        ReporterApplication.logger.warn { exception }
         HelpFormatter().printHelp(ReporterApplication.APPLICATION, options)
         exitProcess(1)
     }
