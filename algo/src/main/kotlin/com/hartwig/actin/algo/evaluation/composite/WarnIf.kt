@@ -15,14 +15,16 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
                     result = EvaluationResult.WARN,
                     recoverable = childEvaluation.recoverable,
                     warnMessages = childEvaluation.passMessages,
-                    childEvaluations = listOf(childEvaluation)
+                    childEvaluations = listOf(childEvaluation),
+                    isMissingMolecularResultForEvaluation = false,
                 )
             }
 
             EvaluationResult.WARN -> childEvaluation.copy(
                 inclusionMolecularEvents = emptySet(),
                 exclusionMolecularEvents = emptySet(),
-                childEvaluations = listOf(childEvaluation)
+                childEvaluations = listOf(childEvaluation),
+                isMissingMolecularResultForEvaluation = false,
             )
 
             else -> {
@@ -30,7 +32,7 @@ class WarnIf(private val function: EvaluationFunction) : EvaluationFunction {
                     result = EvaluationResult.PASS,
                     recoverable = childEvaluation.recoverable,
                     passMessages = (childEvaluation.passMessages + childEvaluation.warnMessages + childEvaluation.undeterminedMessages + childEvaluation.failMessages),
-                    isMissingMolecularResultForEvaluation = childEvaluation.isMissingMolecularResultForEvaluation,
+                    isMissingMolecularResultForEvaluation = false,
                     childEvaluations = listOf(childEvaluation)
                 )
             }
