@@ -311,24 +311,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minCreatinineClearance = function.param<DoubleParameter>(0).value
-
-            val directMeasuredCreatinineClearance = createLabEvaluator(
-                LabMeasurement.CREATININE_CLEARANCE_24H,
-                HasSufficientLabValue(minCreatinineClearance, LabMeasurement.CREATININE_CLEARANCE_24H, LabUnit.MILLILITERS_PER_MINUTE),
-                false
-            )
-
-            val calculatedFromDailyTotal = createMultiLabEvaluator(
-                setOf(LabMeasurement.CREATININE_24U, LabMeasurement.CREATININE),
-                HasSufficientMeasuredCreatinineClearance(minCreatinineClearance, MeasuredCreatinineClearanceMethod.DAILY_TOTAL),
-            )
-
-            val calculatedFromConcentration = createMultiLabEvaluator(
-                setOf(LabMeasurement.CREATININE_URINE, LabMeasurement.URINE_VOLUME_24H, LabMeasurement.CREATININE),
-                HasSufficientMeasuredCreatinineClearance(minCreatinineClearance, MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION),
-            )
-
-            Fallback(directMeasuredCreatinineClearance, Fallback(calculatedFromDailyTotal, calculatedFromConcentration))
+            MeasuredCreatinineClearanceEvaluator(minCreatinineClearance, minValidLabDate(), minPassLabDate())
         }
     }
 
@@ -387,15 +370,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
         function: LabEvaluationFunction,
         highestFirst: Boolean = true
     ): EvaluationFunction {
-        return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate(), highestFirst)
-    }
-
-    private fun createMultiLabEvaluator(
-        measurements: Set<LabMeasurement>,
-        function: MultiLabEvaluationFunction,
-        requireSameDate: Boolean = true,
-    ): EvaluationFunction {
-        return MultiLabMeasurementEvaluator(measurements, function, minValidLabDate(), minPassLabDate(), requireSameDate)
+        return LabMeasurementEvaluator(SingleLabValueSelector(measurement, highestFirst), function, minValidLabDate(), minPassLabDate())
     }
 
     private fun minValidLabDate(): LocalDate {
