@@ -22,24 +22,21 @@ class LabMeasurementEvaluatorTest {
 
     @Test
     fun `Should propagate NotFound from selector as undetermined`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED,
-            evaluator(notFoundSelector).evaluate(record))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluator(notFoundSelector).evaluate(record))
     }
 
     @Test
     fun `Should propagate pass from function when selector returns Found`() {
-        assertEvaluation(EvaluationResult.PASS,
-            evaluator(foundSelector()).evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, evaluator(foundSelector()).evaluate(record))
     }
 
     @Test
     fun `Should propagate fail from function when selector returns Found`() {
-        assertEvaluation(EvaluationResult.FAIL,
-            evaluator(foundSelector(), failingLabEvaluationFunction).evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, evaluator(foundSelector(), failingLabEvaluationFunction).evaluate(record))
     }
 
     @Test
-    fun `Should degrade pass to recoverable pass when measurement is before minPassDate`() {
+    fun `Should evaluate to recoverable pass in case measurement is older than pass date`() {
         val oldDate = TEST_DATE.minusDays(5)
         val evaluation = evaluator(foundSelector(oldDate), minPassDate = oldDate.plusDays(1)).evaluate(record)
         assertEvaluation(EvaluationResult.PASS, evaluation)
@@ -68,13 +65,16 @@ class LabMeasurementEvaluatorTest {
         private val TEST_DATE = LocalDate.of(2020, 4, 20)
 
         private val passingLabEvaluationFunction: LabEvaluationFunction = object : LabEvaluationFunction {
-            override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation =
-                EvaluationTestFactory.withResult(EvaluationResult.PASS)
+            override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
+                return EvaluationTestFactory.withResult(EvaluationResult.PASS)
+            }
+
         }
 
         private val failingLabEvaluationFunction: LabEvaluationFunction = object : LabEvaluationFunction {
-            override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation =
-                EvaluationTestFactory.withResult(EvaluationResult.FAIL)
+            override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
+                return EvaluationTestFactory.withResult(EvaluationResult.FAIL)
+            }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
+import com.hartwig.actin.datamodel.clinical.LabUnit
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -33,6 +34,15 @@ class SingleLabValueSelectorTest {
     @Test
     fun `Should return NotFound with undetermined when most recent value is too old`() {
         val record = LabTestFactory.withLabValue(LabTestFactory.create(measurement, date = minValidDate.minusDays(1)))
+        val interpretation = LabInterpretation.interpret(record.labValues)
+        val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate)
+        assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
+        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+    }
+
+    @Test
+    fun `Should return NotFound with undetermined when most recent value has wrong unit`() {
+        val record = LabTestFactory.withLabValue(LabTestFactory.create(measurement, date = today).copy(unit = LabUnit.SECONDS))
         val interpretation = LabInterpretation.interpret(record.labValues)
         val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
