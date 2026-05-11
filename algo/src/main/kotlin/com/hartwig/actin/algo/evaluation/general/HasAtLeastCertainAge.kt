@@ -14,7 +14,7 @@ class HasAtLeastCertainAge(private val referenceYear: Int, private val minAge: I
 
             age == minAge -> EvaluationFactory.undetermined(
                 "Undetermined if patient with birth year ${record.patient.birthYear})"
-                        + " is above $minAge years old"
+                        + " is older than $minAge"
             )
 
             else -> EvaluationFactory.fail("Patient is younger than $minAge")
