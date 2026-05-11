@@ -29,10 +29,16 @@ class WarnIfTest {
     }
 
     @Test
-    fun `Should not return inclusion or exclusion molecular events`(){
+    fun `Should not return inclusion or exclusion molecular events`() {
         val result: Evaluation =
             WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         assertThat(result.inclusionMolecularEvents).isEmpty()
         assertThat(result.exclusionMolecularEvents).isEmpty()
+    }
+
+    @Test
+    fun `Should set isMissingMolecularResultForEvaluation to false`() {
+        val result = WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        assertThat(result.isMissingMolecularResultForEvaluation).isFalse
     }
 }
