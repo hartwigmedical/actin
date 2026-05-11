@@ -22,11 +22,11 @@ class GeneHasVariantInExonRangeOfType(
 ) {
 
     private enum class VariantClassification {
-        CANONICAL_HIGH_DRIVER,
+        CANONICAL_REPORTABLE_HIGH_DRIVER,
         CANONICAL_REPORTABLE_SUBCLONAL,
         CANONICAL_REPORTABLE_NON_HIGH_DRIVER,
         CANONICAL_UNREPORTABLE,
-        REPORTABLE_OTHER,
+        NON_CANONICAL_REPORTABLE,
         NONE
     }
 
@@ -46,7 +46,7 @@ class GeneHasVariantInExonRangeOfType(
                         }
 
                         hasCanonicalEffectInExonRange && variant.isReportable && variant.driverLikelihood == DriverLikelihood.HIGH -> {
-                            VariantClassification.CANONICAL_HIGH_DRIVER
+                            VariantClassification.CANONICAL_REPORTABLE_HIGH_DRIVER
                         }
 
                         hasCanonicalEffectInExonRange && variant.isReportable -> {
@@ -58,14 +58,14 @@ class GeneHasVariantInExonRangeOfType(
                         }
 
                         variant.isReportable && variant.otherImpacts.any { hasEffectInExonRange(it.affectedExon, minExon, maxExon) } -> {
-                            VariantClassification.REPORTABLE_OTHER
+                            VariantClassification.NON_CANONICAL_REPORTABLE
                         }
 
                         else -> VariantClassification.NONE
                     }
                 }.mapValues { (_, variants) -> variants.map(Variant::event).toSet() }
-        val highDriverEvents = variantClassifications[VariantClassification.CANONICAL_HIGH_DRIVER]
-        val reportableOtherVariantMatches = variantClassifications[VariantClassification.REPORTABLE_OTHER]
+        val highDriverEvents = variantClassifications[VariantClassification.CANONICAL_REPORTABLE_HIGH_DRIVER]
+        val reportableOtherVariantMatches = variantClassifications[VariantClassification.NON_CANONICAL_REPORTABLE]
         val subclonalVariantMatches = variantClassifications[VariantClassification.CANONICAL_REPORTABLE_SUBCLONAL]
 
         val (reportableExonSkips, unreportableExonSkips) =
@@ -91,10 +91,7 @@ class GeneHasVariantInExonRangeOfType(
             }
 
             !highDriverEvents.isNullOrEmpty() -> {
-                val extensions = listOfNotNull(
-                    if (!reportableOtherVariantMatches.isNullOrEmpty()) "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches)}" else null,
-                    if (!subclonalVariantMatches.isNullOrEmpty()) "variant(s) in canonical transcript but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}: ${concat(subclonalVariantMatches)}" else null
-                )
+                val extensions = buildWarnExtensions(reportableOtherVariantMatches, subclonalVariantMatches)
                 EvaluationFactory.warn(
                     "Variant(s) ${concat(highDriverEvents)} $baseMessage in canonical transcript together with ${concat(extensions)}",
                     inclusionEvents = highDriverEvents + reportableOtherVariantMatches.orEmpty() + subclonalVariantMatches.orEmpty()
@@ -102,10 +99,7 @@ class GeneHasVariantInExonRangeOfType(
             }
 
             highDriverExonSkipEvents.isNotEmpty() -> {
-                val extensions = listOfNotNull(
-                    if (!reportableOtherVariantMatches.isNullOrEmpty()) "variant(s) in non-canonical transcript: ${concat(reportableOtherVariantMatches)}" else null,
-                    if (!subclonalVariantMatches.isNullOrEmpty()) "variant(s) in canonical transcript but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}: ${concat(subclonalVariantMatches)}" else null
-                )
+                val extensions = buildWarnExtensions(reportableOtherVariantMatches, subclonalVariantMatches)
                 EvaluationFactory.warn(
                     "Exon(s) skipped $baseMessage due to ${concat(highDriverExonSkipEvents)} together with ${concat(extensions)}",
                     inclusionEvents = highDriverExonSkipEvents + reportableOtherVariantMatches.orEmpty() + subclonalVariantMatches.orEmpty()
@@ -200,6 +194,14 @@ class GeneHasVariantInExonRangeOfType(
             }
         }
     }
+
+    private fun buildWarnExtensions(
+        nonCanonicalMatches: Set<String>?,
+        subclonalMatches: Set<String>?
+    ): List<String> = listOfNotNull(
+        nonCanonicalMatches?.ifEmpty { null }?.let { "variant(s) in non-canonical transcript: ${concat(it)}" },
+        subclonalMatches?.ifEmpty { null }?.let { "variant(s) in canonical transcript but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}: ${concat(it)}" }
+    )
 
     companion object {
         private const val CLONAL_CUTOFF = 0.5

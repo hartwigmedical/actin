@@ -18,6 +18,8 @@ import org.junit.jupiter.params.provider.ValueSource
 private const val MATCHING_EXON = 1
 private const val OTHER_EXON = 6
 private const val TARGET_GENE = "gene A"
+private const val CLONAL_LIKELIHOOD = 0.6
+private const val SUBCLONAL_LIKELIHOOD = 0.3
 
 class GeneHasVariantInExonRangeOfTypeTest {
     
@@ -327,7 +329,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDrivers(
-                    canonicalVariant(VariantType.DELETE, clonalLikelihood = 0.3, isReportable = true),
+                    canonicalVariant(VariantType.DELETE, clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
                     highDriverExonSkipFusion()
                 )
             )
@@ -341,7 +343,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDrivers(
-                    canonicalVariant(VariantType.DELETE, clonalLikelihood = 0.3, isReportable = true),
+                    canonicalVariant(VariantType.DELETE, clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
                     nonCanonicalVariant(VariantType.DELETE),
                     highDriverExonSkipFusion()
                 )
@@ -370,33 +372,33 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should pass when reportable canonical high driver match has clonality above boundary`() {
+    fun `Should pass when reportable canonical high driver clonal match`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
-                MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = 0.6, isReportable = true))
+                MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true))
             )
         )
     }
 
     @Test
-    fun `Should warn when reportable canonical match is subclonal`() {
+    fun `Should warn when reportable canonical high driver match is subclonal`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
-                MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = 0.3, isReportable = true))
+                MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true))
             )
         )
     }
 
     @Test
-    fun `Should warn when high driver canonical match coexists with subclonal canonical match`() {
+    fun `Should warn when reportable canonical high driver match coexists with subclonal canonical match`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDrivers(
-                    canonicalVariant(clonalLikelihood = 0.8, isReportable = true),
-                    canonicalVariant(clonalLikelihood = 0.3, isReportable = true)
+                    canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true),
+                    canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true)
                 )
             )
         )
@@ -409,7 +411,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
             function.evaluate(
                 MolecularTestFactory.withVariant(
                     canonicalVariant(
-                        clonalLikelihood = 0.3,
+                        clonalLikelihood = SUBCLONAL_LIKELIHOOD,
                         driverLikelihood = DriverLikelihood.MEDIUM,
                         isReportable = true
                     )
@@ -430,12 +432,12 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
-    fun `Should warn when high driver canonical match is subclonal and non-canonical match also present`() {
+    fun `Should warn when reportable canonical high driver match is subclonal and non-canonical match also present`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDrivers(
-                    canonicalVariant(clonalLikelihood = 0.3, isReportable = true),
+                    canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
                     nonCanonicalVariant()
                 )
             )
