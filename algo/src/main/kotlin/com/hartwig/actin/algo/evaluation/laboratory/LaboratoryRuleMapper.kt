@@ -367,7 +367,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun createLabEvaluator(
         measurement: LabMeasurement,
-        function: LabEvaluationFunction,
+        function: SingleLabValueEvaluationFunction,
         highestFirst: Boolean = true
     ): EvaluationFunction {
         return LabMeasurementEvaluator(SingleLabValueSelector(measurement, highestFirst), function, minValidLabDate(), minPassLabDate())

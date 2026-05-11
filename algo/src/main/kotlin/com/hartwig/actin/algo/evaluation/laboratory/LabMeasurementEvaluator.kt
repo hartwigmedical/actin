@@ -10,7 +10,7 @@ import java.time.LocalDate
 
 internal class LabMeasurementEvaluator(
     private val selector: LabValueSelector,
-    private val function: MultiLabEvaluationFunction,
+    private val function: LabEvaluationFunction,
     private val minValidDate: LocalDate,
     private val minPassDate: LocalDate,
 ) : EvaluationFunction {

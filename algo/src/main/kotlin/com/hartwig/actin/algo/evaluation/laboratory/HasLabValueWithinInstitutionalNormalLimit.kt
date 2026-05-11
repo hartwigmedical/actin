@@ -6,7 +6,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.LabValue
 
-class HasLabValueWithinInstitutionalNormalLimit: LabEvaluationFunction {
+class HasLabValueWithinInstitutionalNormalLimit: SingleLabValueEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val isOutsideRef = labValue.isOutsideRef

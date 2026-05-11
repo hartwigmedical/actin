@@ -64,14 +64,14 @@ class LabMeasurementEvaluatorTest {
     companion object {
         private val TEST_DATE = LocalDate.of(2020, 4, 20)
 
-        private val passingLabEvaluationFunction: LabEvaluationFunction = object : LabEvaluationFunction {
+        private val passingLabEvaluationFunction: SingleLabValueEvaluationFunction = object : SingleLabValueEvaluationFunction {
             override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
                 return EvaluationTestFactory.withResult(EvaluationResult.PASS)
             }
 
         }
 
-        private val failingLabEvaluationFunction: LabEvaluationFunction = object : LabEvaluationFunction {
+        private val failingLabEvaluationFunction: SingleLabValueEvaluationFunction = object : SingleLabValueEvaluationFunction {
             override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
                 return EvaluationTestFactory.withResult(EvaluationResult.FAIL)
             }

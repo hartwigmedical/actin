@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.LabValue
 
-class HasSufficientLabValueULN(private val minULNFactor: Double) : LabEvaluationFunction {
+class HasSufficientLabValueULN(private val minULNFactor: Double) : SingleLabValueEvaluationFunction {
     
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val labValueString = labValue(labMeasurement, labValue.value, labValue.unit)

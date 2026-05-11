@@ -17,7 +17,7 @@ private const val MEASURED_CREATININE_CLEARANCE_UNDETERMINED_MESSAGE = "$MEASURE
 internal class HasSufficientMeasuredCreatinineClearance(
     private val minCreatinineClearance: Double,
     private val method: MeasuredCreatinineClearanceMethod
-) : MultiLabEvaluationFunction {
+) : LabEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurements: Map<LabMeasurement, LabValue>): Evaluation {
         val creatinine = labMeasurements[LabMeasurement.CREATININE]
