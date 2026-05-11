@@ -21,14 +21,14 @@ internal class SameDateLabValueSelector(
                 )
             )
 
-        val selected = measurements.fold(mutableMapOf<LabMeasurement, LabValue>()) { acc, measurement ->
+        val selected = measurements.associateWith { measurement ->
             val value = interpretation.valuesOnDate(measurement, mostRecentSharedDate).firstOrNull()
             if (!LabEvaluation.isValid(value, measurement, minValidDate)) {
                 return LabValueSelectionResult.NotFound(
                     LabEvaluation.evaluateInvalidLabValue(measurement, value, minValidDate)
                 )
             }
-            acc.also { it[measurement] = value!! }
+            value!!
         }
         return LabValueSelectionResult.Found(selected)
     }

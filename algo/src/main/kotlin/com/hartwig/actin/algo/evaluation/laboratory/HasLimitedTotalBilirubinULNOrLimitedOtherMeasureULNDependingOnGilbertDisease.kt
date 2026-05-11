@@ -29,8 +29,7 @@ class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisea
             LabMeasurement.TOTAL_BILIRUBIN to maxULNWithoutGilbertDisease
         }
 
-        return LabMeasurementEvaluator(SingleLabValueSelector(applicableMeasure), HasLimitedLabValueULN(applicableULN), minValidLabDate, minPassLabDate).evaluate(
-            record
-        )
+        return LabMeasurementEvaluator(SingleLabValueSelector(applicableMeasure), HasLimitedLabValueULN(applicableULN), minValidLabDate, minPassLabDate)
+            .evaluate(record)
     }
 }
