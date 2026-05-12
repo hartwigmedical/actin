@@ -12,10 +12,14 @@ import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.trial.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 private const val MATCHING_EXON = 1
 private const val OTHER_EXON = 6
 private const val TARGET_GENE = "gene A"
+private const val CLONAL_LIKELIHOOD = 0.6
+private const val SUBCLONAL_LIKELIHOOD = 0.3
 
 class GeneHasVariantInExonRangeOfTypeTest {
     
@@ -319,6 +323,35 @@ class GeneHasVariantInExonRangeOfTypeTest {
     }
 
     @Test
+    fun `Should warn when high driver exon skip coexists with subclonal canonical match`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    canonicalVariant(VariantType.DELETE, clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
+                    highDriverExonSkipFusion()
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when high driver exon skip coexists with non-canonical and subclonal matches`() {
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    canonicalVariant(VariantType.DELETE, clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
+                    nonCanonicalVariant(VariantType.DELETE),
+                    highDriverExonSkipFusion()
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should pass for variant with matching canonical and non-canonical impact`() {
         val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
         assertMolecularEvaluation(
@@ -333,6 +366,79 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         canonicalImpact = impactWithExon(MATCHING_EXON),
                         otherImpacts = setOf(impactWithExon(MATCHING_EXON))
                     )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass when reportable canonical high driver clonal match`() {
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true))
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable canonical high driver match is subclonal`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true))
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable canonical high driver match coexists with subclonal canonical match`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true),
+                    canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true)
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable canonical medium driver match is subclonal`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    canonicalVariant(
+                        clonalLikelihood = SUBCLONAL_LIKELIHOOD,
+                        driverLikelihood = DriverLikelihood.MEDIUM,
+                        isReportable = true
+                    )
+                )
+            )
+        )
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = [0.3, 0.7])
+    fun `Should warn when canonical match is not reportable regardless of clonality`(clonalLikelihood: Double) {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = clonalLikelihood, isReportable = false))
+            )
+        )
+    }
+
+    @Test
+    fun `Should warn when reportable canonical high driver match is subclonal and non-canonical match also present`() {
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(
+                MolecularTestFactory.withDrivers(
+                    canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
+                    nonCanonicalVariant()
                 )
             )
         )
@@ -359,6 +465,37 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(result.undeterminedMessagesStrings()).containsExactly("Mutation in exon 1 of type insertion in gene gene A undetermined (not tested for at least mutations)")
     }
+
+    private fun nonCanonicalVariant(type: VariantType = VariantType.INSERT) = TestVariantFactory.createMinimal().copy(
+        gene = TARGET_GENE,
+        isReportable = true,
+        type = type,
+        canonicalImpact = impactWithExon(OTHER_EXON),
+        otherImpacts = setOf(impactWithExon(MATCHING_EXON))
+    )
+
+    private fun canonicalVariant(
+        type: VariantType = VariantType.INSERT,
+        clonalLikelihood: Double? = null,
+        driverLikelihood: DriverLikelihood = DriverLikelihood.HIGH,
+        isReportable: Boolean = false
+    ) = TestVariantFactory.createMinimal().copy(
+        gene = TARGET_GENE,
+        isReportable = isReportable,
+        driverLikelihood = driverLikelihood,
+        type = type,
+        canonicalImpact = impactWithExon(MATCHING_EXON),
+        clonalLikelihood = clonalLikelihood
+    )
+
+    private fun highDriverExonSkipFusion() = TestFusionFactory.createMinimal().copy(
+        geneStart = TARGET_GENE,
+        geneEnd = TARGET_GENE,
+        isReportable = true,
+        driverLikelihood = DriverLikelihood.HIGH,
+        fusedExonUp = 2,
+        fusedExonDown = 3
+    )
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = affectedExon)
 }
