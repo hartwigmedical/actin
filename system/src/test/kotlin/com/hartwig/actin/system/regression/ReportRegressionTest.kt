@@ -4,7 +4,7 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
-import org.apache.logging.log4j.Level
+import ch.qos.logback.classic.Level
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

@@ -24,8 +24,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class TreatmentMatcherInputData(
     val patient: PatientRecord,
@@ -39,12 +38,12 @@ data class TreatmentMatcherInputData(
 )
 
 object InputDataLoader {
-    val LOGGER: Logger = LogManager.getLogger(InputDataLoader::class.java)
+    val logger = KotlinLogging.logger {}
 
     suspend fun load(config: TreatmentMatcherConfig): TreatmentMatcherInputData = coroutineScope {
         val deferredPatient = async {
             withContext(Dispatchers.IO) {
-                LOGGER.info("Loading patient record from {}", config.patientRecordJson)
+                logger.info { "Loading patient record from ${config.patientRecordJson}" }
                 val patient = PatientRecordJson.read(config.patientRecordJson)
                 PatientPrinter.printRecord(patient)
                 patient
@@ -53,32 +52,32 @@ object InputDataLoader {
         val deferredTrials = async {
             withContext(Dispatchers.IO) {
                 config.trialDatabaseDirectory?.let {
-                    LOGGER.info("Loading trials from {}", config.trialDatabaseDirectory)
+                    logger.info { "Loading trials from ${config.trialDatabaseDirectory}" }
                     val trials = TrialJson.readFromDir(it)
-                    LOGGER.info(" Loaded {} trials", trials.size)
+                    logger.info { " Loaded ${trials.size} trials" }
                     trials
                 }
             }
         }
         val deferredDoidEntry = async {
             withContext(Dispatchers.IO) {
-                LOGGER.info("Loading DOID tree from {}", config.doidJson)
+                logger.info { "Loading DOID tree from ${config.doidJson}" }
                 val doidEntry = DoidJson.readDoidOwlEntry(config.doidJson)
-                LOGGER.info(" Loaded {} nodes from DOID tree", doidEntry.nodes.size)
+                logger.info { " Loaded ${doidEntry.nodes.size} nodes from DOID tree" }
                 doidEntry
             }
         }
         val deferredIcdNodes = async {
             withContext(Dispatchers.IO) {
-                LOGGER.info("Creating ICD-11 tree from file {}", config.icdTsv)
+                logger.info { "Creating ICD-11 tree from file ${config.icdTsv}" }
                 val icdNodes = IcdDeserializer.deserialize(CsvReader.readFromFile(config.icdTsv))
-                LOGGER.info(" Loaded {} nodes from ICD-11 tree", icdNodes.size)
+                logger.info { " Loaded ${icdNodes.size} nodes from ICD-11 tree" }
                 icdNodes
             }
         }
         val deferredAtcTree = async {
             withContext(Dispatchers.IO) {
-                LOGGER.info("Creating ATC tree from file {}", config.atcTsv)
+                logger.info { "Creating ATC tree from file ${config.atcTsv}" }
                 AtcTree.createFromFile(config.atcTsv)
             }
         }
@@ -90,9 +89,9 @@ object InputDataLoader {
         val deferredServeDatabase = async {
             withContext(Dispatchers.IO) {
                 val serveJsonFilePath = ServeJson.jsonFilePath(config.serveDirectory)
-                LOGGER.info("Loading SERVE database for resistance evidence from {}", serveJsonFilePath)
+                logger.info { "Loading SERVE database for resistance evidence from $serveJsonFilePath" }
                 val serveDatabase = ServeLoader.loadServeDatabase(serveJsonFilePath, config.removeCombinedProfilesEvidence)
-                LOGGER.info(" Loaded SERVE version {}", serveDatabase.version())
+                logger.info { " Loaded SERVE version ${serveDatabase.version()}" }
                 serveDatabase
             }
         }
@@ -115,7 +114,7 @@ object InputDataLoader {
 
         val serveRecord = serveDatabase.records()[serveRefGenomeVersion]
             ?: throw IllegalStateException("No serve record for ref genome version $serveRefGenomeVersion")
-        LOGGER.info(" Loaded {} evidences from SERVE", serveRecord.evidences().size)
+        logger.info { " Loaded ${serveRecord.evidences().size} evidences from SERVE" }
 
         TreatmentMatcherInputData(
             patient = patient,

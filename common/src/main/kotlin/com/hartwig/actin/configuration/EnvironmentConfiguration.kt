@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinFeature
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 
 const val OVERRIDE_YAML_ARGUMENT = "override_yaml"
@@ -17,13 +17,13 @@ data class EnvironmentConfiguration(
 ) {
 
     companion object {
-        private val LOGGER = LogManager.getLogger(EnvironmentConfiguration::class.java)
+        private val logger = KotlinLogging.logger {}
 
         fun create(environmentConfigFile: String?): EnvironmentConfiguration {
             val configuration = environmentConfigFile?.let { readEnvironmentConfigYaml(it) } ?: EnvironmentConfiguration()
             val configSource = environmentConfigFile?.let { "file $it" } ?: "defaults"
 
-            LOGGER.info("Loaded environment configuration from $configSource")
+            logger.info { "Loaded environment configuration from $configSource" }
             return configuration
         }
 

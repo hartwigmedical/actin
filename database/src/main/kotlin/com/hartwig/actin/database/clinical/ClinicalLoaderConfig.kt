@@ -4,9 +4,8 @@ import com.hartwig.actin.database.DatabaseLoaderConfig
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.core.config.Configurator
+import com.hartwig.actin.utils.enableDebugLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class ClinicalLoaderConfig(
     val clinicalDirectory: String,
@@ -28,8 +27,7 @@ data class ClinicalLoaderConfig(
 
         fun createConfig(cmd: CommandLine): ClinicalLoaderConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                Configurator.setRootLevel(Level.DEBUG)
-                LOGGER.debug("Switched root level logging to DEBUG")
+                enableDebugLogging()
             }
             return ClinicalLoaderConfig(
                 clinicalDirectory = ApplicationConfig.nonOptionalDir(cmd, CLINICAL_DIRECTORY),
@@ -39,7 +37,7 @@ data class ClinicalLoaderConfig(
             )
         }
 
-        private val LOGGER = LogManager.getLogger(ClinicalLoaderConfig::class.java)
+        private val logger = KotlinLogging.logger {}
         private const val CLINICAL_DIRECTORY = "clinical_directory"
         private const val DB_USER = "db_user"
         private const val DB_PASS = "db_pass"

@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.trial.Trial
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.jooq.SQLDialect
 import org.jooq.conf.MappedSchema
 import org.jooq.conf.RenderMapping
@@ -18,39 +18,39 @@ class DatabaseAccess private constructor(
 ) {
 
     fun writeClinicalRecords(records: List<ClinicalRecord>) {
-        LOGGER.info(" Clearing all clinical data")
+        logger.info { " Clearing all clinical data" }
         clinicalDAO.clear()
         for (record in records) {
-            LOGGER.info(" Writing clinical data for {}", record.patientId)
+            logger.info { " Writing clinical data for ${record.patientId}" }
             clinicalDAO.writeClinicalRecord(record)
         }
     }
 
     fun writeMolecularTest(patientId: String, test: MolecularTest) {
-        LOGGER.info(" Clearing molecular data for {}", test.sampleId)
+        logger.info { " Clearing molecular data for ${test.sampleId}" }
         molecularDAO.clear(test)
-        LOGGER.info(" Writing molecular data for {}", test.sampleId)
+        logger.info { " Writing molecular data for ${test.sampleId}" }
         molecularDAO.writeMolecularTest(patientId, test)
     }
 
     fun writeTrials(trials: List<Trial>) {
-        LOGGER.info(" Clearing all trial data")
+        logger.info { " Clearing all trial data" }
         trialDAO.clear()
         for (trial in trials) {
-            LOGGER.info(" Writing trial data for {}", trial.identification.acronym)
+            logger.info { " Writing trial data for ${trial.identification.acronym}" }
             trialDAO.writeTrial(trial)
         }
     }
 
     fun writeTreatmentMatch(treatmentMatch: TreatmentMatch) {
-        LOGGER.info(" Clearing treatment match data for {}", treatmentMatch.patientId)
+        logger.info { " Clearing treatment match data for ${treatmentMatch.patientId}" }
         treatmentMatchDAO.clear(treatmentMatch)
-        LOGGER.info(" Writing treatment match data for {}", treatmentMatch.patientId)
+        logger.info { " Writing treatment match data for ${treatmentMatch.patientId}" }
         treatmentMatchDAO.writeTreatmentMatch(treatmentMatch)
     }
 
     companion object {
-        private val LOGGER = LogManager.getLogger(DatabaseAccess::class.java)
+        private val logger = KotlinLogging.logger {}
         private const val DEV_CATALOG = "actin_test"
 
         fun fromCredentials(user: String, pass: String, url: String): DatabaseAccess {
@@ -60,7 +60,7 @@ class DatabaseAccess private constructor(
             val jdbcUrl = "jdbc:$url"
             val conn = DriverManager.getConnection(jdbcUrl, user, pass)
             val catalog = conn.catalog
-            LOGGER.info("Connecting to database '{}'", catalog)
+            logger.info { "Connecting to database '$catalog'" }
             val context = DSL.using(conn, SQLDialect.MYSQL, settings(catalog))
             return DatabaseAccess(
                 ClinicalDAO(context),

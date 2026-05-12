@@ -2,14 +2,14 @@ package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.molecular.paver.PaveVariantEffect
 import com.hartwig.actin.tools.variant.VariantAnnotator
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import com.hartwig.actin.tools.variant.Variant as TransvarVariant
 
 class PhasedDecompositionCollapser(
     private val variantResolver: VariantAnnotator
 ) {
 
-    private val logger = LogManager.getLogger(PhasedDecompositionCollapser::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun collapse(
         phaseSet: Int,
@@ -104,12 +104,7 @@ class PhasedDecompositionCollapser(
             ?.let { originalHgvs ->
                 variantResolver.resolve(variant.gene, variant.transcript, originalHgvs).also { resolved ->
                     if (resolved == null) {
-                        logger.warn(
-                            "Unable to resolve original coding HGVS '{}' for gene '{}' in phase set {}",
-                            originalHgvs,
-                            variant.gene,
-                            phaseSet
-                        )
+                        logger.warn { "Unable to resolve original coding HGVS '$originalHgvs' for gene '${variant.gene}' in phase set $phaseSet" }
                     }
                 }
             }

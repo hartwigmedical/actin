@@ -9,8 +9,7 @@ import com.hartwig.actin.tools.ensemblcache.EnsemblDataLoader
 import com.hartwig.actin.tools.transvar.TransvarVariantAnnotatorFactory
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.system.exitProcess
 import com.hartwig.actin.tools.ensemblcache.RefGenome as EnsemblRefGenome
 
@@ -100,7 +99,7 @@ private fun toPaveRefGenomeVersion(refGenomeVersion: RefGenomeVersion): PaveRefG
     }
 }
 
-private val LOGGER: Logger = LogManager.getLogger(PhasedVariantDecompositionApplication::class.java)
+private val logger = KotlinLogging.logger {}
 private const val APPLICATION = "Phased Variant Decomposition"
 
 fun main(args: Array<String>) {
@@ -109,7 +108,7 @@ fun main(args: Array<String>) {
     try {
         config = PhasedVariantDecompositionApplicationConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: Exception) {
-        LOGGER.warn(exception.message)
+        logger.warn { exception.message }
         HelpFormatter().printHelp(APPLICATION, options)
         exitProcess(1)
     }

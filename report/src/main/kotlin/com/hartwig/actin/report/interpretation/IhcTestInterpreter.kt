@@ -2,14 +2,14 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.report.pdf.util.Formats
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.time.LocalDate
 
 const val IHC_TEST_TYPE = "IHC"
 
 class IhcTestInterpreter {
 
-    private val logger = LogManager.getLogger(IhcTestInterpreter::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private val interpretationBuilder = IhcTestInterpretationBuilder()
 
@@ -34,7 +34,7 @@ class IhcTestInterpreter {
 
             scoreText != null -> interpretationBuilder.addInterpretation(type, item, scoreText, date)
             hasNumericScore -> interpretationBuilder.addInterpretation(type, item, formatValueBasedIhcTest(test), date)
-            else -> logger.error("IHC test is neither text-based nor value-based: {}", test)
+            else -> logger.error { "IHC test is neither text-based nor value-based: $test" }
         }
     }
 

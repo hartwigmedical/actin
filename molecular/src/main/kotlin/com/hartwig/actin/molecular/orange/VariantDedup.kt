@@ -2,14 +2,14 @@ package com.hartwig.actin.molecular.orange
 
 import com.hartwig.hmftools.datamodel.purple.PurpleVariant
 import com.hartwig.hmftools.datamodel.purple.PurpleVariantEffect
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlin.math.abs
 
 object VariantDedup {
 
     private const val EPSILON = 1e-10
 
-    private val LOGGER = LogManager.getLogger(VariantDedup::class.java)
+    private val logger = KotlinLogging.logger {}
     private val PHASED_EFFECTS = setOf(PurpleVariantEffect.PHASED_INFRAME_DELETION, PurpleVariantEffect.PHASED_INFRAME_INSERTION)
 
     fun apply(variants: Set<PurpleVariant>): Set<PurpleVariant> {
@@ -18,7 +18,7 @@ object VariantDedup {
 
     private fun include(variant: PurpleVariant, variants: Set<PurpleVariant>): Boolean {
         return if (hasCanonicalPhasedEffect(variant) && hasSameEffectWithHigherVCN(variants, variant)) {
-            LOGGER.debug("Dedup'ing variant '{}'", variant)
+            logger.debug { "Dedup'ing variant '$variant'" }
             false
         } else {
             true

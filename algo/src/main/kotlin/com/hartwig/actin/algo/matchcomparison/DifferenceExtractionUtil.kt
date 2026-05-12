@@ -1,11 +1,11 @@
 package com.hartwig.actin.algo.matchcomparison
 
 import com.hartwig.actin.algo.evaluation.util.Format
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object DifferenceExtractionUtil {
 
-    private val LOGGER = LogManager.getLogger(DifferenceExtractionUtil::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun <T> extractDifferences(old: T, new: T, properties: Map<String, (T) -> Any>): List<String> {
         return properties.mapNotNull { (description, property) ->
@@ -23,7 +23,7 @@ object DifferenceExtractionUtil {
             .map { (modification, differences) ->
                 "${differences.size} $description were $modification: ${Format.concat(differences.map(keyToString))}"
             }
-        differences.forEach(LOGGER::debug)
+        differences.forEach { logger.debug { it } }
         return differences
     }
 }

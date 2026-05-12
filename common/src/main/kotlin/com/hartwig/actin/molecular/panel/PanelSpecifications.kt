@@ -7,14 +7,14 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.GeneFilter
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class PanelSpecifications(
     private val geneFilter: GeneFilter,
     panelSpecifications: Map<PanelTestSpecification, List<PanelGeneSpecification>>
 ) {
 
-    private val logger = LogManager.getLogger(PanelSpecifications::class.java)
+    private val logger = KotlinLogging.logger {}
 
     private val molecularTargetsPerTest: Map<PanelTestSpecification, Map<String, List<MolecularTestTarget>>> =
         panelSpecifications.mapValues { (_, geneSpecs) ->
@@ -43,10 +43,7 @@ class PanelSpecifications(
             }
 
         if (mergedTargets != baseTargets) {
-            logger.warn(
-                "${logPanelName(testSpec)} has results containing molecular test target(s) for gene(s) not found in the panel " +
-                        "specifications; these molecular test target(s) for gene(s) are used during evaluation"
-            )
+            logger.warn { "${logPanelName(testSpec)} has results containing molecular test target(s) for gene(s) not found in the panel specifications; these molecular test target(s) for gene(s) are used during evaluation" }
         }
 
         return PanelTargetSpecification(mergedTargets, testSpec.testVersion)

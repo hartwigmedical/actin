@@ -6,12 +6,13 @@ import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.trial.TrialIdentification
-import org.apache.logging.log4j.LogManager
+import com.hartwig.actin.utils.debugIndented
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object TreatmentMatchComparison {
 
     private const val INDENT_WIDTH = 2
-    private val LOGGER = LogManager.getLogger(TreatmentMatchComparison::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun determineTreatmentMatchDifferences(oldMatches: TreatmentMatch, newMatches: TreatmentMatch): EvaluationDifferences {
         val oldTrialSummary = trialMatchesById(oldMatches)
@@ -25,7 +26,7 @@ object TreatmentMatchComparison {
                 val eligibilityDifferences = extractDifferences(
                     oldTrialMatch, newTrialMatch, mapOf("eligibility" to TrialMatch::isPotentiallyEligible)
                 )
-                eligibilityDifferences.forEach(::logDebug)
+                eligibilityDifferences.forEach { logger.debugIndented(it) }
 
                 val evaluationDifferences = EvaluationComparison.determineEvaluationDifferences(
                     oldTrialMatch.evaluations, newTrialMatch.evaluations, key.trialId, 0
@@ -45,7 +46,7 @@ object TreatmentMatchComparison {
             val newCohortMatch = newCohortSummary[cohortId]
             if (newCohortMatch == null) EvaluationDifferences.create() else {
                 val cohortEligibilityDifferences = extractDifferences(oldCohortMatch, newCohortMatch, mapOf("eligibility" to CohortMatch::isPotentiallyEligible))
-                cohortEligibilityDifferences.forEach { logDebug(it, INDENT_WIDTH) }
+                cohortEligibilityDifferences.forEach { logger.debugIndented(it, INDENT_WIDTH) }
                 val id = "${oldTrialMatch.identification.trialId}, cohort$cohortId"
                 EvaluationComparison.determineEvaluationDifferences(
                     oldCohortMatch.evaluations,
@@ -66,7 +67,4 @@ object TreatmentMatchComparison {
         return trialMatch.cohorts.associateBy { it.metadata.cohortId }
     }
 
-    private fun logDebug(message: String, indent: Int = 0) {
-        LOGGER.debug(" ".repeat(indent) + message)
-    }
 }

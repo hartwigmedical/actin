@@ -8,15 +8,14 @@ import com.hartwig.actin.datamodel.trial.Trial
 import com.hartwig.actin.util.json.DrugDeserializer
 import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
 import com.hartwig.actin.util.json.GsonSerializer
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
 
 object TrialJson {
 
-    private val logger: Logger = LogManager.getLogger(TrialJson::class.java)
+    private val logger = KotlinLogging.logger {}
     private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
 
     fun write(trials: List<Trial>, directory: String) {
@@ -26,7 +25,7 @@ object TrialJson {
     fun write(trials: List<Trial>, directory: Path) {
         for (trial: Trial in trials) {
             val jsonFile = directory.resolve(trialFileId(trial.identification.trialId) + TRIAL_JSON_EXTENSION)
-            logger.info(" Writing '{} ({})' to {}", trial.identification.trialId, trial.identification.acronym, jsonFile)
+            logger.info { " Writing '${trial.identification.trialId} (${trial.identification.acronym})' to $jsonFile" }
             val writer = Files.newBufferedWriter(jsonFile)
             writer.write(toJson(trial))
             writer.close()

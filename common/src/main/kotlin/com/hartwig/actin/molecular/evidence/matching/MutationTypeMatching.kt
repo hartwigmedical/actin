@@ -4,11 +4,11 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.serve.datamodel.molecular.MutationType
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 object MutationTypeMatching {
 
-    private val LOGGER = LogManager.getLogger(MutationTypeMatching::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun matches(typeToMatch: MutationType, variant: Variant): Boolean {
         val effect = variant.canonicalImpact.codingEffect
@@ -27,7 +27,7 @@ object MutationTypeMatching {
                     effect == CodingEffect.SPLICE
 
             else -> {
-                LOGGER.warn("Unrecognized mutation type to match: '{}'", typeToMatch)
+                logger.warn { "Unrecognized mutation type to match: '$typeToMatch'" }
                 false
             }
         }

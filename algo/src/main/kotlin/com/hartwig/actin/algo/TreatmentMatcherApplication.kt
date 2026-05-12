@@ -20,8 +20,7 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.system.exitProcess
@@ -29,19 +28,19 @@ import kotlin.system.exitProcess
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
     fun run() = runBlocking {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        logger.info { "Running $APPLICATION v$VERSION" }
 
-        LOGGER.info("Loading data")
+        logger.info { "Loading data" }
         val inputData = InputDataLoader.load(config)
-        LOGGER.info("Loading complete")
+        logger.info { "Loading complete" }
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(inputData.patient, config.runHistorically)
-        LOGGER.info("Matching patient to available trials")
+        logger.info { "Matching patient to available trials" }
 
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val configuration = AlgoConfiguration.create(config.overridesYaml)
-        LOGGER.info("Loaded algo config: $configuration")
+        logger.info { "Loaded algo config: $configuration" }
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
@@ -82,16 +81,16 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
-        LOGGER.info("Printing treatment match")
+        logger.info { "Printing treatment match" }
         TreatmentMatchPrinter.printMatch(treatmentMatch)
         TreatmentMatchJson.write(treatmentMatch, config.outputDirectory)
-        LOGGER.info("Done!")
+        logger.info { "Done!" }
     }
 
     companion object {
         const val APPLICATION = "ACTIN Treatment Matcher"
 
-        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherApplication::class.java)
+        val logger = KotlinLogging.logger {}
         private val VERSION = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
 }
@@ -102,7 +101,7 @@ fun main(args: Array<String>) {
     try {
         config = TreatmentMatcherConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        TreatmentMatcherApplication.LOGGER.error(exception)
+        TreatmentMatcherApplication.logger.error(exception) { exception.message ?: "" }
         HelpFormatter().printHelp(TreatmentMatcherApplication.APPLICATION, options)
         exitProcess(1)
     }

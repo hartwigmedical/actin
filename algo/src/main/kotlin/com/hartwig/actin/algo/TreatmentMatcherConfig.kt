@@ -5,10 +5,8 @@ import com.hartwig.actin.configuration.OVERRIDE_YAML_DESCRIPTION
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.core.config.Configurator
+import com.hartwig.actin.utils.enableDebugLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class TreatmentMatcherConfig(
     val patientRecordJson: String,
@@ -29,7 +27,7 @@ data class TreatmentMatcherConfig(
 ) {
 
     companion object {
-        val LOGGER: Logger = LogManager.getLogger(TreatmentMatcherConfig::class.java)
+        val logger = KotlinLogging.logger {}
 
         private const val PATIENT_RECORD_JSON = "patient_json"
         private const val TRIAL_DATABASE_DIRECTORY = "trial_database_directory"
@@ -85,13 +83,12 @@ data class TreatmentMatcherConfig(
 
         fun createConfig(cmd: CommandLine): TreatmentMatcherConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                Configurator.setRootLevel(Level.DEBUG)
-                LOGGER.debug("Switched root level logging to DEBUG")
+                enableDebugLogging()
             }
 
             val runHistorically = cmd.hasOption(RUN_HISTORICALLY)
             if (runHistorically) {
-                LOGGER.info("Configured to run in historic mode")
+                logger.info { "Configured to run in historic mode" }
             }
 
             return TreatmentMatcherConfig(

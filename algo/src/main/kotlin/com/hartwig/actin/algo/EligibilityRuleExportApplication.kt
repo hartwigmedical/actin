@@ -11,24 +11,23 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class EligibilityRuleExportApplication(private val config: EligibilityRuleExportConfig) {
 
     fun run() {
-        LOGGER.info("Running {} v{}", APPLICATION, VERSION)
+        logger.info { "Running $APPLICATION v$VERSION" }
 
         val outputFile = Path.of(config.outputDirectory).resolve(OUTPUT_FILE_NAME)
         val rules = EligibilityRule.entries.map { rule ->
             EligibilityRuleDefinition(rule = rule.name, parameters = rule.input)
         }
 
-        LOGGER.info("Writing {} eligibility rules to {}", rules.size, outputFile)
+        logger.info { "Writing ${rules.size} eligibility rules to $outputFile" }
         Files.newBufferedWriter(outputFile).use { writer ->
             writer.write(toJson(rules))
         }
-        LOGGER.info("Done!")
+        logger.info { "Done!" }
     }
 
     private fun toJson(rules: List<EligibilityRuleDefinition>): String {
@@ -43,7 +42,7 @@ class EligibilityRuleExportApplication(private val config: EligibilityRuleExport
         const val APPLICATION = "ACTIN Eligibility Rule Export"
         private const val OUTPUT_FILE_NAME = "eligibility_rules.json"
 
-        val LOGGER: Logger = LogManager.getLogger(EligibilityRuleExportApplication::class.java)
+        val logger = KotlinLogging.logger {}
         private val VERSION =
             EligibilityRuleExportApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
     }
@@ -55,7 +54,7 @@ fun main(args: Array<String>) {
     try {
         config = EligibilityRuleExportConfig.createConfig(DefaultParser().parse(options, args))
     } catch (exception: ParseException) {
-        EligibilityRuleExportApplication.LOGGER.error(exception)
+        EligibilityRuleExportApplication.logger.error(exception) { exception.message ?: "" }
         HelpFormatter().printHelp(EligibilityRuleExportApplication.APPLICATION, options)
         exitProcess(1)
     }

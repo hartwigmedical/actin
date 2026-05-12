@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvParser
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 
 private data class CuppaDoidRow(
@@ -26,11 +26,11 @@ class CuppaToDoidMapping(private val mapping: Map<String, CuppaDoids>) {
     }
 
     companion object {
-        private val logger = LogManager.getLogger(CuppaToDoidMapping::class.java)
+        private val logger = KotlinLogging.logger {}
         private const val DOID_SEPARATOR = ";"
 
         fun createFromFile(tsvPath: String): CuppaToDoidMapping {
-            logger.info("Loading CUPPA to DOID mapping from {}", tsvPath)
+            logger.info { "Loading CUPPA to DOID mapping from $tsvPath" }
             val reader = CsvMapper().apply {
                 enable(CsvParser.Feature.EMPTY_STRING_AS_NULL)
             }.readerFor(CuppaDoidRow::class.java).with(CsvSchema.emptySchema().withHeader().withColumnSeparator('\t'))
@@ -42,7 +42,7 @@ class CuppaToDoidMapping(private val mapping: Map<String, CuppaDoids>) {
                     excluded = row.excludedDoidIds?.split(DOID_SEPARATOR)?.toSet()
                 )
             }
-            logger.info(" Loaded {} CUPPA cancer type mappings", mapping.size)
+            logger.info { " Loaded ${mapping.size} CUPPA cancer type mappings" }
             return CuppaToDoidMapping(mapping)
         }
     }

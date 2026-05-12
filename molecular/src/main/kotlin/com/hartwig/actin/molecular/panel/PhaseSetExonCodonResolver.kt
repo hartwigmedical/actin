@@ -1,13 +1,13 @@
 package com.hartwig.actin.molecular.panel
 
 import com.hartwig.actin.molecular.paver.PaveResponse
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class ExonCodon(val exon: Int?, val codon: Int?)
 
 object PhaseSetExonCodonResolver {
 
-    private val LOGGER = LogManager.getLogger(PhaseSetExonCodonResolver::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun resolve(phaseSet: Int, responses: List<PaveResponse>): ExonCodon? {
         if (responses.isEmpty()) {
@@ -40,14 +40,7 @@ object PhaseSetExonCodonResolver {
         }
         val resolvedExon = selectedImpact.exon
         val resolvedCodon = selectedImpact.codon
-        LOGGER.warn(
-            "Phase set {} has mismatched exon/codon across records; exons={}, codons={}, using exon={} codon={}",
-            phaseSet,
-            exons,
-            codons,
-            resolvedExon,
-            resolvedCodon
-        )
+        logger.warn { "Phase set $phaseSet has mismatched exon/codon across records; exons=$exons, codons=$codons, using exon=$resolvedExon codon=$resolvedCodon" }
         return ExonCodon(resolvedExon, resolvedCodon)
     }
 

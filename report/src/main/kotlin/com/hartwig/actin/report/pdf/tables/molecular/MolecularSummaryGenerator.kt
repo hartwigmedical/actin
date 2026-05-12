@@ -15,7 +15,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class MolecularSummaryGenerator(
     private val patientRecord: PatientRecord,
@@ -24,7 +24,7 @@ class MolecularSummaryGenerator(
     private val valueWidth: Float,
 ) : TableGenerator {
 
-    private val logger = LogManager.getLogger(MolecularSummaryGenerator::class.java)
+    private val logger = KotlinLogging.logger {}
 
     override fun title(): String {
         return "Recent molecular results"
@@ -81,7 +81,7 @@ class MolecularSummaryGenerator(
             val wgsMolecular = MolecularHistory(listOf(molecularTest)).latestOrangeMolecularRecord()
             if (wgsMolecular?.hasSufficientQuality != false) {
                 if (molecularTest.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-                    logger.debug("Generating WGS results for non-WGS sample")
+                    logger.debug { "Generating WGS results for non-WGS sample" }
                 }
                 val immunologyGenerator = if (molecularTest.immunology?.isReliable == true) {
                     ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.ALLELE_ONLY, "HLA-A", keyWidth, valueWidth)

@@ -12,12 +12,11 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.known.KnownEventResolver
 import com.hartwig.actin.molecular.interpretation.GeneAlterationFactory
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class MolecularRecordAnnotator(private val knownEventResolver: KnownEventResolver) : MolecularAnnotator<MolecularTest> {
 
-    private val logger: Logger = LogManager.getLogger(MolecularRecordAnnotator::class.java)
+    private val logger = KotlinLogging.logger {}
 
     override fun annotate(input: MolecularTest): MolecularTest {
         return input.copy(drivers = annotateDrivers(input.drivers))
@@ -37,7 +36,7 @@ class MolecularRecordAnnotator(private val knownEventResolver: KnownEventResolve
         val alteration = knownEventResolver.resolveForVariant(variant)
 
         if (!variant.isCancerAssociatedVariant && alteration.isCancerAssociatedVariant) {
-            logger.info("Overwriting isCancerAssociatedVariant to true and setting driverLikelihood to HIGH for ${variant.event}")
+            logger.info { "Overwriting isCancerAssociatedVariant to true and setting driverLikelihood to HIGH for ${variant.event}" }
         }
 
         return variant.copy(

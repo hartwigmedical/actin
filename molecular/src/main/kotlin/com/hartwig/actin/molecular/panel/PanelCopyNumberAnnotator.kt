@@ -10,11 +10,11 @@ import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptCopyNumberImpact
 import com.hartwig.actin.molecular.util.ExtractionUtil
 import com.hartwig.actin.tools.ensemblcache.EnsemblDataCache
-import org.apache.logging.log4j.LogManager
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) {
 
-    private val logger = LogManager.getLogger(PanelAnnotator::class.java)
+    private val logger = KotlinLogging.logger {}
 
     fun <T> annotate(copyNumber: Set<T>): List<CopyNumber> {
         return copyNumber.map { element ->
@@ -30,7 +30,7 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         val canonicalTranscript = canonicalTranscriptIdForGene(sequencedAmplification.gene)
         val isCanonicalTranscript = canonicalTranscript == sequencedAmplification.transcript || sequencedAmplification.transcript == null
         val transcriptId = sequencedAmplification.transcript ?: run {
-            logger.warn("No transcript provided for panel amplification in gene ${sequencedAmplification.gene}, using canonical transcript")
+            logger.warn { "No transcript provided for panel amplification in gene ${sequencedAmplification.gene}, using canonical transcript" }
             canonicalTranscript
         }
         val canonicalImpact = TranscriptCopyNumberImpact(
@@ -67,7 +67,7 @@ class PanelCopyNumberAnnotator(private val ensembleDataCache: EnsemblDataCache) 
         val canonicalTranscript = canonicalTranscriptIdForGene(sequencedDeletion.gene)
         val isCanonicalTranscript = canonicalTranscript == sequencedDeletion.transcript || sequencedDeletion.transcript == null
         val transcriptId = sequencedDeletion.transcript ?: run {
-            logger.warn("No transcript provided for panel deletion in gene ${sequencedDeletion.gene}, using canonical transcript")
+            logger.warn { "No transcript provided for panel deletion in gene ${sequencedDeletion.gene}, using canonical transcript" }
             canonicalTranscript
         }
         val canonicalImpact = TranscriptCopyNumberImpact(

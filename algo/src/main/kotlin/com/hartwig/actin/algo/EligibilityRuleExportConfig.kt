@@ -3,10 +3,6 @@ package com.hartwig.actin.algo
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.core.config.Configurator
 
 data class EligibilityRuleExportConfig(
     val outputDirectory: String

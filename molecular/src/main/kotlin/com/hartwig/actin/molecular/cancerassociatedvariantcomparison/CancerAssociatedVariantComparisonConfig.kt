@@ -3,10 +3,8 @@ package com.hartwig.actin.molecular.cancerassociatedvariantcomparison
 import com.hartwig.actin.util.ApplicationConfig
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import org.apache.logging.log4j.Level
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
-import org.apache.logging.log4j.core.config.Configurator
+import com.hartwig.actin.utils.enableDebugLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class CancerAssociatedVariantComparisonConfig(
     val orangeJson: String,
@@ -15,7 +13,7 @@ data class CancerAssociatedVariantComparisonConfig(
 ) {
 
     companion object {
-        private val LOGGER: Logger = LogManager.getLogger(CancerAssociatedVariantComparisonConfig::class.java)
+        private val logger = KotlinLogging.logger {}
 
         private const val ORANGE_JSON: String = "orange_json"
         private const val SERVE_DIRECTORY: String = "serve_directory"
@@ -33,8 +31,7 @@ data class CancerAssociatedVariantComparisonConfig(
 
         fun createConfig(cmd: CommandLine): CancerAssociatedVariantComparisonConfig {
             if (cmd.hasOption(LOG_DEBUG)) {
-                Configurator.setRootLevel(Level.DEBUG)
-                LOGGER.debug("Switched root level logging to DEBUG")
+                enableDebugLogging()
             }
             return CancerAssociatedVariantComparisonConfig(
                 orangeJson = ApplicationConfig.nonOptionalFile(cmd, ORANGE_JSON),
