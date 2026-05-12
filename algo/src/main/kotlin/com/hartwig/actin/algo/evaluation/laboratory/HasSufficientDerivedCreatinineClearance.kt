@@ -14,9 +14,8 @@ import java.time.LocalDate
 class HasSufficientDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
     private val minCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate
-) : LabEvaluationFunction {
+) : SingleLabValueEvaluationFunction {
 
-    //TODO: Implement logics for method = "measured"
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         return when (method) {
             CreatinineClearanceMethod.EGFR_MDRD -> evaluateMDRD(record, labValue)

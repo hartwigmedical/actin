@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 class HasLimitedIndirectBilirubinULN(private val maxULNFactor: Double, private val minValidDate: LocalDate) :
-    LabEvaluationFunction {
+    SingleLabValueEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val interpretation = LabInterpretation.interpret(record.labValues)

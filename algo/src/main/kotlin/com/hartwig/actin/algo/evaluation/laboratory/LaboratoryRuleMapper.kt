@@ -309,7 +309,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
     }
 
     private fun hasSufficientMeasuredCreatinineClearanceCreator(): FunctionCreator {
-        return { HasSufficientMeasuredCreatinineClearance() }
+        return { function: EligibilityFunction ->
+            val minCreatinineClearance = function.param<DoubleParameter>(0).value
+            MeasuredCreatinineClearanceEvaluator(minCreatinineClearance, minValidLabDate(), minPassLabDate())
+        }
     }
 
     private fun hasPotentialLeukocytosisCreator(): FunctionCreator {
@@ -364,10 +367,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun createLabEvaluator(
         measurement: LabMeasurement,
-        function: LabEvaluationFunction,
+        function: SingleLabValueEvaluationFunction,
         highestFirst: Boolean = true
     ): EvaluationFunction {
-        return LabMeasurementEvaluator(measurement, function, minValidLabDate(), minPassLabDate(), highestFirst)
+        return LabMeasurementEvaluator(SingleLabValueSelector(measurement, highestFirst), function, minValidLabDate(), minPassLabDate())
     }
 
     private fun minValidLabDate(): LocalDate {

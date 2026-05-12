@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.LabValue
 
 class HasLimitedLabValue(
     private val maxValue: Double, private val measurement: LabMeasurement, private val targetUnit: LabUnit
-) : LabEvaluationFunction {
+) : SingleLabValueEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val convertedValue = LabUnitConverter.convert(measurement, labValue, targetUnit)
