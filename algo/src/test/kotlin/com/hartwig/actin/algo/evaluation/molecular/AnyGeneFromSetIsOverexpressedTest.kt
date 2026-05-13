@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -16,7 +17,7 @@ private const val PASS_INCLUSION_EVENT = "pass amplification event"
 private const val WARN_INCLUSION_EVENT = "warn amplification event"
 
 class AnyGeneFromSetIsOverexpressedTest {
-    
+
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
         every { evaluate(any<MolecularTest>(), any<List<IhcTest>>()) } returns EvaluationFactory.pass(
             "",
@@ -55,10 +56,23 @@ class AnyGeneFromSetIsOverexpressedTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined when no amplification`() {
+    fun `Should evaluate to undetermined with clarification of DNA result when no amplification present in DNA`() {
         val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { _ -> alwaysFailGeneAmplificationEvaluation }
         val evaluation =
             createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).contains(
+            "Overexpression of geneA, geneB and geneC in RNA undetermined (but no amplifications found in DNA)"
+        )
+        assertThat(evaluation.inclusionMolecularEvents).isEmpty()
+    }
+
+    @Test
+    fun `Should evaluate to undetermined without clarification of DNA result when genes not tested in DNA`() {
+        val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { _ -> alwaysFailGeneAmplificationEvaluation }
+        val panelRecord = TestPatientFactory.createEmptyMolecularTestPatientRecord()
+            .copy(molecularTests = listOf(TestMolecularFactory.createProperPanelTest()))
+        val evaluation = createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(panelRecord)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).contains("Overexpression of geneA, geneB and geneC in RNA undetermined")
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()
