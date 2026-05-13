@@ -156,11 +156,13 @@ internal object TumorTestFactory {
         )
     }
 
-    fun withActiveBrainAndCnsLesionStatus(
+    fun withActiveAndSymptomaticBrainAndCnsLesionStatus(
         hasBrainLesions: Boolean?,
-        hasActiveBrainLesions: Boolean?,
+        hasSymptomaticBrainLesions: Boolean? = null,
+        hasActiveBrainLesions: Boolean? = null,
         hasCnsLesions: Boolean?,
-        hasActiveCnsLesions: Boolean?,
+        hasSymptomaticCnsLesions: Boolean? = null,
+        hasActiveCnsLesions: Boolean? = null,
         hasSuspectedBrainLesions: Boolean? = false,
         hasSuspectedCnsLesions: Boolean? = false
     ): PatientRecord {
@@ -168,8 +170,10 @@ internal object TumorTestFactory {
             TumorDetails(
                 hasBrainLesions = hasBrainLesions,
                 hasActiveBrainLesions = hasActiveBrainLesions,
+                hasSymptomaticBrainLesions = hasSymptomaticBrainLesions,
                 hasCnsLesions = hasCnsLesions,
                 hasActiveCnsLesions = hasActiveCnsLesions,
+                hasSymptomaticCnsLesions = hasSymptomaticCnsLesions,
                 hasSuspectedBrainLesions = hasSuspectedBrainLesions,
                 hasSuspectedCnsLesions = hasSuspectedCnsLesions
             )
