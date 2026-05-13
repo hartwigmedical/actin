@@ -23,8 +23,9 @@ private const val ROS1_TARGET = "ROS1"
 private const val AMSTERDAM = "Amsterdam"
 private const val UTRECHT = "Utrecht"
 
-private val NKI = Hospital("NKI", isChildrensHospital = false)
+private val NKI = Hospital("NKI-AvL", isChildrensHospital = false)
 private val PMC = Hospital("PMC", isChildrensHospital = true)
+private val UMCU = Hospital("UMCU", isChildrensHospital = false)
 private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = mapOf(AMSTERDAM to setOf(NKI)))
 private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
 private val EGFR_ACTIONABLE = TestVariantFactory.createMinimal().copy(event = EGFR_TARGET)
@@ -95,6 +96,33 @@ class TrialsProviderTest {
     }
 
     @Test
+    fun `Should filter phase I trials running in hospitals to filter`() {
+        val filteredTrial = createExternalTrialSummaryWithHospitalsAndPhase(
+            NETHERLANDS to mapOf(
+                AMSTERDAM to setOf(NKI),
+                UTRECHT to setOf(UMCU)
+            ), phase = TrialPhase.PHASE_1
+        )
+
+        val notFilteredTrial = createExternalTrialSummaryWithHospitalsAndPhase(
+            NETHERLANDS to mapOf(
+                UTRECHT to setOf(UMCU)
+            ), phase = TrialPhase.PHASE_1
+        )
+
+        val trials = setOf(notFilteredTrial, filteredTrial, GERMAN_ROS1)
+
+        val referenceCountryNetherlands = trialsProvider(trials, false, ExternalTrialTumorType.NONE, Country.NETHERLANDS)
+        val externalTrials1 = referenceCountryNetherlands.externalTrials()
+        assertThat(externalTrials1.nationalTrials.filtered).containsExactly(notFilteredTrial)
+
+        val referenceCountryBelgium = trialsProvider(trials, false, ExternalTrialTumorType.NONE, Country.BELGIUM)
+        val externalTrials2 = referenceCountryBelgium.externalTrials()
+        assertThat(externalTrials2.internationalTrials.filtered).containsOnly(GERMAN_ROS1)
+    }
+
+
+    @Test
     fun `Should not filter non-Dutch trials if effectiveDutchExternalTrialExclusion is type lung`() {
         val trialsProvider = trialsProvider(setOf(BELGIUM_TMB), false, ExternalTrialTumorType.LUNG)
         val externalTrials = trialsProvider.externalTrials()
@@ -116,13 +144,13 @@ class TrialsProviderTest {
 
     @Test
     fun `Should filter trials exclusively in childrens hospitals in reference country`() {
-        val notFilteredHospital = createExternalTrialSummaryWithHospitals(
+        val notFilteredHospital = createExternalTrialSummaryWithHospitalsAndPhase(
             NETHERLANDS to mapOf(
                 UTRECHT to setOf(PMC),
                 AMSTERDAM to setOf(NKI)
             )
         )
-        val filteredHospital = createExternalTrialSummaryWithHospitals(
+        val filteredHospital = createExternalTrialSummaryWithHospitalsAndPhase(
             NETHERLANDS to mapOf(
                 UTRECHT to setOf(Hospital("Sophia KinderZiekenhuis", isChildrensHospital = true))
             )
@@ -138,7 +166,7 @@ class TrialsProviderTest {
 
     @Test
     fun `Should not filter trials exclusively in childrens hospitals in reference country when patient is young adult`() {
-        val notFilteredHospital = createExternalTrialSummaryWithHospitals(
+        val notFilteredHospital = createExternalTrialSummaryWithHospitalsAndPhase(
             NETHERLANDS to mapOf(
                 UTRECHT to setOf(PMC)
             )
@@ -290,13 +318,22 @@ class TrialsProviderTest {
 
     private fun countrySet(vararg countries: CountryDetails) = sortedSetOf(Comparator.comparing { it.country }, *countries)
 
-    private fun createExternalTrialSummaryWithHospitals(vararg countryHospitals: Pair<CountryDetails, Map<String, Set<Hospital>>>):
+    private fun createExternalTrialSummaryWithHospitalsAndPhase(
+        vararg countryHospitals: Pair<CountryDetails, Map<String, Set<Hospital>>>,
+        phase: TrialPhase? = null
+    ):
             ActionableWithExternalTrial {
         val countries = countryHospitals.map { (country, hospitals) ->
             country.copy(hospitalsPerCity = hospitals)
         }.toSortedSet(Comparator.comparing { it.country })
 
-        return EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(trial = BASE_EXTERNAL_TRIAL.copy(countries = countries))
+        return EGFR_ACTIONABLE_WITH_EXTERNAL_TRIAL.copy(
+            trial = BASE_EXTERNAL_TRIAL.copy(
+                countries = countries,
+                phase = phase,
+                nctId = NCT_04
+            )
+        )
     }
 
     private fun trialsProvider(
