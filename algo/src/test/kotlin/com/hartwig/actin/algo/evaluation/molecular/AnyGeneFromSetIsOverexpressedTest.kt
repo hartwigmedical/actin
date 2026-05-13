@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import io.mockk.every
 import io.mockk.mockk
 import org.assertj.core.api.Assertions.assertThat
@@ -75,6 +76,27 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation = createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(panelRecord)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).contains("Overexpression of geneA, geneB and geneC in RNA undetermined")
+        assertThat(evaluation.inclusionMolecularEvents).isEmpty()
+    }
+
+    @Test
+    fun `Should evaluate to undetermined with partial DNA clarification when only some genes tested in DNA panel`() {
+        val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { _ -> alwaysFailGeneAmplificationEvaluation }
+        val partialPanelRecord = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
+            molecularTests = listOf(
+                TestMolecularFactory.createMinimalPanelTest().copy(
+                    targetSpecification = TestMolecularFactory.panelSpecifications(
+                        setOf("geneA", "geneB"),
+                        listOf(MolecularTestTarget.AMPLIFICATION)
+                    )
+                )
+            )
+        )
+        val evaluation = createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(partialPanelRecord)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).contains(
+            "Overexpression of geneA, geneB and geneC in RNA undetermined (no amplification in DNA for geneA or geneB)"
+        )
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()
     }
 
