@@ -6,23 +6,7 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.tre
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
-import java.time.YearMonth
-import java.time.temporal.ChronoUnit
-
-private const val ASSUMED_MINIMUM_TREATMENT_DURATION_IN_MONTHS = 3L
-private const val MIN_MONTH = 1
-private const val MAX_MONTH = 12
-
-private data class TimingEvaluatedEntry(val entry: TreatmentHistoryEntry, val timing: TreatmentTiming)
-
-private enum class TreatmentTiming {
-    WITHIN,
-    OUTSIDE,
-    AMBIGUOUS,
-    UNKNOWN
-}
 
 class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
     private val referenceTreatmentCount: Int,
@@ -34,7 +18,7 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val timingEvaluatedHistory = evaluateTreatmentTimingRelativeToNextLine(
+        val timingEvaluatedHistory = SystemicTreatmentAnalyser.evaluateTreatmentTimingRelativeToNextLine(
             record.oncologicalHistory.filter(::treatmentHistoryEntryIsSystemic),
             maxMonthsBeforeNextLine,
             referenceDate
@@ -42,11 +26,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
 
         val (certainlyCountingEntries, potentiallyCountingCurativeAndNeoAdjuvantEntries) = timingEvaluatedHistory.partition {
             val passOnIntent = it.entry.intents?.intersect(Intent.curativeAdjuvantNeoadjuvantSet()).isNullOrEmpty()
-            passOnIntent || it.timing == TreatmentTiming.WITHIN
+            passOnIntent || it.timing == SystemicTreatmentAnalyser.TreatmentTiming.WITHIN
         }
 
         val curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming = potentiallyCountingCurativeAndNeoAdjuvantEntries.filter {
-            it.timing in setOf(TreatmentTiming.AMBIGUOUS, TreatmentTiming.UNKNOWN)
+            it.timing in setOf(SystemicTreatmentAnalyser.TreatmentTiming.AMBIGUOUS, SystemicTreatmentAnalyser.TreatmentTiming.UNKNOWN)
         }
 
         val minCertainCount = SystemicTreatmentAnalyser.minSystemicTreatments(certainlyCountingEntries.map { it.entry })
@@ -73,64 +57,6 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
             else -> EvaluationFactory.fail("Has not received at $comparatorMessage $referenceTreatmentCount systemic treatments")
         }
     }
-
-    private fun evaluateTreatmentTimingRelativeToNextLine(
-        history: List<TreatmentHistoryEntry>, maxMonthsBeforeNextLine: Int, referenceDate: LocalDate
-    ): List<TimingEvaluatedEntry> {
-        val sortedHistory = history.sortedWith(TreatmentHistoryEntryStartDateComparator())
-
-        return sortedHistory.mapIndexed { index, entry ->
-            val nextLine = sortedHistory.getOrNull(index + 1)
-            TimingEvaluatedEntry(entry, entry.stoppedWithinMaxMonthsBeforeNextLine(nextLine, maxMonthsBeforeNextLine, referenceDate))
-        }
-    }
-
-    private fun TreatmentHistoryEntry.stoppedWithinMaxMonthsBeforeNextLine(
-        nextLine: TreatmentHistoryEntry?,
-        maxMonthsBeforeNextLine: Int,
-        referenceDate: LocalDate
-    ): TreatmentTiming {
-        val (nextLineMin, nextLineMax) = when {
-            nextLine == null -> referenceDate to referenceDate
-            nextLine.startYear != null -> dateRange(nextLine.startYear!!, nextLine.startMonth)
-            else -> null to null
-        }
-
-        return when {
-            nextLine != null && nextLine.startYear == null -> TreatmentTiming.UNKNOWN
-
-            this.stopYear() != null -> {
-                val (stopMin, stopMax) = dateRange(this.stopYear()!!, this.stopMonth())
-                val minMonthsBetween = ChronoUnit.MONTHS.between(stopMax, nextLineMin)
-                val maxMonthsBetween = ChronoUnit.MONTHS.between(stopMin, nextLineMax)
-
-                when {
-                    minMonthsBetween > maxMonthsBeforeNextLine -> TreatmentTiming.OUTSIDE
-                    maxMonthsBetween <= maxMonthsBeforeNextLine -> TreatmentTiming.WITHIN
-                    else -> TreatmentTiming.AMBIGUOUS
-                }
-            }
-
-            this.startYear == null -> TreatmentTiming.UNKNOWN
-
-            else -> {
-                val startMax = YearMonth.of(this.startYear!!, this.startMonth ?: MAX_MONTH)
-                val assumedStopDateLowerBound = startMax.plusMonths(ASSUMED_MINIMUM_TREATMENT_DURATION_IN_MONTHS)
-
-                when {
-                    ChronoUnit.MONTHS.between(assumedStopDateLowerBound, nextLineMin) > maxMonthsBeforeNextLine -> TreatmentTiming.OUTSIDE
-                    else -> TreatmentTiming.AMBIGUOUS
-                }
-            }
-        }
-    }
-
-    private fun dateRange(year: Int, month: Int?): Pair<YearMonth, YearMonth> =
-        if (month == null) {
-            YearMonth.of(year, MIN_MONTH) to YearMonth.of(year, MAX_MONTH)
-        } else {
-            YearMonth.of(year, month) to YearMonth.of(year, month)
-        }
 
     companion object {
         fun createForMinimumTreatmentLines(

@@ -6,20 +6,17 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
 
-class IsPrimaryPlatinumRefractoryWithinMonths(
-    private val minMonths: Int,
-    private val referenceDate: LocalDate
-) : EvaluationFunction {
+class IsPrimaryPlatinumRefractoryWithinMonths(private val minMonths: Int, private val referenceDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val platinumProgression = PlatinumProgressionAnalysis.create(record, referenceDate)
+        val platinumProgression = PlatinumProgressionAnalysis.create(record, referenceDate, minMonths)
 
         return when {
-            platinumProgression.hasProgressionOnFirstPlatinumWithinMonths(minMonths) == true -> {
+            platinumProgression.hasProgressionDuringPlatinumOrWithinMonths(platinumProgression.firstPlatinumTreatment) == true -> {
                 EvaluationFactory.pass("Is primary platinum refractory")
             }
 
-            platinumProgression.hasProgressionOrUnknownProgressionOnFirstPlatinum() == true -> {
+            platinumProgression.hasProgressionOrUnknownProgressionOnPlatinum(platinumProgression.firstPlatinumTreatment) == true -> {
                 EvaluationFactory.undetermined("Undetermined if patient is primary platinum refractory")
             }
 

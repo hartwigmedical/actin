@@ -9,14 +9,14 @@ import java.time.LocalDate
 class IsPlatinumResistant(private val referenceDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val platinumProgression = PlatinumProgressionAnalysis.create(record, referenceDate)
+        val platinumProgression = PlatinumProgressionAnalysis.create(record, referenceDate, 6)
 
         return when {
-            platinumProgression.hasProgressionOnLastPlatinumWithinSixMonths() == true -> {
+            platinumProgression.hasProgressionDuringPlatinumOrWithinMonths(platinumProgression.lastPlatinumTreatment) == true -> {
                 EvaluationFactory.pass("Is platinum resistant")
             }
 
-            platinumProgression.hasProgressionOrUnknownProgressionOnLastPlatinum() == true -> {
+            platinumProgression.hasProgressionOrUnknownProgressionOnPlatinum(platinumProgression.lastPlatinumTreatment) == true -> {
                 EvaluationFactory.undetermined("Undetermined if patient is platinum resistant")
             }
 
@@ -24,7 +24,7 @@ class IsPlatinumResistant(private val referenceDate: LocalDate) : EvaluationFunc
                 EvaluationFactory.undetermined("Undetermined if patient is platinum resistant (no platinum treatment)")
             }
 
-            else -> EvaluationFactory.fail("Not platinum resistant (no progression on platinum treatment)")
+            else -> EvaluationFactory.fail("Is platinum sensitive")
         }
     }
 }
