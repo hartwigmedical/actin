@@ -95,7 +95,7 @@ class AnyGeneFromSetIsOverexpressedTest {
         val evaluation = createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(partialPanelRecord)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).contains(
-            "Overexpression of geneA, geneB and geneC in RNA undetermined (no amplification in DNA for geneA or geneB)"
+            "Overexpression of geneA, geneB and geneC in RNA undetermined (no amplification in DNA for geneA and geneB)"
         )
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()
     }
