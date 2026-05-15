@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
-import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -31,12 +30,12 @@ class AnyGeneFromSetIsOverexpressed(
                 }.toSet()
             )
         } else {
-            val (genesTestedForAmplificationInDna, genesNotTestedInDna) =
+            val (genesTestedForAmplificationInDna, genesNotTestedForAmplificationInDna) =
                 genes.partition { test.testsGene(it, specific(MolecularTestTarget.AMPLIFICATION, "Amplification of")) }
             val dnaClarification = when {
                 genesTestedForAmplificationInDna.isEmpty() -> ""
-                genesNotTestedInDna.isEmpty() -> " (but no amplifications found in DNA)"
-                else -> " (no amplification in DNA for ${Format.concatWithCommaAndOr(genesTestedForAmplificationInDna)})"
+                genesNotTestedForAmplificationInDna.isEmpty() -> " (but no amplifications found in DNA)"
+                else -> " (no amplification in DNA for ${concat(genesTestedForAmplificationInDna)})"
             }
             EvaluationFactory.undetermined(
                 "Overexpression of ${concat(genes)} in RNA undetermined$dnaClarification",
