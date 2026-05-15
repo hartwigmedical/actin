@@ -8,12 +8,14 @@ import com.hartwig.actin.datamodel.algo.TrialMatch
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.ExternalTrial
+import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.ActionableAndEvidenceFactory
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
 
 const val YOUNG_ADULT_CUT_OFF = 40
+val HOSPITALS_TO_FILTER = setOf("NKI-AvL", "Erasmus MC")
 
 enum class ExternalPhaseFilter {
     EXTERNAL_LATE_PHASE, EXTERNAL_EARLY_PHASE, EXTERNAL_ALL_PHASES
@@ -236,9 +238,7 @@ fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresentInTria
 }
 
 private fun hospitalsForCountry(trial: ExternalTrial, country: Country) =
-    trial.countries.firstOrNull { it.country == country }?.hospitalsPerCity?.flatMap { it.value }?.toSet()
-        ?: throw IllegalArgumentException("Country not found")
-
+    trial.countries.firstOrNull { it.country == country }?.hospitalsPerCity?.flatMap { it.value }?.toSet() ?: emptySet()
 
 fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInReferenceCountry(
     patientIsYoungAdult: Boolean,
@@ -251,13 +251,14 @@ fun Set<ActionableWithExternalTrial>.filterExclusivelyInChildrensHospitalsInRefe
     }.toSet()
 }
 
-private fun Set<ActionableWithExternalTrial>.filterDutchTrials(
-    effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
-): Set<ActionableWithExternalTrial> {
-    return when (effectiveDutchExternalTrialExclusion) {
-        ExternalTrialTumorType.LUNG -> this.filterNot { Country.NETHERLANDS in it.trial.countries.map { c -> c.country } }.toSet()
-        else -> this
-    }
+private fun Set<ActionableWithExternalTrial>.filterDutchTrials(effectiveDutchExternalTrialExclusion: ExternalTrialTumorType): Set<ActionableWithExternalTrial> {
+    return this.filterNot { actionableWithTrial ->
+        val isDutchLungTrial = effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG &&
+                Country.NETHERLANDS in actionableWithTrial.trial.countries.map { it.country }
+        val isPhaseITrialInHospitalToFilter = actionableWithTrial.trial.phase == TrialPhase.PHASE_1 &&
+                hospitalsForCountry(actionableWithTrial.trial, Country.NETHERLANDS).any { hospital -> hospital.name in HOSPITALS_TO_FILTER }
+        isDutchLungTrial || isPhaseITrialInHospitalToFilter
+    }.toSet()
 }
 
 private fun Set<ActionableWithExternalTrial>.filterMolecularCriteriaAlreadyPresent(presentEvents: Set<String>): Set<ActionableWithExternalTrial> {
