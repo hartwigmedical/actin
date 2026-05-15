@@ -25,7 +25,7 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : Evalu
 
         val ihcResultString = ihcResultToFind.toString().lowercase()
         val warnInclusionEvent = setOf("Potential IHC HER2 $ihcResultString")
-        val erbb2AmplifiedMessage = if (erbb2IsAmplified) " (but ERBB2 amplification detected)" else ""
+        val erbb2AmplifiedMessage = if (erbb2IsAmplified) " (but ERBB2 amplification detected in DNA)" else ""
         val erbb2NotAmplifiedMessage = if (erbb2AmpResult == EvaluationResult.FAIL) " (but no ERBB2 amplification found in DNA)" else ""
 
         return when {
