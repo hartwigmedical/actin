@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.molecular.MolecularTest
+import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 
 class AnyGeneFromSetIsOverexpressed(
     private val genes: Set<String>,
@@ -29,8 +30,15 @@ class AnyGeneFromSetIsOverexpressed(
                 }.toSet()
             )
         } else {
+            val (genesTestedForAmplificationInDna, genesNotTestedForAmplificationInDna) =
+                genes.partition { test.testsGene(it, specific(MolecularTestTarget.AMPLIFICATION, "Amplification of")) }
+            val dnaClarification = when {
+                genesTestedForAmplificationInDna.isEmpty() -> ""
+                genesNotTestedForAmplificationInDna.isEmpty() -> " (but no amplifications found in DNA)"
+                else -> " (no amplification in DNA for ${concat(genesTestedForAmplificationInDna)})"
+            }
             EvaluationFactory.undetermined(
-                "Overexpression of ${concat(genes)} in RNA undetermined",
+                "Overexpression of ${concat(genes)} in RNA undetermined$dnaClarification",
                 isMissingMolecularResultForEvaluation = true
             )
         }

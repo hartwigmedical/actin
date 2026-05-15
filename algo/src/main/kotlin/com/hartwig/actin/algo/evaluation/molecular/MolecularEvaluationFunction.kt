@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristics
 import com.hartwig.actin.datamodel.molecular.driver.Drivers
+import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.util.GeneConstants
 import java.time.LocalDate
 
@@ -75,7 +76,7 @@ abstract class MolecularEvaluationFunction(
             reportHash = null,
             experimentType = ExperimentType.IHC,
             testTypeDisplay = ExperimentType.IHC.display(),
-            targetSpecification = null,
+            targetSpecification = PanelTargetSpecification(emptyMap()),
             refGenomeVersion = RefGenomeVersion.V37,
             containsTumorCells = true,
             hasSufficientPurity = true,
