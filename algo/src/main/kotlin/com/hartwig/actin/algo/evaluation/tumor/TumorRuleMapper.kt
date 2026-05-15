@@ -61,6 +61,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_CNS_METASTASES to hasKnownCnsMetastasesCreator(),
             EligibilityRule.HAS_ACTIVE_CNS_METASTASES to hasKnownActiveCnsMetastasesCreator(),
+            EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES to hasKnownSymptomaticCnsMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_BRAIN_METASTASES to hasKnownBrainMetastasesCreator(),
             EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES to hasKnownActiveBrainMetastasesCreator(),
             EligibilityRule.HAS_SYMPTOMATIC_BRAIN_METASTASES to hasKnownSymptomaticBrainMetastasesCreator(),
@@ -294,6 +295,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasKnownActiveCnsMetastasesCreator(): FunctionCreator {
         return { HasKnownActiveCnsMetastases() }
+    }
+
+    private fun hasKnownSymptomaticCnsMetastasesCreator(): FunctionCreator {
+        return { HasKnownSymptomaticCnsMetastases() }
     }
 
     private fun hasKnownBrainMetastasesCreator(): FunctionCreator {
