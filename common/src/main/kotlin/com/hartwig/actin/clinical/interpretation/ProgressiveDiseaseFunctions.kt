@@ -11,6 +11,13 @@ object ProgressiveDiseaseFunctions {
 
     fun treatmentResultedInPD(treatment: TreatmentHistoryEntry): Boolean? {
         val bestResponse = treatment.treatmentHistoryDetails?.bestResponse
+        return when {
+            bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE -> true
+            else -> treatmentStoppedDueToPD(treatment)
+        }
+    }
+
+    fun treatmentStoppedDueToPD(treatment: TreatmentHistoryEntry): Boolean? {
         val stopReason = treatment.treatmentHistoryDetails?.stopReason
         val treatmentDuration = DateComparison.minWeeksBetweenDates(
             treatment.startYear,
@@ -20,7 +27,7 @@ object ProgressiveDiseaseFunctions {
         )
 
         return when {
-            bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE || stopReason == StopReason.PROGRESSIVE_DISEASE -> true
+            stopReason == StopReason.PROGRESSIVE_DISEASE -> true
 
             stopReason == null && treatmentDuration != null && treatmentDuration > MIN_WEEKS_TO_ASSUME_STOP_DUE_TO_PD -> true
 

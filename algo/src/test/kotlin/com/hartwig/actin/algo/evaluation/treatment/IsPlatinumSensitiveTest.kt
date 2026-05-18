@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
@@ -15,7 +16,6 @@ class IsPlatinumSensitiveTest {
 
     private val referenceDate = LocalDate.of(2025, 2, 5)
     private val recentDate = LocalDate.of(2025, 2, 5).minusMonths(2)
-    private val nonRecentDate = LocalDate.of(2025, 2, 5).minusMonths(9)
     private val function = IsPlatinumSensitive(referenceDate)
 
     private val platinum = DrugTreatment(
@@ -23,14 +23,55 @@ class IsPlatinumSensitiveTest {
         drugs = setOf(Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)))
     )
 
+    private val otherTreatment = DrugTreatment(name = "other treatment", drugs = setOf())
+
     @Test
-    fun `Should fail if treatment history contains platinum treatment with progression and within 6 months`() {
+    fun `Should fail if treatment history contains platinum with stop reason progressive disease`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should fail if treatment history contains platinum with progression as last treatment and within 6 months`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(platinum),
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                stopYear = referenceDate.year,
+                stopMonth = referenceDate.monthValue - 1
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should fail if treatment history contains platinum with progression and next treatment starts within 6 months`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(platinum),
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                startYear = recentDate.year,
+                startMonth = 1,
                 stopYear = recentDate.year,
-                stopMonth = recentDate.monthValue
+                stopMonth = 3
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(otherTreatment),
+                startYear = recentDate.year,
+                startMonth = 6
             )
         )
 
@@ -57,13 +98,16 @@ class IsPlatinumSensitiveTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if treatment history contains platinum with progression and long time ago`() {
+    fun `Should evaluate to undetermined if treatment history contains platinum as last treatment with progression but unknown whether next treatment started within 6 months`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                stopReason = StopReason.PROGRESSIVE_DISEASE,
-                stopYear = nonRecentDate.year,
-                stopMonth = nonRecentDate.monthValue
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                stopYear = recentDate.year,
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(otherTreatment),
+                startYear = recentDate.year
             )
         )
 
@@ -75,7 +119,7 @@ class IsPlatinumSensitiveTest {
 
     @Test
     fun `Should evaluate to undetermined if treatment history does not contain platinum`() {
-        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet()))
+        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(otherTreatment)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -84,13 +128,36 @@ class IsPlatinumSensitiveTest {
     }
 
     @Test
-    fun `Should pass if treatment history contains platinum without progression`() {
+    fun `Should evaluate to undetermined if treatment history contains platinum with progression and next treatment starts after 6 months`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                stopReason = StopReason.TOXICITY,
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                startYear = recentDate.year,
+                startMonth = 1,
                 stopYear = recentDate.year,
-                stopMonth = recentDate.monthValue
+                stopMonth = 3
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(otherTreatment),
+                startYear = recentDate.year,
+                startMonth = 10
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains platinum but without progression`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(platinum),
+                bestResponse = TreatmentResponse.PARTIAL_RESPONSE,
+                stopReason = StopReason.TOXICITY
             )
         )
 

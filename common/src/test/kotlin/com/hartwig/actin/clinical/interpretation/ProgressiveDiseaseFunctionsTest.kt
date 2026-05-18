@@ -1,6 +1,7 @@
 package com.hartwig.actin.clinical.interpretation
 
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.treatmentResultedInPD
+import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.treatmentStoppedDueToPD
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -22,33 +23,50 @@ class ProgressiveDiseaseFunctionsTest {
     }
 
     @Test
+    fun `Should return null when stop reason is null and best response is PD and duration null`() {
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntry(null, TreatmentResponse.PROGRESSIVE_DISEASE))).isNull()
+    }
+
+    @Test
     fun `Should return true when stop reason is PD and best response is null and duration null`() {
-        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, null))).isTrue()
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(function(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, null))).isTrue()
+        }
     }
 
     @Test
     fun `Should return true when stop reason is null and duration was sufficient`() {
-        assertThat(treatmentResultedInPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION))).isTrue()
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(function(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION))).isTrue()
+        }
     }
 
     @Test
     fun `Should return null when stop reason is null and duration was insufficient`() {
-        assertThat(treatmentResultedInPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION))).isNull()
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(function(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION))).isNull()
+        }
     }
 
     @Test
     fun `Should return null when stop reason is null and best response is not PD`() {
-        assertThat(treatmentResultedInPD(treatmentHistoryEntry(null, TreatmentResponse.MIXED))).isNull()
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(function(treatmentHistoryEntry(null, TreatmentResponse.MIXED))).isNull()
+        }
     }
 
     @Test
     fun `Should return false when stop reason is not PD and best response is null`() {
-        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.TOXICITY, null))).isFalse()
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(function(treatmentHistoryEntry(StopReason.TOXICITY, null))).isFalse()
+        }
     }
 
     @Test
     fun `Should return true when stop reason is PD and best response is not PD`() {
-        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, TreatmentResponse.MIXED))).isTrue()
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(function(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, TreatmentResponse.MIXED))).isTrue()
+        }
     }
 
     @Test
@@ -57,21 +75,30 @@ class ProgressiveDiseaseFunctionsTest {
     }
 
     @Test
+    fun `Should return false when stop reason is not PD and best response is PD`() {
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.PROGRESSIVE_DISEASE))).isFalse()
+    }
+
+    @Test
     fun `Should return false when stop reason is not PD`() {
-        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.MIXED))).isFalse()
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(function(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.MIXED))).isFalse()
+        }
     }
 
     @Test
     fun `Should return false when stop reason is not PD also if treatment duration was sufficient`() {
-        assertThat(
-            treatmentResultedInPD(
-                treatmentHistoryEntryWithDates(
-                    StopReason.TOXICITY,
-                    TreatmentResponse.MIXED,
-                    STOP_MONTH_SUFFICIENT_DURATION
+        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
+            assertThat(
+                function(
+                    treatmentHistoryEntryWithDates(
+                        StopReason.TOXICITY,
+                        TreatmentResponse.MIXED,
+                        STOP_MONTH_SUFFICIENT_DURATION
+                    )
                 )
-            )
-        ).isFalse()
+            ).isFalse()
+        }
     }
 
     private fun treatmentHistoryEntry(stopReason: StopReason?, bestResponse: TreatmentResponse?): TreatmentHistoryEntry {

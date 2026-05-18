@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.evaluateTreatmentTimingRelativeToNextLine
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.firstSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.lastSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.maxSystemicTreatments
@@ -9,6 +10,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class SystemicTreatmentAnalyserTest {
 
@@ -17,6 +19,7 @@ class SystemicTreatmentAnalyserTest {
     private val earlierSystemicTreatmentHistoryEntry = systemicTreatmentHistoryEntry.copy(startYear = 2021, startMonth = 5)
     private val nonSystemicTreatment = treatment("treatment B", isSystemic = false)
     private val nonSystemicTreatmentHistoryEntry = treatmentHistoryEntry(setOf(nonSystemicTreatment), 2022, 2)
+    private val referenceDate = LocalDate.of(2025, 12, 1)
 
     @Test
     fun `Should return zero when treatment list is empty`() {
@@ -138,6 +141,40 @@ class SystemicTreatmentAnalyserTest {
 
         treatmentHistory.add(treatmentHistoryEntry(setOf(treatment("5", true)), 2020, 1))
         assertNameForSystemicTreatmentHistoryEntry(treatmentHistory, "4", ::firstSystemicTreatment)
+    }
+
+    @Test
+    fun `Should determine treatment timing relative to next line`() {
+        val history = listOf(
+            treatmentHistoryEntry(
+                setOf(treatment("1", isSystemic = true)),
+                startYear = referenceDate.year - 3,
+                startMonth = 1,
+                stopYear = referenceDate.year - 3,
+                stopMonth = 2
+            ),
+            treatmentHistoryEntry(
+                setOf(treatment("2", isSystemic = true)),
+                startYear = referenceDate.year - 3,
+                startMonth = 6,
+                stopYear = referenceDate.year - 3,
+                stopMonth = 7
+            ),
+            treatmentHistoryEntry(
+                setOf(treatment("3", isSystemic = true)),
+                startYear = referenceDate.year - 2,
+                startMonth = 5,
+                stopYear = referenceDate.year
+            ),
+            treatmentHistoryEntry(setOf(treatment("4", isSystemic = true))),
+        )
+        val result = evaluateTreatmentTimingRelativeToNextLine(history, 6, referenceDate)
+        assertThat(result.map { it.timing }).containsExactly(
+            SystemicTreatmentAnalyser.TreatmentTiming.UNKNOWN,
+            SystemicTreatmentAnalyser.TreatmentTiming.WITHIN,
+            SystemicTreatmentAnalyser.TreatmentTiming.OUTSIDE,
+            SystemicTreatmentAnalyser.TreatmentTiming.AMBIGUOUS
+        )
     }
 
     private fun assertNameForSystemicTreatmentHistoryEntry(

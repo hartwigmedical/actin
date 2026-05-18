@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
+import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
@@ -15,7 +16,6 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
     private val referenceDate = LocalDate.of(2025, 2, 5)
     private val recentDate = LocalDate.of(2025, 2, 5).minusMonths(1)
-    private val nonRecentDate = LocalDate.of(2025, 2, 5).minusMonths(9)
     private val function = IsPrimaryPlatinumRefractoryWithinMonths(3, referenceDate)
 
     private val platinum = DrugTreatment(
@@ -23,14 +23,15 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         drugs = setOf(Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)))
     )
 
+    private val otherTreatment = DrugTreatment(name = "other treatment", drugs = setOf())
+
     @Test
     fun `Should fail if treatment history contains platinum but without progression`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                stopReason = StopReason.TOXICITY,
-                stopYear = recentDate.year,
-                stopMonth = recentDate.monthValue
+                bestResponse = TreatmentResponse.PARTIAL_RESPONSE,
+                stopReason = StopReason.TOXICITY
             )
         )
 
@@ -58,13 +59,17 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if treatment history contains platinum with progression but long time ago`() {
+    fun `Should evaluate to undetermined if treatment history contains platinum as last treatment with progression but unknown whether next treatment started within required months`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
-                stopReason = StopReason.PROGRESSIVE_DISEASE,
-                stopYear = nonRecentDate.year,
-                stopMonth = nonRecentDate.monthValue
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                stopYear = recentDate.year,
+                stopMonth = recentDate.monthValue
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(otherTreatment),
+                startYear = recentDate.year
             )
         )
 
@@ -76,7 +81,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
     @Test
     fun `Should evaluate to undetermined if treatment history does not contain platinum`() {
-        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet()))
+        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(otherTreatment)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -85,13 +90,76 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
     }
 
     @Test
-    fun `Should pass if treatment history contains platinum with progression and within 3 months`() {
+    fun `Should evaluate to undetermined if treatment history contains platinum with progression and next treatment starts after required months`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(platinum),
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                startYear = recentDate.year,
+                startMonth = 1,
+                stopYear = recentDate.year,
+                stopMonth = 3
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(otherTreatment),
+                startYear = recentDate.year,
+                startMonth = 10
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains platinum with stop reason progressive disease`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains platinum with progression as last treatment and within required months`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(platinum),
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                stopYear = referenceDate.year,
+                stopMonth = referenceDate.monthValue - 1
+            )
+        )
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains platinum with progression and next treatment starts within required months`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(platinum),
+                bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE,
+                startYear = recentDate.year,
+                startMonth = 1,
                 stopYear = recentDate.year,
-                stopMonth = recentDate.monthValue
+                stopMonth = 3
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(
+                treatments = setOf(otherTreatment),
+                startYear = recentDate.year,
+                startMonth = 5
             )
         )
 
