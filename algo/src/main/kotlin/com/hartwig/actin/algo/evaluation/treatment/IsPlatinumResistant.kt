@@ -24,7 +24,7 @@ class IsPlatinumResistant(private val referenceDate: LocalDate) : EvaluationFunc
                 EvaluationFactory.undetermined("Undetermined if patient is platinum resistant (no platinum treatment)")
             }
 
-            else -> EvaluationFactory.fail("Is platinum sensitive")
+            else -> EvaluationFactory.fail("Is not platinum resistant")
         }
     }
 }

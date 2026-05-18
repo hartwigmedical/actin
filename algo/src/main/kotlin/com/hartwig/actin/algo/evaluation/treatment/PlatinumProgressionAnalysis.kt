@@ -18,16 +18,17 @@ class PlatinumProgressionAnalysis(val firstPlatinumTreatment: TimingEvaluatedEnt
         }
 
     fun hasProgressionOrUnknownProgressionOnPlatinum(platinumTreatment: TimingEvaluatedEntry?) =
-        platinumTreatment?.let { treatmentStoppedDueToOrBestResponsePD(it.entry) != false }
+        platinumTreatment?.let { stopReasonOrBestResponseIsPd(it.entry) != false }
 
     private fun treatmentResultedInPDWithTiming(treatment: TimingEvaluatedEntry, timing: Set<SystemicTreatmentAnalyser.TreatmentTiming>) =
-        treatmentStoppedDueToOrBestResponsePD(treatment.entry) == true && treatment.timing in timing
+        stopReasonOrBestResponseIsPd(treatment.entry) == true && treatment.timing in timing
 
-    private fun treatmentStoppedDueToOrBestResponsePD(treatment: TreatmentHistoryEntry): Boolean? {
+    private fun stopReasonOrBestResponseIsPd(treatment: TreatmentHistoryEntry): Boolean? {
         val bestResponse = treatment.treatmentHistoryDetails?.bestResponse
+        val stoppedDueToPD = treatmentStoppedDueToPD(treatment)
         return when {
-            bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE || treatmentStoppedDueToPD(treatment) == true -> true
-            treatmentStoppedDueToPD(treatment) == false && bestResponse != null -> false
+            bestResponse == TreatmentResponse.PROGRESSIVE_DISEASE || stoppedDueToPD == true -> true
+            stoppedDueToPD == false && bestResponse != null -> false
             else -> null
         }
     }

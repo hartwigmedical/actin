@@ -101,7 +101,7 @@ class PlatinumProgressionAnalysisTest {
     }
 
     @Test
-    fun `Should return true if treatment history contains platinum but without progression`() {
+    fun `Should return true if treatment history contains platinum but with unknown progressive disease status`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 treatments = setOf(platinum),
