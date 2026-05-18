@@ -27,6 +27,21 @@ class MedicationCategoriesTest {
     }
 
     @Test
+    fun `Should resolve known category case-insensitively`() {
+        val atcTree = AtcTree(emptyMap())
+        val firstLevel = AtcLevel(code = CALCIUM_HOMEOSTASIS, name = "")
+        val victim = MedicationCategories(mapOf("Systemic corticosteroids" to setOf(firstLevel)), atcTree)
+        assertThat(victim.resolve("systemic corticosteroids")).containsExactly(firstLevel)
+    }
+
+    @Test
+    fun `Should return canonical category name when resolved case-insensitively`() {
+        val atcTree = AtcTree(emptyMap())
+        val victim = MedicationCategories(mapOf("Systemic corticosteroids" to emptySet()), atcTree)
+        assertThat(victim.resolveCategoryName("systemic corticosteroids")).isEqualTo("Systemic corticosteroids")
+    }
+
+    @Test
     fun `Should return known category name without checking ATC tree`() {
         val atcTree = AtcTree(emptyMap())
         val victim = MedicationCategories(mapOf("Bone resorptive" to emptySet()), atcTree)
