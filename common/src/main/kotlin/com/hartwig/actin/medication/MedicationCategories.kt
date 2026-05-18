@@ -13,14 +13,13 @@ private val systemicAntimicrobials = systemicAntibiotics + systemicAntimycobacte
 class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel>>, private val atcTree: AtcTree) {
 
     fun resolve(categoryName: String): Set<AtcLevel> {
-        return knownCategories[categoryName]
+        return knownCategories.entries.firstOrNull { it.key.equals(categoryName, ignoreCase = true) }?.value
             ?: setOf(atcTree.resolve(categoryName))
     }
 
     fun resolveCategoryName(categoryName: String): String {
-        return if (knownCategories[categoryName] != null) categoryName else {
-            atcTree.resolve(categoryName).name
-        }
+        return knownCategories.entries.firstOrNull { it.key.equals(categoryName, ignoreCase = true) }?.key
+            ?: atcTree.resolve(categoryName).name
     }
 
     companion object {
