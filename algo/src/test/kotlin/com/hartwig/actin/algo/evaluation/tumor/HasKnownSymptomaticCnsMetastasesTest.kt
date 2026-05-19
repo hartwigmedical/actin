@@ -4,65 +4,65 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
-class HasKnownActiveCnsMetastasesTest {
+class HasKnownSymptomaticCnsMetastasesTest {
 
-    private val function = HasKnownActiveCnsMetastases()
+    private val function = HasKnownSymptomaticCnsMetastases()
 
     @Test
-    fun `Should return undetermined when unknown if (active) CNS or brain metastases present`() {
+    fun `Should return undetermined when unknown if (symptomatic) CNS or brain metastases present`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = null,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = null,
-                    hasActiveCnsLesions = null
+                    hasSymptomaticCnsLesions = null
                 )
             )
         )
     }
 
     @Test
-    fun `Should return undetermined when CNS metastases present but unknown if active`() {
+    fun `Should return undetermined when CNS metastases present but unknown if symptomatic`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = false,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = true,
-                    hasActiveCnsLesions = null
+                    hasSymptomaticCnsLesions = null
                 )
             )
         )
     }
 
     @Test
-    fun `Should return undetermined when brain metastases present but unknown if active`() {
+    fun `Should return undetermined when brain metastases present but unknown if symptomatic`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = true,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = false,
-                    hasActiveCnsLesions = null
+                    hasSymptomaticCnsLesions = null
                 )
             )
         )
     }
 
     @Test
-    fun `Should return undetermined when brain metastases are suspected but unknown if active`() {
+    fun `Should return undetermined when brain metastases are suspected but unknown if symptomatic`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = false,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = null,
-                    hasActiveCnsLesions = null,
+                    hasSymptomaticCnsLesions = null,
                     hasSuspectedBrainLesions = true
                 )
             )
@@ -70,15 +70,15 @@ class HasKnownActiveCnsMetastasesTest {
     }
 
     @Test
-    fun `Should return undetermined when CNS metastases are suspected but unknown if active`() {
+    fun `Should return undetermined when CNS metastases are suspected but unknown if symptomatic`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = null,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = false,
-                    hasActiveCnsLesions = null,
+                    hasSymptomaticCnsLesions = null,
                     hasSuspectedCnsLesions = true
                 )
             )
@@ -92,69 +92,69 @@ class HasKnownActiveCnsMetastasesTest {
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = false,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = false,
-                    hasActiveCnsLesions = null
+                    hasSymptomaticCnsLesions = null
                 )
             )
         )
     }
 
     @Test
-    fun `Should fail when CNS metastases are present but not active`() {
+    fun `Should fail when CNS metastases are present but not symptomatic`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = true,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = true,
-                    hasActiveCnsLesions = false
+                    hasSymptomaticCnsLesions = false
                 )
             )
         )
     }
 
     @Test
-    fun `Should pass when CNS metastases are present and active`() {
+    fun `Should pass when CNS metastases are present and symptomatic`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = false,
-                    hasActiveBrainLesions = null,
+                    hasSymptomaticBrainLesions = null,
                     hasCnsLesions = true,
-                    hasActiveCnsLesions = true
+                    hasSymptomaticCnsLesions = true
                 )
             )
         )
     }
 
     @Test
-    fun `Should pass when brain metastases are present and active`() {
+    fun `Should pass when brain metastases are present and symptomatic`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = true,
-                    hasActiveBrainLesions = true,
+                    hasSymptomaticBrainLesions = true,
                     hasCnsLesions = false,
-                    hasActiveCnsLesions = false
+                    hasSymptomaticCnsLesions = false
                 )
             )
         )
     }
 
     @Test
-    fun `Should pass when brain metastases are present and active and CNS metastases are present but not active`() {
+    fun `Should pass when brain metastases are present and symptomatic and CNS metastases are present but not symptomatic`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 TumorTestFactory.withActiveAndSymptomaticBrainAndCnsLesionStatus(
                     hasBrainLesions = true,
-                    hasActiveBrainLesions = true,
+                    hasSymptomaticBrainLesions = true,
                     hasCnsLesions = true,
-                    hasActiveCnsLesions = false
+                    hasSymptomaticCnsLesions = false
                 )
             )
         )
