@@ -20,4 +20,30 @@ internal object LabUnitConverter {
         }
         return labValue.value * conversionFactor
     }
+
+    data class NormalizedLabValue(val value: LabValue, val conversionNote: String? = null)
+
+    fun normalizeLabValue(measurement: LabMeasurement, labValue: LabValue): NormalizedLabValue? {
+        val targetUnit = measurement.defaultUnit
+        val conversionFactor = LabUnitConversionTable.findConversionFactor(measurement, labValue.unit, targetUnit)
+        return when {
+            labValue.unit == targetUnit -> NormalizedLabValue(labValue)
+            conversionFactor == null -> {
+                logger.warn { "No conversion factor defined for ${measurement.display()} to go from '${labValue.unit.display()}' to '$targetUnit'" }
+                null
+            }
+            else -> {
+                val converted = labValue.copy(
+                    value = labValue.value * conversionFactor,
+                    unit = targetUnit,
+                    refLimitLow = labValue.refLimitLow?.let { it * conversionFactor },
+                    refLimitUp = labValue.refLimitUp?.let { it * conversionFactor }
+                )
+                NormalizedLabValue(
+                    value = converted,
+                    conversionNote = "${measurement.display()} converted from: ${labValue.value} ${labValue.unit.display()} to ${converted.value} ${converted.unit.display()}"
+                )
+            }
+        }
+    }
 }

@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
-import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
 internal class SameDateLabValueSelector(
@@ -21,16 +20,15 @@ internal class SameDateLabValueSelector(
                 )
             )
 
+        val conversionNotes = mutableListOf<String>()
         val selected = measurements.associateWith { measurement ->
             val value = interpretation.valuesOnDate(measurement, mostRecentSharedDate).firstOrNull()
-            if (!LabEvaluation.isValid(value, measurement, minValidDate)) {
-                return LabValueSelectionResult.NotFound(
-                    LabEvaluation.evaluateInvalidLabValue(measurement, value, minValidDate)
-                )
-            }
-            value!!
+            val normalized = normalizeAndValidate(measurement, value, minValidDate)
+                ?: return LabValueSelectionResult.NotFound(LabEvaluation.evaluateInvalidLabValue(measurement, value, minValidDate))
+            normalized.conversionNote?.let { conversionNotes.add(it) }
+            normalized.value
         }
-        return LabValueSelectionResult.Found(selected)
+        return LabValueSelectionResult.Found(values = selected, conversionNotes = conversionNotes)
     }
 
 }

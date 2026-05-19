@@ -41,11 +41,30 @@ class SingleLabValueSelectorTest {
     }
 
     @Test
-    fun `Should return NotFound with undetermined when most recent value has wrong unit`() {
+    fun `Should return NotFound with undetermined when most recent value has non-convertible unit`() {
         val record = LabTestFactory.withLabValue(LabTestFactory.create(measurement, date = today).copy(unit = LabUnit.SECONDS))
         val interpretation = LabInterpretation.interpret(record.labValues)
         val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
         assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+    }
+
+    @Test
+    fun `Should return Found with converted unit and note when unit is convertible to default`() {
+        val record = LabTestFactory.withLabValue(
+            LabTestFactory.create(measurement, date = today).copy(unit = LabUnit.GRAMS_PER_DECILITER, value = 4.0)
+        )
+        val interpretation = LabInterpretation.interpret(record.labValues)
+        val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate) as LabValueSelectionResult.Found
+        assertThat(result.values[measurement]!!.unit).isEqualTo(measurement.defaultUnit)
+        assertThat(result.conversionNotes).hasSize(1)
+    }
+
+    @Test
+    fun `Should return Found with no conversion note when unit already matches default`() {
+        val record = LabTestFactory.withLabValue(LabTestFactory.create(measurement, date = today))
+        val interpretation = LabInterpretation.interpret(record.labValues)
+        val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate) as LabValueSelectionResult.Found
+        assertThat(result.conversionNotes).isEmpty()
     }
 }

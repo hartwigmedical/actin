@@ -10,11 +10,12 @@ internal class SingleLabValueSelector(
 
     override fun select(interpretation: LabInterpretation, minValidDate: LocalDate): LabValueSelectionResult {
         val mostRecent = interpretation.mostRecentValue(measurement, highestFirst)
-        return when {
-            mostRecent != null && LabEvaluation.isValid(mostRecent, measurement, minValidDate) ->
-                LabValueSelectionResult.Found(mapOf(measurement to mostRecent))
-            else ->
-                LabValueSelectionResult.NotFound(LabEvaluation.evaluateInvalidLabValue(measurement, mostRecent, minValidDate))
+        return when (val normalized = normalizeAndValidate(measurement, mostRecent, minValidDate)) {
+            null -> LabValueSelectionResult.NotFound(LabEvaluation.evaluateInvalidLabValue(measurement, mostRecent, minValidDate))
+            else -> LabValueSelectionResult.Found(
+                values = mapOf(measurement to normalized.value),
+                conversionNotes = listOfNotNull(normalized.conversionNote)
+            )
         }
     }
 }
