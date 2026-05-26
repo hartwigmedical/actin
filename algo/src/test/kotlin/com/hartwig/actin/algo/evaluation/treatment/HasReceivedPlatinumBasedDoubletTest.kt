@@ -17,9 +17,11 @@ import org.junit.jupiter.api.Test
 class HasReceivedPlatinumBasedDoubletTest {
 
     private val function = HasReceivedPlatinumBasedDoublet(
-        TestDoidModelFactory.createWithOneParentChild(
-            DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID,
-            DoidConstants.LUNG_ADENOCARCINOMA_DOID
+        TestDoidModelFactory.createWithChildToParentMap(
+            mapOf(
+                DoidConstants.LUNG_ADENOCARCINOMA_DOID to DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID,
+                DoidConstants.OVARIAN_CARCINOMA_DOID to DoidConstants.FEMALE_REPRODUCTIVE_ORGAN_CANCER_DOID
+            )
         )
     )
 
@@ -64,6 +66,14 @@ class HasReceivedPlatinumBasedDoubletTest {
         TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(
                 TreatmentTestFactory.treatment("CHEMOTHERAPY+IMMUNOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet())
+            )
+        )
+    )
+
+    private val undefinedChemoHistory = listOf(
+        TreatmentTestFactory.treatmentHistoryEntry(
+            treatments = setOf(
+                TreatmentTestFactory.treatment("CHEMOTHERAPY", false, setOf(TreatmentCategory.CHEMOTHERAPY), emptySet())
             )
         )
     )
@@ -139,6 +149,26 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.BREAST_CANCER_DOID)).copy(oncologicalHistory = chemoImmunoHistory)
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass if treatment history contains undefined chemo when tumor type is gynaecological`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                TumorTestFactory.withDoids(setOf(DoidConstants.OVARIAN_CARCINOMA_DOID)).copy(oncologicalHistory = undefinedChemoHistory)
+            )
+        )
+    }
+
+    @Test
+    fun `Should fail if treatment history contains undefined chemo when tumor type is other than gynaecological`() {
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID)).copy(oncologicalHistory = undefinedChemoHistory)
             )
         )
     }
