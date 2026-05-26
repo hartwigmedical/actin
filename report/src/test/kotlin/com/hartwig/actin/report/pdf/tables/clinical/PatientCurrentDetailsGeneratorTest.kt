@@ -90,7 +90,7 @@ class PatientCurrentDetailsGeneratorTest {
 
         assertThat(table.numberOfRows).isEqualTo(2)
         assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Unresolved toxicities grade => 2")
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("From EHR: Toxicity 1 (3), Toxicity 2 (2)")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Toxicity 1 (3), Toxicity 2 (2), Toxicity 4 (unknown grade)")
     }
 
     private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =

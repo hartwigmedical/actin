@@ -82,18 +82,18 @@ class PatientCurrentDetailsGenerator(
             formatToxicities(questionnaireToxicities).ifEmpty { "Yes (details unknown)" }
         }
         val ehrSummary = filterUncuratedToxicities(ehrToxicities).let { filteredEHRToxicities ->
-            if (filteredEHRToxicities.isEmpty()) null else "From EHR: " + formatToxicities(filteredEHRToxicities)
+            if (filteredEHRToxicities.isEmpty()) null else formatToxicities(filteredEHRToxicities)
         }
         return Formats.valueOrDefault(listOfNotNull(questionnaireSummary, ehrSummary).joinToString("; "), "None")
     }
 
     private fun formatToxicities(filteredToxicities: List<Toxicity>) =
-        filteredToxicities.map { (it.name ?: "Unknown") + (it.grade?.let { grade -> " ($grade)" } ?: "") }.distinct()
+        filteredToxicities.map { (it.name ?: "Unknown") + (it.grade?.let { grade -> " ($grade)" } ?: " (unknown grade)") }.distinct()
             .joinToString(Formats.COMMA_SEPARATOR)
 
     private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
         return toxicities
-            .filter { (it.grade ?: -1) >= 2 }
+            .filter { it.grade == null || it.grade!! >= 2 }
             .groupBy(Toxicity::name)
             .map { (_, toxicitiesWithName) ->
                 toxicitiesWithName.maxBy { it.evaluatedDate ?: LocalDate.MIN }

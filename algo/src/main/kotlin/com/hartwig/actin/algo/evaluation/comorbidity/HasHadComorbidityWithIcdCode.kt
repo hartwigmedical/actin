@@ -22,13 +22,21 @@ class HasHadComorbidityWithIcdCode(
     private val referenceDate: LocalDate
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate = referenceDate, emptyList())
-            .filter { toxicity -> (toxicity.grade ?: 0) >= 2 || toxicity.source == ToxicitySource.QUESTIONNAIRE }
+        val (relevantToxicitiesUnknownGrade, relevantToxicities) = ToxicityFunctions.selectRelevantToxicities(
+            record,
+            icdModel,
+            referenceDate = referenceDate,
+            emptyList()
+        )
+            .filter { toxicity -> toxicity.grade == null || toxicity.grade!! >= 2 || toxicity.source == ToxicitySource.QUESTIONNAIRE }
+            .partition { toxicity -> toxicity.grade == null }
 
         val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(
             record.comorbidities.filter { it !is Toxicity } + relevantToxicities,
             targetIcdCodes
         )
+
+        val icdMatchesUnknownGrade = icdModel.findInstancesMatchingAnyIcdCode(relevantToxicitiesUnknownGrade, targetIcdCodes)
 
         return when {
             icdMatches.fullMatches.isNotEmpty() -> {
@@ -49,6 +57,16 @@ class HasHadComorbidityWithIcdCode(
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
                 "Has history of ${Format.concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension, true)} " +
                         "but undetermined if history of $diseaseDescription"
+            )
+
+            icdMatchesUnknownGrade.fullMatches.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Has history of ${Format.concatItemsWithAnd(icdMatchesUnknownGrade.fullMatches, true)} " +
+                        "but grade of toxicity unknown"
+            )
+
+            icdMatchesUnknownGrade.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Has history of ${Format.concatItemsWithAnd(icdMatchesUnknownGrade.mainCodeMatchesWithUnknownExtension, true)} " +
+                        "but undetermined if history of $diseaseDescription and grade unknown"
             )
 
             else -> EvaluationFactory.fail("Has no comorbidity belonging to category $diseaseDescription")

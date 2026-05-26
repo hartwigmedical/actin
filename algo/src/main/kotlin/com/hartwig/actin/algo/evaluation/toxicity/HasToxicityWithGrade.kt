@@ -35,10 +35,10 @@ class HasToxicityWithGrade(
                 gradeMatch && (icdMatches == null || icdMatches.contains(toxicity))
             }
 
-        val unresolvableToxicities = if (minGrade <= DEFAULT_QUESTIONNAIRE_GRADE) emptyList() else {
-            otherToxicities.filter {
-                with(it) { grade == null && source == ToxicitySource.QUESTIONNAIRE && icdMatches?.contains(this) != false }
-            }
+        val unresolvableToxicities = otherToxicities.filter {
+            it.grade == null && (minGrade >= DEFAULT_QUESTIONNAIRE_GRADE || it.source != ToxicitySource.QUESTIONNAIRE) && icdMatches?.contains(
+                it
+            ) != false
         }
 
         val icdTitleText = targetIcdTitles?.let { "in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
@@ -56,7 +56,7 @@ class HasToxicityWithGrade(
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                return EvaluationFactory.undetermined("Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
+                return EvaluationFactory.undetermined("Has $toxicityString but unknown if grade >= $minGrade")
             }
 
             else -> return EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")

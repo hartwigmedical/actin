@@ -61,6 +61,15 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
+    fun `Should return undetermined for EHR toxicity without grade`() {
+        val toxicities = listOf(toxicity(source = ToxicitySource.EHR))
+        val function = function(minGrade = 4)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities))
+        )
+    }
+
+    @Test
     fun `Should pass with questionnaire toxicity with higher grade`() {
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = DEFAULT_QUESTIONNAIRE_GRADE + 2)
