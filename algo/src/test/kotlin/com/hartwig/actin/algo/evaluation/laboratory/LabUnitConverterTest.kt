@@ -25,6 +25,29 @@ class LabUnitConverterTest {
         assertThat(LabUnitConverter.convert(LabMeasurement.NEUTROPHILS_ABS, value, LabUnit.GRAMS_PER_LITER)).isNull()
     }
 
+    @Test
+    fun `Should return converted value when conversion factor exists`() {
+        val labValue = LabTestFactory.create(LabMeasurement.ALBUMIN, value = 4.0)
+            .copy(unit = LabUnit.GRAMS_PER_DECILITER, refLimitLow = 3.5, refLimitUp = 5.0)
+        val result = LabUnitConverter.normalizeLabValue(LabMeasurement.ALBUMIN, labValue)!!
+        assertThat(result.value).isEqualTo(40.0)
+        assertThat(result.unit).isEqualTo(LabUnit.GRAMS_PER_LITER)
+        assertThat(result.refLimitLow).isEqualTo(35.0)
+        assertThat(result.refLimitUp).isEqualTo(50.0)
+    }
+
+    @Test
+    fun `Should return same value when unit already matches default`() {
+        val labValue = LabTestFactory.create(LabMeasurement.ALBUMIN, value = 40.0)
+        assertThat(LabUnitConverter.normalizeLabValue(LabMeasurement.ALBUMIN, labValue)).isEqualTo(labValue)
+    }
+
+    @Test
+    fun `Should return null when no conversion factor exists for lab value`() {
+        val labValue = LabTestFactory.create().copy(unit = LabUnit.CELLS_PER_CUBIC_MILLIMETER)
+        assertThat(LabUnitConverter.normalizeLabValue(LabMeasurement.NEUTROPHILS_ABS, labValue)).isNull()
+    }
+
     companion object {
         private const val EPSILON = 1.0E-10
         private fun firstMeasurementWithConversionTable(): LabMeasurement {

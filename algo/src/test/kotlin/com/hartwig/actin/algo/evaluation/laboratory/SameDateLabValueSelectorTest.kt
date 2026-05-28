@@ -98,4 +98,36 @@ class SameDateLabValueSelectorTest {
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
         assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
     }
+
+    @Test
+    fun `Should return Found with converted units when all units are convertible to default`() {
+        val albumin = LabMeasurement.ALBUMIN
+        val creatinine = LabMeasurement.CREATININE
+        val record = LabTestFactory.withLabValues(
+            listOf(
+                LabTestFactory.create(albumin, date = today).copy(unit = LabUnit.GRAMS_PER_DECILITER, value = 4.0),
+                LabTestFactory.create(creatinine, date = today).copy(unit = LabUnit.MILLIGRAMS_PER_DECILITER, value = 1.0)
+            )
+        )
+        val result = SameDateLabValueSelector(setOf(albumin, creatinine)).select(LabInterpretation.interpret(record.labValues), minValidDate)
+        assertThat(result).isInstanceOf(LabValueSelectionResult.Found::class.java)
+        result as LabValueSelectionResult.Found
+        assertThat(result.values[albumin]!!.unit).isEqualTo(albumin.defaultUnit)
+        assertThat(result.values[creatinine]!!.unit).isEqualTo(creatinine.defaultUnit)
+    }
+
+    @Test
+    fun `Should return NotFound when one value has non-convertible unit on shared date`() {
+        val albumin = LabMeasurement.ALBUMIN
+        val creatinine = LabMeasurement.CREATININE
+        val record = LabTestFactory.withLabValues(
+            listOf(
+                LabTestFactory.create(albumin, date = today).copy(unit = LabUnit.SECONDS),
+                LabTestFactory.create(creatinine, date = today).copy(unit = LabUnit.MILLIGRAMS_PER_DECILITER, value = 1.0)
+            )
+        )
+        val result = SameDateLabValueSelector(setOf(albumin, creatinine)).select(LabInterpretation.interpret(record.labValues), minValidDate)
+        assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
+        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+    }
 }
