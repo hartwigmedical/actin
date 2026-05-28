@@ -243,8 +243,9 @@ object TrialGeneratorFunctions {
         replaceEmptyWithNone: Boolean = true,
         separator: String = Formats.COMMA_SEPARATOR
     ): String {
-        val sorted =
-            input.sortedWith(compareByDescending<StaticMessageWithIsMissingMolecularResultForEvaluation> { it.isMissingMolecularResultForEvaluation }.thenBy { it.message })
+        val sorted = input.sortedWith(compareByDescending<StaticMessageWithIsMissingMolecularResultForEvaluation> {
+            it.isMissingMolecularResultForEvaluation
+        }.thenBy { it.message })
         val joinedString = sorted.map { it.message }.toSet().joinToString(separator)
         return replaceEmptyWithNone(joinedString, replaceEmptyWithNone)
     }
