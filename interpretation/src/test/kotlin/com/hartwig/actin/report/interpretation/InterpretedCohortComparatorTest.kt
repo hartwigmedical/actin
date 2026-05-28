@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.algo.MolecularEvent
+import com.hartwig.actin.datamodel.algo.StaticMessageWithIsMissingMolecularResultForEvaluation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import org.assertj.core.api.Assertions.assertThat
@@ -72,7 +73,12 @@ class InterpretedCohortComparatorTest {
 
     @Test
     fun `Should place cohorts with warnings after those without`() {
-        assertExpectedOrder(listOf(cohort, cohort.copy(warnings = setOf("Warning"))))
+        assertExpectedOrder(
+            listOf(
+                cohort,
+                cohort.copy(warnings = setOf(StaticMessageWithIsMissingMolecularResultForEvaluation("Warning", false)))
+            )
+        )
     }
 
     private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>, requestingSource: TrialSource? = null) {

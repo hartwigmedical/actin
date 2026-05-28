@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.algo.MolecularEvent
+import com.hartwig.actin.datamodel.algo.StaticMessageWithIsMissingMolecularResultForEvaluation
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 
@@ -22,6 +23,6 @@ data class InterpretedCohort(
     val molecularExclusionEvents: Set<MolecularEvent>,
     val isPotentiallyEligible: Boolean,
     val isMissingMolecularResultForEvaluation: Boolean,
-    val warnings: Set<String>,
-    val fails: Set<String>
+    val warnings: Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
+    val fails: Set<StaticMessageWithIsMissingMolecularResultForEvaluation>
 )

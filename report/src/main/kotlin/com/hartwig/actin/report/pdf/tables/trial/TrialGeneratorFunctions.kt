@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.datamodel.algo.StaticMessageWithIsMissingMolecularResultForEvaluation
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
@@ -30,7 +31,7 @@ object TrialGeneratorFunctions {
         requestingSource: TrialSource?,
         countryOfReference: Country?,
         includeFeedback: Boolean,
-        feedbackFunction: (InterpretedCohort) -> Set<String>,
+        feedbackFunction: (InterpretedCohort) -> Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
         indicateNoSlotsOrClosed: Boolean,
         useSmallerSize: Boolean,
         includeCohortConfig: Boolean,
@@ -84,7 +85,7 @@ object TrialGeneratorFunctions {
         cohortsForTrial: List<InterpretedCohort>,
         requestingSource: TrialSource?,
         includeFeedback: Boolean,
-        feedbackFunction: (InterpretedCohort) -> Set<String>,
+        feedbackFunction: (InterpretedCohort) -> Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
         indicateNoSlotsOrClosed: Boolean,
         useSmallerSize: Boolean,
         includeCohortConfig: Boolean,
@@ -167,7 +168,7 @@ object TrialGeneratorFunctions {
     fun contentForTrialCohortList(
         cohortsForTrial: List<InterpretedCohort>,
         includeFeedback: Boolean,
-        feedbackFunction: (InterpretedCohort) -> Set<String>,
+        feedbackFunction: (InterpretedCohort) -> Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
         includeCohortConfig: Boolean,
         requestingSource: TrialSource? = null,
         includeSites: Boolean,
@@ -191,7 +192,7 @@ object TrialGeneratorFunctions {
                         commonLocations,
                         true
                     ) else null,
-                    concat(commonFeedback).takeIf { includeFeedback }
+                    concatFeedback(commonFeedback).takeIf { includeFeedback }
                 )
             )
         }
@@ -215,7 +216,10 @@ object TrialGeneratorFunctions {
                     cohort.locations - commonLocations,
                     true
                 ) else null,
-                if (includeFeedback) concat(feedbackFunction(cohort) - commonFeedback, commonFeedback.isEmpty() && hidePrefix) else null,
+                if (includeFeedback) concatFeedback(
+                    feedbackFunction(cohort) - commonFeedback,
+                    commonFeedback.isEmpty() && hidePrefix
+                ) else null,
                 if (includeCohortConfig) concat(
                     setOfNotNull(
                         "Ignored".takeIf { cohort.ignore },
@@ -225,16 +229,31 @@ object TrialGeneratorFunctions {
         }
     }
 
-    private fun findCommonMembersInCohorts(
-        cohorts: List<InterpretedCohort>, retrieveMemberFunction: (InterpretedCohort) -> Set<String>
-    ): Set<String> {
+    private fun <T> findCommonMembersInCohorts(
+        cohorts: List<InterpretedCohort>,
+        retrieveMemberFunction: (InterpretedCohort) -> Set<T>
+    ): Set<T> {
         return if (cohorts.size > 1) {
             cohorts.map(retrieveMemberFunction).reduce { acc, set -> acc.intersect(set) }
         } else emptySet()
     }
 
+    private fun concatFeedback(
+        input: Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
+        replaceEmptyWithNone: Boolean = true,
+        separator: String = Formats.COMMA_SEPARATOR
+    ): String {
+        val sorted =
+            input.sortedWith(compareByDescending<StaticMessageWithIsMissingMolecularResultForEvaluation> { it.isMissingMolecularResultForEvaluation }.thenBy { it.message })
+        val joinedString = sorted.map { it.message }.toSet().joinToString(separator)
+        return replaceEmptyWithNone(joinedString, replaceEmptyWithNone)
+    }
+
     private fun concat(strings: Set<String>, replaceEmptyWithNone: Boolean = true, separator: String = Formats.COMMA_SEPARATOR): String {
         val joinedString = strings.sorted().joinToString(separator)
-        return if (replaceEmptyWithNone && joinedString.isEmpty()) Formats.VALUE_NONE else joinedString
+        return replaceEmptyWithNone(joinedString, replaceEmptyWithNone)
     }
+
+    private fun replaceEmptyWithNone(joinedString: String, replaceEmptyWithNone: Boolean = true) =
+        if (replaceEmptyWithNone && joinedString.isEmpty()) Formats.VALUE_NONE else joinedString
 }

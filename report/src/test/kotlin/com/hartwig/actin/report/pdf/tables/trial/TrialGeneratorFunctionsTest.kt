@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.algo.MolecularEvent
+import com.hartwig.actin.datamodel.algo.StaticMessageWithIsMissingMolecularResultForEvaluation
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.util.Formats
@@ -29,7 +30,7 @@ class TrialGeneratorFunctionsTest {
         molecularExclusionEvents = emptySet(),
         isPotentiallyEligible = true,
         isMissingMolecularResultForEvaluation = false,
-        warnings = setOf("warning1"),
+        warnings = setOf(StaticMessageWithIsMissingMolecularResultForEvaluation("warning1", false)),
         fails = emptySet()
     )
 
@@ -38,7 +39,10 @@ class TrialGeneratorFunctionsTest {
         title = "title2",
         name = "cohort2",
         hasSlotsAvailable = true,
-        warnings = setOf("warning1", "warning2"),
+        warnings = setOf(
+            StaticMessageWithIsMissingMolecularResultForEvaluation("warning1", false),
+            StaticMessageWithIsMissingMolecularResultForEvaluation("warning2", false)
+        ),
         sources = setOf(TrialSource.LKO),
         molecularInclusionEvents = emptySet()
     )
@@ -64,6 +68,35 @@ class TrialGeneratorFunctionsTest {
     }
 
     @Test
+    fun `Should first show warnings with isMissingMolecularResultForEvaluation is true`() {
+        val cohort2WithIsMissingMolecularResultForEvaluation = cohort2.copy(
+            warnings = cohort1.warnings + StaticMessageWithIsMissingMolecularResultForEvaluation(
+                "warning4",
+                false
+            ) + StaticMessageWithIsMissingMolecularResultForEvaluation(
+                "warning3",
+                true
+            ) + StaticMessageWithIsMissingMolecularResultForEvaluation("warning2", false)
+        )
+        assertThat(
+            TrialGeneratorFunctions.contentForTrialCohortList(
+                listOf(cohort1, cohort2WithIsMissingMolecularResultForEvaluation),
+                includeFeedback = true,
+                InterpretedCohort::warnings,
+                includeCohortConfig = false,
+                includeSites = true,
+                indicateNoSlotsOrClosed = true
+            )
+        ).isEqualTo(
+            listOf(
+                listOf(APPLIES_TO_ALL_COHORTS, "", "", "warning1"),
+                listOf("cohort1 (no slots)", "MSI", "", ""),
+                listOf("cohort2", "None", "", "warning3, warning2, warning4")
+            )
+        )
+    }
+
+    @Test
     fun `Should not group warnings for trial with single cohort`() {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
@@ -80,8 +113,14 @@ class TrialGeneratorFunctionsTest {
     @Test
     fun `Should group common failures for multiple cohorts in trial`() {
         val cohorts = listOf(
-            cohort1.copy(warnings = emptySet(), fails = setOf("failure1")),
-            cohort2.copy(warnings = emptySet(), fails = setOf("failure1", "failure2"))
+            cohort1.copy(warnings = emptySet(), fails = setOf(StaticMessageWithIsMissingMolecularResultForEvaluation("failure1", false))),
+            cohort2.copy(
+                warnings = emptySet(),
+                fails = setOf(
+                    StaticMessageWithIsMissingMolecularResultForEvaluation("failure1", false),
+                    StaticMessageWithIsMissingMolecularResultForEvaluation("failure2", false)
+                )
+            )
         )
 
         assertThat(
