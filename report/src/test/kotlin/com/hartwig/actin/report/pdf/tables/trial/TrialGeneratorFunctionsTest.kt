@@ -68,7 +68,7 @@ class TrialGeneratorFunctionsTest {
     }
 
     @Test
-    fun `Should first show warnings with isMissingMolecularResultForEvaluation is true`() {
+    fun `Should first show warnings with isMissingMolecularResultForEvaluation is true and then sort messages alphabetically`() {
         val cohort2WithIsMissingMolecularResultForEvaluation = cohort2.copy(
             warnings = cohort1.warnings + StaticMessageWithIsMissingMolecularResultForEvaluation(
                 "warning4",
