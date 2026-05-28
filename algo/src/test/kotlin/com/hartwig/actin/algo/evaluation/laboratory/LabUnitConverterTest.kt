@@ -26,23 +26,20 @@ class LabUnitConverterTest {
     }
 
     @Test
-    fun `Should return converted value with note when conversion factor exists`() {
+    fun `Should return converted value when conversion factor exists`() {
         val labValue = LabTestFactory.create(LabMeasurement.ALBUMIN, value = 4.0)
             .copy(unit = LabUnit.GRAMS_PER_DECILITER, refLimitLow = 3.5, refLimitUp = 5.0)
         val result = LabUnitConverter.normalizeLabValue(LabMeasurement.ALBUMIN, labValue)!!
-        assertThat(result.value.value).isEqualTo(40.0)
-        assertThat(result.value.unit).isEqualTo(LabUnit.GRAMS_PER_LITER)
-        assertThat(result.value.refLimitLow).isEqualTo(35.0)
-        assertThat(result.value.refLimitUp).isEqualTo(50.0)
-        assertThat(result.conversionNote).isNotNull()
+        assertThat(result.value).isEqualTo(40.0)
+        assertThat(result.unit).isEqualTo(LabUnit.GRAMS_PER_LITER)
+        assertThat(result.refLimitLow).isEqualTo(35.0)
+        assertThat(result.refLimitUp).isEqualTo(50.0)
     }
 
     @Test
-    fun `Should return value with no note when unit already matches default`() {
+    fun `Should return same value when unit already matches default`() {
         val labValue = LabTestFactory.create(LabMeasurement.ALBUMIN, value = 40.0)
-        val result = LabUnitConverter.normalizeLabValue(LabMeasurement.ALBUMIN, labValue)!!
-        assertThat(result.value).isEqualTo(labValue)
-        assertThat(result.conversionNote).isNull()
+        assertThat(LabUnitConverter.normalizeLabValue(LabMeasurement.ALBUMIN, labValue)).isEqualTo(labValue)
     }
 
     @Test

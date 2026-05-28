@@ -36,20 +36,6 @@ class LabMeasurementEvaluatorTest {
     }
 
     @Test
-    fun `Should add conversion note to messages when selector returns a conversion note`() {
-        val note = "albumin converted from: 4.0 g/dL to 40.0 g/L"
-        val selectorWithConversion = mockk<LabValueSelector>().also {
-            every { it.select(any(), any()) } returns LabValueSelectionResult.Found(
-                values = mapOf(measurement to LabTestFactory.create(measurement, date = TEST_DATE)),
-                conversionNotes = listOf(note)
-            )
-        }
-        val evaluation = evaluator(selectorWithConversion).evaluate(record)
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).contains(note)
-    }
-
-    @Test
     fun `Should evaluate to recoverable pass in case measurement is older than pass date`() {
         val oldDate = TEST_DATE.minusDays(5)
         val evaluation = evaluator(foundSelector(oldDate), minPassDate = oldDate.plusDays(1)).evaluate(record)
@@ -71,7 +57,7 @@ class LabMeasurementEvaluatorTest {
 
     private fun foundSelector(date: LocalDate = TEST_DATE) = mockk<LabValueSelector>().also {
         every { it.select(any(), any()) } returns LabValueSelectionResult.Found(
-            values = mapOf(measurement to LabTestFactory.create(measurement, date = date))
+            mapOf(measurement to LabTestFactory.create(measurement, date = date))
         )
     }
 

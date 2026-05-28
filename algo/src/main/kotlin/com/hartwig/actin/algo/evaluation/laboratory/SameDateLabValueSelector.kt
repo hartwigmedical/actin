@@ -20,15 +20,12 @@ internal class SameDateLabValueSelector(
                 )
             )
 
-        val conversionNotes = mutableListOf<String>()
         val selected = measurements.associateWith { measurement ->
             val value = interpretation.valuesOnDate(measurement, mostRecentSharedDate).firstOrNull()
-            val normalized = normalizeAndValidate(measurement, value, minValidDate)
+            normalizeAndValidate(measurement, value, minValidDate)
                 ?: return LabValueSelectionResult.NotFound(LabEvaluation.evaluateInvalidLabValue(measurement, value, minValidDate))
-            normalized.conversionNote?.let { conversionNotes.add(it) }
-            normalized.value
         }
-        return LabValueSelectionResult.Found(values = selected, conversionNotes = conversionNotes)
+        return LabValueSelectionResult.Found(selected)
     }
 
 }

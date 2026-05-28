@@ -22,26 +22,16 @@ internal class LabMeasurementEvaluator(
             is LabValueSelectionResult.Found -> {
                 val evaluation = function.evaluate(record, result.values)
                 val oldestDate = result.values.values.minOf { it.date }
-                val conversionNoteMessages = result.conversionNotes.map { StaticMessage(it) }.toSet()
                 if (evaluation.result == EvaluationResult.PASS && !oldestDate.isAfter(minPassDate)) {
                     Evaluation(
                         result = EvaluationResult.PASS,
                         recoverable = true,
                         passMessages = evaluation.passMessages
                             .map { StaticMessage("$it but measurement occurred before ${Format.date(minPassDate)}") }
-                            .toSet() + conversionNoteMessages
+                            .toSet()
                     )
-                } else {
-                    evaluationWithConversionNotes(evaluation, conversionNoteMessages)
-                }
+                } else evaluation
             }
         }
-    }
-
-    private fun evaluationWithConversionNotes(evaluation: Evaluation, notes: Set<StaticMessage>): Evaluation = when (evaluation.result) {
-        EvaluationResult.PASS -> evaluation.copy(passMessages = evaluation.passMessages + notes)
-        EvaluationResult.FAIL -> evaluation.copy(failMessages = evaluation.failMessages + notes)
-        EvaluationResult.WARN -> evaluation.copy(warnMessages = evaluation.warnMessages + notes)
-        EvaluationResult.UNDETERMINED -> evaluation.copy(undeterminedMessages = evaluation.undeterminedMessages + notes)
     }
 }

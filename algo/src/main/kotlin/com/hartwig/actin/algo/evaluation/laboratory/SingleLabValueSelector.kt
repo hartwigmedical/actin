@@ -12,10 +12,7 @@ internal class SingleLabValueSelector(
         val mostRecent = interpretation.mostRecentValue(measurement, highestFirst)
         return when (val normalized = normalizeAndValidate(measurement, mostRecent, minValidDate)) {
             null -> LabValueSelectionResult.NotFound(LabEvaluation.evaluateInvalidLabValue(measurement, mostRecent, minValidDate))
-            else -> LabValueSelectionResult.Found(
-                values = mapOf(measurement to normalized.value),
-                conversionNotes = listOfNotNull(normalized.conversionNote)
-            )
+            else -> LabValueSelectionResult.Found(mapOf(measurement to normalized))
         }
     }
 }

@@ -100,7 +100,7 @@ class SameDateLabValueSelectorTest {
     }
 
     @Test
-    fun `Should return Found with converted units and notes when all units are convertible to default`() {
+    fun `Should return Found with converted units when all units are convertible to default`() {
         val albumin = LabMeasurement.ALBUMIN
         val creatinine = LabMeasurement.CREATININE
         val record = LabTestFactory.withLabValues(
@@ -114,7 +114,6 @@ class SameDateLabValueSelectorTest {
         result as LabValueSelectionResult.Found
         assertThat(result.values[albumin]!!.unit).isEqualTo(albumin.defaultUnit)
         assertThat(result.values[creatinine]!!.unit).isEqualTo(creatinine.defaultUnit)
-        assertThat(result.conversionNotes).hasSize(2)
     }
 
     @Test
@@ -130,16 +129,5 @@ class SameDateLabValueSelectorTest {
         val result = SameDateLabValueSelector(setOf(albumin, creatinine)).select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
         assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
-    }
-
-    @Test
-    fun `Should return Found with no conversion notes when units already match default`() {
-        val record = LabTestFactory.withLabValues(listOf(
-            LabTestFactory.create(measurement1, date = today),
-            LabTestFactory.create(measurement2, date = today)
-        ))
-        val result = selector().select(LabInterpretation.interpret(record.labValues), minValidDate)
-        assertThat(result).isInstanceOf(LabValueSelectionResult.Found::class.java)
-        assertThat((result as LabValueSelectionResult.Found).conversionNotes).isEmpty()
     }
 }

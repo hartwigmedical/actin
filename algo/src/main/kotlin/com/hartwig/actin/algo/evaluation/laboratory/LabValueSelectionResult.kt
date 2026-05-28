@@ -13,11 +13,11 @@ internal fun normalizeAndValidate(
     measurement: LabMeasurement,
     labValue: LabValue?,
     minValidDate: LocalDate
-): LabUnitConverter.NormalizedLabValue? =
+): LabValue? =
     labValue?.let { LabUnitConverter.normalizeLabValue(measurement, it) }
-        ?.takeIf { LabEvaluation.isValid(it.value, measurement, minValidDate) }
+        ?.takeIf { LabEvaluation.isValid(it, measurement, minValidDate) }
 
 internal sealed class LabValueSelectionResult {
-    data class Found(val values: Map<LabMeasurement, LabValue>, val conversionNotes: List<String> = emptyList()) : LabValueSelectionResult()
+    data class Found(val values: Map<LabMeasurement, LabValue>) : LabValueSelectionResult()
     data class NotFound(val evaluation: Evaluation) : LabValueSelectionResult()
 }
