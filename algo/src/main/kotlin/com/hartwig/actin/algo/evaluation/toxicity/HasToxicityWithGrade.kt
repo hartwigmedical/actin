@@ -36,7 +36,7 @@ class HasToxicityWithGrade(
             }
 
         val unresolvableToxicities = otherToxicities.filter {
-            it.grade == null && (minGrade >= DEFAULT_QUESTIONNAIRE_GRADE || it.source != ToxicitySource.QUESTIONNAIRE) && icdMatches?.contains(
+            it.grade == null && ((minGrade >= DEFAULT_QUESTIONNAIRE_GRADE && it.source == ToxicitySource.QUESTIONNAIRE) || it.source != ToxicitySource.QUESTIONNAIRE) && icdMatches?.contains(
                 it
             ) != false
         }
