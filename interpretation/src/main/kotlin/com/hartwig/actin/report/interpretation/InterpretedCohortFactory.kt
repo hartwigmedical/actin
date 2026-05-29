@@ -133,7 +133,7 @@ object InterpretedCohortFactory {
         matches.filter { match ->
             val trialWarningsAndFails = extractWarnings(evaluations(match)) + extractFails(evaluations(match))
             !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.message.contains("Has not exhausted SOC") }
-                    && "Tumor type" !in trialWarningsAndFails.map { it.message }
+                    && "Tumor type" !in trialWarningsAndFails.map { it.toString() }
         }
     }
 
