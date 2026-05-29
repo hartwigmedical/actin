@@ -1,88 +1,100 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
-import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
+import com.hartwig.actin.datamodel.PatientRecord
+import com.hartwig.actin.datamodel.TestPatientFactory
+import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.OtherCondition
+import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
-import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class ToxicityFunctionsTest {
 
     private val referenceDate = LocalDate.of(2024, 12, 6)
-    private val ehrTox = ComorbidityTestFactory.toxicity(name = "tox", toxicitySource = ToxicitySource.EHR, icdMainCode = "code", grade = 2)
+    private val ehrTox = Toxicity(
+        name = "tox",
+        icdCodes = setOf(IcdCode("code")),
+        evaluatedDate = referenceDate.minusMonths(2),
+        source = ToxicitySource.EHR,
+        grade = 2
+    )
 
     @Test
     fun `Should not select toxicities with code matching the icd entries to ignore`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
+        val codesToIgnore = listOf("ignoreTitle").mapNotNull(icdModel::resolveCodeForTitle).map { it.mainCode }.toSet()
         val keepTox = ehrTox.copy(icdCodes = setOf(IcdCode("keepCode")))
-        val record = ComorbidityTestFactory.withToxicities(listOf(keepTox, keepTox.copy(icdCodes = setOf(IcdCode("ignoreCode")))))
+        val record = withComorbidities(listOf(keepTox, keepTox.copy(icdCodes = setOf(IcdCode("ignoreCode")))))
 
-        assertThat(ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, listOf("ignoreTitle"))).containsOnly(keepTox)
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate, codesToIgnore)).containsOnly(keepTox)
     }
 
     @Test
     fun `Should only select most recent EHR toxicities when multiple of same icd code are present with null evaluated date `() {
         val newTox = ehrTox.copy(evaluatedDate = LocalDate.of(2024, 12, 6))
-        val record = ComorbidityTestFactory.withToxicities(
+        val record = withComorbidities(
             listOf(
                 newTox,
                 newTox.copy(evaluatedDate = LocalDate.of(2023, 12, 6)),
                 newTox.copy(evaluatedDate = null),
             )
         )
-        assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate))
-            .containsOnly(newTox)
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).containsOnly(newTox)
     }
 
     @Test
     fun `Should select one EHR toxicities when when all do not have an evaluated date `() {
         val newTox = ehrTox.copy(null)
-        val record = ComorbidityTestFactory.withToxicities(
+        val record = withComorbidities(
             listOf(
                 newTox,
                 newTox.copy(evaluatedDate = null),
             )
         )
-        assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate))
-            .containsOnly(newTox)
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).containsOnly(newTox)
     }
 
     @Test
     fun `Should only select most recent EHR toxicities when multiple of same icd code are present`() {
         val newTox = ehrTox.copy(evaluatedDate = LocalDate.of(2024, 12, 6))
-        val record = ComorbidityTestFactory.withToxicities(
+        val record = withComorbidities(
             listOf(
                 newTox,
                 newTox.copy(evaluatedDate = LocalDate.of(2023, 12, 6)),
                 newTox.copy(evaluatedDate = LocalDate.of(2022, 12, 6))
             )
         )
-        assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate))
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate))
             .containsOnly(newTox)
     }
 
     @Test
     fun `Should filter EHR toxicities when also present in other conditions`() {
-        val withEhrTox = ComorbidityTestFactory.withComorbidities(listOf(ehrTox, OtherCondition(ehrTox.name!!, icdCodes = ehrTox.icdCodes)))
-        assertThat(ToxicityFunctions.selectRelevantToxicities(withEhrTox, TestIcdFactory.createTestModel(), referenceDate)).isEmpty()
+        val withEhrTox = withComorbidities(listOf(ehrTox, OtherCondition(ehrTox.name!!, icdCodes = ehrTox.icdCodes)))
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(withEhrTox, referenceDate)).isEmpty()
     }
 
     @Test
     fun `Should not filter questionnaire toxicities when also present in other conditions`() {
         val questionnaireTox = ehrTox.copy(source = ToxicitySource.QUESTIONNAIRE)
-        val withQuestionnaireTox = ComorbidityTestFactory.withComorbidities(
+        val withQuestionnaireTox = withComorbidities(
             listOf(questionnaireTox, OtherCondition(ehrTox.name!!, ehrTox.icdCodes))
         )
-        assertThat(ToxicityFunctions.selectRelevantToxicities(withQuestionnaireTox, TestIcdFactory.createTestModel(), referenceDate))
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(withQuestionnaireTox, referenceDate))
             .containsOnly(questionnaireTox)
     }
 
     @Test
-    fun `Should filter out toxicities with end date before reference date`() {
-        val record = ComorbidityTestFactory.withToxicities(listOf(ehrTox.copy(endDate = referenceDate.minusYears(1))))
-        assertThat(ToxicityFunctions.selectRelevantToxicities(record, TestIcdFactory.createTestModel(), referenceDate)).isEmpty()
+    fun `Should filter out toxicities with date 5 years before reference date`() {
+        val record = withComorbidities(listOf(ehrTox.copy(evaluatedDate = referenceDate.minusYears(5))))
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).isEmpty()
+    }
+
+    private fun withComorbidities(comorbidities: List<Comorbidity>): PatientRecord {
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(comorbidities = comorbidities)
     }
 }

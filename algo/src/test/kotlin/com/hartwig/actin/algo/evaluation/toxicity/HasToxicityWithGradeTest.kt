@@ -145,11 +145,11 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should not pass for toxicity with earlier end date`() {
+    fun `Should not pass for toxicity with old date`() {
         val function = function()
         val toxicities = listOf(
             toxicity(
-                ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", endDate = LocalDate.of(2022, 1, 2)
+                ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", evaluatedDate = LocalDate.of(2022, 1, 2)
             )
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))

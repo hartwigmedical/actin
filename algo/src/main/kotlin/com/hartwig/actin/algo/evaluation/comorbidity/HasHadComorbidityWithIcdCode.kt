@@ -24,9 +24,8 @@ class HasHadComorbidityWithIcdCode(
     override fun evaluate(record: PatientRecord): Evaluation {
         val (relevantToxicities, relevantToxicitiesUnknownGrade) = ToxicityFunctions.selectRelevantToxicities(
             record,
-            icdModel,
             referenceDate = referenceDate,
-            emptyList()
+            emptySet()
         )
             .filter { toxicity -> toxicity.grade == null || toxicity.grade!! >= 2 || toxicity.source == ToxicitySource.QUESTIONNAIRE }
             .partition { toxicity -> toxicity.grade != null }

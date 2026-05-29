@@ -89,7 +89,8 @@ class HasHadComorbidityWithIcdCodeTest {
             icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
             icdExtensionCode = null,
             toxicitySource = ToxicitySource.EHR,
-            grade = null
+            grade = null,
+            date = referenceDate.minusYears(1)
         )
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(listOf(toxicities))))

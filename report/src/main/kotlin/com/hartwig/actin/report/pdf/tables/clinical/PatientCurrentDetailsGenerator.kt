@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
+import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
 import com.hartwig.actin.clinical.sort.SurgeryDescendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.EcgMeasure
@@ -32,8 +33,8 @@ class PatientCurrentDetailsGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey("Unresolved toxicities grade => 2"))
-        table.addCell(Cells.createValue(unresolvedToxicities(record)))
+        table.addCell(Cells.createKey("Toxicities grade >= 2"))
+        table.addCell(Cells.createValue(toxicities(record)))
         val infectionStatus = record.clinicalStatus.infectionStatus
         if (infectionStatus != null && infectionStatus.hasActiveInfection) {
             table.addCell(Cells.createKey("Significant infection"))
@@ -73,32 +74,29 @@ class PatientCurrentDetailsGenerator(
         table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value.toDouble())).toString() + " " + measure.unit)
     }
 
-    private fun unresolvedToxicities(record: PatientRecord): String {
-        val (questionnaireToxicities, ehrToxicities) = record.toxicities
-            .filter { it.endDate?.let { endDate -> endDate >= referenceDate } ?: true }
+    private fun toxicities(record: PatientRecord): String {
+        val (questionnaireToxicities, ehrToxicities) = ToxicityFunctions.selectRelevantToxicities(record, referenceDate)
+            .filter { it.grade == null || it.grade!! >= 2 }
             .partition { it.source == ToxicitySource.QUESTIONNAIRE }
 
-        val questionnaireSummary = if (questionnaireToxicities.isEmpty()) null else {
-            formatToxicities(questionnaireToxicities).ifEmpty { "Yes (details unknown)" }
+        val questionnaireSummary = when {
+            questionnaireToxicities.isEmpty() -> null
+            questionnaireToxicities.all { it.name.isNullOrEmpty() } -> "Yes (details unknown)"
+            else -> formatToxicities(questionnaireToxicities)
         }
-        val ehrSummary = filterUncuratedToxicities(ehrToxicities).let { filteredEHRToxicities ->
-            if (filteredEHRToxicities.isEmpty()) null else formatToxicities(filteredEHRToxicities)
-        }
+
+        val ehrSummary = if (ehrToxicities.isEmpty()) null else formatToxicities(ehrToxicities)
+
         return Formats.valueOrDefault(listOfNotNull(questionnaireSummary, ehrSummary).joinToString("; "), "None")
     }
 
-    private fun formatToxicities(filteredToxicities: List<Toxicity>) =
-        filteredToxicities.map { (it.name ?: "Unknown") + (it.grade?.let { grade -> " ($grade)" } ?: " (unknown grade)") }.distinct()
-            .joinToString(Formats.COMMA_SEPARATOR)
-
-    private fun filterUncuratedToxicities(toxicities: List<Toxicity>): List<Toxicity> {
-        return toxicities
-            .filter { it.grade == null || it.grade!! >= 2 }
-            .groupBy(Toxicity::name)
-            .map { (_, toxicitiesWithName) ->
-                toxicitiesWithName.maxBy { it.evaluatedDate ?: LocalDate.MIN }
-            }
-    }
+    private fun formatToxicities(toxicities: List<Toxicity>) =
+        toxicities.map {
+            val name = (it.name ?: "Unknown")
+            val grade =
+                (it.grade?.let { grade -> " ($grade)" } ?: if (it.source != ToxicitySource.QUESTIONNAIRE) " (unknown grade)" else "")
+            name + grade
+        }.distinct().joinToString(Formats.COMMA_SEPARATOR)
 
     private fun allergies(intolerances: List<Intolerance>): String {
         val intoleranceSummary = intolerances.filter { !it.name.equals("none", ignoreCase = true) }

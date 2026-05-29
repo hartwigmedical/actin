@@ -74,14 +74,14 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     @Test
-    fun `Should include toxicities with known sufficient grade that were unresolved as of reference date`() {
+    fun `Should include toxicities`() {
         val patientRecord = minimalPatientRecord.copy(
             comorbidities = listOf(
                 toxicity("Toxicity 1", null, 3),
-                toxicity("Toxicity 2", referenceDate.plusMonths(1), 2),
-                toxicity("Toxicity 3", referenceDate.minusDays(5), 2),
-                toxicity("Toxicity 4", referenceDate.plusMonths(1), null),
-                toxicity("Toxicity 5", referenceDate.plusMonths(1), 1)
+                toxicity("Toxicity 2", referenceDate.minusMonths(1), 2),
+                toxicity("Toxicity 3", referenceDate.minusYears(5), 2),
+                toxicity("Toxicity 4", referenceDate.minusMonths(1), null),
+                toxicity("Toxicity 5", referenceDate.minusMonths(1), 1)
             )
         )
         val patientCurrentDetailsGenerator =
@@ -89,10 +89,12 @@ class PatientCurrentDetailsGeneratorTest {
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)
-        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Unresolved toxicities grade => 2")
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2")
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Toxicity 1 (3), Toxicity 2 (2), Toxicity 4 (unknown grade)")
     }
 
-    private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =
-        Toxicity(name, setOf(IcdCode("icdCode")), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
+    // kan in questionnaire neuropathy zijn ingevuld // Neuropathy (grade >= 2) // name = "neuropathy", grade = empty, source = questionnaire
+
+    private fun toxicity(name: String, date: LocalDate?, grade: Int?) =
+        Toxicity(name, setOf(IcdCode(name)), date, ToxicitySource.EHR, grade)
 }
