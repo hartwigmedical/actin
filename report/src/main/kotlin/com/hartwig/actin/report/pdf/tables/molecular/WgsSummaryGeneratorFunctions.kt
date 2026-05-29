@@ -192,8 +192,7 @@ object WgsSummaryGeneratorFunctions {
             "Microsatellite (in)stability" to characteristicsGenerator.createMSStabilityString(),
             "HR status" to characteristicsGenerator.createHRStatusString(),
             "Driver mutations" to formatList(summarizer.keyVariantEvents()),
-            "Other mutations" to formatList(
-                summarizer.otherVariantEvents() - summarizer.actionableEventsThatAreNotKeyDrivers().map { it.eventDisplay() }),
+            "Other mutations" to formatList(summarizer.otherVariantEvents()),
             "Amplified genes" to formatList(summarizer.keyAmplifiedGeneEvents()),
             "Deleted genes" to formatList(summarizer.keyDeletedGeneEvents()),
             "Homozygously disrupted genes" to formatList(summarizer.keyHomozygouslyDisruptedGenes()),
