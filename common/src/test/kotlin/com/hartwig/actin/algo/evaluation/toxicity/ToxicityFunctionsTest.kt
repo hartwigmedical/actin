@@ -68,8 +68,7 @@ class ToxicityFunctionsTest {
                 newTox.copy(evaluatedDate = LocalDate.of(2022, 12, 6))
             )
         )
-        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate))
-            .containsOnly(newTox)
+        Assertions.assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).containsOnly(newTox)
     }
 
     @Test
