@@ -41,7 +41,7 @@ private val EGFR_PACC_CODON_VARIANTS = listOf(
 private val NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE =
     setOf("ALK", "EGFR", "NTRK1", "NTRK2", "NTRK3", "RET", "ROS1")
 val NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE =
-    NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE + setOf("BRAF", "ERBB2", "KRAS", "MET")
+    NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_FIRST_LINE + setOf("BRAF", "KRAS", "MET")
 
 class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 

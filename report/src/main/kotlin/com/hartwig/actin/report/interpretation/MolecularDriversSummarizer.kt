@@ -20,7 +20,7 @@ class MolecularDriversSummarizer private constructor(
     fun otherVariantEvents(): List<String> =
         keyVariantEvents().toSet().let { keyVariants ->
             drivers.variants.filter { it.isReportable }.map { it.eventDisplay() }.filterNot(keyVariants::contains).distinct().sorted()
-        }
+        } - actionableEventsThatAreNotKeyDrivers().map { it.eventDisplay() }
 
     fun keyAmplifiedGeneEvents(): List<String> =
         drivers.copyNumbers
