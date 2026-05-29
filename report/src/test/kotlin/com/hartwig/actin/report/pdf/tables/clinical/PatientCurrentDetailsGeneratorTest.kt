@@ -93,8 +93,38 @@ class PatientCurrentDetailsGeneratorTest {
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Toxicity 1 (3), Toxicity 2 (2), Toxicity 4 (unknown grade)")
     }
 
-    // kan in questionnaire neuropathy zijn ingevuld // Neuropathy (grade >= 2) // name = "neuropathy", grade = empty, source = questionnaire
+    @Test
+    fun `Should include questionnaire toxicities with details unknown`() {
+        val patientRecord = minimalPatientRecord.copy(
+            comorbidities = listOf(
+                toxicity("", null, null, ToxicitySource.QUESTIONNAIRE),
+            )
+        )
+        val patientCurrentDetailsGenerator =
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+        val table = patientCurrentDetailsGenerator.contents()
 
-    private fun toxicity(name: String, date: LocalDate?, grade: Int?) =
-        Toxicity(name, setOf(IcdCode(name)), date, ToxicitySource.EHR, grade)
+        assertThat(table.numberOfRows).isEqualTo(2)
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Yes (details unknown)")
+    }
+
+    @Test
+    fun `Should include questionnaire toxicities without grade specified`() {
+        val patientRecord = minimalPatientRecord.copy(
+            comorbidities = listOf(
+                toxicity("neuropathy", null, null, ToxicitySource.QUESTIONNAIRE),
+            )
+        )
+        val patientCurrentDetailsGenerator =
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+        val table = patientCurrentDetailsGenerator.contents()
+
+        assertThat(table.numberOfRows).isEqualTo(2)
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("neuropathy")
+    }
+
+    private fun toxicity(name: String, date: LocalDate?, grade: Int?, source: ToxicitySource = ToxicitySource.EHR) =
+        Toxicity(name, setOf(IcdCode(name)), date, source, grade)
 }
