@@ -1,11 +1,12 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.datamodel.algo.StaticMessageWithIsMissingMolecularResultForEvaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortComparator
+import com.hartwig.actin.report.interpretation.MessageWithIsMissingMolecularResultForEvaluation
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
@@ -31,7 +32,7 @@ object TrialGeneratorFunctions {
         requestingSource: TrialSource?,
         countryOfReference: Country?,
         includeFeedback: Boolean,
-        feedbackFunction: (InterpretedCohort) -> Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
+        feedbackFunction: (InterpretedCohort) -> Set<MessageWithIsMissingMolecularResultForEvaluation>,
         indicateNoSlotsOrClosed: Boolean,
         useSmallerSize: Boolean,
         includeCohortConfig: Boolean,
@@ -85,7 +86,7 @@ object TrialGeneratorFunctions {
         cohortsForTrial: List<InterpretedCohort>,
         requestingSource: TrialSource?,
         includeFeedback: Boolean,
-        feedbackFunction: (InterpretedCohort) -> Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
+        feedbackFunction: (InterpretedCohort) -> Set<MessageWithIsMissingMolecularResultForEvaluation>,
         indicateNoSlotsOrClosed: Boolean,
         useSmallerSize: Boolean,
         includeCohortConfig: Boolean,
@@ -168,7 +169,7 @@ object TrialGeneratorFunctions {
     fun contentForTrialCohortList(
         cohortsForTrial: List<InterpretedCohort>,
         includeFeedback: Boolean,
-        feedbackFunction: (InterpretedCohort) -> Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
+        feedbackFunction: (InterpretedCohort) -> Set<MessageWithIsMissingMolecularResultForEvaluation>,
         includeCohortConfig: Boolean,
         requestingSource: TrialSource? = null,
         includeSites: Boolean,
@@ -239,13 +240,13 @@ object TrialGeneratorFunctions {
     }
 
     private fun concatFeedback(
-        input: Set<StaticMessageWithIsMissingMolecularResultForEvaluation>,
+        input: Set<MessageWithIsMissingMolecularResultForEvaluation>,
         replaceEmptyWithNone: Boolean = true,
         separator: String = Formats.COMMA_SEPARATOR
     ): String {
-        val sorted = input.sortedWith(compareByDescending<StaticMessageWithIsMissingMolecularResultForEvaluation> {
-            it.isMissingMolecularResultForEvaluation
-        }.thenBy { it.message })
+        val sorted = input.sortedWith(compareByDescending<EvaluationMessage> {
+            (it as? MessageWithIsMissingMolecularResultForEvaluation)?.isMissingMolecularResultForEvaluation ?: false
+        }.thenComparing(EvaluationMessage::toString))
         val joinedString = sorted.map { it.message }.toSet().joinToString(separator)
         return replaceEmptyWithNone(joinedString, replaceEmptyWithNone)
     }
