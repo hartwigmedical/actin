@@ -2,6 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.algo.TrialMatch
@@ -116,11 +117,9 @@ object InterpretedCohortFactory {
     private fun extractWarnings(evaluationMap: Map<Eligibility, Evaluation>): Set<MessageWithIsMissingMolecularResultForEvaluation> {
         return evaluationMap.values.flatMap { evaluation ->
             when {
-                evaluation.result == EvaluationResult.FAIL && evaluation.recoverable -> evaluation.failMessages.toMessageSet(evaluation)
-                evaluation.result == EvaluationResult.WARN -> evaluation.warnMessages.toMessageSet(evaluation)
-                evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable -> evaluation.undeterminedMessages.toMessageSet(
-                    evaluation
-                )
+                evaluation.result == EvaluationResult.FAIL && evaluation.recoverable -> evaluation.toMessageSet(Evaluation::failMessages)
+                evaluation.result == EvaluationResult.WARN -> evaluation.toMessageSet(Evaluation::warnMessages)
+                evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable -> evaluation.toMessageSet(Evaluation::undeterminedMessages)
 
                 else -> emptySet()
             }
@@ -139,22 +138,11 @@ object InterpretedCohortFactory {
 
     private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<MessageWithIsMissingMolecularResultForEvaluation> {
         return evaluations.values.filter { it.result == EvaluationResult.FAIL && !it.recoverable }
-            .flatMap { evaluation ->
-                evaluation.failMessages.map { failMessage ->
-                    MessageWithIsMissingMolecularResultForEvaluation(
-                        failMessage.toString(),
-                        evaluation.isMissingMolecularResultForEvaluation
-                    )
-                }
-            }
+            .flatMap { it.toMessageSet(Evaluation::failMessages) }
             .toSet()
     }
 
-    private fun Collection<Any>.toMessageSet(evaluation: Evaluation): Set<MessageWithIsMissingMolecularResultForEvaluation> =
-        this.map {
-            MessageWithIsMissingMolecularResultForEvaluation(
-                it.toString(),
-                evaluation.isMissingMolecularResultForEvaluation
-            )
-        }.toSet()
+    private fun Evaluation.toMessageSet(getMessages: (Evaluation) -> Set<EvaluationMessage>): Set<MessageWithIsMissingMolecularResultForEvaluation> =
+        getMessages(this).map { MessageWithIsMissingMolecularResultForEvaluation(it.toString(), isMissingMolecularResultForEvaluation) }
+            .toSet()
 }

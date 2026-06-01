@@ -247,7 +247,7 @@ object TrialGeneratorFunctions {
         val sorted = input.sortedWith(compareByDescending<EvaluationMessage> {
             (it as? MessageWithIsMissingMolecularResultForEvaluation)?.isMissingMolecularResultForEvaluation ?: false
         }.thenComparing(EvaluationMessage::toString))
-        val joinedString = sorted.map { it.toString() }.toSet().joinToString(separator)
+        val joinedString = sorted.joinToString(separator) { it.toString() }
         return replaceEmptyWithNone(joinedString, replaceEmptyWithNone)
     }
 
