@@ -53,8 +53,18 @@ class PatientCurrentDetailsGeneratorTest {
 
         val patientRecord = minimalPatientRecord.copy(
             surgeries = listOf(
-                Surgery(name = "Surgery 2", endDateMinus6, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.DEBULKING_SURGERY),
-                Surgery(name = "Surgery 1", endDate, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY),
+                Surgery(
+                    name = "Surgery 2",
+                    endDateMinus6,
+                    status = SurgeryStatus.FINISHED,
+                    treatmentType = OtherTreatmentType.DEBULKING_SURGERY
+                ),
+                Surgery(
+                    name = "Surgery 1",
+                    endDate,
+                    status = SurgeryStatus.FINISHED,
+                    treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY
+                ),
                 Surgery(name = null, endDateMinus4, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.OTHER_SURGERY)
             )
         )
@@ -74,14 +84,14 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     @Test
-    fun `Should include toxicities with known sufficient grade that were unresolved as of reference date`() {
+    fun `Should include toxicities with grade equal or above 2 or unknown and not older than 2 years from reference date`() {
         val patientRecord = minimalPatientRecord.copy(
             comorbidities = listOf(
                 toxicity("Toxicity 1", null, 3),
-                toxicity("Toxicity 2", referenceDate.plusMonths(1), 2),
-                toxicity("Toxicity 3", referenceDate.minusDays(5), 2),
-                toxicity("Toxicity 4", referenceDate.plusMonths(1), null),
-                toxicity("Toxicity 5", referenceDate.plusMonths(1), 1)
+                toxicity("Toxicity 2", referenceDate.minusMonths(1), 2),
+                toxicity("Toxicity 3", referenceDate.minusYears(5), 2),
+                toxicity("Toxicity 4", referenceDate.minusMonths(1), null),
+                toxicity("Toxicity 5", referenceDate.minusMonths(1), 1)
             )
         )
         val patientCurrentDetailsGenerator =
@@ -89,10 +99,43 @@ class PatientCurrentDetailsGeneratorTest {
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)
-        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Unresolved toxicities grade => 2")
-        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("From EHR: Toxicity 1 (3), Toxicity 2 (2)")
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2 or unknown")
+        assertThat(extractTextFromCell(table.getCell(0, 1)))
+            .isEqualTo("Toxicity 1 (GR 3, unknown date), Toxicity 2 (GR 2, 2024-09-01), Toxicity 4 (unknown grade, 2024-09-01)")
     }
 
-    private fun toxicity(name: String, endDate: LocalDate?, grade: Int?) =
-        Toxicity(name, setOf(IcdCode("icdCode")), referenceDate.minusMonths(1), ToxicitySource.EHR, grade, endDate)
+    @Test
+    fun `Should include questionnaire toxicities with details unknown`() {
+        val patientRecord = minimalPatientRecord.copy(
+            comorbidities = listOf(
+                toxicity("", null, null, ToxicitySource.QUESTIONNAIRE),
+            )
+        )
+        val patientCurrentDetailsGenerator =
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+        val table = patientCurrentDetailsGenerator.contents()
+
+        assertThat(table.numberOfRows).isEqualTo(2)
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2 or unknown")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Yes (details unknown)")
+    }
+
+    @Test
+    fun `Should include questionnaire toxicities without grade specified`() {
+        val patientRecord = minimalPatientRecord.copy(
+            comorbidities = listOf(
+                toxicity("neuropathy", null, null, ToxicitySource.QUESTIONNAIRE),
+            )
+        )
+        val patientCurrentDetailsGenerator =
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+        val table = patientCurrentDetailsGenerator.contents()
+
+        assertThat(table.numberOfRows).isEqualTo(2)
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2 or unknown")
+        assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("neuropathy (unknown date)")
+    }
+
+    private fun toxicity(name: String, date: LocalDate?, grade: Int?, source: ToxicitySource = ToxicitySource.EHR) =
+        Toxicity(name, setOf(IcdCode(name)), date, source, grade)
 }

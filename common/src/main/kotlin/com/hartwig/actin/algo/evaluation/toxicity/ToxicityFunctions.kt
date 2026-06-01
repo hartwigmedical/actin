@@ -4,19 +4,17 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.Comorbidity
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
-import com.hartwig.actin.icd.IcdModel
 import java.time.LocalDate
 
 object ToxicityFunctions {
 
     fun selectRelevantToxicities(
-        record: PatientRecord, icdModel: IcdModel, referenceDate: LocalDate, icdTitlesToIgnore: List<String> = emptyList()
+        record: PatientRecord, referenceDate: LocalDate, ignoredIcdMainCodes: Set<String> = emptySet()
     ): List<Toxicity> {
         val icdCodesToExclude = record.otherConditions.map(Comorbidity::icdCodes).toSet()
-        val ignoredIcdMainCodes = icdTitlesToIgnore.mapNotNull(icdModel::resolveCodeForTitle).map { it.mainCode }.toSet()
 
         return dropOutdatedEHRToxicities(record.toxicities)
-            .filter { it.endDate?.isAfter(referenceDate) != false }
+            .filter { it.evaluatedDate?.isBefore(referenceDate.minusYears(2)) != true }
             .filter { it.source != ToxicitySource.EHR || it.icdCodes !in icdCodesToExclude }
             .filterNot { it.icdCodes.any { code -> code.mainCode in ignoredIcdMainCodes } }
     }

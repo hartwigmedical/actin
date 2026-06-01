@@ -58,6 +58,45 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined for toxicity with unknown grade and correct ICD code in history`() {
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(
+                ComorbidityTestFactory.withToxicities(
+                    listOf(
+                        toxicity(
+                            ToxicitySource.EHR,
+                            IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK),
+                            null
+                        )
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should evaluate to undetermined for toxicity with unknown grade and unknown extension`() {
+        val function = HasHadComorbidityWithIcdCode(
+            TestIcdFactory.createTestModel(),
+            setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, "extensionCode")),
+            "respiratory compromise",
+            referenceDate
+        )
+
+        val toxicities = ComorbidityTestFactory.toxicity(
+            name = "pneumonitis",
+            icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
+            icdExtensionCode = null,
+            toxicitySource = ToxicitySource.EHR,
+            grade = null,
+            date = referenceDate.minusYears(1)
+        )
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(listOf(toxicities))))
+    }
+
+    @Test
     fun `Should fail when patient has no comorbidities`() {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
     }

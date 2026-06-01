@@ -22,7 +22,8 @@ class HasToxicityWithGrade(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, icdModel, referenceDate, icdTitlesToIgnore)
+        val ignoredIcdMainCodes = icdTitlesToIgnore.mapNotNull(icdModel::resolveCodeForTitle).map { it.mainCode }.toSet()
+        val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, referenceDate, ignoredIcdMainCodes)
         val icdMatches = targetIcdTitles?.mapNotNull(icdModel::resolveCodeForTitle)?.toSet()?.let { targetCodes ->
             icdModel.findInstancesMatchingAnyIcdCode(relevantToxicities, targetCodes).fullMatches.toSet()
         }
@@ -35,10 +36,11 @@ class HasToxicityWithGrade(
                 gradeMatch && (icdMatches == null || icdMatches.contains(toxicity))
             }
 
-        val unresolvableToxicities = if (minGrade <= DEFAULT_QUESTIONNAIRE_GRADE) emptyList() else {
-            otherToxicities.filter {
-                with(it) { grade == null && source == ToxicitySource.QUESTIONNAIRE && icdMatches?.contains(this) != false }
-            }
+        val minGradeAboveDefault = minGrade >= DEFAULT_QUESTIONNAIRE_GRADE
+        val unresolvableToxicities = otherToxicities.filter {
+            it.grade == null && ((minGradeAboveDefault && it.source == ToxicitySource.QUESTIONNAIRE) || it.source != ToxicitySource.QUESTIONNAIRE) && icdMatches?.contains(
+                it
+            ) != false
         }
 
         val icdTitleText = targetIcdTitles?.let { "in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
@@ -56,10 +58,10 @@ class HasToxicityWithGrade(
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                return EvaluationFactory.undetermined("Has toxicities grade >= $DEFAULT_QUESTIONNAIRE_GRADE$toxicityString but unknown if grade >= $minGrade")
+                EvaluationFactory.undetermined("Has $toxicityString but unknown if grade >= $minGrade")
             }
 
-            else -> return EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
+            else -> EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
         }
     }
 

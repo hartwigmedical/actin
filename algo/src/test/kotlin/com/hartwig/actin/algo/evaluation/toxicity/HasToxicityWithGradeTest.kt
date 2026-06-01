@@ -61,6 +61,15 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
+    fun `Should return undetermined for EHR toxicity without grade`() {
+        val toxicities = listOf(toxicity(source = ToxicitySource.EHR))
+        val function = function(minGrade = 4)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities))
+        )
+    }
+
+    @Test
     fun `Should pass with questionnaire toxicity with higher grade`() {
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = DEFAULT_QUESTIONNAIRE_GRADE + 2)
@@ -136,11 +145,11 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should not pass for toxicity with earlier end date`() {
+    fun `Should not pass for toxicity with a date older than 2 years from reference`() {
         val function = function()
         val toxicities = listOf(
             toxicity(
-                ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", endDate = LocalDate.of(2022, 1, 2)
+                ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", evaluatedDate = LocalDate.of(2022, 1, 2)
             )
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
