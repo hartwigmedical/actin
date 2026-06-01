@@ -36,8 +36,9 @@ class HasToxicityWithGrade(
                 gradeMatch && (icdMatches == null || icdMatches.contains(toxicity))
             }
 
+        val minGradeAboveDefault = minGrade >= DEFAULT_QUESTIONNAIRE_GRADE
         val unresolvableToxicities = otherToxicities.filter {
-            it.grade == null && ((minGrade >= DEFAULT_QUESTIONNAIRE_GRADE && it.source == ToxicitySource.QUESTIONNAIRE) || it.source != ToxicitySource.QUESTIONNAIRE) && icdMatches?.contains(
+            it.grade == null && ((minGradeAboveDefault && it.source == ToxicitySource.QUESTIONNAIRE) || it.source != ToxicitySource.QUESTIONNAIRE) && icdMatches?.contains(
                 it
             ) != false
         }

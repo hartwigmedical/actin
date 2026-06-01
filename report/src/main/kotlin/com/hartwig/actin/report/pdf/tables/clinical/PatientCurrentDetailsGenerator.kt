@@ -33,7 +33,7 @@ class PatientCurrentDetailsGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey("Toxicities grade >= 2"))
+        table.addCell(Cells.createKey("Toxicities grade >= 2 or unknown"))
         table.addCell(Cells.createValue(toxicities(record)))
         val infectionStatus = record.clinicalStatus.infectionStatus
         if (infectionStatus != null && infectionStatus.hasActiveInfection) {

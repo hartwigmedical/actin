@@ -145,7 +145,7 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
-    fun `Should not pass for toxicity with old date`() {
+    fun `Should not pass for toxicity with a date older than 2 years from reference`() {
         val function = function()
         val toxicities = listOf(
             toxicity(

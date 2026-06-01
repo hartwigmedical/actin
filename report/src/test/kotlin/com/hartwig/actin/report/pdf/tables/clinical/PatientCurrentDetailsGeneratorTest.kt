@@ -53,8 +53,18 @@ class PatientCurrentDetailsGeneratorTest {
 
         val patientRecord = minimalPatientRecord.copy(
             surgeries = listOf(
-                Surgery(name = "Surgery 2", endDateMinus6, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.DEBULKING_SURGERY),
-                Surgery(name = "Surgery 1", endDate, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY),
+                Surgery(
+                    name = "Surgery 2",
+                    endDateMinus6,
+                    status = SurgeryStatus.FINISHED,
+                    treatmentType = OtherTreatmentType.DEBULKING_SURGERY
+                ),
+                Surgery(
+                    name = "Surgery 1",
+                    endDate,
+                    status = SurgeryStatus.FINISHED,
+                    treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY
+                ),
                 Surgery(name = null, endDateMinus4, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.OTHER_SURGERY)
             )
         )
@@ -74,7 +84,7 @@ class PatientCurrentDetailsGeneratorTest {
     }
 
     @Test
-    fun `Should include toxicities`() {
+    fun `Should include toxicities with grade equal or above 2 or unknown and not older than 2 years from reference date`() {
         val patientRecord = minimalPatientRecord.copy(
             comorbidities = listOf(
                 toxicity("Toxicity 1", null, 3),
@@ -89,15 +99,9 @@ class PatientCurrentDetailsGeneratorTest {
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)
-        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2")
-        assertThat(
-            extractTextFromCell(
-                table.getCell(
-                    0,
-                    1
-                )
-            )
-        ).isEqualTo("Toxicity 1 (GR 3, unknown date), Toxicity 2 (GR 2, 2024-09-01), Toxicity 4 (unknown grade, 2024-09-01)")
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2 or unknown")
+        assertThat(extractTextFromCell(table.getCell(0, 1)))
+            .isEqualTo("Toxicity 1 (GR 3, unknown date), Toxicity 2 (GR 2, 2024-09-01), Toxicity 4 (unknown grade, 2024-09-01)")
     }
 
     @Test
@@ -112,7 +116,7 @@ class PatientCurrentDetailsGeneratorTest {
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)
-        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2")
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2 or unknown")
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Yes (details unknown)")
     }
 
@@ -128,7 +132,7 @@ class PatientCurrentDetailsGeneratorTest {
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)
-        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2")
+        assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2 or unknown")
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("neuropathy (unknown date)")
     }
 
