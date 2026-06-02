@@ -8,7 +8,8 @@ class FindingRecordFactoryTest {
 
     @Test
     fun `Should not crash on minimal orange record`() {
-        // TODO Figure out why MSI status cannot be UNKNOWN 
+        // TODO Figure out why MSI status, TMB status, TMB status, virus interpreter, CUPPA etc cannot be UNKNOWN
+        // TODO Also issues with LILAC QC and PEACH genotypes. 
         // assertThat(FindingRecordFactory.create(TestOrangeFactory.createMinimalTestOrangeRecord())).isNotNull()
     }
 
