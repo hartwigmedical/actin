@@ -2,6 +2,7 @@ package com.hartwig.actin.report.interpretation
 
 import com.hartwig.actin.datamodel.algo.CohortMatch
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.algo.TrialMatch
@@ -113,17 +114,12 @@ object InterpretedCohortFactory {
         return evaluationMap.values.flatMap(Evaluation::exclusionMolecularEvents).toSet()
     }
 
-    private fun extractWarnings(evaluationMap: Map<Eligibility, Evaluation>): Set<String> {
+    private fun extractWarnings(evaluationMap: Map<Eligibility, Evaluation>): Set<MessageWithIsMissingMolecularResultForEvaluation> {
         return evaluationMap.values.flatMap { evaluation ->
             when {
-                evaluation.result == EvaluationResult.FAIL && evaluation.recoverable ->
-                    evaluation.failMessagesStrings()
-
-                evaluation.result == EvaluationResult.WARN ->
-                    evaluation.warnMessagesStrings()
-
-                evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable ->
-                    evaluation.undeterminedMessagesStrings()
+                evaluation.result == EvaluationResult.FAIL && evaluation.recoverable -> evaluation.toMessageSet(Evaluation::failMessages)
+                evaluation.result == EvaluationResult.WARN -> evaluation.toMessageSet(Evaluation::warnMessages)
+                evaluation.result == EvaluationResult.UNDETERMINED && !evaluation.recoverable -> evaluation.toMessageSet(Evaluation::undeterminedMessages)
 
                 else -> emptySet()
             }
@@ -133,17 +129,20 @@ object InterpretedCohortFactory {
     private fun <T> filteredMatches(
         matches: List<T>, filterOnSOCExhaustionAndTumorType: Boolean, evaluations: (T) -> Map<Eligibility, Evaluation>
     ) = if (!filterOnSOCExhaustionAndTumorType) matches else {
-        matches.filter {
-            val trialWarningsAndFails = extractWarnings(evaluations(it)) + extractFails(evaluations(it))
-            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.contains("Has not exhausted SOC") }
-                    && "Tumor type" !in trialWarningsAndFails
+        matches.filter { match ->
+            val trialWarningsAndFails = extractWarnings(evaluations(match)) + extractFails(evaluations(match))
+            !trialWarningsAndFails.any { trialWarningOrFail -> trialWarningOrFail.message.contains("Has not exhausted SOC") }
+                    && "Tumor type" !in trialWarningsAndFails.map { it.toString() }
         }
     }
 
-    private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<String> {
+    private fun extractFails(evaluations: Map<Eligibility, Evaluation>): Set<MessageWithIsMissingMolecularResultForEvaluation> {
         return evaluations.values.filter { it.result == EvaluationResult.FAIL && !it.recoverable }
-            .flatMap(Evaluation::failMessages)
-            .map { it.toString() }
+            .flatMap { it.toMessageSet(Evaluation::failMessages) }
             .toSet()
     }
+
+    private fun Evaluation.toMessageSet(getMessages: (Evaluation) -> Set<EvaluationMessage>): Set<MessageWithIsMissingMolecularResultForEvaluation> =
+        getMessages(this).map { MessageWithIsMissingMolecularResultForEvaluation(it.toString(), isMissingMolecularResultForEvaluation) }
+            .toSet()
 }

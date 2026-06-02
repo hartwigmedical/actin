@@ -22,6 +22,6 @@ data class InterpretedCohort(
     val molecularExclusionEvents: Set<MolecularEvent>,
     val isPotentiallyEligible: Boolean,
     val isMissingMolecularResultForEvaluation: Boolean,
-    val warnings: Set<String>,
-    val fails: Set<String>
+    val warnings: Set<MessageWithIsMissingMolecularResultForEvaluation>,
+    val fails: Set<MessageWithIsMissingMolecularResultForEvaluation>
 )

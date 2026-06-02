@@ -72,7 +72,12 @@ class InterpretedCohortComparatorTest {
 
     @Test
     fun `Should place cohorts with warnings after those without`() {
-        assertExpectedOrder(listOf(cohort, cohort.copy(warnings = setOf("Warning"))))
+        assertExpectedOrder(
+            listOf(
+                cohort,
+                cohort.copy(warnings = setOf(MessageWithIsMissingMolecularResultForEvaluation("Warning", false)))
+            )
+        )
     }
 
     private fun assertExpectedOrder(expectedCohorts: List<InterpretedCohort>, requestingSource: TrialSource? = null) {
