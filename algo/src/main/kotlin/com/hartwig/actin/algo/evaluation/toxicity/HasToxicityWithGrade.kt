@@ -58,7 +58,7 @@ class HasToxicityWithGrade(
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                EvaluationFactory.undetermined("Has $toxicityString but unknown if grade >= $minGrade")
+                EvaluationFactory.undetermined("Has toxicities$toxicityString but unknown if grade >= $minGrade")
             }
 
             else -> EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
