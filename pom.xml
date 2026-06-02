@@ -32,6 +32,7 @@
         <serve.version>8.6.0</serve.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
         <finding-datamodel.version>0.2.4-beta.4</finding-datamodel.version>
+        <finding.version>0.1.0-beta.16</finding.version>
         <actin-transvar.version>2.0.0</actin-transvar.version>
         <pave.version>1.8.2</pave.version>
 
@@ -212,6 +213,17 @@
                 <groupId>com.hartwig</groupId>
                 <artifactId>finding-datamodel</artifactId>
                 <version>${finding-datamodel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig</groupId>
+                <artifactId>finding</artifactId>
+                <version>${finding.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.github.samtools</groupId>
+                        <artifactId>htsjdk</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>

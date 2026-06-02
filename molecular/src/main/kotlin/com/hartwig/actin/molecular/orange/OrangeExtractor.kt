@@ -13,6 +13,7 @@ import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
+import com.hartwig.hmftools.finding.ConversionUtil
 import java.time.LocalDate
 import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentType
 
@@ -26,6 +27,8 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
     }
 
     fun interpret(record: OrangeRecord): MolecularTest {
+        
+        
         validateOrangeRecord(record)
         val driverExtractor = DriverExtractor.create(geneFilter)
 
