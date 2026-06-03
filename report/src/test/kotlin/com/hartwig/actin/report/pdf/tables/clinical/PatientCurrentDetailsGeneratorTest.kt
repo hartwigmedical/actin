@@ -101,7 +101,7 @@ class PatientCurrentDetailsGeneratorTest {
         assertThat(table.numberOfRows).isEqualTo(2)
         assertThat(extractTextFromCell(table.getCell(0, 0))).isEqualTo("Toxicities grade >= 2 or unknown")
         assertThat(extractTextFromCell(table.getCell(0, 1)))
-            .isEqualTo("Toxicity 1 (GR 3, unknown date), Toxicity 2 (GR 2, 2024-09-01), Toxicity 4 (unknown grade, 2024-09-01)")
+            .isEqualTo("Toxicity 1 (GR 3, unknown date), Toxicity 2 (GR 2, 1/9/2024), Toxicity 4 (unknown grade, 1/9/2024)")
     }
 
     @Test

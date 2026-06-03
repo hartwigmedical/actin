@@ -6,7 +6,7 @@ object ClinicalDataFunctions {
         when {
             maybeYear == null -> null
             maybeMonth == null -> "$maybeYear"
-            maybeDay == null -> "$maybeYear-$maybeMonth"
-            else -> "$maybeYear-$maybeMonth-$maybeDay"
+            maybeDay == null -> "$maybeMonth/$maybeYear"
+            else -> "$maybeDay/$maybeMonth/$maybeYear"
         }
 }
