@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.MedicationToTreatmentConverter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.ClinicalDataFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
 import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
@@ -219,12 +220,6 @@ class ClinicalSummaryGenerator(
 
     private fun toOtherConditionString(otherCondition: OtherCondition): String {
         return otherCondition.display().replaceFirstChar(Char::uppercase)
-    }
-
-    private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {
-        return maybeYear?.let { year: Int ->
-            maybeMonth?.let { month: Int -> "$month/$year" } ?: year.toString()
-        }
     }
 
     private fun createDoubleColumnTable(column1Width: Float, column2Width: Float): Table {

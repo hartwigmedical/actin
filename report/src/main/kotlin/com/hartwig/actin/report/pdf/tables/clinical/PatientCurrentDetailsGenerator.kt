@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.ClinicalDataFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -95,7 +96,7 @@ class PatientCurrentDetailsGenerator(
             val name = (it.name ?: "Unknown")
             val grade =
                 (it.grade?.let { grade -> "GR $grade" } ?: if (it.source != ToxicitySource.QUESTIONNAIRE) "unknown grade" else "")
-            val date = it.evaluatedDate ?: "unknown date"
+            val date = toDateString(it.year, it.month, it.day) ?: "unknown date"
             "$name ($grade${if (grade.isNotEmpty()) ", " else ""}$date)"
         }.distinct().joinToString(Formats.COMMA_SEPARATOR)
 
