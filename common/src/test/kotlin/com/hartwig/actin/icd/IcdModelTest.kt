@@ -158,7 +158,7 @@ class IcdModelTest {
     private fun createIcdEntityList(icdCodes: Set<IcdCode>): List<Comorbidity> {
         return listOf(
             OtherCondition("name", icdCodes = icdCodes),
-            Toxicity("name", icdCodes, date, ToxicitySource.EHR, 3, date),
+            Toxicity("name", icdCodes, date.year, date.monthValue, date.dayOfMonth, ToxicitySource.EHR, 3, date),
             Intolerance("name", icdCodes = icdCodes),
         )
     }
