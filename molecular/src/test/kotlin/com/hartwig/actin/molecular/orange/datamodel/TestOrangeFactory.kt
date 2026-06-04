@@ -60,7 +60,7 @@ object TestOrangeFactory {
         return ImmutableOrangeRecord.builder()
             .sampleId(TestPatientFactory.TEST_SAMPLE)
             .samplingDate(LocalDate.of(2021, 5, 6))
-            .experimentType(ExperimentType.WHOLE_GENOME)
+            .experimentType(ExperimentType.TARGETED)
             .refGenomeVersion(OrangeRefGenomeVersion.V37)
             .purple(createMinimalTestPurpleRecord())
             .linx(ImmutableLinxRecord.builder().build())
@@ -68,6 +68,7 @@ object TestOrangeFactory {
             .tumorSample(createOrangeTumorSample())
             .plots(createOrangePlots())
             .immuneEscape(createImmuneEscapeRecord())
+            .peach(emptyList())
             .build()
     }
 
@@ -83,7 +84,7 @@ object TestOrangeFactory {
     }
 
     private fun createMinimalTestLilacRecord(): LilacRecord {
-        return ImmutableLilacRecord.builder().qc("").build()
+        return ImmutableLilacRecord.builder().qc("PASS").build()
     }
 
     fun createProperTestOrangeRecord(): OrangeRecord {

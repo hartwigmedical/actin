@@ -12,8 +12,9 @@ import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.hmftools.datamodel.cuppa.CuppaPrediction
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
+import com.hartwig.hmftools.datamodel.purple.PurpleMicrosatelliteStatus
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import com.hartwig.hmftools.finding.ConversionUtil
+import com.hartwig.hmftools.datamodel.purple.PurpleTumorMutationalStatus
 import java.time.LocalDate
 import com.hartwig.hmftools.datamodel.orange.ExperimentType as OrangeExperimentType
 
@@ -27,8 +28,6 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
     }
 
     fun interpret(record: OrangeRecord): MolecularTest {
-        
-        
         validateOrangeRecord(record)
         val driverExtractor = DriverExtractor.create(geneFilter)
 
@@ -101,9 +100,26 @@ class OrangeExtractor(private val geneFilter: GeneFilter, private val panelSpeci
     }
 
     private fun validateOrangeRecord(orange: OrangeRecord) {
+        throwIfPurpleCharacteristicsUnknown(orange)
         throwIfGermlineFieldNonEmpty(orange)
         throwIfAnyCuppaPredictionClassifierMissing(orange)
         throwIfPurpleQCMissing(orange)
+    }
+
+    private fun throwIfPurpleCharacteristicsUnknown(orange: OrangeRecord) {
+        with (orange.purple().characteristics()) {
+            check(microsatelliteStatus() != PurpleMicrosatelliteStatus.UNKNOWN) {
+                "Microsatellite status cannot be UNKNOWN"
+            }
+            
+            check(tumorMutationalLoadStatus() != PurpleTumorMutationalStatus.UNKNOWN) {
+                "Tumor mutational load status cannot be UNKNOWN"
+            }
+            
+            check(tumorMutationalBurdenStatus() != PurpleTumorMutationalStatus.UNKNOWN) {
+                "Tumor mutational burden status cannot be UNKNOWN"
+            }
+        }
     }
 
     private fun throwIfGermlineFieldNonEmpty(orange: OrangeRecord) {

@@ -49,11 +49,11 @@ object TestPurpleFactory {
     fun characteristicsBuilder(): ImmutablePurpleCharacteristics.Builder {
         return ImmutablePurpleCharacteristics.builder()
             .microsatelliteIndelsPerMb(0.0)
-            .microsatelliteStatus(PurpleMicrosatelliteStatus.UNKNOWN)
+            .microsatelliteStatus(PurpleMicrosatelliteStatus.MSS)
             .tumorMutationalBurdenPerMb(0.0)
-            .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.UNKNOWN)
+            .tumorMutationalBurdenStatus(PurpleTumorMutationalStatus.LOW)
             .tumorMutationalLoad(0)
-            .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.UNKNOWN)
+            .tumorMutationalLoadStatus(PurpleTumorMutationalStatus.LOW)
             .wholeGenomeDuplication(false)
             .svTumorMutationalBurden(0)
     }
