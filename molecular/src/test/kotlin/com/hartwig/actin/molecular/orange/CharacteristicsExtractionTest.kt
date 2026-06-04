@@ -28,9 +28,9 @@ class CharacteristicsExtractionTest {
         assertThat(characteristics.ploidy).isNotNull()
         assertThat(characteristics.predictedTumorOrigin).isNull()
         assertThat(characteristics.homologousRecombination).isNull()
-        assertThat(characteristics.microsatelliteStability).isNull()
-        assertThat(characteristics.tumorMutationalBurden).isNull()
-        assertThat(characteristics.tumorMutationalLoad).isNull()
+        assertThat(characteristics.microsatelliteStability).isNotNull()
+        assertThat(characteristics.tumorMutationalBurden).isNotNull()
+        assertThat(characteristics.tumorMutationalLoad).isNotNull()
     }
 
     @Test
