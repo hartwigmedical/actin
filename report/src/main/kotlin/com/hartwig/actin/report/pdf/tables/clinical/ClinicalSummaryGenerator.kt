@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.MedicationToTreatmentConverter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.ClinicalDataFunctions.toDateString
+import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
 import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
@@ -146,9 +146,9 @@ class ClinicalSummaryGenerator(
         val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
 
         return when {
-            startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
+            startString != null && stopString != null -> if (startString != stopString) "$startString to $stopString" else startString
             startString != null -> startString
-            stopString != null -> "?-$stopString"
+            stopString != null -> "? to $stopString"
             else -> DATE_UNKNOWN
         }
     }

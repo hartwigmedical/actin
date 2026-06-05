@@ -18,9 +18,9 @@ class ToxicityFunctionsTest {
     private val ehrTox = Toxicity(
         name = "tox",
         icdCodes = setOf(IcdCode("code")),
-        year = 2024,
-        month = 10,
-        day = 6,
+        year = referenceDate.year,
+        month = referenceDate.monthValue,
+        day = referenceDate.dayOfMonth,
         source = ToxicitySource.EHR,
         grade = 2
     )

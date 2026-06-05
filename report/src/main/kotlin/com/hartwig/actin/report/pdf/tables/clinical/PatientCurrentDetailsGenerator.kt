@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.report.pdf.tables.TableGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.ClinicalDataFunctions.toDateString
+import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date

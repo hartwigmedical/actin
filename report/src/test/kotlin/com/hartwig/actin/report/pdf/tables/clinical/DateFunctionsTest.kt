@@ -1,10 +1,10 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.report.pdf.tables.clinical.ClinicalDataFunctions.toDateString
+import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class ClinicalDataFunctionsTest {
+class DateFunctionsTest {
 
     @Test
     fun `Should return null when year is null`() {
@@ -18,12 +18,12 @@ class ClinicalDataFunctionsTest {
 
     @Test
     fun `Should return year-month when day is null`() {
-        assertThat(toDateString(2024, 1, null)).isEqualTo("1/2024")
+        assertThat(toDateString(2024, 1, null)).isEqualTo("2024-01")
     }
 
     @Test
     fun `Should return year-month-day when all are provided`() {
-        assertThat(toDateString(2024, 2, 1)).isEqualTo("1/2/2024")
+        assertThat(toDateString(2024, 2, 1)).isEqualTo("2024-02-01")
     }
 
     @Test
