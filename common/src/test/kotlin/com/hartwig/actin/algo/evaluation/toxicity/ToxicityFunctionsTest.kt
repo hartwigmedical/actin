@@ -18,7 +18,9 @@ class ToxicityFunctionsTest {
     private val ehrTox = Toxicity(
         name = "tox",
         icdCodes = setOf(IcdCode("code")),
-        evaluatedDate = referenceDate.minusMonths(2),
+        year = referenceDate.year,
+        month = referenceDate.monthValue,
+        day = referenceDate.dayOfMonth,
         source = ToxicitySource.EHR,
         grade = 2
     )
@@ -35,12 +37,12 @@ class ToxicityFunctionsTest {
 
     @Test
     fun `Should only select most recent EHR toxicities when multiple of same icd code are present with null evaluated date `() {
-        val newTox = ehrTox.copy(evaluatedDate = LocalDate.of(2024, 12, 6))
+        val newTox = ehrTox.copy(year = 2024, month = 12, day = 6)
         val record = withComorbidities(
             listOf(
                 newTox,
-                newTox.copy(evaluatedDate = LocalDate.of(2023, 12, 6)),
-                newTox.copy(evaluatedDate = null),
+                newTox.copy(year = 2023, month = 12, day = 6),
+                newTox.copy(year = null, month = null, day = null),
             )
         )
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).containsOnly(newTox)
@@ -48,11 +50,11 @@ class ToxicityFunctionsTest {
 
     @Test
     fun `Should select one EHR toxicities when when all do not have an evaluated date `() {
-        val newTox = ehrTox.copy(null)
+        val newTox = ehrTox.copy(year = null, month = null, day = null)
         val record = withComorbidities(
             listOf(
                 newTox,
-                newTox.copy(evaluatedDate = null),
+                newTox.copy(year = null, month = null, day = null),
             )
         )
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).containsOnly(newTox)
@@ -60,12 +62,12 @@ class ToxicityFunctionsTest {
 
     @Test
     fun `Should only select most recent EHR toxicities when multiple of same icd code are present`() {
-        val newTox = ehrTox.copy(evaluatedDate = LocalDate.of(2024, 12, 6))
+        val newTox = ehrTox.copy(year = 2024, month = 12, day = 6)
         val record = withComorbidities(
             listOf(
                 newTox,
-                newTox.copy(evaluatedDate = LocalDate.of(2023, 12, 6)),
-                newTox.copy(evaluatedDate = LocalDate.of(2022, 12, 6))
+                newTox.copy(year = 2023, month = 12, day = 6),
+                newTox.copy(year = 2022, month = 12, day = 6)
             )
         )
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).containsOnly(newTox)
@@ -89,7 +91,7 @@ class ToxicityFunctionsTest {
 
     @Test
     fun `Should filter out toxicities with date 5 years before reference date`() {
-        val record = withComorbidities(listOf(ehrTox.copy(evaluatedDate = referenceDate.minusYears(5))))
+        val record = withComorbidities(listOf(ehrTox.copy(year = 2019, month = 12, day = 6)))
         assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate)).isEmpty()
     }
 

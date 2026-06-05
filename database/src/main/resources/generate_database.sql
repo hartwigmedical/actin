@@ -175,7 +175,9 @@ CREATE TABLE `toxicity`
     `patientId` varchar(50) NOT NULL,
     `name` varchar(50),
     `icdCodes` varchar(50) NOT NULL,
-    `evaluatedDate` DATE NOT NULL,
+    `year` int,
+    `month` int,
+    `day` int,
     `source` varchar(50) NOT NULL,
     `grade` int,
     PRIMARY KEY (`id`)

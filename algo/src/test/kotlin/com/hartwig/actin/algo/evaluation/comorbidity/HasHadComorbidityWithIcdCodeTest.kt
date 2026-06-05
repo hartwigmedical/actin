@@ -193,7 +193,9 @@ class HasHadComorbidityWithIcdCodeTest {
         return Toxicity(
             icdCodes = setOf(icdCode),
             name = TOXICITY_NAME,
-            evaluatedDate = referenceDate,
+            year = referenceDate.year,
+            month = referenceDate.monthValue,
+            day = referenceDate.dayOfMonth,
             source = toxicitySource,
             grade = grade
         )
