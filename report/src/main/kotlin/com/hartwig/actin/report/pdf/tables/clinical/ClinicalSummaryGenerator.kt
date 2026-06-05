@@ -87,7 +87,7 @@ class ClinicalSummaryGenerator(
         medications: List<Medication>,
         requireSystemic: Boolean
     ): Table {
-        val dateWidth = valueWidth / 5
+        val dateWidth = valueWidth / 4
         val treatmentWidth = valueWidth - dateWidth
         val table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
@@ -122,7 +122,7 @@ class ClinicalSummaryGenerator(
     }
 
     private fun relevantNonOncologicalHistoryTable(record: PatientRecord): Table {
-        val dateWidth = valueWidth / 5
+        val dateWidth = valueWidth / 4
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
