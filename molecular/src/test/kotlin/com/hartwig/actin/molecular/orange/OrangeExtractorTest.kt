@@ -3,6 +3,8 @@ package com.hartwig.actin.molecular.orange
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.RefGenomeVersion
+import com.hartwig.actin.datamodel.molecular.panel.PanelTestSpecification
+import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.molecular.filter.TestGeneFilterFactory
@@ -19,16 +21,20 @@ import com.hartwig.hmftools.datamodel.orange.OrangeRefGenomeVersion
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleFit
 import com.hartwig.hmftools.datamodel.purple.ImmutablePurpleRecord
 import com.hartwig.hmftools.datamodel.purple.PurpleQCStatus
-import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class OrangeExtractorTest {
 
+    private val oncoPanel = PanelTestSpecification(
+        testName = "OncoPanel", testVersion = TestVersion(LocalDate.of(2024, 12, 9))
+    )
+
     private val interpreter = OrangeExtractor(
         TestGeneFilterFactory.createAlwaysValid(),
-        PanelSpecifications(AlwaysValidFilter(), emptyMap())
+        PanelSpecifications(AlwaysValidFilter(), mapOf(oncoPanel to emptyList()))
     )
 
     @Test

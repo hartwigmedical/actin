@@ -90,6 +90,7 @@ object TestOrangeFactory {
     fun createProperTestOrangeRecord(): OrangeRecord {
         return ImmutableOrangeRecord.builder()
             .from(createMinimalTestOrangeRecord())
+            .experimentType(ExperimentType.WHOLE_GENOME)
             .purple(createTestPurpleRecord())
             .linx(createTestLinxRecord())
             .addPeach(createTestPeachGenotype())
