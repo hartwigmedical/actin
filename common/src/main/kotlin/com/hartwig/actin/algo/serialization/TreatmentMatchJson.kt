@@ -1,20 +1,22 @@
 package com.hartwig.actin.algo.serialization
 
-import com.google.gson.Gson
-import com.hartwig.actin.clinical.serialization.TreatmentAdapter
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.hartwig.actin.clinical.serialization.DrugDeserializer
+import com.hartwig.actin.clinical.serialization.TreatmentDeserializer
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.TreatmentMatch
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
-import com.hartwig.actin.util.json.DrugDeserializer
-import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
-import com.hartwig.actin.util.json.EvaluationMessageAdapter
-import com.hartwig.actin.util.json.GsonSerializer
+import com.hartwig.actin.trial.serialization.EligibilityFunctionDeserializer
+import com.hartwig.actin.trial.serialization.EligibilityFunctionSerializer
+import com.hartwig.actin.util.json.ActinObjectMapper
+import com.hartwig.actin.util.json.ComplexKeyMapModule
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 object TreatmentMatchJson {
 
@@ -42,21 +44,25 @@ object TreatmentMatchJson {
     }
 
     fun toJson(match: TreatmentMatch): String {
-        return gson().toJson(match)
+        return mapper.writeValueAsString(match)
     }
 
     fun fromJson(json: String): TreatmentMatch {
-        return gson().fromJson(json, TreatmentMatch::class.java)
+        return mapper.readValue(json, TreatmentMatch::class.java)
     }
 
-    private fun gson(): Gson {
-        val gsonBuilder = GsonSerializer.createBuilder()
-        return gsonBuilder.registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
-            .registerTypeAdapter(Drug::class.java, DrugDeserializer())
-            .registerTypeAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
-            .registerTypeHierarchyAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
-            .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
-            .create()
+    private val mapper: ObjectMapper by lazy {
+        ActinObjectMapper.create()
+            .registerModule(ComplexKeyMapModule())
+            .registerModule(
+                SimpleModule().apply {
+                    addDeserializer(Treatment::class.java, TreatmentDeserializer)
+                    addDeserializer(Drug::class.java, DrugDeserializer)
+                    addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
+                    addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
+                    addSerializer(EvaluationMessage::class.java, EvaluationMessageSerializer)
+                    addDeserializer(EvaluationMessage::class.java, EvaluationMessageDeserializer)
+                }
+            )
     }
-
 }

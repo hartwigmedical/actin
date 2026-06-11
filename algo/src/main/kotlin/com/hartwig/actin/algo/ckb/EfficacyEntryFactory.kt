@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.ckb
 
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
+import com.fasterxml.jackson.core.JacksonException
+import com.fasterxml.jackson.core.type.TypeReference
 import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
@@ -25,8 +25,14 @@ import com.hartwig.actin.datamodel.efficacy.TrialReference
 import com.hartwig.actin.datamodel.efficacy.ValuePercentage
 import com.hartwig.actin.datamodel.efficacy.VariantRequirement
 import com.hartwig.actin.treatment.database.TreatmentDatabase
+import com.hartwig.actin.util.json.ActinObjectMapper
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
+
+    companion object {
+        private val mapper by lazy { ActinObjectMapper.create() }
+        private val STRING_INT_MAP_TYPE = object : TypeReference<Map<String, Int>>() {}
+    }
 
     fun extractEfficacyEvidenceFromCkbFile(ckbExtendedEvidenceJson: String): List<EfficacyEntry> {
         return convertCkbExtendedEvidence(CkbExtendedEvidenceJson.read(ckbExtendedEvidenceJson))
@@ -132,8 +138,8 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
     fun convertPrimaryTumorLocation(primaryTumorLocations: String): Map<String, Int> {
         return try {
-            primaryTumorLocations.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
-        } catch (_: JsonSyntaxException) {
+            mapper.readValue(primaryTumorLocations, STRING_INT_MAP_TYPE)
+        } catch (_: JacksonException) {
             val regex = """^(\w+): (\d+)(?: \(\d+(?:\.\d+)?%\))?$""".toRegex()
             primaryTumorLocations.split(", ").associate { item ->
                 regex.find(item)?.let {

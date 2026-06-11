@@ -1,9 +1,8 @@
 package com.hartwig.actin.algo
 
-import com.google.gson.Gson
 import com.hartwig.actin.datamodel.trial.EligibilityRuleDefinition
 import com.hartwig.actin.trial.input.EligibilityRule
-import com.hartwig.actin.util.json.GsonSerializer
+import com.hartwig.actin.util.json.ActinObjectMapper
 import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.system.exitProcess
@@ -25,17 +24,9 @@ class EligibilityRuleExportApplication(private val config: EligibilityRuleExport
 
         logger.info { "Writing ${rules.size} eligibility rules to $outputFile" }
         Files.newBufferedWriter(outputFile).use { writer ->
-            writer.write(toJson(rules))
+            writer.write(mapper.writeValueAsString(rules))
         }
         logger.info { "Done!" }
-    }
-
-    private fun toJson(rules: List<EligibilityRuleDefinition>): String {
-        return gson().toJson(rules)
-    }
-
-    private fun gson(): Gson {
-        return GsonSerializer.createBuilder().create()
     }
 
     companion object {
@@ -45,6 +36,7 @@ class EligibilityRuleExportApplication(private val config: EligibilityRuleExport
         val logger = KotlinLogging.logger {}
         private val VERSION =
             EligibilityRuleExportApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+        private val mapper by lazy { ActinObjectMapper.create() }
     }
 }
 

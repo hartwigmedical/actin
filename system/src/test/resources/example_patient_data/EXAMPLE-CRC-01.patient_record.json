@@ -112,10 +112,11 @@
       "name": "Cerebrovascular accident",
       "year": 2019,
       "month": 1,
-      "doids": [
-        "3526"
+      "icdCodes": [
+        {
+          "mainCode": "3526"
+        }
       ],
-      "category": "Cerebrovascular disease",
       "comorbidityClass": "OTHER_CONDITION"
     },
     {
@@ -159,8 +160,7 @@
   "labValues": [
     {
       "date": "2023-01-31",
-      "code": "ALAT",
-      "name": "Alanine aminotransferase",
+      "measurement": "ALANINE_AMINOTRANSFERASE",
       "comparator": "",
       "value": 40.0,
       "unit": "UNITS_PER_LITER",
@@ -170,8 +170,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "ASAT",
-      "name": "Aspartate aminotransferase",
+      "measurement": "ASPARTATE_AMINOTRANSFERASE",
       "comparator": "",
       "value": 30.0,
       "unit": "UNITS_PER_LITER",
@@ -181,8 +180,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "TBIL",
-      "name": "total bilirubin",
+      "measurement": "TOTAL_BILIRUBIN",
       "comparator": "",
       "value": 8.0,
       "unit": "MICROMOLES_PER_LITER",
@@ -192,8 +190,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "Hb",
-      "name": "hemoglobin",
+      "measurement": "HEMOGLOBIN",
       "comparator": "",
       "value": 8.2,
       "unit": "MILLIMOLES_PER_LITER",
@@ -203,8 +200,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "THROMBO-ABS",
-      "name": "absolute thrombocyte count",
+      "measurement": "THROMBOCYTES_ABS",
       "comparator": "",
       "value": 125.0,
       "unit": "BILLIONS_PER_LITER",
@@ -214,8 +210,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "LYMPHO-ABS",
-      "name": "absolute lymphocyte count eDA",
+      "measurement": "LYMPHOCYTES_ABS",
       "comparator": "",
       "value": 4.0,
       "unit": "BILLIONS_PER_LITER",
@@ -225,8 +220,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "LEUKO-ABS",
-      "name": "absolute leukocyte count",
+      "measurement": "LEUKOCYTES_ABS",
       "comparator": "",
       "value": 5.0,
       "unit": "BILLIONS_PER_LITER",
@@ -236,8 +230,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "NEUTRO-ABS",
-      "name": "absolute neutrophil count eDA",
+      "measurement": "NEUTROPHILS_ABS",
       "comparator": "",
       "value": 3.0,
       "unit": "BILLIONS_PER_LITER",
@@ -247,8 +240,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "CREA",
-      "name": "creatinine",
+      "measurement": "CREATININE",
       "comparator": "",
       "value": 45.0,
       "unit": "MICROMOLES_PER_LITER",
@@ -258,8 +250,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "ALP",
-      "name": "alkaline phosphatase",
+      "measurement": "ALKALINE_PHOSPHATASE",
       "comparator": "",
       "value": 60.0,
       "unit": "UNITS_PER_LITER",
@@ -269,8 +260,7 @@
     },
     {
       "date": "2023-01-31",
-      "code": "APTT",
-      "name": "APTT",
+      "measurement": "ACTIVATED_PARTIAL_THROMBOPLASTIN_TIME",
       "comparator": "",
       "value": 30.0,
       "unit": "SECONDS",
@@ -280,19 +270,17 @@
     },
     {
       "date": "2023-01-31",
-      "code": "POCT_INR",
-      "name": "POCT INR",
+      "measurement": "INTERNATIONAL_NORMALIZED_RATIO",
       "comparator": "",
       "value": 1.0,
-      "unit": "INR",
+      "unit": "UNITS_OF_INR",
       "refLimitLow": 0.8,
       "refLimitUp": 1.2,
       "isOutsideRef": false
     },
     {
       "date": "2023-01-31",
-      "code": "PT",
-      "name": "PT",
+      "measurement": "PROTHROMBIN_TIME",
       "comparator": "",
       "value": 12.0,
       "unit": "SECONDS",
@@ -395,7 +383,8 @@
     {
       "name": "Hemicolectomy right",
       "endDate": "2021-11-12",
-      "status": "FINISHED"
+      "status": "FINISHED",
+      "treatmentType": "OTHER_SURGERY"
     }
   ],
   "bodyWeights": [
@@ -559,7 +548,7 @@
       "experimentType": "PANEL",
       "testTypeDisplay": "NGS & MSI Panel",
       "targetSpecification": {
-        "geneTargetMap": [],
+        "geneTargetMap": {},
         "testVersion": {
           "versionDate": null,
           "testDateIsBeforeOldestTestVersion": false
@@ -581,7 +570,7 @@
             "variantAlleleFrequency": 0.2232,
             "canonicalImpact": {
               "transcriptId": "ENST00000256078",
-              "hgvsCodingImpact": "c.35G\u003eA",
+              "hgvsCodingImpact": "c.35G>A",
               "hgvsProteinImpact": "p.G12D",
               "affectedCodon": 12,
               "affectedExon": 2,
