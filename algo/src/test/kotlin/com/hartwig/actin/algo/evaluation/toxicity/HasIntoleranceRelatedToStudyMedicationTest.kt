@@ -35,12 +35,6 @@ class HasIntoleranceRelatedToStudyMedicationTest {
     }
 
     @Test
-    fun `Should fail when intolerance with matching ICD code is not active`() {
-        val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = matchingIcdCodes.first(), clinicalStatus = "other")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)))
-    }
-
-    @Test
     fun `Should fail when toxicity with matching ICD code has grade below 2 or null`() {
         val icdMainCode = matchingIcdCodes.first()
         listOf(
@@ -55,18 +49,16 @@ class HasIntoleranceRelatedToStudyMedicationTest {
     fun `Should fail when allergy is not to anti-cancer agent`() {
         val intolerance = ComorbidityTestFactory.intolerance(
             icdMainCode = matchingIcdCodes.first(),
-            icdExtensionCode = IcdConstants.CEFAMYCIN_ANTIBIOTIC,
-            clinicalStatus = HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE
+            icdExtensionCode = IcdConstants.CEFAMYCIN_ANTIBIOTIC
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)))
     }
 
     @Test
-    fun `Should evaluate to undetermined when active intolerance has matching ICD code`() {
+    fun `Should evaluate to undetermined when intolerance has matching ICD code`() {
         val intolerance = ComorbidityTestFactory.intolerance(
             icdMainCode = matchingIcdCodes.first(),
-            icdExtensionCode = IcdConstants.NIVOLUMAB_CODE,
-            clinicalStatus = HasIntoleranceRelatedToStudyMedication.CLINICAL_STATUS_ACTIVE
+            icdExtensionCode = IcdConstants.NIVOLUMAB_CODE
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)))
     }
