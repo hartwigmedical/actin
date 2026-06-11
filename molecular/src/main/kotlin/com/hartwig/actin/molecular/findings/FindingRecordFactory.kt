@@ -7,6 +7,6 @@ import com.hartwig.hmftools.findings.finding.datamodel.FindingRecord
 object FindingRecordFactory {
 
     fun create(orangeRecord: OrangeRecord): FindingRecord {
-        return ConversionUtil. and morangeRecordToFindingRecord(orangeRecord, null, null, null)
+        return ConversionUtil.orangeRecordToFindingRecord(orangeRecord, null, null, null)
     }
 }
