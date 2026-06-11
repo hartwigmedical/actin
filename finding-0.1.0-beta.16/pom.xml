@@ -40,8 +40,8 @@
                         <configuration>
                             <relocations>
                                 <relocation>
-                                    <pattern>com.hartwig.hmftools.common</pattern>
-                                    <shadedPattern>com.hartwig.hmftools.common.v0_1_0</shadedPattern>
+                                    <pattern>com.hartwig.hmftools</pattern>
+                                    <shadedPattern>com.hartwig.hmftools.findings</shadedPattern>
                                 </relocation>
                             </relocations>
                             <artifactSet>
