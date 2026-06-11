@@ -18,16 +18,16 @@
             <artifactId>common</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>finding-0.1.0-beta.16</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.hartwig</groupId>
             <artifactId>orange-datamodel</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hartwig</groupId>
             <artifactId>finding-datamodel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>finding</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>
