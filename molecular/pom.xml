@@ -22,12 +22,12 @@
             <artifactId>finding-0.1.0-beta.16</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.hartwig</groupId>
-            <artifactId>orange-datamodel</artifactId>
+            <groupId>com.hartwig.actin</groupId>
+            <artifactId>finding-datamodel-0.2.4-beta.4</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hartwig</groupId>
-            <artifactId>finding-datamodel</artifactId>
+            <artifactId>orange-datamodel</artifactId>
         </dependency>
         <dependency>
             <groupId>com.hartwig.actin</groupId>

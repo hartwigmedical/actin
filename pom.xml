@@ -11,6 +11,7 @@
     <modules>
         <module>common</module>
         <module>finding-0.1.0-beta.16</module>
+        <module>finding-datamodel-0.2.4-beta.4</module>
         <module>molecular</module>
         <module>trial</module>
         <module>algo</module>
@@ -32,7 +33,6 @@
         <actin-utils.version>2.1.0</actin-utils.version>
         <serve.version>8.6.0</serve.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
-        <finding-datamodel.version>0.2.4-beta.4</finding-datamodel.version>
         <actin-transvar.version>2.0.0</actin-transvar.version>
         <pave.version>1.8.2</pave.version>
 
@@ -165,6 +165,11 @@
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
+                <artifactId>finding-datamodel-0.2.4-beta.4</artifactId>
+                <version>local-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.hartwig.actin</groupId>
                 <artifactId>molecular</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
@@ -213,11 +218,6 @@
                 <groupId>com.hartwig</groupId>
                 <artifactId>orange-datamodel</artifactId>
                 <version>${orange-datamodel.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>finding-datamodel</artifactId>
-                <version>${finding-datamodel.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
@@ -382,13 +382,6 @@
                 <groupId>com.hartwig.actin</groupId>
                 <artifactId>datamodel</artifactId>
                 <version>${actin-datamodel.version}</version>
-                <scope>test</scope>
-                <type>test-jar</type>
-            </dependency>
-            <dependency>
-                <groupId>com.hartwig</groupId>
-                <artifactId>finding-datamodel</artifactId>
-                <version>${finding-datamodel.version}</version>
                 <scope>test</scope>
                 <type>test-jar</type>
             </dependency>

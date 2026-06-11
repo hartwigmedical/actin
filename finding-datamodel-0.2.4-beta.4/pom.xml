@@ -8,15 +8,15 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>finding-0.1.0-beta.16</artifactId>
+    <artifactId>finding-datamodel-0.2.4-beta.4</artifactId>
     <packaging>jar</packaging>
-    <name>Hartwig ACTIN - Finding 0.1.0-beta.16</name>
+    <name>Hartwig ACTIN - Finding Datamodel 0.2.4-beta.4</name>
 
     <dependencies>
         <dependency>
             <groupId>com.hartwig</groupId>
-            <artifactId>finding</artifactId>
-            <version>0.1.0-beta.16</version>
+            <artifactId>finding-datamodel</artifactId>
+            <version>0.2.4-beta.4</version>
             <optional>true</optional>
         </dependency>
     </dependencies>
@@ -41,7 +41,7 @@
                             </relocations>
                             <artifactSet>
                                 <includes>
-                                    <include>com.hartwig:finding</include>
+                                    <include>com.hartwig:finding-datamodel</include>
                                 </includes>
                             </artifactSet>
                             <transformers>
