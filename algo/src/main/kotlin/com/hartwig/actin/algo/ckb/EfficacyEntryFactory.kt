@@ -29,11 +29,6 @@ import com.hartwig.actin.util.json.ActinObjectMapper
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
-    companion object {
-        private val mapper by lazy { ActinObjectMapper.create() }
-        private val STRING_INT_MAP_TYPE = object : TypeReference<Map<String, Int>>() {}
-    }
-
     fun extractEfficacyEvidenceFromCkbFile(ckbExtendedEvidenceJson: String): List<EfficacyEntry> {
         return convertCkbExtendedEvidence(CkbExtendedEvidenceJson.read(ckbExtendedEvidenceJson))
     }
@@ -138,7 +133,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
     fun convertPrimaryTumorLocation(primaryTumorLocations: String): Map<String, Int> {
         return try {
-            mapper.readValue(primaryTumorLocations, STRING_INT_MAP_TYPE)
+            mapper.readValue(primaryTumorLocations, object : TypeReference<Map<String, Int>>() {})
         } catch (_: JacksonException) {
             val regex = """^(\w+): (\d+)(?: \(\d+(?:\.\d+)?%\))?$""".toRegex()
             primaryTumorLocations.split(", ").associate { item ->
@@ -250,5 +245,9 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
         } else {
             throw IllegalStateException("Incorrect confidence interval found: $confidenceInterval")
         }
+    }
+
+    companion object {
+        private val mapper by lazy { ActinObjectMapper.create() }
     }
 }
