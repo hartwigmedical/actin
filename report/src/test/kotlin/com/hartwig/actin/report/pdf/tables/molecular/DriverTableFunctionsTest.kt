@@ -37,6 +37,22 @@ class DriverTableFunctionsTest {
         )
     }
 
+    @Test
+    fun `Should deduplicate nctIds when same trial appears via multiple actionables for same event`() {
+        val actionable1 = TestVariantFactory.createMinimal().copy(event = "EGFR L858R", variantAlleleFrequency = 0.5)
+        val actionable2 = TestVariantFactory.createMinimal().copy(event = "EGFR L858R", variantAlleleFrequency = 0.45)
+        val externalTrials = setOf(
+            ActionableWithExternalTrial(actionable = actionable1, trial = trial1),
+            ActionableWithExternalTrial(actionable = actionable1, trial = trial2),
+            ActionableWithExternalTrial(actionable = actionable2, trial = trial1),
+            ActionableWithExternalTrial(actionable = actionable2, trial = trial2),
+        )
+        val groupedByEvent = DriverTableFunctions.groupByEvent(externalTrials)
+        assertThat(groupedByEvent).containsOnly(
+            entry("EGFR L858R", "trial1, trial2")
+        )
+    }
+
     private fun createEventWithExternalTrial(event: String, trial: ExternalTrial): ActionableWithExternalTrial {
         return ActionableWithExternalTrial(actionable = createActionable(event), trial = trial)
     }

@@ -431,20 +431,12 @@ class ClinicalDAO(private val context: DSLContext) {
                 Tables.INTOLERANCE,
                 Tables.INTOLERANCE.PATIENTID,
                 Tables.INTOLERANCE.NAME,
-                Tables.INTOLERANCE.ICDCODES,
-                Tables.INTOLERANCE.TYPE,
-                Tables.INTOLERANCE.CLINICALSTATUS,
-                Tables.INTOLERANCE.VERIFICATIONSTATUS,
-                Tables.INTOLERANCE.CRITICALITY
+                Tables.INTOLERANCE.ICDCODES
             )
                 .values(
                     patientId,
                     intolerance.name,
-                    DataUtil.concatObjects(intolerance.icdCodes),
-                    intolerance.type,
-                    intolerance.clinicalStatus,
-                    intolerance.verificationStatus,
-                    intolerance.criticality
+                    DataUtil.concatObjects(intolerance.icdCodes)
                 )
                 .execute()
         }

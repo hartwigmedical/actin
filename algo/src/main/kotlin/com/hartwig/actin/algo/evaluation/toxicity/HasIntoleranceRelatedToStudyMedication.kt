@@ -7,7 +7,6 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
-import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.icd.IcdModel
 
@@ -16,7 +15,6 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetIcdCodes = IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, IcdConstants.ANTI_NEOPLASTIC_AGENTS) }
         val allergies = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetIcdCodes).fullMatches
-            .filter { (it as? Intolerance)?.clinicalStatus?.equals(CLINICAL_STATUS_ACTIVE, ignoreCase = true) != false }
             .filterNot { it is Toxicity && it.grade?.let { grade -> grade < 2 } ?: true }
             .toSet()
 
@@ -27,7 +25,4 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
         } else EvaluationFactory.fail("Has no intolerances to study medication")
     }
 
-    companion object {
-        const val CLINICAL_STATUS_ACTIVE: String = "Active"
-    }
 }
