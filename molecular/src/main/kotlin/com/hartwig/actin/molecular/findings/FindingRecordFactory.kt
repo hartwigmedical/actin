@@ -1,8 +1,8 @@
 package com.hartwig.actin.molecular.findings
 
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
-import com.hartwig.hmftools.findings.finding.ConversionUtil
-import com.hartwig.hmftools.findings.finding.datamodel.FindingRecord
+import com.hartwig.hmftools.finding.ConversionUtil
+import com.hartwig.hmftools.finding.datamodel.FindingRecord
 
 object FindingRecordFactory {
 

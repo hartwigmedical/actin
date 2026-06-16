@@ -8,15 +8,15 @@
         <version>local-SNAPSHOT</version>
     </parent>
 
-    <artifactId>finding-datamodel-0.2.4-beta.4</artifactId>
+    <artifactId>finding-shaded</artifactId>
     <packaging>jar</packaging>
-    <name>Hartwig ACTIN - Finding Datamodel 0.2.4-beta.4</name>
+    <name>Hartwig ACTIN - Finding 0.1.0-beta.16</name>
 
     <dependencies>
         <dependency>
             <groupId>com.hartwig</groupId>
-            <artifactId>finding-datamodel</artifactId>
-            <version>0.2.4-beta.4</version>
+            <artifactId>finding</artifactId>
+            <version>${finding.version}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>
@@ -36,12 +36,18 @@
                             <relocations>
                                 <relocation>
                                     <pattern>com.hartwig.hmftools</pattern>
-                                    <shadedPattern>com.hartwig.hmftools.findings</shadedPattern>
+                                    <shadedPattern>com.hartwig.hmftools.finding_shaded</shadedPattern>
+                                    <excludes>
+                                        <exclude>com.hartwig.hmftools.finding.**</exclude>
+                                        <exclude>com.hartwig.hmftools.datamodel.**</exclude>
+                                    </excludes>
                                 </relocation>
                             </relocations>
                             <artifactSet>
                                 <includes>
-                                    <include>com.hartwig:finding-datamodel</include>
+                                    <include>com.hartwig:finding</include>
+                                    <include>com.hartwig:hmf-common</include>
+                                    <include>com.hartwig:orange-datamodel</include>
                                 </includes>
                             </artifactSet>
                             <transformers>

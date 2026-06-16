@@ -1,7 +1,6 @@
 package com.hartwig.actin.molecular.orange.datamodel
 
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.molecular.orange.datamodel.cuppa.TestCuppaFactory
 import com.hartwig.actin.molecular.orange.datamodel.lilac.TestLilacFactory
 import com.hartwig.actin.molecular.orange.datamodel.linx.TestLinxFactory
@@ -299,7 +298,7 @@ object TestOrangeFactory {
             .brca2Value(0.05)
             .hrdValue(0.45)
             .hrStatus(ChordStatus.HR_PROFICIENT)
-            .hrdType(HomologousRecombinationType.NONE.name)
+            .hrdType("none")
             .build()
     }
 

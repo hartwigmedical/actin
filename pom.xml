@@ -10,8 +10,7 @@
 
     <modules>
         <module>common</module>
-        <module>finding-0.1.0-beta.16</module>
-        <module>finding-datamodel-0.2.4-beta.4</module>
+        <module>finding-shaded</module>
         <module>molecular</module>
         <module>trial</module>
         <module>algo</module>
@@ -32,13 +31,16 @@
         <actin-treatment-database.version>0.4.6</actin-treatment-database.version>
         <actin-utils.version>2.1.0</actin-utils.version>
         <serve.version>8.6.0</serve.version>
-        <orange-datamodel.version>3.0.0</orange-datamodel.version>
+        <finding.version>0.1.0-beta.20</finding.version>
+        <finding-datamodel.version>0.2.6-beta.1</finding-datamodel.version>
+        <orange-datamodel.version>finding-${finding.version}</orange-datamodel.version>
         <actin-transvar.version>2.0.0</actin-transvar.version>
         <pave.version>1.8.2</pave.version>
 
         <!-- KD: Even though all code is in kotlin, the jooq code generator generates java code that needs to be compiled -->
         <maven.compiler.plugin.version>3.13.0</maven.compiler.plugin.version>
         <maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+        <maven.shade.plugin.version>3.5.2</maven.shade.plugin.version>
         <maven.jar.plugin.version>3.2.0</maven.jar.plugin.version>
         <maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
 
@@ -143,6 +145,11 @@
                     </configuration>
                 </plugin>
                 <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-shade-plugin</artifactId>
+                    <version>${maven.shade.plugin.version}</version>
+                </plugin>
+                <plugin>
                     <groupId>org.jooq</groupId>
                     <artifactId>jooq-codegen-maven</artifactId>
                     <version>${jooq.version}</version>
@@ -159,13 +166,13 @@
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
-                <groupId>com.hartwig.actin</groupId>
-                <artifactId>finding-0.1.0-beta.16</artifactId>
-                <version>local-SNAPSHOT</version>
+                <groupId>com.hartwig</groupId>
+                <artifactId>finding-datamodel</artifactId>
+                <version>${finding-datamodel.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.hartwig.actin</groupId>
-                <artifactId>finding-datamodel-0.2.4-beta.4</artifactId>
+                <artifactId>finding-shaded</artifactId>
                 <version>local-SNAPSHOT</version>
             </dependency>
             <dependency>
