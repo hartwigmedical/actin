@@ -11,7 +11,7 @@ import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.molecular.filter.GeneFilter
 import com.hartwig.actin.molecular.filter.GeneFilterFactory
 import com.hartwig.actin.molecular.panel.EMPTY_VARIANT_DECOMPOSITION_TABLE
-import com.hartwig.actin.molecular.panel.PanelGeneSpecificationsFile
+import com.hartwig.actin.molecular.panel.PanelGeneSpecifications
 import com.hartwig.actin.molecular.panel.PanelSpecifications
 import com.hartwig.actin.molecular.panel.PaveVariantDecomposition
 import com.hartwig.actin.molecular.panel.VariantDecompositionTable
@@ -22,11 +22,13 @@ import com.hartwig.hmftools.datamodel.OrangeJson
 import com.hartwig.hmftools.datamodel.orange.OrangeRecord
 import com.hartwig.serve.datamodel.ServeDatabase
 import com.hartwig.serve.datamodel.serialization.ServeJson
+import io.github.oshai.kotlinlogging.KotlinLogging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
-import io.github.oshai.kotlinlogging.KotlinLogging
+import java.nio.file.Files
+import java.nio.file.Path
 
 data class MolecularInterpreterInputData(
     val clinical: ClinicalRecord,
@@ -115,7 +117,12 @@ object InputDataLoader {
 
                 withContext(Dispatchers.IO) {
                     logger.info { "Loading panel specifications from ${config.panelSpecificationsFilePath}" }
-                    config.panelSpecificationsFilePath?.let { PanelGeneSpecificationsFile.create(it, deferredGeneFilter.await()) }
+                    config.panelSpecificationsFilePath?.let {
+                        PanelGeneSpecifications.create(
+                            Files.readString(Path.of(it)),
+                            deferredGeneFilter.await()
+                        )
+                    }
                         ?: PanelSpecifications(AlwaysValidFilter(), emptyMap())
                 }
             }

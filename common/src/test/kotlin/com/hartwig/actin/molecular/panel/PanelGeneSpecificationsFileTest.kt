@@ -5,15 +5,15 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.molecular.filter.AlwaysValidFilter
 import com.hartwig.actin.testutil.ResourceLocator
-import java.time.LocalDate
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class PanelGeneSpecificationsFileTest {
 
     @Test
     fun `Should read from panel gene list TSV and match gene lists on test name regex`() {
-        val geneList = PanelGeneSpecificationsFile.create(
+        val geneList = PanelGeneSpecifications.create(
             ResourceLocator.resourceOnClasspath("panel_specifications/panel_specifications.tsv"),
             AlwaysValidFilter()
         )
@@ -30,7 +30,7 @@ class PanelGeneSpecificationsFileTest {
 
     @Test
     fun `Should group genes correctly by test specification`() {
-        val geneList = PanelGeneSpecificationsFile.create(
+        val geneList = PanelGeneSpecifications.create(
             ResourceLocator.resourceOnClasspath("panel_specifications/panel_specifications.tsv"),
             AlwaysValidFilter()
         )
