@@ -158,10 +158,6 @@
           "extensionCode": null
         }
       ],
-      "type": "allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "low",
       "comorbidityClass": "INTOLERANCE"
     },
     {
@@ -172,10 +168,6 @@
           "extensionCode": null
         }
       ],
-      "type": "allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Confirmed",
-      "criticality": "unable-to-assess",
       "comorbidityClass": "INTOLERANCE"
     },
     {

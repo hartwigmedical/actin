@@ -191,10 +191,6 @@ CREATE TABLE `intolerance`
     `icdCodes` varchar(50) NOT NULL,
     `category` varchar(50) NOT NULL,
     `subcategories` varchar(100) NOT NULL,
-    `type` varchar(50) NOT NULL,
-    `clinicalStatus` varchar(50) NOT NULL,
-    `verificationStatus` varchar(50) NOT NULL,
-    `criticality` varchar(50) NOT NULL,
     PRIMARY KEY (`id`)
 );
 

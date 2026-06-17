@@ -8,7 +8,7 @@ object DriverTableFunctions {
 
     fun groupByEvent(externalTrialSummaries: Set<ActionableWithExternalTrial>): Map<String, String> {
         return externalTrialSummaries.groupBy { e -> e.actionable.event }
-            .mapValues { entry -> entry.value.joinToString(", ") { it.trial.nctId } }
+            .mapValues { entry -> entry.value.distinctBy { it.trial.nctId }.joinToString(", ") { it.trial.nctId } }
     }
 
     fun allDrivers(molecularTests: List<MolecularTest>): List<Pair<MolecularTest, List<Driver>>> =

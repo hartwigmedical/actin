@@ -126,10 +126,6 @@
           "extensionCode": "XM1KZ5"
         }
       ],
-      "type": "Allergy",
-      "clinicalStatus": "Active",
-      "verificationStatus": "Unconfirmed",
-      "criticality": "Unable-to-assess",
       "year": null,
       "month": null,
       "comorbidityClass": "INTOLERANCE"

@@ -41,16 +41,11 @@ internal object ComorbidityTestFactory {
     fun intolerance(
         name: String = "",
         icdMainCode: String = "",
-        icdExtensionCode: String? = null,
-        clinicalStatus: String = ""
+        icdExtensionCode: String? = null
     ): Intolerance {
         return Intolerance(
             name = name,
-            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
-            type = "",
-            clinicalStatus = clinicalStatus,
-            verificationStatus = "",
-            criticality = ""
+            icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode))
         )
     }
 
