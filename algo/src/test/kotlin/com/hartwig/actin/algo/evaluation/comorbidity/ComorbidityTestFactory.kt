@@ -60,7 +60,9 @@ internal object ComorbidityTestFactory {
         return Toxicity(
             name = name,
             icdCodes = setOf(IcdCode(icdMainCode, icdExtensionCode)),
-            evaluatedDate = date,
+            year = date.year,
+            month = date.monthValue,
+            day = date.dayOfMonth,
             source = toxicitySource,
             grade = grade
         )

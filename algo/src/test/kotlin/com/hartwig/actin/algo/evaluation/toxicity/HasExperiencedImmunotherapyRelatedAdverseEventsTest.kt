@@ -78,7 +78,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = listOf(
                 OtherCondition("name", setOf(IcdCode(IcdConstants.HAND_FRACTURE_CODE, IMMUNO_ICD_EXTENSION))),
                 Intolerance("name", setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, IcdConstants.TAXANE_CODE))),
-                Toxicity("name", setOf(IcdCode(IcdConstants.HAND_FRACTURE_CODE, null)), DATE, ToxicitySource.EHR, 3)
+                Toxicity("name", setOf(IcdCode(IcdConstants.HAND_FRACTURE_CODE, null)), DATE.year, DATE.monthValue, DATE.dayOfMonth, ToxicitySource.EHR, 3)
             ),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
@@ -128,7 +128,9 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
                 Toxicity(
                     "Nivolumab induced pneumonitis",
                     setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, IcdConstants.IMMUNOTHERAPY_DRUG_SET.first())),
-                    DATE,
+                    DATE.year,
+                    DATE.monthValue,
+                    DATE.dayOfMonth,
                     ToxicitySource.EHR,
                     3
                 )
