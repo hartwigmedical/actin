@@ -121,19 +121,23 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_AT_LEAST_Y_WEEKS_AGO to hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to {
-                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
-                    referenceDate,
+                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
+                    referenceDate = referenceDate,
                     intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
-                    "metastatic"
+                    settingDescription = "metastatic",
+                    maximumLines = null
                 )
             },
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
-                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
-                    referenceDate,
+                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
+                    referenceDate = referenceDate,
                     intentsToIgnore = setOf(Intent.CURATIVE),
-                    "advanced or metastatic"
+                    settingDescription = "advanced or metastatic",
+                    maximumLines = null
                 )
             },
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_ADVANCED_OR_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(),
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_RADIOLOGICAL_RESPONSE_TO_TREATMENT_WITH_DRUG_X to hasHadRadiologicalResponseFollowingDrugTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
@@ -752,6 +756,28 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val intents = function.param<ManyIntentsParameter>(0).value
             HasHadSystemicTherapyWithAnyIntent(intents, null, null, null)
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
+                referenceDate = referenceDate,
+                intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                settingDescription = "metastatic",
+                maximumLines = function.param<IntegerParameter>(0).value
+            )
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
+                referenceDate = referenceDate,
+                intentsToIgnore = setOf(Intent.CURATIVE),
+                settingDescription = "advanced or metastatic",
+                maximumLines = function.param<IntegerParameter>(0).value
+            )
         }
     }
 
