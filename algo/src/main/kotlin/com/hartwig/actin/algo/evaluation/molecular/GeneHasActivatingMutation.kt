@@ -11,6 +11,8 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
+import com.hartwig.actin.datamodel.trial.VariantTypeInput
 
 private enum class ActivationWarningType(val description: String? = null) {
     NON_ONCOGENE,
@@ -39,6 +41,9 @@ class GeneHasActivatingMutation(
     override val gene: String,
     private val codonsToIgnore: List<String>?,
     private val inKinaseDomain: Boolean = false,
+    private val proteinImpactsToIgnore: Set<String>? = null,
+    private val variantTypeToIgnore: VariantTypeInput? = null,
+    private val exonToIgnore: Int? = null
 ) : MolecularEvaluationFunction(
     targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in")
 ) {
@@ -48,6 +53,8 @@ class GeneHasActivatingMutation(
         val variantCharacteristics =
             test.drivers.variants.filter { it.gene == gene }
                 .filter { ignoredCodon(codonsToIgnore, it) }
+                .filter { ignoredProteinImpact(proteinImpactsToIgnore, it) }
+                .filter { ignoredExonAndType(variantTypeToIgnore, exonToIgnore, it) }
                 .map { variant ->
                     evaluateVariant(variant, hasHighMutationalLoad)
                 }
@@ -203,6 +210,29 @@ class GeneHasActivatingMutation(
 
     private fun isMissenseOrCancerAssociatedVariant(variant: Variant): Boolean {
         return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isCancerAssociatedVariant
+    }
+
+    private fun ignoredProteinImpact(impactsToIgnore: Set<String>?, variant: Variant): Boolean {
+        if (impactsToIgnore == null) return true
+        val impact = variant.canonicalImpact.hgvsProteinImpact.removePrefix("p.")
+        return impact !in impactsToIgnore
+    }
+
+    private fun ignoredExonAndType(variantTypeToIgnore: VariantTypeInput?, exonToIgnore: Int?, variant: Variant): Boolean {
+        if (variantTypeToIgnore == null || exonToIgnore == null) return true
+        val excludedTypes = determineExcludedVariantTypes(variantTypeToIgnore)
+        return !(variant.canonicalImpact.affectedExon == exonToIgnore && variant.type in excludedTypes)
+    }
+
+    private fun determineExcludedVariantTypes(variantTypeInput: VariantTypeInput): Set<VariantType> {
+        return when (variantTypeInput) {
+            VariantTypeInput.SNV -> setOf(VariantType.SNV)
+            VariantTypeInput.MNV -> setOf(VariantType.MNV)
+            VariantTypeInput.INSERT -> setOf(VariantType.INSERT)
+            VariantTypeInput.DELETE -> setOf(VariantType.DELETE)
+            VariantTypeInput.INDEL -> setOf(VariantType.INSERT, VariantType.DELETE)
+            else -> throw IllegalStateException("Could not map variant type input: $variantTypeInput")
+        }
     }
 
     private fun isCodonMatch(affectedCodon: Int?, codonsToMatch: String): Boolean {

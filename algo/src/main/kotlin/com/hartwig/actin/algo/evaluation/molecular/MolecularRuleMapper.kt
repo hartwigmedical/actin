@@ -79,6 +79,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y to geneHasVariantInExonCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z to geneHasVariantInExonRangeCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z to geneHasVariantInExonOfTypeCreator(),
+            EligibilityRule.MUTATION_IN_GENE_X_EXCLUDING_PROTEIN_IMPACTS_Y_AND_TYPE_Z_IN_EXON_A to geneHasMutationExcludingProteinImpactsAndTypeInExonCreator(),
             EligibilityRule.UTR_3_LOSS_IN_GENE_X to geneHasUTR3LossCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X to geneIsAmplifiedCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES to geneIsAmplifiedMinCopiesCreator(),
@@ -330,6 +331,28 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val exon = function.param<IntegerParameter>(1).value
             val variantType = function.param<VariantTypeParameter>(2).value
             GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType)
+        }
+    }
+
+    private fun geneHasMutationExcludingProteinImpactsAndTypeInExonCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.GENE,
+                Parameter.Type.MANY_PROTEIN_IMPACTS,
+                Parameter.Type.VARIANT_TYPE,
+                Parameter.Type.INTEGER
+            )
+            val gene = function.param<GeneParameter>(0).value
+            val proteinImpacts = function.param<ManyProteinImpactsParameter>(1).value
+            val variantType = function.param<VariantTypeParameter>(2).value
+            val exon = function.param<IntegerParameter>(3).value
+            GeneHasActivatingMutation(
+                gene,
+                codonsToIgnore = null,
+                proteinImpactsToIgnore = proteinImpacts,
+                variantTypeToIgnore = variantType,
+                exonToIgnore = exon
+            )
         }
     }
 
