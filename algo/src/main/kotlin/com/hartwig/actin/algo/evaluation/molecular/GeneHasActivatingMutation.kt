@@ -213,15 +213,17 @@ class GeneHasActivatingMutation(
     }
 
     private fun ignoredProteinImpact(impactsToIgnore: Set<String>?, variant: Variant): Boolean {
-        if (impactsToIgnore == null) return true
-        val impact = variant.canonicalImpact.hgvsProteinImpact.removePrefix("p.")
-        return impact !in impactsToIgnore
+        return if (impactsToIgnore == null) true else {
+            val impact = variant.canonicalImpact.hgvsProteinImpact.removePrefix("p.")
+            impact !in impactsToIgnore
+        }
     }
 
     private fun ignoredExonAndType(variantTypeToIgnore: VariantTypeInput?, exonToIgnore: Int?, variant: Variant): Boolean {
-        if (variantTypeToIgnore == null || exonToIgnore == null) return true
-        val excludedTypes = determineExcludedVariantTypes(variantTypeToIgnore)
-        return !(variant.canonicalImpact.affectedExon == exonToIgnore && variant.type in excludedTypes)
+       return if (variantTypeToIgnore == null || exonToIgnore == null) true else {
+           val excludedTypes = determineExcludedVariantTypes(variantTypeToIgnore)
+           !(variant.canonicalImpact.affectedExon == exonToIgnore && variant.type in excludedTypes)
+       }
     }
 
     private fun determineExcludedVariantTypes(variantTypeInput: VariantTypeInput): Set<VariantType> {
@@ -231,7 +233,6 @@ class GeneHasActivatingMutation(
             VariantTypeInput.INSERT -> setOf(VariantType.INSERT)
             VariantTypeInput.DELETE -> setOf(VariantType.DELETE)
             VariantTypeInput.INDEL -> setOf(VariantType.INSERT, VariantType.DELETE)
-            else -> throw IllegalStateException("Could not map variant type input: $variantTypeInput")
         }
     }
 
