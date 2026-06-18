@@ -121,19 +121,17 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X_AT_LEAST_Y_WEEKS_AGO to hasHadSystemicTherapyWithIntentsAtLeastWeeksAgoCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to {
-                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
+                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                     referenceDate = referenceDate,
                     intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
-                    settingDescription = "metastatic",
-                    maximumLines = null
+                    settingDescription = "metastatic"
                 )
             },
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
-                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
+                HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                     referenceDate = referenceDate,
                     intentsToIgnore = setOf(Intent.CURATIVE),
-                    settingDescription = "advanced or metastatic",
-                    maximumLines = null
+                    settingDescription = "advanced or metastatic"
                 )
             },
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(),
@@ -761,8 +759,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
-                referenceDate = referenceDate,
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
                 intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
                 settingDescription = "metastatic",
                 maximumLines = function.param<IntegerParameter>(0).value
@@ -772,8 +769,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
-                referenceDate = referenceDate,
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
                 intentsToIgnore = setOf(Intent.CURATIVE),
                 settingDescription = "advanced or metastatic",
                 maximumLines = function.param<IntegerParameter>(0).value

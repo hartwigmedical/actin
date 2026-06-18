@@ -12,22 +12,15 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLinesTest {
+class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
 
     private val referenceDate = LocalDate.of(2024, 11, 26)
     private val recentDate = referenceDate.minusMonths(1)
     private val nonRecentDate = recentDate.minusMonths(7)
-    private val functionWithoutMaxLines = HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
+    private val function = HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         referenceDate,
         intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
-        settingDescription = "metastatic",
-        maximumLines = null
-    )
-    private val functionWithMaxLines = HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLines(
-        referenceDate,
-        intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
-        settingDescription = "metastatic",
-        maximumLines = 2
+        settingDescription = "metastatic"
     )
     private val nonRecentTreatment = createTreatment(
         intent = null, isSystemic = true, "Treatment a", stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue
@@ -37,7 +30,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
     fun `Should fail if patient has only had systemic treatments with curative intent`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithoutMaxLines.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.CURATIVE, isSystemic = true, "Treatment a"))))
+            function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.CURATIVE, isSystemic = true, "Treatment a"))))
         )
     }
 
@@ -45,20 +38,20 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
     fun `Should fail for non-systemic treatment`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithoutMaxLines.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.PALLIATIVE, isSystemic = false))))
+            function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.PALLIATIVE, isSystemic = false))))
         )
     }
 
     @Test
     fun `Should fail for empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, functionWithoutMaxLines.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
     fun `Should pass if patient has had systemic treatment with palliative intent`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithoutMaxLines.evaluate(
+            function.evaluate(
                 withTreatmentHistory(listOf(Intent.PALLIATIVE, Intent.CURATIVE).map { createTreatment(it, isSystemic = true) })
             )
         )
@@ -69,7 +62,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
         val record = withTreatmentHistory(
             listOf(createTreatment(null, isSystemic = true, "Treatment", stopYear = recentDate.year, stopMonth = recentDate.monthValue))
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithoutMaxLines.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
@@ -78,7 +71,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
             listOf(Intent.INDUCTION, Intent.CURATIVE)
                 .map { createTreatment(it, isSystemic = true, "Treatment", stopYear = recentDate.year, stopMonth = recentDate.monthValue) }
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithoutMaxLines.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
@@ -87,13 +80,13 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
             listOf(null, Intent.MAINTENANCE, Intent.INDUCTION)
                 .map { nonRecentTreatment.copy(intents = it?.let { setOf(it) }) }
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithoutMaxLines.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
     fun `Should pass if patient has had one systemic line with non curative or (neo)adjuvant intent and not followed by radiotherapy or surgery`() {
         val record = withTreatmentHistory(listOf(createTreatment(null, isSystemic = true, stopYear = null, stopMonth = null)))
-        assertEvaluation(EvaluationResult.PASS, functionWithoutMaxLines.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
@@ -110,7 +103,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
                 )
             )
         )
-        val evaluation = functionWithoutMaxLines.evaluate(record)
+        val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings())
             .containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic setting (Treatment name)")
@@ -135,7 +128,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
                 ),
             )
         )
-        val evaluation = functionWithoutMaxLines.evaluate(record)
+        val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings())
             .containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic setting (Treatment name)")
@@ -155,66 +148,10 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingAndLimitedLine
                 )
             )
         )
-        val evaluation = functionWithoutMaxLines.evaluate(record)
+        val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings())
             .containsExactly("Has had prior systemic treatment but undetermined if in metastatic setting (Treatment name)")
-    }
-
-    @Test
-    fun `Should pass with no prior systemic treatment when maximum lines is set`() {
-        assertEvaluation(EvaluationResult.PASS, functionWithMaxLines.evaluate(withTreatmentHistory(emptyList())))
-    }
-
-    @Test
-    fun `Should fail if palliative lines alone exceed maximum`() {
-        val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.PALLIATIVE, Intent.PALLIATIVE).map { nonRecentTreatment.copy(intents = setOf(it)) }
-        )
-        assertEvaluation(EvaluationResult.FAIL, functionWithMaxLines.evaluate(record))
-    }
-
-    @Test
-    fun `Should fail when total lines exceed maximum plus one uncertain buffer`() {
-        val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.MAINTENANCE, Intent.INDUCTION, null).map { nonRecentTreatment.copy(intents = it?.let { setOf(it) }) }
-        )
-        assertEvaluation(EvaluationResult.FAIL, functionWithMaxLines.evaluate(record))
-    }
-
-    @Test
-    fun `Should be undetermined when uncertain lines could push total over maximum`() {
-        val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.MAINTENANCE, null).map { nonRecentTreatment.copy(intents = it?.let { setOf(it) }) }
-        )
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithMaxLines.evaluate(record))
-    }
-
-    @Test
-    fun `Should pass when palliative lines plus uncertain lines are at the maximum`() {
-        val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.MAINTENANCE)
-                .map { nonRecentTreatment.copy(intents = setOf(it)) }
-        )
-        assertEvaluation(EvaluationResult.PASS, functionWithMaxLines.evaluate(record))
-    }
-
-    @Test
-    fun `Should pass when palliative lines are at the maximum with no uncertain lines`() {
-        val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.PALLIATIVE)
-                .map { nonRecentTreatment.copy(intents = setOf(it)) }
-        )
-        assertEvaluation(EvaluationResult.PASS, functionWithMaxLines.evaluate(record))
-    }
-
-    @Test
-    fun `Should pass when palliative lines are below the maximum with no uncertain lines`() {
-        val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE)
-                .map { nonRecentTreatment.copy(intents = setOf(it)) }
-        )
-        assertEvaluation(EvaluationResult.PASS, functionWithMaxLines.evaluate(record))
     }
 
     private fun createTreatment(
