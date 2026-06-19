@@ -21,6 +21,7 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.trial.VariantTypeInput
 import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
@@ -29,12 +30,13 @@ class IsEligibleForOnLabelTreatment(
     private val treatment: Treatment,
     private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory,
     private val doidModel: DoidModel,
-    private val minTreatmentDate: LocalDate
+    private val minTreatmentDate: LocalDate,
+    private val intent: Intent? = null
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
-        val treatmentDisplay = treatment.display()
+        val treatmentDisplay = intent?.let { "${intent.name.lowercase()} ${treatment.display()}" } ?: treatment.display()
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
 
         return when {
