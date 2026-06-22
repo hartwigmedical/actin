@@ -20,6 +20,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHi
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
@@ -31,6 +32,7 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.input.EligibilityRule
 import io.mockk.every
 import io.mockk.mockk
+import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
@@ -47,6 +49,8 @@ class IsEligibleForOnLabelTreatmentTest {
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
     val function =
         IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE)
+    private val functionWithIntent =
+        IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE, intent = Intent.CURATIVE)
     private val functionEvaluatingOsimertinib =
         IsEligibleForOnLabelTreatment(
             OSIMERTINIB,
@@ -186,7 +190,15 @@ class IsEligibleForOnLabelTreatmentTest {
         standardOfCareCannotBeEvaluatedForPatient()
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             tumor = nsclcTumor,
-            ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreLowerBound = 30.0, scoreUpperBound = 30.0, scoreValueUnit = "%")),
+            ihcTests = listOf(
+                IhcTest(
+                    item = "PD-L1",
+                    measure = "TPS",
+                    scoreLowerBound = 30.0,
+                    scoreUpperBound = 30.0,
+                    scoreValueUnit = "%"
+                )
+            ),
             oncologicalHistory = emptyList()
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))
@@ -260,6 +272,17 @@ class IsEligibleForOnLabelTreatmentTest {
         standardOfCareCannotBeEvaluatedForPatient()
         val treatments = listOf(treatmentHistoryEntry(setOf(treatment("test", true))))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatments)))
+    }
+
+    @Test
+    fun `Should return right messages for non colorectal cancer patient with non empty treatment list but not containing the specific treatment with and without intent`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val treatments = listOf(treatmentHistoryEntry(setOf(treatment("test", true))))
+        val evaluationWithoutIntent = function.evaluate(withTreatmentHistory(treatments))
+        val evaluationWithIntent = functionWithIntent.evaluate(withTreatmentHistory(treatments))
+
+        assertThat(evaluationWithoutIntent.undeterminedMessagesStrings()).containsExactly("Undetermined if patient is eligible for on-label Treatment")
+        assertThat(evaluationWithIntent.undeterminedMessagesStrings()).containsExactly("Undetermined if patient is eligible for on-label curative Treatment")
     }
 
     private fun standardOfCareCannotBeEvaluatedForPatient() {
