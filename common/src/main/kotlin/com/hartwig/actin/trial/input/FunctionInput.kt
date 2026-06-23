@@ -30,6 +30,7 @@ object FunctionInput {
     val MANY_TREATMENT_CATEGORIES = listOf(Parameter.Type.MANY_TREATMENT_CATEGORIES)
     val ONE_SPECIFIC_TREATMENT = listOf(Parameter.Type.TREATMENT)
     val ONE_SPECIFIC_TREATMENT_ONE_INTEGER = listOf(Parameter.Type.TREATMENT, Parameter.Type.INTEGER)
+    val ONE_SPECIFIC_TREATMENT_ONE_INTENT = listOf(Parameter.Type.TREATMENT, Parameter.Type.INTENT)
     val MANY_SPECIFIC_TREATMENTS = listOf(Parameter.Type.MANY_TREATMENTS)
     val MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS =
         listOf(Parameter.Type.MANY_TREATMENTS, Parameter.Type.INTEGER, Parameter.Type.INTEGER)

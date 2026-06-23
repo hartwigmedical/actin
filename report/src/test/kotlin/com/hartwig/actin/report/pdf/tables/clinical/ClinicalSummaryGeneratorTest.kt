@@ -47,10 +47,10 @@ class PatientClinicalHistoryGeneratorTest {
         val otherHistoryTable = generateHistoryAndReturnTableWithText(reportWithOtherConditions, "Relevant non-oncological history")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
-        assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("8/2024")
-        assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 0))).isEqualTo("5/2024")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("2024-08")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 0))).isEqualTo("2024-05")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(2, 0))).isEqualTo("2024")
-        assertThat(extractTextFromCell(otherHistoryTable.getCell(3, 0))).isEqualTo("9/2023")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(3, 0))).isEqualTo("2023-09")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(4, 0))).isEqualTo("Date unknown")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(5, 0))).isEqualTo("Date unknown")
     }
@@ -92,7 +92,7 @@ class PatientClinicalHistoryGeneratorTest {
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(2)
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("2022")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 1))).isEqualTo("Chemotherapy")
-        assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 0))).isEqualTo("12/2023")
+        assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 0))).isEqualTo("2023-12")
         assertThat(extractTextFromCell(otherHistoryTable.getCell(1, 1))).isEqualTo("Pembrolizumab")
     }
 

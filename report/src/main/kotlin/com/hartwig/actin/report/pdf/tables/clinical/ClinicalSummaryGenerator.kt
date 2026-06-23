@@ -13,6 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.MedicationToTreatmentConverter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
+import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells.create
 import com.hartwig.actin.report.pdf.util.Cells.createKey
 import com.hartwig.actin.report.pdf.util.Cells.createSpanningValue
@@ -86,7 +87,7 @@ class ClinicalSummaryGenerator(
         medications: List<Medication>,
         requireSystemic: Boolean
     ): Table {
-        val dateWidth = valueWidth / 5
+        val dateWidth = valueWidth / 4
         val treatmentWidth = valueWidth - dateWidth
         val table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
@@ -121,7 +122,7 @@ class ClinicalSummaryGenerator(
     }
 
     private fun relevantNonOncologicalHistoryTable(record: PatientRecord): Table {
-        val dateWidth = valueWidth / 5
+        val dateWidth = valueWidth / 4
         val treatmentWidth = valueWidth - dateWidth
         val table: Table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
@@ -145,9 +146,9 @@ class ClinicalSummaryGenerator(
         val stopString = treatmentHistoryEntry.treatmentHistoryDetails?.let { toDateString(it.stopYear, it.stopMonth) }
 
         return when {
-            startString != null && stopString != null -> if (startString != stopString) "$startString-$stopString" else startString
+            startString != null && stopString != null -> if (startString != stopString) "$startString to $stopString" else startString
             startString != null -> startString
-            stopString != null -> "?-$stopString"
+            stopString != null -> "? to $stopString"
             else -> DATE_UNKNOWN
         }
     }
@@ -219,12 +220,6 @@ class ClinicalSummaryGenerator(
 
     private fun toOtherConditionString(otherCondition: OtherCondition): String {
         return otherCondition.display().replaceFirstChar(Char::uppercase)
-    }
-
-    private fun toDateString(maybeYear: Int?, maybeMonth: Int?): String? {
-        return maybeYear?.let { year: Int ->
-            maybeMonth?.let { month: Int -> "$month/$year" } ?: year.toString()
-        }
     }
 
     private fun createDoubleColumnTable(column1Width: Float, column2Width: Float): Table {

@@ -174,6 +174,17 @@ class HasToxicityWithGradeTest {
         icdMainCode: String = icdModel.titleToCodeMap.keys.first(),
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null
-    ) =
-        Toxicity(name, setOf(IcdCode(icdMainCode)), evaluatedDate ?: referenceDate.minusMonths(1), source, grade, endDate)
+    ): Toxicity {
+        val date = evaluatedDate ?: referenceDate.minusMonths(1)
+        return Toxicity(
+            name = name,
+            icdCodes = setOf(IcdCode(icdMainCode)),
+            year = date.year,
+            month = date.monthValue,
+            day = date.dayOfMonth,
+            source = source,
+            grade = grade,
+            endDate = endDate
+        )
+    }
 }

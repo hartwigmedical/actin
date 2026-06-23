@@ -409,7 +409,9 @@ class ClinicalDAO(private val context: DSLContext) {
                 Tables.TOXICITY.PATIENTID,
                 Tables.TOXICITY.NAME,
                 Tables.TOXICITY.ICDCODES,
-                Tables.TOXICITY.EVALUATEDDATE,
+                Tables.TOXICITY.YEAR,
+                Tables.TOXICITY.MONTH,
+                Tables.TOXICITY.DAY,
                 Tables.TOXICITY.SOURCE,
                 Tables.TOXICITY.GRADE
             )
@@ -417,7 +419,9 @@ class ClinicalDAO(private val context: DSLContext) {
                     patientId,
                     toxicity.name,
                     DataUtil.concatObjects(toxicity.icdCodes),
-                    toxicity.evaluatedDate,
+                    toxicity.year,
+                    toxicity.month,
+                    toxicity.day,
                     toxicity.source.display(),
                     toxicity.grade
                 )
@@ -431,20 +435,12 @@ class ClinicalDAO(private val context: DSLContext) {
                 Tables.INTOLERANCE,
                 Tables.INTOLERANCE.PATIENTID,
                 Tables.INTOLERANCE.NAME,
-                Tables.INTOLERANCE.ICDCODES,
-                Tables.INTOLERANCE.TYPE,
-                Tables.INTOLERANCE.CLINICALSTATUS,
-                Tables.INTOLERANCE.VERIFICATIONSTATUS,
-                Tables.INTOLERANCE.CRITICALITY
+                Tables.INTOLERANCE.ICDCODES
             )
                 .values(
                     patientId,
                     intolerance.name,
-                    DataUtil.concatObjects(intolerance.icdCodes),
-                    intolerance.type,
-                    intolerance.clinicalStatus,
-                    intolerance.verificationStatus,
-                    intolerance.criticality
+                    DataUtil.concatObjects(intolerance.icdCodes)
                 )
                 .execute()
         }

@@ -121,7 +121,9 @@
     {
       "name": "Nausea",
       "icdCodes": [],
-      "evaluatedDate": "2024-09-09",
+      "year": 2024,
+      "month": 9,
+      "day": 9,
       "source": "EHR",
       "grade": 3,
       "endDate": null,
