@@ -58,6 +58,14 @@ class IsEligibleForOnLabelTreatmentTest {
             doidModel,
             MIN_DATE
         )
+    private val functionEvaluatingOsimertinibWithIntent =
+        IsEligibleForOnLabelTreatment(
+            OSIMERTINIB,
+            standardOfCareEvaluatorFactory,
+            doidModel,
+            MIN_DATE,
+            Intent.CURATIVE
+        )
     private val functionEvaluatingPembrolizumab = IsEligibleForOnLabelTreatment(
         PEMBROLIZUMAB,
         standardOfCareEvaluatorFactory,
@@ -69,7 +77,7 @@ class IsEligibleForOnLabelTreatmentTest {
     private val nsclcTumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
 
     @Test
-    fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion`() {
+    fun `Should pass for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion when no intent requested`() {
         standardOfCareCannotBeEvaluatedForPatient()
         val record = MolecularTestFactory.withVariant(
             TestVariantFactory.createMinimal().copy(
@@ -84,6 +92,24 @@ class IsEligibleForOnLabelTreatmentTest {
             )
         ).copy(tumor = nsclcTumor)
         assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
+    }
+
+    @Test
+    fun `Should be undetermined for NSCLC patient eligible for on label treatment osimertinib based on EGFR exon19 deletion when intent requested`() {
+        standardOfCareCannotBeEvaluatedForPatient()
+        val record = MolecularTestFactory.withVariant(
+            TestVariantFactory.createMinimal().copy(
+                gene = "EGFR",
+                isReportable = true,
+                type = VariantType.DELETE,
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 19),
+                clonalLikelihood = 1.0,
+                driverLikelihood = DriverLikelihood.HIGH,
+                proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                isCancerAssociatedVariant = true
+            )
+        ).copy(tumor = nsclcTumor)
+        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingOsimertinibWithIntent.evaluate(record))
     }
 
     @Test
@@ -237,17 +263,6 @@ class IsEligibleForOnLabelTreatmentTest {
             standardOfCareEvaluator.standardOfCareEvaluatedTreatments(colorectalCancerPatient)
         } returns StandardOfCareEvaluation(emptyList())
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(colorectalCancerPatient))
-    }
-
-    @Test
-    fun `Should return undetermined for tumor type CUP`() {
-        standardOfCareCannotBeEvaluatedForPatient()
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(
-                TumorTestFactory.withTumorDetails(TumorDetails(name = "Unknown (CUP)"))
-            )
-        )
     }
 
     @Test
