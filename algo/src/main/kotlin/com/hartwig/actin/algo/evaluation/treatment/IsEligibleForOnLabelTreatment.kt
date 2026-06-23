@@ -62,7 +62,7 @@ class IsEligibleForOnLabelTreatment(
                     EvaluationResult.FAIL -> EvaluationFactory.fail("Not eligible for on-label treatment $treatmentDisplay")
 
                     else -> {
-                        EvaluationFactory.recoverableUndetermined(
+                        EvaluationFactory.undetermined(
                             "Undetermined if patient is eligible for on-label treatment $treatmentDisplay"
                         )
                     }
@@ -75,7 +75,7 @@ class IsEligibleForOnLabelTreatment(
                 )
             }
 
-            else -> EvaluationFactory.recoverableUndetermined("Undetermined if patient is eligible for on-label $treatmentDisplay")
+            else -> EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label $treatmentDisplay")
         }
     }
 
