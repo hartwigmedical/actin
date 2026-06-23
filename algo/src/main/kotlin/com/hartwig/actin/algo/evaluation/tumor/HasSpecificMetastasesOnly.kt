@@ -7,48 +7,47 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 
 class HasSpecificMetastasesOnly(
-    private val hasSpecificMetastases: (TumorDetails) -> Boolean?,
-    private val hasSuspectedSpecificMetastases: (TumorDetails) -> Boolean?,
+    private val targetMetastases: List<(TumorDetails) -> Boolean?>,
+    private val targetSuspectedMetastases: List<(TumorDetails) -> Boolean?>,
     private val typeOfMetastases: String
-) :
-    EvaluationFunction {
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
-            val hasSpecificMetastases = hasSpecificMetastases(this)
-                ?: return EvaluationFactory.undetermined("Missing $typeOfMetastases metastasis data")
-            val hasSuspectedSpecificMetastases = hasSuspectedSpecificMetastases(this) ?: false
+            val targetMetastasesValues = targetMetastases.map { it(this) }
+            val suspectedTargetMetastasesValues = targetSuspectedMetastases.map { it(this) }
 
-            val otherMetastasesAccessors = confirmedCategoricalLesionList() - hasSpecificMetastases
-            val suspectedOtherMetastasesAccessors = suspectedCategoricalLesionList() - hasSuspectedSpecificMetastases
-            val hasAnyOtherLesion = otherMetastasesAccessors.any { it == true } || !otherLesions.isNullOrEmpty()
-            val hasSuspectedOtherLesion = !otherSuspectedLesions.isNullOrEmpty() || suspectedOtherMetastasesAccessors.any { it == true }
+            val hasTargetMetastases = targetMetastasesValues.any { it == true }
+            val hasSuspectedTargetMetastases = suspectedTargetMetastasesValues.any { it == true }
+            val hasNoTargetMetastases = targetMetastasesValues.all { it == false } && !hasSuspectedTargetMetastases
 
-            val metastasisString = "$typeOfMetastases-only metastases"
+            val otherMetastasesValues = targetMetastasesValues.fold(confirmedCategoricalLesionList()) { acc, v -> acc - v }
+            val suspectedOtherMetastasesValues =
+                suspectedTargetMetastasesValues.fold(suspectedCategoricalLesionList()) { acc, v -> acc - v }
+
+            val hasMetastasesOutsideTargetMetastases = otherMetastasesValues.any { it == true } || otherLesions?.isNotEmpty() == true
+            val hasSuspectedMetastasesOutsideTargetMetastases =
+                suspectedOtherMetastasesValues.any { it == true } || otherSuspectedLesions?.isNotEmpty() == true
+            val hasNoMetastasesOutsideTargetMetastases =
+                otherMetastasesValues.all { it == false } && otherLesions?.isEmpty() == true &&
+                        suspectedOtherMetastasesValues.none { it == true } && otherSuspectedLesions.isNullOrEmpty() &&
+                        !hasSuspectedMetastasesOutsideTargetMetastases
 
             return when {
-                hasSpecificMetastases && !hasAnyOtherLesion && otherLesions == null && otherMetastasesAccessors.any { it == null } -> {
-                    EvaluationFactory.warn("Unknown if $metastasisString (lesion location missing)")
+                hasTargetMetastases && hasNoMetastasesOutsideTargetMetastases -> {
+                    EvaluationFactory.pass("Has only $typeOfMetastases metastases")
                 }
 
-                hasSpecificMetastases && !hasAnyOtherLesion -> {
-                    if (hasSuspectedOtherLesion) {
-                        EvaluationFactory.warn("Uncertain $metastasisString - suspected other lesions present")
-                    } else {
-                        EvaluationFactory.pass(metastasisString.replaceFirstChar { it.uppercase() })
-                    }
+                hasNoTargetMetastases || hasMetastasesOutsideTargetMetastases -> {
+                    EvaluationFactory.fail("Does not have only $typeOfMetastases metastases")
                 }
 
-                hasSuspectedSpecificMetastases && !hasAnyOtherLesion -> {
-                    if (hasSuspectedOtherLesion) {
-                        EvaluationFactory.warn("Uncertain $metastasisString - lesion is suspected and other suspected lesion(s) present as well")
-                    } else {
-                        EvaluationFactory.warn("Uncertain $metastasisString - lesion is suspected only")
-                    }
+                hasSuspectedTargetMetastases || hasSuspectedMetastasesOutsideTargetMetastases -> {
+                    EvaluationFactory.undetermined("Undetermined if patient has only $typeOfMetastases metastases (suspected lesions presence and/or missing lesion data)")
                 }
 
                 else -> {
-                    EvaluationFactory.fail("No $metastasisString")
+                    EvaluationFactory.undetermined("Undetermined if patient has only $typeOfMetastases metastases (missing lesion data)")
                 }
             }
         }
