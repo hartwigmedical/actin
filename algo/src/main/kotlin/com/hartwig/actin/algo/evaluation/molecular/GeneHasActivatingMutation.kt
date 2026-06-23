@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.molecular.MolecularVariantUtil.toProteinImpact
+import com.hartwig.actin.algo.evaluation.molecular.MolecularVariantUtil.variantTypesForInput
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
@@ -11,6 +13,7 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.trial.VariantTypeInput
 
 private enum class ActivationWarningType(val description: String? = null) {
     NON_ONCOGENE,
@@ -37,8 +40,11 @@ private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation(
     override val gene: String,
-    private val codonsToIgnore: List<String>?,
+    private val codonsToIgnore: Set<String>? = null,
     private val inKinaseDomain: Boolean = false,
+    private val proteinImpactsToIgnore: Set<String>? = null,
+    private val variantTypeToIgnore: VariantTypeInput? = null,
+    private val exonToIgnore: Int? = null
 ) : MolecularEvaluationFunction(
     targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in")
 ) {
@@ -48,6 +54,8 @@ class GeneHasActivatingMutation(
         val variantCharacteristics =
             test.drivers.variants.filter { it.gene == gene }
                 .filter { ignoredCodon(codonsToIgnore, it) }
+                .filter { ignoredProteinImpact(proteinImpactsToIgnore, it) }
+                .filter { ignoredExonAndType(variantTypeToIgnore, exonToIgnore, it) }
                 .map { variant ->
                     evaluateVariant(variant, hasHighMutationalLoad)
                 }
@@ -140,7 +148,7 @@ class GeneHasActivatingMutation(
     private fun isSubclonal(variant: Variant) = variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
 
     private fun ignoredCodon(
-        codonsToIgnore: List<String>?, variant: Variant
+        codonsToIgnore: Set<String>?, variant: Variant
     ) = codonsToIgnore == null || codonsToIgnore.none {
         isCodonMatch(
             variant.canonicalImpact.affectedCodon, it
@@ -203,6 +211,15 @@ class GeneHasActivatingMutation(
 
     private fun isMissenseOrCancerAssociatedVariant(variant: Variant): Boolean {
         return variant.canonicalImpact.codingEffect == CodingEffect.MISSENSE || variant.isCancerAssociatedVariant
+    }
+
+    private fun ignoredProteinImpact(impactsToIgnore: Set<String>?, variant: Variant): Boolean {
+        return impactsToIgnore == null || toProteinImpact(variant.canonicalImpact.hgvsProteinImpact) !in impactsToIgnore
+    }
+
+    private fun ignoredExonAndType(variantTypeToIgnore: VariantTypeInput?, exonToIgnore: Int?, variant: Variant): Boolean {
+        return variantTypeToIgnore == null || exonToIgnore == null ||
+                !(variant.canonicalImpact.affectedExon == exonToIgnore && variant.type in variantTypesForInput(variantTypeToIgnore))
     }
 
     private fun isCodonMatch(affectedCodon: Int?, codonsToMatch: String): Boolean {
