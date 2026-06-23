@@ -36,6 +36,7 @@ class IsEligibleForOnLabelTreatment(
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
         val treatmentDisplay = intent?.let { "${intent.name.lowercase()} ${treatment.display()}" } ?: treatment.display()
+        val undeterminedMessage = "Undetermined if patient is eligible for on-label $treatmentDisplay"
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
 
         return when {
@@ -43,9 +44,9 @@ class IsEligibleForOnLabelTreatment(
                 val potentiallyEligibleTreatments =
                     standardOfCareEvaluator.standardOfCareEvaluatedTreatments(record).potentiallyEligibleTreatments()
                 if (potentiallyEligibleTreatments.any { it.treatmentCandidate.treatment.name.equals(treatment.name, ignoreCase = true) }) {
-                    EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment $treatmentDisplay")
+                    EvaluationFactory.undetermined(undeterminedMessage)
                 } else {
-                    EvaluationFactory.fail("Not eligible for on-label treatment $treatmentDisplay")
+                    EvaluationFactory.fail("Not eligible for on-label $treatmentDisplay")
                 }
             }
 
@@ -53,19 +54,15 @@ class IsEligibleForOnLabelTreatment(
                 when (evaluate(record, treatmentNameToEvaluationFunctionsForNSCLC[treatmentDisplay]!!).result) {
                     EvaluationResult.PASS -> {
                         if (intent == null) {
-                            EvaluationFactory.pass("Eligible for on-label treatment $treatmentDisplay")
+                            EvaluationFactory.pass("Eligible for on-label $treatmentDisplay")
                         } else {
-                            EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label treatment $treatmentDisplay")
+                            EvaluationFactory.undetermined(undeterminedMessage)
                         }
                     }
 
-                    EvaluationResult.FAIL -> EvaluationFactory.fail("Not eligible for on-label treatment $treatmentDisplay")
+                    EvaluationResult.FAIL -> EvaluationFactory.fail("Not eligible for on-label $treatmentDisplay")
 
-                    else -> {
-                        EvaluationFactory.undetermined(
-                            "Undetermined if patient is eligible for on-label treatment $treatmentDisplay"
-                        )
-                    }
+                    else -> EvaluationFactory.undetermined(undeterminedMessage)
                 }
             }
 
@@ -75,7 +72,7 @@ class IsEligibleForOnLabelTreatment(
                 )
             }
 
-            else -> EvaluationFactory.undetermined("Undetermined if patient is eligible for on-label $treatmentDisplay")
+            else -> EvaluationFactory.undetermined(undeterminedMessage)
         }
     }
 
