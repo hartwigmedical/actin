@@ -35,7 +35,7 @@ class IsEligibleForOnLabelTreatment(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
-        val treatmentDisplay = intent?.let { "${intent.display()} ${treatment.display()}" } ?: treatment.display()
+        val treatmentDisplay = intent?.let { "${intent.name.lowercase()} ${treatment.display()}" } ?: treatment.display()
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
 
         return when {
