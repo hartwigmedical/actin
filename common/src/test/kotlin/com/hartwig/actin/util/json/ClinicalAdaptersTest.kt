@@ -69,7 +69,9 @@ class ClinicalAdaptersTest {
         val toxicity: Comorbidity = Toxicity(
             name = "Nausea",
             icdCodes = emptySet(),
-            evaluatedDate = LocalDate.of(2026, 1, 5),
+            year = 2026,
+            month = 1,
+            day = 5,
             source = ToxicitySource.EHR,
             grade = 2
         )
