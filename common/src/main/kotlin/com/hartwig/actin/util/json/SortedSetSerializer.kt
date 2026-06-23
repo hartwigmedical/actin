@@ -22,12 +22,7 @@ object SortedSetSerializer : JsonSerializer<Set<*>>() {
 
     private fun compare(a: Any, b: Any): Int {
         @Suppress("UNCHECKED_CAST")
-        val comparable = a as? Comparable<Any>
-        if (comparable != null) {
-            try {
-                return comparable.compareTo(b)
-            } catch (_: ClassCastException) {}
-        }
-        return a.toString().compareTo(b.toString())
+        val byNatural = (a as? Comparable<Any>)?.runCatching { compareTo(b) }?.getOrNull()
+        return byNatural ?: a.toString().compareTo(b.toString())
     }
 }

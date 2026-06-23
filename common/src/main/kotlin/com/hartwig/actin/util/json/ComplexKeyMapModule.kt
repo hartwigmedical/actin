@@ -21,9 +21,6 @@ import com.fasterxml.jackson.databind.jsontype.TypeSerializer
 import com.fasterxml.jackson.databind.ser.Serializers
 import com.fasterxml.jackson.databind.type.MapType
 
-/**
- * Replacement of Gson's enableComplexMapKeySerialization()
- */
 class ComplexKeyMapModule : Module() {
 
     override fun getModuleName(): String = "ComplexKeyMapModule"

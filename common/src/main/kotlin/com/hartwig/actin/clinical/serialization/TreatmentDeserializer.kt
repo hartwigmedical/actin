@@ -12,14 +12,18 @@ object TreatmentDeserializer : JsonDeserializer<Treatment?>() {
 
     override fun deserialize(parser: JsonParser, context: DeserializationContext): Treatment? {
         val node: JsonNode = parser.codec.readTree(parser)
-        if (node.isNull) return null
-        val className = node.get("treatmentClass")?.takeUnless { it.isNull }?.asText()
-            ?: throw JsonMappingException.from(parser, "Missing 'treatmentClass' field in treatment: $node")
-        return try {
-            val target = TreatmentClass.valueOf(className).treatmentClass as Class<*>
-            parser.codec.treeToValue(node, target) as Treatment
-        } catch (e: Exception) {
-            throw JsonMappingException.from(parser, "Failed to deserialize Treatment: $node", e)
+        return when {
+            node.isNull -> null
+            else -> {
+                val className = node.get("treatmentClass")?.takeUnless { it.isNull }?.asText()
+                    ?: throw JsonMappingException.from(parser, "Missing 'treatmentClass' field in treatment: $node")
+                try {
+                    val target = TreatmentClass.valueOf(className).treatmentClass as Class<*>
+                    parser.codec.treeToValue(node, target) as Treatment
+                } catch (e: Exception) {
+                    throw JsonMappingException.from(parser, "Failed to deserialize Treatment: $node", e)
+                }
+            }
         }
     }
 

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.core.JsonGenerator
 import com.hartwig.actin.datamodel.clinical.Comorbidity
-import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
@@ -41,7 +40,6 @@ object ClinicalRecordJsonMapper {
         return SimpleModule().apply {
             addDeserializer(Treatment::class.java, TreatmentDeserializer)
             addDeserializer(Comorbidity::class.java, ComorbidityDeserializer)
-            addDeserializer(WhoStatus::class.java, WhoStatusDeserializer)
             addDeserializer(Drug::class.java, DrugDeserializer)
             addDeserializer(DrugType::class.java, StrictEnumDeserializer(DrugType::class.java))
             addDeserializer(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))

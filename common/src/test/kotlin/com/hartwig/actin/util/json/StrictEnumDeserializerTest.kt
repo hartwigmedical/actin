@@ -26,4 +26,15 @@ class StrictEnumDeserializerTest {
             .isInstanceOf(JsonMappingException::class.java)
             .hasMessageContaining("Unknown enum value for type RadiotherapyType: \"INVALID\"")
     }
+
+    @Test
+    fun `Should deserialize JSON null to null for nullable enum field`() {
+        val kotlinMapper = ActinObjectMapper.create().registerModule(
+            SimpleModule().addDeserializer(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))
+        )
+        val wrapper = kotlinMapper.readValue("""{"type":null}""", NullableEnumWrapper::class.java)
+        assertThat(wrapper.type).isNull()
+    }
+
+    private data class NullableEnumWrapper(val type: RadiotherapyType?)
 }

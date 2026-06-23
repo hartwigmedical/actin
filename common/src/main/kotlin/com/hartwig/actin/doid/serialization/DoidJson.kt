@@ -1,6 +1,5 @@
 package com.hartwig.actin.doid.serialization
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -15,6 +14,7 @@ import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.Restriction
 import com.hartwig.actin.doid.datamodel.Synonym
 import com.hartwig.actin.doid.datamodel.Xref
+import com.hartwig.actin.util.json.Json
 import com.hartwig.actin.util.json.Json.array
 import com.hartwig.actin.util.json.Json.objectNode
 import com.hartwig.actin.util.json.Json.optionalArray
@@ -26,7 +26,6 @@ import com.hartwig.actin.util.json.Json.string
 import com.hartwig.actin.util.json.Json.stringList
 import com.hartwig.actin.util.json.JsonDatamodelChecker
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.io.File
 
 object DoidJson {
 
@@ -38,14 +37,7 @@ object DoidJson {
     const val DOID_URL_PREFIX = "http://purl.obolibrary.org/obo/DOID_"
 
     fun readDoidOwlEntry(doidJson: String): DoidEntry {
-        val rootObject = mapper.createParser(File(doidJson)).use { parser ->
-            val root = parser.readValueAsTree<JsonNode>() as? ObjectNode
-                ?: throw IllegalStateException("Root of DOID JSON file is not a JSON object: $doidJson")
-            if (parser.nextToken() != null) {
-                logger.warn { "More data found in $doidJson after reading main JSON object!" }
-            }
-            root
-        }
+        val rootObject = Json.readSingleObjectFromFile(doidJson, mapper)
         DatamodelCheckerFactory.rootObjectChecker().check(rootObject)
 
         var entry: DoidEntry? = null

@@ -19,18 +19,8 @@ import org.junit.jupiter.api.Test
 
 class EligibilityFunctionAdapterTest {
 
-    private fun mapper(includeTreatment: Boolean = false) = ActinObjectMapper.create().registerModule(
-        SimpleModule().apply {
-            addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
-            addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
-            if (includeTreatment) {
-                addDeserializer(Treatment::class.java, TreatmentDeserializer)
-            }
-        }
-    )
-
     @Test
-    fun `Should round-trip eligibility function`() {
+    fun `Should serialize and deserialize eligibility function`() {
         val function = EligibilityFunction(
             rule = EligibilityRule.NOT.name, parameters = listOf(
                 FunctionParameter(
@@ -43,7 +33,7 @@ class EligibilityFunctionAdapterTest {
     }
 
     @Test
-    fun `Should round-trip treatment and drug parameters with full objects`() {
+    fun `Should serialize and deserialize treatment and drug parameters with full objects`() {
         val treatmentDb = TestTreatmentDatabaseFactory.createProper()
         val treatment = requireNotNull(treatmentDb.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
         val drug = requireNotNull(treatmentDb.findDrugByName(TestTreatmentDatabaseFactory.CISPLATIN))
@@ -62,4 +52,14 @@ class EligibilityFunctionAdapterTest {
         val mapper = mapper(includeTreatment = true)
         assertThat(mapper.readValue(mapper.writeValueAsString(function), EligibilityFunction::class.java)).isEqualTo(function)
     }
+
+    private fun mapper(includeTreatment: Boolean = false) = ActinObjectMapper.create().registerModule(
+        SimpleModule().apply {
+            addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
+            addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
+            if (includeTreatment) {
+                addDeserializer(Treatment::class.java, TreatmentDeserializer)
+            }
+        }
+    )
 }

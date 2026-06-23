@@ -1,11 +1,27 @@
 package com.hartwig.actin.util.json
 
 import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
+import io.github.oshai.kotlinlogging.KotlinLogging
+import java.io.File
 import java.time.LocalDate
 
 object Json {
+
+    private val logger = KotlinLogging.logger {}
+
+    fun readSingleObjectFromFile(path: String, mapper: ObjectMapper = ActinObjectMapper.create()): ObjectNode {
+        return mapper.createParser(File(path)).use { parser ->
+            val root = parser.readValueAsTree<JsonNode>() as? ObjectNode
+                ?: throw IllegalStateException("Root of JSON file is not a JSON object: $path")
+            if (parser.nextToken() != null) {
+                logger.warn { "More data found in $path after reading main JSON object!" }
+            }
+            root
+        }
+    }
 
     fun optionalObject(node: ObjectNode, field: String): ObjectNode? {
         return if (node.has(field)) nullableObject(node, field) else null

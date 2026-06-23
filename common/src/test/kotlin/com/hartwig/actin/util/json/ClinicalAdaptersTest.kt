@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.serialization.EvaluationMessageSerializer
 import com.hartwig.actin.clinical.serialization.ComorbidityDeserializer
 import com.hartwig.actin.clinical.serialization.DrugDeserializer
 import com.hartwig.actin.clinical.serialization.TreatmentDeserializer
-import com.hartwig.actin.clinical.serialization.WhoStatusDeserializer
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.Comorbidity
@@ -31,7 +30,6 @@ class ClinicalAdaptersTest {
             addDeserializer(Drug::class.java, DrugDeserializer)
             addDeserializer(Treatment::class.java, TreatmentDeserializer)
             addDeserializer(Comorbidity::class.java, ComorbidityDeserializer)
-            addDeserializer(WhoStatus::class.java, WhoStatusDeserializer)
             addSerializer(EvaluationMessage::class.java, EvaluationMessageSerializer)
             addDeserializer(EvaluationMessage::class.java, EvaluationMessageDeserializer)
         }
