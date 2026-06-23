@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.driver.CodingEffect
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.datamodel.molecular.driver.VariantType
 import com.hartwig.actin.datamodel.trial.VariantTypeInput
 
 private enum class ActivationWarningType(val description: String? = null) {
@@ -213,27 +212,12 @@ class GeneHasActivatingMutation(
     }
 
     private fun ignoredProteinImpact(impactsToIgnore: Set<String>?, variant: Variant): Boolean {
-        return if (impactsToIgnore == null) true else {
-            val impact = variant.canonicalImpact.hgvsProteinImpact.removePrefix("p.")
-            impact !in impactsToIgnore
-        }
+        return impactsToIgnore == null || toProteinImpact(variant.canonicalImpact.hgvsProteinImpact) !in impactsToIgnore
     }
 
     private fun ignoredExonAndType(variantTypeToIgnore: VariantTypeInput?, exonToIgnore: Int?, variant: Variant): Boolean {
-       return if (variantTypeToIgnore == null || exonToIgnore == null) true else {
-           val excludedTypes = determineExcludedVariantTypes(variantTypeToIgnore)
-           !(variant.canonicalImpact.affectedExon == exonToIgnore && variant.type in excludedTypes)
-       }
-    }
-
-    private fun determineExcludedVariantTypes(variantTypeInput: VariantTypeInput): Set<VariantType> {
-        return when (variantTypeInput) {
-            VariantTypeInput.SNV -> setOf(VariantType.SNV)
-            VariantTypeInput.MNV -> setOf(VariantType.MNV)
-            VariantTypeInput.INSERT -> setOf(VariantType.INSERT)
-            VariantTypeInput.DELETE -> setOf(VariantType.DELETE)
-            VariantTypeInput.INDEL -> setOf(VariantType.INSERT, VariantType.DELETE)
-        }
+        return variantTypeToIgnore == null || exonToIgnore == null ||
+                !(variant.canonicalImpact.affectedExon == exonToIgnore && variant.type in variantTypesForInput(variantTypeToIgnore))
     }
 
     private fun isCodonMatch(affectedCodon: Int?, codonsToMatch: String): Boolean {

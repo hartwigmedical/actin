@@ -312,7 +312,7 @@ class GeneHasActivatingMutationTest {
 
     companion object {
         private const val GENE = "gene A"
-        private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
+        private val CODONS_TO_IGNORE = setOf("A100X", "A200X")
         private val ACTIVATING_VARIANT = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             event = "event",

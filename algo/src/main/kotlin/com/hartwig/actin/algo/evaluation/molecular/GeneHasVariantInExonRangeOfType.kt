@@ -34,7 +34,8 @@ class GeneHasVariantInExonRangeOfType(
         val exonRangeMessage = generateExonRangeMessage(minExon, maxExon)
         val variantTypeMessage = generateRequiredVariantTypeMessage(requiredVariantType)
         val baseMessage = "in exon $exonRangeMessage in $gene$variantTypeMessage"
-        val allowedVariantTypes = determineAllowedVariantTypes(requiredVariantType)
+        val allowedVariantTypes =
+            if (requiredVariantType == null) VariantType.entries.toSet() else variantTypesForInput(requiredVariantType)
 
         val variantClassifications =
             test.drivers.variants.filter { it.gene == gene && allowedVariantTypes.contains(it.type) }
@@ -162,36 +163,6 @@ class GeneHasVariantInExonRangeOfType(
             minExon.toString()
         } else {
             "$minExon-$maxExon"
-        }
-    }
-
-    private fun determineAllowedVariantTypes(requiredVariantType: VariantTypeInput?): Set<VariantType> {
-        return if (requiredVariantType == null) {
-            VariantType.entries.toSet()
-        } else when (requiredVariantType) {
-            VariantTypeInput.SNV -> {
-                setOf(VariantType.SNV)
-            }
-
-            VariantTypeInput.MNV -> {
-                setOf(VariantType.MNV)
-            }
-
-            VariantTypeInput.INSERT -> {
-                setOf(VariantType.INSERT)
-            }
-
-            VariantTypeInput.DELETE -> {
-                setOf(VariantType.DELETE)
-            }
-
-            VariantTypeInput.INDEL -> {
-                setOf(VariantType.INSERT, VariantType.DELETE)
-            }
-
-            else -> {
-                throw IllegalStateException("Could not map required variant type: $requiredVariantType")
-            }
         }
     }
 

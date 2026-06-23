@@ -8,8 +8,6 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.TranscriptVariantImpact
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import com.hartwig.actin.molecular.interpretation.MolecularInputChecker
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 private const val CLONAL_CUTOFF = 0.5
 
@@ -30,8 +28,6 @@ class GeneHasVariantWithProteinImpact(
         "Mutation with protein impact(s) ${allowedProteinImpacts.joinToString()} in"
     )
 ) {
-
-    private val logger = KotlinLogging.logger {}
 
     override fun evaluate(test: MolecularTest): Evaluation {
 
@@ -100,16 +96,5 @@ class GeneHasVariantWithProteinImpact(
 
     private fun toProteinImpacts(impacts: Set<TranscriptVariantImpact>): Set<String> {
         return impacts.map { toProteinImpact(it.hgvsProteinImpact) }.toSet()
-    }
-
-    private fun toProteinImpact(hgvsProteinImpact: String): String {
-        val impact = if (hgvsProteinImpact.startsWith("p.")) hgvsProteinImpact.substring(2) else hgvsProteinImpact
-        if (impact.isEmpty()) {
-            return impact
-        }
-        if (!MolecularInputChecker.isProteinImpact(impact)) {
-            logger.warn { "Cannot convert hgvs protein impact to a usable protein impact: $hgvsProteinImpact" }
-        }
-        return impact
     }
 }
