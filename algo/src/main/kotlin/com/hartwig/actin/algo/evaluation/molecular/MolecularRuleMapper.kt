@@ -79,7 +79,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y to geneHasVariantInExonCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_TO_EXON_Z to geneHasVariantInExonRangeCreator(),
             EligibilityRule.MUTATION_IN_GENE_X_IN_EXON_Y_OF_TYPE_Z to geneHasVariantInExonOfTypeCreator(),
-            EligibilityRule.MUTATION_IN_GENE_X_EXCLUDING_PROTEIN_IMPACTS_Y_AND_TYPE_Z_IN_EXON_A to geneHasMutationExcludingProteinImpactsAndTypeInExonCreator(),
+            EligibilityRule.ACTIVATING_MUTATION_IN_GENE_X_EXCLUDING_PROTEIN_IMPACTS_Y_AND_TYPE_Z_IN_EXON_A to geneHasActivatingMutationExcludingProteinImpactsAndTypeInExonCreator(),
             EligibilityRule.UTR_3_LOSS_IN_GENE_X to geneHasUTR3LossCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X to geneIsAmplifiedCreator(),
             EligibilityRule.AMPLIFICATION_OF_GENE_X_OF_AT_LEAST_Y_COPIES to geneIsAmplifiedMinCopiesCreator(),
@@ -228,7 +228,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val gene = function.param<GeneParameter>(0).value
             Or(
                 listOf(
-                    GeneHasActivatingMutation(gene, codonsToIgnore = null),
+                    GeneHasActivatingMutation(gene),
                     GeneIsAmplified(gene, null)
                 )
             )
@@ -247,7 +247,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun anyGeneHasActivatingMutationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            Or(genes.map { GeneHasActivatingMutation(it, codonsToIgnore = null) })
+            Or(genes.map { GeneHasActivatingMutation(it) })
         }
     }
 
@@ -258,7 +258,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 Parameter.Type.MANY_CODONS
             )
             val gene = function.param<GeneParameter>(0).value
-            val codons = function.param<ManyCodonsParameter>(1).value
+            val codons = function.param<ManyCodonsParameter>(1).value.toSet()
             GeneHasActivatingMutation(gene, codonsToIgnore = codons)
         }
     }
@@ -266,7 +266,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun anyGeneHasActivatingMutationInKinaseDomainCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            Or(genes.map { GeneHasActivatingMutation(it, codonsToIgnore = null, inKinaseDomain = true) })
+            Or(genes.map { GeneHasActivatingMutation(it, inKinaseDomain = true) })
         }
     }
 
@@ -334,7 +334,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun geneHasMutationExcludingProteinImpactsAndTypeInExonCreator(): FunctionCreator {
+    private fun geneHasActivatingMutationExcludingProteinImpactsAndTypeInExonCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             function.expectTypes(
                 Parameter.Type.GENE,
@@ -348,7 +348,6 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val exon = function.param<IntegerParameter>(3).value
             GeneHasActivatingMutation(
                 gene,
-                codonsToIgnore = null,
                 proteinImpactsToIgnore = proteinImpacts,
                 variantTypeToIgnore = variantType,
                 exonToIgnore = exon

@@ -39,7 +39,7 @@ private const val CLONAL_CUTOFF = 0.5
 
 class GeneHasActivatingMutation(
     override val gene: String,
-    private val codonsToIgnore: List<String>?,
+    private val codonsToIgnore: Set<String>? = null,
     private val inKinaseDomain: Boolean = false,
     private val proteinImpactsToIgnore: Set<String>? = null,
     private val variantTypeToIgnore: VariantTypeInput? = null,
@@ -147,7 +147,7 @@ class GeneHasActivatingMutation(
     private fun isSubclonal(variant: Variant) = variant.clonalLikelihood?.let { it < CLONAL_CUTOFF } == true
 
     private fun ignoredCodon(
-        codonsToIgnore: List<String>?, variant: Variant
+        codonsToIgnore: Set<String>?, variant: Variant
     ) = codonsToIgnore == null || codonsToIgnore.none {
         isCodonMatch(
             variant.canonicalImpact.affectedCodon, it
