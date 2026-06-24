@@ -117,14 +117,19 @@ class TreatmentHistoryEntryFunctionsTest {
 
     @Test
     fun `Should return single-stage entry with aggregated treatments and cycles for matching multi-stage treatment`() {
-        val maintenanceTreatment = treatmentStage(drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY))
+        val maintenanceTreatment = treatmentStage(drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)),
             maintenanceTreatment = maintenanceTreatment,
             numCycles = 2
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
-            .isEqualTo(entry.copy(treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(cycles = 5, maintenanceTreatment = null)))
+            .isEqualTo(
+                entry.copy(
+                    treatments = entry.treatments + maintenanceTreatment.treatment,
+                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(cycles = 5, maintenanceTreatment = null)
+                )
+            )
     }
 
     @Test
@@ -139,7 +144,7 @@ class TreatmentHistoryEntryFunctionsTest {
     }
 
     @Test
-    fun `Should return single-stage entry with aggregated treatments and cycles for partially matching multi-stage treatment`() {
+    fun `Should override stop date to start of non-matching maintenance stage`() {
         val maintenanceTreatment = treatmentStage(
             drugTreatment("maintenance treatment", TreatmentCategory.SUPPORTIVE_TREATMENT), startYear = 2021, startMonth = 4
         )
@@ -153,9 +158,8 @@ class TreatmentHistoryEntryFunctionsTest {
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
                 entry.copy(
-                    treatments = entry.treatments,
                     treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
-                        cycles = 5,
+                        cycles = 2,
                         maintenanceTreatment = null,
                         stopYear = maintenanceTreatment.startYear,
                         stopMonth = maintenanceTreatment.startMonth
@@ -165,7 +169,7 @@ class TreatmentHistoryEntryFunctionsTest {
     }
 
     @Test
-    fun `Should not alter stop date when intermediate stage does not match`() {
+    fun `Should aggregate matching additional stage treatment with base treatment`() {
         val maintenanceTreatment = treatmentStage(
             drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY), startYear = 2021, startMonth = 4
         )
@@ -191,7 +195,7 @@ class TreatmentHistoryEntryFunctionsTest {
     @Test
     fun `Should return entry representing matching stages when base treatment does not match`() {
         val maintenanceTreatment = treatmentStage(
-            drugTreatment("maintenance treatment", TreatmentCategory.SUPPORTIVE_TREATMENT), startYear = 2021, startMonth = 4
+            drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY), startYear = 2021, startMonth = 4
         )
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.TARGETED_THERAPY)),
@@ -205,11 +209,12 @@ class TreatmentHistoryEntryFunctionsTest {
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
                 entry.copy(
+                    treatments = setOf(maintenanceTreatment.treatment),
+                    startYear = maintenanceTreatment.startYear,
+                    startMonth = maintenanceTreatment.startMonth,
                     treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
-                        cycles = 3,
                         maintenanceTreatment = null,
-                        stopYear = maintenanceTreatment.startYear,
-                        stopMonth = maintenanceTreatment.startMonth,
+                        cycles = null
                     )
                 )
             )
