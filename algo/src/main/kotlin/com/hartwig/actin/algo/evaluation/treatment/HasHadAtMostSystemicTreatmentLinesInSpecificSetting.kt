@@ -29,7 +29,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
 
         return when {
             includedIntentTreatments.isEmpty() ->
-                EvaluationFactory.pass("Has had no prior systemic treatment in $settingMessage - within maximum of $maximumLines line(s)")
+                EvaluationFactory.pass("Has had no prior systemic treatment in $settingMessage - thus within maximum of $maximumLines line(s)")
 
             palliativeIntentTreatments.size > maximumLines ->
                 EvaluationFactory.fail(
