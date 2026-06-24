@@ -89,7 +89,6 @@
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",
         "stopReasonDetail": null,
-        "switchToTreatments": null,
         "maintenanceTreatment": {
           "treatment": {
             "name": "PEMETREXED",
@@ -157,7 +156,6 @@
         "bestResponse": "STABLE_DISEASE",
         "stopReason": "TOXICITY",
         "stopReasonDetail": null,
-        "switchToTreatments": null,
         "maintenanceTreatment": null
       },
       "toxicities": [

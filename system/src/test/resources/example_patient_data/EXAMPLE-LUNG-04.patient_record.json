@@ -88,7 +88,6 @@
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",
         "stopReasonDetail": null,
-        "switchToTreatments": null,
         "maintenanceTreatment": null
       },
       "toxicities": [
