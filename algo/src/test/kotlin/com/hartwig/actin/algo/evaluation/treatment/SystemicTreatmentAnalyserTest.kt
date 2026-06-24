@@ -5,8 +5,11 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.fir
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.lastSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.maxSystemicTreatments
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.minSystemicTreatments
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.partitionByIntent
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.partitionRecentTreatments
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -175,6 +178,62 @@ class SystemicTreatmentAnalyserTest {
             SystemicTreatmentAnalyser.TreatmentTiming.OUTSIDE,
             SystemicTreatmentAnalyser.TreatmentTiming.AMBIGUOUS
         )
+    }
+
+    @Test
+    fun `partitionByIntent should place treatments with ignored intent in excluded partition`() {
+        val curative = systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.CURATIVE))
+        val palliative = systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.PALLIATIVE))
+        val nullIntent = systemicTreatmentHistoryEntry.copy(intents = null)
+        val (excluded, included) = partitionByIntent(
+            listOf(curative, palliative, nullIntent),
+            Intent.curativeAdjuvantNeoadjuvantSet()
+        )
+        assertThat(excluded).containsExactly(curative)
+        assertThat(included).containsExactly(palliative, nullIntent)
+    }
+
+    @Test
+    fun `partitionByIntent should place all treatments in included when no intents are ignored`() {
+        val entries = listOf(
+            systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.CURATIVE)),
+            systemicTreatmentHistoryEntry.copy(intents = null)
+        )
+        val (excluded, included) = partitionByIntent(entries, emptySet())
+        assertThat(excluded).isEmpty()
+        assertThat(included).containsExactlyElementsOf(entries)
+    }
+
+    @Test
+    fun `partitionRecentTreatments should place treatments stopped within minDate in recent partition`() {
+        val minDate = referenceDate.minusMonths(6)
+        val recent = treatmentHistoryEntry(
+            setOf(systemicTreatment),
+            stopYear = referenceDate.minusMonths(1).year,
+            stopMonth = referenceDate.minusMonths(1).monthValue
+        )
+        val nonRecent = treatmentHistoryEntry(
+            setOf(systemicTreatment),
+            stopYear = referenceDate.minusMonths(8).year,
+            stopMonth = referenceDate.minusMonths(8).monthValue
+        )
+        val (recentPartition, nonRecentPartition) = partitionRecentTreatments(listOf(recent, nonRecent), minDate, false)
+        assertThat(recentPartition).containsExactly(recent)
+        assertThat(nonRecentPartition).containsExactly(nonRecent)
+    }
+
+    @Test
+    fun `partitionRecentTreatments should place unknown-date treatments according to includeUnknown flag`() {
+        val minDate = referenceDate.minusMonths(6)
+        val unknownDate = treatmentHistoryEntry(setOf(systemicTreatment))
+
+        val (recentWhenIncluded, nonRecentWhenIncluded) = partitionRecentTreatments(listOf(unknownDate), minDate, true)
+        assertThat(recentWhenIncluded).containsExactly(unknownDate)
+        assertThat(nonRecentWhenIncluded).isEmpty()
+
+        val (recentWhenExcluded, nonRecentWhenExcluded) = partitionRecentTreatments(listOf(unknownDate), minDate, false)
+        assertThat(recentWhenExcluded).isEmpty()
+        assertThat(nonRecentWhenExcluded).containsExactly(unknownDate)
     }
 
     private fun assertNameForSystemicTreatmentHistoryEntry(

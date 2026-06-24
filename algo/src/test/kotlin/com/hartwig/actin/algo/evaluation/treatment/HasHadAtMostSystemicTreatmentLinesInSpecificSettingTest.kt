@@ -7,16 +7,20 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
 class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
 
+    private val referenceDate = LocalDate.of(2024, 11, 26)
+    private val recentDate = referenceDate.minusMonths(1)
+    private val nonRecentDate = referenceDate.minusMonths(8)
     private val function = HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+        referenceDate = referenceDate,
         intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
         settingDescription = "metastatic",
         maximumLines = 2
     )
-    private val treatment = createTreatment(intent = null)
 
     @Test
     fun `Should pass with no prior systemic treatment`() {
@@ -34,23 +38,44 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
     @Test
     fun `Should fail if palliative lines alone exceed maximum`() {
         val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.PALLIATIVE, Intent.PALLIATIVE).map { treatment.copy(intents = setOf(it)) }
+            listOf(Intent.PALLIATIVE, Intent.PALLIATIVE, Intent.PALLIATIVE).map { createTreatment(it) }
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
     @Test
-    fun `Should fail when total lines exceed maximum plus one uncertain buffer`() {
+    fun `Should fail when probable lines exceed maximum plus one buffer`() {
         val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.MAINTENANCE, Intent.INDUCTION, null).map { treatment.copy(intents = it?.let { setOf(it) }) }
+            listOf(
+                createTreatment(Intent.PALLIATIVE),
+                createTreatment(Intent.MAINTENANCE, stopYear = recentDate.year, stopMonth = recentDate.monthValue),
+                createTreatment(Intent.INDUCTION, stopYear = recentDate.year, stopMonth = recentDate.monthValue),
+                createTreatment(null, stopYear = recentDate.year, stopMonth = recentDate.monthValue)
+            )
         )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
     @Test
-    fun `Should be undetermined when uncertain lines could push total over maximum`() {
+    fun `Should be undetermined when probable lines could push total over maximum`() {
         val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.MAINTENANCE, null).map { treatment.copy(intents = it?.let { setOf(it) }) }
+            listOf(
+                createTreatment(Intent.PALLIATIVE),
+                createTreatment(Intent.MAINTENANCE, stopYear = recentDate.year, stopMonth = recentDate.monthValue),
+                createTreatment(null, stopYear = recentDate.year, stopMonth = recentDate.monthValue)
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should be undetermined when non-recent uncertain lines could push total over maximum`() {
+        val record = withTreatmentHistory(
+            listOf(
+                createTreatment(Intent.PALLIATIVE),
+                createTreatment(null, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue),
+                createTreatment(null, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue)
+            )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
@@ -58,21 +83,37 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
     @Test
     fun `Should pass when total included lines are at the maximum`() {
         val record = withTreatmentHistory(
-            listOf(Intent.PALLIATIVE, Intent.MAINTENANCE).map { treatment.copy(intents = setOf(it)) }
+            listOf(
+                createTreatment(Intent.PALLIATIVE),
+                createTreatment(Intent.MAINTENANCE, stopYear = recentDate.year, stopMonth = recentDate.monthValue)
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should pass when non-recent uncertain lines stay within maximum`() {
+        val record = withTreatmentHistory(
+            listOf(
+                createTreatment(Intent.PALLIATIVE),
+                createTreatment(null, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue)
+            )
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
     @Test
     fun `Should pass when included lines are below the maximum`() {
-        val record = withTreatmentHistory(listOf(treatment.copy(intents = setOf(Intent.PALLIATIVE))))
+        val record = withTreatmentHistory(listOf(createTreatment(Intent.PALLIATIVE)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
     }
 
-    private fun createTreatment(intent: Intent?): TreatmentHistoryEntry {
+    private fun createTreatment(intent: Intent?, stopYear: Int? = null, stopMonth: Int? = null): TreatmentHistoryEntry {
         return treatmentHistoryEntry(
             setOf(TreatmentTestFactory.treatment("treatment", isSystemic = true)),
-            intents = intent?.let { setOf(it) }
+            intents = intent?.let { setOf(it) },
+            stopYear = stopYear,
+            stopMonth = stopMonth
         )
     }
 }

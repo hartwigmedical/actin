@@ -760,6 +760,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
                 intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
                 settingDescription = "metastatic",
                 maximumLines = function.param<IntegerParameter>(0).value
@@ -770,6 +771,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
                 intentsToIgnore = setOf(Intent.CURATIVE),
                 settingDescription = "advanced or metastatic",
                 maximumLines = function.param<IntegerParameter>(0).value

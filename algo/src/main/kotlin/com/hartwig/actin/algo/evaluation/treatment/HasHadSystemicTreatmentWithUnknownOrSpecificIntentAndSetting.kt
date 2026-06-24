@@ -117,8 +117,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         nonCurativeTreatments: List<TreatmentHistoryEntry>,
         includeUnknown: Boolean
     ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
-        return nonCurativeTreatments
-            .partition { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, referenceDate.minusMonths(6), includeUnknown) }
+        return SystemicTreatmentAnalyser.partitionRecentTreatments(nonCurativeTreatments, referenceDate.minusMonths(6), includeUnknown)
     }
 
     private fun createMessage(string: String, treatments: List<TreatmentHistoryEntry>): String {

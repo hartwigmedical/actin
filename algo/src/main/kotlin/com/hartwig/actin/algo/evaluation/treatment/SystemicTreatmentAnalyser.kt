@@ -29,6 +29,14 @@ object SystemicTreatmentAnalyser {
         return systemicTreatments.partition { it.intents?.any { intent -> intentsToIgnore.contains(intent) } == true }
     }
 
+    fun partitionRecentTreatments(
+        treatments: List<TreatmentHistoryEntry>,
+        minDate: LocalDate,
+        includeUnknown: Boolean
+    ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
+        return treatments.partition { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate, includeUnknown) }
+    }
+
     fun maxSystemicTreatments(treatmentHistory: List<TreatmentHistoryEntry>): Int {
         return treatmentHistory.count(::treatmentHistoryEntryIsSystemic)
     }
