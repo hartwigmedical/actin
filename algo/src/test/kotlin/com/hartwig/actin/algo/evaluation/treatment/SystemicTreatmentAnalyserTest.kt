@@ -181,7 +181,7 @@ class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    fun `partitionByIntent should place treatments with ignored intent in excluded partition`() {
+    fun `Should place treatments with ignored intent in excluded partition`() {
         val curative = systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.CURATIVE))
         val palliative = systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.PALLIATIVE))
         val nullIntent = systemicTreatmentHistoryEntry.copy(intents = null)
@@ -194,7 +194,7 @@ class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    fun `partitionByIntent should place all treatments in included when no intents are ignored`() {
+    fun `Should place all treatments in included when no intents are ignored`() {
         val entries = listOf(
             systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.CURATIVE)),
             systemicTreatmentHistoryEntry.copy(intents = null)
@@ -205,7 +205,7 @@ class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    fun `partitionRecentTreatments should place treatments stopped within minDate in recent partition`() {
+    fun `Should place treatments stopped within minDate in recent partition`() {
         val minDate = referenceDate.minusMonths(6)
         val recent = treatmentHistoryEntry(
             setOf(systemicTreatment),
@@ -223,7 +223,7 @@ class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    fun `partitionRecentTreatments should place unknown-date treatments according to includeUnknown flag`() {
+    fun `Should place unknown-date treatments according to includeUnknown flag`() {
         val minDate = referenceDate.minusMonths(6)
         val unknownDate = treatmentHistoryEntry(setOf(systemicTreatment))
 

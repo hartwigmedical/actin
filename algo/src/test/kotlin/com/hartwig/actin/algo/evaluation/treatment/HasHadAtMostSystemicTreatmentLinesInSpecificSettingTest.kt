@@ -57,7 +57,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
     }
 
     @Test
-    fun `Should be undetermined when probable lines could push total over maximum`() {
+    fun `Should be undetermined when uncertain lines could push total over maximum`() {
         val record = withTreatmentHistory(
             listOf(
                 createTreatment(Intent.PALLIATIVE),
