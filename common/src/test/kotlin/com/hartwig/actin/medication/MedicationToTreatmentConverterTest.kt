@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.interpretation
+package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -10,9 +10,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import java.time.LocalDate
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class MedicationToTreatmentConverterTest {
 

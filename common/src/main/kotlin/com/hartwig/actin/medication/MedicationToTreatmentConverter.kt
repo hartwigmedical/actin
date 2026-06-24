@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.interpretation
+package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
@@ -15,7 +15,7 @@ object MedicationToTreatmentConverter {
     fun convert(medications: List<Medication>, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
         val treatmentsByDrug = createTreatmentHistoryEntryPerDrugMap(treatmentHistory)
         return medications.filter { medication ->
-            val isSystemicCancerTreatment = medication.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
+            val isSystemicCancerTreatment = medication.drug?.category in TreatmentCategory.Companion.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
             val hasNoMatchingTreatmentHistoryEntry =
                 medication.drug?.let(treatmentsByDrug::get)?.none { matchesDate(medication, it) } ?: true
             val mayBeActive = medication.status == null || medication.status == MedicationStatus.ACTIVE
@@ -29,6 +29,7 @@ object MedicationToTreatmentConverter {
                     startYear = start?.year,
                     startMonth = start?.monthValue,
                     treatments = setOf(DrugTreatment(name = name, drugs = setOfNotNull(drug))),
+                    isTrial = true,
                     treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
                 )
             }
