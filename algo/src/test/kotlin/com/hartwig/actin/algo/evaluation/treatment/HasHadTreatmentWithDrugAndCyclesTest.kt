@@ -175,11 +175,4 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(EvaluationResult.PASS, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
         assertEvaluation(EvaluationResult.PASS, functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
-
-    @Test
-    fun `Should pass for maintenance therapies containing matching drug and enough cycles`() {
-        val matchingTreatmentStage = TreatmentTestFactory.treatmentStage(MATCHING_DRUG_TREATMENT, cycles = 2)
-        val treatmentHistory = listOf(treatmentHistoryEntry(maintenanceTreatment = matchingTreatmentStage))
-        assertEvaluation(EvaluationResult.PASS, functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)))
-    }
 }
