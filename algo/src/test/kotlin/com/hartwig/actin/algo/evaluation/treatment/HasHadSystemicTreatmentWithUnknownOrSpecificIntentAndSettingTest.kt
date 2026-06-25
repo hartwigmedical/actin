@@ -12,7 +12,7 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class HasHadSystemicTreatmentInAdvancedOrMetastaticSettingTest {
+class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
 
     private val referenceDate = LocalDate.of(2024, 11, 26)
     private val recentDate = referenceDate.minusMonths(1)
