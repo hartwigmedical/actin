@@ -11,7 +11,7 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val effectiveTreatmentHistory = record.oncologicalHistory + MedicationToTreatmentConverter.convert(record.medications ?: emptyList(), record.oncologicalHistory)
+        val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(record.medications, record.oncologicalHistory)
 
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(effectiveTreatmentHistory, category)
 

@@ -91,10 +91,9 @@ class ClinicalSummaryGenerator(
         val treatmentWidth = valueWidth - dateWidth
         val table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, treatmentHistory)
         val systemicTreatmentHistory = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
 
-        (systemicTreatmentHistory + medicationsToAdd).sortedWith(TreatmentHistoryAscendingDateComparator())
+        (MedicationToTreatmentConverter.convertAndCombine(medications, systemicTreatmentHistory)).sortedWith(TreatmentHistoryAscendingDateComparator())
             .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
             .forEach { (key, historyEntries) ->
                 val details =

@@ -2,17 +2,17 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.medication.MedicationToTreatmentConverter
 
 class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val hasHadDrug = (record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(record.medications)).any { entry ->
+        val hasHadDrug = (MedicationToTreatmentConverter.convertAndCombine(record.medications, record.oncologicalHistory)).any { entry ->
             entry.treatments.any { treatment ->
                 (treatment as? DrugTreatment)?.drugs?.any { it.name.equals(drug.name, ignoreCase = true) } == true
             }

@@ -12,10 +12,14 @@ import java.time.YearMonth
 
 object MedicationToTreatmentConverter {
 
+    fun convertAndCombine(medications: List<Medication>?, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
+        return treatmentHistory + convert(medications ?: emptyList(), treatmentHistory)
+    }
+
     fun convert(medications: List<Medication>, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
         val treatmentsByDrug = createTreatmentHistoryEntryPerDrugMap(treatmentHistory)
         return medications.filter { medication ->
-            val isSystemicCancerTreatment = medication.drug?.category in TreatmentCategory.Companion.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
+            val isSystemicCancerTreatment = medication.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
             val hasNoMatchingTreatmentHistoryEntry =
                 medication.drug?.let(treatmentsByDrug::get)?.none { matchesDate(medication, it) } ?: true
             val mayBeActive = medication.status == null || medication.status == MedicationStatus.ACTIVE
@@ -25,11 +29,12 @@ object MedicationToTreatmentConverter {
             .mapNotNull { (drug, medications) ->
                 val (start, stop) = extractStartAndStopRange(medications)
                 val name = drug?.name?.lowercase()?.replaceFirstChar { char -> char.uppercase() } ?: "Unknown"
+                val isTrialMedication = medications.all { it.isTrialMedication }
                 TreatmentHistoryEntry(
                     startYear = start?.year,
                     startMonth = start?.monthValue,
                     treatments = setOf(DrugTreatment(name = name, drugs = setOfNotNull(drug))),
-                    isTrial = true,
+                    isTrial = isTrialMedication,
                     treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
                 )
             }
