@@ -93,7 +93,7 @@ class HasSpecificMetastasesOnlyTest {
 
     @Test
     fun `Should fail when patient has liver lesion but also other lesion`() {
-        val record = TumorTestFactory.withConfirmedLesions(hasLiverLesions = true, otherLesions = listOf("skin"))
+        val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(otherLesions = listOf("skin")))
 
         assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record))
         assertEvaluation(EvaluationResult.FAIL, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
