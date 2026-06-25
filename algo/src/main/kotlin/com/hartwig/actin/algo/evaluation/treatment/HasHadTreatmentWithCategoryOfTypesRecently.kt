@@ -22,7 +22,9 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(
-                record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }, record.oncologicalHistory)
+            record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE },
+            record.oncologicalHistory
+        )
 
         val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
             val categoryMatch = category in treatmentHistoryEntry.categories()

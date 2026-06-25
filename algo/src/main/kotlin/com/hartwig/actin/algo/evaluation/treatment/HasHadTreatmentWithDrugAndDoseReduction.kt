@@ -12,7 +12,8 @@ class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : Evaluati
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
-        val hasHadDrug = (MedicationToTreatmentConverter.convertAndCombine(record.medications, record.oncologicalHistory)).any { entry ->
+        val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(record.medications, record.oncologicalHistory)
+        val hasHadDrug = effectiveTreatmentHistory.any { entry ->
             entry.treatments.any { treatment ->
                 (treatment as? DrugTreatment)?.drugs?.any { it.name.equals(drug.name, ignoreCase = true) } == true
             }

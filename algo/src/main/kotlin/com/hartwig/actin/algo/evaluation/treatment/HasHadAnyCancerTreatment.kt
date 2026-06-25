@@ -14,7 +14,10 @@ class HasHadAnyCancerTreatment(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val effectiveTreatmentHistoryWithoutTrialMedication = MedicationToTreatmentConverter.convertAndCombine(record.medications?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() }, record.oncologicalHistory)
+        val effectiveTreatmentHistoryWithoutTrialMedication = MedicationToTreatmentConverter.convertAndCombine(
+            record.medications?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() },
+            record.oncologicalHistory
+        )
 
         val hasHadPriorCancerTreatment =
             if (categoriesToIgnore.isEmpty()) {

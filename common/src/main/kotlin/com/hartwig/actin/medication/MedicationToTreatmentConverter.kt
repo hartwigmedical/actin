@@ -23,7 +23,7 @@ object MedicationToTreatmentConverter {
             val hasNoMatchingTreatmentHistoryEntry =
                 medication.drug?.let(treatmentsByDrug::get)?.none { matchesDate(medication, it) } ?: true
             val mayBeActive = medication.status == null || medication.status == MedicationStatus.ACTIVE
-            isSystemicCancerTreatment && hasNoMatchingTreatmentHistoryEntry && mayBeActive
+            (isSystemicCancerTreatment || medication.isTrialMedication) && hasNoMatchingTreatmentHistoryEntry && mayBeActive
         }
             .groupBy { it.drug }
             .mapNotNull { (drug, medications) ->
