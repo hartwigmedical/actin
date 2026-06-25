@@ -28,7 +28,9 @@ class HasSpecificMetastasesOnly(
             val hasMetastasesOutsideTargetMetastases = otherMetastasesValues.any { it == true } || otherLesions?.isNotEmpty() == true
             val hasSuspectedMetastasesOutsideTargetMetastases =
                 suspectedOtherMetastasesValues.any { it == true } || otherSuspectedLesions?.isNotEmpty() == true
-            val hasNoMetastasesOutsideTargetMetastases = !hasMetastasesOutsideTargetMetastases && !hasSuspectedMetastasesOutsideTargetMetastases
+            val hasNoMetastasesOutsideTargetMetastases =
+                otherMetastasesValues.all { it == false } && otherLesions.isNullOrEmpty() &&
+                        suspectedOtherMetastasesValues.none { it == true } && otherSuspectedLesions.isNullOrEmpty()
 
             return when {
                 hasTargetMetastases && hasNoMetastasesOutsideTargetMetastases -> {
