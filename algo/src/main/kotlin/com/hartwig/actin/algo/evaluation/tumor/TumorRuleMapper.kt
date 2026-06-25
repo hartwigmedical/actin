@@ -59,6 +59,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES_ONLY to hasOnlyLiverMetastasesCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
+            EligibilityRule.HAS_LIVER_AND_OR_LYMPH_NODE_AND_OR_LUNG_METASTASES_ONLY to hasOnlyLiverAndOrLymphNodeAndOrLungMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_CNS_METASTASES to hasKnownCnsMetastasesCreator(),
             EligibilityRule.HAS_ACTIVE_CNS_METASTASES to hasKnownActiveCnsMetastasesCreator(),
             EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES to hasKnownSymptomaticCnsMetastasesCreator(),
@@ -282,9 +283,31 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
         return {
             HasSpecificMetastasesOnly(
-                TumorDetails::hasLiverLesions,
-                TumorDetails::hasSuspectedLiverLesions,
-                TumorDetails.LIVER.lowercase()
+                listOf(TumorDetails::hasLiverLesions),
+                listOf(TumorDetails::hasSuspectedLiverLesions),
+                "liver"
+            )
+        }
+    }
+
+    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
+        return { MeetsSpecificCriteriaRegardingLiverMetastases() }
+    }
+
+    private fun hasOnlyLiverAndOrLymphNodeAndOrLungMetastasesCreator(): FunctionCreator {
+        return {
+            HasSpecificMetastasesOnly(
+                listOf(
+                    TumorDetails::hasLiverLesions,
+                    TumorDetails::hasLymphNodeLesions,
+                    TumorDetails::hasLungLesions
+                ),
+                listOf(
+                    TumorDetails::hasSuspectedLiverLesions,
+                    TumorDetails::hasSuspectedLymphNodeLesions,
+                    TumorDetails::hasSuspectedLungLesions
+                ),
+                "liver and/or lymph node and/or lung"
             )
         }
     }
@@ -328,9 +351,9 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
         return {
             HasSpecificMetastasesOnly(
-                TumorDetails::hasBoneLesions,
-                TumorDetails::hasSuspectedBoneLesions,
-                TumorDetails.BONE.lowercase()
+                listOf(TumorDetails::hasBoneLesions),
+                listOf(TumorDetails::hasSuspectedBoneLesions),
+                "bone"
             )
         }
     }
@@ -451,10 +474,6 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
         return { HasLeftSidedColorectalTumor(doidModel()) }
-    }
-
-    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
-        return { MeetsSpecificCriteriaRegardingLiverMetastases() }
     }
 
     private fun hasSymptomsOfPrimaryTumorInSitu(): FunctionCreator {
