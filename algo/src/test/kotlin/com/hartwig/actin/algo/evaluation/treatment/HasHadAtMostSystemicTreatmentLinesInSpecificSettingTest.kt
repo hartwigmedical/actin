@@ -44,7 +44,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessagesStrings()).containsExactly("Has had more than 2 systemic treatment line(s) with palliative " +
-                "intent in metastatic setting (Treatment)")
+                "intent in metastatic setting")
     }
 
     @Test
@@ -60,7 +60,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessagesStrings()).containsExactly("Likely exceeded maximum of 2 systemic treatment line(s) in " +
-                "metastatic setting (4 lines likely in metastatic setting) (Treatment)")
+                "metastatic setting (4 lines likely in metastatic setting)")
     }
 
     @Test
@@ -75,7 +75,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Uncertain whether maximum of 2 systemic treatment line(s) " +
-                "in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some) (Treatment)")
+                "in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some)")
     }
 
     @Test
@@ -91,7 +91,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded" +
-                    " (3 lines likely in metastatic setting, setting unclear for some) (Treatment)"
+                    " (3 lines likely in metastatic setting, setting unclear for some)"
         )
     }
 
@@ -109,7 +109,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.failMessagesStrings()).containsExactly(
             "Likely exceeded maximum of 2 systemic treatment line(s) in metastatic setting" +
-                    " (4 lines likely in metastatic setting) (Treatment)"
+                    " (4 lines likely in metastatic setting)"
         )
     }
 
@@ -125,7 +125,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Uncertain whether maximum of 2 systemic treatment line(s) " +
-                "in metastatic setting is exceeded (3 lines with non-excluded intent, setting unclear for older lines) (Treatment)")
+                "in metastatic setting is exceeded (3 lines with non-excluded intent, setting unclear for older lines)")
     }
 
     @Test
