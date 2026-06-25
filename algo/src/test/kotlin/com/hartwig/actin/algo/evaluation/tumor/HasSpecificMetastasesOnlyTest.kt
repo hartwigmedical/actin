@@ -17,17 +17,17 @@ class HasSpecificMetastasesOnlyTest {
     )
 
     @Test
-    fun `Should pass when patient has liver metastases only for both functions`() {
-        val record = TumorTestFactory.withTumorDetails(noOutsideLesions(hasLiverLesions = true))
+    fun `Should pass when patient has liver metastases only`() {
+        val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true))
 
         assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record))
         assertEvaluation(EvaluationResult.PASS, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
     }
 
     @Test
-    fun `Should pass when patient has liver metastases only and only suspected lesions data is missing for both functions`() {
+    fun `Should pass when patient has liver metastases only and only suspected lesions data is missing`() {
         val record = TumorTestFactory.withTumorDetails(
-            noOutsideLesions(hasLiverLesions = true).copy(
+            withNoOutsideLesions(hasLiverLesions = true).copy(
                 otherSuspectedLesions = null,
                 hasSuspectedBrainLesions = null
             )
@@ -38,20 +38,20 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should pass when patient has lymph node metastases for hasLiverAndOrLymphNodeAndOrLungMetastasesOnly`() {
+    fun `Should pass when patient has only lymph node metastases`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(noOutsideLesions(hasLymphNodeLesions = true)))
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLymphNodeLesions = true)))
         )
     }
 
     @Test
-    fun `Should pass when patient has liver, lymph node and lung metastases for hasLiverAndOrLymphNodeAndOrLungMetastasesOnly`() {
+    fun `Should pass when patient has liver, lymph node and lung metastases only`() {
         assertEvaluation(
             EvaluationResult.PASS,
             hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(
                 TumorTestFactory.withTumorDetails(
-                    noOutsideLesions(
+                    withNoOutsideLesions(
                         hasLiverLesions = true,
                         hasLymphNodeLesions = true,
                         hasLungLesions = true
@@ -62,7 +62,7 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should fail when patient has no liver metastases for hasLiverMetastasesOnly`() {
+    fun `Should fail when patient has no liver metastases`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             hasLiverMetastasesOnly.evaluate(TumorTestFactory.withConfirmedLesions(hasLiverLesions = false))
@@ -70,7 +70,7 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should fail when patient has no liver, lymph node or lung metastases for hasLiverAndOrLymphNodeAndOrLungMetastasesOnly`() {
+    fun `Should fail when patient has no liver, lymph node or lung metastases`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(
@@ -84,7 +84,7 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should fail when patient has liver lesion but also bone metastases for both functions`() {
+    fun `Should fail when patient has liver lesion but also bone metastases`() {
         val record = TumorTestFactory.withConfirmedLesions(hasLiverLesions = true, hasBoneLesions = true)
 
         assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record))
@@ -92,7 +92,7 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should fail when patient has liver lesion but also other lesion for both functions`() {
+    fun `Should fail when patient has liver lesion but also other lesion`() {
         val record = TumorTestFactory.withConfirmedLesions(hasLiverLesions = true, otherLesions = listOf("skin"))
 
         assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record))
@@ -100,8 +100,8 @@ class HasSpecificMetastasesOnlyTest {
     }
 
     @Test
-    fun `Should be undetermined when only suspected liver metastases exist for both functions`() {
-        val record = TumorTestFactory.withBoneAndSuspectedLiverLesions(false, true)
+    fun `Should be undetermined when only suspected liver metastases exist`() {
+        val record = TumorTestFactory.withBoneAndSuspectedLiverLesions(hasBoneLesions = false, hasSuspectedLiverLesions = true)
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
@@ -114,7 +114,7 @@ class HasSpecificMetastasesOnlyTest {
 
     @Test
     fun `Should be undetermined when liver lesion is present but suspected bone lesions exist`() {
-        val record = TumorTestFactory.withTumorDetails(noOutsideLesions(hasLiverLesions = true).copy(hasSuspectedBoneLesions = true))
+        val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(hasSuspectedBoneLesions = true))
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
@@ -128,7 +128,7 @@ class HasSpecificMetastasesOnlyTest {
     @Test
     fun `Should be undetermined when liver lesion is present but suspected other lesions exist`() {
         val record =
-            TumorTestFactory.withTumorDetails(noOutsideLesions(hasLiverLesions = true).copy(otherSuspectedLesions = listOf("lesion")))
+            TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(otherSuspectedLesions = listOf("lesion")))
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
@@ -159,7 +159,7 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
     }
 
-    private fun noOutsideLesions(
+    private fun withNoOutsideLesions(
         hasLiverLesions: Boolean = false,
         hasLymphNodeLesions: Boolean = false,
         hasLungLesions: Boolean = false

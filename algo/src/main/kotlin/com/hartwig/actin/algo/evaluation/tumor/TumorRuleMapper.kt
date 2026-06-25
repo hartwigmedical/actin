@@ -298,12 +298,16 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return {
             HasSpecificMetastasesOnly(
                 listOf(
-                    TumorDetails::hasLiverLesions, TumorDetails::hasLymphNodeLesions, TumorDetails::hasLungLesions
-                ), listOf(
+                    TumorDetails::hasLiverLesions,
+                    TumorDetails::hasLymphNodeLesions,
+                    TumorDetails::hasLungLesions
+                ),
+                listOf(
                     TumorDetails::hasSuspectedLiverLesions,
                     TumorDetails::hasSuspectedLymphNodeLesions,
                     TumorDetails::hasSuspectedLungLesions
-                ), "liver and/or lymph node and/or lung"
+                ),
+                "liver and/or lymph node and/or lung"
             )
         }
     }
