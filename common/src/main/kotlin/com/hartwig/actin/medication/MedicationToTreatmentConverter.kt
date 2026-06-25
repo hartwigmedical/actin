@@ -13,12 +13,8 @@ import java.time.YearMonth
 object MedicationToTreatmentConverter {
 
     fun convertAndCombine(medications: List<Medication>?, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
-        return treatmentHistory + convert(medications ?: emptyList(), treatmentHistory)
-    }
-
-    fun convert(medications: List<Medication>, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
         val treatmentsByDrug = createTreatmentHistoryEntryPerDrugMap(treatmentHistory)
-        return medications.filter { medication ->
+        return treatmentHistory + (medications ?: emptyList()).filter { medication ->
             val isSystemicCancerTreatment = medication.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
             val hasNoMatchingTreatmentHistoryEntry =
                 medication.drug?.let(treatmentsByDrug::get)?.none { matchesDate(medication, it) } ?: true

@@ -33,7 +33,7 @@ class MedicationToTreatmentConverterTest {
 
     @Test
     fun `Should convert medications not already present in treatment history to a treatment history`() {
-        val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, oncologicalHistory)
+        val medicationsToAdd = MedicationToTreatmentConverter.convertAndCombine(medications, oncologicalHistory)
         Assertions.assertThat(medicationsToAdd.size).isEqualTo(1)
         Assertions.assertThat(medicationsToAdd.first()).isEqualTo(
             createTreatmentHistoryEntry("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, 2023, 2023).copy(
