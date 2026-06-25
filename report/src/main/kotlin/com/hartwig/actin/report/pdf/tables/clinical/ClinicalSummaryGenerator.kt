@@ -11,7 +11,7 @@ import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.MedicationToTreatmentConverter
+import com.hartwig.actin.medication.MedicationToTreatmentConverter
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells.create
@@ -91,10 +91,10 @@ class ClinicalSummaryGenerator(
         val treatmentWidth = valueWidth - dateWidth
         val table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, treatmentHistory)
         val systemicTreatmentHistory = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
+        val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(medications, systemicTreatmentHistory)
 
-        (systemicTreatmentHistory + medicationsToAdd).sortedWith(TreatmentHistoryAscendingDateComparator())
+        effectiveTreatmentHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
             .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
             .forEach { (key, historyEntries) ->
                 val details =

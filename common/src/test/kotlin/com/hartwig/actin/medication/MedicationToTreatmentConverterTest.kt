@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.interpretation
+package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -10,9 +10,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import java.time.LocalDate
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class MedicationToTreatmentConverterTest {
 
@@ -33,14 +33,16 @@ class MedicationToTreatmentConverterTest {
 
     @Test
     fun `Should convert medications not already present in treatment history to a treatment history`() {
-        val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, oncologicalHistory)
-        Assertions.assertThat(medicationsToAdd.size).isEqualTo(1)
-        Assertions.assertThat(medicationsToAdd.first()).isEqualTo(
+        val medicationsAdded = MedicationToTreatmentConverter.convertAndCombine(medications, oncologicalHistory)
+        Assertions.assertThat(medicationsAdded.size - oncologicalHistory.size).isEqualTo(1)
+        Assertions.assertThat(
+            medicationsAdded.contains(
             createTreatmentHistoryEntry("Pembrolizumab", TreatmentCategory.IMMUNOTHERAPY, DrugType.PD_1_PD_L1_ANTIBODY, 2023, 2023).copy(
                 treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = 2023, stopMonth = 12),
                 startYear = 2023,
                 startMonth = 11,
                 intents = null,
+            )
             )
         )
     }
