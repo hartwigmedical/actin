@@ -1,7 +1,7 @@
 package com.hartwig.actin.util.json
 
-import com.google.gson.GsonBuilder
-import com.hartwig.actin.clinical.serialization.TreatmentAdapter
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.hartwig.actin.clinical.serialization.TreatmentDeserializer
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.DrugParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -12,13 +12,15 @@ import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
 import com.hartwig.actin.datamodel.trial.TreatmentParameter
 import com.hartwig.actin.treatment.database.TestTreatmentDatabaseFactory
 import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.trial.serialization.EligibilityFunctionDeserializer
+import com.hartwig.actin.trial.serialization.EligibilityFunctionSerializer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-class EligibilityFunctionDeserializerTest {
+class EligibilityFunctionAdapterTest {
 
     @Test
-    fun `Should deserialize eligibility function without modification`() {
+    fun `Should serialize and deserialize eligibility function`() {
         val function = EligibilityFunction(
             rule = EligibilityRule.NOT.name, parameters = listOf(
                 FunctionParameter(
@@ -26,13 +28,12 @@ class EligibilityFunctionDeserializerTest {
                 )
             )
         )
-        val gson = GsonBuilder().registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer()).create()
-
-        assertThat(gson.fromJson(gson.toJson(function), EligibilityFunction::class.java)).isEqualTo(function)
+        val mapper = mapper()
+        assertThat(mapper.readValue(mapper.writeValueAsString(function), EligibilityFunction::class.java)).isEqualTo(function)
     }
 
     @Test
-    fun `Should deserialize treatment and drug parameters with full objects`() {
+    fun `Should serialize and deserialize treatment and drug parameters with full objects`() {
         val treatmentDb = TestTreatmentDatabaseFactory.createProper()
         val treatment = requireNotNull(treatmentDb.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
         val drug = requireNotNull(treatmentDb.findDrugByName(TestTreatmentDatabaseFactory.CISPLATIN))
@@ -48,11 +49,17 @@ class EligibilityFunctionDeserializerTest {
             )
         )
 
-        val gson = GsonBuilder()
-            .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
-            .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
-            .create()
-
-        assertThat(gson.fromJson(gson.toJson(function), EligibilityFunction::class.java)).isEqualTo(function)
+        val mapper = mapper(includeTreatment = true)
+        assertThat(mapper.readValue(mapper.writeValueAsString(function), EligibilityFunction::class.java)).isEqualTo(function)
     }
+
+    private fun mapper(includeTreatment: Boolean = false) = ActinObjectMapper.create().registerModule(
+        SimpleModule().apply {
+            addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
+            addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
+            if (includeTreatment) {
+                addDeserializer(Treatment::class.java, TreatmentDeserializer)
+            }
+        }
+    )
 }
