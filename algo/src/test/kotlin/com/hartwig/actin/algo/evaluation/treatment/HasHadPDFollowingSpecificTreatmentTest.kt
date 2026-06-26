@@ -5,7 +5,6 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
-import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -45,16 +44,6 @@ class HasHadPDFollowingSpecificTreatmentTest {
     @Test
     fun `Should pass for matching treatment and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
-    }
-
-    @Test
-    fun `Should pass for matching switch to treatment and stop reason PD`() {
-        val treatmentHistoryEntry = treatmentHistoryEntry(
-            NON_MATCHING_TREATMENTS,
-            stopReason = StopReason.PROGRESSIVE_DISEASE,
-            switchToTreatments = listOf(treatmentStage(MATCHING_TREATMENTS.first()))
-        )
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 

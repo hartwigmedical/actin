@@ -81,7 +81,6 @@
         "bestResponse": null,
         "stopReason": null,
         "stopReasonDetail": null,
-        "switchToTreatments": null,
         "maintenanceTreatment": null,
         "toxicities": null,
         "bodyLocationCategories": [

@@ -104,10 +104,6 @@ CREATE TABLE `treatmentHistoryEntry`
     `maintenanceTreatment` varchar(100),
     `maintenanceTreatmentStartYear` int,
     `maintenanceTreatmentStartMonth` int,
-    `switchToTreatment` varchar(100),
-    `switchToTreatmentStartYear` int,
-    `switchToTreatmentStartMonth` int,
-    `switchToTreatmentCycles` int,
     PRIMARY KEY (`id`)
 );
 
