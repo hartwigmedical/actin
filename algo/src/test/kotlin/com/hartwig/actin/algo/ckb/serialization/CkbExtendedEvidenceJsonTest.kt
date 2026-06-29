@@ -20,18 +20,12 @@ class CkbExtendedEvidenceJsonTest {
     @Test
     fun `Can convert proper database back and forth JSON`() {
         val proper = CkbExtendedEvidenceTestFactory.createProperTestExtendedEvidenceDatabase()
-        assertThat(CkbExtendedEvidenceJson.fromJson(toJson(proper))).isEqualTo(proper)
+        assertThat(CkbExtendedEvidenceJson.fromJson(CkbExtendedEvidenceJson.toJson(proper))).isEqualTo(proper)
     }
 
     @Test
     fun `Can convert minimal database back and forth JSON`() {
         val minimal = CkbExtendedEvidenceTestFactory.createMinimalTestExtendedEvidenceDatabase()
-        assertThat(CkbExtendedEvidenceJson.fromJson(toJson(minimal))).isEqualTo(minimal)
-    }
-
-    companion object {
-        private fun toJson(entries: List<CkbExtendedEvidenceEntry>): String {
-            return CkbExtendedEvidenceJson.createGson().toJson(entries)
-        }
+        assertThat(CkbExtendedEvidenceJson.fromJson(CkbExtendedEvidenceJson.toJson(minimal))).isEqualTo(minimal)
     }
 }

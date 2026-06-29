@@ -1,10 +1,9 @@
 package com.hartwig.actin.doid.serialization
 
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ArrayNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.hartwig.actin.doid.datamodel.BasicPropertyValue
 import com.hartwig.actin.doid.datamodel.Definition
 import com.hartwig.actin.doid.datamodel.DoidEntry
@@ -16,37 +15,27 @@ import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.Restriction
 import com.hartwig.actin.doid.datamodel.Synonym
 import com.hartwig.actin.doid.datamodel.Xref
-import com.hartwig.actin.util.json.Json.array
-import com.hartwig.actin.util.json.Json.`object`
-import com.hartwig.actin.util.json.Json.optionalArray
-import com.hartwig.actin.util.json.Json.optionalBool
-import com.hartwig.actin.util.json.Json.optionalObject
-import com.hartwig.actin.util.json.Json.optionalString
-import com.hartwig.actin.util.json.Json.optionalStringList
-import com.hartwig.actin.util.json.Json.string
-import com.hartwig.actin.util.json.Json.stringList
 import com.hartwig.actin.util.json.JsonDatamodelChecker
 import io.github.oshai.kotlinlogging.KotlinLogging
-import java.io.FileReader
+import java.io.File
 
 object DoidJson {
 
     private val logger = KotlinLogging.logger {}
+    private val mapper = ObjectMapper()
 
     const val ID_TO_READ = "http://purl.obolibrary.org/obo/doid.owl"
 
     const val DOID_URL_PREFIX = "http://purl.obolibrary.org/obo/DOID_"
 
     fun readDoidOwlEntry(doidJson: String): DoidEntry {
-        val reader = JsonReader(FileReader(doidJson))
-        reader.isLenient = true
-        val rootObject: JsonObject = JsonParser.parseReader(reader).asJsonObject
+        val rootObject = readSingleObjectFromFile(doidJson, mapper)
         DatamodelCheckerFactory.rootObjectChecker().check(rootObject)
 
         var entry: DoidEntry? = null
-        val graphsChecker: JsonDatamodelChecker = DatamodelCheckerFactory.graphsChecker()
+        val graphsChecker = DatamodelCheckerFactory.graphsChecker()
         for (element in array(rootObject, "graphs")) {
-            val graph: JsonObject = element.asJsonObject
+            val graph = element as ObjectNode
             graphsChecker.check(graph)
             val id: String = string(graph, "id")
             if (id == ID_TO_READ) {
@@ -55,13 +44,10 @@ object DoidJson {
                     id = id,
                     nodes = extractNodes(array(graph, "nodes")),
                     edges = extractEdges(array(graph, "edges")),
-                    metadata = extractGraphMetadata(`object`(graph, "meta")),
+                    metadata = extractGraphMetadata(objectNode(graph, "meta")),
                     logicalDefinitionAxioms = extractLogicalDefinitionAxioms(optionalArray(graph, "logicalDefinitionAxioms"))
                 )
             }
-        }
-        if (reader.peek() != JsonToken.END_DOCUMENT) {
-            logger.warn { "More data found in $doidJson after reading main JSON object!" }
         }
         checkNotNull(entry) { "Could not read DOID entry with ID '$ID_TO_READ'" }
         return entry
@@ -71,10 +57,10 @@ object DoidJson {
         return if (url.startsWith(DOID_URL_PREFIX)) url.substring(DOID_URL_PREFIX.length) else ""
     }
 
-    private fun extractNodes(nodeArray: JsonArray): List<Node> {
+    private fun extractNodes(nodeArray: ArrayNode): List<Node> {
         val nodeChecker: JsonDatamodelChecker = DatamodelCheckerFactory.nodeChecker()
         return nodeArray.map { nodeElement ->
-            val node: JsonObject = nodeElement.asJsonObject
+            val node = nodeElement as ObjectNode
             nodeChecker.check(node)
             val id: String = string(node, "id")
             Node(
@@ -87,10 +73,10 @@ object DoidJson {
         }
     }
 
-    private fun extractEdges(edgeArray: JsonArray): List<Edge> {
+    private fun extractEdges(edgeArray: ArrayNode): List<Edge> {
         val edgeChecker: JsonDatamodelChecker = DatamodelCheckerFactory.edgeChecker()
         return edgeArray.map { edgeElement ->
-            val edge: JsonObject = edgeElement.asJsonObject
+            val edge = edgeElement as ObjectNode
             edgeChecker.check(edge)
             val `object`: String = string(edge, "obj")
             val subject: String = string(edge, "sub")
@@ -104,7 +90,7 @@ object DoidJson {
         }
     }
 
-    private fun extractGraphMetadata(metadata: JsonObject): GraphMetadata {
+    private fun extractGraphMetadata(metadata: ObjectNode): GraphMetadata {
         DatamodelCheckerFactory.graphMetadataChecker().check(metadata)
 
         return GraphMetadata(
@@ -113,14 +99,14 @@ object DoidJson {
         )
     }
 
-    private fun extractBasicPropertyValues(basicPropertyValueArray: JsonArray?): List<BasicPropertyValue>? {
+    private fun extractBasicPropertyValues(basicPropertyValueArray: ArrayNode?): List<BasicPropertyValue>? {
         if (basicPropertyValueArray == null) {
             return null
         }
         val basicPropertyValuesChecker: JsonDatamodelChecker = DatamodelCheckerFactory.basicPropertyValueChecker()
 
         return basicPropertyValueArray.map { basicPropertyElement ->
-            val basicProperty: JsonObject = basicPropertyElement.asJsonObject
+            val basicProperty = basicPropertyElement as ObjectNode
             basicPropertyValuesChecker.check(basicProperty)
             BasicPropertyValue(
                 pred = string(basicProperty, "pred"),
@@ -129,11 +115,11 @@ object DoidJson {
         }
     }
 
-    private fun extractLogicalDefinitionAxioms(logicalDefinitionAxiomArray: JsonArray?): List<LogicalDefinitionAxioms>? {
+    private fun extractLogicalDefinitionAxioms(logicalDefinitionAxiomArray: ArrayNode?): List<LogicalDefinitionAxioms>? {
         val logicalDefinitionAxiomsChecker: JsonDatamodelChecker = DatamodelCheckerFactory.logicalDefinitionAxiomChecker()
 
         return logicalDefinitionAxiomArray?.map { logicalDefinitionAxiomElement ->
-            val logicalDefinitionAxiom: JsonObject = logicalDefinitionAxiomElement.asJsonObject
+            val logicalDefinitionAxiom = logicalDefinitionAxiomElement as ObjectNode
             logicalDefinitionAxiomsChecker.check(logicalDefinitionAxiom)
 
             LogicalDefinitionAxioms(
@@ -144,10 +130,10 @@ object DoidJson {
         }
     }
 
-    private fun extractLogicalDefinitionAxiomRestrictions(restrictionArray: JsonArray?): List<Restriction>? {
+    private fun extractLogicalDefinitionAxiomRestrictions(restrictionArray: ArrayNode?): List<Restriction>? {
         val restrictionChecker: JsonDatamodelChecker = DatamodelCheckerFactory.restrictionChecker()
         return restrictionArray?.map { restrictionElement ->
-            val restriction: JsonObject = restrictionElement.asJsonObject
+            val restriction = restrictionElement as ObjectNode
             restrictionChecker.check(restriction)
             Restriction(
                 propertyId = string(restriction, "propertyId"),
@@ -156,7 +142,7 @@ object DoidJson {
         }
     }
 
-    private fun extractMetadata(metadata: JsonObject?): Metadata? {
+    private fun extractMetadata(metadata: ObjectNode?): Metadata? {
         if (metadata == null) {
             return null
         }
@@ -175,14 +161,14 @@ object DoidJson {
         )
     }
 
-    private fun extractDoidXrefValList(xrefs: JsonArray?): List<Xref>? {
+    private fun extractDoidXrefValList(xrefs: ArrayNode?): List<Xref>? {
         if (xrefs == null) {
             return null
         }
         val xrefChecker: JsonDatamodelChecker = DatamodelCheckerFactory.metadataXrefChecker()
 
         return xrefs.map { xrefElement ->
-            val xref: JsonObject = xrefElement.asJsonObject
+            val xref = xrefElement as ObjectNode
             xrefChecker.check(xref)
             Xref(string(xref, "val"))
         }
@@ -210,18 +196,18 @@ object DoidJson {
         return try {
             string.toLong()
             true
-        } catch (e: NumberFormatException) {
+        } catch (_: NumberFormatException) {
             false
         }
     }
 
-    private fun extractSynonyms(synonymArray: JsonArray?): List<Synonym>? {
+    private fun extractSynonyms(synonymArray: ArrayNode?): List<Synonym>? {
         if (synonymArray == null) {
             return null
         }
         val synonymChecker: JsonDatamodelChecker = DatamodelCheckerFactory.synonymChecker()
         return synonymArray.map { synonymElement ->
-            val synonym: JsonObject = synonymElement.asJsonObject
+            val synonym = synonymElement as ObjectNode
             synonymChecker.check(synonym)
             Synonym(
                 pred = string(synonym, "pred"),
@@ -232,7 +218,7 @@ object DoidJson {
         }
     }
 
-    private fun extractDefinition(definition: JsonObject?): Definition? {
+    private fun extractDefinition(definition: ObjectNode?): Definition? {
         if (definition == null) {
             return null
         }
@@ -242,4 +228,44 @@ object DoidJson {
             xrefs = optionalStringList(definition, "xrefs")
         )
     }
+
+    private fun readSingleObjectFromFile(path: String, mapper: ObjectMapper): ObjectNode {
+        return mapper.createParser(File(path)).use { parser ->
+            (parser.readValueAsTree<JsonNode>() as? ObjectNode)?.also {
+                if (parser.nextToken() != null) {
+                    logger.warn { "More data found in $path after reading main JSON object!" }
+                }
+            } ?: throw IllegalStateException("Root of JSON file is not a JSON object: $path")
+        }
+    }
+
+    private fun string(node: ObjectNode, field: String): String = node.get(field).asText()
+
+    private fun stringList(node: ObjectNode, field: String): List<String> {
+        val element = node.get(field)
+        return if (element.isValueNode) listOf(element.asText())
+        else {
+            require(element.isArray) { "Expected array or primitive for field '$field' but got $element" }
+            element.map(JsonNode::asText)
+        }
+    }
+
+    private fun array(node: ObjectNode, field: String): ArrayNode = node.get(field) as ArrayNode
+
+    private fun objectNode(node: ObjectNode, field: String): ObjectNode = node.get(field) as ObjectNode
+
+    private fun optionalString(node: ObjectNode, field: String): String? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field).asText() else null
+
+    private fun optionalStringList(node: ObjectNode, field: String): List<String>? =
+        if (node.has(field) && !node.get(field).isNull) stringList(node, field) else null
+
+    private fun optionalArray(node: ObjectNode, field: String): ArrayNode? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field) as ArrayNode else null
+
+    private fun optionalObject(node: ObjectNode, field: String): ObjectNode? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field) as ObjectNode else null
+
+    private fun optionalBool(node: ObjectNode, field: String): Boolean? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field).asBoolean() else null
 }
