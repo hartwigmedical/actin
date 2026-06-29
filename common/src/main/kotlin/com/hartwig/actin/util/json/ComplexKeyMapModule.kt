@@ -80,20 +80,17 @@ class ComplexKeyMapModule : Module() {
             val keyType = mapType.keyType
             val valueType = mapType.contentType
             val tree = parser.codec.readTree<JsonNode>(parser)
-            val result = linkedMapOf<Any?, Any?>()
-            if (tree.isObject && tree.isEmpty) return result
+            if (tree.isObject && tree.isEmpty) return emptyMap()
             if (!tree.isArray) {
                 throw JsonMappingException.from(parser, "Expected array of [key, value] pairs for map with complex key, got: $tree")
             }
-            tree.forEach { entry ->
+            return tree.associate { entry ->
                 if (!entry.isArray || entry.size() != 2) {
                     throw JsonMappingException.from(parser, "Expected 2-element [key, value] array for complex key map entry, got: $entry")
                 }
-                val key: Any? = context.readTreeAsValue(entry.get(0), keyType)
-                val value: Any? = context.readTreeAsValue(entry.get(1), valueType)
-                result[key] = value
+                context.readTreeAsValue<Any?>(entry.get(0), keyType) to
+                        context.readTreeAsValue(entry.get(1), valueType)
             }
-            return result
         }
     }
 

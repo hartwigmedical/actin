@@ -11,19 +11,14 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 object TreatmentDeserializer : JsonDeserializer<Treatment?>() {
 
     override fun deserialize(parser: JsonParser, context: DeserializationContext): Treatment? {
-        val node: JsonNode = parser.codec.readTree(parser)
-        return when {
-            node.isNull -> null
-            else -> {
-                val className = node.get("treatmentClass")?.takeUnless { it.isNull }?.asText()
-                    ?: throw JsonMappingException.from(parser, "Missing 'treatmentClass' field in treatment: $node")
-                try {
-                    val target = TreatmentClass.valueOf(className).treatmentClass as Class<*>
-                    parser.codec.treeToValue(node, target) as Treatment
-                } catch (e: Exception) {
-                    throw JsonMappingException.from(parser, "Failed to deserialize Treatment: $node", e)
-                }
-            }
+        val node = parser.codec.readTree<JsonNode>(parser)
+        if (node.isNull) return null
+        return try {
+            val target = node.get("treatmentClass")?.takeUnless { it.isNull }?.asText()
+                ?.let { TreatmentClass.valueOf(it).treatmentClass as Class<*> }
+            parser.codec.treeToValue(node, target) as Treatment
+        } catch (e: Exception) {
+            throw JsonMappingException.from(parser, "Failed to deserialize Treatment: $node", e)
         }
     }
 

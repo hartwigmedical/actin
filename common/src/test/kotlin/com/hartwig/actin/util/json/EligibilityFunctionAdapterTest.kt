@@ -29,7 +29,8 @@ class EligibilityFunctionAdapterTest {
             )
         )
         val mapper = mapper()
-        assertThat(mapper.readValue(mapper.writeValueAsString(function), EligibilityFunction::class.java)).isEqualTo(function)
+        val serialized = mapper.writeValueAsString(function)
+        assertThat(mapper.readValue(serialized, EligibilityFunction::class.java)).isEqualTo(function)
     }
 
     @Test
@@ -49,17 +50,16 @@ class EligibilityFunctionAdapterTest {
             )
         )
 
-        val mapper = mapper(includeTreatment = true)
-        assertThat(mapper.readValue(mapper.writeValueAsString(function), EligibilityFunction::class.java)).isEqualTo(function)
+        val mapper = mapper()
+        val serialized = mapper.writeValueAsString(function)
+        assertThat(mapper.readValue(serialized, EligibilityFunction::class.java)).isEqualTo(function)
     }
 
-    private fun mapper(includeTreatment: Boolean = false) = ActinObjectMapper.create().registerModule(
+    private fun mapper() = ActinObjectMapper.create().registerModule(
         SimpleModule().apply {
             addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
             addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
-            if (includeTreatment) {
-                addDeserializer(Treatment::class.java, TreatmentDeserializer)
-            }
+            addDeserializer(Treatment::class.java, TreatmentDeserializer)
         }
     )
 }

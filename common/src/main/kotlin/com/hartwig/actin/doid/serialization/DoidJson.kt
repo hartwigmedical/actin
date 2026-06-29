@@ -1,5 +1,6 @@
 package com.hartwig.actin.doid.serialization
 
+import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
@@ -14,18 +15,9 @@ import com.hartwig.actin.doid.datamodel.Node
 import com.hartwig.actin.doid.datamodel.Restriction
 import com.hartwig.actin.doid.datamodel.Synonym
 import com.hartwig.actin.doid.datamodel.Xref
-import com.hartwig.actin.util.json.Json
-import com.hartwig.actin.util.json.Json.array
-import com.hartwig.actin.util.json.Json.objectNode
-import com.hartwig.actin.util.json.Json.optionalArray
-import com.hartwig.actin.util.json.Json.optionalBool
-import com.hartwig.actin.util.json.Json.optionalObject
-import com.hartwig.actin.util.json.Json.optionalString
-import com.hartwig.actin.util.json.Json.optionalStringList
-import com.hartwig.actin.util.json.Json.string
-import com.hartwig.actin.util.json.Json.stringList
 import com.hartwig.actin.util.json.JsonDatamodelChecker
 import io.github.oshai.kotlinlogging.KotlinLogging
+import java.io.File
 
 object DoidJson {
 
@@ -37,7 +29,7 @@ object DoidJson {
     const val DOID_URL_PREFIX = "http://purl.obolibrary.org/obo/DOID_"
 
     fun readDoidOwlEntry(doidJson: String): DoidEntry {
-        val rootObject = Json.readSingleObjectFromFile(doidJson, mapper)
+        val rootObject = readSingleObjectFromFile(doidJson, mapper)
         DatamodelCheckerFactory.rootObjectChecker().check(rootObject)
 
         var entry: DoidEntry? = null
@@ -236,4 +228,44 @@ object DoidJson {
             xrefs = optionalStringList(definition, "xrefs")
         )
     }
+
+    private fun readSingleObjectFromFile(path: String, mapper: ObjectMapper): ObjectNode {
+        return mapper.createParser(File(path)).use { parser ->
+            (parser.readValueAsTree<JsonNode>() as? ObjectNode)?.also {
+                if (parser.nextToken() != null) {
+                    logger.warn { "More data found in $path after reading main JSON object!" }
+                }
+            } ?: throw IllegalStateException("Root of JSON file is not a JSON object: $path")
+        }
+    }
+
+    private fun string(node: ObjectNode, field: String): String = node.get(field).asText()
+
+    private fun stringList(node: ObjectNode, field: String): List<String> {
+        val element = node.get(field)
+        return if (element.isValueNode) listOf(element.asText())
+        else {
+            require(element.isArray) { "Expected array or primitive for field '$field' but got $element" }
+            element.map(JsonNode::asText)
+        }
+    }
+
+    private fun array(node: ObjectNode, field: String): ArrayNode = node.get(field) as ArrayNode
+
+    private fun objectNode(node: ObjectNode, field: String): ObjectNode = node.get(field) as ObjectNode
+
+    private fun optionalString(node: ObjectNode, field: String): String? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field).asText() else null
+
+    private fun optionalStringList(node: ObjectNode, field: String): List<String>? =
+        if (node.has(field) && !node.get(field).isNull) stringList(node, field) else null
+
+    private fun optionalArray(node: ObjectNode, field: String): ArrayNode? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field) as ArrayNode else null
+
+    private fun optionalObject(node: ObjectNode, field: String): ObjectNode? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field) as ObjectNode else null
+
+    private fun optionalBool(node: ObjectNode, field: String): Boolean? =
+        if (node.has(field) && !node.get(field).isNull) node.get(field).asBoolean() else null
 }

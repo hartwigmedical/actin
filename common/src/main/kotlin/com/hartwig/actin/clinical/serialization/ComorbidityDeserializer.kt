@@ -12,9 +12,8 @@ object ComorbidityDeserializer : JsonDeserializer<Comorbidity>() {
 
     override fun deserialize(parser: JsonParser, context: DeserializationContext): Comorbidity {
         val node: JsonNode = parser.codec.readTree(parser)
-        val className = node.get("comorbidityClass")?.takeUnless { it.isNull }?.asText()
-            ?: throw JsonMappingException.from(parser, "Missing 'comorbidityClass' field in comorbidity: $node")
         return try {
+            val className = node.get("comorbidityClass").asText()
             val target = ComorbidityClass.valueOf(className).comorbidityClass as Class<*>
             parser.codec.treeToValue(node, target) as Comorbidity
         } catch (e: Exception) {

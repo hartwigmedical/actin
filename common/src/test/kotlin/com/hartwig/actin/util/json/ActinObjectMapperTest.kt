@@ -24,21 +24,24 @@ class ActinObjectMapperTest {
         val variant5 = variant(DriverLikelihood.MEDIUM, "BRAF", "V600E", "1800")
         val variants = setOf(variant3, variant5, variant1, variant4, variant2)
 
-        val deserialized = mapper.readValue(mapper.writeValueAsString(variants), object : TypeReference<List<Variant>>() {})
+        val serialized = mapper.writeValueAsString(variants)
+        val deserialized = mapper.readValue(serialized, object : TypeReference<List<Variant>>() {})
         assertThat(deserialized).isEqualTo(variants.sorted())
     }
 
     @Test
     fun `Should sort non-comparable sets by converting elements to string`() {
         val set = setOf(3, "2", Country.NETHERLANDS, null)
-        val deserialized = mapper.readValue(mapper.writeValueAsString(set), object : TypeReference<List<String?>>() {})
+        val serialized = mapper.writeValueAsString(set)
+        val deserialized = mapper.readValue(serialized, object : TypeReference<List<String?>>() {})
         assertThat(deserialized).isEqualTo(listOf("2", "3", Country.NETHERLANDS.toString(), null))
     }
 
     @Test
     fun `Should sort nulls last`() {
         val set = setOf(Intent.PALLIATIVE, null, Intent.ADJUVANT)
-        val deserialized = mapper.readValue(mapper.writeValueAsString(set), object : TypeReference<List<Intent?>>() {})
+        val serialized = mapper.writeValueAsString(set)
+        val deserialized = mapper.readValue(serialized, object : TypeReference<List<Intent?>>() {})
         assertThat(deserialized).isEqualTo(listOf(Intent.ADJUVANT, Intent.PALLIATIVE, null))
     }
 

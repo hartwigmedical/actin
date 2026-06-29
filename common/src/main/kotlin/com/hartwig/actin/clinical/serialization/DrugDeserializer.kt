@@ -32,7 +32,6 @@ object DrugDeserializer : JsonDeserializer<Drug>() {
     }
 
     private fun <T> readTree(parser: JsonParser, node: JsonNode?, type: TypeReference<T>): T? {
-        if (node == null || node.isNull) return null
-        return parser.codec.readValue(parser.codec.treeAsTokens(node), type)
+        return node?.takeUnless { it.isNull }?.let { parser.codec.readValue(parser.codec.treeAsTokens(it), type) }
     }
 }

@@ -53,19 +53,21 @@ class ClinicalAdaptersTest {
             category = TreatmentCategory.CHEMOTHERAPY,
             types = setOf(DrugType.PLATINUM_COMPOUND)
         )
-        val roundtripped = mapper.readValue(mapper.writeValueAsString(treatment), Treatment::class.java)
+        val serialized = mapper.writeValueAsString(treatment)
+        val roundtripped = mapper.readValue(serialized, Treatment::class.java)
         assertThat(roundtripped).isEqualTo(treatment)
     }
 
     @Test
     fun `Should round-trip OtherCondition via Comorbidity polymorphic deserializer`() {
         val condition: Comorbidity = OtherCondition(name = "Hypertension", icdCodes = emptySet(), year = 2024, month = 6)
-        val roundtripped = mapper.readValue(mapper.writeValueAsString(condition), Comorbidity::class.java)
+        val serialized = mapper.writeValueAsString(condition)
+        val roundtripped = mapper.readValue(serialized, Comorbidity::class.java)
         assertThat(roundtripped).isEqualTo(condition)
     }
 
     @Test
-    fun `Should dispatch Toxicity via Comorbidity polymorphic deserializer`() {
+    fun `Should round-trip Toxicity via Comorbidity polymorphic deserializer`() {
         val toxicity: Comorbidity = Toxicity(
             name = "Nausea",
             icdCodes = emptySet(),
@@ -75,7 +77,8 @@ class ClinicalAdaptersTest {
             source = ToxicitySource.EHR,
             grade = 2
         )
-        val roundtripped = mapper.readValue(mapper.writeValueAsString(toxicity), Comorbidity::class.java)
+        val serialized = mapper.writeValueAsString(toxicity)
+        val roundtripped = mapper.readValue(serialized, Comorbidity::class.java)
         assertThat(roundtripped).isEqualTo(toxicity)
     }
 

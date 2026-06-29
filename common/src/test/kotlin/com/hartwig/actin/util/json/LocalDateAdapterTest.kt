@@ -12,7 +12,8 @@ class LocalDateAdapterTest {
         val mapper = ActinObjectMapper.create()
 
         assertThat(mapper.writeValueAsString(date)).isEqualTo("\"2022-10-20\"")
-        assertThat(mapper.readValue(mapper.writeValueAsString(date), LocalDate::class.java)).isEqualTo(date)
+        val serialized = mapper.writeValueAsString(date)
+        assertThat(mapper.readValue(serialized, LocalDate::class.java)).isEqualTo(date)
         assertThat(mapper.readValue(mapper.writeValueAsString(null as LocalDate?), LocalDate::class.java)).isNull()
     }
 }
