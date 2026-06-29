@@ -48,6 +48,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
         val specificDrugCombinedWithCategoryAndTypesEvaluator =
             SpecificDrugCombinedWithCategoryAndTypesEvaluator(drugToFind, category, types)
 
+        val history = record.oncologicalHistory
         val treatmentEvaluations = specificDrugCombinedWithCategoryAndTypesEvaluator.relevantHistory(record).map { treatmentHistoryEntry ->
             val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
 
@@ -56,7 +57,8 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) { treatment ->
                 specificDrugCombinedWithCategoryAndTypesEvaluator.treatmentWithoutDrugMatchesCategoryAndType(treatment)
             }?.let { matchingPortionOfEntry ->
-                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry)
+                val hasSubsequentLine = ProgressiveDiseaseFunctions.hasSubsequentTreatmentLine(treatmentHistoryEntry, history)
+                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry, hasSubsequentLine)
                 val durationWeeksMatchingPortion = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
 
                 PDFollowingSpecificCombinationEvaluation.create(

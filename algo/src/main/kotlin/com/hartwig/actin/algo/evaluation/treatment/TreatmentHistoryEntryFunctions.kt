@@ -34,7 +34,8 @@ object TreatmentHistoryEntryFunctions {
 
         return treatmentHistory.map { entry ->
             val categoriesToMatch = drugsToMatch.map(Drug::category).toSet()
-            val isPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(entry)
+            val hasSubsequentLine = ProgressiveDiseaseFunctions.hasSubsequentTreatmentLine(entry, treatmentHistory)
+            val isPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, hasSubsequentLine)
             val matchingDrugs = entry.allTreatments().flatMap {
                 (it as? DrugTreatment)?.drugs?.intersect(drugsToMatch) ?: emptyList()
             }.toSet()
