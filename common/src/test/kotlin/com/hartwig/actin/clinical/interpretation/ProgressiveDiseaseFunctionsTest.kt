@@ -29,44 +29,38 @@ class ProgressiveDiseaseFunctionsTest {
 
     @Test
     fun `Should return true when stop reason is PD and best response is null and duration null`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(function(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, null))).isTrue()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, null))).isTrue()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, null))).isTrue()
     }
 
     @Test
     fun `Should return true when stop reason is null and duration was sufficient`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(function(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION))).isTrue()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION))).isTrue()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION))).isTrue()
     }
 
     @Test
     fun `Should return null when stop reason is null and duration was insufficient`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(function(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION))).isNull()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION))).isNull()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION))).isNull()
     }
 
     @Test
     fun `Should return null when stop reason is null and best response is not PD`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(function(treatmentHistoryEntry(null, TreatmentResponse.MIXED))).isNull()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntry(null, TreatmentResponse.MIXED))).isNull()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntry(null, TreatmentResponse.MIXED))).isNull()
     }
 
     @Test
     fun `Should return false when stop reason is not PD and best response is null`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(function(treatmentHistoryEntry(StopReason.TOXICITY, null))).isFalse()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.TOXICITY, null))).isFalse()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntry(StopReason.TOXICITY, null))).isFalse()
     }
 
     @Test
     fun `Should return true when stop reason is PD and best response is not PD`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(function(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, TreatmentResponse.MIXED))).isTrue()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, TreatmentResponse.MIXED))).isTrue()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntry(StopReason.PROGRESSIVE_DISEASE, TreatmentResponse.MIXED))).isTrue()
     }
 
     @Test
@@ -81,24 +75,74 @@ class ProgressiveDiseaseFunctionsTest {
 
     @Test
     fun `Should return false when stop reason is not PD`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(function(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.MIXED))).isFalse()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.MIXED))).isFalse()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntry(StopReason.TOXICITY, TreatmentResponse.MIXED))).isFalse()
     }
 
     @Test
     fun `Should return false when stop reason is not PD also if treatment duration was sufficient`() {
-        listOf(::treatmentResultedInPD, ::treatmentStoppedDueToPD).forEach { function ->
-            assertThat(
-                function(
-                    treatmentHistoryEntryWithDates(
-                        StopReason.TOXICITY,
-                        TreatmentResponse.MIXED,
-                        STOP_MONTH_SUFFICIENT_DURATION
-                    )
-                )
-            ).isFalse()
-        }
+        assertThat(treatmentResultedInPD(treatmentHistoryEntryWithDates(StopReason.TOXICITY, TreatmentResponse.MIXED, STOP_MONTH_SUFFICIENT_DURATION))).isFalse()
+        assertThat(treatmentStoppedDueToPD(treatmentHistoryEntryWithDates(StopReason.TOXICITY, TreatmentResponse.MIXED, STOP_MONTH_SUFFICIENT_DURATION))).isFalse()
+    }
+
+    @Test
+    fun `Should return true when stop reason is null and subsequent line starts within 26 weeks`() {
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
+        val subsequentEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("next treatment", true)),
+            startYear = STOP_YEAR, startMonth = STOP_MONTH_INSUFFICIENT_DURATION + 2
+        )
+        val history = listOf(entry, subsequentEntry)
+        assertThat(treatmentResultedInPD(entry, history)).isTrue()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isTrue()
+    }
+
+    @Test
+    fun `Should not infer PD from subsequent line when stop reason is toxicity`() {
+        val entry = treatmentHistoryEntryWithDates(StopReason.TOXICITY, null, STOP_MONTH_INSUFFICIENT_DURATION)
+        val subsequentEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("next treatment", true)),
+            startYear = STOP_YEAR, startMonth = STOP_MONTH_INSUFFICIENT_DURATION + 2
+        )
+        val history = listOf(entry, subsequentEntry)
+        assertThat(treatmentResultedInPD(entry, history)).isFalse()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isFalse()
+    }
+
+    @Test
+    fun `Should return null when stop reason is null and subsequent line starts more than 26 weeks later`() {
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
+        val distantEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("next treatment", true)),
+            startYear = STOP_YEAR + 1, startMonth = 1
+        )
+        val history = listOf(entry, distantEntry)
+        assertThat(treatmentResultedInPD(entry, history)).isNull()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isNull()
+    }
+
+    @Test
+    fun `Should return null when treatment has no stop date and treatment gap can therefore not be determined`() {
+        val entry = treatmentHistoryEntry(null, null)
+        val subsequentEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("next treatment", true)),
+            startYear = STOP_YEAR, startMonth = STOP_MONTH_INSUFFICIENT_DURATION + 2
+        )
+        assertThat(treatmentResultedInPD(entry, listOf(entry, subsequentEntry))).isNull()
+        assertThat(treatmentStoppedDueToPD(entry, listOf(entry, subsequentEntry))).isNull()
+    }
+
+    @Test
+    fun `Should return true when another treatment started during this treatment and outlasted it`() {
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION)
+        val overlappingEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("overlapping treatment", true)),
+            startYear = START_YEAR, startMonth = STOP_MONTH_INSUFFICIENT_DURATION,
+            stopYear = STOP_YEAR + 1, stopMonth = 1
+        )
+        val history = listOf(entry, overlappingEntry)
+        assertThat(treatmentResultedInPD(entry, history)).isTrue()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isTrue()
     }
 
     private fun treatmentHistoryEntry(stopReason: StopReason?, bestResponse: TreatmentResponse?): TreatmentHistoryEntry {
