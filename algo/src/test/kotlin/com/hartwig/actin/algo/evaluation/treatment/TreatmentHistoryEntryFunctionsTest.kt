@@ -265,5 +265,4 @@ class TreatmentHistoryEntryFunctionsTest {
         val entry = TreatmentHistoryEntry(treatments = emptySet(), startYear = 2024, startMonth = 3, treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8))
         assertThat(TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(entry)).isEqualTo(17)
     }
-
 }

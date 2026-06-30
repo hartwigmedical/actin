@@ -7,9 +7,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import java.time.YearMonth
 
-object ProgressiveDiseaseFunctions {
+private const val MIN_WEEKS_TO_ASSUME_STOP_DUE_TO_PD = 26 // half year
 
-    private const val MIN_WEEKS_TO_ASSUME_STOP_DUE_TO_PD = 26L // half year
+object ProgressiveDiseaseFunctions {
 
     fun treatmentResultedInPD(treatment: TreatmentHistoryEntry, treatmentHistory: List<TreatmentHistoryEntry> = emptyList()): Boolean? {
         val bestResponse = treatment.treatmentHistoryDetails?.bestResponse
@@ -22,7 +22,10 @@ object ProgressiveDiseaseFunctions {
     fun treatmentStoppedDueToPD(treatment: TreatmentHistoryEntry, treatmentHistory: List<TreatmentHistoryEntry> = emptyList()): Boolean? {
         val stopReason = treatment.treatmentHistoryDetails?.stopReason
         val treatmentDuration = DateComparison.minWeeksBetweenDates(
-            treatment.startYear, treatment.startMonth, treatment.stopYear(), treatment.stopMonth()
+            treatment.startYear,
+            treatment.startMonth,
+            treatment.stopYear(),
+            treatment.stopMonth()
         )
         return when {
             stopReason == StopReason.PROGRESSIVE_DISEASE -> true
@@ -44,7 +47,7 @@ object ProgressiveDiseaseFunctions {
             others.mapNotNull { other -> other.startYear?.let { year -> other to year } }.any { (other, otherStartYear) ->
                 val otherStart = YearMonth.of(otherStartYear, other.startMonth ?: 1)
                 when {
-                    otherStart.isAfter(entryStop) -> gapSuggestsPD(stopYear, stopMonth, otherStartYear, other.startMonth)
+                    otherStart.isAfter(entryStop) -> treatmentGapSuggestsPD(stopYear, stopMonth, otherStartYear, other.startMonth)
                     entryStartYear != null && otherStart.isAfter(YearMonth.of(entryStartYear, entry.startMonth ?: 12)) -> {
                         val otherStopYear = other.stopYear()
                         otherStopYear == null || YearMonth.of(otherStopYear, other.stopMonth() ?: 1).isAfter(entryStop)
@@ -62,7 +65,7 @@ object ProgressiveDiseaseFunctions {
         }
     }
 
-    private fun gapSuggestsPD(stopYear: Int, stopMonth: Int?, nextStartYear: Int, nextStartMonth: Int?): Boolean {
+    private fun treatmentGapSuggestsPD(stopYear: Int, stopMonth: Int?, nextStartYear: Int, nextStartMonth: Int?): Boolean {
         val minGapWeeks = DateComparison.minWeeksBetweenDates(stopYear, stopMonth, nextStartYear, nextStartMonth)
         return minGapWeeks != null && minGapWeeks < MIN_WEEKS_TO_ASSUME_STOP_DUE_TO_PD
     }
