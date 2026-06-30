@@ -36,8 +36,7 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
         val treatmentCategoriesToMatch = treatments.flatMap { it.categories() }.filter(TrialFunctions::categoryAllowsTrialMatches).toSet()
 
         return treatmentHistory.map { entry ->
-            val hasSubsequentLine = TreatmentHistoryEntryFunctions.hasSubsequentTreatmentLine(entry, treatmentHistory)
-            val isPD = treatmentResultedInPD(entry, hasSubsequentLine)
+            val isPD = treatmentResultedInPD(entry, treatmentHistory)
             val treatmentsMatchingNames = treatmentsMatchingNameListExactly(entry.allTreatments(), treatmentNamesToMatch)
             val includesTrial = TrialFunctions.treatmentMayMatchAsTrial(entry, treatmentCategoriesToMatch)
             if (treatmentsMatchingNames.isNotEmpty()) {

@@ -28,8 +28,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
                 categoryMatches && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             }?.let { matchingPortionOfEntry ->
                 val cycles = matchingPortionOfEntry.treatmentHistoryDetails?.cycles
-                val hasSubsequentLine = TreatmentHistoryEntryFunctions.hasSubsequentTreatmentLine(treatmentHistoryEntry, history)
-                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry, hasSubsequentLine)
+                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry, history)
 
                 val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
                 val meetsMinCycles = minCycles == null || (cycles != null && cycles >= minCycles)

@@ -16,9 +16,9 @@ class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCate
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
             history,
             category,
-            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, TreatmentHistoryEntryFunctions.hasSubsequentTreatmentLine(entry, history)) },
+            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, history) },
             { true },
-            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, TreatmentHistoryEntryFunctions.hasSubsequentTreatmentLine(entry, history)) != false }
+            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, history) != false }
         )
 
         return if (treatmentSummary.hasSpecificMatch()) {

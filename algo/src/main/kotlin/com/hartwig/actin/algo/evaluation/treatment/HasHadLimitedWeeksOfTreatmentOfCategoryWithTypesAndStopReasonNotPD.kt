@@ -23,8 +23,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
                 categoryMatches && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             }?.let { matchingPortionOfEntry ->
-                val hasSubsequentLine = TreatmentHistoryEntryFunctions.hasSubsequentTreatmentLine(treatmentHistoryEntry, history)
-                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry, hasSubsequentLine)
+                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry, history)
 
                 val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
                 val durationWeeksMax = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(matchingPortionOfEntry)

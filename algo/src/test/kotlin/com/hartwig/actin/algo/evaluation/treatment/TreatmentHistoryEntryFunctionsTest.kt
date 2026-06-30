@@ -1,8 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.evaluateIfDrugHadPDResponse
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.hasSubsequentTreatmentLine
-import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
@@ -268,56 +266,4 @@ class TreatmentHistoryEntryFunctionsTest {
         assertThat(TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(entry)).isEqualTo(17)
     }
 
-    @Test
-    fun `hasSubsequentTreatmentLine should return true when another systemic entry starts shortly after stop`() {
-        val entry = treatmentHistoryEntry(stopYear = 1999, stopMonth = 4)
-        val subsequent = treatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.treatment("next treatment", true)),
-            startYear = 1999, startMonth = 6
-        )
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, subsequent))).isTrue()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return false when gap to next line exceeds 26 weeks`() {
-        val entry = treatmentHistoryEntry(stopYear = 1999, stopMonth = 4)
-        val subsequent = treatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.treatment("next treatment", true)),
-            startYear = 2000, startMonth = 1
-        )
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, subsequent))).isFalse()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return false when no other systemic entry exists`() {
-        val entry = treatmentHistoryEntry(stopYear = 1999, stopMonth = 4)
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry))).isFalse()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return null when entry has no stop date`() {
-        val entry = treatmentHistoryEntry(treatments = setOf(TreatmentTestFactory.treatment("treatment", true)))
-        val subsequent = treatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.treatment("next treatment", true)),
-            startYear = 1999, startMonth = 6
-        )
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, subsequent))).isNull()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return null when a subsequent entry has unknown start date`() {
-        val entry = treatmentHistoryEntry(stopYear = 1999, stopMonth = 4)
-        val uncertain = treatmentHistoryEntry(treatments = setOf(TreatmentTestFactory.treatment("uncertain", true)))
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, uncertain))).isNull()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return true when another entry started during and ended after current entry`() {
-        val entry = treatmentHistoryEntry(startYear = 1999, startMonth = 1, stopYear = 1999, stopMonth = 9)
-        val overlapping = treatmentHistoryEntry(
-            treatments = setOf(TreatmentTestFactory.treatment("overlapping", true)),
-            startYear = 1999, startMonth = 6, stopYear = 2000, stopMonth = 1
-        )
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, overlapping))).isTrue()
-    }
 }
