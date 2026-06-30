@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
-import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.treatmentResultedInPD
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -37,7 +36,7 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
         val treatmentCategoriesToMatch = treatments.flatMap { it.categories() }.filter(TrialFunctions::categoryAllowsTrialMatches).toSet()
 
         return treatmentHistory.map { entry ->
-            val hasSubsequentLine = ProgressiveDiseaseFunctions.hasSubsequentTreatmentLine(entry, treatmentHistory)
+            val hasSubsequentLine = TreatmentHistoryEntryFunctions.hasSubsequentTreatmentLine(entry, treatmentHistory)
             val isPD = treatmentResultedInPD(entry, hasSubsequentLine)
             val treatmentsMatchingNames = treatmentsMatchingNameListExactly(entry.allTreatments(), treatmentNamesToMatch)
             val includesTrial = TrialFunctions.treatmentMayMatchAsTrial(entry, treatmentCategoriesToMatch)

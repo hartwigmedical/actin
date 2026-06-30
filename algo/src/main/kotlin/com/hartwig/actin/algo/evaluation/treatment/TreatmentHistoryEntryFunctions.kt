@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.treatmentHistoryEntryIsSystemic
 import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
+import java.time.YearMonth
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -34,7 +36,7 @@ object TreatmentHistoryEntryFunctions {
 
         return treatmentHistory.map { entry ->
             val categoriesToMatch = drugsToMatch.map(Drug::category).toSet()
-            val hasSubsequentLine = ProgressiveDiseaseFunctions.hasSubsequentTreatmentLine(entry, treatmentHistory)
+            val hasSubsequentLine = hasSubsequentTreatmentLine(entry, treatmentHistory)
             val isPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, hasSubsequentLine)
             val matchingDrugs = entry.allTreatments().flatMap {
                 (it as? DrugTreatment)?.drugs?.intersect(drugsToMatch) ?: emptyList()
@@ -130,6 +132,43 @@ object TreatmentHistoryEntryFunctions {
         matchingPortionOfEntry.stopYear(),
         matchingPortionOfEntry.stopMonth()
     )
+
+    fun hasSubsequentTreatmentLine(entry: TreatmentHistoryEntry, history: List<TreatmentHistoryEntry>): Boolean? {
+        val stopYear = entry.stopYear() ?: return null
+        val stopMonth = entry.stopMonth()
+        val entryStop = YearMonth.of(stopYear, stopMonth ?: 12)
+
+        var hasUncertain = false
+
+        for (other in history.filter { it !== entry && treatmentHistoryEntryIsSystemic(it) }) {
+            val otherStartYear = other.startYear
+
+            if (otherStartYear == null) {
+                hasUncertain = true
+                continue
+            }
+
+            val otherStart = YearMonth.of(otherStartYear, other.startMonth ?: 1)
+
+            if (otherStart.isAfter(entryStop)) {
+                if (ProgressiveDiseaseFunctions.isWithinPDInferenceGap(stopYear, stopMonth, otherStartYear, other.startMonth)) {
+                    return true
+                }
+                continue
+            }
+
+            // Overlap: other started after current started but ends later (or is ongoing) — current was dropped
+            val entryStartYear = entry.startYear ?: continue
+            if (otherStart.isAfter(YearMonth.of(entryStartYear, entry.startMonth ?: 12))) {
+                val otherStopYear = other.stopYear()
+                val otherEndsAfterCurrent = otherStopYear == null ||
+                    YearMonth.of(otherStopYear, other.stopMonth() ?: 1).isAfter(entryStop)
+                if (otherEndsAfterCurrent) return true
+            }
+        }
+
+        return if (hasUncertain) null else false
+    }
 
     private fun sumOrNullIfEmpty(list: List<Int>) = if (list.isEmpty()) null else list.sum()
 

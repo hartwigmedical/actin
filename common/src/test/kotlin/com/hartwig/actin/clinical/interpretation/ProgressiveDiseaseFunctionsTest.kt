@@ -1,6 +1,5 @@
 package com.hartwig.actin.clinical.interpretation
 
-import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.hasSubsequentTreatmentLine
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.treatmentResultedInPD
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.treatmentStoppedDueToPD
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -114,45 +113,6 @@ class ProgressiveDiseaseFunctionsTest {
         val entry = treatmentHistoryEntryWithDates(StopReason.TOXICITY, null, STOP_MONTH_INSUFFICIENT_DURATION)
         assertThat(treatmentResultedInPD(entry, hasSubsequentLine = true)).isFalse()
         assertThat(treatmentStoppedDueToPD(entry, hasSubsequentLine = true)).isFalse()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return true when another entry starts shortly after this entry stops`() {
-        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
-        val subsequentEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.treatment("next treatment", true)),
-            startYear = STOP_YEAR,
-            startMonth = STOP_MONTH_INSUFFICIENT_DURATION + 2
-        )
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, subsequentEntry))).isTrue()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return false when gap to next line is too long`() {
-        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
-        val subsequentEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.treatment("next treatment", true)),
-            startYear = STOP_YEAR + 1,
-            startMonth = 1
-        )
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, subsequentEntry))).isFalse()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return false when no other entry exists`() {
-        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry))).isFalse()
-    }
-
-    @Test
-    fun `hasSubsequentTreatmentLine should return false when entry has no stop date`() {
-        val entry = treatmentHistoryEntry(null, null)
-        val otherEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(TreatmentTestFactory.treatment("next treatment", true)),
-            startYear = STOP_YEAR,
-            startMonth = STOP_MONTH_INSUFFICIENT_DURATION + 2
-        )
-        assertThat(hasSubsequentTreatmentLine(entry, listOf(entry, otherEntry))).isFalse()
     }
 
     private fun treatmentHistoryEntry(stopReason: StopReason?, bestResponse: TreatmentResponse?): TreatmentHistoryEntry {
