@@ -134,7 +134,7 @@ class ProgressiveDiseaseFunctionsTest {
 
     @Test
     fun `Should return true when another treatment started during this treatment and outlasted it`() {
-        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_SUFFICIENT_DURATION)
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
         val overlappingEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.treatment("overlapping treatment", true)),
             startYear = START_YEAR, startMonth = STOP_MONTH_INSUFFICIENT_DURATION,
@@ -143,6 +143,58 @@ class ProgressiveDiseaseFunctionsTest {
         val history = listOf(entry, overlappingEntry)
         assertThat(treatmentResultedInPD(entry, history)).isTrue()
         assertThat(treatmentStoppedDueToPD(entry, history)).isTrue()
+    }
+
+    @Test
+    fun `Should not infer PD when overlapping treatment does not outlast entry`() {
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
+        val containedEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("contained treatment", true)),
+            startYear = START_YEAR, startMonth = START_MONTH + 1,
+            stopYear = STOP_YEAR, stopMonth = STOP_MONTH_INSUFFICIENT_DURATION - 1
+        )
+        val history = listOf(entry, containedEntry)
+        assertThat(treatmentResultedInPD(entry, history)).isNull()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isNull()
+    }
+
+    @Test
+    fun `Should return true when overlapping treatment has no stop date and is presumed ongoing`() {
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
+        val ongoingEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("ongoing treatment", true)),
+            startYear = START_YEAR, startMonth = START_MONTH + 1
+        )
+        val history = listOf(entry, ongoingEntry)
+        assertThat(treatmentResultedInPD(entry, history)).isTrue()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isTrue()
+    }
+
+    @Test
+    fun `Should return true when a confirmed subsequent line exists alongside another treatment with unknown start`() {
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
+        val confirmedSubsequent = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("next treatment", true)),
+            startYear = STOP_YEAR, startMonth = STOP_MONTH_INSUFFICIENT_DURATION + 2
+        )
+        val unknownStartTreatment = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("unknown timing treatment", true))
+        )
+        val history = listOf(entry, confirmedSubsequent, unknownStartTreatment)
+        assertThat(treatmentResultedInPD(entry, history)).isTrue()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isTrue()
+    }
+
+    @Test
+    fun `Should not treat non-systemic treatments as subsequent lines`() {
+        val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
+        val nonSystemicSubsequent = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("non-systemic treatment", false)),
+            startYear = STOP_YEAR, startMonth = STOP_MONTH_INSUFFICIENT_DURATION + 1
+        )
+        val history = listOf(entry, nonSystemicSubsequent)
+        assertThat(treatmentResultedInPD(entry, history)).isNull()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isNull()
     }
 
     private fun treatmentHistoryEntry(stopReason: StopReason?, bestResponse: TreatmentResponse?): TreatmentHistoryEntry {
