@@ -7,13 +7,14 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
+// ADD TESTS FOR NUMBERS OF LINES
 class HasHadRadiotherapyToSomeBodyLocationTest {
 
     private val radiotherapy = setOf(treatment("Radiotherapy", isSystemic = false, categories = setOf(TreatmentCategory.RADIOTHERAPY)))
     private val targetBodyLocation = setOf("Spleen")
     private val targetBodyLocationInLargerString = setOf("Lower spleen")
     private val wrongBodyLocation = setOf("Bladder")
-    private val function = HasHadRadiotherapyToSomeBodyLocation(targetBodyLocation.iterator().next())
+    private val function = HasHadRadiotherapyToSomeBodyLocation(targetBodyLocation.iterator().next(), 2)
 
     @Test
     fun `Should pass if radiotherapy with target body location in oncological history`() {

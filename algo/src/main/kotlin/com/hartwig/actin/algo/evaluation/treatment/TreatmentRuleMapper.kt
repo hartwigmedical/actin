@@ -149,6 +149,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TARGETED_THERAPY_INTERFERING_WITH_RAS_MEK_MAPK_PATHWAY to hasHadTargetedTherapyInterferingWithRasMekMapkPathwayCreator(),
             EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY to { HasHadNonInternalRadiotherapy() },
             EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X to hasHadRadiotherapyToSomeBodyLocationCreator(),
+            EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X_FOR_AT_LEAST_Y_LINES to hasHadRadiotherapyToSomeBodyLocationAndSufficientLinesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ONLY_TYPES_Y_FOR_AT_LEAST_Z_MONTHS_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_WITH_ANY_DRUG_X_AND_AT_LEAST_Y_CYCLES to hasHadChemoradiotherapyWithAnyDrugAndMinimumCyclesCreator(),
             EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES to hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(),
@@ -876,7 +877,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadRadiotherapyToSomeBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadRadiotherapyToSomeBodyLocation(function.param<StringParameter>(0).value)
+            HasHadRadiotherapyToSomeBodyLocation(function.param<StringParameter>(0).value, null)
+        }
+    }
+
+    private fun hasHadRadiotherapyToSomeBodyLocationAndSufficientLinesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val bodyLocation = function.param<StringParameter>(0).value
+            val lines = function.param<IntegerParameter>(1).value
+            HasHadRadiotherapyToSomeBodyLocation(bodyLocation, lines)
         }
     }
 

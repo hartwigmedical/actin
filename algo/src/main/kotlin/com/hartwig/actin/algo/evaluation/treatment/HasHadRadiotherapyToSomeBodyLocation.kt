@@ -6,22 +6,20 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String) : EvaluationFunction {
+class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String, private val lines: Int?) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorRadiotherapies = record.oncologicalHistory
             .filter { it.categories().contains(TreatmentCategory.RADIOTHERAPY) }
 
-        val hadRadiotherapyToTargetLocation =
-            priorRadiotherapies.any { radiotherapy ->
+        val radiotherapyToTargetLocationCount =
+            priorRadiotherapies.count { radiotherapy ->
                 radiotherapy.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains(bodyLocation.lowercase()) } == true
             }
 
-        val message = "prior radiotherapy to $bodyLocation"
-
         return when {
-            hadRadiotherapyToTargetLocation -> {
-                EvaluationFactory.pass("Has had $message")
+            radiotherapyToTargetLocationCount > (lines ?: 0) -> {
+                EvaluationFactory.pass("Has had prior radiotherapy to $bodyLocation" + (lines?.let { " for at least $it lines" } ?: ""))
             }
 
             priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {

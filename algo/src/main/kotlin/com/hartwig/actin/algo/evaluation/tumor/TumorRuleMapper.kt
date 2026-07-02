@@ -15,6 +15,7 @@ import com.hartwig.actin.datamodel.trial.ManyTnmTParameter
 import com.hartwig.actin.datamodel.trial.ManyTumorStagesParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.ReceptorTypeParameter
+import com.hartwig.actin.datamodel.trial.StringParameter
 import com.hartwig.actin.datamodel.trial.TumorTypeParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
@@ -26,7 +27,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SOLID_PRIMARY_TUMOR to hasSolidPrimaryTumorCreator(),
             EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA to hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(),
             EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X to hasPrimaryTumorBelongsToDoidTermsCreator(),
-            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X_DISTAL_SUB_LOCATION to hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(),
+            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X_WITH_SUB_LOCATION_Y to hasPrimaryTumorBelongsToDoidTermsWithSubLocationCreator(),
             EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X to hasCancerOfUnknownPrimaryCreator(),
             EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to hasCancerWithNeuroendocrineComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
@@ -92,6 +93,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_MEASURABLE_DISEASE to hasMeasurableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST to hasMeasurableDiseaseRecistCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RANO to hasMeasurableDiseaseRanoCreator(),
+            EligibilityRule.HAS_MEASURABLE_DISEASE_PERCIST to hasMeasurableDiseasePercistCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA to hasSpecificProgressiveDiseaseCriteriaCreator(),
             EligibilityRule.HAS_RAPID_PROGRESSIVE_DISEASE to hasRapidProgressiveDiseaseCreator(),
             EligibilityRule.HAS_INJECTION_AMENABLE_LESION to hasInjectionAmenableLesionCreator(),
@@ -101,9 +103,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT to hasLowRiskOfHemorrhageUponTreatmentCreator(),
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
+            EligibilityRule.HAS_SIEWERT_TYPE_X to hasSiewertTypeCreator(),
             EligibilityRule.HAS_ANY_RISK_X_PROSTATE_CANCER to hasAnyProstateCancerRiskCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
-            EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSitu()
+            EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSituCreator(),
+            EligibilityRule.HAS_TUMOR_LENGTH_OF_AT_MOST_X_CM to hasLimitedTumorLengthCreator(),
         )
     }
 
@@ -123,11 +127,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         }
     }
 
-    private fun hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(): FunctionCreator {
+    private fun hasPrimaryTumorBelongsToDoidTermsWithSubLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
             val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, "distal")
+            val subLocation = function.param<StringParameter>(1).value
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, subLocation)
         }
     }
 
@@ -430,6 +435,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasMeasurableDiseaseRano(doidModel()) }
     }
 
+    private fun hasMeasurableDiseasePercistCreator(): FunctionCreator {
+        return { HasMeasurableDiseasePercist(doidModel()) }
+    }
+
     private fun hasSpecificProgressiveDiseaseCriteriaCreator(): FunctionCreator {
         return { HasSpecificProgressiveDiseaseCriteria() }
     }
@@ -466,6 +475,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasBCLCStage() }
     }
 
+    private fun hasSiewertTypeCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasSiewertType(function.param<StringParameter>(0).value)
+        }
+    }
+
     private fun hasAnyProstateCancerRiskCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             HasProstateCancerRisk(function.param<ManyStringsParameter>(0).value, doidModel())
@@ -476,7 +491,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasLeftSidedColorectalTumor(doidModel()) }
     }
 
-    private fun hasSymptomsOfPrimaryTumorInSitu(): FunctionCreator {
+    private fun hasSymptomsOfPrimaryTumorInSituCreator(): FunctionCreator {
         return { HasSymptomsOfPrimaryTumorInSitu() }
+    }
+
+    private fun hasLimitedTumorLengthCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasLimitedTumorLength(function.param<IntegerParameter>(0).value)
+        }
     }
 }

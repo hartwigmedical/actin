@@ -122,7 +122,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.IC),
             EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TC),
             EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to { HasAvailablePDL1Status() },
-            EligibilityRule.HAS_PSMA_POSITIVE_PET_SCAN to { HasPSMAPositivePETScan() },
+            EligibilityRule.HAS_POSITIVE_PET_SCAN_FOR_TRACER_X to hasPositivePETScanForTracerCreator(),
             EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable() },
             EligibilityRule.MOLECULAR_TEST_RESULT_IS_KNOWN_FOR_GENE_X to molecularResultsAreKnownForGeneCreator(),
             EligibilityRule.MOLECULAR_TEST_RESULT_IS_KNOWN_FOR_PROMOTER_OF_GENE_X to molecularResultsAreKnownForPromoterOfGeneCreator(),
@@ -636,6 +636,12 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val genesToFind = function.param<ManyGenesParameter>(0).value
             IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind)
+        }
+    }
+
+    private fun hasPositivePETScanForTracerCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasPositivePETScanForTracer(function.param<StringParameter>(0).value)
         }
     }
 }

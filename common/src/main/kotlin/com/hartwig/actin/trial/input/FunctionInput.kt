@@ -74,6 +74,7 @@ object FunctionInput {
     val ONE_DOID_TERM = listOf(Parameter.Type.DOID_TERM)
     val ONE_ICD_TITLE_ONE_INTEGER = listOf(Parameter.Type.ICD_TITLE, Parameter.Type.INTEGER)
     val MANY_DOID_TERMS = listOf(Parameter.Type.MANY_DOID_TERMS)
+    val MANY_DOID_TERMS_ONE_STRING = listOf(Parameter.Type.MANY_DOID_TERMS, Parameter.Type.STRING)
     val MANY_TUMOR_STAGES = listOf(Parameter.Type.MANY_TUMOR_STAGES)
     val ONE_HAPLOTYPE = listOf(Parameter.Type.HAPLOTYPE)
     val ONE_RECEPTOR_TYPE = listOf(Parameter.Type.RECEPTOR_TYPE)
