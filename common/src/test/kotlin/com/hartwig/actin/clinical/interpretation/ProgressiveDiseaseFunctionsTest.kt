@@ -133,6 +133,21 @@ class ProgressiveDiseaseFunctionsTest {
     }
 
     @Test
+    fun `Should return true when both treatments have no stop date and subsequent starts after entry`() {
+        val entry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("test treatment", true)),
+            startYear = START_YEAR, startMonth = START_MONTH
+        )
+        val ongoingSubsequent = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.treatment("next treatment", true)),
+            startYear = START_YEAR, startMonth = START_MONTH + 3
+        )
+        val history = listOf(entry, ongoingSubsequent)
+        assertThat(treatmentResultedInPD(entry, history)).isTrue()
+        assertThat(treatmentStoppedDueToPD(entry, history)).isTrue()
+    }
+
+    @Test
     fun `Should return true when another treatment started during this treatment and outlasted it`() {
         val entry = treatmentHistoryEntryWithDates(null, null, STOP_MONTH_INSUFFICIENT_DURATION)
         val overlappingEntry = TreatmentTestFactory.treatmentHistoryEntry(

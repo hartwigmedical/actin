@@ -42,16 +42,28 @@ object ProgressiveDiseaseFunctions {
         val startYear = entry.startYear
         val others = history.filter { it !== entry && it.allTreatments().any(Treatment::isSystemic) }
 
-        val subsequentLineSuggestsPD = if (stopYear == null) null else {
-            val entryStop = YearMonth.of(stopYear, stopMonth ?: 12)
-            others.mapNotNull { other -> other.startYear?.let { year -> other to year } }.any { (other, otherStartYear) ->
-                val otherStart = YearMonth.of(otherStartYear, other.startMonth ?: 1)
-                when {
-                    otherStart.isAfter(entryStop) -> treatmentGapSuggestsPD(stopYear, stopMonth, otherStartYear, other.startMonth)
-                    startYear != null && !otherStart.isAfter(YearMonth.of(startYear, entry.startMonth ?: 12)) -> false
-                    else -> treatmentOverlapSuggestsPD(entryStop, other)
+        val subsequentLineSuggestsPD = when {
+            stopYear != null -> {
+                val entryStop = YearMonth.of(stopYear, stopMonth ?: 12)
+                others.mapNotNull { other -> other.startYear?.let { year -> other to year } }.any { (other, otherStartYear) ->
+                    val otherStart = YearMonth.of(otherStartYear, other.startMonth ?: 1)
+                    when {
+                        otherStart.isAfter(entryStop) -> treatmentGapSuggestsPD(stopYear, stopMonth, otherStartYear, other.startMonth)
+                        startYear == null || !otherStart.isAfter(YearMonth.of(startYear, entry.startMonth ?: 12)) -> false
+                        else -> treatmentOverlapSuggestsPD(entryStop, other)
+                    }
                 }
             }
+
+            startYear != null -> {
+                val entryStart = YearMonth.of(startYear, entry.startMonth ?: 1)
+                others.mapNotNull { other -> other.startYear?.let { year -> other to year } }
+                    .any { (other, otherStartYear) ->
+                        YearMonth.of(otherStartYear, other.startMonth ?: 1).isAfter(entryStart) && other.stopYear() == null
+                    }
+            }
+
+            else -> null
         }
 
         return when {
