@@ -13,11 +13,12 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
     private val targetBodyLocation = setOf("Spleen")
     private val targetBodyLocationInLargerString = setOf("Lower spleen")
     private val wrongBodyLocation = setOf("Bladder")
-    private val function = HasHadRadiotherapyToSomeBodyLocation(targetBodyLocation.iterator().next())
+    private val function = HasHadRadiotherapyToSomeBodyLocation(targetBodyLocation.iterator().next(), 2)
 
     @Test
-    fun `Should pass if radiotherapy with target body location in oncological history`() {
+    fun `Should pass if radiotherapy with target body location in oncological history and sufficient lines`() {
         val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = targetBodyLocation),
             TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = targetBodyLocation),
             TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = wrongBodyLocation)
         )
@@ -28,10 +29,10 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
     }
 
     @Test
-    fun `Should pass if substring of radiotherapy location matches to target body location`() {
+    fun `Should pass if substring of radiotherapy location matches to target body location and sufficient lines`() {
         val history = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = targetBodyLocationInLargerString),
-            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = wrongBodyLocation)
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = targetBodyLocation)
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -47,6 +48,17 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+        )
+    }
+
+    @Test
+    fun `Should fail if radiotherapy with target body location in oncological history but insufficient lines`() {
+        val history = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(treatments = radiotherapy, bodyLocations = targetBodyLocation)
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
         )
     }

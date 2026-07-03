@@ -30,6 +30,9 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 IcdConstants.HEART_DISEASE_SET,
                 "cardiac disease"
             ),
+            EligibilityRule.HAS_HISTORY_OF_CARDIAC_DISEASE_WITHIN_X_MONTHS to hasHadOtherConditionWithIcdCodeFromSetRecentlyCreator(
+                IcdConstants.HEART_DISEASE_SET.map { IcdCode(it) }.toSet(), "cardiac disease"
+            ),
             EligibilityRule.HAS_HISTORY_OF_CARDIOVASCULAR_DISEASE to hasHadComorbiditiesWithIcdCodeCreator(
                 setOf(IcdConstants.CIRCULATORY_SYSTEM_DISEASE_CHAPTER),
                 "cardiovascular disease"
@@ -216,8 +219,8 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                             IcdConstants.ASCITES_CODE
                         ),
                         "peritoneal effusion"
-                    )
-
+                    ),
+            EligibilityRule.HAS_POTENTIAL_DISRUPTION_OF_LYMPHATIC_DRAINAGE to hasPotentialDisruptionOfLymphaticDrainageCreator()
         )
     }
 
@@ -365,6 +368,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 referenceDateProvider().date()
             )
         }
+    }
+
+    private fun hasPotentialDisruptionOfLymphaticDrainageCreator(): FunctionCreator {
+        return { HasPotentialDisruptionOfLymphaticDrainage(icdModel()) }
     }
 
 }

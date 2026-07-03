@@ -12,6 +12,8 @@ import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
+private val CATEGORY_TO_IGNORE = TreatmentCategory.TARGETED_THERAPY
+
 class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
 
     private val referenceDate = LocalDate.of(2024, 11, 26)
@@ -20,6 +22,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
     private val function = HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         referenceDate,
         intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+        categoryToIgnore = CATEGORY_TO_IGNORE,
         settingDescription = "metastatic"
     )
     private val nonRecentTreatment = createTreatment(
@@ -54,6 +57,20 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
             function.evaluate(
                 withTreatmentHistory(listOf(Intent.PALLIATIVE, Intent.CURATIVE).map { createTreatment(it, isSystemic = true) })
             )
+        )
+    }
+
+    @Test
+    fun `Should fail if patient has had systemic treatment with palliative intent but of category to ignore`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(Intent.PALLIATIVE, Intent.CURATIVE).map {
+                createTreatment(
+                    it,
+                    isSystemic = true,
+                    categories = setOf(CATEGORY_TO_IGNORE)
+                )
+            }))
         )
     }
 
@@ -106,7 +123,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings())
-            .containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic setting (Treatment name)")
+            .containsExactly("Has had prior systemic treatment ignoring targeted therapy >6 months ago but undetermined if in metastatic setting (Treatment name)")
     }
 
     @Test
@@ -131,7 +148,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings())
-            .containsExactly("Has had prior systemic treatment >6 months ago but undetermined if in metastatic setting (Treatment name)")
+            .containsExactly("Has had prior systemic treatment ignoring targeted therapy >6 months ago but undetermined if in metastatic setting (Treatment name)")
     }
 
     @Test
@@ -151,7 +168,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         val evaluation = function.evaluate(record)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings())
-            .containsExactly("Has had prior systemic treatment but undetermined if in metastatic setting (Treatment name)")
+            .containsExactly("Has had prior systemic treatment ignoring targeted therapy but undetermined if in metastatic setting (Treatment name)")
     }
 
     private fun createTreatment(
