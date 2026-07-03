@@ -12,9 +12,8 @@ import com.hartwig.actin.icd.IcdModel
 class HasPotentialDisruptionOfLymphaticDrainage(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(
-            record.comorbidities, setOf(IcdCode(IcdConstants.DISORDERS_OF_LYMPHATIC_VESSELS_OR_LYMPH_NODES))
-        ).fullMatches
+        val targetIcdCodes = IcdConstants.LYMPHATIC_DRAINAGE_SET.map { IcdCode(it) }.toSet()
+        val matchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetIcdCodes).fullMatches
 
         return if (matchingComorbidities.isNotEmpty()) {
             EvaluationFactory.warn("Potential disruption of lymphatic drainage (${Format.concatItemsWithAnd(matchingComorbidities)})")

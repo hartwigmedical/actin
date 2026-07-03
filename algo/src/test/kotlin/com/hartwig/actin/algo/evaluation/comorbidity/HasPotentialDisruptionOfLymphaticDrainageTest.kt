@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test
 
 class HasPotentialDisruptionOfLymphaticDrainageTest {
     private val function = HasPotentialDisruptionOfLymphaticDrainage(TestIcdFactory.createTestModel())
-    private val correctIcd = IcdConstants.DISORDERS_OF_LYMPHATIC_VESSELS_OR_LYMPH_NODES
+    private val correctIcd = IcdConstants.LYMPHATIC_DRAINAGE_SET.iterator().next()
     private val wrongIcdMainCode = "wrong"
     private val correctCondition = ComorbidityTestFactory.otherCondition(icdMainCode = correctIcd)
     private val correctToxicity = ComorbidityTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)

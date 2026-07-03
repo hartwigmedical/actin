@@ -221,7 +221,6 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                         "peritoneal effusion"
                     ),
             EligibilityRule.HAS_POTENTIAL_DISRUPTION_OF_LYMPHATIC_DRAINAGE to hasPotentialDisruptionOfLymphaticDrainageCreator()
-
         )
     }
 
