@@ -1,16 +1,16 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
+import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-//UPDATE TESTS
 class HasMeasurableDiseasePercistTest {
 
     private val doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200")
-    private val function = HasMeasurableDiseaseRecist(doidModel)
+    private val function = HasMeasurableDiseasePercist(doidModel)
 
     @Test
     fun `Should pass when has measurable disease is true`() {
@@ -41,13 +41,24 @@ class HasMeasurableDiseasePercistTest {
     }
 
     @Test
-    fun `Should warn when uncertain if evaluated against RECIST`() {
+    fun `Should warn when uncertain if evaluated against PERCIST`() {
         val evaluation = function.evaluate(
             TumorTestFactory.withMeasurableDiseaseAndDoid(
                 true,
-                HasMeasurableDiseaseRecist.NON_RECIST_TUMOR_DOIDS.iterator().next()
+                HasMeasurableDiseasePercist.NON_PERCIST_TUMOR_DOIDS.iterator().next()
             )
         )
         assertEvaluation(EvaluationResult.WARN, evaluation)
+    }
+
+    @Test
+    fun `Should pass when patient with lymphoma is evaluated against PERCIST`() {
+        val evaluation = function.evaluate(
+            TumorTestFactory.withMeasurableDiseaseAndDoid(
+                true,
+                DoidConstants.LYMPHOMA_DOID
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, evaluation)
     }
 }

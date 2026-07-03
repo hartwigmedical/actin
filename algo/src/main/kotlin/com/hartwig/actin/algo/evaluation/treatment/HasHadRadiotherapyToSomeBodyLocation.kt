@@ -17,9 +17,11 @@ class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String, pri
                 radiotherapy.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains(bodyLocation.lowercase()) } == true
             }
 
+        val messageEnding = lines?.let { " for at least $it lines" } ?: ""
+
         return when {
-            radiotherapyToTargetLocationCount > (lines ?: 0) -> {
-                EvaluationFactory.pass("Has had prior radiotherapy to $bodyLocation" + (lines?.let { " for at least $it lines" } ?: ""))
+            radiotherapyToTargetLocationCount >= (lines ?: 1) -> {
+                EvaluationFactory.pass("Has had prior radiotherapy to $bodyLocation$messageEnding")
             }
 
             priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {
@@ -27,7 +29,7 @@ class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String, pri
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received prior radiation therapy to $bodyLocation")
+                EvaluationFactory.fail("Has not received prior radiation therapy to $bodyLocation$messageEnding")
             }
         }
     }

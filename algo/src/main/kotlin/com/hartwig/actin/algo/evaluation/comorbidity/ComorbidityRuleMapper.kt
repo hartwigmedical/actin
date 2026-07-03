@@ -219,7 +219,8 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                             IcdConstants.ASCITES_CODE
                         ),
                         "peritoneal effusion"
-                    )
+                    ),
+            EligibilityRule.HAS_POTENTIAL_DISRUPTION_OF_LYMPHATIC_DRAINAGE to hasPotentialDisruptionOfLymphaticDrainage()
 
         )
     }
@@ -368,6 +369,10 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                 referenceDateProvider().date()
             )
         }
+    }
+
+    private fun hasPotentialDisruptionOfLymphaticDrainage(): FunctionCreator {
+        return { HasPotentialDisruptionOfLymphaticDrainage(icdModel()) }
     }
 
 }

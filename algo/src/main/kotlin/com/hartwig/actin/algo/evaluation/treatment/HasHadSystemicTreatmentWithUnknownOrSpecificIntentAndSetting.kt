@@ -16,12 +16,14 @@ import java.time.LocalDate
 class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
     private val referenceDate: LocalDate,
     private val intentsToIgnore: Set<Intent>,
+    private val categoryToIgnore: TreatmentCategory?,
     private val settingDescription: String
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
-        val priorSystemicTreatments = priorTreatments.filter { it.treatments.any(Treatment::isSystemic) }
+        val priorSystemicTreatments =
+            priorTreatments.filter { it.treatments.any(Treatment::isSystemic) && !it.categories().contains(categoryToIgnore) }
         val (excludedIntentTreatments, includedIntentTreatments) =
             SystemicTreatmentAnalyser.partitionByIntent(priorSystemicTreatments, intentsToIgnore)
         val (recentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) =
@@ -31,6 +33,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = includedIntentTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
         val settingMessage = "$settingDescription setting"
+        val categoryToIgnoreMessage = categoryToIgnore?.let { " ignoring ${it.display()}" } ?: ""
 
         return when {
             excludedIntentTreatments.isNotEmpty() && includedIntentTreatments.isEmpty() -> {
@@ -46,14 +49,14 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
 
             palliativeIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    createMessage("Has had prior systemic treatment in $settingMessage", palliativeIntentTreatments)
+                    createMessage("Has had prior systemic treatment in $settingMessage$categoryToIgnoreMessage", palliativeIntentTreatments)
                 )
             }
 
             recentPotentiallyCorrectIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had recent systemic treatment - presumably in $settingMessage",
+                        "Has had recent systemic treatment$categoryToIgnoreMessage - presumably in $settingMessage",
                         recentPotentiallyCorrectIntentTreatments
                     )
                 )
@@ -62,7 +65,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
             includedIntentTreatments.size > 1 -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had more than one systemic treatment line of uncertain setting - presumably at least one in $settingMessage",
+                        "Has had more than one systemic treatment line of uncertain setting$categoryToIgnoreMessage- presumably at least one in $settingMessage",
                         includedIntentTreatments
                     )
                 )
@@ -74,7 +77,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
             ) -> {
                 EvaluationFactory.pass(
                     createMessage(
-                        "Has had a systemic treatment line not followed by radiotherapy or surgery - presumably in $settingMessage",
+                        "Has had a systemic treatment line$categoryToIgnoreMessage not followed by radiotherapy or surgery - presumably in $settingMessage",
                         recentPotentiallyCorrectIntentTreatmentsIncludingUnknown
                     )
                 )
@@ -83,7 +86,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
             potentiallyCorrectIntentTreatmentsWithUnknownStopDate.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
-                        "Has had prior systemic treatment but undetermined if in $settingMessage",
+                        "Has had prior systemic treatment$categoryToIgnoreMessage but undetermined if in $settingMessage",
                         potentiallyCorrectIntentTreatmentsWithUnknownStopDate
                     )
                 )
@@ -92,7 +95,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
             nonRecentPotentiallyCorrectIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
                     createMessage(
-                        "Has had prior systemic treatment >6 months ago but undetermined if in $settingMessage",
+                        "Has had prior systemic treatment$categoryToIgnoreMessage >6 months ago but undetermined if in $settingMessage",
                         nonRecentPotentiallyCorrectIntentTreatments
                     )
                 )

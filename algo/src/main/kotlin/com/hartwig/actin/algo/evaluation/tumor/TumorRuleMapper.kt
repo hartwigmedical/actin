@@ -76,13 +76,16 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LUNG_AND_OR_LUNG_LYMPH_NODE_METASTASES_ONLY to hasOnlyLungAndOrLungLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
             EligibilityRule.HAS_IN_TRANSIT_METASTASES to hasInTransitMetastasesCreator(),
+            EligibilityRule.HAS_SPLEEN_METASTASES to hasSpleenMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
             EligibilityRule.HAS_LESIONS_INFILTRATING_BLOOD_VESSEL to { HasLesionsInfiltratingBloodVessel() },
             EligibilityRule.HAS_LESION_COUNT_OF_AT_LEAST_X_IN_BODY_LOCATION_Y to hasMinimumLesionsInSpecificBodyLocationCreator(),
             EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
+            EligibilityRule.HAS_EXTENSIVE_ABDOMINAL_TUMOR_SPREAD to hasExtensiveAbdominalTumorSpreadCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
+            EligibilityRule.HAS_HIFU_AMENABLE_LESION to hasHifuAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.HAS_RISK_OF_AT_LEAST_X_PERCENTAGE_FOR_SENTINEL_NODE_POSITIVITY to hasMinimumRiskForSentinelNodePositivityCreator(),
             EligibilityRule.HAS_OLIGOPROGRESSIVE_DISEASE to { HasOligoprogressiveDisease() },
@@ -383,8 +386,16 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasInTransitMetastases() }
     }
 
+    private fun hasSpleenMetastasesCreator(): FunctionCreator {
+        return { HasSpleenMetastases() }
+    }
+
     private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {
         return { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(HasMetastaticCancer(doidModel())) }
+    }
+
+    private fun hasExtensiveAbdominalTumorSpreadCreator(): FunctionCreator {
+        return { HasExtensiveAbdominalTumorSpread(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {
@@ -393,6 +404,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasIrradiationAmenableLesionCreator(): FunctionCreator {
         return { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel())) }
+    }
+
+    private fun hasHifuAmenableLesionCreator(): FunctionCreator {
+        return { HasHifuAmenableLesion() }
     }
 
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {

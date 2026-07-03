@@ -126,13 +126,16 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                     referenceDate = referenceDate,
                     intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                    categoryToIgnore = null,
                     settingDescription = "metastatic"
                 )
             },
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING_EXCLUDING_CATEGORY_X to hasHadSystemicTreatmentInMetastaticSettingExcludingCategoryCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
                 HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                     referenceDate = referenceDate,
                     intentsToIgnore = setOf(Intent.CURATIVE),
+                    categoryToIgnore = null,
                     settingDescription = "advanced or metastatic"
                 )
             },
@@ -759,6 +762,18 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val weeks = function.param<IntegerParameter>(1).value
             val refDate = referenceDate.minusWeeks(weeks.toLong())
             HasHadSystemicTherapyWithAnyIntent(intents, refDate, weeks, false)
+        }
+    }
+
+    private fun hasHadSystemicTreatmentInMetastaticSettingExcludingCategoryCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                categoryToIgnore = input.category,
+                settingDescription = "metastatic"
+            )
         }
     }
 
