@@ -11,6 +11,8 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
+import com.hartwig.actin.datamodel.molecular.driver.VariantType
+import com.hartwig.actin.datamodel.trial.VariantTypeInput
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -210,6 +212,67 @@ class GeneHasActivatingMutationTest {
             .containsExactly("Activating mutation in gene gene A undetermined (not tested for mutations)")
     }
 
+    @Test
+    fun `Should fail with activating mutation for correct gene but protein impact to ignore`() {
+        val function = GeneHasActivatingMutation(GENE, codonsToIgnore = null, proteinImpactsToIgnore = setOf("V600E"))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    ACTIVATING_VARIANT.copy(
+                        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
+                            .copy(hgvsProteinImpact = "p.V600E", affectedCodon = 300)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass with activating mutation for correct gene when protein impact differs from ignored`() {
+        val function = GeneHasActivatingMutation(GENE, codonsToIgnore = null, proteinImpactsToIgnore = setOf("V600E"))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
+        )
+    }
+
+    @Test
+    fun `Should fail with activating mutation for correct gene but exon and type to ignore`() {
+        val function = GeneHasActivatingMutation(
+            GENE, codonsToIgnore = null, variantTypeToIgnore = VariantTypeInput.DELETE, exonToIgnore = 2
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    ACTIVATING_VARIANT.copy(
+                        type = VariantType.DELETE,
+                        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 2)
+                    )
+                )
+            )
+        )
+    }
+
+    @Test
+    fun `Should pass with activating mutation in ignored exon but different type`() {
+        val function = GeneHasActivatingMutation(
+            GENE, codonsToIgnore = null, variantTypeToIgnore = VariantTypeInput.DELETE, exonToIgnore = 2
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(
+                MolecularTestFactory.withVariant(
+                    ACTIVATING_VARIANT.copy(
+                        type = VariantType.INSERT,
+                        canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 2)
+                    )
+                )
+            )
+        )
+    }
+
     private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
         assertResultForVariantWithTML(expectedResult, variant, null)
 
@@ -249,7 +312,7 @@ class GeneHasActivatingMutationTest {
 
     companion object {
         private const val GENE = "gene A"
-        private val CODONS_TO_IGNORE = listOf("A100X", "A200X")
+        private val CODONS_TO_IGNORE = setOf("A100X", "A200X")
         private val ACTIVATING_VARIANT = TestVariantFactory.createMinimal().copy(
             gene = GENE,
             event = "event",

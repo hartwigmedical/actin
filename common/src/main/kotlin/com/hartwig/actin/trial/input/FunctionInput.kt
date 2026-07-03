@@ -30,6 +30,7 @@ object FunctionInput {
     val MANY_TREATMENT_CATEGORIES = listOf(Parameter.Type.MANY_TREATMENT_CATEGORIES)
     val ONE_SPECIFIC_TREATMENT = listOf(Parameter.Type.TREATMENT)
     val ONE_SPECIFIC_TREATMENT_ONE_INTEGER = listOf(Parameter.Type.TREATMENT, Parameter.Type.INTEGER)
+    val ONE_SPECIFIC_TREATMENT_ONE_INTENT = listOf(Parameter.Type.TREATMENT, Parameter.Type.INTENT)
     val MANY_SPECIFIC_TREATMENTS = listOf(Parameter.Type.MANY_TREATMENTS)
     val MANY_SPECIFIC_TREATMENTS_TWO_INTEGERS =
         listOf(Parameter.Type.MANY_TREATMENTS, Parameter.Type.INTEGER, Parameter.Type.INTEGER)
@@ -65,6 +66,8 @@ object FunctionInput {
     val ONE_GENE_TWO_INTEGERS = listOf(Parameter.Type.GENE, Parameter.Type.INTEGER, Parameter.Type.INTEGER)
     val ONE_GENE_MANY_CODONS = listOf(Parameter.Type.GENE, Parameter.Type.MANY_CODONS)
     val ONE_GENE_MANY_PROTEIN_IMPACTS = listOf(Parameter.Type.GENE, Parameter.Type.MANY_PROTEIN_IMPACTS)
+    val ONE_GENE_MANY_PROTEIN_IMPACTS_ONE_VARIANT_TYPE_ONE_INTEGER =
+        listOf(Parameter.Type.GENE, Parameter.Type.MANY_PROTEIN_IMPACTS, Parameter.Type.VARIANT_TYPE, Parameter.Type.INTEGER)
     val MANY_GENES = listOf(Parameter.Type.MANY_GENES)
     val MANY_HLA_ALLELES = listOf(Parameter.Type.MANY_HLA_ALLELES)
     val ONE_HLA_GROUP = listOf(Parameter.Type.HLA_GROUP)

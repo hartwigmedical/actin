@@ -77,45 +77,46 @@ class FunctionCreatorFactoryTest {
 
     private fun stringValueFor(type: Parameter.Type, doidTerm: String, icdTitle: String): String {
         return when (type) {
-            Parameter.Type.INTEGER -> "1"
-            Parameter.Type.DOUBLE -> "1.0"
-            Parameter.Type.STRING -> "value"
-            Parameter.Type.DOID_TERM -> doidTerm
-            Parameter.Type.TUMOR_TYPE -> "CARCINOMA"
             Parameter.Type.ALBI_GRADE -> "1"
-            Parameter.Type.MANY_INTEGERS -> "1"
-            Parameter.Type.MANY_STRINGS -> "value"
-            Parameter.Type.ICD_TITLE -> icdTitle
-            Parameter.Type.MANY_ICD_TITLES -> icdTitle
-            Parameter.Type.NYHA_CLASS -> "I"
-            Parameter.Type.TREATMENT_CATEGORY -> TreatmentCategory.CHEMOTHERAPY.name
-            Parameter.Type.TREATMENT_CATEGORY_OR_TYPE -> TreatmentCategory.CHEMOTHERAPY.name
-            Parameter.Type.TREATMENT_TYPE -> DrugType.ANTI_PD_1.name
-            Parameter.Type.MANY_TREATMENT_TYPES -> DrugType.ANTI_PD_1.name
-            Parameter.Type.MANY_TREATMENT_CATEGORIES -> TreatmentCategory.CHEMOTHERAPY.name
-            Parameter.Type.MANY_DRUG_INTERACTION_TYPES -> DrugInteraction.Type.INHIBITOR.name
-            Parameter.Type.MANY_TNM_T -> TnmT.T1.name
             Parameter.Type.BODY_LOCATION -> BodyLocationCategory.LUNG.name
             Parameter.Type.MANY_BODY_LOCATIONS -> BodyLocationCategory.LUNG.name
+            Parameter.Type.MANY_CODONS -> "12"
+            Parameter.Type.CYP -> Cyp.CYP3A4_5.name
+            Parameter.Type.DOID_TERM -> doidTerm
+            Parameter.Type.MANY_DOID_TERMS -> doidTerm
+            Parameter.Type.DOUBLE -> "1.0"
+            Parameter.Type.MANY_DRUG_INTERACTION_TYPES -> DrugInteraction.Type.INHIBITOR.name
             Parameter.Type.GENE -> "BRAF"
             Parameter.Type.MANY_GENES -> "KRAS"
-            Parameter.Type.VARIANT_TYPE -> VariantTypeInput.INSERT.name
-            Parameter.Type.MANY_CODONS -> "12"
-            Parameter.Type.MANY_PROTEIN_IMPACTS -> "V600E"
-            Parameter.Type.HLA_GROUP -> "HLA-A"
-            Parameter.Type.MANY_HLA_ALLELES -> "HLA-A*01:01"
-            Parameter.Type.MANY_TUMOR_STAGES -> TumorStage.I.name
             Parameter.Type.HAPLOTYPE -> "HLA-A*02:01"
-            Parameter.Type.RECEPTOR_TYPE -> ReceptorType.ER.name
-            Parameter.Type.MANY_INTENTS -> Intent.ADJUVANT.name
-            Parameter.Type.MEDICATION_CATEGORY -> "Chemotherapy"
-            Parameter.Type.MANY_MEDICATION_CATEGORIES -> "Chemotherapy"
-            Parameter.Type.CYP -> Cyp.CYP3A4_5.name
-            Parameter.Type.TRANSPORTER -> Transporter.BCRP.name
-            Parameter.Type.PROTEIN -> "TP53"
-            Parameter.Type.TREATMENT_RESPONSE -> TreatmentResponse.COMPLETE_RESPONSE.name
-            Parameter.Type.MANY_DOID_TERMS -> doidTerm
+            Parameter.Type.MANY_HLA_ALLELES -> "HLA-A*01:01"
+            Parameter.Type.HLA_GROUP -> "HLA-A"
+            Parameter.Type.ICD_TITLE -> icdTitle
+            Parameter.Type.MANY_ICD_TITLES -> icdTitle
             Parameter.Type.IHC_TEST_RESULT -> IhcTestResult.LOW.name
+            Parameter.Type.INTEGER -> "1"
+            Parameter.Type.MANY_INTEGERS -> "1"
+            Parameter.Type.INTENT -> Intent.ADJUVANT.name
+            Parameter.Type.MANY_INTENTS -> Intent.ADJUVANT.name
+            Parameter.Type.MANY_MEDICATION_CATEGORIES -> "Chemotherapy"
+            Parameter.Type.MEDICATION_CATEGORY -> "Chemotherapy"
+            Parameter.Type.NYHA_CLASS -> "I"
+            Parameter.Type.PROTEIN -> "TP53"
+            Parameter.Type.MANY_PROTEIN_IMPACTS -> "V600E"
+            Parameter.Type.RECEPTOR_TYPE -> ReceptorType.ER.name
+            Parameter.Type.STRING -> "value"
+            Parameter.Type.MANY_STRINGS -> "value"
+            Parameter.Type.MANY_TNM_T -> TnmT.T1.name
+            Parameter.Type.TRANSPORTER -> Transporter.BCRP.name
+            Parameter.Type.MANY_TREATMENT_CATEGORIES -> TreatmentCategory.CHEMOTHERAPY.name
+            Parameter.Type.TREATMENT_CATEGORY -> TreatmentCategory.CHEMOTHERAPY.name
+            Parameter.Type.TREATMENT_CATEGORY_OR_TYPE -> TreatmentCategory.CHEMOTHERAPY.name
+            Parameter.Type.TREATMENT_RESPONSE -> TreatmentResponse.COMPLETE_RESPONSE.name
+            Parameter.Type.TREATMENT_TYPE -> DrugType.ANTI_PD_1.name
+            Parameter.Type.MANY_TREATMENT_TYPES -> DrugType.ANTI_PD_1.name
+            Parameter.Type.MANY_TUMOR_STAGES -> TumorStage.I.name
+            Parameter.Type.TUMOR_TYPE -> "CARCINOMA"
+            Parameter.Type.VARIANT_TYPE -> VariantTypeInput.INSERT.name
             Parameter.Type.TREATMENT,
             Parameter.Type.SYSTEMIC_TREATMENT,
             Parameter.Type.MANY_TREATMENTS,

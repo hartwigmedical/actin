@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 import com.hartwig.actin.datamodel.trial.DrugParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.IntegerParameter
+import com.hartwig.actin.datamodel.trial.IntentParameter
 import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
 import com.hartwig.actin.datamodel.trial.ManyGenesParameter
 import com.hartwig.actin.datamodel.trial.ManyIntegersParameter
@@ -43,6 +44,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return mapOf(
             EligibilityRule.IS_NOT_ELIGIBLE_FOR_TREATMENT_WITH_CURATIVE_INTENT to { IsNotEligibleForCurativeTreatment() },
             EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X to isEligibleForOnLabelTreatmentCreator(),
+            EligibilityRule.IS_ELIGIBLE_FOR_ON_LABEL_TREATMENT_X_WITH_INTENT_Y to isEligibleForOnLabelTreatmentWithIntentCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_RADIOTHERAPY to { IsEligibleForRadiotherapy() },
             EligibilityRule.IS_ELIGIBLE_FOR_RADIOTHERAPY_TO_BODY_LOCATION_X to isEligibleForRadiotherapyToBodyLocationCreator(),
             EligibilityRule.IS_ELIGIBLE_FOR_PALLIATIVE_RADIOTHERAPY to { IsEligibleForPalliativeRadiotherapy() },
@@ -122,18 +124,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to {
                 HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
-                    referenceDate,
+                    referenceDate = referenceDate,
                     intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
-                    "metastatic"
+                    settingDescription = "metastatic"
                 )
             },
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
                 HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
-                    referenceDate,
+                    referenceDate = referenceDate,
                     intentsToIgnore = setOf(Intent.CURATIVE),
-                    "advanced or metastatic"
+                    settingDescription = "advanced or metastatic"
                 )
             },
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_ADVANCED_OR_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(),
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_RADIOLOGICAL_RESPONSE_TO_TREATMENT_WITH_DRUG_X to hasHadRadiologicalResponseFollowingDrugTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
@@ -190,6 +194,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val treatmentName = function.param<TreatmentParameter>(0).value
             val minDate = referenceDate.minusWeeks(26)
             IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate)
+        }
+    }
+
+    private fun isEligibleForOnLabelTreatmentWithIntentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val treatmentName = function.param<TreatmentParameter>(0).value
+            val minDate = referenceDate.minusWeeks(26)
+            val intent = function.param<IntentParameter>(1).value
+            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate, intent)
         }
     }
 
@@ -755,6 +768,28 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                settingDescription = "metastatic",
+                maximumLines = function.param<IntegerParameter>(0).value
+            )
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = setOf(Intent.CURATIVE),
+                settingDescription = "advanced or metastatic",
+                maximumLines = function.param<IntegerParameter>(0).value
+            )
+        }
+    }
+
     private fun hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             function.expectTypes(
@@ -774,7 +809,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     }
 
     private fun hasHadRadiologicalResponseFollowingDrugTreatmentCreator(): FunctionCreator {
-        return { function: EligibilityFunction -> function.expectTypes(Parameter.Type.DRUG)
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.DRUG)
             val drug = function.param<DrugParameter>(0).value
             HasHadRadiologicalResponseFollowingDrugTreatment(drug = drug)
         }
