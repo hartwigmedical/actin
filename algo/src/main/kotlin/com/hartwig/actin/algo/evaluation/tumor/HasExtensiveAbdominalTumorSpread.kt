@@ -6,15 +6,12 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 
-class HasExtensiveAbdominalTumorSpread(private val hasMetastaticCancer: HasMetastaticCancer) :
-    EvaluationFunction {
+class HasExtensiveAbdominalTumorSpread(private val hasMetastaticCancer: HasMetastaticCancer) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (hasMetastaticCancer.evaluate(record).result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail(
-                    "No metastatic cancer hence no extensive abdominal tumor spread"
-                )
+                EvaluationFactory.fail("No metastatic cancer hence no extensive abdominal tumor spread")
             }
 
             EvaluationResult.UNDETERMINED, EvaluationResult.WARN -> {
@@ -23,9 +20,7 @@ class HasExtensiveAbdominalTumorSpread(private val hasMetastaticCancer: HasMetas
                 )
             }
 
-            else -> {
-                EvaluationFactory.undetermined("Undetermined if extensive abdominal tumor spread")
-            }
+            else -> EvaluationFactory.undetermined("Undetermined if extensive abdominal tumor spread")
         }
     }
 }
