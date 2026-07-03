@@ -220,7 +220,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
                         ),
                         "peritoneal effusion"
                     ),
-            EligibilityRule.HAS_POTENTIAL_DISRUPTION_OF_LYMPHATIC_DRAINAGE to hasPotentialDisruptionOfLymphaticDrainage()
+            EligibilityRule.HAS_POTENTIAL_DISRUPTION_OF_LYMPHATIC_DRAINAGE to hasPotentialDisruptionOfLymphaticDrainageCreator()
 
         )
     }
@@ -371,7 +371,7 @@ class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resour
         }
     }
 
-    private fun hasPotentialDisruptionOfLymphaticDrainage(): FunctionCreator {
+    private fun hasPotentialDisruptionOfLymphaticDrainageCreator(): FunctionCreator {
         return { HasPotentialDisruptionOfLymphaticDrainage(icdModel()) }
     }
 
