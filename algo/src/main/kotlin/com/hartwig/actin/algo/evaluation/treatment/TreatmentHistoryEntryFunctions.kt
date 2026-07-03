@@ -66,13 +66,10 @@ object TreatmentHistoryEntryFunctions {
 
     fun fullTreatmentDisplay(entry: TreatmentHistoryEntry): String {
         return entry.treatmentHistoryDetails?.let { details ->
-            val switchToTreatmentDisplay = if (details.switchToTreatments.isNullOrEmpty()) "" else {
-                " with switch to " + details.switchToTreatments!!.joinToString(" then ") { it.treatment.display() }
-            }
             val maintenanceTreatmentDisplay = details.maintenanceTreatment?.let {
                 " continued with ${details.maintenanceTreatment!!.treatment.display()} maintenance"
             } ?: ""
-            entry.treatmentDisplay() + switchToTreatmentDisplay + maintenanceTreatmentDisplay
+            entry.treatmentDisplay() + maintenanceTreatmentDisplay
         } ?: entry.treatmentDisplay()
     }
 
@@ -81,7 +78,7 @@ object TreatmentHistoryEntryFunctions {
     ): TreatmentHistoryEntry? {
         val initialTreatmentStageMatches = entry.treatments.any(predicate)
         val details = entry.treatmentHistoryDetails
-        val additionalTreatmentStages = (details?.switchToTreatments ?: emptyList()) + listOfNotNull(details?.maintenanceTreatment)
+        val additionalTreatmentStages = listOfNotNull(details?.maintenanceTreatment)
 
         val matchingAdditionalStages = dropNonMatchingStagesFromStartAndEnd(additionalTreatmentStages, predicate)
 
@@ -158,7 +155,6 @@ object TreatmentHistoryEntryFunctions {
             stopYear = stopYearMonth.year,
             stopMonth = stopYearMonth.month,
             maintenanceTreatment = null,
-            switchToTreatments = emptyList(),
             cycles = cycles
         ) ?: TreatmentHistoryDetails(
             stopYear = stopYearMonth.year,
@@ -168,7 +164,6 @@ object TreatmentHistoryEntryFunctions {
             bestResponse = null,
             stopReason = null,
             stopReasonDetail = null,
-            switchToTreatments = emptyList(),
             maintenanceTreatment = null
         )
     }

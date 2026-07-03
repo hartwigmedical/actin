@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
@@ -12,6 +11,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
+import com.hartwig.actin.medication.MedicationToTreatmentConverter
 import java.time.LocalDate
 
 class HasHadAnyCancerTreatmentSinceDate(
@@ -26,10 +26,13 @@ class HasHadAnyCancerTreatmentSinceDate(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val antiCancerMedicationsWithoutTrialMedicationsAsTreatments =
-            createTreatmentHistoryEntriesFromMedications(record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
-                ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() })
+            MedicationToTreatmentConverter.convertAndCombine(
+                record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }
+                    ?.filter { (it.allLevels() intersect atcLevelsToFind).isNotEmpty() },
+                record.oncologicalHistory
+            )
 
-        val effectiveTreatmentHistory = (record.oncologicalHistory + antiCancerMedicationsWithoutTrialMedicationsAsTreatments)
+        val effectiveTreatmentHistory = antiCancerMedicationsWithoutTrialMedicationsAsTreatments
             .filter { entry ->
                 val treatments = entry.allTreatments().filterNot { treatment ->
                     treatment.categories().contains(categoryToIgnore) && treatment.types().any { it in typesToIgnore }

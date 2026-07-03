@@ -37,19 +37,6 @@ class HasAcquiredResistanceToAnyDrugTest {
     }
 
     @Test
-    fun `Should pass for matching drug in switch to treatment with stop reason PD`() {
-        val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
-            setOf(wrongDrugTreatment),
-            stopReason = StopReason.PROGRESSIVE_DISEASE,
-            switchToTreatments = listOf(TreatmentTestFactory.treatmentStage(targetDrugTreatment))
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
-        )
-    }
-
-    @Test
     fun `Should evaluate to undetermined if target drug in treatment history with stop reason toxicity`() {
         val history = TreatmentTestFactory.treatmentHistoryEntry(
             treatments = setOf(targetDrugTreatment),

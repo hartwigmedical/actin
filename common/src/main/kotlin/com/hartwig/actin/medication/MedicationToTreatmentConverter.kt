@@ -1,4 +1,4 @@
-package com.hartwig.actin.report.interpretation
+package com.hartwig.actin.medication
 
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
@@ -12,23 +12,25 @@ import java.time.YearMonth
 
 object MedicationToTreatmentConverter {
 
-    fun convert(medications: List<Medication>, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
+    fun convertAndCombine(medications: List<Medication>?, treatmentHistory: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
         val treatmentsByDrug = createTreatmentHistoryEntryPerDrugMap(treatmentHistory)
-        return medications.filter { medication ->
+        return treatmentHistory + (medications ?: emptyList()).filter { medication ->
             val isSystemicCancerTreatment = medication.drug?.category in TreatmentCategory.SYSTEMIC_CANCER_TREATMENT_CATEGORIES
             val hasNoMatchingTreatmentHistoryEntry =
                 medication.drug?.let(treatmentsByDrug::get)?.none { matchesDate(medication, it) } ?: true
             val mayBeActive = medication.status == null || medication.status == MedicationStatus.ACTIVE
-            isSystemicCancerTreatment && hasNoMatchingTreatmentHistoryEntry && mayBeActive
+            (isSystemicCancerTreatment || medication.isTrialMedication) && hasNoMatchingTreatmentHistoryEntry && mayBeActive
         }
             .groupBy { it.drug }
             .mapNotNull { (drug, medications) ->
                 val (start, stop) = extractStartAndStopRange(medications)
                 val name = drug?.name?.lowercase()?.replaceFirstChar { char -> char.uppercase() } ?: "Unknown"
+                val isTrialMedication = medications.all { it.isTrialMedication }
                 TreatmentHistoryEntry(
                     startYear = start?.year,
                     startMonth = start?.monthValue,
                     treatments = setOf(DrugTreatment(name = name, drugs = setOfNotNull(drug))),
+                    isTrial = isTrialMedication,
                     treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
                 )
             }

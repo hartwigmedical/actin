@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.createTreatmentHistoryEntriesFromMedications
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
@@ -11,6 +10,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
+import com.hartwig.actin.medication.MedicationToTreatmentConverter
 import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryOfTypesRecently(
@@ -21,9 +21,10 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val effectiveTreatmentHistory =
-            record.oncologicalHistory + createTreatmentHistoryEntriesFromMedications(
-                record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE })
+        val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(
+            record.medications?.filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE },
+            record.oncologicalHistory
+        )
 
         val treatmentAssessment = effectiveTreatmentHistory.map { treatmentHistoryEntry ->
             val categoryMatch = category in treatmentHistoryEntry.categories()

@@ -274,17 +274,8 @@ class ClinicalDAO(private val context: DSLContext) {
                     )
                 } ?: emptyMap()
 
-                val switchToTreatmentMap = details?.switchToTreatments?.firstOrNull()?.let { switchToTreatment ->
-                    mapOf(
-                        "switchToTreatment" to switchToTreatment.treatment.name,
-                        "switchToTreatmentStartYear" to switchToTreatment.startYear,
-                        "switchToTreatmentStartMonth" to switchToTreatment.startMonth,
-                        "switchToTreatmentCycles" to switchToTreatment.cycles
-                    )
-                } ?: emptyMap()
-
                 val record = context.newRecord(Tables.TREATMENTHISTORYENTRY)
-                record.fromMap(valueMap + maintenanceTreatmentMap + switchToTreatmentMap)
+                record.fromMap(valueMap + maintenanceTreatmentMap)
                 record
             }
         context.batchInsert(records).execute()
