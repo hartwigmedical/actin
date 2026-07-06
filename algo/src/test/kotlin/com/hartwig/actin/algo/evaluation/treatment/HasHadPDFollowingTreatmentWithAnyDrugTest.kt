@@ -43,6 +43,27 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
     }
 
     @Test
+    fun `Should pass for matching treatment with no stop reason but subsequent treatment line within 26 weeks`() {
+        val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopYear = 2020, stopMonth = 6)
+        val subsequentEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, startYear = 2020, startMonth = 9)
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+    }
+
+    @Test
+    fun `Should return undetermined for matching treatment with no stop reason when gap to next line exceeds 26 weeks`() {
+        val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopYear = 2020, stopMonth = 6)
+        val subsequentEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, startYear = 2021, startMonth = 1)
+        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+    }
+
+    @Test
+    fun `Should fail for matching treatment stopped due to toxicity even if subsequent line exists`() {
+        val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.TOXICITY, stopYear = 2020, stopMonth = 6)
+        val subsequentEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, startYear = 2020, startMonth = 9)
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+    }
+
+    @Test
     fun `Should pass for matching treatment and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))

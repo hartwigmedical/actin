@@ -42,6 +42,13 @@ class HasHadPDFollowingSpecificTreatmentTest {
     }
 
     @Test
+    fun `Should pass for matching treatment with no stop reason but subsequent treatment line within 26 weeks`() {
+        val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopYear = 2020, stopMonth = 6)
+        val subsequentEntry = treatmentHistoryEntry(setOf(drugTreatment("other", TreatmentCategory.CHEMOTHERAPY)), startYear = 2020, startMonth = 9)
+        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+    }
+
+    @Test
     fun `Should pass for matching treatment and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
         assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))

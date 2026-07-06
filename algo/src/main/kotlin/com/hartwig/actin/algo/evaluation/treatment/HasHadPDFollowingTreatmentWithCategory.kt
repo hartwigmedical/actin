@@ -12,12 +12,13 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val history = record.oncologicalHistory
         val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(
-            record.oncologicalHistory,
+            history,
             category,
-            ProgressiveDiseaseFunctions::treatmentResultedInPD,
+            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, history) },
             { true },
-            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry) != false }
+            { entry -> ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, history) != false }
         )
 
         return if (treatmentSummary.hasSpecificMatch()) {

@@ -161,6 +161,21 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
     }
 
     @Test
+    fun `Should pass for combination of target drug and treatment with target category with no stop reason but subsequent line within 26 weeks and sufficient duration`() {
+        val matchingEntry = treatmentHistoryEntry(
+            setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)),
+            startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 6
+        )
+        val subsequentEntry = treatmentHistoryEntry(
+            setOf(drugTreatment("other", TreatmentCategory.IMMUNOTHERAPY)), startYear = 2022, startMonth = 8
+        )
+        val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+    }
+
+    @Test
     fun `Should pass for combination of target drug and treatment with target category and type and stop reason PD and sufficient weeks`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)),

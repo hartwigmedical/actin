@@ -27,6 +27,15 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
     }
 
     @Test
+    fun `Should fail for right category type with no stop reason but subsequent treatment line within 26 weeks`() {
+        val matchingEntry = TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopYear = 2020, stopMonth = 6)
+        val subsequentEntry = TreatmentTestFactory.treatmentHistoryEntry(
+            setOf(TreatmentTestFactory.drugTreatment("other", TreatmentCategory.CHEMOTHERAPY)), startYear = 2020, startMonth = 9
+        )
+        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(listOf(matchingEntry, subsequentEntry)))
+    }
+
+    @Test
     fun `Should fail for right category and type but with PD`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(

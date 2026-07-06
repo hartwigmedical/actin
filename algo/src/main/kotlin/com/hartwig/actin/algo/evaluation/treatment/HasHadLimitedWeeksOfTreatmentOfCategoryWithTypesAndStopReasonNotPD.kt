@@ -15,14 +15,15 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val treatmentEvaluations = record.oncologicalHistory.map { treatmentHistoryEntry ->
+        val history = record.oncologicalHistory
+        val treatmentEvaluations = history.map { treatmentHistoryEntry ->
             val mayMatchAsTrial = TrialFunctions.treatmentMayMatchAsTrial(treatmentHistoryEntry, setOf(category))
             val categoryMatches = treatmentHistoryEntry.categories().contains(category)
 
             TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(treatmentHistoryEntry) {
                 categoryMatches && treatmentHistoryEntry.matchesTypeFromSet(types) == true
             }?.let { matchingPortionOfEntry ->
-                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry)
+                val treatmentResultedInPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(matchingPortionOfEntry, history)
 
                 val durationWeeks = TreatmentHistoryEntryFunctions.weeksBetweenDates(matchingPortionOfEntry)
                 val durationWeeksMax = TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(matchingPortionOfEntry)
