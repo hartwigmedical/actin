@@ -91,6 +91,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y to hasHadTreatmentCategoryWithAnyIntentCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y_WITHIN_Z_MONTHS to hasHadTreatmentCategoryWithAnyIntentRecentlyCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ANY_TYPES_Y_WITH_ANY_INTENT_Z to hasHadTreatmentCategoryAndTypeWithAnyIntentCreator(),
             EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to { HasReceivedPlatinumBasedDoublet(doidModel()) },
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y to hasHadTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentCategoryOfAllTypesCreator(),
@@ -509,7 +510,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_INTENTS)
             val category = function.param<TreatmentCategoryParameter>(0).value
             val intents = function.param<ManyIntentsParameter>(1).value
-            HasHadSomeTreatmentsWithCategoryWithIntents(category, intents)
+            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(category, intents)
         }
     }
 
@@ -524,7 +525,22 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val intents = function.param<ManyIntentsParameter>(1).value
             val weeksAgo = function.param<IntegerParameter>(2).value
             val minDate = createInterpreterForWashout(weeksAgo, null, referenceDate).second
-            HasHadSomeTreatmentsWithCategoryWithIntents(category, intents, minDate)
+            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(category, intents, minDate = minDate)
+        }
+    }
+
+    private fun hasHadTreatmentCategoryAndTypeWithAnyIntentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.MANY_INTENTS
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val intents = function.param<ManyIntentsParameter>(2).value
+
+            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(category, intents, types)
         }
     }
 

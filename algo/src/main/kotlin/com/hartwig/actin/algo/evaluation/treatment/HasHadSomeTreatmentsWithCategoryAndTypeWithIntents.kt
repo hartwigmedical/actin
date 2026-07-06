@@ -6,19 +6,22 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 
-class HasHadSomeTreatmentsWithCategoryWithIntents(
+class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
     private val category: TreatmentCategory,
     private val intentsToFind: Set<Intent>,
+    private val allowedTypes: Set<TreatmentType>? = null,
     private val minDate: LocalDate? = null
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val oncologicalHistory = if (minDate == null) record.oncologicalHistory else historyAfterDate(record, false)
-        val treatmentSummary = TreatmentSummaryForCategory.createForTreatmentHistory(oncologicalHistory, category, ::hasAnyMatchingIntent)
+        val treatmentSummary =
+            TreatmentSummaryForCategory.createForTreatmentHistory(oncologicalHistory, category, ::hasAnyMatchingTypeAndIntent)
 
         val intentsList = Format.concatItemsWithOr(intentsToFind)
 
@@ -39,7 +42,7 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
             else -> {
                 minDate?.let {
                     TreatmentSummaryForCategory.createForTreatmentHistory(
-                        historyAfterDate(record, true), category, ::hasAnyMatchingIntent
+                        historyAfterDate(record, true), category, ::hasAnyMatchingTypeAndIntent
                     ).specificMatches.ifEmpty { null }
                 }?.let { unknownDateMatches ->
                     EvaluationFactory.undetermined("Has received $intentsList ${category.display()} (${unknownDateMatches.joinToString(", ")}) with unknown date")
@@ -48,7 +51,10 @@ class HasHadSomeTreatmentsWithCategoryWithIntents(
         }
     }
 
-    private fun hasAnyMatchingIntent(entry: TreatmentHistoryEntry) = entry.intents?.intersect(intentsToFind)?.isNotEmpty()
+    private fun hasAnyMatchingTypeAndIntent(entry: TreatmentHistoryEntry): Boolean? {
+        val typeMatches = allowedTypes?.let { types -> entry.treatments.any { types.intersect(it.types()).isNotEmpty() } } ?: true
+        return if (typeMatches) entry.intents?.intersect(intentsToFind)?.isNotEmpty() else false
+    }
 
     private fun historyAfterDate(record: PatientRecord, includeUnknown: Boolean): List<TreatmentHistoryEntry> {
         return record.oncologicalHistory.filter { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate!!, includeUnknown) }
