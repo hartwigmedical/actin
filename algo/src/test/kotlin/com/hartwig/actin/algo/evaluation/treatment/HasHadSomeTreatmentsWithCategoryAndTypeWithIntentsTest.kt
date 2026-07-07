@@ -40,11 +40,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
     @Test
     fun `Should fail for wrong treatment type`() {
         val treatmentHistoryEntry =
-            treatmentHistoryEntry(
-                setOf(
-                    drugTreatment("test", matchingCategory, setOf(DrugType.ROS1_INHIBITOR))
-                ), intents = matchingIntents
-            )
+            treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, setOf(DrugType.ROS1_INHIBITOR))), intents = matchingIntents)
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
