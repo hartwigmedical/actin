@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import java.time.LocalDate
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
@@ -24,16 +25,21 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
 
     @Test
     fun `Should fail for no treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        val evaluation = function.evaluate(withTreatmentHistory(emptyList()))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy"
+        )
     }
 
     @Test
     fun `Should fail for wrong treatment category`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), intents = matchingIntents)
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+        val evaluation = function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy"
         )
     }
 
@@ -41,9 +47,10 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
     fun `Should fail for wrong treatment type`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, setOf(DrugType.ROS1_INHIBITOR))), intents = matchingIntents)
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
+        val evaluation = function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy"
         )
     }
 
@@ -58,7 +65,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        val evaluation = function.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy"
+        )
     }
 
     @Test
@@ -72,7 +83,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patientRecord))
+        val evaluation = function.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessagesStrings()).containsExactly(
+            "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (Matching category with correct intent and type)"
+        )
     }
 
     @Test
@@ -87,12 +102,10 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(
-            EvaluationResult.PASS,
-            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, allowedTypes = null).evaluate(
-                patientRecord
-            )
-        )
+        val evaluation = HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, allowedTypes = null)
+            .evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Has received palliative targeted therapy (Matching)")
     }
 
     @Test
@@ -105,7 +118,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        val evaluation = function.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
+            "Undetermined if received ALK inhibitor or EGFR inhibitor targeted therapy is palliative"
+        )
     }
 
     @Test
@@ -118,7 +135,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        val evaluation = function.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
+            "Undetermined if treatment received in previous trial included palliative ALK inhibitor or EGFR inhibitor targeted therapy"
+        )
     }
 
     @Test
@@ -131,7 +152,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        val evaluation = function.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy"
+        )
     }
 
     @Test
@@ -146,7 +171,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(patientRecord))
+        val evaluation = functionWithDate.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly(
+            "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy"
+        )
     }
 
     @Test
@@ -161,20 +190,25 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithDate.evaluate(patientRecord))
+        val evaluation = functionWithDate.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessagesStrings()).containsExactly(
+            "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (Recent matching treatment)"
+        )
     }
 
     @Test
     fun `Should return undetermined when treatments with correct category and intent but unknown date`() {
         val treatment = drugTreatment("matching but unknown date", category = matchingCategory, types = matchingTypes)
-        val patientRecord = withTreatmentHistory(
-            listOf(
-                treatmentHistoryEntry(
-                    setOf(treatment),
-                    intents = matchingIntents
-                )
-            )
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(treatment),
+            intents = matchingIntents
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithDate.evaluate(patientRecord))
+        val patientRecord = withTreatmentHistory(listOf(treatmentHistoryEntry))
+        val evaluation = functionWithDate.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
+            "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date"
+        )
     }
 }
