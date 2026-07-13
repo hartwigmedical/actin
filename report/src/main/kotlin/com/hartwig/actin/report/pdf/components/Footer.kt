@@ -43,7 +43,10 @@ class Footer {
                 "All results and data described in this report are for Research Use Only and have NOT been generated " +
                         "using a clinically validated and controlled procedure nor is it a validated medical device. " +
                         "The results should NOT be used for diagnostic or treatment purposes. " +
-                        "No rights can be derived from the content of this report."
+                        "No rights can be derived from the content of this report.\n" +
+                        "Information for trials shown with an asterisk was sourced from clinicalTrials.gov on 24th september. " +
+                        "The original clinicalTrials.gov content is not modified. ACTIN processes and structures trial information " +
+                        "for matching and analytical purposes"
             val disclaimerParagraph = Paragraph(disclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(disclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
