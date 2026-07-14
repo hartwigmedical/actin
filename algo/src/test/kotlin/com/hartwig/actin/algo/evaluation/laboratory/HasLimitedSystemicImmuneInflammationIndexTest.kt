@@ -43,6 +43,6 @@ class HasLimitedSystemicImmuneInflammationIndexTest {
         val evaluation = function.evaluate(LabTestFactory.withLabValues(listOf(neutrophils.copy(value = 10.0), thrombocytes.copy(value = 150.0), lymphocytes)))
         assertThat(evaluation.recoverable).isTrue
         EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Systemic immune-inflammation index (1500.0) above 900.0")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Systemic immune-inflammation index (1500) above 900.0")
     }
 }
