@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
 import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
-import kotlin.math.roundToInt
 
 class HasLimitedSystemicImmuneInflammationIndex(
     private val index: Double,
@@ -29,16 +28,16 @@ class HasLimitedSystemicImmuneInflammationIndex(
             lymphocytes to LabMeasurement.LYMPHOCYTES_ABS
         )
 
-        val calculatedIndex = calculateSystemicImmuneInflammationIndex(neutrophils!!, thrombocytes!!, lymphocytes!!)
-            ?: return EvaluationFactory.recoverableUndetermined(
-                "Systemic immune-inflammation index cannot be calculated since neutrophils and/or thrombocytes and/or lymphocytes " +
-                        "not in expected unit and not able to convert"
-            )
-
         return when {
             invalidLabValue != null -> invalidLabValue
 
-            calculatedIndex <= index -> {
+            calculateSystemicImmuneInflammationIndex(neutrophils!!, thrombocytes!!, lymphocytes!!) == null ->
+                EvaluationFactory.recoverableUndetermined(
+                    "Systemic immune-inflammation index cannot be calculated since neutrophils and/or thrombocytes and/or lymphocytes " +
+                            "not in expected unit and not able to convert"
+                )
+
+            calculateSystemicImmuneInflammationIndex(neutrophils, thrombocytes, lymphocytes)!! <= index -> {
                 val message = "Systemic immune-inflammation index at most $index" +
                         if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) ||
                             lymphocytes.date.isBefore(minPassLabDate)
@@ -52,7 +51,7 @@ class HasLimitedSystemicImmuneInflammationIndex(
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Systemic immune-inflammation index (${calculatedIndex.roundToInt()}) above $index"
+                    "Systemic immune-inflammation index above $index"
                 )
             }
         }
