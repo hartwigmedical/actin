@@ -28,32 +28,26 @@ class HasLimitedSystemicImmuneInflammationIndex(
             lymphocytes to LabMeasurement.LYMPHOCYTES_ABS
         )
 
-        return when {
-            invalidLabValue != null -> invalidLabValue
+        if (invalidLabValue != null) {
+            return invalidLabValue
+        }
 
-            calculateSystemicImmuneInflammationIndex(neutrophils!!, thrombocytes!!, lymphocytes!!) == null ->
-                EvaluationFactory.recoverableUndetermined(
-                    "Systemic immune-inflammation index cannot be calculated since neutrophils and/or thrombocytes and/or lymphocytes " +
-                            "not in expected unit and not able to convert"
-                )
+        val calculatedIndex = calculateSystemicImmuneInflammationIndex(neutrophils!!, thrombocytes!!, lymphocytes!!)
+            ?: return EvaluationFactory.recoverableUndetermined(
+                "Systemic immune-inflammation index cannot be calculated since neutrophils and/or thrombocytes and/or lymphocytes " +
+                        "not in expected unit and not able to convert"
+            )
 
-            calculateSystemicImmuneInflammationIndex(neutrophils, thrombocytes, lymphocytes)!! <= index -> {
-                val message = "Systemic immune-inflammation index at most $index" +
-                        if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) ||
-                            lymphocytes.date.isBefore(minPassLabDate)
-                        ) {
-                            " but measurement occurred before $minPassLabDate"
-                        } else {
-                            ""
-                        }
-                EvaluationFactory.recoverablePass(message)
-            }
-
-            else -> {
-                EvaluationFactory.recoverableFail(
-                    "Systemic immune-inflammation index above $index"
-                )
-            }
+        return if (calculatedIndex <= index) {
+            val message = "Systemic immune-inflammation index at most $index" +
+                    if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) || lymphocytes.date.isBefore(minPassLabDate)) {
+                        " but measurement occurred before $minPassLabDate"
+                    } else {
+                        ""
+                    }
+            EvaluationFactory.recoverablePass(message)
+        } else {
+            EvaluationFactory.recoverableFail("Systemic immune-inflammation index above $index")
         }
     }
 
