@@ -34,12 +34,14 @@ class HasLimitedSystemicImmuneInflammationIndex(
 
         val calculatedIndex = calculateSystemicImmuneInflammationIndex(neutrophils!!, thrombocytes!!, lymphocytes!!)
             ?: return EvaluationFactory.recoverableUndetermined(
-                "Systemic immune-inflammation index cannot be calculated since neutrophils and/or thrombocytes and/or lymphocytes not in expected unit and not able to convert"
+                "Systemic immune-inflammation index cannot be calculated since neutrophils and/or thrombocytes and/or lymphocytes " +
+                        "not in expected unit and not able to convert"
             )
 
         return if (calculatedIndex <= index) {
             val message = "Systemic immune-inflammation index at most $index" +
-                    if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) || lymphocytes.date.isBefore(minPassLabDate)) {
+                    if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) ||
+                        lymphocytes.date.isBefore(minPassLabDate)) {
                         " but measurement occurred before $minPassLabDate"
                     } else {
                         ""
