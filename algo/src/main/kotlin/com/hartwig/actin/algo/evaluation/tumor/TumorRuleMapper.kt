@@ -34,14 +34,15 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_CANCER_WITH_LARGE_CELL_COMPONENT to hasCancerWithLargeCellComponentCreator(),
             EligibilityRule.HAS_LOW_GRADE_CANCER to hasLowGradeCancerCreator(),
             EligibilityRule.HAS_HIGH_GRADE_CANCER to hasHighGradeCancerCreator(),
+            EligibilityRule.HAS_WELL_DIFFERENTIATED_TUMOR to hasWellDifferentiatedTumorCreator(),
             EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to hasKnownSclcTransformationCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNsclcCreator(),
             EligibilityRule.HAS_TRIPLE_NEGATIVE_BREAST_CANCER to hasTripleNegativeBreastCancerCreator(),
             EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
             EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to hasOvarianBorderlineTumorCreator(),
-            EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR to hasStomachUndifferentiatedTumorCreator(),
             EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA to hasSecondaryGlioblastomaCreator(),
+            EligibilityRule.HAS_NON_MUSCLE_INVASIVE_BLADDER_CANCER to hasNonMuscleInvasiveBladderCancerCreator(),
             EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasCytologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasHistologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_PATHOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasPathologicalDocumentationOfTumorTypeCreator(),
@@ -55,6 +56,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_RECURRENT_CANCER to hasRecurrentCancerCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_RECURRENT_CANCER to meetsSpecificCriteriaRegardingRecurrentCancerCreator(),
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
+            EligibilityRule.HAS_PRIMARY_TUMOR_AT_UNFAVOURABLE_SITE to hasPrimaryTumorAtUnfavourableSiteCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_METASTASES to meetsSpecificCriteriaRegardingMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
@@ -92,6 +94,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
             EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY to meetsSpecificBiopsyRequirementsCreator(),
+            EligibilityRule.HAS_VISIBLE_LESION_BY_CYSTOSCOPY to hasVisibleLesionByCystoscopyCreator(),
             EligibilityRule.HAS_EVALUABLE_DISEASE to hasEvaluableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE to hasMeasurableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST to hasMeasurableDiseaseRecistCreator(),
@@ -107,7 +110,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
             EligibilityRule.HAS_SIEWERT_TYPE_X to hasSiewertTypeCreator(),
-            EligibilityRule.HAS_ANY_RISK_X_PROSTATE_CANCER to hasAnyProstateCancerRiskCreator(),
+            EligibilityRule.HAS_ANY_RISK_X_CANCER to hasAnyRiskCancerCreator(),
+            EligibilityRule.HAS_MODIFIED_OBERLIN_PROGNOSTIC_SCORE_OF_AT_LEAST_X to hasMinimumModifiedOberlinPrognosticScoreCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
             EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSituCreator(),
             EligibilityRule.HAS_TUMOR_LENGTH_OF_AT_MOST_X_CM to hasLimitedTumorLengthCreator(),
@@ -173,6 +177,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { Not(HasLowGradeCancer()) }
     }
 
+    private fun hasWellDifferentiatedTumorCreator(): FunctionCreator {
+        return { HasWellDifferentiatedTumor() }
+    }
+
     private fun hasKnownSclcTransformationCreator(): FunctionCreator {
         return { HasKnownSclcTransformation(doidModel()) }
     }
@@ -193,12 +201,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasOvarianBorderlineTumor(doidModel()) }
     }
 
-    private fun hasStomachUndifferentiatedTumorCreator(): FunctionCreator {
-        return { HasStomachUndifferentiatedTumor(doidModel()) }
-    }
-
     private fun hasSecondaryGlioblastomaCreator(): FunctionCreator {
         return { HasSecondaryGlioblastoma(doidModel()) }
+    }
+
+    private fun hasNonMuscleInvasiveBladderCancerCreator(): FunctionCreator {
+        return { HasNonMuscleInvasiveBladderCancer(doidModel()) }
     }
 
     private fun hasCytologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
@@ -274,6 +282,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasIncurableCancerCreator(): FunctionCreator {
         return { DerivedTumorStageEvaluationFunction(HasIncurableCancer(), "incurable cancer") }
+    }
+
+    private fun hasPrimaryTumorAtUnfavourableSiteCreator(): FunctionCreator {
+        return { HasPrimaryTumorAtUnfavourableSite() }
     }
 
     private fun hasAnyLesionCreator(): FunctionCreator {
@@ -434,6 +446,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { MeetsSpecificBiopsyRequirements() }
     }
 
+    private fun hasVisibleLesionByCystoscopyCreator(): FunctionCreator {
+        return { HasVisibleLesionByCystoscopy() }
+    }
+
     private fun hasEvaluableDiseaseCreator(): FunctionCreator {
         return { HasEvaluableDisease() }
     }
@@ -496,9 +512,15 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         }
     }
 
-    private fun hasAnyProstateCancerRiskCreator(): FunctionCreator {
+    private fun hasAnyRiskCancerCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasProstateCancerRisk(function.param<ManyStringsParameter>(0).value, doidModel())
+            HasAnyRiskCancer(function.param<ManyStringsParameter>(0).value)
+        }
+    }
+
+    private fun hasMinimumModifiedOberlinPrognosticScoreCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasMinimumModifiedOberlinPrognosticScore(function.param<IntegerParameter>(0).value)
         }
     }
 

@@ -56,6 +56,11 @@ internal object LabEvaluation {
         return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
     }
 
+    fun firstInvalidLabValue(minValidDate: LocalDate, vararg values: Pair<LabValue?, LabMeasurement>): Evaluation? {
+        return values.firstOrNull { (value, measurement) -> !isValid(value, measurement, minValidDate) }
+            ?.let { (value, measurement) -> evaluateInvalidLabValue(measurement, value, minValidDate) }
+    }
+
     fun evaluateInvalidLabValue(
         measurement: LabMeasurement,
         mostRecent: LabValue?,
