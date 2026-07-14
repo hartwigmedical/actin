@@ -27,6 +27,7 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
             EligibilityRule.IS_INVOLVED_IN_STUDY_PROCEDURES to { IsInvolvedInStudyProcedures() },
             EligibilityRule.USES_TOBACCO_PRODUCTS to { UsesTobaccoProducts() },
             EligibilityRule.ADHERES_TO_BLOOD_DONATION_PRESCRIPTIONS to { AdheresToBloodDonationPrescriptions() },
+            EligibilityRule.HAS_MOUTH_OPENING_OF_AT_LEAST_X_MM to hasMinimumMouthOpeningCreator()
         )
     }
 
@@ -64,6 +65,12 @@ class GeneralRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     private fun willParticipateInTrialInCountryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             WillParticipateInTrialInCountry(function.param<StringParameter>(0).value)
+        }
+    }
+
+    private fun hasMinimumMouthOpeningCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasMinimumMouthOpening(function.param<IntegerParameter>(0).value)
         }
     }
 }

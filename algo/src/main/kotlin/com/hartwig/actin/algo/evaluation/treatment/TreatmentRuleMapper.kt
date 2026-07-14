@@ -143,6 +143,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_ADVANCED_OR_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(),
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
+            EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_ANY_TREATMENT_NAME_X to hasHadResponseFollowingSomeSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_RADIOLOGICAL_RESPONSE_TO_TREATMENT_WITH_DRUG_X to hasHadRadiologicalResponseFollowingDrugTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
@@ -836,6 +837,18 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 treatmentResponses = setOf(treatmentResponse),
                 category = category,
                 types = types
+            )
+        }
+    }
+
+    private fun hasHadResponseFollowingSomeSpecificTreatmentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.TREATMENT_RESPONSE, Parameter.Type.MANY_TREATMENTS)
+            val treatmentResponse = function.param<TreatmentResponseParameter>(0).value
+            val treatments = function.param<ManyTreatmentsParameter>(1).value
+            HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+                treatmentResponses = setOf(treatmentResponse),
+                targetTreatments = treatments
             )
         }
     }

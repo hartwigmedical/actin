@@ -37,6 +37,7 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabUnit.CELLS_PER_CUBIC_MILLIMETER
             ),
             EligibilityRule.HAS_POTENTIAL_LEUKOCYTOSIS to hasPotentialLeukocytosisCreator(),
+            EligibilityRule.HAS_SYSTEMIC_IMMUNE_INFLAMMATION_INDEX_OF_AT_MOST_X to hasLimitedSystemicImmuneInflammationIndexCreator(),
             EligibilityRule.HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.NEUTROPHILS_ABS),
             EligibilityRule.HAS_THROMBOCYTES_ABS_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.THROMBOCYTES_ABS),
             EligibilityRule.HAS_HEMOGLOBIN_G_PER_DL_OF_AT_LEAST_X to hasSufficientLabValueCreator(
@@ -86,6 +87,9 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabUnit.MILLIGRAMS_PER_DECILITER
             ),
             EligibilityRule.HAS_CREATININE_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.CREATININE),
+            EligibilityRule.HAS_CREATININE_WITHIN_INSTITUTIONAL_NORMAL_LIMITS to hasLabValueWithinInstitutionalNormalLimitCreator(
+                LabMeasurement.CREATININE
+            ),
             EligibilityRule.HAS_EGFR_CKD_EPI_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_CKD_EPI),
             EligibilityRule.HAS_EGFR_MDRD_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.EGFR_MDRD),
             EligibilityRule.HAS_CREATININE_CLEARANCE_CG_OF_AT_LEAST_X to hasSufficientCreatinineClearanceCreator(CreatinineClearanceMethod.COCKCROFT_GAULT),
@@ -140,9 +144,10 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
                 LabUnit.NANOGRAMS_PER_DECILITER
             ),
             EligibilityRule.HAS_CORTISOL_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.CORTISOL),
-            EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.ALPHA_FETOPROTEIN),
-            EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.CARBOHYDRATE_ANTIGEN_125),
-            EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.HUMAN_CHORIONIC_GONADOTROPIN),
+            EligibilityRule.HAS_AFP_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.ALPHA_FETOPROTEIN),
+            EligibilityRule.HAS_CA125_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.CARBOHYDRATE_ANTIGEN_125),
+            EligibilityRule.HAS_CA19_9_KU_PER_LITER_OF_AT_MOST_X to hasLimitedLabValueCreator(LabMeasurement.CARBOHYDRATE_ANTIGEN_19_9),
+            EligibilityRule.HAS_HCG_ULN_OF_AT_LEAST_X to hasSufficientLabValueULNCreator(LabMeasurement.HUMAN_CHORIONIC_GONADOTROPIN),
             EligibilityRule.HAS_LDH_ULN_OF_AT_MOST_X to hasLimitedLabValueULNCreator(LabMeasurement.LACTATE_DEHYDROGENASE),
             EligibilityRule.HAS_PSA_UG_PER_L_OF_AT_LEAST_X to hasSufficientLabValueCreator(LabMeasurement.PROSTATE_SPECIFIC_ANTIGEN),
             EligibilityRule.HAS_PSA_LLN_OF_AT_LEAST_X to hasSufficientLabValueLLNCreator(LabMeasurement.PROSTATE_SPECIFIC_ANTIGEN),
@@ -317,6 +322,13 @@ class LaboratoryRuleMapper(resources: RuleMappingResources) : RuleMapper(resourc
 
     private fun hasPotentialLeukocytosisCreator(): FunctionCreator {
         return { createLabEvaluator(LabMeasurement.LEUKOCYTES_ABS, HasSufficientLabValueULN(1.0)) }
+    }
+
+    private fun hasLimitedSystemicImmuneInflammationIndexCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val index = function.param<DoubleParameter>(0).value
+            HasLimitedSystemicImmuneInflammationIndex(index, minValidLabDate(), minPassLabDate())
+        }
     }
 
     private fun hasPotentialHypokalemiaCreator(): FunctionCreator {
