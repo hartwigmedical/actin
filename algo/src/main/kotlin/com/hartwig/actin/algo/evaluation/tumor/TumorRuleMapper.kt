@@ -94,7 +94,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
             EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY to meetsSpecificBiopsyRequirementsCreator(),
-            EligibilityRule.HAS_VISIBLE_LESION to hasVisibleLesionCreator(),
+            EligibilityRule.HAS_VISIBLE_LESION_BY_CYSTOSCOPY to hasVisibleLesionByCystoscopyCreator(),
             EligibilityRule.HAS_EVALUABLE_DISEASE to hasEvaluableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE to hasMeasurableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST to hasMeasurableDiseaseRecistCreator(),
@@ -446,8 +446,8 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { MeetsSpecificBiopsyRequirements() }
     }
 
-    private fun hasVisibleLesionCreator(): FunctionCreator {
-        return { HasVisibleLesion() }
+    private fun hasVisibleLesionByCystoscopyCreator(): FunctionCreator {
+        return { HasVisibleLesionByCystoscopy() }
     }
 
     private fun hasEvaluableDiseaseCreator(): FunctionCreator {

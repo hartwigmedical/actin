@@ -19,9 +19,9 @@ class HasWellDifferentiatedTumorTest {
     }
 
     @Test
-    fun `Should warn if tumor has unknown of differentiation type`() {
+    fun `Should evaluate to undetermined if tumor has unknown of differentiation type`() {
         val tumor = TumorTestFactory.withDoidAndName("doid", "name without")
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(tumor))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumor))
     }
 
     @Test

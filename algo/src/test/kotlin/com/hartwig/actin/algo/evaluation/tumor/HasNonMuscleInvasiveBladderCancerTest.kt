@@ -26,9 +26,9 @@ class HasNonMuscleInvasiveBladderCancerTest {
     }
 
     @Test
-    fun `Should warn if tumor is bladder cancer but unknown of non muscle invasive type`() {
+    fun `Should evaluate to undetermined if tumor is bladder cancer but unknown of non muscle invasive type`() {
         val tumor = TumorTestFactory.withDoidAndName(DoidConstants.URINARY_BLADDER_CANCER_DOID, "name without")
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(tumor))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumor))
     }
 
     @Test

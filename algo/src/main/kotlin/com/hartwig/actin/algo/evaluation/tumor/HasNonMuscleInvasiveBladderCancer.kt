@@ -19,7 +19,7 @@ class HasNonMuscleInvasiveBladderCancer(private val doidModel: DoidModel) : Eval
 
         return when {
             isBladderCancer && isNonMuscleInvasive -> EvaluationFactory.pass("Has non muscle invasive bladder cancer")
-            isBladderCancer -> EvaluationFactory.warn("Has bladder cancer but undetermined if non muscle invasive")
+            isBladderCancer -> EvaluationFactory.undetermined("Has bladder cancer but undetermined if non muscle invasive")
             else -> EvaluationFactory.fail("No non muscle invasive bladder cancer")
         }
     }

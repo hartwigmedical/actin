@@ -8,13 +8,16 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasWellDifferentiatedTumor() : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val isWellDifferentiatedType = WELL_DIFFERENTIATED_TERMS.any { record.tumor.name.lowercase().contains(it) }
-        val isOtherDifferentiatedType = OTHER_DIFFERENTIATION_TERMS.any { record.tumor.name.lowercase().contains(it) }
-
         return when {
-            isWellDifferentiatedType -> EvaluationFactory.pass("Has well-differentiated tumor")
-            isOtherDifferentiatedType -> EvaluationFactory.fail("Has no well-differentiated tumor")
-            else -> EvaluationFactory.warn("Undetermined if well-differentiated tumor")
+            WELL_DIFFERENTIATED_TERMS.any {
+                record.tumor.name.lowercase().contains(it)
+            } -> EvaluationFactory.pass("Has well-differentiated tumor")
+
+            OTHER_DIFFERENTIATION_TERMS.any {
+                record.tumor.name.lowercase().contains(it)
+            } -> EvaluationFactory.fail("Has no well-differentiated tumor")
+
+            else -> EvaluationFactory.undetermined("Undetermined if well-differentiated tumor")
         }
     }
 

@@ -28,9 +28,6 @@ class HasLimitedSystemicImmuneInflammationIndex(
             thrombocytes to LabMeasurement.THROMBOCYTES_ABS,
             lymphocytes to LabMeasurement.LYMPHOCYTES_ABS
         )
-        if (invalidLabValue != null) {
-            return invalidLabValue
-        }
 
         val calculatedIndex = calculateSystemicImmuneInflammationIndex(neutrophils!!, thrombocytes!!, lymphocytes!!)
             ?: return EvaluationFactory.recoverableUndetermined(
@@ -38,19 +35,26 @@ class HasLimitedSystemicImmuneInflammationIndex(
                         "not in expected unit and not able to convert"
             )
 
-        return if (calculatedIndex <= index) {
-            val message = "Systemic immune-inflammation index at most $index" +
-                    if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) ||
-                        lymphocytes.date.isBefore(minPassLabDate)) {
-                        " but measurement occurred before $minPassLabDate"
-                    } else {
-                        ""
-                    }
-            EvaluationFactory.recoverablePass(message)
-        } else {
-            EvaluationFactory.recoverableFail(
-                "Systemic immune-inflammation index (${calculatedIndex.roundToInt()}) above $index"
-            )
+        return when {
+            invalidLabValue != null -> invalidLabValue
+
+            calculatedIndex <= index -> {
+                val message = "Systemic immune-inflammation index at most $index" +
+                        if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) ||
+                            lymphocytes.date.isBefore(minPassLabDate)
+                        ) {
+                            " but measurement occurred before $minPassLabDate"
+                        } else {
+                            ""
+                        }
+                EvaluationFactory.recoverablePass(message)
+            }
+
+            else -> {
+                EvaluationFactory.recoverableFail(
+                    "Systemic immune-inflammation index (${calculatedIndex.roundToInt()}) above $index"
+                )
+            }
         }
     }
 
