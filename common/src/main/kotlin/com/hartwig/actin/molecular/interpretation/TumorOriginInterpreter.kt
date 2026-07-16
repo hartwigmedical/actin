@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
+import kotlin.math.roundToInt
 
 private const val LIKELIHOOD_CONFIDENCE_THRESHOLD = 0.8
 private const val LIKELIHOOD_DISPLAY_THRESHOLD = 0.1
@@ -12,7 +13,8 @@ private const val MAX_PREDICTIONS_TO_DISPLAY = 3
 class TumorOriginInterpreter(val hasSufficientQuality: Boolean?, val predictedTumorOrigin: PredictedTumorOrigin?) {
 
     fun hasConfidentPrediction(): Boolean {
-        return hasSufficientQuality == true && predictedTumorOrigin?.likelihood()?.let { it >= LIKELIHOOD_CONFIDENCE_THRESHOLD } == true
+        val roundedLikelihood = predictedTumorOrigin?.likelihood()?.let { (it * 100).roundToInt() / 100.0 }
+        return hasSufficientQuality == true && roundedLikelihood?.let { it >= LIKELIHOOD_CONFIDENCE_THRESHOLD } == true
     }
 
     fun topPredictionsToDisplay(): List<CupPrediction> = bestNPredictions(MAX_PREDICTIONS_TO_DISPLAY)
