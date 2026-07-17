@@ -78,15 +78,13 @@ class HasHadCombinedTreatmentNamesWithCycles(
             }
         }
             .groupBy {
-                when (val cycles = it.treatmentHistoryDetails?.cycles) {
+                when (it.treatmentHistoryDetails?.cycles) {
                     null -> EvaluationResult.UNDETERMINED
-                    else -> if (cycles >= minCycles && (maxCycles == null || cycles <= maxCycles)) {
-                        EvaluationResult.PASS
-                    } else {
-                        EvaluationResult.WARN
-                    }
+                    in minCycles..(maxCycles ?: Int.MAX_VALUE) -> EvaluationResult.PASS
+                    else -> EvaluationResult.WARN
                 }
             }
+
         return if (matchingHistoryEntries.isEmpty()) {
             EvaluationFactory.fail("No prior treatments found matching $treatmentName and ${cyclesRequirementDescription()} cycles")
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
