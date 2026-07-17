@@ -52,6 +52,14 @@ object TumorEvaluationFunctions {
         return evaluateSpleenMetastases(tumor.otherSuspectedLesions)
     }
 
+    fun hasSoftTissueMetastases(tumor: TumorDetails): Boolean? {
+        return evaluateSoftTissueMetastases(tumor.otherLesions)
+    }
+
+    fun hasSuspectedSoftTissueMetastases(tumor: TumorDetails): Boolean? {
+        return evaluateSoftTissueMetastases(tumor.otherSuspectedLesions)
+    }
+
     fun isStageMatch(stage: TumorStage, stagesToMatch: Set<TumorStage>): Boolean {
         if (stagesToMatch.any { it.category != null }) throw IllegalArgumentException("This function cannot be used to evaluate specific (non-categorical) stages. Use isSpecificStageMatch instead.")
         return stage in stagesToMatch || stage.category in stagesToMatch
@@ -70,6 +78,11 @@ object TumorEvaluationFunctions {
 
     private fun evaluateSpleenMetastases(lesions: List<String>?): Boolean? {
         val targetTerms = listOf("spleen", "splenic", "lien", "intrasplenic")
+        return evaluateMetastases(lesions, targetTerms)
+    }
+
+    private fun evaluateSoftTissueMetastases(lesions: List<String>?): Boolean? {
+        val targetTerms = listOf("soft tissue", "muscle", "muscular", "intramuscular", "skin", "cutaneous", "subcutaneous", "dermal", "tendon", "ligament", "fascia", "myofascial")
         return evaluateMetastases(lesions, targetTerms)
     }
 
