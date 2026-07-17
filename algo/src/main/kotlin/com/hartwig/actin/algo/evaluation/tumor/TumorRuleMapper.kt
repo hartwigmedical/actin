@@ -79,6 +79,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
             EligibilityRule.HAS_IN_TRANSIT_METASTASES to hasInTransitMetastasesCreator(),
             EligibilityRule.HAS_SPLEEN_METASTASES to hasSpleenMetastasesCreator(),
+            EligibilityRule.HAS_SOFT_TISSUE_METASTASES to hasSoftTissueMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
             EligibilityRule.HAS_LESIONS_INFILTRATING_BLOOD_VESSEL to { HasLesionsInfiltratingBloodVessel() },
@@ -400,6 +401,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasSpleenMetastasesCreator(): FunctionCreator {
         return { HasSpleenMetastases() }
+    }
+
+    private fun hasSoftTissueMetastasesCreator(): FunctionCreator {
+        return { HasSoftTissueMetastases() }
     }
 
     private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {
