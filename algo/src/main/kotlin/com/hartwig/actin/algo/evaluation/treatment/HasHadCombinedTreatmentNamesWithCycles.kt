@@ -13,7 +13,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 class HasHadCombinedTreatmentNamesWithCycles(
     private val treatments: List<Treatment>,
     private val minCycles: Int,
-    private val maxCycles: Int
+    private val maxCycles: Int?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -78,18 +78,21 @@ class HasHadCombinedTreatmentNamesWithCycles(
             }
         }
             .groupBy {
-                when (it.treatmentHistoryDetails?.cycles) {
+                when (val cycles = it.treatmentHistoryDetails?.cycles) {
                     null -> EvaluationResult.UNDETERMINED
-                    in minCycles..maxCycles -> EvaluationResult.PASS
-                    else -> EvaluationResult.WARN
+                    else -> if (cycles >= minCycles && (maxCycles == null || cycles <= maxCycles)) {
+                        EvaluationResult.PASS
+                    } else {
+                        EvaluationResult.WARN
+                    }
                 }
             }
         return if (matchingHistoryEntries.isEmpty()) {
-            EvaluationFactory.fail("No prior treatments found matching $treatmentName and between $minCycles and $maxCycles cycles")
+            EvaluationFactory.fail("No prior treatments found matching $treatmentName and ${cyclesRequirementDescription()} cycles")
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
                 "Found matching treatments (${formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true)}" +
-                        " and between $minCycles and $maxCycles cycles"
+                        " and ${cyclesRequirementDescription()} cycles"
             )
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.UNDETERMINED)) {
             EvaluationFactory.undetermined(
@@ -100,14 +103,14 @@ class HasHadCombinedTreatmentNamesWithCycles(
             )
         } else {
             EvaluationFactory.warn(
-                String.format(
-                    "Matching treatments did not have between %d and %d cycles: %s",
-                    minCycles,
-                    maxCycles,
-                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.WARN]!!, true)
-                )
+                "Matching treatments did not have ${cyclesRequirementDescription()} cycles: " +
+                        formatTreatmentList(matchingHistoryEntries[EvaluationResult.WARN]!!, true)
             )
         }
+    }
+
+    private fun cyclesRequirementDescription(): String {
+        return if (maxCycles != null) "between $minCycles and $maxCycles" else "at least $minCycles"
     }
 
     companion object {
