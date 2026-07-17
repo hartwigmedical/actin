@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.components
 
+import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.kernel.geom.Rectangle
 import com.itextpdf.kernel.pdf.PdfDocument
@@ -9,8 +10,9 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject
 import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
+import java.time.LocalDate
 
-class Footer {
+class Footer(private val reportDate: LocalDate) {
 
     private val footerTemplates: MutableList<FooterTemplate> = mutableListOf()
 
@@ -19,7 +21,7 @@ class Footer {
         val pageNumber = page.document.getPageNumber(page)
         val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 40f))
         canvas.addXObjectAt(template, 58f, 18f)
-        footerTemplates.add(FooterTemplate(pageNumber, template))
+        footerTemplates.add(FooterTemplate(pageNumber, template, reportDate))
         canvas.release()
     }
 
@@ -30,7 +32,7 @@ class Footer {
         }
     }
 
-    private class FooterTemplate(private val pageNumber: Int, private val template: PdfFormXObject) {
+    private class FooterTemplate(private val pageNumber: Int, private val template: PdfFormXObject, private val reportDate: LocalDate) {
 
         fun renderFooter(document: PdfDocument, totalPageCount: Int) {
             val canvas = Canvas(template, document)
@@ -46,7 +48,7 @@ class Footer {
             val researchDisclaimerParagraph = Paragraph(researchDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(researchDisclaimerParagraph, 30f, 27f, TextAlignment.LEFT)
 
-            val ctgovDisclaimer = "Information for trials shown with an asterisk was sourced from clinicalTrials.gov on ${todaysdate}. " +
+            val ctgovDisclaimer = "Information for trials shown with an asterisk was sourced from clinicalTrials.gov on ${Formats.date(reportDate)}. " +
                     "The original clinicalTrials.gov content is not modified. ACTIN processes and structures trial information " +
                     "for matching and analytical purposes."
             val ctgovDisclaimerParagraph = Paragraph(ctgovDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
