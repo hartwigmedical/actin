@@ -114,9 +114,11 @@ object TrialGeneratorFunctions {
 
     private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, useSmallerSize: Boolean): Cell {
         val anyCohort = cohortsForTrial.first()
-        val trialIdIsNotAcronym = anyCohort.trialId.trimIndent() != anyCohort.acronym
+        val trialId = anyCohort.trialId.trimIndent()
+        val trialIdIsNotAcronym = trialId != anyCohort.acronym
+        val hasCtGovSource = anyCohort.sources.singleOrNull() == TrialSource.CTgov
         val trialLabelText = listOfNotNull(
-            Text(anyCohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
+            Text(if (hasCtGovSource) "$trialId*" else trialId).addStyle(Styles.tableHighlightStyle()),
             if (trialIdIsNotAcronym) Text("\n") else null,
             if (trialIdIsNotAcronym) Text(anyCohort.acronym).addStyle(Styles.tableContentStyle()) else null,
             anyCohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
