@@ -36,6 +36,14 @@ data class DoidModel(
         return doidForLowerCaseTermMap[term.lowercase()]
     }
 
+    fun toDoid(input: String): String {
+        return when {
+            termForDoidMap.containsKey(input) -> input
+            doidForLowerCaseTermMap.containsKey(input.lowercase()) -> resolveDoidForTerm(input)!!
+            else -> throw IllegalStateException("DOID term(s) or code(s) not valid: $input")
+        }
+    }
+
     private tailrec fun expandedParentsDoidSet(doidsToExpand: Set<String>, expandedDoids: Set<String>, excludedDoids: Set<String>, mapping: Map<String, List<String>>): Set<String> {
         val remainingDoids = doidsToExpand - excludedDoids
         if (remainingDoids.isEmpty()) {

@@ -10,11 +10,10 @@ import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
 class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
-    private val doidModel: DoidModel, private val doidTermsToIgnore: List<String>, private val minDate: LocalDate?
+    private val doidModel: DoidModel, private val doidsToIgnore: Set<String>, private val minDate: LocalDate?
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val doidsToIgnore = doidTermsToIgnore.mapNotNull(doidModel::resolveDoidForTerm).toSet()
         val priorPrimaries = record.priorPrimaries
         val priorPrimariesByDate = groupByDate(priorPrimaries)
 

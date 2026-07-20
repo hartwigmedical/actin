@@ -129,18 +129,18 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasPrimaryTumorBelongsToDoidTermsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
-            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, null)
+            val doidInputToMatch = function.param<ManyDoidTermsParameter>(0).value
+            val doidsToMatch = doidInputToMatch.map { doidModel().toDoid(it) }.toSet()
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidsToMatch, null)
         }
     }
 
     private fun hasPrimaryTumorBelongsToDoidTermsWithSubLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
-            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
+            val doidInputToMatch = function.param<ManyDoidTermsParameter>(0).value
+            val doidsToMatch = doidInputToMatch.map { doidModel().toDoid(it) }.toSet()
             val subLocation = function.param<StringParameter>(1).value
-            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, subLocation)
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidsToMatch, subLocation)
         }
     }
 
