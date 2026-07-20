@@ -50,8 +50,8 @@ class Footer(private val reportDate: LocalDate) {
 
             val ctgovDisclaimer =
                 "Information for trials marked with an asterisk (*) was sourced from ClinicalTrials.gov on ${Formats.date(reportDate)}. " +
-                    "The original ClinicalTrials.gov content is not modified. ACTIN processes and structures trial information " +
-                    "for matching and analytical purposes."
+                    "No modifications have been made to the ClinicalTrials.gov data. ACTIN structures trial information for matching " +
+                        "and analytical purposes."
             val ctgovDisclaimerParagraph = Paragraph(ctgovDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(ctgovDisclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
