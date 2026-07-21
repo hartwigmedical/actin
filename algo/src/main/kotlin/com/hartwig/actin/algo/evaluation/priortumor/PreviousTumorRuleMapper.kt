@@ -34,17 +34,17 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
 
     private fun hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermsToIgnore = function.param<ManyDoidTermsParameter>(0).value
-            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate = null)
+            val doidInputsToIgnore = function.param<ManyDoidTermsParameter>(0).value
+            val doidsToIgnore = doidInputsToIgnore.map { doidModel().toDoid(it) }.toSet()
+            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidsToIgnore, minDate = null)
         }
     }
 
     private fun hasHistoryOfSecondMalignancyWithDoidTermCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = function.param<DoidTermParameter>(0).value
-            val doidToMatch = doidModel().resolveDoidForTerm(doidTermToMatch)
-            doidToMatch?.let { HasHistoryOfSecondMalignancyWithDoid(doidModel(), it) }
-                ?: error("DOID term not found: $doidTermToMatch")
+            val doidInputToMatch = function.param<DoidTermParameter>(0).value
+            val doidToMatch = doidModel().toDoid(doidInputToMatch)
+            HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidToMatch)
         }
     }
 
@@ -60,9 +60,10 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
         return { function: EligibilityFunction ->
             function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.MANY_DOID_TERMS)
             val maxYears = function.param<IntegerParameter>(0).value
-            val doidTermsToIgnore = function.param<ManyDoidTermsParameter>(1).value
+            val doidInputsToIgnore = function.param<ManyDoidTermsParameter>(1).value
+            val doidsToIgnore = doidInputsToIgnore.map { doidModel().toDoid(it) }.toSet()
             val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
-            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidTermsToIgnore, minDate)
+            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidsToIgnore, minDate)
         }
     }
 }
