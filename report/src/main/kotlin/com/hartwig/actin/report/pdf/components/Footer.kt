@@ -49,14 +49,13 @@ class Footer(private val reportDate: LocalDate) {
             canvas.showTextAligned(researchDisclaimerParagraph, 30f, 27f, TextAlignment.LEFT)
 
             val ctgovDisclaimer =
-                "Information for trials marked with an asterisk (*) was sourced from ClinicalTrials.gov on ${Formats.date(reportDate)}. " +
+                "Trials marked with asterisk (*) were sourced from ClinicalTrials.gov on ${Formats.date(reportDate)}. " +
                     "No modifications have been made to the ClinicalTrials.gov data. ACTIN structures trial information for matching " +
                         "and analytical purposes."
             val ctgovDisclaimerParagraph = Paragraph(ctgovDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(ctgovDisclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
             // TODO (KD) Only add CKB attribution in case we have done molecular interpretation with evidenceSource = CKB.
-            // Note: If we don't add the CKB attribution we can reduce the height of the footer.
             val attribution = "Gene and variant annotations and related content are powered by Genomenon Cancer Knowledgebase (CKB)."
             val attributionParagraph = Paragraph(attribution).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(attributionParagraph, 30f, 0f, TextAlignment.LEFT)
