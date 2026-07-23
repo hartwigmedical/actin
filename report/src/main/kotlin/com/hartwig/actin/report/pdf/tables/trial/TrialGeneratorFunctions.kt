@@ -25,7 +25,6 @@ object TrialGeneratorFunctions {
     private const val CLOSED = "(closed)"
     private const val SMALL_LINE_DISTANCE = 0.9f
     private const val SUPERSCRIPT_RISE_RATIO = 0.4f
-    private const val SUPERSCRIPT_FONT_SIZE_RATIO = 0.7f
 
     fun addTrialsToTable(
         table: Table,
@@ -120,8 +119,7 @@ object TrialGeneratorFunctions {
         val trialIdIsNotAcronym = trialId != anyCohort.acronym
         val hasCtGovSource = anyCohort.sources.singleOrNull() == TrialSource.CTgov
         val fontSize = if (useSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
-        val asterisk = Text("*").addStyle(Styles.tableHighlightStyle()).setFontSize(fontSize * SUPERSCRIPT_FONT_SIZE_RATIO)
-            .setTextRise(fontSize * SUPERSCRIPT_RISE_RATIO)
+        val asterisk = Text("*").addStyle(Styles.tableHighlightStyle()).setFontSize(fontSize).setTextRise(fontSize * SUPERSCRIPT_RISE_RATIO)
         val trialLabelText = listOfNotNull(
             Text(trialId).addStyle(Styles.tableHighlightStyle()),
             if (hasCtGovSource) asterisk else null,
