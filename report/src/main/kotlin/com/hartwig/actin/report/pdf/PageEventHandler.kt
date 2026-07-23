@@ -53,7 +53,7 @@ class PageEventHandler private constructor(private val header: Header, private v
 
     companion object {
         fun create(patientId: String, sourcePatientId: String?, reportDate: LocalDate): PageEventHandler {
-            return PageEventHandler(Header(), Footer(), SidePanel(patientId, sourcePatientId, reportDate))
+            return PageEventHandler(Header(), Footer(reportDate), SidePanel(patientId, sourcePatientId, reportDate))
         }
     }
 }

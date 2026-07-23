@@ -4,7 +4,9 @@ import com.hartwig.actin.datamodel.algo.MolecularEvent
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MessageWithIsMissingMolecularResultForEvaluation
+import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
 import com.hartwig.actin.report.pdf.util.Formats
+import com.hartwig.actin.report.pdf.util.Tables
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -387,5 +389,30 @@ class TrialGeneratorFunctionsTest {
                 listOf("cohort2", "None", "", "")
             )
         )
+    }
+
+    @Test
+    fun `Should mark trial id with asterisk when CTgov is the only source`() {
+        assertThat(trialIdCellTextFor(setOf(TrialSource.CTgov))).isEqualTo("trial1*\nT1")
+        assertThat(trialIdCellTextFor(setOf(TrialSource.CTgov, TrialSource.LKO))).isEqualTo("trial1\nT1")
+        assertThat(trialIdCellTextFor(emptySet())).isEqualTo("trial1\nT1")
+    }
+
+    private fun trialIdCellTextFor(sources: Set<TrialSource>): String {
+        val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f)
+        TrialGeneratorFunctions.addTrialsToTable(
+            table = table,
+            cohorts = listOf(cohort1.copy(sources = sources)),
+            externalTrials = emptySet(),
+            requestingSource = null,
+            countryOfReference = null,
+            includeFeedback = true,
+            feedbackFunction = InterpretedCohort::warnings,
+            indicateNoSlotsOrClosed = true,
+            useSmallerSize = false,
+            includeCohortConfig = false,
+            includeSites = true
+        )
+        return extractTextFromCell(table.getCell(0, 0))
     }
 }

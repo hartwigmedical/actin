@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.components
 
+import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.kernel.geom.Rectangle
 import com.itextpdf.kernel.pdf.PdfDocument
@@ -9,17 +10,18 @@ import com.itextpdf.kernel.pdf.xobject.PdfFormXObject
 import com.itextpdf.layout.Canvas
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
+import java.time.LocalDate
 
-class Footer {
+class Footer(private val reportDate: LocalDate) {
 
     private val footerTemplates: MutableList<FooterTemplate> = mutableListOf()
 
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageNumber = page.document.getPageNumber(page)
-        val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 25f))
+        val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 40f))
         canvas.addXObjectAt(template, 58f, 18f)
-        footerTemplates.add(FooterTemplate(pageNumber, template))
+        footerTemplates.add(FooterTemplate(pageNumber, template, reportDate))
         canvas.release()
     }
 
@@ -30,7 +32,7 @@ class Footer {
         }
     }
 
-    private class FooterTemplate(private val pageNumber: Int, private val template: PdfFormXObject) {
+    private class FooterTemplate(private val pageNumber: Int, private val template: PdfFormXObject, private val reportDate: LocalDate) {
 
         fun renderFooter(document: PdfDocument, totalPageCount: Int) {
             val canvas = Canvas(template, document)
@@ -39,16 +41,21 @@ class Footer {
             val pageNumberParagraph = Paragraph().add(pageNumberString).addStyle(Styles.pageNumberStyle())
             canvas.showTextAligned(pageNumberParagraph, 0f, 0f, TextAlignment.LEFT)
 
-            val disclaimer =
-                "All results and data described in this report are for Research Use Only and have NOT been generated " +
+            val researchDisclaimer = "All results and data described in this report are for Research Use Only and have NOT been generated " +
                         "using a clinically validated and controlled procedure nor is it a validated medical device. " +
                         "The results should NOT be used for diagnostic or treatment purposes. " +
                         "No rights can be derived from the content of this report."
-            val disclaimerParagraph = Paragraph(disclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
-            canvas.showTextAligned(disclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
+            val researchDisclaimerParagraph = Paragraph(researchDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            canvas.showTextAligned(researchDisclaimerParagraph, 30f, 27f, TextAlignment.LEFT)
+
+            val ctgovDisclaimer =
+                "Trials marked with asterisk (*) were sourced from ClinicalTrials.gov on ${Formats.date(reportDate)}. " +
+                    "No modifications have been made to the ClinicalTrials.gov data. ACTIN structures trial information for matching " +
+                        "and analytical purposes."
+            val ctgovDisclaimerParagraph = Paragraph(ctgovDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            canvas.showTextAligned(ctgovDisclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
             // TODO (KD) Only add CKB attribution in case we have done molecular interpretation with evidenceSource = CKB.
-            // Note: If we don't add the CKB attribution we can reduce the height of the footer from 28 to ~20.
             val attribution = "Gene and variant annotations and related content are powered by Genomenon Cancer Knowledgebase (CKB)."
             val attributionParagraph = Paragraph(attribution).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(attributionParagraph, 30f, 0f, TextAlignment.LEFT)
