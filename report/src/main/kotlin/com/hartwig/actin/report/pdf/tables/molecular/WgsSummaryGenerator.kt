@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -14,7 +13,6 @@ import com.itextpdf.layout.element.Table
 
 class WgsSummaryGenerator(
     private val summaryType: SummaryType,
-    private val patientRecord: PatientRecord,
     private val molecular: MolecularTest,
     private val pathologyReport: PathologyReport?,
     cohorts: List<InterpretedCohort>,
@@ -39,7 +37,7 @@ class WgsSummaryGenerator(
 
     override fun contents(): Table {
         return WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
-            summaryType, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer, labels, immunologyGenerator
+            summaryType, molecular, wgsMolecular, keyWidth, valueWidth, summarizer, labels, immunologyGenerator
         )
     }
 }

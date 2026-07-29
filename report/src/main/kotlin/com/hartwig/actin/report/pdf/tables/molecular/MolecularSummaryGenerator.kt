@@ -90,7 +90,6 @@ class MolecularSummaryGenerator(
                 } else null
                 val wgsGenerator = WgsSummaryGenerator(
                     selectSummaryType(molecularTest.experimentType),
-                    patientRecord,
                     molecularTest,
                     pathologyReport,
                     cohorts,

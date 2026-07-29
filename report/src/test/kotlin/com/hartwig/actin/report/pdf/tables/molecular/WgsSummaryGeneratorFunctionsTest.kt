@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.configuration.ReportIntendedUse
-import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
@@ -21,9 +20,9 @@ import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 class WgsSummaryGeneratorFunctionsTest {
 
@@ -110,7 +109,6 @@ class WgsSummaryGeneratorFunctionsTest {
         val date = LocalDate.of(2023, 9, 19)
         val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
-            TestPatientFactory.createProperTestPatientRecord(),
             molecularRecord.copy(
                 date = date,
                 targetSpecification = PanelTargetSpecification(emptyMap(), TestVersion(date.plusYears(1), true))
@@ -138,7 +136,6 @@ class WgsSummaryGeneratorFunctionsTest {
     fun `Should not include HLA-A row in panel summary table when no immunology generator is provided`() {
         val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
-            TestPatientFactory.createProperTestPatientRecord(),
             TestMolecularFactory.createMinimalPanelTest(),
             wgsMolecular = null,
             100f,
@@ -164,7 +161,6 @@ class WgsSummaryGeneratorFunctionsTest {
 
         val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
-            TestPatientFactory.createProperTestPatientRecord(),
             panelMolecular,
             wgsMolecular = null,
             100f,
@@ -199,7 +195,6 @@ class WgsSummaryGeneratorFunctionsTest {
 
         val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
-            TestPatientFactory.createProperTestPatientRecord(),
             panelMolecular,
             wgsMolecular = null,
             100f,

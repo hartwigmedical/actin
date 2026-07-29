@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -8,10 +7,10 @@ import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumber
 import com.hartwig.actin.datamodel.molecular.driver.Driver
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
+import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.interpretation.DriverDisplayFunctions.eventDisplay
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
-import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
 import com.hartwig.actin.report.interpretation.generateSummaryString
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.SummaryType
@@ -28,7 +27,6 @@ object WgsSummaryGeneratorFunctions {
 
     fun createMolecularSummaryTable(
         summaryType: SummaryType,
-        patientRecord: PatientRecord,
         molecular: MolecularTest,
         wgsMolecular: MolecularTest?,
         keyWidth: Float,

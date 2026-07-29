@@ -139,7 +139,6 @@ class MolecularDetailsChapter(
             else null
             WgsSummaryGenerator(
                 SummaryType.DETAILS,
-                report.patientRecord,
                 molecularTest,
                 pathologyReport,
                 cohorts,
