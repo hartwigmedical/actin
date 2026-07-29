@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -14,11 +15,11 @@ import com.itextpdf.layout.element.Table
 class MolecularClinicalEvidenceGenerator(
     val molecularTests: List<MolecularTest>,
     private val isOnLabel: Boolean,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     override fun title(): String {
-        val titleEnd = "label clinical evidence"
-        return if (isOnLabel) "On $titleEnd" else "Off $titleEnd"
+        return if (isOnLabel) labels.molecularEvidenceOnLabel() else labels.molecularEvidenceOffLabel()
     }
 
     override fun forceKeepTogether(): Boolean {

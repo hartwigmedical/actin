@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Formats.date
@@ -19,7 +20,8 @@ class WgsSummaryGenerator(
     cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val immunologyGenerator: ImmunologyGenerator? = null,
+    private val labels: ReportLabels,
+    private val immunologyGenerator: ImmunologyGenerator? = null
 ) : TableGenerator {
 
     private val summarizer = MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(molecular.drivers, cohorts)
@@ -37,7 +39,7 @@ class WgsSummaryGenerator(
 
     override fun contents(): Table {
         return WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
-            summaryType, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer, immunologyGenerator
+            summaryType, patientRecord, molecular, wgsMolecular, keyWidth, valueWidth, summarizer, labels, immunologyGenerator
         )
     }
 }

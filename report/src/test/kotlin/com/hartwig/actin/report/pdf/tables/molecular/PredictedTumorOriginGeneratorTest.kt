@@ -1,9 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.datamodel.molecular.characteristics.PredictedTumorOrigin
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.getCellContents
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -30,7 +32,8 @@ class PredictedTumorOriginGeneratorTest {
                 )
             )
         )
-        val table = PredictedTumorOriginGenerator(molecularWTGS)
+        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+        val table = PredictedTumorOriginGenerator(molecularWTGS, labels)
 
         assertThat(table.title()).isEqualTo("Predicted tumor origin (WGTS)")
 

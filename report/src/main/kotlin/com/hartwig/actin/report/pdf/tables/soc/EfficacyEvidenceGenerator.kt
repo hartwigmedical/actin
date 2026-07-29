@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.efficacy.EfficacyEntry
 import com.hartwig.actin.datamodel.efficacy.PatientPopulation
 import com.hartwig.actin.datamodel.efficacy.TrialReference
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.soc.SoCGeneratorFunctions.addEndPointsToTable
 import com.hartwig.actin.report.pdf.tables.soc.SoCGeneratorFunctions.analysisGroupForPopulation
@@ -13,19 +14,19 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
-class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentMatch>?) : TableGenerator {
+class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentMatch>?, private val labels: ReportLabels) : TableGenerator {
 
     private val patientCharacteristicHeadersAndFunctions = listOf<Pair<String, (PatientPopulation) -> String?>>(
-        "WHO/ECOG" to SoCGeneratorFunctions::createWhoString,
-        "Primary tumor location" to { it.formatTumorLocation(", ") },
-        "Mutations" to PatientPopulation::mutations,
-        "Metastatic sites" to PatientPopulation::formatMetastaticSites,
-        "Previous systemic therapy" to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
-        "Prior therapies" to PatientPopulation::priorTherapies
+        labels.efficacyColWhoEcog() to SoCGeneratorFunctions::createWhoString,
+        labels.efficacyColPrimaryTumorLocation() to { it.formatTumorLocation(", ") },
+        labels.efficacyColMutations() to PatientPopulation::mutations,
+        labels.efficacyColMetastaticSites() to PatientPopulation::formatMetastaticSites,
+        labels.efficacyColPreviousSystemicTherapy() to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
+        labels.efficacyColPriorTherapies() to PatientPopulation::priorTherapies
     )
 
     override fun title(): String {
-        return "Standard of care options considered potentially eligible"
+        return labels.socEfficacyTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -35,11 +36,11 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
     override fun contents(): Table {
         if (treatments.isNullOrEmpty()) {
             return Tables.createSingleCol()
-                .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
+                .addCell(Cells.createContentNoBorder(labels.socNoOptions()))
         } else {
             val table = Tables.createRelativeWidthCols(1f, 3f)
-            table.addHeaderCell(Cells.createHeader("Treatment"))
-            table.addHeaderCell(Cells.createHeader("Literature efficacy evidence"))
+            table.addHeaderCell(Cells.createHeader(labels.socColTreatment()))
+            table.addHeaderCell(Cells.createHeader(labels.socColLiteratureEvidence()))
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(SoCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
@@ -52,7 +53,7 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
                         }
                     }
                     table.addCell(Cells.createContent(subTable))
-                } else table.addCell(Cells.createContent("No literature efficacy evidence available yet"))
+                } else table.addCell(Cells.createContent(labels.socNoLiterature()))
             }
             return table
         }
@@ -85,7 +86,7 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
                 .addStyle(Styles.urlStyle())
         )
         table.addCell(Cells.createValue(""))
-        table.addCell(Cells.createValue("Patient characteristics: "))
+        table.addCell(Cells.createValue(labels.efficacyPatientCharacteristics()))
         table.addCell(Cells.createKey(""))
         return table
     }
@@ -111,11 +112,11 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
             .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
             .forEach { patientPopulation ->
                 val analysisGroup = analysisGroupForPopulation(patientPopulation)
-                table.addCell(Cells.createValue("Median PFS: "))
-                addEndPointsToTable(analysisGroup, "Median Progression-Free Survival", table)
+                table.addCell(Cells.createValue(labels.efficacyMedianPfsLabel()))
+                addEndPointsToTable(analysisGroup, labels.efficacyMedianPfs(), table)
 
-                table.addCell(Cells.createValue("Median OS: "))
-                addEndPointsToTable(analysisGroup, "Median Overall Survival", table)
+                table.addCell(Cells.createValue(labels.efficacyMedianOsLabel()))
+                addEndPointsToTable(analysisGroup, labels.efficacyMedianOs(), table)
             }
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.createEmpty())

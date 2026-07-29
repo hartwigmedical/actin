@@ -1,14 +1,16 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
+import com.hartwig.actin.report.pdf.ReportLabels
+
 object TrialFormatFunctions {
 
-    fun generateCohortsFromTrialsString(cohortCount: Int, trialCount: Int): String {
-        val formatTrialCount = formatCountWithLabel(trialCount, "trial")
+    fun generateCohortsFromTrialsString(cohortCount: Int, trialCount: Int, labels: ReportLabels): String {
+        val formatTrialCount = formatCountWithLabel(trialCount, labels.miscTrial())
         return when {
             trialCount > cohortCount -> throw IllegalStateException("Trial count > cohort count - which should not be possible")
             cohortCount > 0 && cohortCount == trialCount -> "($formatTrialCount)"
-            cohortCount > 0 -> "(${formatCountWithLabel(cohortCount, "cohort")} from $formatTrialCount)"
-            else -> "(0 trials)"
+            cohortCount > 0 -> "(${formatCountWithLabel(cohortCount, labels.miscCohort())} ${labels.miscFrom()} $formatTrialCount)"
+            else -> labels.miscZeroTrials()
         }
     }
 

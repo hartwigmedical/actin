@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.clinical.PathologyReport
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.util.Cells
@@ -18,7 +19,8 @@ class OrangeMolecularRecordGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val width: Float,
     private val molecular: MolecularTest,
-    private val pathologyReport: PathologyReport?
+    private val pathologyReport: PathologyReport?,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     override fun title(): String {
@@ -35,35 +37,30 @@ class OrangeMolecularRecordGenerator(
         val table = Tables.createSingleColWithWidth(width)
 
         if (molecular.hasSufficientQualityButLowPurity()) {
-            val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: "NA"
+            val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: labels.miscNotAvailable()
             table.addCell(
-                Cells.createContentNoBorder(
-                    ("Low tumor purity (${purityString}) indicating that potential (subclonal) " +
-                            "DNA aberrations might not have been detected & predicted tumor origin results may be less reliable")
-                )
+                Cells.createContentNoBorder(labels.molecularLowPurity(purityString))
             )
         }
 
         if (molecular.targetSpecification?.testVersion?.testDateIsBeforeOldestTestVersion == true) {
             table.addCell(
                 Cells.createSpanningSubNote(
-                    "The date of this test (${molecular.date}) is older than the date of the oldest version of the test for which " +
-                            "we could derive which genes were tested (${molecular.targetSpecification?.testVersion?.versionDate!!}). This version is " +
-                            "still used to determine which genes were tested. This determination is potentially not correct.",
+                    labels.molecularOldTestVersion(
+                        molecular.date.toString(),
+                        molecular.targetSpecification?.testVersion?.versionDate!!.toString()
+                    ),
                     table
                 )
             )
         }
 
-        val generators = listOf(MolecularCharacteristicsGenerator(molecular)) + tumorDetailsGenerators(molecular, cohorts, trials)
+        val generators = listOf(MolecularCharacteristicsGenerator(molecular, labels)) + tumorDetailsGenerators(molecular, cohorts, trials)
         TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true, skipWrappingFooter = true)
 
         if (!molecular.hasSufficientQuality) {
             table.addCell(
-                Cells.createContent(
-                    ("No successful OncoAct WGS and/or tumor NGS panel could be "
-                            + "performed on the submitted biopsy (insufficient quality for reporting)")
-                )
+                Cells.createContent(labels.molecularNoWgs())
             )
         }
 
@@ -77,25 +74,22 @@ class OrangeMolecularRecordGenerator(
     ): List<TableGenerator> {
         return if (molecular.hasSufficientQuality) {
             listOf(
-                PredictedTumorOriginGenerator(molecular),
+                PredictedTumorOriginGenerator(molecular, labels),
                 MolecularDriversGenerator(
                     molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, true)),
                     evaluated,
                     trials,
-                    "Key drivers"
+                    labels.molecularKeyDrivers(),
+                    labels
                 ),
                 MolecularDriversGenerator(
                     molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, false)),
                     evaluated,
                     trials,
-                    "Other drivers or relevant events"
+                    labels.molecularOtherDrivers(),
+                    labels
                 )
             )
         } else emptyList()
     }
 }
-
-
-
-
-

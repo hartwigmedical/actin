@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -12,7 +13,8 @@ class IneligibleTrialGenerator(
     private val requestingSource: TrialSource?,
     private val title: String,
     private val indicateNoSlotsOrClosed: Boolean,
-    private val useIneligibilityInsteadOfSiteAndConfig: Boolean
+    private val useIneligibilityInsteadOfSiteAndConfig: Boolean,
+    private val labels: ReportLabels
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -38,17 +40,17 @@ class IneligibleTrialGenerator(
             ineligibilityColWidth
         ) else Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
 
-        table.addHeaderCell(Cells.createHeader("Trial"))
-        table.addHeaderCell(Cells.createHeader("Cohort"))
-        table.addHeaderCell(Cells.createHeader("Molecular"))
+        table.addHeaderCell(Cells.createHeader(labels.trialColTrial()))
+        table.addHeaderCell(Cells.createHeader(labels.trialColCohort()))
+        table.addHeaderCell(Cells.createHeader(labels.trialColMolecular()))
         if (!useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader("Sites"))
+            table.addHeaderCell(Cells.createHeader(labels.trialColSites()))
         }
         if (useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader("Ineligibility reasons"))
+            table.addHeaderCell(Cells.createHeader(labels.trialColIneligibilityReasons()))
         }
         if (!useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader("Configuration"))
+            table.addHeaderCell(Cells.createHeader(labels.trialColConfiguration()))
         }
 
         addTrialsToTable(
@@ -76,46 +78,50 @@ class IneligibleTrialGenerator(
         fun evaluableCohorts(
             cohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?,
+            labels: ReportLabels,
             openOnly: Boolean = false
         ): TrialTableGenerator {
             val ineligibleCohorts = cohorts.filter { !it.isPotentiallyEligible && (it.isOpen || !openOnly) }
             val ineligibleTrials = ineligibleCohorts.map(InterpretedCohort::trialId).distinct()
-            val title = "Trials and cohorts that are considered ineligible ${
-                TrialFormatFunctions.generateCohortsFromTrialsString(
-                    ineligibleCohorts.size,
-                    ineligibleTrials.size
-                )
-            }"
+            val cohortsString = TrialFormatFunctions.generateCohortsFromTrialsString(
+                ineligibleCohorts.size,
+                ineligibleTrials.size,
+                labels
+            )
+            val title = labels.trialTitleIneligible(cohortsString)
 
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
                 requestingSource = requestingSource,
                 title = title,
                 indicateNoSlotsOrClosed = true,
-                useIneligibilityInsteadOfSiteAndConfig = true
+                useIneligibilityInsteadOfSiteAndConfig = true,
+                labels = labels
             )
         }
 
         fun nonEvaluableOrIgnoredCohorts(
             ignoredCohorts: List<InterpretedCohort>,
             nonEvaluableCohorts: List<InterpretedCohort>,
-            requestingSource: TrialSource?
+            requestingSource: TrialSource?,
+            labels: ReportLabels
         ): TrialTableGenerator {
             val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
             val nonEvaluableAndIgnoredTrials = nonEvaluableAndIgnoredCohorts.map(InterpretedCohort::trialId).distinct()
-            val title = "Trials and cohorts that are not evaluable or ignored ${
-                TrialFormatFunctions.generateCohortsFromTrialsString(
-                    nonEvaluableAndIgnoredCohorts.size,
-                    nonEvaluableAndIgnoredTrials.size
-                )
-            }"
+            val cohortsString = TrialFormatFunctions.generateCohortsFromTrialsString(
+                nonEvaluableAndIgnoredCohorts.size,
+                nonEvaluableAndIgnoredTrials.size,
+                labels
+            )
+            val title = labels.trialTitleNonEvaluable(cohortsString)
 
             return IneligibleTrialGenerator(
                 cohorts = nonEvaluableAndIgnoredCohorts,
                 requestingSource = requestingSource,
                 title = title,
                 indicateNoSlotsOrClosed = false,
-                useIneligibilityInsteadOfSiteAndConfig = false
+                useIneligibilityInsteadOfSiteAndConfig = false,
+                labels = labels
             )
         }
     }

@@ -7,6 +7,7 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
 import com.hartwig.actin.report.interpretation.TrialAcronymAndLocations
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.trial.TrialLocations
 import com.hartwig.actin.report.pdf.util.Cells
@@ -19,7 +20,8 @@ class MolecularDriversGenerator(
     private val molecular: MolecularTest,
     private val cohorts: List<InterpretedCohort>,
     private val externalTrials: Set<ActionableWithExternalTrial>,
-    private val title: String
+    private val title: String,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     override fun title(): String {
@@ -33,12 +35,12 @@ class MolecularDriversGenerator(
     override fun contents(): Table {
         val table = Tables.createRelativeWidthCols(35f, 21f, 10f, 10f, 11f, 10f)
 
-        table.addHeaderCell(Cells.createHeader("Type"))
-        table.addHeaderCell(Cells.createHeader("Driver"))
-        table.addHeaderCell(Cells.createHeader("Trials (Locations)"))
-        table.addHeaderCell(Cells.createHeader("Trials in ${molecular.externalTrialSource}"))
-        table.addHeaderCell(Cells.createHeader("Best evidence in ${molecular.evidenceSource}"))
-        table.addHeaderCell(Cells.createHeader("Resistance in ${molecular.evidenceSource}"))
+        table.addHeaderCell(Cells.createHeader(labels.molecularColType()))
+        table.addHeaderCell(Cells.createHeader(labels.molecularColDriver()))
+        table.addHeaderCell(Cells.createHeader(labels.molecularColTrialsLocations()))
+        table.addHeaderCell(Cells.createHeader(labels.molecularColTrialsSource(molecular.externalTrialSource)))
+        table.addHeaderCell(Cells.createHeader(labels.molecularColBestEvidence(molecular.evidenceSource)))
+        table.addHeaderCell(Cells.createHeader(labels.molecularColResistance(molecular.evidenceSource)))
 
         val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrials)
@@ -52,7 +54,7 @@ class MolecularDriversGenerator(
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
         if (molecularDriversInterpreter.hasPotentiallySubClonalVariants()) {
-            val note = "* Variant has > " + Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF) + " likelihood of being sub-clonal"
+            val note = labels.molecularSubClonalNote(Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF))
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
         return table

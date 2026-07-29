@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.TreatmentEvidence
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.sortTreatmentEvidence
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
@@ -14,10 +15,10 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
 
-class MolecularEfficacyDescriptionGenerator(val molecularTests: List<MolecularTest>) : TableGenerator {
+class MolecularEfficacyDescriptionGenerator(val molecularTests: List<MolecularTest>, private val labels: ReportLabels) : TableGenerator {
 
     override fun title(): String {
-        return "Efficacy evidence description"
+        return labels.molecularEfficacyDescriptionTitle()
     }
 
     override fun forceKeepTogether(): Boolean {

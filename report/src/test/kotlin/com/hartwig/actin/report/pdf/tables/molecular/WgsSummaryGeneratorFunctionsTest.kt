@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
@@ -16,6 +17,7 @@ import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
 import com.hartwig.actin.report.interpretation.MolecularDriversSummarizer
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.hartwig.actin.report.pdf.util.Tables
@@ -26,6 +28,7 @@ import java.time.LocalDate
 class WgsSummaryGeneratorFunctionsTest {
 
     private val molecularRecord = TestMolecularFactory.createProperWholeGenomeTest()
+    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
     private val inconclusivePredictions = listOf(
         CupPrediction(
             cancerType = "Melanoma",
@@ -98,7 +101,7 @@ class WgsSummaryGeneratorFunctionsTest {
         val record = molecularRecord.copy(
             characteristics = molecularRecord.characteristics.copy(tumorMutationalLoad = null, tumorMutationalBurden = null)
         )
-        val hasTmbTmlCells = WgsSummaryGeneratorFunctions.createTmbCells(record, false, Tables.createFixedWidthCols(100f, 100f))
+        val hasTmbTmlCells = WgsSummaryGeneratorFunctions.createTmbCells(record, false, Tables.createFixedWidthCols(100f, 100f), labels)
         assertThat(hasTmbTmlCells).isFalse()
     }
 
@@ -118,7 +121,8 @@ class WgsSummaryGeneratorFunctionsTest {
             MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(
                 TestMolecularFactory.createMinimalWholeGenomeTest().drivers,
                 emptyList()
-            )
+            ),
+            labels
         )
         assertThat(
             CellTestUtil.extractTextFromCell(
@@ -141,7 +145,8 @@ class WgsSummaryGeneratorFunctionsTest {
             200f,
             MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(
                 TestMolecularFactory.createMinimalPanelTest().drivers, emptyList()
-            )
+            ),
+            labels
         )
 
         val hasHlaRow = (0 until table.numberOfRows).any { row ->
@@ -155,7 +160,7 @@ class WgsSummaryGeneratorFunctionsTest {
         val panelMolecular = TestMolecularFactory.createMinimalPanelTest().copy(
             immunology = MolecularImmunology(isReliable = true, hlaAlleles = emptySet())
         )
-        val immunologyGenerator = ImmunologyGenerator(panelMolecular, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", 100f, 200f)
+        val immunologyGenerator = ImmunologyGenerator(panelMolecular, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", 100f, 200f, labels)
 
         val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
@@ -165,6 +170,7 @@ class WgsSummaryGeneratorFunctionsTest {
             100f,
             200f,
             MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(panelMolecular.drivers, emptyList()),
+            labels,
             immunologyGenerator
         )
 
@@ -189,7 +195,7 @@ class WgsSummaryGeneratorFunctionsTest {
         val panelMolecular = TestMolecularFactory.createMinimalPanelTest().copy(
             immunology = MolecularImmunology(isReliable = true, hlaAlleles = setOf(allele))
         )
-        val immunologyGenerator = ImmunologyGenerator(panelMolecular, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", 100f, 200f)
+        val immunologyGenerator = ImmunologyGenerator(panelMolecular, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", 100f, 200f, labels)
 
         val table = WgsSummaryGeneratorFunctions.createMolecularSummaryTable(
             SummaryType.DETAILS,
@@ -199,6 +205,7 @@ class WgsSummaryGeneratorFunctionsTest {
             100f,
             200f,
             MolecularDriversSummarizer.fromMolecularDriversAndEvaluatedCohorts(panelMolecular.drivers, emptyList()),
+            labels,
             immunologyGenerator
         )
 

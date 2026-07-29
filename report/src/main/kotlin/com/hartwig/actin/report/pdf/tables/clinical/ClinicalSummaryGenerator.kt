@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.medication.MedicationToTreatmentConverter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells.create
@@ -30,11 +31,12 @@ class ClinicalSummaryGenerator(
     private val report: Report,
     private val includeAdditionalFields: Boolean,
     private val keyWidth: Float,
-    private val valueWidth: Float
+    private val valueWidth: Float,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Clinical summary"
+        return labels.clinicalSummaryTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -51,15 +53,15 @@ class ClinicalSummaryGenerator(
         val record = report.patientRecord
 
         return listOfNotNull(
-            "Relevant systemic treatment history" to relevantSystemicTreatmentHistoryTable(record),
+            labels.clinicalSectionSystemicHistory() to relevantSystemicTreatmentHistoryTable(record),
             if (includeAdditionalFields) {
-                "Relevant other oncological history" to relevantNonSystemicTreatmentHistoryTable(record)
+                labels.clinicalSectionOtherOncological() to relevantNonSystemicTreatmentHistoryTable(record)
             } else null,
             if (includeAdditionalFields) {
-                "Previous primary tumor" to priorPrimaryTable(record)
+                labels.clinicalSectionPreviousPrimary() to priorPrimaryTable(record)
             } else null,
             if (includeAdditionalFields) {
-                "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
+                labels.clinicalSectionNonOncological() to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
     }

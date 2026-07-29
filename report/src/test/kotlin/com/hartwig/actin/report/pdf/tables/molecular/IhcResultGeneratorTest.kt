@@ -1,7 +1,9 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
@@ -16,7 +18,8 @@ class IhcResultGeneratorTest {
     private val ihcTest4 = IhcTest(item = "NTRK2", measureDate = testDate, scoreText = "Negative")
     private val ihcTest5 = IhcTest(item = "NTRK3", measureDate = testDate, scoreText = "Negative")
 
-    private val ihcResultGenerator = IhcResultGenerator(emptyList(), 10.0f, 10.0f, IhcTestInterpreter())
+    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    private val ihcResultGenerator = IhcResultGenerator(emptyList(), 10.0f, 10.0f, IhcTestInterpreter(), labels)
 
     @Test
     fun `Should return IHC results titles`() {
@@ -29,7 +32,8 @@ class IhcResultGeneratorTest {
             ihcTests = listOf(ihcTest1, ihcTest2, ihcTest3, ihcTest4, ihcTest5),
             keyWidth = 10.0f,
             valueWidth = 10.0f,
-            interpreter = IhcTestInterpreter()
+            interpreter = IhcTestInterpreter(),
+            labels = labels
         )
         val table = generator.contents()
         assertThat(table.numberOfRows).isEqualTo(2)
@@ -51,7 +55,8 @@ class IhcResultGeneratorTest {
             ),
             keyWidth = 10.0f,
             valueWidth = 10.0f,
-            interpreter = IhcTestInterpreter()
+            interpreter = IhcTestInterpreter(),
+            labels = labels
         )
         val table = generator.contents()
         assertThat(table.numberOfRows).isEqualTo(2)
@@ -64,7 +69,7 @@ class IhcResultGeneratorTest {
     @Test
     fun `Should display exclusive lower bound with greater-than operator`() {
         val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreLowerBound = 50.0, isLowerBoundInclusive = false, scoreValueUnit = "%")
-        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter(), labels)
         val table = generator.contents()
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score > 50%")
     }
@@ -72,7 +77,7 @@ class IhcResultGeneratorTest {
     @Test
     fun `Should display exclusive upper bound with less-than operator`() {
         val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreUpperBound = 1.0, isUpperBoundInclusive = false, scoreValueUnit = "%")
-        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter(), labels)
         val table = generator.contents()
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score < 1%")
     }
@@ -80,7 +85,7 @@ class IhcResultGeneratorTest {
     @Test
     fun `Should display inclusive lower bound with greater-than-or-equal operator`() {
         val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreLowerBound = 50.0, isLowerBoundInclusive = true, scoreValueUnit = "%")
-        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter(), labels)
         val table = generator.contents()
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score >= 50%")
     }
@@ -88,7 +93,7 @@ class IhcResultGeneratorTest {
     @Test
     fun `Should display inclusive upper bound with less-than-or-equal operator`() {
         val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreUpperBound = 1.0, isUpperBoundInclusive = true, scoreValueUnit = "%")
-        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter(), labels)
         val table = generator.contents()
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score <= 1%")
     }
@@ -96,7 +101,7 @@ class IhcResultGeneratorTest {
     @Test
     fun `Should default to inclusive when inclusivity flag is null`() {
         val test = IhcTest(item = "PD-L1", measureDate = testDate, scoreUpperBound = 5.0, scoreValueUnit = "%")
-        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter())
+        val generator = IhcResultGenerator(listOf(test), 10.0f, 10.0f, IhcTestInterpreter(), labels)
         val table = generator.contents()
         assertThat(extractTextFromCell(table.getCell(0, 1))).isEqualTo("Score <= 5%")
     }

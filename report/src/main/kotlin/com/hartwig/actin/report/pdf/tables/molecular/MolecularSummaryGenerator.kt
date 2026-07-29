@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
@@ -22,12 +23,13 @@ class MolecularSummaryGenerator(
     private val cohorts: List<InterpretedCohort>,
     private val keyWidth: Float,
     private val valueWidth: Float,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     private val logger = KotlinLogging.logger {}
 
     override fun title(): String {
-        return "Recent molecular results"
+        return labels.molecularSummaryTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -84,7 +86,7 @@ class MolecularSummaryGenerator(
                     logger.debug { "Generating WGS results for non-WGS sample" }
                 }
                 val immunologyGenerator = if (molecularTest.immunology?.isReliable == true) {
-                    ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.ALLELE_ONLY, "HLA-A", keyWidth, valueWidth)
+                    ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.ALLELE_ONLY, "HLA-A", keyWidth, valueWidth, labels)
                 } else null
                 val wgsGenerator = WgsSummaryGenerator(
                     selectSummaryType(molecularTest.experimentType),
@@ -94,6 +96,7 @@ class MolecularSummaryGenerator(
                     cohorts,
                     keyWidth,
                     valueWidth,
+                    labels,
                     immunologyGenerator
                 )
                 if (pathologyReport == null) {
@@ -105,14 +108,14 @@ class MolecularSummaryGenerator(
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
                 noRecent.addCell(Cells.createKey(molecularTest.experimentType.display() + " results"))
-                noRecent.addCell(Cells.createValue("No successful WGS could be performed on the submitted biopsy"))
+                noRecent.addCell(Cells.createValue(labels.molecularWgsNoSuccessful()))
                 table.addCell(Cells.create(noRecent))
             }
         }
 
         if (ihcTests.isNotEmpty()) {
             val molecularResultGenerator =
-                IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter(), "Trial-relevant IHC results")
+                IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter(), labels, labels.molecularIhcSummaryTitle())
             table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
             table.addCell(Cells.create(molecularResultGenerator.contents()))
         }

@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
 import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -15,11 +16,10 @@ private const val ADDITIONAL_EMPTY_COLS = 1
 private const val PADDING_LEFT = 20
 private const val PADDING_RIGHT = 25
 
-class PredictedTumorOriginGenerator(private val molecular: MolecularTest) : TableGenerator {
+class PredictedTumorOriginGenerator(private val molecular: MolecularTest, private val labels: ReportLabels) : TableGenerator {
 
     override fun title(): String {
-        val cuppaModeIsWGTS = if (isWGTS()) " (WGTS)" else ""
-        return "Predicted tumor origin${cuppaModeIsWGTS}"
+        return if (isWGTS()) labels.molecularOriginTitleWgts() else labels.molecularOriginTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -31,10 +31,9 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest) : Tabl
         val tumorOriginInterpreter = TumorOriginInterpreter.create(molecular)
         val predictions = tumorOriginInterpreter.topPredictionsToDisplay()
         return if (predictions.isEmpty()) {
-            val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else String.format(
-                "All tumor cohorts have a prediction lower than 10%%. Highest prediction: %s (%s)",
-                predictedTumorOrigin.cancerType(),
-                Formats.percentage(predictedTumorOrigin.likelihood())
+            val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else labels.molecularOriginAllBelow10(
+                Formats.percentage(predictedTumorOrigin.likelihood()),
+                predictedTumorOrigin.cancerType()
             )
             Tables.createSingleCol().addCell(Cells.createContentNoBorder(message))
         } else {
@@ -50,7 +49,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest) : Tabl
                 .forEach(table::addHeaderCell)
             repeat(ADDITIONAL_EMPTY_COLS) { table.addHeaderCell(Cells.createEmpty()) }
 
-            table.addCell(Cells.createContentBold("Combined prediction score"))
+            table.addCell(Cells.createContentBold(labels.molecularOriginCombinedScore()))
             predictions.map {
                 val likelihoodCell = Cells.createContentBold(Formats.percentage(it.likelihood)).setPaddingLeft(PADDING_LEFT.toFloat())
                 if (!tumorOriginInterpreter.hasConfidentPrediction()) {
@@ -60,28 +59,27 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest) : Tabl
             }.forEach(table::addCell)
             repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
 
-            table.addCell(Cells.createContent("This score is calculated by combining information on:"))
+            table.addCell(Cells.createContent(labels.molecularOriginScoreNote()))
             repeat(predictions.size) { table.addCell(Cells.createContent("")) }
             repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
-            addClassifierRow("(1) SNV types", predictions, CupPrediction::snvPairwiseClassifier, table)
+            addClassifierRow(labels.molecularOriginSnvTypes(), predictions, CupPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
-                "(2) SNV genomic localisation distribution", predictions, CupPrediction::genomicPositionClassifier, table
+                labels.molecularOriginSnvGenomic(), predictions, CupPrediction::genomicPositionClassifier, table
             )
             addClassifierRow(
-                "(3) Driver genes and passenger characteristics", predictions, CupPrediction::featureClassifier, table
+                labels.molecularOriginDriverGenes(), predictions, CupPrediction::featureClassifier, table
             )
             if (isWGTS()) {
                 addClassifierRow(
-                    "(4) Gene expression", predictions, CupPrediction::expressionPairWiseClassifier, table
+                    labels.molecularOriginGeneExpression(), predictions, CupPrediction::expressionPairWiseClassifier, table
                 )
                 addClassifierRow(
-                    "(5) Alternative splice junctions", predictions, CupPrediction::altSjCohortClassifier, table
+                    labels.molecularOriginAltSplice(), predictions, CupPrediction::altSjCohortClassifier, table
                 )
             }
             table.addCell(
                 Cells.createSpanningSubNote(
-                    String.format(
-                        "Other cohorts have a combined prediction of %s or lower",
+                    labels.molecularOriginOtherCohorts(
                         Formats.percentage(tumorOriginInterpreter.greatestOmittedLikelihood())
                     ), table
                 )
@@ -97,7 +95,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest) : Tabl
         predictions
             .asSequence()
             .map(classifierFunction)
-            .map { it?.let(Formats::percentage) ?: "N/A" }
+            .map { it?.let(Formats::percentage) ?: labels.miscNotAvailable() }
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
         repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }

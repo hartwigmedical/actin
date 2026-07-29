@@ -29,12 +29,13 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         logger.info { "Building report for patient ${report.patientId} with configuration $configuration" }
 
         logger.debug { "Extended suffix enabled: $addExtendedSuffix" }
-        
+
         logger.debug { "Initializing output styles" }
         Styles.initialize()
 
-        val chapters = ReportContentProvider(report, configuration, doidModel).provideChapters()
-        writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, report.reportDate, addExtendedSuffix)
+        val labels = ReportLabels.load(configuration.intendedUse)
+        val chapters = ReportContentProvider(report, configuration, doidModel, labels).provideChapters()
+        writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, report.reportDate, addExtendedSuffix, labels)
     }
 
     private fun writePdfChapters(
@@ -42,11 +43,12 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         sourcePatientId: String?,
         chapters: List<ReportChapter>,
         reportDate: LocalDate,
-        addExtendedSuffix: Boolean
+        addExtendedSuffix: Boolean,
+        labels: ReportLabels
     ) {
         val doc = initializeReport(patientId, addExtendedSuffix)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate)
+        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]

@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.components
 
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Styles
 import com.itextpdf.kernel.geom.Rectangle
@@ -12,7 +13,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
 import java.time.LocalDate
 
-class Footer(private val reportDate: LocalDate) {
+class Footer(private val reportDate: LocalDate, private val labels: ReportLabels) {
 
     private val footerTemplates: MutableList<FooterTemplate> = mutableListOf()
 
@@ -21,7 +22,7 @@ class Footer(private val reportDate: LocalDate) {
         val pageNumber = page.document.getPageNumber(page)
         val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 40f))
         canvas.addXObjectAt(template, 58f, 18f)
-        footerTemplates.add(FooterTemplate(pageNumber, template, reportDate))
+        footerTemplates.add(FooterTemplate(pageNumber, template, reportDate, labels))
         canvas.release()
     }
 
@@ -32,32 +33,27 @@ class Footer(private val reportDate: LocalDate) {
         }
     }
 
-    private class FooterTemplate(private val pageNumber: Int, private val template: PdfFormXObject, private val reportDate: LocalDate) {
+    private class FooterTemplate(
+        private val pageNumber: Int,
+        private val template: PdfFormXObject,
+        private val reportDate: LocalDate,
+        private val labels: ReportLabels
+    ) {
 
         fun renderFooter(document: PdfDocument, totalPageCount: Int) {
             val canvas = Canvas(template, document)
 
-            val pageNumberString = "$pageNumber/$totalPageCount"
-            val pageNumberParagraph = Paragraph().add(pageNumberString).addStyle(Styles.pageNumberStyle())
+            val pageNumberParagraph = Paragraph().add("$pageNumber/$totalPageCount").addStyle(Styles.pageNumberStyle())
             canvas.showTextAligned(pageNumberParagraph, 0f, 0f, TextAlignment.LEFT)
 
-            val researchDisclaimer = "All results and data described in this report are for Research Use Only and have NOT been generated " +
-                        "using a clinically validated and controlled procedure nor is it a validated medical device. " +
-                        "The results should NOT be used for diagnostic or treatment purposes. " +
-                        "No rights can be derived from the content of this report."
-            val researchDisclaimerParagraph = Paragraph(researchDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            val researchDisclaimerParagraph = Paragraph(labels.footerResearchDisclaimer()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(researchDisclaimerParagraph, 30f, 27f, TextAlignment.LEFT)
 
-            val ctgovDisclaimer =
-                "Trials marked with asterisk (*) were sourced from ClinicalTrials.gov on ${Formats.date(reportDate)}. " +
-                    "No modifications have been made to the ClinicalTrials.gov data. ACTIN structures trial information for matching " +
-                        "and analytical purposes."
-            val ctgovDisclaimerParagraph = Paragraph(ctgovDisclaimer).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            val ctgovDisclaimerParagraph = Paragraph(labels.footerCtgovDisclaimer(Formats.date(reportDate))).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(ctgovDisclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
             // TODO (KD) Only add CKB attribution in case we have done molecular interpretation with evidenceSource = CKB.
-            val attribution = "Gene and variant annotations and related content are powered by Genomenon Cancer Knowledgebase (CKB)."
-            val attributionParagraph = Paragraph(attribution).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            val attributionParagraph = Paragraph(labels.footerCkbAttribution()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(attributionParagraph, 30f, 0f, TextAlignment.LEFT)
         }
     }

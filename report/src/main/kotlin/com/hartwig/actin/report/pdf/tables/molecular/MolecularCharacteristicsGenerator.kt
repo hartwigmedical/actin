@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoGene
 import com.hartwig.actin.report.interpretation.MolecularCharacteristicFormat
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -15,12 +16,12 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import java.util.function.Consumer
 
-class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : TableGenerator {
+class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, private val labels: ReportLabels) : TableGenerator {
 
     private val wgsMolecular = MolecularHistory(listOf(molecular)).latestOrangeMolecularRecord()
 
     override fun title(): String {
-        return "General"
+        return labels.molecularGeneralTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -30,7 +31,16 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest) : 
     override fun contents(): Table {
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f, 1f, 2f, 2f)
 
-        listOf("Purity", "Ploidy", "TML Status", "TMB Status", "MS Stability", "HR Status", "DPYD", "UGT1A1").forEach(
+        listOf(
+            labels.molecularCharPurity(),
+            labels.molecularCharPloidy(),
+            labels.molecularCharTml(),
+            labels.molecularCharTmb(),
+            labels.molecularCharMs(),
+            labels.molecularCharHr(),
+            labels.molecularCharDpyd(),
+            labels.molecularCharUgt1a1()
+        ).forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
         listOfNotNull(
             createPurityCell(molecular.characteristics.purity),

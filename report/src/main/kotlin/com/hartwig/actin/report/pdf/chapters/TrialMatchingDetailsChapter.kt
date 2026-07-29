@@ -12,6 +12,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.EvaluationInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
@@ -35,11 +36,12 @@ private const val KEY_WIDTH = 90f
 class TrialMatchingDetailsChapter(
     private val report: Report,
     private val configuration: ReportConfiguration,
-    private val trialsProvider: TrialsProvider
+    private val trialsProvider: TrialsProvider,
+    private val labels: ReportLabels
 ) : ReportChapter {
 
     override fun name(): String {
-        return "Trial Matching Details"
+        return labels.chapterTrialMatchingDetails()
     }
 
     override fun pageSize(): PageSize {
@@ -83,17 +85,20 @@ class TrialMatchingDetailsChapter(
             externalTrials,
             requestingSource,
             true,
-            trialsProvider.effectiveDutchExternalTrialExclusion
+            trialsProvider.effectiveDutchExternalTrialExclusion,
+            labels
         ).takeIf { includeSpecificExternalGenerators }
 
         val internationalExternalTrialGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(
             externalTrials,
             requestingSource,
             false,
-            trialsProvider.effectiveDutchExternalTrialExclusion
+            trialsProvider.effectiveDutchExternalTrialExclusion,
+            labels
         ).takeIf { includeSpecificExternalGenerators }
 
-        val filteredExternalTrialGenerator = EligibleTrialGenerator.filteredExternalTrials(externalTrials, configuration.countryOfReference)
+        val filteredExternalTrialGenerator =
+            EligibleTrialGenerator.filteredExternalTrials(externalTrials, configuration.countryOfReference, labels)
 
         return listOfNotNull(
             nationalExternalTrialGenerator,
@@ -109,10 +114,10 @@ class TrialMatchingDetailsChapter(
     ): List<TrialTableGenerator> {
         val (ignoredCohorts, nonIgnoredCohorts) = evaluableCohorts.partition { it.ignore }
 
-        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.closedCohorts(nonIgnoredCohorts, source)
-        val ineligibleTrialsGenerator = IneligibleTrialGenerator.evaluableCohorts(nonIgnoredCohorts, source)
+        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.closedCohorts(nonIgnoredCohorts, source, labels)
+        val ineligibleTrialsGenerator = IneligibleTrialGenerator.evaluableCohorts(nonIgnoredCohorts, source, labels)
         val nonEvaluableOrIgnoredCohortsGenerator = IneligibleTrialGenerator.nonEvaluableOrIgnoredCohorts(
-            ignoredCohorts, nonEvaluableCohorts, source
+            ignoredCohorts, nonEvaluableCohorts, source, labels
         )
 
         return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableOrIgnoredCohortsGenerator)
@@ -124,14 +129,14 @@ class TrialMatchingDetailsChapter(
             .fold(TrialClassification(), TrialClassification::combine)
 
         if (eligible.isNotEmpty()) {
-            addDetailedTrialMatches(document, eligible, "Potentially eligible open trials & cohorts", true)
+            addDetailedTrialMatches(document, eligible, labels.trialTitleEligibleOpen(), true)
         }
 
         if (nonEligible.isNotEmpty()) {
             if (eligible.isNotEmpty()) {
                 document.add(pageBreak())
             }
-            addDetailedTrialMatches(document, nonEligible, "Other trials & cohorts", false)
+            addDetailedTrialMatches(document, nonEligible, labels.trialTitleOther(), false)
         }
     }
 
@@ -191,13 +196,13 @@ class TrialMatchingDetailsChapter(
         val table = Tables.createFixedWidthCols(INDENT_WIDTH, KEY_WIDTH, valueWidth).setWidth(contentWidth()).setKeepTogether(true)
         table.addCell(Cells.createSpanningTitle(identification.trialId, table))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey("Potentially eligible"))
+        table.addCell(Cells.createKey(labels.trialDetailPotentiallyEligible()))
         table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey("Acronym"))
+        table.addCell(Cells.createKey(labels.trialDetailAcronym()))
         table.addCell(Cells.createValue(identification.acronym))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey("Title"))
+        table.addCell(Cells.createKey(labels.trialDetailTitle()))
         table.addCell(Cells.createValue(identification.title))
         return table
     }
@@ -207,20 +212,20 @@ class TrialMatchingDetailsChapter(
         val table = Tables.createFixedWidthCols(INDENT_WIDTH, KEY_WIDTH, valueWidth).setWidth(contentWidth()).setKeepTogether(true)
         table.addCell(Cells.createSpanningTitle(trialId + " - " + metadata.description, table))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey("Cohort ID"))
+        table.addCell(Cells.createKey(labels.trialDetailCohortId()))
         table.addCell(Cells.createValue(metadata.cohortId))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey("Potentially eligible?"))
+        table.addCell(Cells.createKey(labels.trialDetailPotentiallyEligibleQ()))
         table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey("Open for inclusion?"))
+        table.addCell(Cells.createKey(labels.trialDetailOpenForInclusion()))
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.open)))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey("Has slots available?"))
+        table.addCell(Cells.createKey(labels.trialDetailHasSlots()))
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.slotsAvailable)))
         if (metadata.ignore) {
             table.addCell(Cells.createEmpty())
-            table.addCell(Cells.createKey("Ignored for eligibility?"))
+            table.addCell(Cells.createKey(labels.trialDetailIgnored()))
             table.addCell(Cells.createValue(Formats.yesNoUnknown(true)))
         }
         return table
@@ -230,8 +235,8 @@ class TrialMatchingDetailsChapter(
         val evaluationWidth = contentWidth() - (INDENT_WIDTH + KEY_WIDTH)
         val table = Tables.createFixedWidthCols(INDENT_WIDTH, KEY_WIDTH, evaluationWidth).setWidth(contentWidth())
         table.addHeaderCell(Cells.createEmpty())
-        table.addHeaderCell(Cells.createHeader("Reference"))
-        table.addHeaderCell(Cells.createHeader("Evaluation"))
+        table.addHeaderCell(Cells.createHeader(labels.trialColReference()))
+        table.addHeaderCell(Cells.createHeader(labels.trialColEvaluation()))
 
         for (interpretation in EvaluationInterpreter.interpretForDetailedTrialMatching(evaluations, displayFailOnly)) {
             table.addCell(Cells.createEmpty())

@@ -12,6 +12,7 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.InterpretedCohortFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.SummaryType
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.IhcResultGenerator
@@ -34,13 +35,14 @@ import com.itextpdf.layout.element.Table
 class MolecularDetailsChapter(
     private val report: Report,
     private val configuration: ReportConfiguration,
-    private val trialsProvider: TrialsProvider
+    private val trialsProvider: TrialsProvider,
+    private val labels: ReportLabels
 ) : ReportChapter {
 
     private val externalTrials = trialsProvider.externalTrials().allFiltered()
 
     override fun name(): String {
-        return "Molecular Details"
+        return labels.chapterMolecularDetails()
     }
 
     override fun pageSize(): PageSize {
@@ -122,11 +124,18 @@ class MolecularDetailsChapter(
         } ?: topTable
 
         val orangeGenerators = orangeMolecularRecord.map {
-            OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport)
+            OrangeMolecularRecordGenerator(externalTrials, cohorts, tableWidth, it, pathologyReport, labels)
         }
         val wgsSummaryGenerators = externalPanelResults.map { molecularTest ->
             val panelImmunologyGenerator = if (molecularTest.immunology != null)
-                ImmunologyGenerator(molecularTest, ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", keyWidth, valueWidth - 10)
+                ImmunologyGenerator(
+                    molecularTest,
+                    ImmunologyDisplayMode.DETAILED_INLINE,
+                    labels.molecularImmunologyTitle(),
+                    keyWidth,
+                    valueWidth - 10,
+                    labels
+                )
             else null
             WgsSummaryGenerator(
                 SummaryType.DETAILS,
@@ -136,13 +145,14 @@ class MolecularDetailsChapter(
                 cohorts,
                 keyWidth,
                 valueWidth,
+                labels,
                 panelImmunologyGenerator
             )
         }
         val immunologyGenerators = createImmunologyGenerators(orangeMolecularRecord, keyWidth, valueWidth - 10)
 
         val ihcGenerator = if (ihcTests.isNotEmpty()) {
-            IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter())
+            IhcResultGenerator(ihcTests, keyWidth, valueWidth - 10, IhcTestInterpreter(), labels)
         } else null
 
         TableGeneratorFunctions.addGenerators(
@@ -161,7 +171,7 @@ class MolecularDetailsChapter(
             val showImmunology = molecularTest.immunology != null && molecularTest.immunology?.isReliable == true
             if (showImmunology) {
                 val displayMode = if (molecularTest.hasSufficientQuality) ImmunologyDisplayMode.DETAILED_TABLE else ImmunologyDisplayMode.ALLELE_ONLY
-                ImmunologyGenerator(molecularTest, displayMode, "Immunology", keyWidth, valueWidth)
+                ImmunologyGenerator(molecularTest, displayMode, labels.molecularImmunologyTitle(), keyWidth, valueWidth, labels)
             } else null
         }
     }
@@ -187,7 +197,7 @@ class MolecularDetailsChapter(
     private fun addLongitudinalMolecularHistoryTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
         val cohorts = trialsProvider.evaluableCohortsAndNotIgnore()
-        val generator = LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularTests, cohorts)
+        val generator = LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularTests, cohorts, labels)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
