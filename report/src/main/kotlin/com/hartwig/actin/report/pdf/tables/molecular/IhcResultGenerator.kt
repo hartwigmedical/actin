@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.report.interpretation.IhcTestInterpretation
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -14,7 +15,8 @@ class IhcResultGenerator(
     private val keyWidth: Float,
     private val valueWidth: Float,
     private val interpreter: IhcTestInterpreter,
-    private val title: String = "IHC results",
+    private val labels: ReportLabels,
+    private val title: String = labels.molecular.ihcTitle(),
 ) : TableGenerator {
 
     override fun title(): String {

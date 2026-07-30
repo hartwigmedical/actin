@@ -8,13 +8,17 @@ import com.hartwig.actin.report.interpretation.InterpretedCohortsSummarizer
 import com.hartwig.actin.report.interpretation.MolecularDriverEntry
 import com.hartwig.actin.report.interpretation.MolecularDriverEntryFactory
 import com.hartwig.actin.report.interpretation.MolecularDriversInterpreter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
-class LongitudinalMolecularHistoryGenerator(private val molecularTests: List<MolecularTest>, private val cohorts: List<InterpretedCohort>) :
-    TableGenerator {
+class LongitudinalMolecularHistoryGenerator(
+    private val molecularTests: List<MolecularTest>,
+    private val cohorts: List<InterpretedCohort>,
+    private val labels: ReportLabels
+) : TableGenerator {
 
     private val driverSortOrder: Comparator<MolecularDriverEntry> = compareBy(
         MolecularDriverEntry::evidenceTier,
@@ -23,7 +27,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularTests: List<Mol
     )
 
     override fun title(): String {
-        return "Molecular history"
+        return labels.molecular.historyTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -39,7 +43,7 @@ class LongitudinalMolecularHistoryGenerator(private val molecularTests: List<Mol
         val finalColumnWidths = FloatArray(eventVAFMapByTest.size) { 0.8f }
         val table = Tables.createRelativeWidthCols(1.0f, 1.0f, *finalColumnWidths)
 
-        val headers = listOf("Event", "Description") + eventVAFMapByTest.keys.map(::testDisplay)
+        val headers = listOf(labels.molecular.colEvent(), labels.molecular.colDescription()) + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
         val allDrivers = molecularTests.map(MolecularTest::drivers)

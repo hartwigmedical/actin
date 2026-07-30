@@ -34,6 +34,11 @@ enum class TrialMatchingChapterType {
     DETAILED_ALL_TRIALS
 }
 
+enum class ReportIntendedUse {
+    RESEARCH_USE_ONLY,
+    NON_MEDICAL
+}
+
 enum class ExternalTrialTumorType(val tumorDoids: Set<String>?) {
     LUNG(setOf(DoidConstants.LUNG_CANCER_DOID, DoidConstants.PLEURAL_MESOTHELIOMA_DOID)),
     NONE(null);
@@ -52,7 +57,8 @@ data class ReportConfiguration(
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS,
     val hospitalOfReference: String? = null,
-    val dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE
+    val dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE,
+    val intendedUse: ReportIntendedUse = ReportIntendedUse.RESEARCH_USE_ONLY
 ) {
 
     companion object {
@@ -70,7 +76,8 @@ data class ReportConfiguration(
                 molecularChapterType = MolecularChapterType.STANDARD_AND_LONGITUDINAL,
                 efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
                 clinicalChapterType = ClinicalChapterType.COMPLETE,
-                trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS
+                trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS,
+                intendedUse = ReportIntendedUse.RESEARCH_USE_ONLY
             )
         }
     }

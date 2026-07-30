@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
@@ -32,11 +33,12 @@ import com.itextpdf.layout.properties.TextAlignment
 class SummaryChapter(
     private val report: Report,
     private val configuration: ReportConfiguration,
-    private val trialsProvider: TrialsProvider
+    private val trialsProvider: TrialsProvider,
+    private val labels: ReportLabels
 ) : ReportChapter {
 
     override fun name(): String {
-        return "Summary"
+        return labels.summary.title()
     }
 
     override fun pageSize(): PageSize {
@@ -56,17 +58,17 @@ class SummaryChapter(
 
     private fun addPatientDetails(document: Document) {
         val patientDetailFields = listOf(
-            "Gender: " to (report.patientRecord.patient.gender?.display() ?: Formats.VALUE_UNKNOWN),
-            " | Birth year: " to report.patientRecord.patient.birthYear.toString(),
-            " | WHO: " to whoStatus(report.patientRecord.performanceStatus.latestWho)
+            labels.summary.gender() to (report.patientRecord.patient.gender?.display() ?: Formats.VALUE_UNKNOWN),
+            labels.summary.birthYear() to report.patientRecord.patient.birthYear.toString(),
+            labels.summary.who() to whoStatus(report.patientRecord.performanceStatus.latestWho)
         )
         addParagraphWithContent(document, patientDetailFields)
 
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOfNotNull(
-            "Tumor: " to report.patientRecord.tumor.name,
+            labels.summary.tumor() to report.patientRecord.tumor.name,
             if (configuration.patientDetailsType == ReportContentType.COMPREHENSIVE) {
-                " | Lesions: " to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
+                labels.summary.lesions() to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
             } else null,
             " | $stageTitle: " to stages
         )
@@ -76,18 +78,18 @@ class SummaryChapter(
     private fun whoStatus(who: WhoStatus?) = who?.asText() ?: Formats.VALUE_UNKNOWN
 
     private fun stageSummary(tumor: TumorDetails): Pair<String, String> {
-        val knownStage = "Stage"
+        val knownStage = labels.summary.stage()
         return when {
             tumor.stage != null -> {
                 Pair(knownStage, tumor.stage!!.display())
             }
 
             !tumor.derivedStages.isNullOrEmpty() -> {
-                Pair("Derived stage(s)", tumor.derivedStages!!.sorted().joinToString(", ") { it.display() })
+                Pair(labels.summary.derivedStages(), tumor.derivedStages!!.sorted().joinToString(", ") { it.display() })
             }
 
             else -> {
-                Pair(knownStage, "Unknown")
+                Pair(knownStage, Formats.VALUE_UNKNOWN)
             }
         }
     }
@@ -120,7 +122,8 @@ class SummaryChapter(
                     report = report,
                     includeAdditionalFields = it == ReportContentType.COMPREHENSIVE,
                     keyWidth = keyWidth,
-                    valueWidth = valueWidth
+                    valueWidth = valueWidth,
+                    labels = labels
                 )
             }
 
@@ -131,13 +134,14 @@ class SummaryChapter(
                     patientRecord = report.patientRecord,
                     cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
                     keyWidth = keyWidth,
-                    valueWidth = valueWidth
+                    valueWidth = valueWidth,
+                    labels = labels
                 )
             }
 
         val standardOfCareTableGenerator = configuration.standardOfCareSummaryType
             .takeIf { it != ReportContentType.NONE }
-            ?.let { EligibleStandardOfCareGenerator(report) }
+            ?.let { EligibleStandardOfCareGenerator(report, labels) }
 
         val trialTableGenerators = configuration.trialMatchingSummaryType
             .takeIf { it != ReportContentType.NONE }
@@ -168,7 +172,8 @@ class SummaryChapter(
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
                 localTrialsType = LocalTrialsType.LOCAL_LATE_PHASE,
-                effectiveDutchExternalTrialExclusion = trialsProvider.effectiveDutchExternalTrialExclusion
+                effectiveDutchExternalTrialExclusion = trialsProvider.effectiveDutchExternalTrialExclusion,
+                labels = labels
             )
 
         val nationalOpenAndEligibleEarlyPhaseCohortsGenerator =
@@ -178,21 +183,24 @@ class SummaryChapter(
                 requestingSource = requestingSource,
                 countryOfReference = configuration.countryOfReference,
                 localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE,
-                effectiveDutchExternalTrialExclusion = trialsProvider.effectiveDutchExternalTrialExclusion
+                effectiveDutchExternalTrialExclusion = trialsProvider.effectiveDutchExternalTrialExclusion,
+                labels = labels
             )
 
         val localOpenAndEligibleCohortsWithMissingMolecularResultForEvaluationGenerator =
             EligibleTrialGenerator.openCohortsWithMissingMolecularResultsForEvaluation(
                 cohorts,
                 configuration.countryOfReference,
-                requestingSource
+                requestingSource,
+                labels
             )
 
         val internationalTrialsGenerator = EligibleTrialGenerator.externalOpenAndEligibleCohorts(
             externalTrials,
             requestingSource,
             false,
-            trialsProvider.effectiveDutchExternalTrialExclusion
+            trialsProvider.effectiveDutchExternalTrialExclusion,
+            labels
         )
 
         return listOfNotNull(

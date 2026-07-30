@@ -1,8 +1,10 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.datamodel.molecular.panel.TestVersion
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.getCellContents
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
@@ -13,6 +15,7 @@ class OrangeMolecularRecordGeneratorTest {
     @Test
     fun `Should show warning in case the date of the molecular test is before the oldest version date of this test`() {
         val date = LocalDate.of(2023, 9, 19)
+        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
         val table = OrangeMolecularRecordGenerator(
             emptySet(),
             emptyList(),
@@ -25,7 +28,8 @@ class OrangeMolecularRecordGeneratorTest {
                         TestVersion(date.plusYears(1), testDateIsBeforeOldestTestVersion = true)
                     )
                 ),
-            null
+            null,
+            labels
         )
         assertThat(
             getCellContents(table.contents(), 0, 0)

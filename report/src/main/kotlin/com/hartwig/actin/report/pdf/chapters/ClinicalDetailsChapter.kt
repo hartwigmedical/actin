@@ -4,6 +4,7 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEv
 import com.hartwig.actin.configuration.ClinicalChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
@@ -16,10 +17,14 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
 
-class ClinicalDetailsChapter(private val report: Report, private val configuration: ReportConfiguration) : ReportChapter {
+class ClinicalDetailsChapter(
+    private val report: Report,
+    private val configuration: ReportConfiguration,
+    private val labels: ReportLabels
+) : ReportChapter {
 
     override fun name(): String {
-        return "Clinical Details"
+        return labels.clinicalDetails.title()
     }
 
     override fun pageSize(): PageSize {
@@ -50,23 +55,26 @@ class ClinicalDetailsChapter(private val report: Report, private val configurati
                 report = report,
                 includeAdditionalFields = true,
                 keyWidth = keyWidth,
-                valueWidth = valueWidth
+                valueWidth = valueWidth,
+                labels = labels
             ),
             PatientCurrentDetailsGenerator(
                 record = report.patientRecord,
                 keyWidth = keyWidth,
                 valueWidth = valueWidth,
-                referenceDate = report.treatmentMatch.referenceDate
+                referenceDate = report.treatmentMatch.referenceDate,
+                labels = labels
             ),
-            TumorDetailsGenerator(record = report.patientRecord, keyWidth = keyWidth, valueWidth = valueWidth),
+            TumorDetailsGenerator(record = report.patientRecord, keyWidth = keyWidth, valueWidth = valueWidth, labels = labels),
             report.patientRecord.medications?.let {
                 MedicationGenerator(
                     medications = it,
-                    interpreter = MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null)
+                    interpreter = MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null),
+                    labels = labels
                 )
             },
             if (report.patientRecord.bloodTransfusions.isEmpty()) null else
-                BloodTransfusionGenerator(bloodTransfusions = report.patientRecord.bloodTransfusions)
+                BloodTransfusionGenerator(bloodTransfusions = report.patientRecord.bloodTransfusions, labels = labels)
         )
     }
 }

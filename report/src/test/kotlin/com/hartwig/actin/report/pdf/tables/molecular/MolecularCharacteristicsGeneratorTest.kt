@@ -1,15 +1,19 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombination
 import com.hartwig.actin.datamodel.molecular.characteristics.HomologousRecombinationType
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalLoad
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class MolecularCharacteristicsGeneratorTest {
+
+    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
 
     @Test
     fun `Should not display hrd type or brca value when sample is HR proficient`() {
@@ -20,7 +24,7 @@ class MolecularCharacteristicsGeneratorTest {
             brca1Value = 0.0,
             brca2Value = 0.0
         )
-        assertThat(MolecularCharacteristicsGenerator(test).createHRStatusString()).isEqualTo("Proficient (0)")
+        assertThat(MolecularCharacteristicsGenerator(test, labels).createHRStatusString()).isEqualTo("Proficient (0)")
     }
 
     @Test
@@ -33,7 +37,7 @@ class MolecularCharacteristicsGeneratorTest {
                 brca1Value = 0.75,
                 brca2Value = 0.06123
             )
-        assertThat(MolecularCharacteristicsGenerator(cannotBeDetermined).createHRStatusString()).isEqualTo("Deficient (0.81)")
+        assertThat(MolecularCharacteristicsGenerator(cannotBeDetermined, labels).createHRStatusString()).isEqualTo("Deficient (0.81)")
     }
 
     @Test
@@ -54,16 +58,16 @@ class MolecularCharacteristicsGeneratorTest {
                 brca1Value = 0.03123,
                 brca2Value = 0.78
             )
-        assertThat(MolecularCharacteristicsGenerator(brca1Type).createHRStatusString())
+        assertThat(MolecularCharacteristicsGenerator(brca1Type, labels).createHRStatusString())
             .isEqualTo("Deficient (0.81) - BRCA1-type (BRCA1 value: 0.75)")
-        assertThat(MolecularCharacteristicsGenerator(brca2Type).createHRStatusString())
+        assertThat(MolecularCharacteristicsGenerator(brca2Type, labels).createHRStatusString())
             .isEqualTo("Deficient (0.81) - BRCA2-type (BRCA2 value: 0.78)")
     }
 
     @Test
     fun `Should display TML correctly`() {
         val tml = withTumorMutationalLoad(value = 100, isHigh = true)
-        assertThat(MolecularCharacteristicsGenerator(tml).createTMLStatusString()).isEqualTo("High (100)")
+        assertThat(MolecularCharacteristicsGenerator(tml, labels).createTMLStatusString()).isEqualTo("High (100)")
     }
 
     private fun withHomologousRecombinationStatusAndType(

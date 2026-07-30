@@ -8,6 +8,7 @@ import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells
@@ -21,11 +22,12 @@ class PatientCurrentDetailsGenerator(
     private val record: PatientRecord,
     private val keyWidth: Float,
     private val valueWidth: Float,
-    private val referenceDate: LocalDate
+    private val referenceDate: LocalDate,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Patient current details (" + date(record.patient.questionnaireDate) + ")"
+        return labels.clinicalDetails.patientDetailsTitle(date(record.patient.questionnaireDate))
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -34,37 +36,37 @@ class PatientCurrentDetailsGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey("Toxicities grade >= 2 or unknown"))
+        table.addCell(Cells.createKey(labels.clinicalDetails.keyToxicities()))
         table.addCell(Cells.createValue(toxicities(record)))
         val infectionStatus = record.clinicalStatus.infectionStatus
         if (infectionStatus != null && infectionStatus.hasActiveInfection) {
-            table.addCell(Cells.createKey("Significant infection"))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keyInfection()))
             val description = infectionStatus.description
-            table.addCell(Cells.createValue(description ?: "Yes (infection details unknown)"))
+            table.addCell(Cells.createValue(description ?: labels.clinicalDetails.valueInfectionUnknown()))
         }
         record.ecgs.firstOrNull()?.let { ecg ->
-            table.addCell(Cells.createKey("Significant aberration on latest ECG"))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keyEcg()))
             val aberration = ecg.name
-            val description = aberration ?: "Yes (ECG aberration details unknown)"
+            val description = aberration ?: labels.clinicalDetails.valueEcgUnknown()
             table.addCell(Cells.createValue(description))
 
             val qtcfMeasure = ecg.qtcfMeasure
             if (qtcfMeasure != null) {
-                createMeasureCells(table, "QTcF", qtcfMeasure)
+                createMeasureCells(table, labels.clinicalDetails.keyQtcf(), qtcfMeasure)
             }
             val jtcMeasure = ecg.jtcMeasure
             if (jtcMeasure != null) {
-                createMeasureCells(table, "JTc", jtcMeasure)
+                createMeasureCells(table, labels.clinicalDetails.keyJtc(), jtcMeasure)
             }
         }
         if (record.clinicalStatus.lvef != null) {
-            table.addCell(Cells.createKey("LVEF"))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keyLvef()))
             table.addCell(Cells.createValue(Formats.percentage(record.clinicalStatus.lvef!!)))
         }
-        table.addCell(Cells.createKey("Known allergies"))
+        table.addCell(Cells.createKey(labels.clinicalDetails.keyAllergies()))
         table.addCell(Cells.createValue(allergies(record.intolerances)))
         if (record.surgeries.isNotEmpty()) {
-            table.addCell(Cells.createKey("Recent surgeries"))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keySurgeries()))
             table.addCell(Cells.createValue(surgeries(record.surgeries)))
         }
         return table

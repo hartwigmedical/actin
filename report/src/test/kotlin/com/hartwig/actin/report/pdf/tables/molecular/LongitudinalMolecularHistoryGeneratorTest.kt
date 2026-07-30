@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -7,6 +8,7 @@ import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteri
 import com.hartwig.actin.datamodel.molecular.characteristics.TumorMutationalBurden
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.evidence.TestClinicalEvidenceFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.assertHeader
 import com.hartwig.actin.report.pdf.assertRow
 import java.time.LocalDate
@@ -24,11 +26,13 @@ private const val VAF = "VAF 10.0%"
 private const val NOT_DETECTED = ""
 private const val DETECTED = "Detected"
 
+private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+
 class LongitudinalMolecularHistoryGeneratorTest {
 
     @Test
     fun `Should create table with header with column for each test`() {
-        val result = LongitudinalMolecularHistoryGenerator(listOf(FIRST_TEST, SECOND_TEST), emptyList())
+        val result = LongitudinalMolecularHistoryGenerator(listOf(FIRST_TEST, SECOND_TEST), emptyList(), labels)
         assertThat(result.title()).isEqualTo("Molecular history")
         assertHeader(result, "Event", "Description", "2024-07-21\nHartwig WGS", "2024-07-22\nHartwig WGS")
     }
@@ -40,7 +44,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(variants = listOf(VARIANT))
             ), SECOND_TEST
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList())
+        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList(), labels)
         assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (gain of function)", VAF, NOT_DETECTED)
     }
 
@@ -60,7 +64,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 )
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList())
+        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList(), labels)
         assertRow(result, 0, "BRAF V600E\n(Tier I)", "Mutation (gain of function)", VAF)
         assertRow(result, 1, "KRAS G12C\n(Tier I)", "Mutation (gain of function)", VAF)
         assertRow(result, 2, "KRAS G12D\n(Tier I)", "Mutation (gain of function)", VAF)
@@ -78,7 +82,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 characteristics = withTumorMutationalBurden(test = SECOND_TEST, score = 2.0)
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList())
+        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList(), labels)
         assertRow(result, 0, "TMB", "", "1.0", "2.0")
     }
 
@@ -91,7 +95,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 date = SECOND_TEST.date?.plusDays(1), characteristics = TestMolecularFactory.createMinimalTestCharacteristics()
             )
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList())
+        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList(), labels)
         assertRow(result, 1, "MSI", "", "Stable", "Unstable", "")
     }
 
@@ -102,7 +106,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
                 drivers = TestMolecularFactory.createMinimalTestDrivers().copy(fusions = listOf(FUSION))
             ), SECOND_TEST
         )
-        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList())
+        val result = LongitudinalMolecularHistoryGenerator(molecularTests, emptyList(), labels)
         assertRow(
             result,
             0,
