@@ -35,12 +35,12 @@ class MolecularDriversGenerator(
     override fun contents(): Table {
         val table = Tables.createRelativeWidthCols(35f, 21f, 10f, 10f, 11f, 10f)
 
-        table.addHeaderCell(Cells.createHeader(labels.molecularColType()))
-        table.addHeaderCell(Cells.createHeader(labels.molecularColDriver()))
-        table.addHeaderCell(Cells.createHeader(labels.molecularColTrialsLocations()))
-        table.addHeaderCell(Cells.createHeader(labels.molecularColTrialsSource(molecular.externalTrialSource)))
-        table.addHeaderCell(Cells.createHeader(labels.molecularColBestEvidence(molecular.evidenceSource)))
-        table.addHeaderCell(Cells.createHeader(labels.molecularColResistance(molecular.evidenceSource)))
+        table.addHeaderCell(Cells.createHeader(labels.molecular.colType()))
+        table.addHeaderCell(Cells.createHeader(labels.molecular.colDriver()))
+        table.addHeaderCell(Cells.createHeader(labels.molecular.colTrialsLocations()))
+        table.addHeaderCell(Cells.createHeader(labels.molecular.colTrialsSource(molecular.externalTrialSource)))
+        table.addHeaderCell(Cells.createHeader(labels.molecular.colBestEvidence(molecular.evidenceSource)))
+        table.addHeaderCell(Cells.createHeader(labels.molecular.colResistance(molecular.evidenceSource)))
 
         val molecularDriversInterpreter = MolecularDriversInterpreter(molecular.drivers, InterpretedCohortsSummarizer.fromCohorts(cohorts))
         val externalTrialsPerSingleEvent = DriverTableFunctions.groupByEvent(externalTrials)
@@ -54,7 +54,7 @@ class MolecularDriversGenerator(
             table.addCell(Cells.createContent(entry.bestResistanceEvidence ?: ""))
         }
         if (molecularDriversInterpreter.hasPotentiallySubClonalVariants()) {
-            val note = labels.molecularSubClonalNote(Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF))
+            val note = labels.molecular.subClonalNote(Formats.percentage(ClonalityInterpreter.CLONAL_CUTOFF))
             table.addCell(Cells.createSpanningSubNote(note, table))
         }
         return table

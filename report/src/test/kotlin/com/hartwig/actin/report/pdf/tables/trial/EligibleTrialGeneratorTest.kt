@@ -140,15 +140,15 @@ class EligibleTrialGeneratorTest {
 
     @Test
     fun `Should show specific footnote if filtering is applied based on lung tumor type`() {
-        val filteredSuffix = labels.trialFootnoteFilteredSuffix()
-        val expected = labels.trialFootnoteDutchLung("1 trial", filteredSuffix)
+        val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
+        val expected = labels.trialMatching.footnoteDutchLung("1 trial", filteredSuffix)
         assertThat(localAndNationalGenerator(ExternalTrialTumorType.LUNG).footnote()).isEqualTo(expected)
     }
 
     @Test
     fun `Should show standard footnote if filtering based on lung tumor type is not applied`() {
-        val filteredSuffix = labels.trialFootnoteFilteredSuffix()
-        val expected = labels.trialFootnoteChildrensHospital("1 trial", filteredSuffix)
+        val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
+        val expected = labels.trialMatching.footnoteChildrensHospital("1 trial", filteredSuffix)
         assertThat(localAndNationalGenerator(ExternalTrialTumorType.NONE).footnote()).isEqualTo(expected)
     }
 

@@ -19,7 +19,7 @@ private const val PADDING_RIGHT = 25
 class PredictedTumorOriginGenerator(private val molecular: MolecularTest, private val labels: ReportLabels) : TableGenerator {
 
     override fun title(): String {
-        return if (isWGTS()) labels.molecularOriginTitleWgts() else labels.molecularOriginTitle()
+        return if (isWGTS()) labels.molecular.originTitleWgts() else labels.molecular.originTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -31,7 +31,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest, privat
         val tumorOriginInterpreter = TumorOriginInterpreter.create(molecular)
         val predictions = tumorOriginInterpreter.topPredictionsToDisplay()
         return if (predictions.isEmpty()) {
-            val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else labels.molecularOriginAllBelow10(
+            val message = if (predictedTumorOrigin == null) Formats.VALUE_UNKNOWN else labels.molecular.originAllBelow10(
                 Formats.percentage(predictedTumorOrigin.likelihood()),
                 predictedTumorOrigin.cancerType()
             )
@@ -49,7 +49,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest, privat
                 .forEach(table::addHeaderCell)
             repeat(ADDITIONAL_EMPTY_COLS) { table.addHeaderCell(Cells.createEmpty()) }
 
-            table.addCell(Cells.createContentBold(labels.molecularOriginCombinedScore()))
+            table.addCell(Cells.createContentBold(labels.molecular.originCombinedScore()))
             predictions.map {
                 val likelihoodCell = Cells.createContentBold(Formats.percentage(it.likelihood)).setPaddingLeft(PADDING_LEFT.toFloat())
                 if (!tumorOriginInterpreter.hasConfidentPrediction()) {
@@ -59,27 +59,27 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest, privat
             }.forEach(table::addCell)
             repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
 
-            table.addCell(Cells.createContent(labels.molecularOriginScoreNote()))
+            table.addCell(Cells.createContent(labels.molecular.originScoreNote()))
             repeat(predictions.size) { table.addCell(Cells.createContent("")) }
             repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }
-            addClassifierRow(labels.molecularOriginSnvTypes(), predictions, CupPrediction::snvPairwiseClassifier, table)
+            addClassifierRow(labels.molecular.originSnvTypes(), predictions, CupPrediction::snvPairwiseClassifier, table)
             addClassifierRow(
-                labels.molecularOriginSnvGenomic(), predictions, CupPrediction::genomicPositionClassifier, table
+                labels.molecular.originSnvGenomic(), predictions, CupPrediction::genomicPositionClassifier, table
             )
             addClassifierRow(
-                labels.molecularOriginDriverGenes(), predictions, CupPrediction::featureClassifier, table
+                labels.molecular.originDriverGenes(), predictions, CupPrediction::featureClassifier, table
             )
             if (isWGTS()) {
                 addClassifierRow(
-                    labels.molecularOriginGeneExpression(), predictions, CupPrediction::expressionPairWiseClassifier, table
+                    labels.molecular.originGeneExpression(), predictions, CupPrediction::expressionPairWiseClassifier, table
                 )
                 addClassifierRow(
-                    labels.molecularOriginAltSplice(), predictions, CupPrediction::altSjCohortClassifier, table
+                    labels.molecular.originAltSplice(), predictions, CupPrediction::altSjCohortClassifier, table
                 )
             }
             table.addCell(
                 Cells.createSpanningSubNote(
-                    labels.molecularOriginOtherCohorts(
+                    labels.molecular.originOtherCohorts(
                         Formats.percentage(tumorOriginInterpreter.greatestOmittedLikelihood())
                     ), table
                 )
@@ -95,7 +95,7 @@ class PredictedTumorOriginGenerator(private val molecular: MolecularTest, privat
         predictions
             .asSequence()
             .map(classifierFunction)
-            .map { it?.let(Formats::percentage) ?: labels.miscNotAvailable() }
+            .map { it?.let(Formats::percentage) ?: labels.misc.notAvailable() }
             .map { Cells.createContent(it).setPaddingLeft(PADDING_LEFT.toFloat()).setPaddingRight(PADDING_RIGHT.toFloat()) }
             .forEach(table::addCell)
         repeat(ADDITIONAL_EMPTY_COLS) { table.addCell(Cells.createEmpty()) }

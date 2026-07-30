@@ -38,7 +38,7 @@ class SummaryChapter(
 ) : ReportChapter {
 
     override fun name(): String {
-        return labels.chapterSummary()
+        return labels.summary.title()
     }
 
     override fun pageSize(): PageSize {
@@ -58,17 +58,17 @@ class SummaryChapter(
 
     private fun addPatientDetails(document: Document) {
         val patientDetailFields = listOf(
-            labels.summaryGender() to (report.patientRecord.patient.gender?.display() ?: Formats.VALUE_UNKNOWN),
-            labels.summaryBirthYear() to report.patientRecord.patient.birthYear.toString(),
-            labels.summaryWho() to whoStatus(report.patientRecord.performanceStatus.latestWho)
+            labels.summary.gender() to (report.patientRecord.patient.gender?.display() ?: Formats.VALUE_UNKNOWN),
+            labels.summary.birthYear() to report.patientRecord.patient.birthYear.toString(),
+            labels.summary.who() to whoStatus(report.patientRecord.performanceStatus.latestWho)
         )
         addParagraphWithContent(document, patientDetailFields)
 
         val (stageTitle, stages) = stageSummary(report.patientRecord.tumor)
         val tumorDetailFields = listOfNotNull(
-            labels.summaryTumor() to report.patientRecord.tumor.name,
+            labels.summary.tumor() to report.patientRecord.tumor.name,
             if (configuration.patientDetailsType == ReportContentType.COMPREHENSIVE) {
-                labels.summaryLesions() to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
+                labels.summary.lesions() to TumorDetailsInterpreter.lesionString(report.patientRecord.tumor)
             } else null,
             " | $stageTitle: " to stages
         )
@@ -78,14 +78,14 @@ class SummaryChapter(
     private fun whoStatus(who: WhoStatus?) = who?.asText() ?: Formats.VALUE_UNKNOWN
 
     private fun stageSummary(tumor: TumorDetails): Pair<String, String> {
-        val knownStage = labels.summaryStage()
+        val knownStage = labels.summary.stage()
         return when {
             tumor.stage != null -> {
                 Pair(knownStage, tumor.stage!!.display())
             }
 
             !tumor.derivedStages.isNullOrEmpty() -> {
-                Pair(labels.summaryDerivedStages(), tumor.derivedStages!!.sorted().joinToString(", ") { it.display() })
+                Pair(labels.summary.derivedStages(), tumor.derivedStages!!.sorted().joinToString(", ") { it.display() })
             }
 
             else -> {

@@ -16,7 +16,7 @@ class IhcResultGenerator(
     private val valueWidth: Float,
     private val interpreter: IhcTestInterpreter,
     private val labels: ReportLabels,
-    private val title: String = labels.molecularIhcTitle(),
+    private val title: String = labels.molecular.ihcTitle(),
 ) : TableGenerator {
 
     override fun title(): String {

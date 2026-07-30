@@ -38,10 +38,10 @@ class ImmunologyGenerator(
     private fun createDetailedTable(): Table {
         val table = Tables.createRelativeWidthCols(2f, 3f, 2f, 2f, 5f)
 
-        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecularColHlaGene()))
-        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecularColType()))
-        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecularColTumorCopyNumber()))
-        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecularColMutatedInTumor()))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colHlaGene()))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colType()))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colTumorCopyNumber()))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colMutatedInTumor()))
 
         addHlaAAlleles(table)
 
@@ -74,11 +74,11 @@ class ImmunologyGenerator(
             if (alleles.isNotEmpty()) {
                 table.addCell(Cells.createValue(alleles.joinToString(", ", transform = ::alleleCompactString)))
             } else {
-                table.addCell(Cells.createValue(labels.miscNoHlaAlleles()))
+                table.addCell(Cells.createValue(labels.molecular.immunologyNoHlaAlleles()))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createValue(labels.miscHlaTypingNotAvailable()))
+            table.addCell(Cells.createValue(labels.molecular.immunologyHlaTypingNotAvailable()))
         }
     }
 
@@ -111,13 +111,13 @@ class ImmunologyGenerator(
                 }
             } else {
                 table.addCell(Cells.createKey("HLA-A"))
-                table.addCell(Cells.createContentNoBorder(labels.miscNoHlaAlleles()))
+                table.addCell(Cells.createContentNoBorder(labels.molecular.immunologyNoHlaAlleles()))
                 table.addCell(Cells.createContentNoBorder(""))
                 table.addCell(Cells.createContentNoBorder(""))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createContentNoBorder(labels.miscHlaTypingNotAvailable()))
+            table.addCell(Cells.createContentNoBorder(labels.molecular.immunologyHlaTypingNotAvailable()))
             table.addCell(Cells.createContentNoBorder(""))
             table.addCell(Cells.createContentNoBorder(""))
         }
@@ -134,11 +134,11 @@ class ImmunologyGenerator(
                 }
             } else {
                 table.addCell(Cells.createKey("HLA-A"))
-                table.addCell(Cells.createValue(labels.miscNoHlaAlleles()))
+                table.addCell(Cells.createValue(labels.molecular.immunologyNoHlaAlleles()))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createValue(labels.miscHlaTypingNotAvailable()))
+            table.addCell(Cells.createValue(labels.molecular.immunologyHlaTypingNotAvailable()))
         }
     }
 

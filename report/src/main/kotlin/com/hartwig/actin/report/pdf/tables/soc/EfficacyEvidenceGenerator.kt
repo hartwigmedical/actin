@@ -17,16 +17,16 @@ import com.itextpdf.layout.element.Table
 class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentMatch>?, private val labels: ReportLabels) : TableGenerator {
 
     private val patientCharacteristicHeadersAndFunctions = listOf<Pair<String, (PatientPopulation) -> String?>>(
-        labels.efficacyColWhoEcog() to SoCGeneratorFunctions::createWhoString,
-        labels.efficacyColPrimaryTumorLocation() to { it.formatTumorLocation(", ") },
-        labels.efficacyColMutations() to PatientPopulation::mutations,
-        labels.efficacyColMetastaticSites() to PatientPopulation::formatMetastaticSites,
-        labels.efficacyColPreviousSystemicTherapy() to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
-        labels.efficacyColPriorTherapies() to PatientPopulation::priorTherapies
+        labels.efficacyEvidence.colWhoEcog() to SoCGeneratorFunctions::createWhoString,
+        labels.efficacyEvidence.colPrimaryTumorLocation() to { it.formatTumorLocation(", ") },
+        labels.efficacyEvidence.colMutations() to PatientPopulation::mutations,
+        labels.efficacyEvidence.colMetastaticSites() to PatientPopulation::formatMetastaticSites,
+        labels.efficacyEvidence.colPreviousSystemicTherapy() to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
+        labels.efficacyEvidence.colPriorTherapies() to PatientPopulation::priorTherapies
     )
 
     override fun title(): String {
-        return labels.socEfficacyTitle()
+        return labels.efficacyEvidence.socEfficacyTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -36,11 +36,11 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
     override fun contents(): Table {
         if (treatments.isNullOrEmpty()) {
             return Tables.createSingleCol()
-                .addCell(Cells.createContentNoBorder(labels.socNoOptions()))
+                .addCell(Cells.createContentNoBorder(labels.efficacyEvidence.socNoOptions()))
         } else {
             val table = Tables.createRelativeWidthCols(1f, 3f)
-            table.addHeaderCell(Cells.createHeader(labels.socColTreatment()))
-            table.addHeaderCell(Cells.createHeader(labels.socColLiteratureEvidence()))
+            table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColTreatment()))
+            table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColLiteratureEvidence()))
             treatments.sortedBy { it.annotations.size }.reversed().forEach { treatment: AnnotatedTreatmentMatch ->
                 table.addCell(Cells.createContentBold(SoCGeneratorFunctions.abbreviate(treatment.treatmentCandidate.treatment.name)))
                 if (treatment.annotations.isNotEmpty()) {
@@ -53,7 +53,7 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
                         }
                     }
                     table.addCell(Cells.createContent(subTable))
-                } else table.addCell(Cells.createContent(labels.socNoLiterature()))
+                } else table.addCell(Cells.createContent(labels.efficacyEvidence.socNoLiterature()))
             }
             return table
         }
@@ -86,7 +86,7 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
                 .addStyle(Styles.urlStyle())
         )
         table.addCell(Cells.createValue(""))
-        table.addCell(Cells.createValue(labels.efficacyPatientCharacteristics()))
+        table.addCell(Cells.createValue(labels.efficacyEvidence.patientCharacteristics()))
         table.addCell(Cells.createKey(""))
         return table
     }
@@ -112,11 +112,11 @@ class EfficacyEvidenceGenerator(private val treatments: List<AnnotatedTreatmentM
             .filter { it.treatment?.name.equals(treatment.treatmentCandidate.treatment.name, true) }
             .forEach { patientPopulation ->
                 val analysisGroup = analysisGroupForPopulation(patientPopulation)
-                table.addCell(Cells.createValue(labels.efficacyMedianPfsLabel()))
-                addEndPointsToTable(analysisGroup, labels.efficacyMedianPfs(), table)
+                table.addCell(Cells.createValue(labels.efficacyEvidence.medianPfsLabel()))
+                addEndPointsToTable(analysisGroup, labels.efficacyEvidence.medianPfs(), table)
 
-                table.addCell(Cells.createValue(labels.efficacyMedianOsLabel()))
-                addEndPointsToTable(analysisGroup, labels.efficacyMedianOs(), table)
+                table.addCell(Cells.createValue(labels.efficacyEvidence.medianOsLabel()))
+                addEndPointsToTable(analysisGroup, labels.efficacyEvidence.medianOs(), table)
             }
         table.addCell(Cells.createEmpty())
         table.addCell(Cells.createEmpty())

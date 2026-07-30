@@ -40,17 +40,17 @@ class IneligibleTrialGenerator(
             ineligibilityColWidth
         ) else Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
 
-        table.addHeaderCell(Cells.createHeader(labels.trialColTrial()))
-        table.addHeaderCell(Cells.createHeader(labels.trialColCohort()))
-        table.addHeaderCell(Cells.createHeader(labels.trialColMolecular()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colTrial()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colCohort()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colMolecular()))
         if (!useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader(labels.trialColSites()))
+            table.addHeaderCell(Cells.createHeader(labels.trialMatching.colSites()))
         }
         if (useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader(labels.trialColIneligibilityReasons()))
+            table.addHeaderCell(Cells.createHeader(labels.trialMatching.colIneligibilityReasons()))
         }
         if (!useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader(labels.trialColConfiguration()))
+            table.addHeaderCell(Cells.createHeader(labels.trialMatching.colConfiguration()))
         }
 
         addTrialsToTable(
@@ -88,7 +88,7 @@ class IneligibleTrialGenerator(
                 ineligibleTrials.size,
                 labels
             )
-            val title = labels.trialTitleIneligible(cohortsString)
+            val title = labels.trialMatching.titleIneligible(cohortsString)
 
             return IneligibleTrialGenerator(
                 cohorts = ineligibleCohorts,
@@ -113,7 +113,7 @@ class IneligibleTrialGenerator(
                 nonEvaluableAndIgnoredTrials.size,
                 labels
             )
-            val title = labels.trialTitleNonEvaluable(cohortsString)
+            val title = labels.trialMatching.titleNonEvaluable(cohortsString)
 
             return IneligibleTrialGenerator(
                 cohorts = nonEvaluableAndIgnoredCohorts,

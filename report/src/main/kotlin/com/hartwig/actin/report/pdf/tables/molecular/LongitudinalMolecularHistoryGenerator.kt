@@ -27,7 +27,7 @@ class LongitudinalMolecularHistoryGenerator(
     )
 
     override fun title(): String {
-        return labels.molecularHistoryTitle()
+        return labels.molecular.historyTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -43,7 +43,7 @@ class LongitudinalMolecularHistoryGenerator(
         val finalColumnWidths = FloatArray(eventVAFMapByTest.size) { 0.8f }
         val table = Tables.createRelativeWidthCols(1.0f, 1.0f, *finalColumnWidths)
 
-        val headers = listOf(labels.molecularColEvent(), labels.molecularColDescription()) + eventVAFMapByTest.keys.map(::testDisplay)
+        val headers = listOf(labels.molecular.colEvent(), labels.molecular.colDescription()) + eventVAFMapByTest.keys.map(::testDisplay)
         headers.forEach { table.addHeaderCell(Cells.createHeader(it)) }
 
         val allDrivers = molecularTests.map(MolecularTest::drivers)

@@ -14,7 +14,7 @@ class Header(private val labels: ReportLabels) {
         val pdfCanvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val canvas = Canvas(pdfCanvas, page.pageSize)
         canvas.add(
-            Paragraph().add(Text(labels.reportTitle()).addStyle(Styles.reportTitleStyle()))
+            Paragraph().add(Text(labels.report.title()).addStyle(Styles.reportTitleStyle()))
                 .setFixedPosition(140f, page.pageSize.height - 40, 300f)
         )
 

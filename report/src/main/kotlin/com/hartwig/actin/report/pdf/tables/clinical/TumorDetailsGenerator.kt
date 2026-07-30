@@ -18,7 +18,7 @@ class TumorDetailsGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return labels.clinicalTumorDetailsTitle(date(record.patient.questionnaireDate))
+        return labels.clinicalDetails.tumorDetailsTitle(date(record.patient.questionnaireDate))
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -27,7 +27,7 @@ class TumorDetailsGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey(labels.clinicalKeyMeasurableDisease()))
+        table.addCell(Cells.createKey(labels.clinicalDetails.keyMeasurableDisease()))
         table.addCell(Cells.createValue(Formats.yesNoUnknown(record.tumor.hasMeasurableDisease)))
         table.createLesionDetails()
         return table
@@ -37,8 +37,8 @@ class TumorDetailsGenerator(
         val lesions = TumorDetailsInterpreter.classifyLesions(record.tumor)
 
         with(lesions) {
-            createLesionRow(labels.clinicalKeyLesions(), nonLymphNodeLesions + lymphNodeLesions + suspectedLesions)
-            if (negativeCategories.isNotEmpty()) createLesionRow(labels.clinicalKeyNoLesions(), negativeCategories)
+            createLesionRow(labels.clinicalDetails.keyLesions(), nonLymphNodeLesions + lymphNodeLesions + suspectedLesions)
+            if (negativeCategories.isNotEmpty()) createLesionRow(labels.clinicalDetails.keyNoLesions(), negativeCategories)
         }
     }
 

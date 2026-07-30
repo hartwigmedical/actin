@@ -29,7 +29,7 @@ class MolecularSummaryGenerator(
     private val logger = KotlinLogging.logger {}
 
     override fun title(): String {
-        return labels.molecularSummaryTitle()
+        return labels.molecular.summaryTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -107,14 +107,14 @@ class MolecularSummaryGenerator(
             } else {
                 val noRecent = Tables.createFixedWidthCols(keyWidth, valueWidth)
                 noRecent.addCell(Cells.createKey(molecularTest.experimentType.display() + " results"))
-                noRecent.addCell(Cells.createValue(labels.molecularWgsNoSuccessful()))
+                noRecent.addCell(Cells.createValue(labels.molecular.wgsNoSuccessful()))
                 table.addCell(Cells.create(noRecent))
             }
         }
 
         if (ihcTests.isNotEmpty()) {
             val molecularResultGenerator =
-                IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter(), labels, labels.molecularIhcSummaryTitle())
+                IhcResultGenerator(ihcTests, keyWidth, valueWidth, IhcTestInterpreter(), labels, labels.molecular.ihcSummaryTitle())
             table.addCell(Cells.createSubTitle(molecularResultGenerator.title()))
             table.addCell(Cells.create(molecularResultGenerator.contents()))
         }

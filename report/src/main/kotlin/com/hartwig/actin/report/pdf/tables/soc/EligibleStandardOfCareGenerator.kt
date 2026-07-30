@@ -10,7 +10,7 @@ import com.itextpdf.layout.element.Table
 class EligibleStandardOfCareGenerator(private val report: Report, private val labels: ReportLabels) : TableGenerator {
 
     override fun title(): String {
-        return labels.socEligibleTitle()
+        return labels.efficacyEvidence.socEligibleTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -21,10 +21,10 @@ class EligibleStandardOfCareGenerator(private val report: Report, private val la
         val treatments = report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() }
         if (treatments.isNullOrEmpty()) {
             return Tables.createSingleCol()
-                .addCell(Cells.createContentNoBorder(labels.socNoOptions()))
+                .addCell(Cells.createContentNoBorder(labels.efficacyEvidence.socNoOptions()))
         }
         val table = Tables.createRelativeWidthCols(18f, 30f, 27f)
-        sequenceOf(labels.socColTreatment(), labels.socColLiteratureEvidence(), labels.socColWarnings())
+        sequenceOf(labels.efficacyEvidence.socColTreatment(), labels.efficacyEvidence.socColLiteratureEvidence(), labels.efficacyEvidence.socColWarnings())
             .map(Cells::createHeader).forEach(table::addHeaderCell)
 
         SoCGeneratorFunctions.approvedTreatmentCells(treatments).forEach(table::addCell)

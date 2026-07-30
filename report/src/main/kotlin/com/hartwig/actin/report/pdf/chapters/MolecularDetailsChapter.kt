@@ -42,7 +42,7 @@ class MolecularDetailsChapter(
     private val externalTrials = trialsProvider.externalTrials().allFiltered()
 
     override fun name(): String {
-        return labels.chapterMolecularDetails()
+        return labels.molecular.title()
     }
 
     override fun pageSize(): PageSize {
@@ -131,7 +131,7 @@ class MolecularDetailsChapter(
                 ImmunologyGenerator(
                     molecularTest,
                     ImmunologyDisplayMode.DETAILED_INLINE,
-                    labels.molecularImmunologyTitle(),
+                    labels.molecular.immunologyTitle(),
                     keyWidth,
                     valueWidth - 10,
                     labels
@@ -170,7 +170,7 @@ class MolecularDetailsChapter(
             val showImmunology = molecularTest.immunology != null && molecularTest.immunology?.isReliable == true
             if (showImmunology) {
                 val displayMode = if (molecularTest.hasSufficientQuality) ImmunologyDisplayMode.DETAILED_TABLE else ImmunologyDisplayMode.ALLELE_ONLY
-                ImmunologyGenerator(molecularTest, displayMode, labels.molecularImmunologyTitle(), keyWidth, valueWidth, labels)
+                ImmunologyGenerator(molecularTest, displayMode, labels.molecular.immunologyTitle(), keyWidth, valueWidth, labels)
             } else null
         }
     }

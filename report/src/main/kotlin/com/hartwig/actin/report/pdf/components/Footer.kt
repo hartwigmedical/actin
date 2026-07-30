@@ -46,14 +46,14 @@ class Footer(private val reportDate: LocalDate, private val labels: ReportLabels
             val pageNumberParagraph = Paragraph().add("$pageNumber/$totalPageCount").addStyle(Styles.pageNumberStyle())
             canvas.showTextAligned(pageNumberParagraph, 0f, 0f, TextAlignment.LEFT)
 
-            val researchDisclaimerParagraph = Paragraph(labels.footerResearchDisclaimer()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            val researchDisclaimerParagraph = Paragraph(labels.footer.researchDisclaimer()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(researchDisclaimerParagraph, 30f, 27f, TextAlignment.LEFT)
 
-            val ctgovDisclaimerParagraph = Paragraph(labels.footerCtgovDisclaimer(Formats.date(reportDate))).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            val ctgovDisclaimerParagraph = Paragraph(labels.footer.ctgovDisclaimer(Formats.date(reportDate))).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(ctgovDisclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
 
             // TODO (KD) Only add CKB attribution in case we have done molecular interpretation with evidenceSource = CKB.
-            val attributionParagraph = Paragraph(labels.footerCkbAttribution()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
+            val attributionParagraph = Paragraph(labels.footer.ckbAttribution()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
             canvas.showTextAligned(attributionParagraph, 30f, 0f, TextAlignment.LEFT)
         }
     }

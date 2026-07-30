@@ -17,19 +17,19 @@ class MedicationGenerator(
     private val labels: ReportLabels
 ) : TableGenerator {
 
-    override fun title(): String = labels.clinicalMedicationTitle()
+    override fun title(): String = labels.clinicalDetails.medicationTitle()
 
     override fun forceKeepTogether(): Boolean = false
 
     override fun contents(): Table {
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f, 1f)
 
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColMedication()))
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColAdminRoute()))
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColStartDate()))
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColStopDate()))
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColDosage()))
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColFrequency()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colMedication()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colAdminRoute()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colStartDate()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colStopDate()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colDosage()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colFrequency()))
 
         medications.distinct()
             .filter { interpreter.interpret(it) == MedicationStatusInterpretation.ACTIVE }

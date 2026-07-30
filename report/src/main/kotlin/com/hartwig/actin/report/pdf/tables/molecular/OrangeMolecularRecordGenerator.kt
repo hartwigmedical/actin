@@ -37,16 +37,16 @@ class OrangeMolecularRecordGenerator(
         val table = Tables.createSingleColWithWidth(width)
 
         if (molecular.hasSufficientQualityButLowPurity()) {
-            val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: labels.miscNotAvailable()
+            val purityString = molecular.characteristics.purity?.let { Formats.percentage(it) } ?: labels.misc.notAvailable()
             table.addCell(
-                Cells.createContentNoBorder(labels.molecularLowPurity(purityString))
+                Cells.createContentNoBorder(labels.molecular.lowPurity(purityString))
             )
         }
 
         if (molecular.targetSpecification?.testVersion?.testDateIsBeforeOldestTestVersion == true) {
             table.addCell(
                 Cells.createSpanningSubNote(
-                    labels.molecularOldTestVersion(
+                    labels.molecular.oldTestVersion(
                         molecular.date.toString(),
                         molecular.targetSpecification?.testVersion?.versionDate!!.toString()
                     ),
@@ -60,7 +60,7 @@ class OrangeMolecularRecordGenerator(
 
         if (!molecular.hasSufficientQuality) {
             table.addCell(
-                Cells.createContent(labels.molecularNoWgs())
+                Cells.createContent(labels.molecular.noWgs())
             )
         }
 
@@ -79,14 +79,14 @@ class OrangeMolecularRecordGenerator(
                     molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, true)),
                     evaluated,
                     trials,
-                    labels.molecularKeyDrivers(),
+                    labels.molecular.keyDrivers(),
                     labels
                 ),
                 MolecularDriversGenerator(
                     molecular.copy(drivers = MolecularDriversSummarizer.filterDriversByDriverLikelihood(molecular.drivers, false)),
                     evaluated,
                     trials,
-                    labels.molecularOtherDrivers(),
+                    labels.molecular.otherDrivers(),
                     labels
                 )
             )

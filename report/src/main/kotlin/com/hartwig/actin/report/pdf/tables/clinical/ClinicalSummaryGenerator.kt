@@ -36,7 +36,7 @@ class ClinicalSummaryGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return labels.clinicalSummaryTitle()
+        return labels.clinicalDetails.summaryTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -53,15 +53,15 @@ class ClinicalSummaryGenerator(
         val record = report.patientRecord
 
         return listOfNotNull(
-            labels.clinicalSectionSystemicHistory() to relevantSystemicTreatmentHistoryTable(record),
+            labels.clinicalDetails.sectionSystemicHistory() to relevantSystemicTreatmentHistoryTable(record),
             if (includeAdditionalFields) {
-                labels.clinicalSectionOtherOncological() to relevantNonSystemicTreatmentHistoryTable(record)
+                labels.clinicalDetails.sectionOtherOncological() to relevantNonSystemicTreatmentHistoryTable(record)
             } else null,
             if (includeAdditionalFields) {
-                labels.clinicalSectionPreviousPrimary() to priorPrimaryTable(record)
+                labels.clinicalDetails.sectionPreviousPrimary() to priorPrimaryTable(record)
             } else null,
             if (includeAdditionalFields) {
-                labels.clinicalSectionNonOncological() to relevantNonOncologicalHistoryTable(record)
+                labels.clinicalDetails.sectionNonOncological() to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
     }

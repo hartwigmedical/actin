@@ -42,7 +42,7 @@ object WgsSummaryGeneratorFunctions {
         if (isDetailsSummaryType && molecular.targetSpecification?.testVersion?.testDateIsBeforeOldestTestVersion == true) {
             table.addCell(
                 Cells.createSpanningSubNote(
-                    labels.molecularOldTestVersion(
+                    labels.molecular.oldTestVersion(
                         molecular.date.toString(),
                         molecular.targetSpecification?.testVersion?.versionDate!!.toString()
                     ),
@@ -54,7 +54,7 @@ object WgsSummaryGeneratorFunctions {
         if (wgsMolecular?.hasSufficientQuality != false) {
             if (isLongSummaryType || (isDetailsSummaryType && wgsMolecular?.characteristics?.predictedTumorOrigin != null)) {
                 val tissueOriginTitle = if (molecular.characteristics.predictedTumorOrigin?.cuppaMode() == CuppaMode.WGTS)
-                    labels.molecularWgsTissueOriginTitleWgts() else labels.molecularWgsTissueOriginTitle()
+                    labels.molecular.wgsTissueOriginTitleWgts() else labels.molecular.wgsTissueOriginTitle()
                 table.addCell(Cells.createKey(tissueOriginTitle))
                 table.addCell(tumorOriginPredictionCell(molecular))
             }
@@ -77,21 +77,21 @@ object WgsSummaryGeneratorFunctions {
             val ploidy = molecular.characteristics.ploidy
 
             if (actionableEventsWithLowOrMediumDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey(labels.molecularWgsPotentialEventsNoHighDriver()))
+                table.addCell(Cells.createKey(labels.molecular.wgsPotentialEventsNoHighDriver()))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithLowOrMediumDriver, ploidy))
             }
             if (actionableEventsWithUnknownDriver.isNotEmpty()) {
-                table.addCell(Cells.createKey(labels.molecularWgsPotentialEventsNoTumorDriver()))
+                table.addCell(Cells.createKey(labels.molecular.wgsPotentialEventsNoTumorDriver()))
                 table.addCell(potentiallyActionableEventsCell(actionableEventsWithUnknownDriver, ploidy))
             }
 
             if (filteredContents.isEmpty() && !hasTmbData && actionableEventsWithLowOrMediumDriver.isEmpty()
                 && actionableEventsWithUnknownDriver.isEmpty()
             ) {
-                table.addCell(Cells.createSpanningContent(labels.molecularWgsNoRelevantAlterations(), table))
+                table.addCell(Cells.createSpanningContent(labels.molecular.wgsNoRelevantAlterations(), table))
             }
         } else {
-            table.addCell(Cells.createSpanningContent(labels.molecularWgsInsufficientQuality(), table))
+            table.addCell(Cells.createSpanningContent(labels.molecular.wgsInsufficientQuality(), table))
         }
         return table
     }
@@ -108,12 +108,12 @@ object WgsSummaryGeneratorFunctions {
             molecular.characteristics.tumorMutationalLoad != null && molecular.characteristics.tumorMutationalBurden != null
         if (tmlUnknownAndTmbKnown) {
             val tmbStatus = MolecularCharacteristicFormat.formatTumorMutationalBurden(molecular.characteristics, true)
-            table.addCell(Cells.createKey(labels.molecularWgsTmbLabel()))
+            table.addCell(Cells.createKey(labels.molecular.wgsTmbLabel()))
             table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmbStatus))
             return true
         } else if (isLongSummaryType || tmlAndTmbKnown) {
             val tmlAndTmbStatus = tumorMutationalLoadAndTumorMutationalBurdenStatus(molecular)
-            table.addCell(Cells.createKey(labels.molecularWgsTmlTmbLabel()))
+            table.addCell(Cells.createKey(labels.molecular.wgsTmlTmbLabel()))
             table.addCell(tumorMutationalLoadAndTumorMutationalBurdenStatusCell(molecular, tmlAndTmbStatus))
             return true
         }
@@ -187,17 +187,17 @@ object WgsSummaryGeneratorFunctions {
     ): List<Pair<String, String>> {
         val characteristicsGenerator = MolecularCharacteristicsGenerator(molecular, labels)
         return buildList {
-            add(labels.molecularWgsMsStability() to characteristicsGenerator.createMSStabilityString())
-            add(labels.molecularWgsHrStatus() to characteristicsGenerator.createHRStatusString())
-            add(labels.molecularWgsDriverMutations() to formatList(summarizer.keyVariantEvents()))
+            add(labels.molecular.wgsMsStability() to characteristicsGenerator.createMSStabilityString())
+            add(labels.molecular.wgsHrStatus() to characteristicsGenerator.createHRStatusString())
+            add(labels.molecular.wgsDriverMutations() to formatList(summarizer.keyVariantEvents()))
             if (summaryType == SummaryType.DETAILS) {
-                add(labels.molecularWgsOtherMutations() to formatList(summarizer.otherVariantEvents()))
+                add(labels.molecular.wgsOtherMutations() to formatList(summarizer.otherVariantEvents()))
             }
-            add(labels.molecularWgsAmplifiedGenes() to formatList(summarizer.keyAmplifiedGeneEvents()))
-            add(labels.molecularWgsDeletedGenes() to formatList(summarizer.keyDeletedGeneEvents()))
-            add(labels.molecularWgsHomozygouslyDisruptedGenes() to formatList(summarizer.keyHomozygouslyDisruptedGenes()))
-            add(labels.molecularWgsGeneFusions() to formatList(summarizer.keyFusionEvents()))
-            add(labels.molecularWgsDriverVirus() to formatList(summarizer.keyVirusEvents()))
+            add(labels.molecular.wgsAmplifiedGenes() to formatList(summarizer.keyAmplifiedGeneEvents()))
+            add(labels.molecular.wgsDeletedGenes() to formatList(summarizer.keyDeletedGeneEvents()))
+            add(labels.molecular.wgsHomozygouslyDisruptedGenes() to formatList(summarizer.keyHomozygouslyDisruptedGenes()))
+            add(labels.molecular.wgsGeneFusions() to formatList(summarizer.keyFusionEvents()))
+            add(labels.molecular.wgsDriverVirus() to formatList(summarizer.keyVirusEvents()))
         }
     }
 }

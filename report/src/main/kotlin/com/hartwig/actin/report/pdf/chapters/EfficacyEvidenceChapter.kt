@@ -59,7 +59,7 @@ class EfficacyEvidenceChapter(
     private val plotHeight = contentHeight() - 100
 
     override fun name(): String {
-        return labels.chapterEfficacyEvidence()
+        return labels.efficacyEvidence.title()
     }
 
     override fun pageSize(): PageSize {
@@ -106,7 +106,7 @@ class EfficacyEvidenceChapter(
 
         // TODO (KD): Fit in standard structure.
         table.addCell(Cells.createTitle(efficacyEvidenceGenerator.title()))
-        table.addCell(Cells.createKey(labels.socTreatmentNote()))
+        table.addCell(Cells.createKey(labels.efficacyEvidence.socTreatmentNote()))
         table.addCell(Cells.create(efficacyEvidenceGenerator.contents()))
         document.add(table)
     }
@@ -124,7 +124,7 @@ class EfficacyEvidenceChapter(
             TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true)
             document.add(table)
         } else {
-            document.add(Paragraph(labels.socNoOptions()).addStyle(Styles.tableContentStyle()))
+            document.add(Paragraph(labels.efficacyEvidence.socNoOptions()).addStyle(Styles.tableContentStyle()))
         }
     }
 
@@ -169,7 +169,7 @@ class EfficacyEvidenceChapter(
 
         val plot = letsPlot { x = survivalTime; y = survivalProbability; color = group } +
                 geomLine() +
-                labs(x = labels.chartSurvivalX(), y = labels.chartSurvivalY()) +
+                labs(x = labels.efficacyEvidence.chartSurvivalX(), y = labels.efficacyEvidence.chartSurvivalY()) +
                 ggsize(width = plotWidth, height = plotHeight)
 
         val tmpFile = createTempFile("plot", ".svg")
@@ -196,7 +196,7 @@ class EfficacyEvidenceChapter(
                     )
                 ) +
                 guides(fill = "none") +
-                ggtitle(labels.chartShapTitle(treatmentName)) +
+                ggtitle(labels.efficacyEvidence.chartShapTitle(treatmentName)) +
                 ggsize(width = plotWidth, height = plotHeight)
 
         val tmpFile = createTempFile("shap_plot", ".svg")
@@ -223,7 +223,7 @@ class EfficacyEvidenceChapter(
                     y = "proportion"
                     fill = "group"
                 } +
-                ggtitle(labels.chartTreatmentDistributionTitle()) +
+                ggtitle(labels.efficacyEvidence.chartTreatmentDistributionTitle()) +
                 scaleYContinuous(limits = 0.0 to 1.0) +
                 ggsize(width = plotWidth, height = plotHeight)
 

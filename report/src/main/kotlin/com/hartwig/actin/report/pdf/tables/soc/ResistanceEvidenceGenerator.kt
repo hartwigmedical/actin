@@ -16,7 +16,7 @@ class ResistanceEvidenceGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return labels.socResistanceTitle()
+        return labels.efficacyEvidence.socResistanceTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -26,21 +26,21 @@ class ResistanceEvidenceGenerator(
     override fun contents(): Table {
         return if (treatments.isEmpty()) {
             Tables.createSingleColWithWidth(width)
-                .addCell(Cells.createContentNoBorder(labels.socNoOptions()))
+                .addCell(Cells.createContentNoBorder(labels.efficacyEvidence.socNoOptions()))
         } else {
             val treatmentToEvidence = treatments.flatMap { it.resistanceEvidence }.groupBy({ it.treatmentName }, { it })
             if (treatmentToEvidence.isEmpty()) {
                 Tables.createSingleColWithWidth(width)
                     .addCell(
-                        Cells.createContentNoBorder(labels.socNoResistance())
+                        Cells.createContentNoBorder(labels.efficacyEvidence.socNoResistance())
                     )
             } else {
                 val table = Tables.createRelativeWidthCols(3f, 3f, 2f, 2f, 3f).setWidth(width)
-                table.addHeaderCell(Cells.createHeader(labels.socColTreatment()))
-                table.addHeaderCell(Cells.createHeader(labels.socColMutation()))
-                table.addHeaderCell(Cells.createHeader(labels.socColEvidenceSource()))
-                table.addHeaderCell(Cells.createHeader(labels.socColEvidenceLevel()))
-                table.addHeaderCell(Cells.createHeader(labels.socColFoundInMolecular()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColTreatment()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColMutation()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColEvidenceSource()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColEvidenceLevel()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColFoundInMolecular()))
                 treatmentToEvidence.forEach { entry ->
                     table.addCell(Cells.createContentBold(entry.key))
                     val subTable = Tables.createRelativeWidthCols(660f, 1f, 1f, 1f, 250f, 400f, 400f).setWidth((width / 3) * 2)
@@ -76,9 +76,9 @@ class ResistanceEvidenceGenerator(
 
     private fun booleanToString(isFound: Boolean?): String {
         return when (isFound) {
-            true -> labels.miscYes()
-            false -> labels.miscNo()
-            null -> labels.miscNotAvailable()
+            true -> labels.misc.yes()
+            false -> labels.misc.no()
+            null -> labels.misc.notAvailable()
         }
     }
 }

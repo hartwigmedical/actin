@@ -24,7 +24,7 @@ class ClinicalDetailsChapter(
 ) : ReportChapter {
 
     override fun name(): String {
-        return labels.chapterClinicalDetails()
+        return labels.clinicalDetails.title()
     }
 
     override fun pageSize(): PageSize {

@@ -41,7 +41,7 @@ class TrialMatchingDetailsChapter(
 ) : ReportChapter {
 
     override fun name(): String {
-        return labels.chapterTrialMatchingDetails()
+        return labels.trialMatching.title()
     }
 
     override fun pageSize(): PageSize {
@@ -129,14 +129,14 @@ class TrialMatchingDetailsChapter(
             .fold(TrialClassification(), TrialClassification::combine)
 
         if (eligible.isNotEmpty()) {
-            addDetailedTrialMatches(document, eligible, labels.trialTitleEligibleOpen(), true)
+            addDetailedTrialMatches(document, eligible, labels.trialMatching.titleEligibleOpen(), true)
         }
 
         if (nonEligible.isNotEmpty()) {
             if (eligible.isNotEmpty()) {
                 document.add(pageBreak())
             }
-            addDetailedTrialMatches(document, nonEligible, labels.trialTitleOther(), false)
+            addDetailedTrialMatches(document, nonEligible, labels.trialMatching.titleOther(), false)
         }
     }
 
@@ -196,13 +196,13 @@ class TrialMatchingDetailsChapter(
         val table = Tables.createFixedWidthCols(INDENT_WIDTH, KEY_WIDTH, valueWidth).setWidth(contentWidth()).setKeepTogether(true)
         table.addCell(Cells.createSpanningTitle(identification.trialId, table))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey(labels.trialDetailPotentiallyEligible()))
+        table.addCell(Cells.createKey(labels.trialMatching.detailPotentiallyEligible()))
         table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey(labels.trialDetailAcronym()))
+        table.addCell(Cells.createKey(labels.trialMatching.detailAcronym()))
         table.addCell(Cells.createValue(identification.acronym))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey(labels.trialDetailTitle()))
+        table.addCell(Cells.createKey(labels.trialMatching.detailTitle()))
         table.addCell(Cells.createValue(identification.title))
         return table
     }
@@ -212,20 +212,20 @@ class TrialMatchingDetailsChapter(
         val table = Tables.createFixedWidthCols(INDENT_WIDTH, KEY_WIDTH, valueWidth).setWidth(contentWidth()).setKeepTogether(true)
         table.addCell(Cells.createSpanningTitle(trialId + " - " + metadata.description, table))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey(labels.trialDetailCohortId()))
+        table.addCell(Cells.createKey(labels.trialMatching.detailCohortId()))
         table.addCell(Cells.createValue(metadata.cohortId))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey(labels.trialDetailPotentiallyEligibleQ()))
+        table.addCell(Cells.createKey(labels.trialMatching.detailPotentiallyEligibleQ()))
         table.addCell(Cells.createValueYesNo(Formats.yesNoUnknown(isPotentiallyEligible)))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey(labels.trialDetailOpenForInclusion()))
+        table.addCell(Cells.createKey(labels.trialMatching.detailOpenForInclusion()))
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.open)))
         table.addCell(Cells.createEmpty())
-        table.addCell(Cells.createKey(labels.trialDetailHasSlots()))
+        table.addCell(Cells.createKey(labels.trialMatching.detailHasSlots()))
         table.addCell(Cells.createValue(Formats.yesNoUnknown(metadata.slotsAvailable)))
         if (metadata.ignore) {
             table.addCell(Cells.createEmpty())
-            table.addCell(Cells.createKey(labels.trialDetailIgnored()))
+            table.addCell(Cells.createKey(labels.trialMatching.detailIgnored()))
             table.addCell(Cells.createValue(Formats.yesNoUnknown(true)))
         }
         return table
@@ -235,8 +235,8 @@ class TrialMatchingDetailsChapter(
         val evaluationWidth = contentWidth() - (INDENT_WIDTH + KEY_WIDTH)
         val table = Tables.createFixedWidthCols(INDENT_WIDTH, KEY_WIDTH, evaluationWidth).setWidth(contentWidth())
         table.addHeaderCell(Cells.createEmpty())
-        table.addHeaderCell(Cells.createHeader(labels.trialColReference()))
-        table.addHeaderCell(Cells.createHeader(labels.trialColEvaluation()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colReference()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colEvaluation()))
 
         for (interpretation in EvaluationInterpreter.interpretForDetailedTrialMatching(evaluations, displayFailOnly)) {
             table.addCell(Cells.createEmpty())

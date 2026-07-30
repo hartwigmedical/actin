@@ -29,8 +29,8 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
             val subTables = listOf(
                 createTrialInformation(),
                 createPatientCharacteristics(patientPopulations),
-                createEndPointTable(patientPopulations, labels.efficacyPrimaryEndpoints(), EndPointType.PRIMARY),
-                createEndPointTable(patientPopulations, labels.efficacySecondaryEndpoints(), EndPointType.SECONDARY)
+                createEndPointTable(patientPopulations, labels.efficacyEvidence.primaryEndpoints(), EndPointType.PRIMARY),
+                createEndPointTable(patientPopulations, labels.efficacyEvidence.secondaryEndpoints(), EndPointType.SECONDARY)
             )
             subTables.forEachIndexed { i, subTable ->
                 table.addCell(Cells.create(subTable))
@@ -45,7 +45,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
 
     private fun createTrialInformation(): Table {
         val table = Tables.createFixedWidthCols(100f, 250f).setWidth(350f)
-        table.addCell(Cells.createValue(labels.efficacyStudy()))
+        table.addCell(Cells.createValue(labels.efficacyEvidence.study()))
         table.addCell(
             Cells.createKey(
                 listOfNotNull(
@@ -55,7 +55,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
                 ).joinToString(", ")
             )
         )
-        table.addCell(Cells.createValue(labels.efficacyMolecularRequirements()))
+        table.addCell(Cells.createValue(labels.efficacyEvidence.molecularRequirements()))
         if (annotation.variantRequirements.isNotEmpty()) {
             val variantRequirements =
                 annotation.variantRequirements.map { variantRequirement ->
@@ -63,11 +63,11 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
                 }
             table.addCell(Cells.createKey(variantRequirements.joinToString(" and ") { it }))
         } else {
-            table.addCell(Cells.createKey(labels.efficacyNone()))
+            table.addCell(Cells.createKey(labels.efficacyEvidence.none()))
         }
-        table.addCell(Cells.createValue(labels.efficacyTherapies()))
+        table.addCell(Cells.createValue(labels.efficacyEvidence.therapies()))
         table.addCell(Cells.createKey(annotation.treatments.joinToString(", ") { it.display() }))
-        table.addCell(Cells.createValue(labels.efficacyPatientCharacteristics()))
+        table.addCell(Cells.createValue(labels.efficacyEvidence.patientCharacteristics()))
         table.addCell(Cells.createKey(""))
         return table
     }
@@ -85,17 +85,17 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
         table.addCell(Cells.createHeader(patientPopulations[1].name + " (n=" + patientPopulations[1].numberOfPatients + ")"))
 
         listOf<Pair<String, (PatientPopulation) -> String?>>(
-            labels.efficacyColAgeMedianRange() to { "${it.ageMedian} [${it.ageMin}-${it.ageMax}]" },
-            labels.efficacyColSex() to { "${labels.efficacySexMale()}: ${it.numberOfMale ?: NA}\n ${labels.efficacySexFemale()}: ${it.numberOfFemale}" },
-            labels.efficacyColRace() to { it.patientsPerRace?.entries?.joinToString(", ") { (key, value) -> "$key: $value patients" } },
-            labels.efficacyColRegion() to { it.patientsPerRegion?.entries?.joinToString(", ") { (key, value) -> "$key: $value patients" } },
-            labels.efficacyColWhoEcog() to SoCGeneratorFunctions::createWhoString,
-            labels.efficacyColPrimaryTumorLocation() to { it.formatTumorLocation("\n") },
-            labels.efficacyColMutations() to PatientPopulation::mutations,
-            labels.efficacyColMetastaticSites() to PatientPopulation::formatMetastaticSites,
-            labels.efficacyColTimeOfMetastases() to { it.timeOfMetastases?.display() },
-            labels.efficacyColPreviousSystemicTherapy() to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
-            labels.efficacyColPriorTherapies() to PatientPopulation::priorTherapies
+            labels.efficacyEvidence.colAgeMedianRange() to { "${it.ageMedian} [${it.ageMin}-${it.ageMax}]" },
+            labels.efficacyEvidence.colSex() to { "${labels.efficacyEvidence.sexMale()}: ${it.numberOfMale ?: NA}\n ${labels.efficacyEvidence.sexFemale()}: ${it.numberOfFemale}" },
+            labels.efficacyEvidence.colRace() to { it.patientsPerRace?.entries?.joinToString(", ") { (key, value) -> "$key: $value patients" } },
+            labels.efficacyEvidence.colRegion() to { it.patientsPerRegion?.entries?.joinToString(", ") { (key, value) -> "$key: $value patients" } },
+            labels.efficacyEvidence.colWhoEcog() to SoCGeneratorFunctions::createWhoString,
+            labels.efficacyEvidence.colPrimaryTumorLocation() to { it.formatTumorLocation("\n") },
+            labels.efficacyEvidence.colMutations() to PatientPopulation::mutations,
+            labels.efficacyEvidence.colMetastaticSites() to PatientPopulation::formatMetastaticSites,
+            labels.efficacyEvidence.colTimeOfMetastases() to { it.timeOfMetastases?.display() },
+            labels.efficacyEvidence.colPreviousSystemicTherapy() to { "${it.priorSystemicTherapy ?: NA}/${it.numberOfPatients}" },
+            labels.efficacyEvidence.colPriorTherapies() to PatientPopulation::priorTherapies
         )
             .flatMap { (characteristic, extractAsString) ->
                 contentForCharacteristic(
@@ -119,8 +119,8 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
         table.addCell(Cells.createHeader(""))
         table.addCell(Cells.createHeader(patientPopulations[0].name))
         table.addCell(Cells.createHeader(patientPopulations[1].name))
-        table.addCell(Cells.createHeader(labels.efficacyColHrOr()))
-        table.addCell(Cells.createHeader(labels.efficacyColPValue()))
+        table.addCell(Cells.createHeader(labels.efficacyEvidence.colHrOr()))
+        table.addCell(Cells.createHeader(labels.efficacyEvidence.colPValue()))
 
         val endPointsById = patientPopulations.flatMap { analysisGroupForPopulation(it)?.endPoints ?: emptyList() }
             .associateBy(EndPoint::id)
@@ -130,7 +130,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
                 val otherEndpoint = endPointsById[endPoint.derivedMetrics.first().relativeMetricId]
                 val pValue = endPoint.derivedMetrics.first().pValue ?: NA
                 listOf(
-                    "${endPoint.name} ${labels.efficacyCi()}",
+                    "${endPoint.name} ${labels.efficacyEvidence.ci()}",
                     "${endPoint.value} ${formatConfidenceInterval(endPoint.confidenceInterval)}",
                     "${otherEndpoint?.value} ${endPoint.unitOfMeasure.display()} " +
                             formatConfidenceInterval(otherEndpoint?.confidenceInterval),
@@ -145,7 +145,7 @@ class EfficacyEvidenceDetailsGenerator(private val annotation: EfficacyEntry, pr
             }
             .forEach { table.addCell(Cells.createContent(it)) }
 
-        table.addCell(Cells.createSpanningSubNote(labels.efficacyMedianFollowUpPfs(patientPopulations[0].medianFollowUpPFS.toString()), table))
+        table.addCell(Cells.createSpanningSubNote(labels.efficacyEvidence.medianFollowUpPfs(patientPopulations[0].medianFollowUpPFS.toString()), table))
 
         return table
     }

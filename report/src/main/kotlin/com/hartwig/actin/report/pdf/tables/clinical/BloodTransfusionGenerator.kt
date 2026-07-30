@@ -14,7 +14,7 @@ class BloodTransfusionGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return labels.clinicalBloodTransfusionTitle()
+        return labels.clinicalDetails.bloodTransfusionTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -23,8 +23,8 @@ class BloodTransfusionGenerator(
 
     override fun contents(): Table {
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f)
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColProduct()))
-        table.addHeaderCell(Cells.createHeader(labels.clinicalColDate()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colProduct()))
+        table.addHeaderCell(Cells.createHeader(labels.clinicalDetails.colDate()))
         table.addHeaderCell(Cells.createHeader(""))
 
         for (bloodTransfusion in bloodTransfusions) {

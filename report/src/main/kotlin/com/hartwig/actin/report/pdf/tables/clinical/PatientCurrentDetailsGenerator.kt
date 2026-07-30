@@ -27,7 +27,7 @@ class PatientCurrentDetailsGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return labels.clinicalPatientDetailsTitle(date(record.patient.questionnaireDate))
+        return labels.clinicalDetails.patientDetailsTitle(date(record.patient.questionnaireDate))
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -36,37 +36,37 @@ class PatientCurrentDetailsGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey(labels.clinicalKeyToxicities()))
+        table.addCell(Cells.createKey(labels.clinicalDetails.keyToxicities()))
         table.addCell(Cells.createValue(toxicities(record)))
         val infectionStatus = record.clinicalStatus.infectionStatus
         if (infectionStatus != null && infectionStatus.hasActiveInfection) {
-            table.addCell(Cells.createKey(labels.clinicalKeyInfection()))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keyInfection()))
             val description = infectionStatus.description
-            table.addCell(Cells.createValue(description ?: labels.clinicalValueInfectionUnknown()))
+            table.addCell(Cells.createValue(description ?: labels.clinicalDetails.valueInfectionUnknown()))
         }
         record.ecgs.firstOrNull()?.let { ecg ->
-            table.addCell(Cells.createKey(labels.clinicalKeyEcg()))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keyEcg()))
             val aberration = ecg.name
-            val description = aberration ?: labels.clinicalValueEcgUnknown()
+            val description = aberration ?: labels.clinicalDetails.valueEcgUnknown()
             table.addCell(Cells.createValue(description))
 
             val qtcfMeasure = ecg.qtcfMeasure
             if (qtcfMeasure != null) {
-                createMeasureCells(table, labels.clinicalKeyQtcf(), qtcfMeasure)
+                createMeasureCells(table, labels.clinicalDetails.keyQtcf(), qtcfMeasure)
             }
             val jtcMeasure = ecg.jtcMeasure
             if (jtcMeasure != null) {
-                createMeasureCells(table, labels.clinicalKeyJtc(), jtcMeasure)
+                createMeasureCells(table, labels.clinicalDetails.keyJtc(), jtcMeasure)
             }
         }
         if (record.clinicalStatus.lvef != null) {
-            table.addCell(Cells.createKey(labels.clinicalKeyLvef()))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keyLvef()))
             table.addCell(Cells.createValue(Formats.percentage(record.clinicalStatus.lvef!!)))
         }
-        table.addCell(Cells.createKey(labels.clinicalKeyAllergies()))
+        table.addCell(Cells.createKey(labels.clinicalDetails.keyAllergies()))
         table.addCell(Cells.createValue(allergies(record.intolerances)))
         if (record.surgeries.isNotEmpty()) {
-            table.addCell(Cells.createKey(labels.clinicalKeySurgeries()))
+            table.addCell(Cells.createKey(labels.clinicalDetails.keySurgeries()))
             table.addCell(Cells.createValue(surgeries(record.surgeries)))
         }
         return table

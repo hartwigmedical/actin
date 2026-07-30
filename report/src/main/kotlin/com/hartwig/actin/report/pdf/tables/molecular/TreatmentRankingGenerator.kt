@@ -15,16 +15,16 @@ class TreatmentRankingGenerator(
     private val labels: ReportLabels
 ) : TableGenerator {
 
-    override fun title() = labels.molecularTreatmentRankingTitle()
+    override fun title() = labels.molecular.treatmentRankingTitle()
 
     override fun forceKeepTogether() = false
 
     override fun contents(): Table {
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f)
         val header = listOf(
-            labels.molecularColEvent(),
-            labels.molecularColTreatment(),
-            labels.molecularColScore()
+            labels.molecular.colEvent(),
+            labels.molecular.colTreatment(),
+            labels.molecular.colScore()
         ).map(Cells::createHeader)
 
         val groupedRankings = treatmentEvidenceRanking.ranking.groupBy { it.events }

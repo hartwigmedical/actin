@@ -19,7 +19,7 @@ class MolecularClinicalEvidenceGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return if (isOnLabel) labels.molecularEvidenceOnLabel() else labels.molecularEvidenceOffLabel()
+        return if (isOnLabel) labels.molecular.evidenceOnLabel() else labels.molecular.evidenceOffLabel()
     }
 
     override fun forceKeepTogether(): Boolean {

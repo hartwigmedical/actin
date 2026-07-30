@@ -34,8 +34,8 @@ class SidePanel(private val patientId: String, private val sourcePatientId: Stri
         var sideTextIndex = 0
         val cv = Canvas(canvas, page.pageSize)
         val (value, extra) = sourcePatientId.takeUnless { it.isNullOrBlank() }?.let { it to patientId } ?: (patientId to null)
-        cv.add(createDiv(pageSize, ++sideTextIndex, labels.sidePanelPatient(), value, extra))
-        cv.add(createDiv(pageSize, ++sideTextIndex, labels.sidePanelReportDate(), date(reportDate)))
+        cv.add(createDiv(pageSize, ++sideTextIndex, labels.sidePanel.patient(), value, extra))
+        cv.add(createDiv(pageSize, ++sideTextIndex, labels.sidePanel.reportDate(), date(reportDate)))
         canvas.release()
     }
 

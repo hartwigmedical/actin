@@ -21,7 +21,7 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
     private val wgsMolecular = MolecularHistory(listOf(molecular)).latestOrangeMolecularRecord()
 
     override fun title(): String {
-        return labels.molecularGeneralTitle()
+        return labels.molecular.generalTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -32,14 +32,14 @@ class MolecularCharacteristicsGenerator(private val molecular: MolecularTest, pr
         val table = Tables.createRelativeWidthCols(1f, 1f, 1f, 1f, 1f, 1f, 2f, 2f)
 
         listOf(
-            labels.molecularCharPurity(),
-            labels.molecularCharPloidy(),
-            labels.molecularCharTml(),
-            labels.molecularCharTmb(),
-            labels.molecularCharMs(),
-            labels.molecularCharHr(),
-            labels.molecularCharDpyd(),
-            labels.molecularCharUgt1a1()
+            labels.molecular.characteristicsPurity(),
+            labels.molecular.characteristicsPloidy(),
+            labels.molecular.characteristicsTml(),
+            labels.molecular.characteristicsTmb(),
+            labels.molecular.characteristicsMs(),
+            labels.molecular.characteristicsHr(),
+            labels.molecular.characteristicsDpyd(),
+            labels.molecular.characteristicsUgt1a1()
         ).forEach(
             Consumer { title: String -> table.addHeaderCell(Cells.createHeader(title)) })
         listOfNotNull(
