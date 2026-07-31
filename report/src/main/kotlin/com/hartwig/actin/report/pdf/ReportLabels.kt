@@ -74,11 +74,11 @@ class ReportLabels(private val properties: Properties) {
         fun detailHasSlots() = get("trial.detail.has.slots")
         fun detailIgnored() = get("trial.detail.ignored")
         fun footnoteFilteredSuffix() = get("trial.footnote.filtered.suffix")
-        fun footnoteChildrensHospital(count: String, suffix: String) = format("trial.footnote.childrens.hospital", count, suffix)
-        fun footnoteDutchLung(count: String, suffix: String) = format("trial.footnote.dutch.lung", count, suffix)
+        fun footnoteChildrensHospital(count: String) = format("trial.footnote.childrens.hospital", count)
+        fun footnoteDutchLung(count: String) = format("trial.footnote.dutch.lung", count)
         fun footnoteExternalMatched() = get("trial.footnote.external.matched")
         fun footnoteExternalExcluded() = get("trial.footnote.external.excluded")
-        fun footnoteNationalMolecular(count: String, suffix: String) = format("trial.footnote.national.molecular", count, suffix)
+        fun footnoteNationalMolecular(count: String) = format("trial.footnote.national.molecular", count)
     }
 
     inner class EfficacyEvidence {

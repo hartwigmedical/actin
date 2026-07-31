@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
 import com.hartwig.actin.report.pdf.ReportLabels
+import com.hartwig.actin.report.pdf.tables.trial.TrialFormatFunctions.formatCountWithLabel
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -142,16 +143,16 @@ class EligibleTrialGenerator(
             )
             val title = labels.trialMatching.titleOpenEligible(trialDescriptionString, cohortsFromTrialsString)
 
-            val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
+            val filteredSuffix = " " + labels.trialMatching.footnoteFilteredSuffix()
             val footNote = if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG) {
                 relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                    labels.trialMatching.footnoteDutchLung(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
+                    labels.trialMatching.footnoteDutchLung(formatCountWithLabel(count, labels.misc.trial())) + filteredSuffix
                 }
             } else {
                 listOfNotNull(
                     labels.trialMatching.footnoteExternalMatched().takeIf { relevantNationalExternalTrials.isNotEmpty() },
                     relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        labels.trialMatching.footnoteChildrensHospital(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
+                        labels.trialMatching.footnoteChildrensHospital(formatCountWithLabel(count, labels.misc.trial())) + filteredSuffix
                     }
                 ).joinToString("\n").ifEmpty { null }
             }
@@ -191,21 +192,21 @@ class EligibleTrialGenerator(
                 TrialFormatFunctions.generateCohortsFromTrialsString(externalTrials.size, externalTrials.size, labels)
             val nationalString = if (isNational) labels.trialMatching.phaseNational() else labels.trialMatching.phaseInternational()
             val title = labels.trialMatching.titleOpenEligible(nationalString, cohortsFromTrialsString)
-
-            val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
+            val trialLabel = labels.misc.trial()
+            val filteredSuffix = " " + labels.trialMatching.footnoteFilteredSuffix()
             val footNote =
                 if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG && isNational) {
                     externalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        labels.trialMatching.footnoteDutchLung(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
+                        labels.trialMatching.footnoteDutchLung(formatCountWithLabel(count, trialLabel)) + filteredSuffix
                     }
                 } else {
                     listOfNotNull(
                         labels.trialMatching.footnoteExternalExcluded().takeIf { externalTrials.isNotEmpty() },
                         externalTrialsFilteredCount.takeIf { it > 0 && isNational }?.let { count ->
-                            labels.trialMatching.footnoteChildrensHospital(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
+                            labels.trialMatching.footnoteChildrensHospital(formatCountWithLabel(count, trialLabel)) + filteredSuffix
                         },
                         externalTrialsFilteredCount.takeIf { it > 0 && !isNational }?.let { count ->
-                            labels.trialMatching.footnoteNationalMolecular(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
+                            labels.trialMatching.footnoteNationalMolecular(formatCountWithLabel(count, trialLabel)) + filteredSuffix
                         }
                     ).joinToString("\n").ifEmpty { null }
                 }
@@ -289,7 +290,7 @@ class EligibleTrialGenerator(
             val summarizedTrials =
                 ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials())
             val title =
-                labels.trialMatching.titleFilteredEligible(TrialFormatFunctions.formatCountWithLabel(summarizedTrials.size, labels.misc.trial()))
+                labels.trialMatching.titleFilteredEligible(formatCountWithLabel(summarizedTrials.size, labels.misc.trial()))
             return if (summarizedTrials.isNotEmpty()) {
                 EligibleTrialGenerator(
                     cohorts = emptyList(),

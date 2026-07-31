@@ -17,8 +17,8 @@ class ReportLabelsTest {
     @Test
     fun `Should resolve apostrophe escaping`() {
         val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
-        assertThat(labels.trialMatching.footnoteChildrensHospital("2 trials", "See other results."))
-            .isEqualTo("2 trials filtered because trial is running exclusively in children's hospital. See other results.")
+        assertThat(labels.trialMatching.footnoteChildrensHospital("2 trials"))
+            .isEqualTo("2 trials filtered because trial is running exclusively in children's hospital.")
     }
 
     @Test
