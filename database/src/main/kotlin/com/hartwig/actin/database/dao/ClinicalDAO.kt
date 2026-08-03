@@ -7,8 +7,7 @@ import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.Ecg
-import com.hartwig.actin.datamodel.clinical.EcgMeasure
+import com.hartwig.actin.datamodel.clinical.HeartMeasurement
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
@@ -25,7 +24,6 @@ import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import kotlin.math.roundToInt
 import org.jooq.DSLContext
 
 class ClinicalDAO(private val context: DSLContext) {
@@ -38,6 +36,7 @@ class ClinicalDAO(private val context: DSLContext) {
         context.truncate(Tables.TREATMENTHISTORYENTRY).execute()
         context.truncate(Tables.PRIORPRIMARY).execute()
         context.truncate(Tables.OTHERCONDITION).execute()
+        context.truncate(Tables.HEARTMEASUREMENT).execute()
         context.truncate(Tables.IHCTEST).execute()
         context.truncate(Tables.LABVALUE).execute()
         context.truncate(Tables.TOXICITY).execute()
@@ -54,11 +53,12 @@ class ClinicalDAO(private val context: DSLContext) {
         val patientId = record.patientId
         writePatientDetails(patientId, record.patient)
         writeTumorDetails(patientId, record.tumor)
-        writeClinicalStatus(patientId, record.clinicalStatus, record.ecgs)
+        writeClinicalStatus(patientId, record.clinicalStatus)
         writePerformanceStatus(patientId, record.performanceStatus)
         writeTreatmentHistoryEntries(patientId, record.oncologicalHistory)
         writePriorPrimaries(patientId, record.priorPrimaries)
         writeOtherConditions(patientId, record.otherConditions)
+        writeHeartMeasurements(patientId, record.heartMeasurements)
         writeMolecularTests(patientId, record.ihcTests)
         writeLabValues(patientId, record.labValues)
         writeToxicities(patientId, record.toxicities)
@@ -141,51 +141,19 @@ class ClinicalDAO(private val context: DSLContext) {
             .execute()
     }
 
-    private fun ecgMeasure(ecgs: List<Ecg>, measure: (Ecg) -> EcgMeasure?): EcgMeasure? {
-        val ecgMeasures = ecgs.mapNotNull { ecg -> measure(ecg)?.let { ecg to it } }
-        return when {
-            ecgMeasures.isEmpty() -> null
-            ecgMeasures.size == 1 || ecgMeasures.all { with(it.first) { year != null && month != null } } -> {
-                ecgMeasures.maxBy { with(it.first) { "$year-$month" } }.second
-            }
-
-            ecgMeasures.map { it.second.unit }.toSet().size == 1 -> {
-                EcgMeasure(ecgMeasures.map { it.second.value }.average().roundToInt(), ecgMeasures.first().second.unit)
-            }
-
-            else -> {
-                ecgMeasures.maxBy { with(it.first) { "$year-$month" } }.second
-            }
-        }
-    }
-
-    private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus, ecgs: List<Ecg>) {
+    private fun writeClinicalStatus(patientId: String, clinicalStatus: ClinicalStatus) {
         val infectionStatus = clinicalStatus.infectionStatus
-        val qtcfMeasure = ecgMeasure(ecgs, Ecg::qtcfMeasure)
-        val jtcMeasure = ecgMeasure(ecgs, Ecg::jtcMeasure)
         context.insertInto(
             Tables.CLINICALSTATUS,
             Tables.CLINICALSTATUS.PATIENTID,
             Tables.CLINICALSTATUS.HASACTIVEINFECTION,
             Tables.CLINICALSTATUS.ACTIVEINFECTIONDESCRIPTION,
-            Tables.CLINICALSTATUS.HASSIGABERRATIONLATESTECG,
-            Tables.CLINICALSTATUS.ECGABERRATIONDESCRIPTION,
-            Tables.CLINICALSTATUS.QTCFVALUE,
-            Tables.CLINICALSTATUS.QTCFUNIT,
-            Tables.CLINICALSTATUS.JTCVALUE,
-            Tables.CLINICALSTATUS.JTCUNIT,
             Tables.CLINICALSTATUS.LVEF
         )
             .values(
                 patientId,
                 infectionStatus?.hasActiveInfection,
                 infectionStatus?.description,
-                ecgs.isNotEmpty(),
-                ecgs.mapNotNull(Ecg::name).joinToString(", ").ifEmpty { null },
-                qtcfMeasure?.value,
-                qtcfMeasure?.unit,
-                jtcMeasure?.value,
-                jtcMeasure?.unit,
                 clinicalStatus.lvef,
             )
             .execute()
@@ -326,6 +294,38 @@ class ClinicalDAO(private val context: DSLContext) {
                     DataUtil.concatObjects(otherCondition.icdCodes),
                     otherCondition.year,
                     otherCondition.month
+                )
+                .execute()
+        }
+    }
+
+    private fun writeHeartMeasurements(patientId: String, heartMeasurements: List<HeartMeasurement>) {
+        for (heartMeasurement in heartMeasurements) {
+            context.insertInto(
+                Tables.HEARTMEASUREMENT,
+                Tables.HEARTMEASUREMENT.PATIENTID,
+                Tables.HEARTMEASUREMENT.NAME,
+                Tables.HEARTMEASUREMENT.ICDCODES,
+                Tables.HEARTMEASUREMENT.YEAR,
+                Tables.HEARTMEASUREMENT.MONTH,
+                Tables.HEARTMEASUREMENT.DAY,
+                Tables.HEARTMEASUREMENT.ISECG,
+                Tables.HEARTMEASUREMENT.VALUE,
+                Tables.HEARTMEASUREMENT.UNIT,
+                Tables.HEARTMEASUREMENT.MEASUREMENTTYPE
+            )
+                .values(
+                    patientId,
+                    heartMeasurement.name,
+                    DataUtil.concatObjects(heartMeasurement.icdCodes),
+                    heartMeasurement.year,
+                    heartMeasurement.month,
+                    heartMeasurement.day,
+                    heartMeasurement.isECG,
+                    heartMeasurement.value,
+                    heartMeasurement.unit,
+                    heartMeasurement.measurementType?.name
+
                 )
                 .execute()
         }

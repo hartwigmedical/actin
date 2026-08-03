@@ -2,17 +2,17 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
-import com.hartwig.actin.datamodel.clinical.Ecg
-import com.hartwig.actin.datamodel.clinical.EcgMeasure
+import com.hartwig.actin.datamodel.clinical.HeartMeasurement
+import com.hartwig.actin.datamodel.clinical.HeartMeasurementType
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 
 internal object CardiacFunctionTestFactory {
-    fun createMinimal(): Ecg {
-        return Ecg(null, null, null)
+    fun createMinimal(): HeartMeasurement {
+        return HeartMeasurement(null, emptySet(), false, null, null, null, null)
     }
 
     fun withEcgDescription(description: String? = null): PatientRecord {
-        return withEcg(createMinimal().copy(name = description))
+        return withEcg(createMinimal().copy(name = description, isECG = true))
     }
 
     fun withLvef(lvef: Double?): PatientRecord {
@@ -22,11 +22,11 @@ internal object CardiacFunctionTestFactory {
         )
     }
 
-    fun withEcgs(ecgs: List<Ecg>): PatientRecord {
-        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(comorbidities = ecgs)
+    fun withHeartMeasurements(heartMeasurements: List<HeartMeasurement>): PatientRecord {
+        return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(comorbidities = heartMeasurements)
     }
 
-    fun withEcg(ecg: Ecg?) = withEcgs(listOfNotNull(ecg))
+    fun withEcg(heartMeasurement: HeartMeasurement?) = withHeartMeasurements(listOfNotNull(heartMeasurement?.copy(isECG = true)))
 
     fun withOtherCondition(otherCondition: OtherCondition): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
@@ -34,7 +34,9 @@ internal object CardiacFunctionTestFactory {
         )
     }
 
-    fun withValueAndUnit(value: Int, unit: String = EcgUnit.MILLISECONDS.symbol()): PatientRecord {
-        return withEcg(createMinimal().copy(qtcfMeasure = EcgMeasure(value = value, unit = unit)))
+    fun withValueAndUnit(value: Double, unit: String = EcgUnit.MILLISECONDS.symbol()): PatientRecord {
+        return withEcg(
+            createMinimal().copy(isECG = true, value = value, unit = unit, measurementType = HeartMeasurementType.QTCF)
+        )
     }
 }

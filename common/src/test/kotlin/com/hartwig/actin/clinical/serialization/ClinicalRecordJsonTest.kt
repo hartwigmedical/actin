@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import com.hartwig.actin.datamodel.clinical.ClinicalRecord
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
-import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.HeartMeasurement
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.LabValue
@@ -82,7 +82,7 @@ class ClinicalRecordJsonTest {
         assertCollectionOfClassWithSize(record.otherConditions, OtherCondition::class, 2)
         assertCollectionOfClassWithSize(record.toxicities, Toxicity::class, 2)
         assertCollectionOfClassWithSize(record.intolerances, Intolerance::class, 2)
-        assertCollectionOfClassWithSize(record.ecgs, Ecg::class, 1)
+        assertCollectionOfClassWithSize(record.heartMeasurements, HeartMeasurement::class, 1)
 
         assertCollectionOfClassWithSize(record.ihcTests, IhcTest::class, 1)
         assertCollectionOfClassWithSize(record.labValues, LabValue::class, 2)

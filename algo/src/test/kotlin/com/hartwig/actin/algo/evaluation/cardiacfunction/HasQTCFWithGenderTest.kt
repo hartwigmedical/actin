@@ -39,41 +39,41 @@ class HasQTCFWithGenderTest {
     fun `Should evaluate to undetermined when unit is wrong`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(400, "wrong unit"))
+            hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(400.0, "wrong unit"))
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(400, "wrong unit"))
+            hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(400.0, "wrong unit"))
         )
     }
 
     @Test
     fun `Should pass when QTCF above min threshold and correct gender`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(500)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(500.0)))
     }
 
     @Test
     fun `Should pass when QTCF equals min threshold and correct gender`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(450)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(450.0)))
     }
 
     @Test
     fun `Should fail when QTCF below min threshold and correct gender`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(300)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, hasQTCFOfAtLeastWithGenderFunction.evaluate(withValueAndUnit(300.0)))
     }
 
     @Test
     fun `Should pass when QTCF below max threshold and correct gender`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(300)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(300.0)))
     }
 
     @Test
     fun `Should pass when QTCF equals max threshold and correct gender`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(450)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(450.0)))
     }
 
     @Test
     fun `Should fail when QTCF above max threshold and correct gender`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(500)))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, hasQTCFOfAtMostWithGenderFunction.evaluate(withValueAndUnit(500.0)))
     }
 }
