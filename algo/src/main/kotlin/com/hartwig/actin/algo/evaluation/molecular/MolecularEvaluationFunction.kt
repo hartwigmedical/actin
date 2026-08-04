@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -18,13 +19,11 @@ import java.time.LocalDate
 
 val EXAMPLE_DATE: LocalDate = LocalDate.of(1900, 1, 1)
 
-const val NO_SUFFICIENT_QUALITY_MESSAGE = "No molecular results of sufficient quality"
-const val INSUFFICIENT_MOLECULAR_DATA_MESSAGE = "Insufficient molecular data"
-
 abstract class MolecularEvaluationFunction(
     private val useInsufficientQualityRecords: Boolean = false,
     open val gene: String? = null,
     val targetCoveragePredicate: TargetCoveragePredicate = any(),
+    protected val labels: EvaluationLabels.Molecular,
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -35,7 +34,7 @@ abstract class MolecularEvaluationFunction(
 
         return if (recentMolecularTests.isEmpty() && relevantIhcTests.isNullOrEmpty()) {
             noMolecularTestEvaluation() ?: EvaluationFactory.undetermined(
-                NO_SUFFICIENT_QUALITY_MESSAGE,
+                labels.evaluationFunctionNoSufficientQuality(),
                 isMissingMolecularResultForEvaluation = true
             )
         } else {
@@ -57,7 +56,10 @@ abstract class MolecularEvaluationFunction(
             } else {
                 onlyIhcEvaluation
                     ?: noMolecularTestEvaluation()
-                    ?: EvaluationFactory.undetermined(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, isMissingMolecularResultForEvaluation = true)
+                    ?: EvaluationFactory.undetermined(
+                        labels.evaluationFunctionInsufficientData(),
+                        isMissingMolecularResultForEvaluation = true
+                    )
             }
         }
     }

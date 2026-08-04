@@ -16,5 +16,6 @@ data class RuleMappingResources(
     val atcTree: AtcTree,
     val treatmentDatabase: TreatmentDatabase,
     val treatmentEfficacyPredictionJson: String?,
-    val algoConfiguration: AlgoConfiguration
+    val algoConfiguration: AlgoConfiguration,
+    val evaluationLabels: EvaluationLabels
 )

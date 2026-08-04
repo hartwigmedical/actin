@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -50,7 +52,8 @@ class GeneHasSufficientCopyNumberTest {
         canonicalImpact = impactAmpWithUnknownCopyNr,
         otherImpacts = emptySet()
     )
-    private val function = GeneHasSufficientCopyNumber(GENE, REQUIRED_COPY_NR)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = GeneHasSufficientCopyNumber(GENE, REQUIRED_COPY_NR, labels)
 
     @Test
     fun `Should be undetermined when molecular record is empty`() {
@@ -171,7 +174,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.WARN,
             GeneHasSufficientCopyNumber(
                 GENE,
-                10
+                10,
+                labels
             ).evaluate(MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript))
         )
     }

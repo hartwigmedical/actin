@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
@@ -9,26 +10,26 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 
-class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunction {
+class MolecularResultsAreKnownForGene(private val gene: String, private val labels: EvaluationLabels.Molecular) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val orangeMolecular = MolecularHistory(record.molecularTests).latestOrangeMolecularRecord()
         if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && orangeMolecular.hasSufficientQuality) {
-            return EvaluationFactory.pass("WGS results available for $gene")
+            return EvaluationFactory.pass(labels.molecularResultsAreKnownForGenePassWgs(gene))
         }
 
         if (orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED && orangeMolecular.hasSufficientQuality) {
             val geneIsTested = orangeMolecular.drivers.copyNumbers
                 .any { it.gene == gene }
             return if (geneIsTested) {
-                EvaluationFactory.pass("OncoAct tumor NGS panel results available for $gene")
+                EvaluationFactory.pass(labels.molecularResultsAreKnownForGenePassOncoact(gene))
             } else {
-                EvaluationFactory.warn("Unsure if gene $gene results are available within performed OncoAct tumor NGS panel")
+                EvaluationFactory.warn(labels.molecularResultsAreKnownForGeneWarnOncoactUnsure(gene))
             }
         }
 
         if (isGeneTestedInPanel(record.molecularTests)) {
-            return EvaluationFactory.pass("Panel results available for $gene")
+            return EvaluationFactory.pass(labels.molecularResultsAreKnownForGenePassPanel(gene))
         }
 
         val (indeterminateIhcTestsForGene, conclusiveIhcTestsForGene) = record.ihcTests
@@ -37,28 +38,23 @@ class MolecularResultsAreKnownForGene(private val gene: String) : EvaluationFunc
 
         return when {
             conclusiveIhcTestsForGene.isNotEmpty() -> {
-                EvaluationFactory.pass("$gene tested before in IHC test")
+                EvaluationFactory.pass(labels.molecularResultsAreKnownForGenePassIhc(gene))
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME -> {
-                EvaluationFactory.undetermined(
-                    "WGS performed containing $gene but biopsy contained insufficient tumor cells for analysis"
-                )
+                EvaluationFactory.undetermined(labels.molecularResultsAreKnownForGeneUndeterminedWgs(gene))
             }
 
             orangeMolecular != null && orangeMolecular.experimentType == ExperimentType.HARTWIG_TARGETED -> {
-                EvaluationFactory.undetermined(
-                    "OncoAct tumor NGS panel performed containing $gene but biopsy contained " +
-                            "insufficient tumor cells for analysis"
-                )
+                EvaluationFactory.undetermined(labels.molecularResultsAreKnownForGeneUndeterminedOncoact(gene))
             }
 
             indeterminateIhcTestsForGene.isNotEmpty() -> {
-                EvaluationFactory.undetermined("$gene IHC result available but indeterminate status")
+                EvaluationFactory.undetermined(labels.molecularResultsAreKnownForGeneUndeterminedIhc(gene))
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("$gene not tested")
+                EvaluationFactory.recoverableFail(labels.molecularResultsAreKnownForGeneRecoverableFail(gene))
             }
         }
     }

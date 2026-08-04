@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.ihcTest
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
@@ -10,7 +12,8 @@ private const val REFERENCE = 2
 
 class ProteinHasLimitedExpressionByIhcTest {
 
-    private val function = ProteinHasLimitedExpressionByIhc(PROTEIN, REFERENCE)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = ProteinHasLimitedExpressionByIhc(PROTEIN, REFERENCE, labels)
 
     @Test
     fun `Should evaluate to undetermined when no IHC tests present in record`() {

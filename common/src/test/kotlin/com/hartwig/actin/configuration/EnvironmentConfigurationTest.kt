@@ -14,7 +14,7 @@ class EnvironmentConfigurationTest {
         val molecularConfig = MolecularConfiguration.create(properConfigFile)
         assertThat(molecularConfig.eventPathogenicityIsConfirmed).isTrue
 
-        val algoConfig = AlgoConfiguration.create(properConfigFile)
+        val algoConfig = EnvironmentConfiguration.create(properConfigFile).algo
         assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isFalse
 
         val reportConfig = ReportConfiguration.create(properConfigFile)
@@ -26,7 +26,7 @@ class EnvironmentConfigurationTest {
         val molecularConfig = MolecularConfiguration.create(minimalConfigFile)
         assertThat(molecularConfig.eventPathogenicityIsConfirmed).isFalse
 
-        val algoConfig = AlgoConfiguration.create(minimalConfigFile)
+        val algoConfig = EnvironmentConfiguration.create(minimalConfigFile).algo
         assertThat(algoConfig.warnIfToxicitiesNotFromQuestionnaire).isTrue
 
         val reportConfig = ReportConfiguration.create(minimalConfigFile)
@@ -36,7 +36,7 @@ class EnvironmentConfigurationTest {
     @Test
     fun `Should create default configuration when provided file is null`() {
         assertThat(MolecularConfiguration.create(null)).isEqualTo(MolecularConfiguration())
-        assertThat(AlgoConfiguration.create(null)).isEqualTo(AlgoConfiguration())
+        assertThat(EnvironmentConfiguration.create(null).algo).isEqualTo(AlgoConfiguration())
         assertThat(ReportConfiguration.create(null)).isEqualTo(ReportConfiguration())
     }
 }

@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.doid.DoidConstants.SMALL_CELL_LUNG_CANCER_DOIDS
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -20,7 +22,7 @@ class HasKnownSclcTransformationTest {
 
     private val doidModel =
         TestDoidModelFactory.createWithOneParentChild(DoidConstants.LUNG_CANCER_DOID, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-    private val function = HasKnownSclcTransformation(doidModel)
+    private val function = HasKnownSclcTransformation(doidModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular)
 
     @Test
     fun `Should pass if tumor is NSCLC and positive SCLC transformation results`() {

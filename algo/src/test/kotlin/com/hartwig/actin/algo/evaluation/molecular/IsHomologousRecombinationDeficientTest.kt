@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
@@ -13,8 +15,9 @@ import com.hartwig.actin.molecular.util.GeneConstants
 import org.junit.jupiter.api.Test
 
 class IsHomologousRecombinationDeficientTest {
-    
-    private val function = IsHomologousRecombinationDeficient()
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = IsHomologousRecombinationDeficient(labels)
     private val hrGene = GeneConstants.HR_GENES.first()
 
     @Test

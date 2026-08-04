@@ -1,12 +1,15 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class HrdStatusIsAvailableTest {
 
-    private val function = HrdStatusIsAvailable()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = HrdStatusIsAvailable(labels)
 
     @Test
     fun `Should pass with HRD sequencing result true`() {

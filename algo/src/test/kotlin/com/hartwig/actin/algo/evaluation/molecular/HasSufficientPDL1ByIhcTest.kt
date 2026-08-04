@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -8,7 +10,8 @@ import org.junit.jupiter.api.Test
 class HasSufficientPDL1ByIhcTest {
 
     private val minPdl1 = 2.0
-    private val function = HasSufficientPDL1ByIhc(Pdl1Measure.TPS, minPdl1)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = HasSufficientPDL1ByIhc(Pdl1Measure.TPS, minPdl1, labels = labels)
     private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = "TPS")
 
     @Test

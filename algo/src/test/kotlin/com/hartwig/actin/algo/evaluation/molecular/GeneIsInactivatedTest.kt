@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withHomologousRecombinationAndVariant
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.withMicrosatelliteStabilityAndVariant
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -30,8 +32,9 @@ private const val IHC_EVALUABLE_GENE = "MSH2"
 
 class GeneIsInactivatedTest {
 
-    private val functionInactivation = GeneIsInactivated(gene = GENE, onlyDeletions = false)
-    private val functionDeletion = GeneIsInactivated(gene = GENE, onlyDeletions = true)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val functionInactivation = GeneIsInactivated(gene = GENE, onlyDeletions = false, labels = labels)
+    private val functionDeletion = GeneIsInactivated(gene = GENE, onlyDeletions = true, labels = labels)
 
     private val matchingIhcResult = IhcTest(item = IHC_EVALUABLE_GENE, scoreText = "Loss")
 
@@ -175,7 +178,8 @@ class GeneIsInactivatedTest {
     fun `Should pass with matching IHC event if looking for inactivation`() {
         val result = GeneIsInactivated(
             gene = IHC_EVALUABLE_GENE,
-            onlyDeletions = false
+            onlyDeletions = false,
+            labels = labels
         ).evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
 
         assertMolecularEvaluation(EvaluationResult.PASS, result)
@@ -186,7 +190,8 @@ class GeneIsInactivatedTest {
     fun `Should warn with matching IHC event if looking for only deletions`() {
         val result = GeneIsInactivated(
             gene = IHC_EVALUABLE_GENE,
-            onlyDeletions = true
+            onlyDeletions = true,
+            labels = labels
         ).evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
 
         assertMolecularEvaluation(EvaluationResult.WARN, result)
@@ -221,7 +226,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should fail with matching TSG variant when requesting deletions only`() {
-        assertResultForVariantForDeletion(EvaluationResult.FAIL, matchingVariant)
+        assertFailResultForVariantForDeletion(matchingVariant)
     }
 
     @Test
@@ -231,7 +236,7 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should fail with matching TSG variant when unknown if biallelic when requesting deletions only`() {
-        assertResultForVariantForDeletion(EvaluationResult.FAIL, matchingVariant.copy(isBiallelic = null))
+        assertFailResultForVariantForDeletion(matchingVariant.copy(isBiallelic = null))
     }
 
     @Test
@@ -335,7 +340,7 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in MSI gene in MSI sample`() {
         val mmrGene = GeneConstants.MMR_GENES.first()
-        val function = GeneIsInactivated(mmrGene, onlyDeletions = false)
+        val function = GeneIsInactivated(mmrGene, onlyDeletions = false, labels = labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 withMicrosatelliteStabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
@@ -346,7 +351,7 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in MSI sample when requesting only deletions`() {
         val mmrGene = GeneConstants.MMR_GENES.first()
-        val function = GeneIsInactivated(mmrGene, onlyDeletions = true)
+        val function = GeneIsInactivated(mmrGene, onlyDeletions = true, labels = labels)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withMicrosatelliteStabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
@@ -357,7 +362,7 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in MSI gene in MS-Stable sample`() {
         val mmrGene = GeneConstants.MMR_GENES.first()
-        val function = GeneIsInactivated(mmrGene, onlyDeletions = false)
+        val function = GeneIsInactivated(mmrGene, onlyDeletions = false, labels = labels)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withMicrosatelliteStabilityAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
@@ -368,7 +373,7 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should warn when TSG variant is non biallelic and non high driver in HRD gene in HRD sample`() {
         val hrGene = GeneConstants.HR_GENES.first()
-        val function = GeneIsInactivated(hrGene, onlyDeletions = false)
+        val function = GeneIsInactivated(hrGene, onlyDeletions = false, labels = labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 withHomologousRecombinationAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrGene))
@@ -379,7 +384,7 @@ class GeneIsInactivatedTest {
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver in HRD gene in HR-Proficient sample`() {
         val hrGene = GeneConstants.HR_GENES.first()
-        val function = GeneIsInactivated(hrGene, onlyDeletions = false)
+        val function = GeneIsInactivated(hrGene, onlyDeletions = false, labels = labels)
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withHomologousRecombinationAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrGene))
@@ -480,8 +485,8 @@ class GeneIsInactivatedTest {
             .containsExactly("Deletion of gene gene A undetermined (not tested for deletions)")
     }
 
-    private fun assertResultForVariantForDeletion(result: EvaluationResult, variant: Variant) {
-        assertMolecularEvaluation(result, functionDeletion.evaluate(MolecularTestFactory.withVariant(variant)))
+    private fun assertFailResultForVariantForDeletion(variant: Variant) {
+        assertMolecularEvaluation(EvaluationResult.FAIL, functionDeletion.evaluate(MolecularTestFactory.withVariant(variant)))
     }
 
     private fun assertResultForVariantForInactivation(result: EvaluationResult, variant: Variant) {
@@ -503,8 +508,14 @@ class GeneIsInactivatedTest {
     }
 
     private fun assertBothFunctionsForIhc(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = false).evaluate(record))
-        assertMolecularEvaluation(result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = true).evaluate(record))
+        assertMolecularEvaluation(
+            result,
+            GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = false, labels = labels).evaluate(record)
+        )
+        assertMolecularEvaluation(
+            result,
+            GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = true, labels = labels).evaluate(record)
+        )
     }
 
     private fun variantWithPhaseGroups(phaseGroups: Set<Int>?) = TestVariantFactory.createMinimal().copy(

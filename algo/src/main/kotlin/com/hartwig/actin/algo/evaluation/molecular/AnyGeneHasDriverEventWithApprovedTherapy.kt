@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.doid.DoidConstants
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
 import com.hartwig.actin.algo.evaluation.composite.Or
@@ -22,8 +23,9 @@ private val EXCLUDED_CRC_TUMOR_DOIDS = setOf(
 class AnyGeneHasDriverEventWithApprovedTherapy(
     private val genes: Set<String>?,
     val doidModel: DoidModel,
-    private val evaluationFunctionFactory: EvaluationFunctionFactory
-) : MolecularEvaluationFunction() {
+    private val evaluationFunctionFactory: EvaluationFunctionFactory,
+    labels: EvaluationLabels.Molecular
+) : MolecularEvaluationFunction(labels = labels) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
@@ -32,14 +34,15 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
             DoidConstants.COLORECTAL_CANCER_DOID in tumorDoids && (EXCLUDED_CRC_TUMOR_DOIDS intersect tumorDoids).isEmpty()
 
         return when {
-            record.molecularTests.isEmpty() -> EvaluationFactory.fail("No molecular data")
+            record.molecularTests.isEmpty() -> EvaluationFactory.fail(labels.anyGeneHasDriverEventWithApprovedTherapyFailNoData())
 
             isNsclc -> {
                 val evaluation = HasMolecularDriverEventInNsclc(
                     genesToInclude = genes?.toSet(),
                     genesToExclude = emptySet(),
                     warnForMatchesOutsideGenesToInclude = false,
-                    withAvailableSoc = true
+                    withAvailableSoc = true,
+                    labels = labels
                 ).evaluate(record)
 
                 if (evaluation.result in setOf(
@@ -49,7 +52,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
                 ) {
                     val unevaluatedGenes = genes.subtract(NSCLC_DRIVER_GENES_WITH_AVAILABLE_SOC_ANY_LINE)
                     EvaluationFactory.undetermined(
-                        "Possible presence of driver events for gene(s) ${Format.concat(unevaluatedGenes)} could not be determined"
+                        labels.anyGeneHasDriverEventWithApprovedTherapyUndeterminedUnevaluated(Format.concat(unevaluatedGenes))
                     )
                 } else {
                     evaluation
@@ -59,7 +62,7 @@ class AnyGeneHasDriverEventWithApprovedTherapy(
             isColorectalCancer -> hasMolecularEventWithSocForCRC(record)
 
             else -> {
-                EvaluationFactory.undetermined("Undetermined if there are driver events with approved therapy")
+                EvaluationFactory.undetermined(labels.anyGeneHasDriverEventWithApprovedTherapyUndetermined())
             }
         }
     }

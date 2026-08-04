@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.composite.Or
 import com.hartwig.actin.algo.evaluation.util.Format
@@ -21,7 +22,8 @@ class HasMolecularDriverEventInNsclc(
     private val genesToExclude: Set<String>,
     private val warnForMatchesOutsideGenesToInclude: Boolean,
     private val withAvailableSoc: Boolean,
-) : MolecularEvaluationFunction() {
+    labels: EvaluationLabels.Molecular,
+) : MolecularEvaluationFunction(labels = labels) {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (warnForMatchesOutsideGenesToInclude && genesToInclude != null) {
@@ -43,10 +45,10 @@ class HasMolecularDriverEventInNsclc(
 
     private fun createEvaluationFunctions(genesToInclude: Set<String>?, genesToIgnore: Set<String>): List<EvaluationFunction> =
         listOf(
-            ACTIVATING_MUTATION_LIST.map { it to GeneHasActivatingMutation(it, null) },
-            PROTEIN_IMPACT_LIST.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, setOf(impact)) },
-            FUSION_LIST.map { it to HasFusionInGene(it) },
-            EXON_SKIPPING_LIST.map { (gene, exon) -> gene to GeneHasSpecificExonSkipping(gene, exon) }
+            ACTIVATING_MUTATION_LIST.map { it to GeneHasActivatingMutation(it, labels = labels, codonsToIgnore = null) },
+            PROTEIN_IMPACT_LIST.map { (gene, impact) -> gene to GeneHasVariantWithProteinImpact(gene, setOf(impact), labels) },
+            FUSION_LIST.map { it to HasFusionInGene(it, labels) },
+            EXON_SKIPPING_LIST.map { (gene, exon) -> gene to GeneHasSpecificExonSkipping(gene, exon, labels) }
         ).flatten().filter { (gene, _) ->
             genesToInclude?.contains(gene) ?: !genesToIgnore.contains(gene)
         }.map { it.second }
@@ -58,8 +60,8 @@ class HasMolecularDriverEventInNsclc(
     }
 
     private fun clearMolecularEventsAndConfigureMessages(evaluation: Evaluation, mustWarn: Boolean = false): Evaluation {
-        val soc = if (withAvailableSoc) " with available SOC" else ""
-        val message = "NSCLC driver event(s)$soc detected: ${Format.concat(evaluation.inclusionMolecularEvents.map { it.display() })}"
+        val soc = if (withAvailableSoc) labels.hasMolecularDriverEventInNsclcMessageSoc() else ""
+        val message = labels.hasMolecularDriverEventInNsclcMessage(soc, Format.concat(evaluation.inclusionMolecularEvents.map { it.display() }))
         return evaluation.copy(
             result = if (mustWarn) EvaluationResult.WARN else evaluation.result,
             passMessages = writePassMessage(evaluation.passMessagesStrings(), mustWarn, message),
@@ -78,9 +80,9 @@ class HasMolecularDriverEventInNsclc(
 
     private fun writeWarnMessage(passInput: Set<String>, warnInput: Set<String>, mustWarn: Boolean, message: String): Set<StaticMessage> {
         return when {
-            mustWarn && passInput.isNotEmpty() -> setOf(StaticMessage("Potential $message (but undetermined if applicable)"))
+            mustWarn && passInput.isNotEmpty() -> setOf(StaticMessage(labels.hasMolecularDriverEventInNsclcWarnMustWarn(message)))
 
-            warnInput.isNotEmpty() -> setOf(StaticMessage("Potential $message"))
+            warnInput.isNotEmpty() -> setOf(StaticMessage(labels.hasMolecularDriverEventInNsclcWarn(message)))
 
             else -> emptySet()
         }
@@ -90,17 +92,19 @@ class HasMolecularDriverEventInNsclc(
         val notTestedMessages = undeterminedInput.filterIsInstance<TargetCoverageMessage>()
 
         return when {
-            undeterminedInput.any { it.toString() in setOf(INSUFFICIENT_MOLECULAR_DATA_MESSAGE, NO_SUFFICIENT_QUALITY_MESSAGE) } -> {
-                setOf(StaticMessage("Undetermined if NSCLC driver event(s) present (molecular data missing)"))
+            undeterminedInput.any {
+                it.toString() in setOf(labels.evaluationFunctionInsufficientData(), labels.evaluationFunctionNoSufficientQuality())
+            } -> {
+                setOf(StaticMessage(labels.hasMolecularDriverEventInNsclcUndeterminedMissingData()))
             }
 
             notTestedMessages.isNotEmpty() -> {
                 val grouped = notTestedMessages.groupBy { it.targetString }
                 val geneAndTargetDetails = grouped.map { (target, messages) ->
                     val genes = messages.flatMap { it.genes }.toSet()
-                    "${Format.concat(genes)} not tested for $target"
+                    labels.hasMolecularDriverEventInNsclcUndeterminedGeneTarget(Format.concat(genes), target)
                 }.toSet()
-                setOf(StaticMessage("Presence of NSCLC driver event(s) undetermined (${Format.concat(geneAndTargetDetails)})"))
+                setOf(StaticMessage(labels.hasMolecularDriverEventInNsclcUndetermined(Format.concat(geneAndTargetDetails))))
             }
 
             else -> emptySet()
@@ -108,6 +112,8 @@ class HasMolecularDriverEventInNsclc(
     }
 
     private fun writeFailMessage(failInput: Set<String>): Set<StaticMessage> {
-        return if (failInput.isEmpty()) emptySet() else setOf(StaticMessage("No (applicable) NSCLC driver event(s) detected"))
+        return if (failInput.isEmpty()) emptySet() else setOf(
+            StaticMessage(labels.hasMolecularDriverEventInNsclcFail())
+        )
     }
 }

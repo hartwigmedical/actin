@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
@@ -11,7 +13,8 @@ class HasMinimumMouthOpeningTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasMinimumMouthOpening(10).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            HasMinimumMouthOpening(10, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).general)
+                .evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

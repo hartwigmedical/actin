@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
@@ -12,7 +14,8 @@ import org.junit.jupiter.api.Test
 
 class HasHeterozygousDPYDDeficiencyTest {
 
-    private val function = HasHeterozygousDPYDDeficiency()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = HasHeterozygousDPYDDeficiency(labels)
 
     @Test
     fun `Should return undetermined if patient has no DPYD pharmacology details`() {

@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.composite.And
 import com.hartwig.actin.algo.evaluation.composite.Not
 import com.hartwig.actin.algo.evaluation.composite.Or
@@ -30,6 +31,7 @@ class IsEligibleForOnLabelTreatment(
     private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory,
     private val doidModel: DoidModel,
     private val minTreatmentDate: LocalDate,
+    private val labels: EvaluationLabels.Molecular,
     private val intent: Intent? = null
 ) : EvaluationFunction {
 
@@ -97,13 +99,13 @@ class IsEligibleForOnLabelTreatment(
             listOf(
                 And(
                     listOf(
-                        GeneHasActivatingMutation("EGFR", null),
-                        Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT))
+                        GeneHasActivatingMutation("EGFR", null, labels = labels),
+                        Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT, labels))
                     )
                 ),
                 And(
                     listOf(
-                        GeneHasVariantWithProteinImpact("EGFR", setOf("T790M")),
+                        GeneHasVariantWithProteinImpact("EGFR", setOf("T790M"), labels),
                         HasHadSomeTreatmentsWithCategoryOfTypes(
                             TreatmentCategory.TARGETED_THERAPY,
                             setOf(DrugType.TYROSINE_KINASE_INHIBITOR_GEN_1, DrugType.TYROSINE_KINASE_INHIBITOR_GEN_2),
@@ -113,21 +115,24 @@ class IsEligibleForOnLabelTreatment(
                 )
             )
         ),
-        "Pembrolizumab" to PembrolizumabEvaluationFunction(doidModel)
+        "Pembrolizumab" to PembrolizumabEvaluationFunction(doidModel, labels)
     )
 
-    private class PembrolizumabEvaluationFunction(private val doidModel: DoidModel) : EvaluationFunction {
+    private class PembrolizumabEvaluationFunction(private val doidModel: DoidModel, private val labels: EvaluationLabels.Molecular) :
+        EvaluationFunction {
         override fun evaluate(record: PatientRecord): Evaluation {
             val isTreatmentNaive = HasHadLimitedSystemicTreatments(0).evaluate(record).result == EvaluationResult.PASS
             val egfrOrAlkDriverEvaluationResult = HasMolecularDriverEventInNsclc(
                 setOf("EGFR", "ALK"),
                 emptySet(),
                 warnForMatchesOutsideGenesToInclude = false,
-                withAvailableSoc = false
+                withAvailableSoc = false,
+                labels = labels
             ).evaluate(record).result
             val hasNoEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult == EvaluationResult.FAIL
             val hasEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult == EvaluationResult.PASS
-            val hasPdl1Above50 = HasSufficientPDL1ByIhc(Pdl1Measure.TPS, 50.0, doidModel).evaluate(record).result == EvaluationResult.PASS
+            val hasPdl1Above50 =
+                HasSufficientPDL1ByIhc(Pdl1Measure.TPS, 50.0, doidModel, labels).evaluate(record).result == EvaluationResult.PASS
 
             return when {
                 isTreatmentNaive && hasNoEgfrOrAlkDriver && hasPdl1Above50 -> EvaluationFactory.pass("")

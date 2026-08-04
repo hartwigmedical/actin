@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -22,8 +24,9 @@ private const val CLONAL_LIKELIHOOD = 0.6
 private const val SUBCLONAL_LIKELIHOOD = 0.3
 
 class GeneHasVariantInExonRangeOfTypeTest {
-    
-    private val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INSERT)
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INSERT, labels)
 
     @Test
     fun `Should fail when gene not present`() {
@@ -155,7 +158,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should fail for input type INDEL when variant type is MNV`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INDEL)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, VariantTypeInput.INDEL, labels)
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -188,7 +191,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should pass for reportable exon skipping fusion when variant type is DELETE`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE, labels)
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -208,7 +211,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should warn for unreportable exon skipping fusion when variant type is DELETE`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE, labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -227,7 +230,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should warn when exon skipping fusion is non-high driver`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE, labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -248,14 +251,14 @@ class GeneHasVariantInExonRangeOfTypeTest {
     @Test
     fun `Should evaluate for all variant input types`() {
         for (input in VariantTypeInput.entries) {
-            val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, input)
+            val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, input, labels)
             assertThat(function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())).isNotNull()
         }
     }
 
     @Test
     fun `Should evaluate without variant types`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, null)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, 2, null, labels)
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -298,7 +301,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should warn when reportable exon skips but also other reportable matches`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE, labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -324,7 +327,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should warn when high driver exon skip coexists with subclonal canonical match`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE, labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -338,7 +341,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should warn when high driver exon skip coexists with non-canonical and subclonal matches`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE, labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -353,7 +356,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should pass for variant with matching canonical and non-canonical impact`() {
-        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE)
+        val function = GeneHasVariantInExonRangeOfType(TARGET_GENE, 1, 4, VariantTypeInput.DELETE, labels)
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -457,7 +460,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient and single exon`() {
-        val result = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON, VariantTypeInput.INSERT).evaluate(
+        val result = GeneHasVariantInExonRangeOfType(TARGET_GENE, MATCHING_EXON, MATCHING_EXON, VariantTypeInput.INSERT, labels).evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )

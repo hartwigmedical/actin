@@ -1,13 +1,15 @@
 package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Gender
 import org.junit.jupiter.api.Test
 
 class IsMaleTest {
 
-    private val function = IsMale()
+    private val function = IsMale(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).general)
 
     @Test
     fun `Should pass if patient is male`() {

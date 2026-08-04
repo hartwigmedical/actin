@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -38,7 +40,8 @@ private val POTENTIAL_SPLICE_VARIANT =
 
 class GeneHasSpecificExonSkippingTest {
 
-    val function = GeneHasSpecificExonSkipping(MATCHING_GENE, 2)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    val function = GeneHasSpecificExonSkipping(MATCHING_GENE, 2, labels)
 
     @Test
     fun `Should be undetermined when no molecular history in patient record`() {

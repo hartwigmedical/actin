@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.PDL1EvaluationFunctions.evaluatePDL1byIhc
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -22,6 +24,7 @@ private val REQUESTED_MEASURE = TPS.name
 
 class PDL1EvaluationFunctionsTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
     private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = REQUESTED_MEASURE)
 
     @Test
@@ -84,7 +87,7 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should pass when test value is below max`() {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.minus(0.5), scoreUpperBound = PDL1_REFERENCE.minus(0.5)))
-        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
+        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels)
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.inclusionMolecularEvents).containsExactly(MolecularEvent("PD-L1 <= 2.0%"))
     }
@@ -93,14 +96,14 @@ class PDL1EvaluationFunctionsTest {
     fun `Should pass when test value is equal to maximum value`() {
         val record =
             MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE, scoreUpperBound = PDL1_REFERENCE))
-        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels))
     }
 
     @Test
     fun `Should evaluate to undetermined when it is unclear if test value is below maximum due to bounds`() {
         val record =
             MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 1.0))
-        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true)
+        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Undetermined if PD-L1 expression (>= 1.0%) below maximum of 2.0%"
@@ -111,28 +114,28 @@ class PDL1EvaluationFunctionsTest {
     fun `Should evaluate to undetermined when range crosses maximum value`() {
         val record =
             MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 1.0, scoreUpperBound = 3.0))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels))
     }
 
     @Test
     fun `Should pass when range is entirely below maximum value`() {
         val record =
             MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 0.0, scoreUpperBound = 1.0))
-        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels))
     }
 
     @Test
     fun `Should fail when range is entirely above maximum value`() {
         val record =
             MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 3.0, scoreUpperBound = 5.0))
-        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels))
     }
 
     @Test
     fun `Should fail when test value is above maximum value`() {
         val record =
             MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.plus(1.0), scoreUpperBound = PDL1_REFERENCE.plus(1.0)))
-        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true))
+        assertEvaluation(EvaluationResult.FAIL, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels))
     }
 
     // Tests specific for evaluateSufficientPDL1byIHC
@@ -140,13 +143,13 @@ class PDL1EvaluationFunctionsTest {
     fun `Should pass when test value is above min`() {
         val record =
             MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.plus(0.5), scoreUpperBound = PDL1_REFERENCE.plus(0.5)))
-        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false))
+        assertEvaluation(EvaluationResult.PASS, evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false, labels = labels))
     }
 
     @Test
     fun `Should pass when test value is equal to minimum value`() {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE, scoreUpperBound = PDL1_REFERENCE))
-        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false, labels = labels)
         assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.inclusionMolecularEvents).containsExactly(MolecularEvent("PD-L1 >= 2.0%"))
     }
@@ -154,7 +157,7 @@ class PDL1EvaluationFunctionsTest {
     @Test
     fun `Should evaluate to undetermined when it is unclear if test value is above minimum due to bounds`() {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreUpperBound = 3.0))
-        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+        val evaluation = evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false, labels = labels)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Undetermined if PD-L1 expression (<= 3.0%) above minimum of 2.0%"
@@ -166,7 +169,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 1.0, scoreUpperBound = 3.0))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -175,7 +178,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = 3.0, scoreUpperBound = 5.0))
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -184,7 +187,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreLowerBound = PDL1_REFERENCE.minus(1.0), scoreUpperBound = PDL1_REFERENCE.minus(1.0)))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -193,7 +196,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = TPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 0.5, doidModel = doidModel, evaluateMaxPDL1 = true)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 0.5, doidModel = doidModel, evaluateMaxPDL1 = true, labels = labels)
         )
     }
 
@@ -202,7 +205,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = TPS.name))
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true, labels = labels)
         )
     }
 
@@ -213,7 +216,7 @@ class PDL1EvaluationFunctionsTest {
 
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true, labels = labels)
         )
     }
 
@@ -222,7 +225,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "positive", measure = TPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true, labels = labels)
         )
     }
 
@@ -231,7 +234,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "positive", measure = TPS.name))
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -242,7 +245,7 @@ class PDL1EvaluationFunctionsTest {
 
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -251,7 +254,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "positive", measure = TPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -260,7 +263,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = TPS.name))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -271,7 +274,7 @@ class PDL1EvaluationFunctionsTest {
 
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -280,7 +283,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = TPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, TPS, pdl1Reference = 0.5, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, TPS, pdl1Reference = 0.5, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -289,7 +292,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = CPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, CPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = true)
+            evaluatePDL1byIhc(record, CPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = true, labels = labels)
         )
     }
 
@@ -298,7 +301,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = CPS.name))
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true)
+            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true, labels = labels)
         )
     }
 
@@ -307,7 +310,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "positive", measure = CPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true)
+            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = true, labels = labels)
         )
     }
 
@@ -316,7 +319,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "positive", measure = CPS.name))
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            evaluatePDL1byIhc(record, CPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, CPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -325,7 +328,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "positive", measure = CPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -334,7 +337,7 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = CPS.name))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePDL1byIhc(record, CPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, CPS, pdl1Reference = 1.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
@@ -343,21 +346,21 @@ class PDL1EvaluationFunctionsTest {
         val record = MolecularTestFactory.withIhcTests(pdl1Test.copy(scoreText = "negative", measure = CPS.name))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, CPS, pdl1Reference = 10.0, doidModel = doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
     }
 
     private fun evaluateFunctions(
         expected: EvaluationResult, record: PatientRecord, measure: Pdl1Measure? = TPS, reference: Double = PDL1_REFERENCE
     ) {
-        assertMolecularEvaluation(expected, evaluatePDL1byIhc(record, measure, reference, doidModel, evaluateMaxPDL1 = true))
-        assertMolecularEvaluation(expected, evaluatePDL1byIhc(record, measure, reference, doidModel, evaluateMaxPDL1 = false))
+        assertMolecularEvaluation(expected, evaluatePDL1byIhc(record, measure, reference, doidModel, evaluateMaxPDL1 = true, labels = labels))
+        assertMolecularEvaluation(expected, evaluatePDL1byIhc(record, measure, reference, doidModel, evaluateMaxPDL1 = false, labels = labels))
     }
 
     private fun assertMessage(record: PatientRecord, message: String, measure: Pdl1Measure?) {
         val evaluations = listOf(
-            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true),
-            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
+            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true, labels = labels),
+            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false, labels = labels)
         )
         evaluations.forEach {
             assertThat(it.failMessagesStrings()).containsExactly(message)

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
@@ -20,7 +22,8 @@ private const val MATCHING_GENE = "GeneA"
 
 class GeneIsWildTypeTest {
 
-    private val function = GeneIsWildType(MATCHING_GENE)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = GeneIsWildType(MATCHING_GENE, labels)
 
     @Test
     fun `Should pass with no molecular findings`() {
@@ -259,7 +262,7 @@ class GeneIsWildTypeTest {
                         .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                 )
             )
-        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
+        val evaluationResult = GeneIsWildType("ALK", labels).evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.PASS, evaluationResult)
     }
 
@@ -272,7 +275,7 @@ class GeneIsWildTypeTest {
                         .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                 )
             )
-        val evaluationResult = GeneIsWildType("EGFR").evaluate(patient)
+        val evaluationResult = GeneIsWildType("EGFR", labels).evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluationResult)
     }
 
@@ -297,7 +300,7 @@ class GeneIsWildTypeTest {
                     )
                 )
             )
-        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
+        val evaluationResult = GeneIsWildType("ALK", labels).evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
     }
 
@@ -322,7 +325,7 @@ class GeneIsWildTypeTest {
                     )
                 )
             )
-        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
+        val evaluationResult = GeneIsWildType("ALK", labels).evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
     }
 
@@ -368,7 +371,7 @@ class GeneIsWildTypeTest {
                     )
                 )
             )
-        val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
+        val evaluationResult = GeneIsWildType("ALK", labels).evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
     }
 

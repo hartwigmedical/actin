@@ -2,16 +2,17 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class WillParticipateInTrialInCountry(private val country: String) : EvaluationFunction {
+class WillParticipateInTrialInCountry(private val country: String, private val labels: EvaluationLabels.General) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return when {
-            country.lowercase().contains("netherlands") -> EvaluationFactory.pass("Patient will be participating in $country")
+            country.lowercase().contains("netherlands") -> EvaluationFactory.pass(labels.willParticipateInTrialInCountryPass(country))
 
-            else -> EvaluationFactory.fail("Patient will not be participating in $country")
+            else -> EvaluationFactory.fail(labels.willParticipateInTrialInCountryFail(country))
         }
     }
 }

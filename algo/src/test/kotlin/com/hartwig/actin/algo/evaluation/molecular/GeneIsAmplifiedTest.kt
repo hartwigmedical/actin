@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -24,6 +26,8 @@ private const val GENE = "gene A"
 private val IHC_EVALUABLE_GENE = GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.keys.first()
 
 class GeneIsAmplifiedTest {
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
 
     private val eligibleImpact =
         TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(
@@ -65,8 +69,8 @@ class GeneIsAmplifiedTest {
         IhcTest(item = GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.getValue(IHC_EVALUABLE_GENE), scoreText = "Positive")
     private val ineligibleNoneCopyNumber = eligibleAmp.copy(canonicalImpact = impactNoneWithLowCopyNr)
 
-    private val functionWithMinCopies = GeneIsAmplified(GENE, REQUIRED_COPY_NR)
-    private val functionWithNoMinCopies = GeneIsAmplified(GENE, null)
+    private val functionWithMinCopies = GeneIsAmplified(GENE, REQUIRED_COPY_NR, labels)
+    private val functionWithNoMinCopies = GeneIsAmplified(GENE, null, labels)
 
     @Test
     fun `Should be undetermined when molecular record is empty`() {
@@ -229,7 +233,7 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should warn with copy numbers meeting amplification threshold if not amp but copy nr meets requested copy nr`() {
-        val function = GeneIsAmplified(GENE, 4)
+        val function = GeneIsAmplified(GENE, 4, labels)
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
@@ -258,7 +262,7 @@ class GeneIsAmplifiedTest {
     fun `Should warn with full amp if copies are null and copies requested`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            GeneIsAmplified(GENE, 10).evaluate(
+            GeneIsAmplified(GENE, 10, labels).evaluate(
                 MolecularTestFactory.withCopyNumber(
                     ampOnCanonicalTranscriptWithoutCopies
                 )
@@ -287,7 +291,7 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should warn with appropriate message when matching IHC event`() {
-        val functionIhcEvaluable = GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR)
+        val functionIhcEvaluable = GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR, labels)
         val result = functionIhcEvaluable.evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
         val resultWithOnlyIhc = functionIhcEvaluable.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(matchingIhcResult)))
 
@@ -331,7 +335,7 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should evaluate undetermined with appropriate message when target coverage insufficient`() {
-        val result = GeneIsAmplified(GENE, 2).evaluate(
+        val result = GeneIsAmplified(GENE, 2, labels).evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
                 molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
@@ -346,7 +350,7 @@ class GeneIsAmplifiedTest {
     }
 
     private fun assertBothFunctionsForIhc(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR).evaluate(record))
-        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, null).evaluate(record))
+        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR, labels).evaluate(record))
+        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, null, labels).evaluate(record))
     }
 }

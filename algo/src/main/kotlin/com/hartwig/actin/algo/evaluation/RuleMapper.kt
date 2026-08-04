@@ -19,5 +19,7 @@ abstract class RuleMapper(val resources: RuleMappingResources) {
 
     protected fun atcTree(): AtcTree = resources.atcTree
 
+    protected fun evaluationLabels(): EvaluationLabels = resources.evaluationLabels
+
     abstract fun createMappings(): Map<EligibilityRule, FunctionCreator>
 }

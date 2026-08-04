@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
@@ -9,7 +10,7 @@ import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 import com.hartwig.actin.datamodel.molecular.driver.VirusType
 
-class HasKnownHPVStatus : EvaluationFunction {
+class HasKnownHPVStatus(private val labels: EvaluationLabels.Molecular) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val (indeterminateIhcTestsForHpv, determinateIhcTestsForHpv) = record.ihcTests
@@ -19,20 +20,20 @@ class HasKnownHPVStatus : EvaluationFunction {
 
         return when {
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME && it.hasSufficientQuality } -> {
-                EvaluationFactory.pass("HPV status known (by WGS test)")
+                EvaluationFactory.pass(labels.hasKnownHpvStatusPassWgs())
             }
 
-            record.molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> EvaluationFactory.pass("HPV status known")
+            record.molecularTests.any { it.drivers.viruses.any { it.type == VirusType.HPV } } -> EvaluationFactory.pass(labels.hasKnownHpvStatusPass())
 
-            determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass("HPV status known (by IHC test)")
+            determinateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.pass(labels.hasKnownHpvStatusPassIhc())
 
-            indeterminateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.warn("HPV tested before but indeterminate status")
+            indeterminateIhcTestsForHpv.isNotEmpty() -> EvaluationFactory.warn(labels.hasKnownHpvStatusWarnIndeterminate())
 
             molecularRecords.any { it.experimentType == ExperimentType.HARTWIG_WHOLE_GENOME } -> {
-                EvaluationFactory.recoverableFail("HPV status undetermined (WGS contained no tumor cells)")
+                EvaluationFactory.recoverableFail(labels.hasKnownHpvStatusRecoverableFailNoTumorCells())
             }
 
-            else -> EvaluationFactory.recoverableFail("HPV status not known")
+            else -> EvaluationFactory.recoverableFail(labels.hasKnownHpvStatusRecoverableFail())
         }
     }
 }

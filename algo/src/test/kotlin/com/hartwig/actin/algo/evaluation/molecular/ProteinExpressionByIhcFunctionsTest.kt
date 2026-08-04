@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.ihcTest
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
@@ -12,10 +14,12 @@ private const val PROTEIN = "PD-L1"
 
 class ProteinExpressionByIhcFunctionsTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
     private val referenceLevel = 2
-    private val limitedFunction = ProteinExpressionByIhcFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.LIMITED)
-    private val sufficientFunction = ProteinExpressionByIhcFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.SUFFICIENT)
-    private val exactFunction = ProteinExpressionByIhcFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.EXACT)
+    private val limitedFunction = ProteinExpressionByIhcFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.LIMITED, labels)
+    private val sufficientFunction =
+        ProteinExpressionByIhcFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.SUFFICIENT, labels)
+    private val exactFunction = ProteinExpressionByIhcFunctions(PROTEIN, referenceLevel, IhcExpressionComparisonType.EXACT, labels)
 
     @Test
     fun `Should be undetermined when no IHC tests present in record`() {

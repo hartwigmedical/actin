@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.NsclcDriverGeneStatusesAreAvailable.Companion.NSCLC_DRIVER_GENE_SET
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -13,7 +15,8 @@ import org.junit.jupiter.api.Test
 
 class NsclcDriverGeneStatusesAreAvailableTest {
 
-    private val function = NsclcDriverGeneStatusesAreAvailable()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = NsclcDriverGeneStatusesAreAvailable(labels)
 
     @Test
     fun `Should pass if WGS is available and contains tumor cells`() {

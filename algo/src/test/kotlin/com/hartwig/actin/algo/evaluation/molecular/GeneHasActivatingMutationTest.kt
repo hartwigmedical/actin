@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -18,8 +20,9 @@ import org.junit.jupiter.api.Test
 
 class GeneHasActivatingMutationTest {
 
-    private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null)
-    private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val functionNotIgnoringCodons = GeneHasActivatingMutation(GENE, null, labels = labels)
+    private val functionWithCodonsToIgnore = GeneHasActivatingMutation(GENE, CODONS_TO_IGNORE, labels = labels)
 
     @Test
     fun `Should fail for patient with minimal WGS record`() {
@@ -41,7 +44,7 @@ class GeneHasActivatingMutationTest {
 
     @Test
     fun `Should warn with activating mutation for gene if kinase domain requirement is true`() {
-        val function = GeneHasActivatingMutation(GENE, null, inKinaseDomain = true)
+        val function = GeneHasActivatingMutation(GENE, null, inKinaseDomain = true, labels = labels)
         val result = function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
 
         assertMolecularEvaluation(EvaluationResult.WARN, result)
@@ -214,7 +217,7 @@ class GeneHasActivatingMutationTest {
 
     @Test
     fun `Should fail with activating mutation for correct gene but protein impact to ignore`() {
-        val function = GeneHasActivatingMutation(GENE, codonsToIgnore = null, proteinImpactsToIgnore = setOf("V600E"))
+        val function = GeneHasActivatingMutation(GENE, codonsToIgnore = null, proteinImpactsToIgnore = setOf("V600E"), labels = labels)
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(
@@ -230,7 +233,7 @@ class GeneHasActivatingMutationTest {
 
     @Test
     fun `Should pass with activating mutation for correct gene when protein impact differs from ignored`() {
-        val function = GeneHasActivatingMutation(GENE, codonsToIgnore = null, proteinImpactsToIgnore = setOf("V600E"))
+        val function = GeneHasActivatingMutation(GENE, codonsToIgnore = null, proteinImpactsToIgnore = setOf("V600E"), labels = labels)
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
@@ -240,7 +243,7 @@ class GeneHasActivatingMutationTest {
     @Test
     fun `Should fail with activating mutation for correct gene but exon and type to ignore`() {
         val function = GeneHasActivatingMutation(
-            GENE, codonsToIgnore = null, variantTypeToIgnore = VariantTypeInput.DELETE, exonToIgnore = 2
+            GENE, codonsToIgnore = null, variantTypeToIgnore = VariantTypeInput.DELETE, exonToIgnore = 2, labels = labels
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
@@ -258,7 +261,7 @@ class GeneHasActivatingMutationTest {
     @Test
     fun `Should pass with activating mutation in ignored exon but different type`() {
         val function = GeneHasActivatingMutation(
-            GENE, codonsToIgnore = null, variantTypeToIgnore = VariantTypeInput.DELETE, exonToIgnore = 2
+            GENE, codonsToIgnore = null, variantTypeToIgnore = VariantTypeInput.DELETE, exonToIgnore = 2, labels = labels
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,

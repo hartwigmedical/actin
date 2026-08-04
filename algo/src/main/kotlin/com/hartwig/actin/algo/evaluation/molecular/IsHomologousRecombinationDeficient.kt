@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -7,7 +8,7 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.characteristics.MolecularCharacteristicEvents
 import com.hartwig.actin.molecular.util.GeneConstants
 
-class IsHomologousRecombinationDeficient: MolecularEvaluationFunction() {
+class IsHomologousRecombinationDeficient(labels: EvaluationLabels.Molecular) : MolecularEvaluationFunction(labels = labels) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val hrdGenesWithBiallelicDriver: MutableSet<String> = mutableSetOf()
@@ -51,21 +52,24 @@ class IsHomologousRecombinationDeficient: MolecularEvaluationFunction() {
             null -> {
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithBiallelicDriver)}) detected",
+                        labels.isHomologousRecombinationDeficientUndeterminedBiallelic(concat(hrdGenesWithBiallelicDriver)),
                         isMissingMolecularResultForEvaluation = true
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but non-biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithNonBiallelicDriver)}) detected",
+                        labels.isHomologousRecombinationDeficientUndeterminedNonBiallelic(concat(hrdGenesWithNonBiallelicDriver)),
                         isMissingMolecularResultForEvaluation = true
                     )
                 } else if (hrdGenesWithUnknownAllelicDriver.isNotEmpty()) {
                     EvaluationFactory.undetermined(
-                        "Unknown HRD status but driver event(s) in HR gene(s) (${concat(hrdGenesWithUnknownAllelicDriver)}) detected",
+                        labels.isHomologousRecombinationDeficientUndeterminedUnknownAllelic(concat(hrdGenesWithUnknownAllelicDriver)),
                         isMissingMolecularResultForEvaluation = true
                     )
                 } else {
-                    EvaluationFactory.undetermined("Unknown HRD status", isMissingMolecularResultForEvaluation = true)
+                    EvaluationFactory.undetermined(
+                        labels.isHomologousRecombinationDeficientUndetermined(),
+                        isMissingMolecularResultForEvaluation = true
+                    )
                 }
             }
 
@@ -73,24 +77,24 @@ class IsHomologousRecombinationDeficient: MolecularEvaluationFunction() {
                 val inclusionMolecularEvents = setOf(MolecularCharacteristicEvents.HOMOLOGOUS_RECOMBINATION_DEFICIENT)
                 if (hrdGenesWithBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.pass(
-                        "Tumor is HRD with biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithBiallelicDriver)})",
+                        labels.isHomologousRecombinationDeficientPass(concat(hrdGenesWithBiallelicDriver)),
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else if (hrdGenesWithNonBiallelicDriver.isNotEmpty()) {
                     EvaluationFactory.warn(
-                        "Tumor is HRD but with only non-biallelic driver event(s) in HR gene(s) (${concat(hrdGenesWithNonBiallelicDriver)})",
+                        labels.isHomologousRecombinationDeficientWarnNonBiallelic(concat(hrdGenesWithNonBiallelicDriver)),
                         inclusionEvents = inclusionMolecularEvents
                     )
                 } else {
                     EvaluationFactory.warn(
-                        "Tumor is HRD but without driver event(s) in HR gene(s)",
+                        labels.isHomologousRecombinationDeficientWarnNoDriver(),
                         inclusionEvents = inclusionMolecularEvents
                     )
                 }
             }
 
             else -> {
-                EvaluationFactory.fail("Tumor is not HRD")
+                EvaluationFactory.fail(labels.isHomologousRecombinationDeficientFail())
             }
         }
     }

@@ -1,12 +1,13 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction {
+class ProteinIsExpressedByIhc(private val protein: String, private val labels: EvaluationLabels.Molecular) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ihcTestEvaluation = IhcTestEvaluation.create(protein, record.ihcTests)
@@ -14,23 +15,23 @@ class ProteinIsExpressedByIhc(private val protein: String) : EvaluationFunction 
         return when {
             ihcTestEvaluation.filteredTests.isEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "No $protein IHC test result",
+                    labels.proteinIsExpressedByIhcUndeterminedNoResult(protein),
                     isMissingMolecularResultForEvaluation = true
                 )
             }
 
             ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() -> {
                 EvaluationFactory.pass(
-                    "$protein has expression by IHC",
+                    labels.proteinIsExpressedByIhcPass(protein),
                     inclusionEvents = setOf("IHC $protein expression")
                 )
             }
 
-            !ihcTestEvaluation.hasPossiblePositiveResultsForItem() -> EvaluationFactory.fail("$protein is not expressed by IHC")
+            !ihcTestEvaluation.hasPossiblePositiveResultsForItem() -> EvaluationFactory.fail(labels.proteinIsExpressedByIhcFail(protein))
 
             else -> {
                 EvaluationFactory.warn(
-                    "Undetermined if $protein IHC result indicates $protein expression by IHC",
+                    labels.proteinIsExpressedByIhcWarn(protein),
                     inclusionEvents = setOf("Potential IHC $protein expression")
                 )
             }

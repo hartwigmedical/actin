@@ -2,13 +2,14 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator.geneIsAmplifiedForPatient
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 
-class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : EvaluationFunction {
+class HasTripleNegativeBreastCancer(private val doidModel: DoidModel, private val labels: EvaluationLabels.Molecular) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
@@ -22,7 +23,7 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
             breastCancerReceptorsEvaluator.evaluate(tumorDoids!!, record.ihcTests, receptor)
         }
 
-        val erbb2Amplified = geneIsAmplifiedForPatient("ERBB2", record)
+        val erbb2Amplified = geneIsAmplifiedForPatient("ERBB2", record, labels)
         val prAndErNotPositive =
             (evaluationPerReceptor[ReceptorType.ER] != BreastCancerReceptorEvaluation.POSITIVE) && (evaluationPerReceptor[ReceptorType.PR] != BreastCancerReceptorEvaluation.POSITIVE)
         val hasNoTripleNegativeBreastCancer =

@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -19,13 +21,15 @@ private const val FAIL_MESSAGE = "Fail message"
 
 class MolecularEvaluationFunctionTest {
 
-    private val function = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+
+    private val function = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false, labels = labels) {
         override fun evaluate(test: MolecularTest): Evaluation {
             return EvaluationFactory.fail(FAIL_MESSAGE)
         }
     }
 
-    private val functionWithOverride = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false) {
+    private val functionWithOverride = object : MolecularEvaluationFunction(useInsufficientQualityRecords = false, labels = labels) {
         override fun evaluate(test: MolecularTest): Evaluation {
             return EvaluationFactory.pass("OK")
         }
@@ -33,12 +37,14 @@ class MolecularEvaluationFunctionTest {
         override fun noMolecularTestEvaluation() = EvaluationFactory.fail(OVERRIDE_MESSAGE)
     }
 
-    private val functionWithGene = object : MolecularEvaluationFunction(gene = "GENE", useInsufficientQualityRecords = false) {}
+    private val functionWithGene =
+        object : MolecularEvaluationFunction(gene = "GENE", useInsufficientQualityRecords = false, labels = labels) {}
 
     private val functionWithGenesAndTarget = object : MolecularEvaluationFunction(
         gene = "GENE",
         targetCoveragePredicate = specific(MolecularTestTarget.FUSION, messagePrefix = "Test in"),
-        useInsufficientQualityRecords = false
+        useInsufficientQualityRecords = false,
+        labels = labels
     ) {}
 
     @Test

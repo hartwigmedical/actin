@@ -4,12 +4,14 @@ import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.TreatmentMatcher
 import com.hartwig.actin.algo.calendar.ReferenceDateProvider
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.config.DoidManualConfig
@@ -95,7 +97,8 @@ class LocalExampleTreatmentMatchApplication {
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,
-            algoConfiguration = algoConfiguration
+            algoConfiguration = algoConfiguration,
+            evaluationLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
         )
     }
 

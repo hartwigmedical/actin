@@ -200,7 +200,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return { function: EligibilityFunction ->
             val treatmentName = function.param<TreatmentParameter>(0).value
             val minDate = referenceDate.minusWeeks(26)
-            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate)
+            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate, evaluationLabels().molecular)
         }
     }
 
@@ -209,7 +209,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val treatmentName = function.param<TreatmentParameter>(0).value
             val minDate = referenceDate.minusWeeks(26)
             val intent = function.param<IntentParameter>(1).value
-            IsEligibleForOnLabelTreatment(treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate, intent)
+            IsEligibleForOnLabelTreatment(
+                treatmentName, StandardOfCareEvaluatorFactory(resources), doidModel(), minDate, evaluationLabels().molecular, intent
+            )
         }
     }
 

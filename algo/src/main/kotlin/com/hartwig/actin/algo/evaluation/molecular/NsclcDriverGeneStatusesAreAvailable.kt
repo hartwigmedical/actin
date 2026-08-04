@@ -1,12 +1,13 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 
-class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
+class NsclcDriverGeneStatusesAreAvailable(private val labels: EvaluationLabels.Molecular) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val molecularHistory = MolecularHistory(record.molecularTests)
@@ -19,19 +20,19 @@ class NsclcDriverGeneStatusesAreAvailable : EvaluationFunction {
 
         return when {
             validOncoPanelOrWGSList.isNotEmpty() || missing.isEmpty() -> {
-                EvaluationFactory.pass("NSCLC driver gene statuses are available")
+                EvaluationFactory.pass(labels.nsclcDriverGeneStatusesAreAvailablePass())
             }
 
             invalidOncoPanelOrWGSList.isNotEmpty() -> {
                 EvaluationFactory.recoverableFail(
-                    "NSCLC driver gene statuses unknown (sequencing data of insufficient quality)",
+                    labels.nsclcDriverGeneStatusesAreAvailableFailInsufficientQuality(),
                     isMissingMolecularResultForEvaluation = true
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "NSCLC driver gene statuses not available (missing: ${missing.joinToString()})",
+                    labels.nsclcDriverGeneStatusesAreAvailableFailMissing(missing.joinToString()),
                     isMissingMolecularResultForEvaluation = true
                 )
             }

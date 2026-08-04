@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +12,7 @@ import org.junit.jupiter.api.Test
 class HasTripleNegativeBreastCancerTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val function = HasTripleNegativeBreastCancer(doidModel)
+    val function = HasTripleNegativeBreastCancer(doidModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular)
 
     @Test
     fun `Should evaluate to undetermined when no tumor doids configured`() {

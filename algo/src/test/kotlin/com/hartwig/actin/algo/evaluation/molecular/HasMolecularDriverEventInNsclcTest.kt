@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -61,6 +63,7 @@ private val BASE_EXON_SKIPPING_FUSION = BASE_FUSION.copy(
 
 class HasMolecularDriverEventInNsclcTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
     private val functionIncludingAllGenes = createFunction(genesToInclude = null, genesToExclude = emptySet())
     private val functionIncludingSpecificGenes =
         createFunction(genesToInclude = setOf(CORRECT_ACTIVATING_MUTATION_GENE, CORRECT_PROTEIN_IMPACT_GENE), genesToExclude = emptySet())
@@ -74,7 +77,7 @@ class HasMolecularDriverEventInNsclcTest {
 
     @Test
     fun `Should fail when molecular record is empty`() {
-        evaluateAllFunctions(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
+        evaluateFail(TestPatientFactory.createMinimalTestWGSPatientRecord())
     }
 
     @Test
@@ -118,7 +121,7 @@ class HasMolecularDriverEventInNsclcTest {
     @Test
     fun `Should fail for activating mutation in gene that is never relevant as driver in NSCLC`() {
         val record = MolecularTestFactory.withVariant(BASE_SPECIFIC_VARIANT.copy(gene = "Wrong"))
-        evaluateAllFunctions(EvaluationResult.FAIL, record)
+        evaluateFail(record)
     }
 
     @Test
@@ -155,7 +158,7 @@ class HasMolecularDriverEventInNsclcTest {
     @Test
     fun `Should fail for variant in correct gene but incorrect protein impact`() {
         val record = MolecularTestFactory.withVariant(BASE_SPECIFIC_VARIANT.copy(canonicalImpact = proteinImpact("W600W")))
-        evaluateAllFunctions(EvaluationResult.FAIL, record)
+        evaluateFail(record)
     }
 
     @Test
@@ -166,7 +169,7 @@ class HasMolecularDriverEventInNsclcTest {
                 canonicalImpact = proteinImpact(CORRECT_PROTEIN_IMPACT)
             )
         )
-        evaluateAllFunctions(EvaluationResult.FAIL, record)
+        evaluateFail(record)
     }
 
     @Test
@@ -332,9 +335,9 @@ class HasMolecularDriverEventInNsclcTest {
         assertEvaluation(expected, functionExcludingSpecificGenes.evaluate(record))
     }
 
-    private fun evaluateAllFunctions(expected: EvaluationResult, record: PatientRecord) {
-        evaluateIncludeFunctions(expected, record)
-        evaluateExcludeFunction(expected, record)
+    private fun evaluateFail(record: PatientRecord) {
+        evaluateIncludeFunctions(EvaluationResult.FAIL, record)
+        evaluateExcludeFunction(EvaluationResult.FAIL, record)
     }
 
     private fun evaluateMessages(fromEvaluation: Set<String>, expected: Set<String>) {
@@ -351,7 +354,8 @@ class HasMolecularDriverEventInNsclcTest {
             genesToInclude,
             genesToExclude,
             warnForMatchesOutsideGenesToInclude,
-            withAvailableSOC
+            withAvailableSOC,
+            labels
         )
     }
 }

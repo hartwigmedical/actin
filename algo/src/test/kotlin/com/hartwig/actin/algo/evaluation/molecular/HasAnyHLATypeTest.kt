@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.MolecularEvent
@@ -15,8 +17,9 @@ private val CORRECT_HLA = TestHlaAlleleFactory.createMinimal().copy(gene = "HLA-
 
 class HasAnyHLATypeTest {
 
-    private val functionWithSpecificMatch = HasAnyHLAType(setOf("$GENE*$ALLELE_GROUP:$HLA_PROTEIN", "A*02:07"))
-    private val functionWithGroupMatch = HasAnyHLAType(setOf("$GENE*$ALLELE_GROUP"), matchOnHlaGroup = true)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val functionWithSpecificMatch = HasAnyHLAType(setOf("$GENE*$ALLELE_GROUP:$HLA_PROTEIN", "A*02:07"), labels = labels)
+    private val functionWithGroupMatch = HasAnyHLAType(setOf("$GENE*$ALLELE_GROUP"), matchOnHlaGroup = true, labels = labels)
 
     @Test
     fun `Should pass if correct HLA allele present`() {
