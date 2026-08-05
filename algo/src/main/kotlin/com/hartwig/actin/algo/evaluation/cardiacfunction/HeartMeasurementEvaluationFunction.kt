@@ -8,7 +8,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.HeartMeasurement
 import com.hartwig.actin.datamodel.clinical.HeartMeasurementType
 
-class EcgMeasureEvaluationFunction internal constructor(
+class HeartMeasurementEvaluationFunction internal constructor(
     private val measureType: HeartMeasurementType,
     private val threshold: Double,
     private val expectedUnit: EcgUnit,
@@ -31,7 +31,7 @@ class EcgMeasureEvaluationFunction internal constructor(
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ecgMeasures = record.ecgs.filter { it.measurementType == measureType }
+        val ecgMeasures = record.heartMeasurements.filter { it.measurementType == measureType }
         val filtered = ecgMeasures.filter { it.unit == expectedUnit.symbol() }
 
         return when {

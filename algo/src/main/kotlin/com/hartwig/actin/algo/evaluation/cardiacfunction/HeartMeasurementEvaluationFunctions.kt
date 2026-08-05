@@ -1,12 +1,12 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
-import com.hartwig.actin.algo.evaluation.cardiacfunction.EcgMeasureEvaluationFunction.ThresholdCriteria
+import com.hartwig.actin.algo.evaluation.cardiacfunction.HeartMeasurementEvaluationFunction.ThresholdCriteria
 import com.hartwig.actin.datamodel.clinical.HeartMeasurementType
 
-object EcgMeasureEvaluationFunctions {
+object HeartMeasurementEvaluationFunctions {
 
-    fun hasLimitedQtcf(maxQtcf: Double): EcgMeasureEvaluationFunction {
-        return EcgMeasureEvaluationFunction(
+    fun hasLimitedQtcf(maxQtcf: Double): HeartMeasurementEvaluationFunction {
+        return HeartMeasurementEvaluationFunction(
             HeartMeasurementType.QTCF,
             maxQtcf,
             EcgUnit.MILLISECONDS,
@@ -14,8 +14,8 @@ object EcgMeasureEvaluationFunctions {
         )
     }
 
-    fun hasSufficientQtcf(minQtcf: Double): EcgMeasureEvaluationFunction {
-        return EcgMeasureEvaluationFunction(
+    fun hasSufficientQtcf(minQtcf: Double): HeartMeasurementEvaluationFunction {
+        return HeartMeasurementEvaluationFunction(
             HeartMeasurementType.QTCF,
             minQtcf,
             EcgUnit.MILLISECONDS,
@@ -23,8 +23,8 @@ object EcgMeasureEvaluationFunctions {
         )
     }
 
-    fun hasSufficientJTc(minJtc: Double): EcgMeasureEvaluationFunction {
-        return EcgMeasureEvaluationFunction(
+    fun hasSufficientJTc(minJtc: Double): HeartMeasurementEvaluationFunction {
+        return HeartMeasurementEvaluationFunction(
             HeartMeasurementType.JTC,
             minJtc,
             EcgUnit.MILLISECONDS,

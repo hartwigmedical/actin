@@ -4,7 +4,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withEcg
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withHeartMeasurements
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withValueAndUnit
-import com.hartwig.actin.algo.evaluation.cardiacfunction.EcgMeasureEvaluationFunction.ThresholdCriteria
+import com.hartwig.actin.algo.evaluation.cardiacfunction.HeartMeasurementEvaluationFunction.ThresholdCriteria
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.HeartMeasurement
@@ -100,8 +100,8 @@ class EcgMeasureEvaluationFunctionTest {
         return evaluations.first()
     }
 
-    private fun withThresholdCriteria(thresholdCriteria: ThresholdCriteria): EcgMeasureEvaluationFunction {
-        return EcgMeasureEvaluationFunction(
+    private fun withThresholdCriteria(thresholdCriteria: ThresholdCriteria): HeartMeasurementEvaluationFunction {
+        return HeartMeasurementEvaluationFunction(
             HeartMeasurementType.QTCF,
             THRESHOLD,
             EcgUnit.MILLISECONDS,

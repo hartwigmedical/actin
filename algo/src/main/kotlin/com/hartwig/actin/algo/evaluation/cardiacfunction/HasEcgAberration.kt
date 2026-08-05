@@ -13,11 +13,11 @@ class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecgs = record.ecgs
-        val ecgsIcdCodes = ecgs.flatMap { it.icdCodes }
+        val ecgsIcdCodes = ecgs.flatMap { it.icdCodes }.toSet()
         val cardiacArrhythmiaComorbidities = icdModel.findInstancesMatchingAnyIcdCode(
             record.comorbidities,
             listOf(IcdCode(IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK))
-        ).fullMatches.filterNot { it.icdCodes.any { icdCode -> icdCode in ecgsIcdCodes } }
+        ).fullMatches.filterNot { it.icdCodes.any(ecgsIcdCodes::contains) }
 
         val aberrations = Format.concat(ecgs.map { it.name ?: "details unknown" })
 

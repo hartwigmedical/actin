@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test
 
 class HasQTCFWithGenderTest {
 
-    private val hasQTCFOfAtLeastWithGenderFunction = HasQtcfWithGender(450.0, Gender.MALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
-    private val hasQTCFOfAtMostWithGenderFunction = HasQtcfWithGender(450.0, Gender.MALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
+    private val hasQTCFOfAtLeastWithGenderFunction =
+        HasQtcfWithGender(450.0, Gender.MALE, HeartMeasurementEvaluationFunctions::hasSufficientQtcf)
+    private val hasQTCFOfAtMostWithGenderFunction =
+        HasQtcfWithGender(450.0, Gender.MALE, HeartMeasurementEvaluationFunctions::hasLimitedQtcf)
 
     @Test
     fun `Should fail with incorrect gender`() {
