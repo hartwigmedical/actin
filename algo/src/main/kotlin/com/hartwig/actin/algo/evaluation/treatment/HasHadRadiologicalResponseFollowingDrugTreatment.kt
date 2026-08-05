@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 
-class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) : EvaluationFunction {
+class HasHadRadiologicalResponseFollowingDrugTreatment(
+    private val drug: Drug,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
@@ -23,31 +27,28 @@ class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) :
                     otherResponses.mapNotNull { it.treatmentHistoryDetails?.bestResponse } }
 
         return when {
-            matchingDrugTreatments.isEmpty() -> EvaluationFactory.fail("Patient did not have radiological response to ${drug.display()} treatment")
+            matchingDrugTreatments.isEmpty() ->
+                EvaluationFactory.fail(labels.hasHadRadiologicalResponseFollowingDrugTreatmentFailNoMatch(drug.display()))
 
             positiveResponses.isNotEmpty() -> {
-                EvaluationFactory.pass(
-                    "Patient had a response to treatment with ${drug.display()} - " +
-                            "it is assumed this response was radiological"
-                )
+                EvaluationFactory.pass(labels.hasHadRadiologicalResponseFollowingDrugTreatmentPass(drug.display()))
             }
 
             otherResponses.contains(TreatmentResponse.MIXED) -> {
-                EvaluationFactory.undetermined(
-                    "Patient had a mixed response to treatment with ${drug.display()} - " +
-                            "it is undetermined if this response is considered a radiological response"
-                )
+                EvaluationFactory.undetermined(labels.hasHadRadiologicalResponseFollowingDrugTreatmentUndeterminedMixed(drug.display()))
             }
 
             otherResponses.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Patient had a ${otherResponses.joinToString(separator = " and a ") { it.display() }} response to ${drug.display()} treatment - " +
-                            "which is not considered a radiological response to ${drug.display()}"
+                    labels.hasHadRadiologicalResponseFollowingDrugTreatmentFailOtherResponses(
+                        otherResponses.joinToString(separator = " and a ") { it.display() },
+                        drug.display()
+                    )
                 )
             }
 
             else -> {
-                EvaluationFactory.undetermined("Undetermined if patient had radiological response to ${drug.display()} treatment")
+                EvaluationFactory.undetermined(labels.hasHadRadiologicalResponseFollowingDrugTreatmentUndeterminedDefault(drug.display()))
             }
         }
     }

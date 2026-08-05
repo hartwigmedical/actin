@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format.concat
@@ -13,16 +14,17 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.GeneConstants
 
-class GeneIsInactivated(override val gene: String, private val onlyDeletions: Boolean) :
+class GeneIsInactivated(override val gene: String, private val onlyDeletions: Boolean, labels: EvaluationLabels.Molecular) :
     MolecularEvaluationFunction(
         targetCoveragePredicate = if (onlyDeletions) {
             specific(
                 MolecularTestTarget.DELETION,
-                messagePrefix = "Deletion of"
+                messagePrefix = labels.geneIsInactivatedMessagePrefixDeletion()
             )
         } else {
-            or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION, messagePrefix = "Inactivation of")
-        }
+            or(MolecularTestTarget.MUTATION, MolecularTestTarget.DELETION, messagePrefix = labels.geneIsInactivatedMessagePrefixInactivation())
+        },
+        labels = labels
     ) {
 
     override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
@@ -143,7 +145,7 @@ class GeneIsInactivated(override val gene: String, private val onlyDeletions: Bo
         if (inactivationEvents.isNotEmpty() || (ihcLossEvents.isNotEmpty() && !onlyDeletions)) {
             val inclusionEvents = inactivationEvents + ihcLossEvents
             return EvaluationFactory.pass(
-                "$gene $messageSubject (${concat(inclusionEvents)})",
+                labels.geneIsInactivatedPass(gene, messageSubject, concat(inclusionEvents)),
                 inclusionEvents = inclusionEvents
             )
         }
@@ -165,7 +167,7 @@ class GeneIsInactivated(override val gene: String, private val onlyDeletions: Bo
             messageSubject
         )
 
-        return potentialWarnEvaluation ?: EvaluationFactory.fail("No $gene $messageSubject")
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(labels.geneIsInactivatedFail(gene, messageSubject))
     }
 
     private fun evaluatePotentialWarns(
@@ -189,61 +191,64 @@ class GeneIsInactivated(override val gene: String, private val onlyDeletions: Bo
             listOfNotNull(
                 EventsWithMessages(
                     ihcLossEvents,
-                    "${concat(ihcLossEvents)} may indicate $gene gene $messageSubject"
+                    labels.geneIsInactivatedWarnIhcLoss(concat(ihcLossEvents), gene, messageSubject)
                 ),
                 EventsWithMessages(
                     ihcEventsThatAreIndeterminate,
-                    "${concat(ihcEventsThatAreIndeterminate)} may indicate $messageSubject but unclear how to interpret IHC result"
+                    labels.geneIsInactivatedWarnIhcIndeterminate(concat(ihcEventsThatAreIndeterminate), messageSubject)
                 ),
                 EventsWithMessages(
                     inactivationEventsThatAreUnreportable,
-                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsThatAreUnreportable)} for $gene but event(s) not reportable"
+                    labels.geneIsInactivatedWarnUnreportable(messageSubjectCapitalized, concat(inactivationEventsThatAreUnreportable), gene)
                 ),
                 EventsWithMessages(
                     inactivationEventsNoTSG,
-                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsNoTSG)} for $gene"
-                            + " however gene is oncogene in $evidenceSource"
+                    labels.geneIsInactivatedWarnNoTsg(messageSubjectCapitalized, concat(inactivationEventsNoTSG), gene, evidenceSource)
                 ),
                 EventsWithMessages(
                     inactivationEventsGainOfFunction,
-                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsGainOfFunction)} for $gene"
-                            + " however event(s) annotated with gain-of-function protein impact in $evidenceSource"
+                    labels.geneIsInactivatedWarnGainOfFunction(
+                        messageSubjectCapitalized, concat(inactivationEventsGainOfFunction), gene, evidenceSource
+                    )
                 ),
                 EventsWithMessages(
                     inactivationEventsNoEffect,
-                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsNoEffect)} for $gene"
-                            + " however event(s) annotated with no protein effect in $evidenceSource"
+                    labels.geneIsInactivatedWarnNoEffect(messageSubjectCapitalized, concat(inactivationEventsNoEffect), gene, evidenceSource)
                 ),
                 if (inactivationHighDriverNonBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
                     EventsWithMessages(
                         inactivationHighDriverNonBiallelicVariants,
-                        "$messageSubjectCapitalized event(s) ${concat(inactivationHighDriverNonBiallelicVariants)} for $gene but event(s) are not biallelic"
+                        labels.geneIsInactivatedWarnNonBiallelic(messageSubjectCapitalized, concat(inactivationHighDriverNonBiallelicVariants), gene)
                     )
                 } else null,
                 if (inactivationHighDriverUnknownBiallelicVariants.isNotEmpty() && eventsThatMayBeTransPhased.size <= 1) {
                     EventsWithMessages(
                         inactivationHighDriverUnknownBiallelicVariants,
-                        "$messageSubjectCapitalized event(s) ${concat(inactivationHighDriverUnknownBiallelicVariants)} for $gene but unknown if event(s) are biallelic"
+                        labels.geneIsInactivatedWarnUnknownBiallelic(
+                            messageSubjectCapitalized, concat(inactivationHighDriverUnknownBiallelicVariants), gene
+                        )
                     )
                 } else null,
                 EventsWithMessages(
                     inactivationEventsOnNonCanonicalTranscript,
-                    "$messageSubjectCapitalized event(s) ${concat(inactivationEventsOnNonCanonicalTranscript)} for $gene but only on non-canonical transcript"
+                    labels.geneIsInactivatedWarnNonCanonical(
+                        messageSubjectCapitalized, concat(inactivationEventsOnNonCanonicalTranscript), gene
+                    )
                 ),
                 EventsWithMessages(
                     reportableNonDriverBiallelicVariantsOther,
-                    "Potential $messageSubject event(s) ${concat(reportableNonDriverBiallelicVariantsOther)} for $gene"
-                            + " but event(s) are not of high driver likelihood"
+                    labels.geneIsInactivatedWarnPotentialNonHighDriver(messageSubject, concat(reportableNonDriverBiallelicVariantsOther), gene)
                 ),
                 EventsWithMessages(
                     reportableNonDriverNonBiallelicVariantsOther,
-                    "Potential $messageSubject event(s) ${concat(reportableNonDriverNonBiallelicVariantsOther)} for $gene"
-                            + " but event(s) are not biallelic and not of high driver likelihood"
+                    labels.geneIsInactivatedWarnPotentialNonBiallelicNonHighDriver(
+                        messageSubject, concat(reportableNonDriverNonBiallelicVariantsOther), gene
+                    )
                 ),
                 if (eventsThatMayBeTransPhased.size > 1) {
                     EventsWithMessages(
                         eventsThatMayBeTransPhased.toSet(),
-                        "Multiple events for $gene (${concat(eventsThatMayBeTransPhased)}) that potentially together cause $messageSubject of the gene"
+                        labels.geneIsInactivatedWarnTransPhased(gene, concat(eventsThatMayBeTransPhased), messageSubject)
                     )
                 } else null
             )

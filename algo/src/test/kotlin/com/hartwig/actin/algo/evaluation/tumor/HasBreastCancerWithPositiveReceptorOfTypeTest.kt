@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.datamodel.clinical.ReceptorType.ER
@@ -14,9 +16,11 @@ import org.junit.jupiter.api.Test
 const val TARGET_RECEPTOR = "PR"
 
 class HasBreastCancerWithPositiveReceptorOfTypeTest {
-    
+
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val function = HasBreastCancerWithPositiveReceptorOfType(doidModel, ReceptorType.valueOf(TARGET_RECEPTOR))
+    val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    val tumorLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    val function = HasBreastCancerWithPositiveReceptorOfType(doidModel, ReceptorType.valueOf(TARGET_RECEPTOR), labels, tumorLabels)
 
     @Test
     fun `Should evaluate to undetermined when no tumor doids configured`() {
@@ -55,7 +59,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should evaluate to undetermined if no data is present for target receptor HER2 but ERBB2 amplification found`() {
-        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
             TumorTestFactory.withDoidsAndAmplificationAndMolecularTest(
                 setOf(DoidConstants.BREAST_CANCER_DOID), "ERBB2", listOf(IhcTestFactory.create("wrong test", "positive"))
             )
@@ -146,7 +150,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             )
         )
         assertEvaluation(
-            EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
                     listOf(IhcTestFactory.create(item = "HER2", score = 3.0, scoreValueUnit = "+")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
@@ -158,7 +162,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     @Test
     fun `Should fail if HER2 1+ based on IHC`() {
         assertEvaluation(
-            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
                     listOf(IhcTestFactory.create(item = "HER2", score = 1.0, scoreValueUnit = "+")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
@@ -170,7 +174,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     @Test
     fun `Should fail if HER2 low based on IHC`() {
         assertEvaluation(
-            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
                     listOf(IhcTestFactory.create(item = "HER2", scoreText = "low")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
@@ -182,7 +186,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     @Test
     fun `Should warn if HER2 negative based on doids but ERBB2 amp present`() {
         assertEvaluation(
-            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withDoidsAndAmplification(
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID), "ERBB2"
                 )
@@ -193,7 +197,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     @Test
     fun `Should warn if HER2 negative based on IHC but ERBB2 amp present`() {
         assertEvaluation(
-            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withDoidsAndAmplificationAndMolecularTest(
                     setOf(DoidConstants.BREAST_CANCER_DOID), "ERBB2", listOf(
                         IhcTestFactory.create("HER2", "Negative")
@@ -206,7 +210,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     @Test
     fun `Should warn if target receptor is HER2 and unclear (not positive or negative) based on IHC and doids but ERBB2 amp present`() {
         assertEvaluation(
-            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.WARN, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withDoidsAndAmplificationAndMolecularTest(
                     setOf(DoidConstants.BREAST_CANCER_DOID),
                     "ERBB2",
@@ -218,7 +222,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should evaluate to undetermined with specific message if target receptor is HER2 and IHC-score is 2+`() {
-        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
                 listOf(IhcTestFactory.create("HER2", score = 2.0, scoreValueUnit = "+")),
                 setOf(DoidConstants.BREAST_CANCER_DOID)
@@ -251,7 +255,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
     @Test
     fun `Should fail if target molecular test present but no clear determination possible on present data`() {
         assertEvaluation(
-            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
                     listOf(IhcTestFactory.create("HER2", "Unclear")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
@@ -278,9 +282,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             emptyList(),
             setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(record))
-        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, ER).evaluate(record))
-        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, PR).evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, ER, labels, tumorLabels).evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, PR, labels, tumorLabels).evaluate(record))
     }
 
     @Test
@@ -353,7 +357,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
 
     @Test
     fun `Should evaluate to borderline if HER2 has differing bounds within borderline range`() {
-        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+        val evaluation = HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
                 listOf(IhcTestFactory.create("HER2", scoreLowerBound = 1.0, scoreUpperBound = 2.0, scoreValueUnit = "+")),
                 setOf(DoidConstants.BREAST_CANCER_DOID)
@@ -381,7 +385,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             )
         )
         assertEvaluation(
-            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
+            EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2, labels, tumorLabels).evaluate(
                 TumorTestFactory.withIhcTestsAndDoids(
                     listOf(
                         IhcTestFactory.create("HER2", score = 1.0, scoreValueUnit = "+"),

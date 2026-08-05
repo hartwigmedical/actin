@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
@@ -24,8 +26,11 @@ private val MIN_DATE = LocalDate.of(2022, 4, 1)
 class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val function =
-        HasHadTreatmentWithCategoryButNotOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, DRUG_TYPE_TO_IGNORE_SET, MIN_DATE, interpreter)
+        HasHadTreatmentWithCategoryButNotOfTypesRecently(
+            TreatmentCategory.TARGETED_THERAPY, DRUG_TYPE_TO_IGNORE_SET, MIN_DATE, interpreter, labels
+        )
 
     @Test
     fun `Should fail for no treatments`() {
@@ -75,7 +80,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val function =
             HasHadTreatmentWithCategoryButNotOfTypesRecently(
                 TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC),
-                MIN_DATE, interpreter
+                MIN_DATE, interpreter, labels
             )
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(treatment("test", true)), isTrial = true, startYear = MIN_DATE.year + 1

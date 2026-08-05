@@ -3,12 +3,14 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel) : EvaluationFunction {
+class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel, private val labels: EvaluationLabels.Tumor) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isMajorAirwayCancer = isOfAtLeastOneDoidType(doidModel, record.tumor.doids, MAJOR_AIRWAYS_CANCER_DOIDS)
@@ -20,23 +22,23 @@ class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel) : Eva
 
             return when {
                 isMajorAirwayCancer -> {
-                    EvaluationFactory.pass("Has lesions close to or involving airway")
+                    EvaluationFactory.pass(labels.hasLesionsCloseToOrInvolvingAirwayPass())
                 }
 
                 isLungCancer || hasLungLesions == true || hasSuspectedLungLesions == true -> {
                     val message = if (hasLungLesions != true && hasSuspectedLungLesions == true) {
-                        "Suspected lung"
-                    } else "Lung"
+                        labels.hasLesionsCloseToOrInvolvingAirwaySubjectSuspectedLung()
+                    } else labels.hasLesionsCloseToOrInvolvingAirwaySubjectLung()
 
-                    EvaluationFactory.warn("$message lesions which may be close to or involving airway")
+                    EvaluationFactory.warn(labels.hasLesionsCloseToOrInvolvingAirwayWarn(message))
                 }
 
                 noLesionsCloseToAirway -> {
-                    EvaluationFactory.fail("No lesions close to or involving airway")
+                    EvaluationFactory.fail(labels.hasLesionsCloseToOrInvolvingAirwayFail())
                 }
 
                 else -> {
-                    EvaluationFactory.undetermined("Lesions close to or involving airway undetermined")
+                    EvaluationFactory.undetermined(labels.hasLesionsCloseToOrInvolvingAirwayUndetermined())
                 }
             }
         }

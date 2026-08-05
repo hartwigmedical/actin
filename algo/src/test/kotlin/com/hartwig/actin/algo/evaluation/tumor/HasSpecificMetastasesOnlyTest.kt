@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import org.assertj.core.api.Assertions.assertThat
@@ -8,12 +10,16 @@ import org.junit.jupiter.api.Test
 
 class HasSpecificMetastasesOnlyTest {
 
-    private val hasLiverMetastasesOnly =
-        HasSpecificMetastasesOnly(listOf(TumorDetails::hasLiverLesions), listOf(TumorDetails::hasSuspectedLiverLesions), "liver")
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+
+    private val hasLiverMetastasesOnly = HasSpecificMetastasesOnly(
+        listOf(TumorDetails::hasLiverLesions), listOf(TumorDetails::hasSuspectedLiverLesions), "liver", labels
+    )
     private val hasLiverAndOrLymphNodeAndOrLungMetastasesOnly = HasSpecificMetastasesOnly(
         listOf(TumorDetails::hasLiverLesions, TumorDetails::hasLymphNodeLesions, TumorDetails::hasLungLesions),
         listOf(TumorDetails::hasSuspectedLiverLesions, TumorDetails::hasSuspectedLymphNodeLesions, TumorDetails::hasSuspectedLungLesions),
-        "liver and/or lymph node and/or lung"
+        "liver and/or lymph node and/or lung",
+        labels
     )
 
     @Test

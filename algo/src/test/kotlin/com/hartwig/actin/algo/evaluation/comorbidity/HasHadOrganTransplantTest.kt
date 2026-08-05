@@ -1,16 +1,19 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withOtherConditions
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.jupiter.api.Test
 
 class HasHadOrganTransplantTest {
-    private val function = HasHadOrganTransplant(TestIcdFactory.createTestModel(), null)
-    private val functionWithMinYear = HasHadOrganTransplant(TestIcdFactory.createTestModel(), 2021)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    private val function = HasHadOrganTransplant(TestIcdFactory.createTestModel(), null, labels)
+    private val functionWithMinYear = HasHadOrganTransplant(TestIcdFactory.createTestModel(), 2021, labels)
 
     @Test
     fun `Should fail with no prior conditions`() {

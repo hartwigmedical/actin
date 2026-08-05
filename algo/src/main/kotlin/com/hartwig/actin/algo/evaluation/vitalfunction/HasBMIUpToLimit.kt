@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.EXPECTED_UNITS
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,15 +11,17 @@ import java.time.LocalDate
 import kotlin.math.roundToInt
 import kotlin.math.sqrt
 
-class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: LocalDate) : EvaluationFunction {
+class HasBMIUpToLimit(
+    private val maximumBMI: Int, private val minimumDate: LocalDate, private val labels: EvaluationLabels.VitalFunction
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val allBodyWeights = record.bodyWeights
         val relevant = BodyWeightFunctions.selectMedianBodyWeightPerDay(record, minimumDate) ?: return EvaluationFactory.recoverableUndetermined(
             if (allBodyWeights.isNotEmpty() && allBodyWeights.none { weight -> EXPECTED_UNITS.any { it.equals(weight.unit, ignoreCase = true) } }) {
-                "Body weights not measured in ${EXPECTED_UNITS.first()}"
+                labels.hasBmiUpToLimitUndeterminedWrongUnit(EXPECTED_UNITS.first())
             } else {
-                "No (recent) body weights found"
+                labels.hasBmiUpToLimitUndeterminedNoData()
             }
         )
         val median = BodyWeightFunctions.determineMedianBodyWeight(relevant)
@@ -28,39 +31,39 @@ class HasBMIUpToLimit(private val maximumBMI: Int, private val minimumDate: Loca
 
         return when {
             bodyMassIndex != null && (bodyMassIndex <= maximumBMI) -> {
-                EvaluationFactory.recoverablePass("BMI (${bodyMassIndex.roundToInt()}) under limit of $maximumBMI")
+                EvaluationFactory.recoverablePass(labels.hasBmiUpToLimitRecoverablePass(bodyMassIndex.roundToInt(), maximumBMI))
             }
 
             bodyMassIndex != null && (bodyMassIndex > maximumBMI) -> {
-                EvaluationFactory.recoverableFail("BMI (${bodyMassIndex.roundToInt()}) above limit of $maximumBMI")
+                EvaluationFactory.recoverableFail(labels.hasBmiUpToLimitRecoverableFail(bodyMassIndex.roundToInt(), maximumBMI))
             }
 
             minimumRequiredHeight <= MIN_EXPECTED_HEIGHT_METRES -> {
                 EvaluationFactory.recoverablePass(
-                    String.format(
-                        ApplicationConfig.LOCALE,
-                        "Median weight %.1f kg will not exceed BMI limit of %d for height >= %.2f m", median, maximumBMI,
-                        minimumRequiredHeight
+                    labels.hasBmiUpToLimitPassHeightLowerBound(
+                        String.format(ApplicationConfig.LOCALE, "%.1f", median),
+                        maximumBMI,
+                        String.format(ApplicationConfig.LOCALE, "%.2f", minimumRequiredHeight)
                     )
                 )
             }
 
             minimumRequiredHeight > MAX_EXPECTED_HEIGHT_METRES -> {
                 EvaluationFactory.recoverableFail(
-                    String.format(
-                        ApplicationConfig.LOCALE,
-                        "Median weight %.1f kg will exceed BMI limit of %d for height < %.2f m", median, maximumBMI,
-                        minimumRequiredHeight
+                    labels.hasBmiUpToLimitExceedsLimitForHeight(
+                        String.format(ApplicationConfig.LOCALE, "%.1f", median),
+                        maximumBMI,
+                        String.format(ApplicationConfig.LOCALE, "%.2f", minimumRequiredHeight)
                     )
                 )
             }
 
             else -> {
                 EvaluationFactory.warn(
-                    String.format(
-                        ApplicationConfig.LOCALE,
-                        "Median weight %.1f kg will exceed BMI limit of %d for height < %.2f m", median, maximumBMI,
-                        minimumRequiredHeight
+                    labels.hasBmiUpToLimitExceedsLimitForHeight(
+                        String.format(ApplicationConfig.LOCALE, "%.1f", median),
+                        maximumBMI,
+                        String.format(ApplicationConfig.LOCALE, "%.2f", minimumRequiredHeight)
                     )
                 )
             }

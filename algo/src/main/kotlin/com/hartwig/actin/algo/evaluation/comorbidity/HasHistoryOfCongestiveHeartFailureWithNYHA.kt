@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -9,7 +10,11 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
 
-class HasHistoryOfCongestiveHeartFailureWithNYHA(private val minimalClass: NyhaClass, private val icdModel: IcdModel) : EvaluationFunction {
+class HasHistoryOfCongestiveHeartFailureWithNYHA(
+    private val minimalClass: NyhaClass,
+    private val icdModel: IcdModel,
+    private val labels: EvaluationLabels.Comorbidity
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
@@ -26,17 +31,15 @@ class HasHistoryOfCongestiveHeartFailureWithNYHA(private val minimalClass: NyhaC
 
         return when {
             matches.fullMatches.isNotEmpty() -> {
-                EvaluationFactory.pass("Has history of congestive heart failure with at least NYHA class ${minimalClass.name}")
+                EvaluationFactory.pass(labels.hasHistoryOfCongestiveHeartFailureWithNyhaPass(minimalClass.name))
             }
 
             matches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
-                EvaluationFactory.undetermined(
-                    "Has history of congestive heart failure but undetermined if at least NYHA class ${minimalClass.name} (NYHA unknown)"
-                )
+                EvaluationFactory.undetermined(labels.hasHistoryOfCongestiveHeartFailureWithNyhaUndetermined(minimalClass.name))
             }
 
             else -> {
-                EvaluationFactory.fail("No history of congestive heart failure with at least NYHA class ${minimalClass.name}")
+                EvaluationFactory.fail(labels.hasHistoryOfCongestiveHeartFailureWithNyhaFail(minimalClass.name))
             }
         }
     }

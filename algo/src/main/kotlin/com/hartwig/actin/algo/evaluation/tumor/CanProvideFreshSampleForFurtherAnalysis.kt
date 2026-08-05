@@ -2,18 +2,19 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularHistory
 
-class CanProvideFreshSampleForFurtherAnalysis : EvaluationFunction {
+class CanProvideFreshSampleForFurtherAnalysis(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val molecularRecord = MolecularHistory(record.molecularTests).latestOrangeMolecularRecord()
         return if (molecularRecord?.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-            EvaluationFactory.recoverableUndetermined("Undetermined if fresh sample for FFPE analysis can be provided")
+            EvaluationFactory.recoverableUndetermined(labels.canProvideFreshSampleForFurtherAnalysisRecoverableUndetermined())
         } else
-            EvaluationFactory.pass("WGS results present so assumed that fresh sample for FFPE analysis can be provided")
+            EvaluationFactory.pass(labels.canProvideFreshSampleForFurtherAnalysisPass())
     }
 }

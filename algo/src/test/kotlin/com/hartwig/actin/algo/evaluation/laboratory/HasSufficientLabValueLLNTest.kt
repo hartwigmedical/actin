@@ -1,5 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -10,7 +12,7 @@ import org.junit.jupiter.api.Test
 
 class HasSufficientLabValueLLNTest {
 
-    private val function = HasSufficientLabValueLLN(2.0)
+    private val function = HasSufficientLabValueLLN(2.0, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory)
     private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test

@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -11,8 +12,9 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 
 class AnyGeneFromSetIsOverexpressed(
     private val genes: Set<String>,
-    private val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { gene -> GeneIsAmplified(gene, null) }
-) : MolecularEvaluationFunction() {
+    labels: EvaluationLabels.Molecular,
+    private val geneIsAmplifiedCreator: (String) -> GeneIsAmplified = { gene -> GeneIsAmplified(gene, null, labels) }
+) : MolecularEvaluationFunction(labels = labels) {
 
     private val genesToAmplification: Map<String, GeneIsAmplified> = genes.associateWith { geneIsAmplifiedCreator(it) }
 
@@ -23,7 +25,7 @@ class AnyGeneFromSetIsOverexpressed(
 
         return if (amplifiedGenesWithEvents.isNotEmpty()) {
             EvaluationFactory.warn(
-                "(Possible) amplification of ${concat(amplifiedGenesWithEvents.keys)} detected and therefore possible overexpression in RNA",
+                labels.anyGeneFromSetIsOverexpressedWarn(concat(amplifiedGenesWithEvents.keys)),
                 isMissingMolecularResultForEvaluation = true,
                 inclusionEvents = amplifiedGenesWithEvents.flatMap { (gene, events) ->
                     events.map { MolecularEvent(it.event, "Potential $gene overexpression") }
@@ -31,14 +33,14 @@ class AnyGeneFromSetIsOverexpressed(
             )
         } else {
             val (genesTestedForAmplificationInDna, genesNotTestedForAmplificationInDna) =
-                genes.partition { test.testsGene(it, specific(MolecularTestTarget.AMPLIFICATION, "Amplification of")) }
+                genes.partition { test.testsGene(it, specific(MolecularTestTarget.AMPLIFICATION, labels.geneIsAmplifiedMessagePrefix())) }
             val dnaClarification = when {
                 genesTestedForAmplificationInDna.isEmpty() -> ""
                 genesNotTestedForAmplificationInDna.isEmpty() -> " (but no amplifications found in DNA)"
                 else -> " (no amplification in DNA for ${concat(genesTestedForAmplificationInDna)})"
             }
             EvaluationFactory.undetermined(
-                "Overexpression of ${concat(genes)} in RNA undetermined$dnaClarification",
+                labels.anyGeneFromSetIsOverexpressedUndetermined(concat(genes), dnaClarification),
                 isMissingMolecularResultForEvaluation = true
             )
         }

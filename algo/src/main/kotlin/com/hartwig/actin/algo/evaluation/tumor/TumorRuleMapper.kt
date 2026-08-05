@@ -82,7 +82,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SOFT_TISSUE_METASTASES to hasSoftTissueMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
-            EligibilityRule.HAS_LESIONS_INFILTRATING_BLOOD_VESSEL to { HasLesionsInfiltratingBloodVessel() },
+            EligibilityRule.HAS_LESIONS_INFILTRATING_BLOOD_VESSEL to { HasLesionsInfiltratingBloodVessel(evaluationLabels.tumor) },
             EligibilityRule.HAS_LESION_COUNT_OF_AT_LEAST_X_IN_BODY_LOCATION_Y to hasMinimumLesionsInSpecificBodyLocationCreator(),
             EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
             EligibilityRule.HAS_EXTENSIVE_ABDOMINAL_TUMOR_SPREAD to hasExtensiveAbdominalTumorSpreadCreator(),
@@ -91,7 +91,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_HIFU_AMENABLE_LESION to hasHifuAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.HAS_RISK_OF_AT_LEAST_X_PERCENTAGE_FOR_SENTINEL_NODE_POSITIVITY to hasMinimumRiskForSentinelNodePositivityCreator(),
-            EligibilityRule.HAS_OLIGOPROGRESSIVE_DISEASE to { HasOligoprogressiveDisease() },
+            EligibilityRule.HAS_OLIGOPROGRESSIVE_DISEASE to { HasOligoprogressiveDisease(evaluationLabels.tumor) },
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
             EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY to meetsSpecificBiopsyRequirementsCreator(),
@@ -120,144 +120,166 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasSolidPrimaryTumorCreator(): FunctionCreator {
-        return { HasSolidPrimaryTumor(doidModel()) }
+        return { HasSolidPrimaryTumor(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(): FunctionCreator {
-        return { HasSolidPrimaryTumorIncludingLymphoma(doidModel()) }
+        return { HasSolidPrimaryTumorIncludingLymphoma(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasPrimaryTumorBelongsToDoidTermsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidInputToMatch = function.param<ManyDoidTermsParameter>(0).value
-            val doidsToMatch = doidInputToMatch.map { doidModel().toDoid(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidsToMatch, null)
+            val doidsToMatch = doidInputToMatch.map { doidModel.toDoid(it) }.toSet()
+            PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, doidsToMatch, null, evaluationLabels.tumor)
         }
     }
 
     private fun hasPrimaryTumorBelongsToDoidTermsWithSubLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidInputToMatch = function.param<ManyDoidTermsParameter>(0).value
-            val doidsToMatch = doidInputToMatch.map { doidModel().toDoid(it) }.toSet()
+            val doidsToMatch = doidInputToMatch.map { doidModel.toDoid(it) }.toSet()
             val subLocation = function.param<StringParameter>(1).value
-            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidsToMatch, subLocation)
+            PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, doidsToMatch, subLocation, evaluationLabels.tumor)
         }
     }
 
     private fun hasCancerOfUnknownPrimaryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val tumorType = function.param<TumorTypeParameter>(0).value
-            HasCancerOfUnknownPrimary(doidModel(), TumorTypeInput.fromString(tumorType))
+            HasCancerOfUnknownPrimary(doidModel, TumorTypeInput.fromString(tumorType), evaluationLabels.tumor)
         }
     }
 
     private fun hasBreastCancerWithPositiveReceptorOfTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val receptorType = function.param<ReceptorTypeParameter>(0).value
-            HasBreastCancerWithPositiveReceptorOfType(doidModel(), receptorType)
+            HasBreastCancerWithPositiveReceptorOfType(doidModel, receptorType, evaluationLabels.molecular, evaluationLabels.tumor)
         }
     }
 
     private fun hasCancerWithNeuroendocrineComponentCreator(): FunctionCreator {
-        return { HasCancerWithNeuroendocrineComponent(doidModel()) }
+        return { HasCancerWithNeuroendocrineComponent(doidModel, evaluationLabels.molecular, evaluationLabels.tumor) }
     }
 
     private fun hasCancerWithSmallCellComponentCreator(): FunctionCreator {
-        return { HasCancerWithSmallCellComponent(doidModel()) }
+        return { HasCancerWithSmallCellComponent(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasCancerWithLargeCellComponentCreator(): FunctionCreator {
-        return { HasCancerWithLargeCellComponent(doidModel()) }
+        return { HasCancerWithLargeCellComponent(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasLowGradeCancerCreator(): FunctionCreator {
-        return { HasLowGradeCancer() }
+        return { HasLowGradeCancer(evaluationLabels.tumor) }
     }
 
     private fun hasHighGradeCancerCreator(): FunctionCreator {
-        return { Not(HasLowGradeCancer()) }
+        return { Not(HasLowGradeCancer(evaluationLabels.tumor)) }
     }
 
     private fun hasWellDifferentiatedTumorCreator(): FunctionCreator {
-        return { HasWellDifferentiatedTumor() }
+        return { HasWellDifferentiatedTumor(evaluationLabels.tumor) }
     }
 
     private fun hasKnownSclcTransformationCreator(): FunctionCreator {
-        return { HasKnownSclcTransformation(doidModel()) }
+        return { HasKnownSclcTransformation(doidModel, evaluationLabels.molecular, evaluationLabels.tumor) }
     }
 
     private fun hasNonSquamousNsclcCreator(): FunctionCreator {
-        return { HasNonSquamousNsclc(doidModel()) }
+        return { HasNonSquamousNsclc(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasTripleNegativeBreastCancerCreator(): FunctionCreator {
-        return { HasTripleNegativeBreastCancer(doidModel()) }
+        return { HasTripleNegativeBreastCancer(doidModel, evaluationLabels.molecular, evaluationLabels.tumor) }
     }
 
     private fun hasOvarianCancerWithMucinousComponentCreator(): FunctionCreator {
-        return { HasOvarianCancerWithMucinousComponent(doidModel()) }
+        return { HasOvarianCancerWithMucinousComponent(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasOvarianBorderlineTumorCreator(): FunctionCreator {
-        return { HasOvarianBorderlineTumor(doidModel()) }
+        return { HasOvarianBorderlineTumor(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasSecondaryGlioblastomaCreator(): FunctionCreator {
-        return { HasSecondaryGlioblastoma(doidModel()) }
+        return { HasSecondaryGlioblastoma(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasNonMuscleInvasiveBladderCancerCreator(): FunctionCreator {
-        return { HasNonMuscleInvasiveBladderCancer(doidModel()) }
+        return { HasNonMuscleInvasiveBladderCancer(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasCytologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return { HasDocumentationOfTumorType("Cytological") }
+        return { HasDocumentationOfTumorType(evaluationLabels.tumor.descriptionCytological(), evaluationLabels.tumor) }
     }
 
     private fun hasHistologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return { HasDocumentationOfTumorType("Histological") }
+        return { HasDocumentationOfTumorType(evaluationLabels.tumor.descriptionHistological(), evaluationLabels.tumor) }
     }
 
     private fun hasPathologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
-        return { HasDocumentationOfTumorType("Pathological") }
+        return { HasDocumentationOfTumorType(evaluationLabels.tumor.descriptionPathological(), evaluationLabels.tumor) }
     }
 
     private fun hasAnyTumorStageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val stagesToMatch = function.param<ManyTumorStagesParameter>(0).value
-            DerivedTumorStageEvaluationFunction(HasTumorStage(stagesToMatch), "tumor stage(s) ${Format.concatItemsWithOr(stagesToMatch)}")
+            DerivedTumorStageEvaluationFunction(
+                HasTumorStage(stagesToMatch, evaluationLabels.tumor),
+                evaluationLabels.tumor.descriptionTumorStages(Format.concatItemsWithOr(stagesToMatch)),
+                evaluationLabels.tumor
+            )
         }
     }
 
     private fun hasSpecificTnmTScoreCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val scores = function.param<ManyTnmTParameter>(0).value
-            HasTnmTScore(scores)
+            HasTnmTScore(scores, evaluationLabels.tumor)
         }
     }
 
     private fun hasLocallyAdvancedCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer(), "locally advanced cancer") }
+        return {
+            DerivedTumorStageEvaluationFunction(
+                HasLocallyAdvancedCancer(evaluationLabels.tumor), evaluationLabels.tumor.descriptionLocallyAdvancedCancer(), evaluationLabels.tumor
+            )
+        }
     }
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()), "metastatic cancer") }
+        return {
+            DerivedTumorStageEvaluationFunction(
+                HasMetastaticCancer(doidModel, evaluationLabels.tumor), evaluationLabels.tumor.descriptionMetastaticCancer(), evaluationLabels.tumor
+            )
+        }
     }
 
     private fun hasOligometastaticCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasOligometastaticCancer(doidModel()), "oligometastatic cancer") }
+        return {
+            DerivedTumorStageEvaluationFunction(
+                HasOligometastaticCancer(doidModel, evaluationLabels.tumor),
+                evaluationLabels.tumor.descriptionOligometastaticCancer(),
+                evaluationLabels.tumor
+            )
+        }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer(), "unresectable cancer") }
+        return {
+            DerivedTumorStageEvaluationFunction(
+                HasUnresectableCancer(evaluationLabels.tumor), evaluationLabels.tumor.descriptionUnresectableCancer(), evaluationLabels.tumor
+            )
+        }
     }
 
     private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
-        return { HasUnresectablePeritonealMetastases() }
+        return { HasUnresectablePeritonealMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasLesionsCloseToOrInvolvingAirwayCreator(): FunctionCreator {
-        return { HasLesionsCloseToOrInvolvingAirway(doidModel()) }
+        return { HasLesionsCloseToOrInvolvingAirway(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasMinimumLesionsInSpecificBodyLocationCreator(): FunctionCreator {
@@ -265,40 +287,54 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.BODY_LOCATION)
             val minLesions = function.param<IntegerParameter>(0).value
             val bodyLocation = function.param<BodyLocationParameter>(1).value
-            HasMinimumLesionsInSpecificBodyLocation(minLesions, bodyLocation)
+            HasMinimumLesionsInSpecificBodyLocation(minLesions, bodyLocation, evaluationLabels.tumor)
         }
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer(), "unresectable stage III cancer") }
+        return {
+            DerivedTumorStageEvaluationFunction(
+                HasUnresectableStageIIICancer(evaluationLabels.tumor),
+                evaluationLabels.tumor.descriptionUnresectableStageIiiCancer(),
+                evaluationLabels.tumor
+            )
+        }
     }
 
     private fun hasRecurrentCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer(), "recurrent cancer") }
+        return {
+            DerivedTumorStageEvaluationFunction(
+                HasRecurrentCancer(evaluationLabels.tumor), evaluationLabels.tumor.descriptionRecurrentCancer(), evaluationLabels.tumor
+            )
+        }
     }
 
     private fun meetsSpecificCriteriaRegardingRecurrentCancerCreator(): FunctionCreator {
-        return { MeetsSpecificCriteriaRegardingRecurrentCancer() }
+        return { MeetsSpecificCriteriaRegardingRecurrentCancer(evaluationLabels.tumor) }
     }
 
     private fun hasIncurableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer(), "incurable cancer") }
+        return {
+            DerivedTumorStageEvaluationFunction(
+                HasIncurableCancer(evaluationLabels.tumor), evaluationLabels.tumor.descriptionIncurableCancer(), evaluationLabels.tumor
+            )
+        }
     }
 
     private fun hasPrimaryTumorAtUnfavourableSiteCreator(): FunctionCreator {
-        return { HasPrimaryTumorAtUnfavourableSite() }
+        return { HasPrimaryTumorAtUnfavourableSite(evaluationLabels.tumor) }
     }
 
     private fun hasAnyLesionCreator(): FunctionCreator {
-        return { HasAnyLesion() }
+        return { HasAnyLesion(evaluationLabels.tumor) }
     }
 
     private fun meetsSpecificCriteriaRegardingMetastasesCreator(): FunctionCreator {
-        return { MeetsSpecificCriteriaRegardingMetastases(HasMetastaticCancer(doidModel())) }
+        return { MeetsSpecificCriteriaRegardingMetastases(HasMetastaticCancer(doidModel, evaluationLabels.tumor), evaluationLabels.tumor) }
     }
 
     private fun hasLiverMetastasesCreator(): FunctionCreator {
-        return { HasLiverMetastases() }
+        return { HasLiverMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
@@ -306,13 +342,14 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             HasSpecificMetastasesOnly(
                 listOf(TumorDetails::hasLiverLesions),
                 listOf(TumorDetails::hasSuspectedLiverLesions),
-                "liver"
+                evaluationLabels.tumor.descriptionLiver(),
+                evaluationLabels.tumor
             )
         }
     }
 
     private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
-        return { MeetsSpecificCriteriaRegardingLiverMetastases() }
+        return { MeetsSpecificCriteriaRegardingLiverMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasOnlyLiverAndOrLymphNodeAndOrLungMetastasesCreator(): FunctionCreator {
@@ -328,45 +365,46 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
                     TumorDetails::hasSuspectedLymphNodeLesions,
                     TumorDetails::hasSuspectedLungLesions
                 ),
-                "liver and/or lymph node and/or lung"
+                evaluationLabels.tumor.descriptionLiverAndOrLymphNodeAndOrLung(),
+                evaluationLabels.tumor
             )
         }
     }
 
     private fun hasKnownCnsMetastasesCreator(): FunctionCreator {
-        return { HasKnownCnsMetastases() }
+        return { HasKnownCnsMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasKnownActiveCnsMetastasesCreator(): FunctionCreator {
-        return { HasKnownActiveCnsMetastases() }
+        return { HasKnownActiveCnsMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasKnownSymptomaticCnsMetastasesCreator(): FunctionCreator {
-        return { HasKnownSymptomaticCnsMetastases() }
+        return { HasKnownSymptomaticCnsMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasKnownBrainMetastasesCreator(): FunctionCreator {
-        return { HasKnownBrainMetastases() }
+        return { HasKnownBrainMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasKnownActiveBrainMetastasesCreator(): FunctionCreator {
-        return { HasKnownActiveBrainMetastases() }
+        return { HasKnownActiveBrainMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasKnownSymptomaticBrainMetastasesCreator(): FunctionCreator {
-        return { HasKnownSymptomaticBrainMetastases() }
+        return { HasKnownSymptomaticBrainMetastases(evaluationLabels.tumor) }
     }
 
     private fun meetsSpecificCriteriaRegardingBrainMetastasesCreator(): FunctionCreator {
-        return { MeetsSpecificCriteriaRegardingBrainMetastases() }
+        return { MeetsSpecificCriteriaRegardingBrainMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasExtracranialMetastasesCreator(): FunctionCreator {
-        return { HasExtracranialMetastases() }
+        return { HasExtracranialMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasBoneMetastasesCreator(): FunctionCreator {
-        return { HasBoneMetastases() }
+        return { HasBoneMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
@@ -374,172 +412,177 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             HasSpecificMetastasesOnly(
                 listOf(TumorDetails::hasBoneLesions),
                 listOf(TumorDetails::hasSuspectedBoneLesions),
-                "bone"
+                evaluationLabels.tumor.descriptionBone(),
+                evaluationLabels.tumor
             )
         }
     }
 
     private fun hasLungMetastasesCreator(): FunctionCreator {
-        return { HasLungMetastases() }
+        return { HasLungMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasLymphNodeMetastasesCreator(): FunctionCreator {
-        return { HasLymphNodeMetastases() }
+        return { HasLymphNodeMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasOnlyLungAndOrLungLymphNodeMetastasesCreator(): FunctionCreator {
-        return { HasOnlyLungAndOrLungLymphNodeMetastases() }
+        return { HasOnlyLungAndOrLungLymphNodeMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasVisceralMetastasesCreator(): FunctionCreator {
-        return { HasVisceralMetastases() }
+        return { HasVisceralMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasInTransitMetastasesCreator(): FunctionCreator {
-        return { HasInTransitMetastases() }
+        return { HasInTransitMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasSpleenMetastasesCreator(): FunctionCreator {
-        return { HasSpleenMetastases() }
+        return { HasSpleenMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasSoftTissueMetastasesCreator(): FunctionCreator {
-        return { HasSoftTissueMetastases() }
+        return { HasSoftTissueMetastases(evaluationLabels.tumor) }
     }
 
     private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {
-        return { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(HasMetastaticCancer(doidModel())) }
+        return {
+            HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(
+                HasMetastaticCancer(doidModel, evaluationLabels.tumor), evaluationLabels.tumor
+            )
+        }
     }
 
     private fun hasExtensiveAbdominalTumorSpreadCreator(): FunctionCreator {
-        return { HasExtensiveAbdominalTumorSpread(HasMetastaticCancer(doidModel())) }
+        return { HasExtensiveAbdominalTumorSpread(HasMetastaticCancer(doidModel, evaluationLabels.tumor), evaluationLabels.tumor) }
     }
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {
-        return { HasBiopsyAmenableLesion() }
+        return { HasBiopsyAmenableLesion(evaluationLabels.tumor) }
     }
 
     private fun hasIrradiationAmenableLesionCreator(): FunctionCreator {
-        return { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel())) }
+        return { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel, evaluationLabels.tumor), evaluationLabels.tumor) }
     }
 
     private fun hasHifuAmenableLesionCreator(): FunctionCreator {
-        return { HasHifuAmenableLesion() }
+        return { HasHifuAmenableLesion(evaluationLabels.tumor) }
     }
 
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasMinimumSitesWithLesions(function.param<IntegerParameter>(0).value)
+            HasMinimumSitesWithLesions(function.param<IntegerParameter>(0).value, evaluationLabels.tumor)
         }
     }
 
     private fun hasMinimumRiskForSentinelNodePositivityCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasMinimumRiskForSentinelNodePositivity(function.param<IntegerParameter>(0).value)
+            HasMinimumRiskForSentinelNodePositivity(function.param<IntegerParameter>(0).value, evaluationLabels.tumor)
         }
     }
 
     private fun canProvideFreshSampleForFurtherAnalysisCreator(): FunctionCreator {
-        return { CanProvideFreshSampleForFurtherAnalysis() }
+        return { CanProvideFreshSampleForFurtherAnalysis(evaluationLabels.tumor) }
     }
 
     private fun canProvideSampleForFurtherAnalysisCreator(): FunctionCreator {
-        return { CanProvideSampleForFurtherAnalysis() }
+        return { CanProvideSampleForFurtherAnalysis(evaluationLabels.tumor) }
     }
 
     private fun meetsSpecificBiopsyRequirementsCreator(): FunctionCreator {
-        return { MeetsSpecificBiopsyRequirements() }
+        return { MeetsSpecificBiopsyRequirements(evaluationLabels.tumor) }
     }
 
     private fun hasVisibleLesionByCystoscopyCreator(): FunctionCreator {
-        return { HasVisibleLesionByCystoscopy() }
+        return { HasVisibleLesionByCystoscopy(evaluationLabels.tumor) }
     }
 
     private fun hasEvaluableDiseaseCreator(): FunctionCreator {
-        return { HasEvaluableDisease() }
+        return { HasEvaluableDisease(evaluationLabels.tumor) }
     }
 
     private fun hasMeasurableDiseaseCreator(): FunctionCreator {
-        return { HasMeasurableDisease() }
+        return { HasMeasurableDisease(evaluationLabels.tumor) }
     }
 
     private fun hasMeasurableDiseaseRecistCreator(): FunctionCreator {
-        return { HasMeasurableDiseaseRecist(doidModel()) }
+        return { HasMeasurableDiseaseRecist(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasMeasurableDiseaseRanoCreator(): FunctionCreator {
-        return { HasMeasurableDiseaseRano(doidModel()) }
+        return { HasMeasurableDiseaseRano(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasMeasurableDiseasePercistCreator(): FunctionCreator {
-        return { HasMeasurableDiseasePercist(doidModel()) }
+        return { HasMeasurableDiseasePercist(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasSpecificProgressiveDiseaseCriteriaCreator(): FunctionCreator {
-        return { HasSpecificProgressiveDiseaseCriteria() }
+        return { HasSpecificProgressiveDiseaseCriteria(evaluationLabels.tumor) }
     }
 
     private fun hasRapidProgressiveDiseaseCreator(): FunctionCreator {
-        return { HasRapidProgressiveDisease() }
+        return { HasRapidProgressiveDisease(evaluationLabels.tumor) }
     }
 
     private fun hasInjectionAmenableLesionCreator(): FunctionCreator {
-        return { HasInjectionAmenableLesion() }
+        return { HasInjectionAmenableLesion(evaluationLabels.tumor) }
     }
 
     private fun hasMRIVolumeAmenableLesionCreator(): FunctionCreator {
-        return { HasMRIVolumeAmenableLesion() }
+        return { HasMRIVolumeAmenableLesion(evaluationLabels.tumor) }
     }
 
     private fun hasEvidenceOfCNSHemorrhageByMRICreator(): FunctionCreator {
-        return { HasEvidenceOfCNSHemorrhageByMRI() }
+        return { HasEvidenceOfCNSHemorrhageByMRI(evaluationLabels.tumor) }
     }
 
     private fun hasIntratumoralHemorrhageByMRICreator(): FunctionCreator {
-        return { HasIntratumoralHemorrhageByMRI() }
+        return { HasIntratumoralHemorrhageByMRI(evaluationLabels.tumor) }
     }
 
     private fun hasLowRiskOfHemorrhageUponTreatmentCreator(): FunctionCreator {
-        return { HasLowRiskOfHemorrhageUponTreatment() }
+        return { HasLowRiskOfHemorrhageUponTreatment(evaluationLabels.tumor) }
     }
 
     private fun hasSuperScanBoneScanCreator(): FunctionCreator {
-        return { HasSuperScanBoneScan() }
+        return { HasSuperScanBoneScan(evaluationLabels.tumor) }
     }
 
     private fun hasBCLCStageCreator(): FunctionCreator {
-        return { HasBCLCStage() }
+        return { HasBCLCStage(evaluationLabels.tumor) }
     }
 
     private fun hasSiewertTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasSiewertType(function.param<StringParameter>(0).value)
+            HasSiewertType(function.param<StringParameter>(0).value, evaluationLabels.tumor)
         }
     }
 
     private fun hasAnyRiskCancerCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasAnyRiskCancer(function.param<ManyStringsParameter>(0).value)
+            HasAnyRiskCancer(function.param<ManyStringsParameter>(0).value, evaluationLabels.tumor)
         }
     }
 
     private fun hasMinimumModifiedOberlinPrognosticScoreCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasMinimumModifiedOberlinPrognosticScore(function.param<IntegerParameter>(0).value)
+            HasMinimumModifiedOberlinPrognosticScore(function.param<IntegerParameter>(0).value, evaluationLabels.tumor)
         }
     }
 
     private fun hasLeftSidedColorectalTumorCreator(): FunctionCreator {
-        return { HasLeftSidedColorectalTumor(doidModel()) }
+        return { HasLeftSidedColorectalTumor(doidModel, evaluationLabels.tumor) }
     }
 
     private fun hasSymptomsOfPrimaryTumorInSituCreator(): FunctionCreator {
-        return { HasSymptomsOfPrimaryTumorInSitu() }
+        return { HasSymptomsOfPrimaryTumorInSitu(evaluationLabels.tumor) }
     }
 
     private fun hasLimitedTumorLengthCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasLimitedTumorLength(function.param<IntegerParameter>(0).value)
+            HasLimitedTumorLength(function.param<IntegerParameter>(0).value, evaluationLabels.tumor)
         }
     }
 }

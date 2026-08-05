@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -12,7 +14,8 @@ private val TARGET_TYPES = setOf(DrugType.PLATINUM_COMPOUND, DrugType.ANTHRACYCL
 
 class IsEligibleForTreatmentOfCategoryAndTypeTest {
 
-    private val function = IsEligibleForTreatmentOfCategoryAndType(TARGET_CATEGORY, TARGET_TYPES)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = IsEligibleForTreatmentOfCategoryAndType(TARGET_CATEGORY, TARGET_TYPES, labels)
 
     @Test
     fun `Should evaluate to undetermined for empty treatment history`() {

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -8,7 +10,8 @@ import org.junit.jupiter.api.Test
 
 class HasLabValueWithinInstitutionalNormalLimitTest {
 
-    private val function = HasLabValueWithinInstitutionalNormalLimit()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+    private val function = HasLabValueWithinInstitutionalNormalLimit(labels)
     private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val labValue = LabTestFactory.create(value = 0.0)
 

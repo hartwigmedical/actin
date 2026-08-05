@@ -2,13 +2,15 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
 
-internal class DerivedTumorStageEvaluationFunction(private val originalFunction: EvaluationFunction, private val messageEnd: String) :
-    EvaluationFunction {
+internal class DerivedTumorStageEvaluationFunction(
+    private val originalFunction: EvaluationFunction, private val messageEnd: String, private val labels: EvaluationLabels.Tumor
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (record.tumor.stage != null) {
@@ -29,7 +31,7 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
         return if (uniqueResults.size == 1) {
             createEvaluationForDerivedResult(derivedResults, uniqueResults.first())
         } else {
-            EvaluationFactory.undetermined("Undetermined if patient has $messageEnd")
+            EvaluationFactory.undetermined(labels.derivedTumorStageEvaluationFunctionUndetermined(messageEnd))
         }
     }
 

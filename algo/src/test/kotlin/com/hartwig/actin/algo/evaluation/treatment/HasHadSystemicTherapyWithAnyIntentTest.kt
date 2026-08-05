@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
@@ -16,17 +18,18 @@ private val NON_SYSTEMIC_TREATMENT = TreatmentTestFactory.treatment("non systemi
 
 class HasHadSystemicTherapyWithAnyIntentTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val evaluationDate = LocalDate.of(2024, 1, 25)
     private val weeksAgo = 20
     private val refDate = evaluationDate.minusWeeks(weeksAgo.toLong())
     private val recentDate = evaluationDate.minusWeeks((weeksAgo - 6).toLong())
     private val olderDate = evaluationDate.minusWeeks((weeksAgo + 6).toLong())
     private val functionEvaluatingWithinWeeks =
-        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, weeksAgo, true)
+        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, weeksAgo, true, labels)
     private val functionEvaluatingBeforeWeeks =
-        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, weeksAgo, false)
-    private val functionWithoutDate = HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, null, null, null)
-    private val functionWithoutIntentsAndWithinWeeks = HasHadSystemicTherapyWithAnyIntent(null, refDate, weeksAgo, true)
+        HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, refDate, weeksAgo, false, labels)
+    private val functionWithoutDate = HasHadSystemicTherapyWithAnyIntent(REQUESTED_INTENT, null, null, null, labels)
+    private val functionWithoutIntentsAndWithinWeeks = HasHadSystemicTherapyWithAnyIntent(null, refDate, weeksAgo, true, labels)
 
     @Test
     fun `Should fail with no treatment history`() {

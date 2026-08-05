@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
-class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(private val type: TreatmentType, private val minCycles: Int) :
-    EvaluationFunction {
+class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(
+    private val type: TreatmentType,
+    private val minCycles: Int,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentMatches = record.oncologicalHistory.map {
@@ -30,18 +34,18 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(privat
         val typeString = type.display()
         return when {
             treatmentMatches.any { (match, cycles) -> match == true && cycles == true } -> EvaluationFactory.pass(
-                "Had received chemoradiotherapy with $typeString chemotherapy and at least $minCycles cycles"
+                labels.hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesPass(typeString, minCycles)
             )
 
             treatmentMatches.any { (match, cycles) -> match == true && cycles == false } -> EvaluationFactory.warn(
-                "Had received chemoradiotherapy with $typeString chemotherapy but with less than $minCycles cycles"
+                labels.hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesWarn(typeString, minCycles)
             )
 
             treatmentMatches.any { (match, cycles) -> match == null || (match && cycles == null) } -> EvaluationFactory.undetermined(
-                "Undetermined if patient received chemoradiotherapy with $typeString chemotherapy and at least $minCycles cycles"
+                labels.hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesUndetermined(typeString, minCycles)
             )
 
-            else -> EvaluationFactory.fail("Has not received chemoradiotherapy with $typeString chemotherapy")
+            else -> EvaluationFactory.fail(labels.hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesFail(typeString))
         }
     }
 }

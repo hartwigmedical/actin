@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
@@ -21,7 +22,8 @@ class HasHadAnyCancerTreatmentSinceDate(
     private val interpreter: MedicationStatusInterpreter,
     private val categoryToIgnore: TreatmentCategory?,
     private val typesToIgnore: Set<TreatmentType>,
-    private val onlySystemicTreatments: Boolean
+    private val onlySystemicTreatments: Boolean,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -40,29 +42,35 @@ class HasHadAnyCancerTreatmentSinceDate(
                 (!onlySystemicTreatments && treatments.isNotEmpty()) || treatments.any { it.isSystemic }
             }
 
-        val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
+        val systemicSuffix = if (onlySystemicTreatments) labels.hasHadAnyCancerTreatmentSinceDateSystemicSuffix() else ""
 
-        val ignoringString = if (typesToIgnore.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(typesToIgnore)}" else ""
+        val ignoringSuffix = if (typesToIgnore.isNotEmpty()) {
+            labels.hasHadAnyCancerTreatmentSinceDateIgnoringSuffix(Format.concatItemsWithAnd(typesToIgnore))
+        } else ""
 
         return when {
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, false) } -> {
-                EvaluationFactory.pass("Received$systemicMessage anti-cancer therapy within the last $monthsAgo months")
+                EvaluationFactory.pass(labels.hasHadAnyCancerTreatmentSinceDatePass(systemicSuffix, monthsAgo))
             }
 
             effectiveTreatmentHistory.any { it.isTrial } || record.medications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined("Inconclusive if patient had any prior$systemicMessage cancer treatment because participated in trial")
+                EvaluationFactory.undetermined(labels.hasHadAnyCancerTreatmentSinceDateUndeterminedTrial(systemicSuffix))
             }
 
             effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, true) } -> {
-                EvaluationFactory.undetermined("Received$systemicMessage anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)")
+                EvaluationFactory.undetermined(
+                    labels.hasHadAnyCancerTreatmentSinceDateUndeterminedDateUnknown(systemicSuffix, monthsAgo)
+                )
             }
 
             effectiveTreatmentHistory.isEmpty() -> {
-                EvaluationFactory.fail("Has not received$systemicMessage anti-cancer therapy within $monthsAgo months$ignoringString")
+                EvaluationFactory.fail(
+                    labels.hasHadAnyCancerTreatmentSinceDateFailNotReceived(systemicSuffix, monthsAgo, ignoringSuffix)
+                )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had any prior$systemicMessage cancer treatment$ignoringString")
+                EvaluationFactory.fail(labels.hasHadAnyCancerTreatmentSinceDateFailNoTreatment(systemicSuffix, ignoringSuffix))
             }
         }
     }

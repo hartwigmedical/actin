@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
 class HasSpecificInfection(
-    private val icdModel: IcdModel, private val icdCodes: Set<IcdCode>, private val term: String
+    private val icdModel: IcdModel,
+    private val icdCodes: Set<IcdCode>,
+    private val term: String,
+    private val labels: EvaluationLabels.Infection
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -24,14 +28,14 @@ class HasSpecificInfection(
 
         return when {
             matchingComorbidities.fullMatches.isNotEmpty() || hasMatchingInfection == true -> {
-                EvaluationFactory.pass("${term.replaceFirstChar(Char::uppercase)} infection in history")
+                EvaluationFactory.pass(labels.hasSpecificInfectionPass(term.replaceFirstChar(Char::uppercase)))
             }
 
             hasMatchingInfection == null || matchingComorbidities.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Infection in history but undetermined if $term")
+                EvaluationFactory.undetermined(labels.hasSpecificInfectionUndetermined(term))
             }
 
-            else -> EvaluationFactory.fail("No $term infection")
+            else -> EvaluationFactory.fail(labels.hasSpecificInfectionFail(term))
         }
     }
 }

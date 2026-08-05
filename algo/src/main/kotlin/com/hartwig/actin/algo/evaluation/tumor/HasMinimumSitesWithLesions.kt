@@ -2,10 +2,12 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : EvaluationFunction {
+class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int, private val labels: EvaluationLabels.Tumor) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
@@ -31,23 +33,23 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
 
             return when {
                 sitesWithKnownLesionsLowerBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.pass("Has at least $minimumSitesWithLesions lesion sites")
+                    EvaluationFactory.pass(labels.hasMinimumSitesWithLesionsPass(minimumSitesWithLesions))
                 }
 
                 sitesWithKnownAndSuspectedLesionsLowerBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.warn("Has at least $minimumSitesWithLesions lesion sites (when including suspected lesions)")
+                    EvaluationFactory.warn(labels.hasMinimumSitesWithLesionsWarn(minimumSitesWithLesions))
                 }
 
                 sitesWithKnownLesionsUpperBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.undetermined("Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions)")
+                    EvaluationFactory.undetermined(labels.hasMinimumSitesWithLesionsUndetermined(minimumSitesWithLesions))
                 }
 
                 sitesWithKnownAndSuspectedLesionsUpperBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.undetermined("Undetermined if sufficient lesion sites (near threshold of $minimumSitesWithLesions when including suspected lesions)")
+                    EvaluationFactory.undetermined(labels.hasMinimumSitesWithLesionsUndeterminedSuspected(minimumSitesWithLesions))
                 }
 
                 else -> {
-                    EvaluationFactory.fail("Insufficient number of lesion sites (less than $minimumSitesWithLesions)")
+                    EvaluationFactory.fail(labels.hasMinimumSitesWithLesionsFail(minimumSitesWithLesions))
                 }
             }
         }

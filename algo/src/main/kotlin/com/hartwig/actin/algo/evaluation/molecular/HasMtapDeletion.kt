@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
@@ -12,39 +13,39 @@ import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 private const val MTAP = "MTAP"
 private const val CDKN2A = "CDKN2A"
 
-class HasMtapDeletion : EvaluationFunction {
+class HasMtapDeletion(private val labels: EvaluationLabels.Molecular) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val mtapTested =
             record.molecularTests.any { test -> test.testsGene(MTAP) { it.contains(MolecularTestTarget.DELETION) } }
                     || IhcTestEvaluation.create(MTAP, record.ihcTests).filteredTests.isNotEmpty()
 
-        val cdkn2aEvaluation = GeneIsInactivated(CDKN2A, onlyDeletions = true).evaluate(record)
+        val cdkn2aEvaluation = GeneIsInactivated(CDKN2A, onlyDeletions = true, labels).evaluate(record)
 
         return when {
             mtapTested -> {
-                ProteinIsLostByIhc(MTAP).evaluate(record).takeIfPassOrWarn()
-                    ?: GeneIsInactivated(MTAP, onlyDeletions = true).evaluate(record).takeIfPassOrWarn()
-                    ?: GeneIsInactivated(MTAP, onlyDeletions = false).evaluate(record).takeIfPassOrWarn()?.let { evaluation ->
+                ProteinIsLostByIhc(MTAP, labels).evaluate(record).takeIfPassOrWarn()
+                    ?: GeneIsInactivated(MTAP, onlyDeletions = true, labels).evaluate(record).takeIfPassOrWarn()
+                    ?: GeneIsInactivated(MTAP, onlyDeletions = false, labels).evaluate(record).takeIfPassOrWarn()?.let { evaluation ->
                         evaluation.copy(
                             result = EvaluationResult.WARN,
                             passMessages = emptySet(),
                             warnMessages = evaluation.passMessages.ifEmpty { evaluation.warnMessages }
                         )
                     }
-                    ?: EvaluationFactory.fail("No $MTAP deletion")
+                    ?: EvaluationFactory.fail(labels.hasMtapDeletionFail())
             }
 
             isPassOrWarn(cdkn2aEvaluation) -> {
                 val events = cdkn2aEvaluation.inclusionMolecularEvents
                 EvaluationFactory.warn(
-                    "$MTAP deletion not tested but $CDKN2A deletion detected (highly correlated)",
+                    labels.hasMtapDeletionWarnCorrelated(),
                     events.map { event -> MolecularEvent(event.event, "Potential $MTAP deletion") }.toSet(),
                     isMissingMolecularResultForEvaluation = true
                 )
             }
 
-            else -> EvaluationFactory.undetermined("$MTAP deletion not tested", isMissingMolecularResultForEvaluation = true)
+            else -> EvaluationFactory.undetermined(labels.hasMtapDeletionUndetermined(), isMissingMolecularResultForEvaluation = true)
         }
     }
 

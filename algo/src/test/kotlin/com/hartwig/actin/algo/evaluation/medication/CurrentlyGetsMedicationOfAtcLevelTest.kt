@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -12,11 +14,12 @@ private const val TARGET_ATC_CODE = "L01A"
 
 class CurrentlyGetsMedicationOfAtcLevelTest {
     private val targetAtcLevel = AtcLevel(code = TARGET_ATC_CODE, name = "")
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
     private val alwaysActiveFunction =
-        CurrentlyGetsMedicationOfAtcLevel(MedicationTestFactory.alwaysActive(), TARGET_ATC_CODE, setOf(targetAtcLevel))
+        CurrentlyGetsMedicationOfAtcLevel(MedicationTestFactory.alwaysActive(), TARGET_ATC_CODE, setOf(targetAtcLevel), labels)
 
     private val alwaysPlannedFunction =
-        CurrentlyGetsMedicationOfAtcLevel(MedicationTestFactory.alwaysPlanned(), TARGET_ATC_CODE, setOf(targetAtcLevel))
+        CurrentlyGetsMedicationOfAtcLevel(MedicationTestFactory.alwaysPlanned(), TARGET_ATC_CODE, setOf(targetAtcLevel), labels)
 
     @Test
     fun `Should fail when no medication`() {

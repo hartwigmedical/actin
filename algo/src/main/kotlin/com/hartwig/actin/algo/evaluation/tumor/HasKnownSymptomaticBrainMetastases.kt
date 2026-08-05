@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasKnownSymptomaticBrainMetastases : EvaluationFunction {
+class HasKnownSymptomaticBrainMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
@@ -13,16 +14,16 @@ class HasKnownSymptomaticBrainMetastases : EvaluationFunction {
 
             return when {
                 unknownIfSymptomatic && hasBrainLesions == true -> {
-                    EvaluationFactory.undetermined("Brain metastases present but unknown if symptomatic (data missing)")
+                    EvaluationFactory.undetermined(labels.hasKnownSymptomaticBrainMetastasesUndetermined())
                 }
 
                 unknownIfSymptomatic && hasBrainLesions == null -> {
-                    EvaluationFactory.undetermined("Undetermined if symptomatic brain metastases present (data missing)")
+                    EvaluationFactory.undetermined(labels.hasKnownSymptomaticBrainMetastasesUndeterminedMissing())
                 }
 
-                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass("Has symptomatic brain metastases")
+                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass(labels.hasKnownSymptomaticBrainMetastasesPass())
 
-                else -> EvaluationFactory.fail("No known symptomatic brain metastases present")
+                else -> EvaluationFactory.fail(labels.hasKnownSymptomaticBrainMetastasesFail())
             }
         }
     }

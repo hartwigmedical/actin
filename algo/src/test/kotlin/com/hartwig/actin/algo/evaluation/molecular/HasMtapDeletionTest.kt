@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -21,7 +23,8 @@ private const val CDKN2A = "CDKN2A"
 
 class HasMtapDeletionTest {
 
-    private val function = HasMtapDeletion()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = HasMtapDeletion(labels)
     private val mtapDel = TestCopyNumberFactory.createMinimal().copy(
         gene = MTAP,
         isReportable = true,

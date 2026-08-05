@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -16,8 +17,8 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 
 private val NO_PROTEIN_EFFECT_SET = setOf(ProteinEffect.NO_EFFECT, ProteinEffect.NO_EFFECT_PREDICTED)
 
-class GeneIsWildType(override val gene: String) :
-    MolecularEvaluationFunction(targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, "Wildtype of")) {
+class GeneIsWildType(override val gene: String, labels: EvaluationLabels.Molecular) :
+    MolecularEvaluationFunction(targetCoveragePredicate = atLeast(MolecularTestTarget.MUTATION, labels.geneIsWildTypeMessagePrefix()), labels = labels) {
     
     override fun evaluationPrecedence() = ::evaluationPrecedenceFunction
 
@@ -68,17 +69,17 @@ class GeneIsWildType(override val gene: String) :
 
         return when {
             reportableEventsWithEffect.isNotEmpty() ->
-                EvaluationFactory.fail("$gene not wild-type due to ${Format.concat(reportableEventsWithEffect)}")
+                EvaluationFactory.fail(labels.geneIsWildTypeFail(gene, Format.concat(reportableEventsWithEffect)))
 
             potentialWarnEvaluation != null -> potentialWarnEvaluation
 
             test.hasSufficientQualityButLowPurity() ->
                 EvaluationFactory.warn(
-                    "$gene is wild-type although tumor purity is low",
+                    labels.geneIsWildTypeWarnLowPurity(gene),
                     inclusionEvents = setOf("$gene wild-type")
                 )
 
-            else -> EvaluationFactory.pass("$gene is wild-type", inclusionEvents = setOf("$gene wild-type"))
+            else -> EvaluationFactory.pass(labels.geneIsWildTypePass(gene), inclusionEvents = setOf("$gene wild-type"))
         }
     }
 
@@ -91,13 +92,11 @@ class GeneIsWildType(override val gene: String) :
             listOf(
                 EventsWithMessages(
                     reportableEventsWithNoEffect,
-                    "Reportable event(s) ${Format.concat(reportableEventsWithNoEffect)} in $gene - however these are annotated"
-                            + " with protein effect 'no effect' in $evidenceSource and thus may potentially be considered wild-type"
+                    labels.geneIsWildTypeWarnNoEffect(Format.concat(reportableEventsWithNoEffect), gene, evidenceSource)
                 ),
                 EventsWithMessages(
                     reportableEventsWithEffectPotentiallyWildtype,
-                    "Reportable event(s) ${Format.concat(reportableEventsWithEffectPotentiallyWildtype)} in $gene"
-                            + " which may potentially be considered wild-type"
+                    labels.geneIsWildTypeWarnPotentiallyWildtype(Format.concat(reportableEventsWithEffectPotentiallyWildtype), gene)
                 ),
             )
         )

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.pharmaco.Haplotype
@@ -12,7 +14,8 @@ import org.junit.jupiter.api.Test
 
 class HasUGT1A1HaplotypeTest {
 
-    private val function = HasUGT1A1Haplotype("*1_HET")
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = HasUGT1A1Haplotype("*1_HET", labels)
 
     @Test
     fun `Should pass if patient has at least one UGT1A1 allel with required haplotype`() {

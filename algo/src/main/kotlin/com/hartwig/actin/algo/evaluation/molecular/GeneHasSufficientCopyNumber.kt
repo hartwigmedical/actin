@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -53,14 +54,18 @@ private enum class CopyNumberEvaluation {
     }
 }
 
-class GeneHasSufficientCopyNumber(override val gene: String, private val requestedMinCopyNumber: Int) :
-    MolecularEvaluationFunction(
-        targetCoveragePredicate = or(
-            MolecularTestTarget.AMPLIFICATION,
-            MolecularTestTarget.MUTATION,
-            messagePrefix = "Sufficient copy number in"
-        )
-    ) {
+class GeneHasSufficientCopyNumber(
+    override val gene: String,
+    private val requestedMinCopyNumber: Int,
+    labels: EvaluationLabels.Molecular
+) : MolecularEvaluationFunction(
+    targetCoveragePredicate = or(
+        MolecularTestTarget.AMPLIFICATION,
+        MolecularTestTarget.MUTATION,
+        messagePrefix = labels.geneHasSufficientCopyNumberMessagePrefix()
+    ),
+    labels = labels
+) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val targetCopyNumbers = test.drivers.copyNumbers.filter { it.gene == gene }
@@ -74,7 +79,7 @@ class GeneHasSufficientCopyNumber(override val gene: String, private val request
         return when {
             eligibleSufficientCopyNumber != null -> {
                 EvaluationFactory.pass(
-                    "$gene copy number is above $requestedMinCopyNumber",
+                    labels.geneHasSufficientCopyNumberPass(gene, requestedMinCopyNumber),
                     inclusionEvents = eligibleSufficientCopyNumber
                 )
             }
@@ -82,17 +87,17 @@ class GeneHasSufficientCopyNumber(override val gene: String, private val request
             fullAmplificationWithUnknownCopyNumber != null -> {
                 if (requestedMinCopyNumber <= ASSUMED_AMP_MIN_COPY_NR)
                     EvaluationFactory.pass(
-                        "$gene is amplified hence assumed gene has a copy number >= $requestedMinCopyNumber copies",
+                        labels.geneHasSufficientCopyNumberPassFullAmpAssumed(gene, requestedMinCopyNumber),
                         inclusionEvents = fullAmplificationWithUnknownCopyNumber
                     ) else
                     EvaluationFactory.warn(
-                        "$gene is amplified but undetermined if gene has a copy number >= $requestedMinCopyNumber copies",
+                        labels.geneHasSufficientCopyNumberWarnFullAmpUndetermined(gene, requestedMinCopyNumber),
                         inclusionEvents = fullAmplificationWithUnknownCopyNumber
                     )
             }
 
             else -> evaluatePotentialOtherWarns(evaluatedCopyNumbers, test.evidenceSource)
-                ?: EvaluationFactory.fail("$gene does not have at least $requestedMinCopyNumber copies")
+                ?: EvaluationFactory.fail(labels.geneHasSufficientCopyNumberFail(gene, requestedMinCopyNumber))
         }
     }
 
@@ -103,23 +108,23 @@ class GeneHasSufficientCopyNumber(override val gene: String, private val request
         val eventGroupsWithMessages = listOf(
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.SUFFICIENT_MIN_COPY_NUMBER_WITH_LOSS_OF_FUNCTION],
-                "$gene has at least $requestedMinCopyNumber copies but gene associated with loss-of-function protein impact in $evidenceSource"
+                labels.geneHasSufficientCopyNumberWarnLossOfFunction(gene, requestedMinCopyNumber, evidenceSource)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.SUFFICIENT_MIN_COPY_NUMBER_ON_TSG],
-                "$gene has at least $requestedMinCopyNumber copies but gene known as TSG in $evidenceSource"
+                labels.geneHasSufficientCopyNumberWarnTsg(gene, requestedMinCopyNumber, evidenceSource)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.SUFFICIENT_MIN_COPY_NUMBER_ON_NON_CANONICAL],
-                "$gene has at least $requestedMinCopyNumber copies but on non-canonical transcript"
+                labels.geneHasSufficientCopyNumberWarnNonCanonical(gene, requestedMinCopyNumber)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.SUFFICIENT_MAX_COPY_NUMBER],
-                "$gene has at least $requestedMinCopyNumber copies but only partially"
+                labels.geneHasSufficientCopyNumberWarnPartial(gene, requestedMinCopyNumber)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[CopyNumberEvaluation.PARTIAL_AMP_WITH_UNKNOWN_COPY_NUMBER],
-                "$gene is amplified but partially and undetermined if copy nr meets threshold of >= $requestedMinCopyNumber copies"
+                labels.geneHasSufficientCopyNumberWarnPartialAmpUndetermined(gene, requestedMinCopyNumber)
             )
         )
 

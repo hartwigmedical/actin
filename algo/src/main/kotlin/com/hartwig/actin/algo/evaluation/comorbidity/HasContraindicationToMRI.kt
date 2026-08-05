@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
@@ -10,7 +11,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunction {
+class HasContraindicationToMRI(private val icdModel: IcdModel, private val labels: EvaluationLabels.Comorbidity) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCodes = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK), IcdCode(IcdConstants.PRESENCE_OF_DEVICE_IMPLANT_OR_GRAFT_BLOCK))
@@ -24,16 +25,19 @@ class HasContraindicationToMRI(private val icdModel: IcdModel) : EvaluationFunct
         }
 
         val conditionString = Format.concatItemsWithAnd(matchingComorbidities)
-        val messageStart = "Potential MRI contraindication: "
 
         return when {
-            matchingComorbidities.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
+            matchingComorbidities.isNotEmpty() -> EvaluationFactory.recoverablePass(
+                labels.hasContraindicationToMriRecoverablePass(conditionString)
+            )
 
             comorbiditiesMatchingString.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(comorbiditiesMatchingString))
+                EvaluationFactory.recoverablePass(
+                    labels.hasContraindicationToMriRecoverablePass(Format.concatItemsWithAnd(comorbiditiesMatchingString))
+                )
             }
 
-            else -> EvaluationFactory.fail("No potential contraindications to MRI")
+            else -> EvaluationFactory.fail(labels.hasContraindicationToMriFail())
         }
     }
 

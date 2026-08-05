@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -89,6 +91,8 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
     }
 
     private fun createFunction(selector: MedicationSelector, type: DrugInteraction.Type): CurrentlyGetsTransporterInteractingMedication {
-        return CurrentlyGetsTransporterInteractingMedication(selector, "BCRP", type)
+        return CurrentlyGetsTransporterInteractingMedication(
+            selector, "BCRP", type, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+        )
     }
 }

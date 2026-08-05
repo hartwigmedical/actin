@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -12,7 +14,8 @@ import org.junit.jupiter.api.Test
 class HasLimitedLabValueTest {
 
     private val measurement = LabMeasurement.THROMBOCYTES_ABS
-    private val function = HasLimitedLabValue(1.0, measurement, measurement.defaultUnit)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+    private val function = HasLimitedLabValue(1.0, measurement, measurement.defaultUnit, labels)
     private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test
@@ -52,7 +55,7 @@ class HasLimitedLabValueTest {
     @Test
     fun `Should evaluate case requiring conversion`() {
         val measurement = LabMeasurement.CREATININE
-        val function = HasLimitedLabValue(1.0, measurement, LabUnit.MILLIGRAMS_PER_DECILITER)
+        val function = HasLimitedLabValue(1.0, measurement, LabUnit.MILLIGRAMS_PER_DECILITER, labels)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val targetUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MILLIGRAMS_PER_DECILITER)
         val offUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MICROMOLES_PER_LITER)

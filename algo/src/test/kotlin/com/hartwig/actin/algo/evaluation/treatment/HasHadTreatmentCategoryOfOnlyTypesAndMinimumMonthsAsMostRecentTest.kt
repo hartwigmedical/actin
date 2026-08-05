@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -14,7 +16,8 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
         val function = HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
             TreatmentCategory.CHEMOTHERAPY,
             setOf(DrugType.ALKYLATING_AGENT),
-            2
+            2,
+            EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
     }

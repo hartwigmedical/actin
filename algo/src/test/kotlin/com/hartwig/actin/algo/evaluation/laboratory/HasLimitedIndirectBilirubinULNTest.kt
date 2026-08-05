@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import java.time.LocalDate
@@ -13,7 +15,7 @@ class HasLimitedIndirectBilirubinULNTest {
     private val minValidDate = refDate.minusDays(90)
     private val directBilirubin = LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, 4.5, refDate, refLimitUp = 5.0, refLimitLow = 1.7)
     private val totalBilirubin = LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, value = 16.0, refDate, refLimitUp = 17.0, refLimitLow = 5.0)
-    val function = HasLimitedIndirectBilirubinULN(2.0, minValidDate)
+    val function = HasLimitedIndirectBilirubinULN(2.0, minValidDate, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory)
 
     @Test
     fun `Should pass when indirect bilirubin below requested fold of ULN`() {

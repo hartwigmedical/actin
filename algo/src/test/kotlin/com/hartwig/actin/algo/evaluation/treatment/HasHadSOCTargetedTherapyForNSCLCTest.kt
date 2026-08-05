@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -12,10 +14,11 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
 class HasHadSOCTargetedTherapyForNSCLCTest {
-    
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val genesToIgnore = setOf("EGFR")
-    private val functionNotIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(emptySet())
-    private val functionIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(genesToIgnore)
+    private val functionNotIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(emptySet(), labels)
+    private val functionIgnoringGenes = HasHadSOCTargetedTherapyForNSCLC(genesToIgnore, labels)
     private val correctDrugType = NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES.values.flatten().first()
     private val correctTreatment = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(correctDrugType))
     private val wrongTreatment = drugTreatment("Correct", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.IDO1_INHIBITOR))

@@ -12,7 +12,7 @@ class BloodTransfusionRuleMapper(resources: RuleMappingResources) : RuleMapper(r
 
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
         return mapOf(
-            EligibilityRule.REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT to requiresRegularHematopoieticSupportCreator(atcTree()),
+            EligibilityRule.REQUIRES_REGULAR_HEMATOPOIETIC_SUPPORT to requiresRegularHematopoieticSupportCreator(atcTree),
             EligibilityRule.HAS_HAD_ERYTHROCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS to hasHadRecentBloodTransfusion(TransfusionProduct.ERYTHROCYTE),
             EligibilityRule.HAS_HAD_THROMBOCYTE_TRANSFUSION_WITHIN_LAST_X_WEEKS to hasHadRecentBloodTransfusion(TransfusionProduct.THROMBOCYTE),
         )
@@ -20,16 +20,18 @@ class BloodTransfusionRuleMapper(resources: RuleMappingResources) : RuleMapper(r
 
     private fun requiresRegularHematopoieticSupportCreator(atcTree: AtcTree): FunctionCreator {
         return {
-            val date = referenceDateProvider().date()
-            RequiresRegularHematopoieticSupport(atcTree, date.minusMonths(2), date.plusMonths(2))
+            val date = referenceDateProvider.date()
+            RequiresRegularHematopoieticSupport(
+                atcTree, date.minusMonths(2), date.plusMonths(2), evaluationLabels.bloodTransfusion, evaluationLabels.medication
+            )
         }
     }
 
     private fun hasHadRecentBloodTransfusion(product: TransfusionProduct): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxAgeWeeks = function.param<IntegerParameter>(0).value
-            val minDate = referenceDateProvider().date().minusWeeks(maxAgeWeeks.toLong())
-            HasHadRecentBloodTransfusion(product, minDate)
+            val minDate = referenceDateProvider.date().minusWeeks(maxAgeWeeks.toLong())
+            HasHadRecentBloodTransfusion(product, minDate, evaluationLabels.bloodTransfusion)
         }
     }
 }

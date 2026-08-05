@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
@@ -11,8 +13,9 @@ import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpa
 import org.junit.jupiter.api.Test
 
 class MolecularResultsAreKnownForGeneTest {
-    
-    private val function = MolecularResultsAreKnownForGene("gene 1")
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = MolecularResultsAreKnownForGene("gene 1", labels)
 
     private val geneCopyNumber1 = TestCopyNumberFactory.createMinimal().copy(
         gene = "gene 1",
@@ -167,7 +170,7 @@ class MolecularResultsAreKnownForGeneTest {
     fun `Should pass for gene that is marked as tested in panel molecular test`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            MolecularResultsAreKnownForGene("ALK")
+            MolecularResultsAreKnownForGene("ALK", labels)
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(
@@ -184,7 +187,7 @@ class MolecularResultsAreKnownForGeneTest {
     fun `Should fail for gene that is not marked as tested in panel molecular test`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            MolecularResultsAreKnownForGene("ALK")
+            MolecularResultsAreKnownForGene("ALK", labels)
                 .evaluate(
                     MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                         listOf(

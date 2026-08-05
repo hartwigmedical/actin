@@ -1,16 +1,20 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withOtherConditions
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasChildPughScoreTest {
-    private val function = HasChildPughScore(TestIcdFactory.createTestModel(), listOf("A", "B"))
+    private val function = HasChildPughScore(
+        TestIcdFactory.createTestModel(), listOf("A", "B"), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    )
 
     @Test
     fun `Should be undetermined when liver cirrhosis not present`() {

@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
@@ -16,8 +18,9 @@ import org.junit.jupiter.api.Test
 
 class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
     private val genesToFind = setOf("BRCA1", "BRCA2")
-    private val function = IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind)
+    private val function = IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind, labels)
 
     @Test
     fun `Should fail when HRD with deletion of BRCA1`() {

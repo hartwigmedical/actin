@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -15,7 +16,8 @@ import com.hartwig.actin.medication.MedicationToTreatmentConverter
 class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>?,
-    private val ignoreDrugs: Set<Drug>
+    private val ignoreDrugs: Set<Drug>,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -38,19 +40,26 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
         val concatenatedMatchingTypes = concatItemsWithAnd(matchingTreatmentTypes)
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
-        val typeMessage = if (types != null && concatenatedMatchingTypes.isNotEmpty()) " of types $concatenatedMatchingTypes" else ""
-        val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
+        val typeMessage = if (types != null && concatenatedMatchingTypes.isNotEmpty()) {
+            labels.hasHadTreatmentWithCategoryAndTypeButNotWithDrugsTypeSuffix(concatenatedMatchingTypes)
+        } else ""
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Has $messageEnding")
+                EvaluationFactory.pass(
+                    labels.hasHadTreatmentWithCategoryAndTypeButNotWithDrugsPass(category.display(), typeMessage, ignoreDrugsList)
+                )
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}$typeMessage ignoring $ignoreDrugsList")
+                EvaluationFactory.undetermined(
+                    labels.hasHadTreatmentWithCategoryAndTypeButNotWithDrugsUndetermined(category.display(), typeMessage, ignoreDrugsList)
+                )
             }
 
-            else -> EvaluationFactory.fail("Has not $messageEnding")
+            else -> EvaluationFactory.fail(
+                labels.hasHadTreatmentWithCategoryAndTypeButNotWithDrugsFail(category.display(), typeMessage, ignoreDrugsList)
+            )
         }
     }
 }

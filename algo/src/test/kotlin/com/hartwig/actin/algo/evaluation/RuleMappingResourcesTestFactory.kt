@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.calendar.ReferenceDateProviderTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.configuration.AlgoConfiguration
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.icd.IcdModel
@@ -19,7 +20,8 @@ object RuleMappingResourcesTestFactory {
         cuppaToDoidMapping: CuppaToDoidMapping = CuppaToDoidMapping(emptyMap()),
         icdModel: IcdModel = TestIcdFactory.createTestModel(),
         atcTree: AtcTree = AtcTestFactory.createProperAtcTree(),
-        treatmentDatabase: TreatmentDatabase = TestTreatmentDatabaseFactory.createProper()
+        treatmentDatabase: TreatmentDatabase = TestTreatmentDatabaseFactory.createProper(),
+        evaluationLabels: EvaluationLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
     ): RuleMappingResources {
         return RuleMappingResources(
             referenceDateProvider = ReferenceDateProviderTestFactory.createCurrentDateProvider(),
@@ -29,7 +31,8 @@ object RuleMappingResourcesTestFactory {
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,
-            algoConfiguration = AlgoConfiguration()
+            algoConfiguration = AlgoConfiguration(),
+            evaluationLabels = evaluationLabels
         )
     }
 }

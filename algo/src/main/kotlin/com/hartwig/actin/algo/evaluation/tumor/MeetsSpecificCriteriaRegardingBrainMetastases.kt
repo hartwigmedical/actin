@@ -2,47 +2,44 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class MeetsSpecificCriteriaRegardingBrainMetastases : EvaluationFunction {
+class MeetsSpecificCriteriaRegardingBrainMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
-            val messageStart = "Undetermined if study specific criteria regarding"
             val unknownBrainLesions = hasBrainLesions == null
 
             // We assume that if a patient has active brain metastases, hasBrainMetastases is allowed to be (theoretically) null/false
             return when {
                 hasActiveBrainLesions == true -> {
-                    EvaluationFactory.undetermined("$messageStart brain metastases are met")
+                    EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingBrainMetastasesUndetermined())
                 }
 
                 hasBrainLesions == true -> {
-                    EvaluationFactory.undetermined("$messageStart brain metastases are met")
+                    EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingBrainMetastasesUndetermined())
                 }
 
                 hasSuspectedBrainLesions == true -> {
-                    EvaluationFactory.undetermined("$messageStart suspected brain metastases are met")
+                    EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingBrainMetastasesUndeterminedSuspected())
                 }
 
                 unknownBrainLesions && hasCnsLesions == true -> {
-                    EvaluationFactory.undetermined("$messageStart brain metastases are met")
+                    EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingBrainMetastasesUndetermined())
                 }
 
                 unknownBrainLesions && hasSuspectedCnsLesions == true -> {
-                    EvaluationFactory.undetermined("$messageStart suspected brain metastases are met")
+                    EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingBrainMetastasesUndeterminedSuspected())
                 }
 
                 unknownBrainLesions -> {
-                    EvaluationFactory.undetermined("Undetermined if specific criteria regarding brain metastases are met " +
-                            "(brain lesions data missing)")
+                    EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingBrainMetastasesUndeterminedMissing())
                 }
 
                 else -> {
-                    EvaluationFactory.fail(
-                        "No brain metastases present hence won't meet study specific criteria regarding brain metastases"
-                    )
+                    EvaluationFactory.fail(labels.meetsSpecificCriteriaRegardingBrainMetastasesFail())
                 }
             }
         }

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,7 +11,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
     private val category: TreatmentCategory,
-    private val types: Set<TreatmentType>
+    private val types: Set<TreatmentType>,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentsByMatchEvaluation = record.oncologicalHistory.flatMap { it.allTreatments() }
@@ -27,23 +29,27 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
         val typesList = concatItemsWithOr(types)
         return when {
             false in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.fail("Did not only receive $typesList ${category.display()} treatment")
+                EvaluationFactory.fail(labels.hasHadSystemicTreatmentOnlyOfCategoryOfTypesFailNotOnly(typesList, category.display()))
             }
 
             null in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.undetermined("Undetermined if received ${category.display()} is of type $typesList")
+                EvaluationFactory.undetermined(
+                    labels.hasHadSystemicTreatmentOnlyOfCategoryOfTypesUndeterminedType(category.display(), typesList)
+                )
             }
 
             record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() } -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial was $typesList ${category.display()}")
+                EvaluationFactory.undetermined(
+                    labels.hasHadSystemicTreatmentOnlyOfCategoryOfTypesUndeterminedTrial(typesList, category.display())
+                )
             }
 
             true in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.pass("Has only had $typesList ${category.display()} treatment")
+                EvaluationFactory.pass(labels.hasHadSystemicTreatmentOnlyOfCategoryOfTypesPass(typesList, category.display()))
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had $typesList ${category.display()} treatment (no prior systemic treatment)")
+                EvaluationFactory.fail(labels.hasHadSystemicTreatmentOnlyOfCategoryOfTypesFailNoPrior(typesList, category.display()))
             }
         }
     }

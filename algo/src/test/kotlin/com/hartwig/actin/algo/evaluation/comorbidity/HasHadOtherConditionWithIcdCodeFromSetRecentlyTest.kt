@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
@@ -17,8 +19,9 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
     private val minDate: LocalDate = referenceDate.minusMonths(maxMonthsAgo.toLong())
     private val targetIcdCodes = IcdConstants.STROKE_SET.map { IcdCode(it) }.toSet()
     private val icdModel = IcdModel.create(targetIcdCodes.map { IcdNode(it.mainCode, emptyList(), it.mainCode + "node") })
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
     private val function =
-        HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel, targetIcdCodes, "stroke", minDate, maxMonthsAgo)
+        HasHadOtherConditionWithIcdCodeFromSetRecently(icdModel, targetIcdCodes, "stroke", minDate, maxMonthsAgo, labels)
 
     @Test
     fun `Should warn if condition in history with correct ICD code and within first 2 months of specified time-frame`() {
@@ -105,7 +108,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
     @Test
     fun `Should evaluate to undetermined if condition matches main ICD code but has unknown extension`() {
         val function = HasHadOtherConditionWithIcdCodeFromSetRecently(
-            icdModel, setOf(IcdCode(IcdConstants.STROKE_NOS_CODE, "extensionCode")), "stroke", minDate, maxMonthsAgo
+            icdModel, setOf(IcdCode(IcdConstants.STROKE_NOS_CODE, "extensionCode")), "stroke", minDate, maxMonthsAgo, labels
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,

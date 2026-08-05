@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import org.junit.jupiter.api.Test
@@ -9,7 +11,7 @@ class HasHistoryOfSecondMalignancyTest {
 
     @Test
     fun canEvaluate() {
-        val function = HasHistoryOfSecondMalignancy()
+        val function = HasHistoryOfSecondMalignancy(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).priorTumor)
 
         // No active prior tumors.
         val priorTumors: MutableList<PriorPrimary> = mutableListOf()

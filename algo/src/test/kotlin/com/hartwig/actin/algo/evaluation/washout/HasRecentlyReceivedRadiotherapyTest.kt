@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -18,8 +20,9 @@ private const val MONTH = 5
 private const val CORRECT_LOCATION = "Brain"
 
 class HasRecentlyReceivedRadiotherapyTest {
-    private val function = HasRecentlyReceivedRadiotherapy(YEAR, MONTH)
-    private val functionWithLocation = HasRecentlyReceivedRadiotherapy(YEAR, MONTH, CORRECT_LOCATION)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).washout
+    private val function = HasRecentlyReceivedRadiotherapy(YEAR, MONTH, labels = labels)
+    private val functionWithLocation = HasRecentlyReceivedRadiotherapy(YEAR, MONTH, CORRECT_LOCATION, labels)
     private val radiotherapy = Radiotherapy(name = "")
 
 

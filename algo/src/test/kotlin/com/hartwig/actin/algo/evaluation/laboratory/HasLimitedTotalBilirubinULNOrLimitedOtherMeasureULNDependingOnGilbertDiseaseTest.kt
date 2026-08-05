@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.icd.TestIcdFactory
@@ -23,7 +25,8 @@ class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisea
         ulnLimitWithGilbertDisease,
         minValidDate,
         minPassDate,
-        TestIcdFactory.createTestModel()
+        TestIcdFactory.createTestModel(),
+        EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
     )
     private val tbil1Uln = LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, value = 100.0, refDate, refLimitUp = 100.0)
     private val tbil4Uln = tbil1Uln.copy(value = 400.0)

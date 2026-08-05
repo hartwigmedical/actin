@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.algo.evaluation.medication.medicationNotProvided
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -11,25 +12,31 @@ import com.hartwig.actin.medication.AtcTree
 import java.time.LocalDate
 
 class RequiresRegularHematopoieticSupport(
-    private val atcTree: AtcTree, private val minDate: LocalDate, private val maxDate: LocalDate
+    private val atcTree: AtcTree,
+    private val minDate: LocalDate,
+    private val maxDate: LocalDate,
+    private val bloodTransfusionLabels: EvaluationLabels.BloodTransfusion,
+    private val medicationLabels: EvaluationLabels.Medication
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         for (transfusion in record.bloodTransfusions) {
             if (transfusion.date.isAfter(minDate) && transfusion.date.isBefore(maxDate)) {
-                return EvaluationFactory.pass("Has received recent hematopoietic support (${transfusion.product})")
+                return EvaluationFactory.pass(bloodTransfusionLabels.requiresRegularHematopoieticSupportPassTransfusion(transfusion.product))
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
-        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val medications = record.medications ?: return medicationNotProvided(medicationLabels)
         val filteredMedications = medications
             .filter { activeBetweenDates(it) }
             .filter { it.atc?.chemicalSubGroup in resolvedCategories }
             .map { it.name }
         return if (filteredMedications.isNotEmpty()) {
-            EvaluationFactory.pass("Has received recent hematopoietic support (${concatLowercaseWithCommaAndAnd(filteredMedications)})")
+            EvaluationFactory.pass(
+                bloodTransfusionLabels.requiresRegularHematopoieticSupportPassMedication(concatLowercaseWithCommaAndAnd(filteredMedications))
+            )
         } else
-            EvaluationFactory.fail("Has not received recent hematopoietic support")
+            EvaluationFactory.fail(bloodTransfusionLabels.requiresRegularHematopoieticSupportFail())
     }
 
     private fun activeBetweenDates(medication: Medication): Boolean {

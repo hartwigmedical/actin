@@ -1,15 +1,17 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withCnsOrBrainLesionsAndOncologicalHistory
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withSuspectedCnsOrBrainLesionsAndOncologicalHistory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.junit.jupiter.api.Test
 
 class HasReceivedSystemicTherapyForBrainMetastasesTest {
 
-    private val function = HasReceivedSystemicTherapyForBrainMetastases()
+    private val function = HasReceivedSystemicTherapyForBrainMetastases(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment)
     private val systemicTherapy = TreatmentTestFactory.treatment("Systemic treatment", isSystemic = true)
     private val systemicTreatment = TreatmentTestFactory.treatmentHistoryEntry(listOf(systemicTherapy))
     private val nonSystemicTherapy = TreatmentTestFactory.treatment("Local treatment", isSystemic = false)

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -15,7 +17,8 @@ private const val TARGET_GENE = "gene A"
 
 class GeneHasVariantInCodonTest {
 
-    private val function = GeneHasVariantInCodon(TARGET_GENE, listOf("A100", "B200"))
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = GeneHasVariantInCodon(TARGET_GENE, listOf("A100", "B200"), labels)
 
     @Test
     fun `Should fail when gene not present`() {

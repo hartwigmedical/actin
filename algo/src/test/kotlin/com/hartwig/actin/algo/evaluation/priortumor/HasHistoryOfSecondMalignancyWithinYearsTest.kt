@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import java.time.LocalDate
@@ -11,7 +13,7 @@ class HasHistoryOfSecondMalignancyWithinYearsTest {
     @Test
     fun canEvaluate() {
         val minDate = LocalDate.of(2019, 6, 20)
-        val function = HasHistoryOfSecondMalignancyWithinYears(minDate)
+        val function = HasHistoryOfSecondMalignancyWithinYears(minDate, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).priorTumor)
 
         // No history in case of no second primary
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())))

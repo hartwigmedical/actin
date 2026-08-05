@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,7 +11,8 @@ import java.time.LocalDate
 
 class IsNotParticipatingInAnotherInterventionalTrial(
     private val selector: MedicationSelector,
-    private val minStopDate: LocalDate
+    private val minStopDate: LocalDate,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -22,10 +24,10 @@ class IsNotParticipatingInAnotherInterventionalTrial(
 
         return when {
             hadRecentTrialTreatment || hasActiveOrRecentlyStoppedTrialMedication -> {
-                EvaluationFactory.warn("Recent trial treatment - undetermined if patient is participating in another interventional trial")
+                EvaluationFactory.warn(labels.isNotParticipatingInAnotherInterventionalTrialWarn())
             }
 
-            else -> EvaluationFactory.pass("Assumed that patient is not participating in another interventional trial")
+            else -> EvaluationFactory.pass(labels.isNotParticipatingInAnotherInterventionalTrialPass())
         }
     }
 }

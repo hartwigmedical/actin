@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.junit.jupiter.api.Test
 
 class IsEligibleForTreatmentLinesTest {
-    
-    private val function = IsEligibleForTreatmentLines(listOf(2))
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = IsEligibleForTreatmentLines(listOf(2), labels)
 
     @Test
     fun `Should fail when not eligible for target treatment line`() {
@@ -45,7 +48,7 @@ class IsEligibleForTreatmentLinesTest {
 
     @Test
     fun `Should match against multiple target lines`() {
-        val functionForLine2Or3 = IsEligibleForTreatmentLines(listOf(2, 3))
+        val functionForLine2Or3 = IsEligibleForTreatmentLines(listOf(2, 3), labels)
 
         val patientWithEmptyHistory = TreatmentTestFactory.withTreatmentHistory(emptyList())
         assertEvaluation(EvaluationResult.FAIL, functionForLine2Or3.evaluate(patientWithEmptyHistory))

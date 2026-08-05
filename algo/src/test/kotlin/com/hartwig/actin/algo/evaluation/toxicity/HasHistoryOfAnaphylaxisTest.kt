@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.IcdModel
@@ -17,7 +19,7 @@ class HasHistoryOfAnaphylaxisTest {
             IcdNode(IcdConstants.DRUG_INDUCED_ANAPHYLAXIS_CODE, listOf(IcdConstants.ANAPHYLAXIS_CODE), "Drug-induced anaphylaxis")
         )
     )
-    private val function = HasHistoryOfAnaphylaxis(icdModel)
+    private val function = HasHistoryOfAnaphylaxis(icdModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).toxicity)
     private val testPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test

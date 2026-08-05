@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import org.junit.jupiter.api.Test
 
 class MolecularResultsAreKnownForPromoterOfGeneTest {
 
-    private val function = MolecularResultsAreKnownForPromoterOfGene("gene 1")
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = MolecularResultsAreKnownForPromoterOfGene("gene 1", labels)
 
     @Test
     fun `Should pass if promoter of gene tested by IHC with determinate results`() {

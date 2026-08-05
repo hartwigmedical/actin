@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMinValue
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions
 import com.hartwig.actin.datamodel.PatientRecord
@@ -13,7 +14,8 @@ import java.time.LocalDate
 
 class HasSufficientDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
-    private val minCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate
+    private val minCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate,
+    private val labels: EvaluationLabels.Laboratory
 ) : SingleLabValueEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
@@ -61,18 +63,24 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
-                "eGFR (CG) may be insufficient based on creatinine level ($unit) but body weight unknown"
+                labels.hasSufficientDerivedCreatinineClearanceRecoverableUndeterminedUnknownWeightFail(unit)
             )
 
-            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail("eGFR (Cockcroft-Gault) $formattedCockcroftGault below min of $minCreatinineClearance")
+            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
+                labels.hasSufficientDerivedCreatinineClearanceCockcroftGaultRecoverableFail(formattedCockcroftGault, minCreatinineClearance)
+            )
 
-            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined("eGFR (Cockcroft-Gault) evaluation undetermined")
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined(
+                labels.hasSufficientDerivedCreatinineClearanceCockcroftGaultRecoverableUndetermined()
+            )
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.recoverableUndetermined(
-                "eGFR (CG) based on creatinine level ($unit) most likely above min of $minCreatinineClearance but body weight unknown",
+                labels.hasSufficientDerivedCreatinineClearanceRecoverableUndeterminedUnknownWeightPass(unit, minCreatinineClearance)
             )
 
-            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass("eGFR (Cockcroft-Gault) $formattedCockcroftGault above min of $minCreatinineClearance")
+            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
+                labels.hasSufficientDerivedCreatinineClearanceCockcroftGaultPass(formattedCockcroftGault, minCreatinineClearance)
+            )
 
             else -> Evaluation(result = result, recoverable = true)
         }
@@ -83,13 +91,13 @@ class HasSufficientDerivedCreatinineClearance internal constructor(
 
         return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.recoverableFail("eGFR ($code) below min of $minCreatinineClearance")
+                EvaluationFactory.recoverableFail(labels.hasSufficientDerivedCreatinineClearanceRecoverableFail(code, minCreatinineClearance))
             }
             EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.recoverableUndetermined("eGFR ($code) evaluation undetermined")
+                EvaluationFactory.recoverableUndetermined(labels.hasSufficientDerivedCreatinineClearanceRecoverableUndetermined(code))
             }
             EvaluationResult.PASS -> {
-                EvaluationFactory.recoverablePass("eGFR ($code) above min of $minCreatinineClearance")
+                EvaluationFactory.recoverablePass(labels.hasSufficientDerivedCreatinineClearancePass(code, minCreatinineClearance))
             }
 
             else -> {

@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -19,7 +21,9 @@ private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
 
 class HasHadSomeTreatmentsWithCategoryOfTypesTest {
 
-    private val function = HasHadSomeTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 2)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+
+    private val function = HasHadSomeTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 2, labels)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -56,7 +60,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
 
     @Test
     fun `Should pass for recent correct treatment category with incorrect type in treatment history entry but correct type in medication entry`() {
-        val function = HasHadSomeTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 1)
+        val function = HasHadSomeTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 1, labels)
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
@@ -89,7 +93,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
 
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
-        val function = HasHadSomeTreatmentsWithCategoryOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 2)
+        val function = HasHadSomeTreatmentsWithCategoryOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 2, labels)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))

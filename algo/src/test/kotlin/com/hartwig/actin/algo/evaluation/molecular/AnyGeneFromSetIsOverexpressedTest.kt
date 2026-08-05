@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -18,6 +20,8 @@ private const val PASS_INCLUSION_EVENT = "pass amplification event"
 private const val WARN_INCLUSION_EVENT = "warn amplification event"
 
 class AnyGeneFromSetIsOverexpressedTest {
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
 
     private val alwaysPassGeneAmplificationEvaluation = mockk<GeneIsAmplified> {
         every { evaluate(any<MolecularTest>(), any<List<IhcTest>>()) } returns EvaluationFactory.pass(
@@ -101,6 +105,6 @@ class AnyGeneFromSetIsOverexpressedTest {
     }
 
     private fun createFunctionWithEvaluations(geneIsAmplified: (String) -> GeneIsAmplified): AnyGeneFromSetIsOverexpressed {
-        return AnyGeneFromSetIsOverexpressed(setOf("geneA", "geneB", "geneC"), geneIsAmplified)
+        return AnyGeneFromSetIsOverexpressed(setOf("geneA", "geneB", "geneC"), labels, geneIsAmplified)
     }
 }

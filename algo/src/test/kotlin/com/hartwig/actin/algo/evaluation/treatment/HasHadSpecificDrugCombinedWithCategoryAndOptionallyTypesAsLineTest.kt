@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -20,11 +22,14 @@ private val MATCHING_DRUG_TREATMENT = drugTreatment("Target drug", MATCHING_CATE
 
 class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+
     private val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
         MATCHING_DRUG_TREATMENT.drugs.first(),
         MATCHING_CATEGORY,
         MATCHING_TYPES,
-        null
+        null,
+        labels
     )
 
     @Test
@@ -59,7 +64,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     fun `Should pass if combination of target drug and treatment with target category in history if function requires no types and line`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)))
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null, labels
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -75,7 +80,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
             )
         )
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), null
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), null, labels
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -86,7 +91,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
             setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, MATCHING_TYPES))
         )
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, labels
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -125,7 +130,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
             )
         )
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 2
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 2, labels
         )
         val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         assertEvaluation(EvaluationResult.UNDETERMINED, result)

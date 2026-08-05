@@ -1,13 +1,16 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import org.junit.jupiter.api.Test
 
 class HasMinimumSitesWithLesionsTest {
-    
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
     private val testPatient = patient(
         hasBoneLesions = true,
         hasSuspectedBoneLesions = false,
@@ -29,7 +32,7 @@ class HasMinimumSitesWithLesionsTest {
     fun `Should pass when number of categorized lesions equals threshold and no other lesions are present`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            HasMinimumSitesWithLesions(6).evaluate(
+            HasMinimumSitesWithLesions(6, labels).evaluate(
                 patientWithConsistentLesionFlags(
                     lesionFlag = true,
                     suspectedLesionFlag = false,
@@ -42,48 +45,48 @@ class HasMinimumSitesWithLesionsTest {
 
     @Test
     fun `Should pass when number of categorized lesions are one less than threshold and other lesions are present`() {
-        assertEvaluation(EvaluationResult.PASS, HasMinimumSitesWithLesions(3).evaluate(testPatient))
+        assertEvaluation(EvaluationResult.PASS, HasMinimumSitesWithLesions(3, labels).evaluate(testPatient))
     }
 
     @Test
     fun `Should warn when number of categorized lesions meets threshold when including suspected lesions`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            HasMinimumSitesWithLesions(4).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true)))
+            HasMinimumSitesWithLesions(4, labels).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true)))
         )
     }
 
     @Test
     fun `Should be undetermined when threshold is between upper and lower lesion site limits`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, HasMinimumSitesWithLesions(5).evaluate(testPatient))
+        assertEvaluation(EvaluationResult.UNDETERMINED, HasMinimumSitesWithLesions(5, labels).evaluate(testPatient))
     }
 
     @Test
     fun `Should be undetermined when threshold is between upper and lower lesion site limits including suspected lesion`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasMinimumSitesWithLesions(6).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true)))
+            HasMinimumSitesWithLesions(6, labels).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true)))
         )
     }
 
     @Test
     fun `Should fail when lesion site upper limit is less than threshold`() {
-        assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(6).evaluate(testPatient))
+        assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(6, labels).evaluate(testPatient))
     }
 
     @Test
     fun `Should fail when lesion site upper limit including suspected lesions is less than threshold`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            HasMinimumSitesWithLesions(7).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true)))
+            HasMinimumSitesWithLesions(7, labels).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true)))
         )
     }
 
     @Test
     fun `Should not count null boolean fields or empty other lesions as sites`() {
         val patient = patientWithConsistentLesionFlags(null, null, emptyList(), emptyList())
-        assertEvaluation(EvaluationResult.UNDETERMINED, HasMinimumSitesWithLesions(1).evaluate(patient))
-        assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(2).evaluate(patient))
+        assertEvaluation(EvaluationResult.UNDETERMINED, HasMinimumSitesWithLesions(1, labels).evaluate(patient))
+        assertEvaluation(EvaluationResult.FAIL, HasMinimumSitesWithLesions(2, labels).evaluate(patient))
     }
 
     companion object {

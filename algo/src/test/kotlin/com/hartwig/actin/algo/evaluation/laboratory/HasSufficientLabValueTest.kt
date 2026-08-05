@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -12,7 +14,8 @@ import org.junit.jupiter.api.Test
 class HasSufficientLabValueTest {
 
     private val measurement = LabMeasurement.THROMBOCYTES_ABS
-    private val function = HasSufficientLabValue(200.0, measurement, measurement.defaultUnit)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+    private val function = HasSufficientLabValue(200.0, measurement, measurement.defaultUnit, labels)
     private val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
 
     @Test
@@ -52,7 +55,7 @@ class HasSufficientLabValueTest {
     @Test
     fun `Should correctly evaluate case requiring conversion`() {
         val measurement = LabMeasurement.HEMOGLOBIN
-        val function = HasSufficientLabValue(7.5, measurement, LabUnit.MILLIMOLES_PER_LITER)
+        val function = HasSufficientLabValue(7.5, measurement, LabUnit.MILLIMOLES_PER_LITER, labels)
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val targetUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.MILLIMOLES_PER_LITER)
         val offUnit = LabTestFactory.create(measurement).copy(unit = LabUnit.GRAMS_PER_DECILITER)
@@ -70,7 +73,7 @@ class HasSufficientLabValueTest {
         assertThat(evaluation.failMessagesStrings()).containsExactly("Hemoglobin 5.1 mmol/L (converted from: 8.2 g/dL) below min of 7.5 mmol/L")
 
         // Works with other unit as target unit as well.
-        val function2 = HasSufficientLabValue(7.5, measurement, LabUnit.GRAMS_PER_DECILITER)
+        val function2 = HasSufficientLabValue(7.5, measurement, LabUnit.GRAMS_PER_DECILITER, labels)
         assertEvaluation(EvaluationResult.PASS, function2.evaluate(record, measurement, targetUnit.copy(value = 6.5)))
 
         // Test that evaluation becomes undetermined if lab evaluation cannot convert.

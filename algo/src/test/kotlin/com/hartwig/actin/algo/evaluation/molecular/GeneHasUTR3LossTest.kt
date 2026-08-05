@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -18,7 +20,8 @@ private const val TARGET_GENE = "gene A"
 
 class GeneHasUTR3LossTest {
 
-    private val function = GeneHasUTR3Loss(TARGET_GENE)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = GeneHasUTR3Loss(TARGET_GENE, labels)
 
     @Test
     fun canEvaluate() {

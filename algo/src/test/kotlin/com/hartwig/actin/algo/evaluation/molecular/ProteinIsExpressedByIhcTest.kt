@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
 import com.hartwig.actin.algo.evaluation.molecular.MolecularTestFactory.ihcTest
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
@@ -10,7 +12,8 @@ private const val PROTEIN = "protein 1"
 
 class ProteinIsExpressedByIhcTest {
 
-    private val function = ProteinIsExpressedByIhc(PROTEIN)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = ProteinIsExpressedByIhc(PROTEIN, labels)
     private val passingTest = ihcTest(item = PROTEIN, scoreText = IhcTestEvaluationConstants.BROAD_POSITIVE_TERMS.first())
     private val wrongTest = ihcTest(item = PROTEIN, scoreText = IhcTestEvaluationConstants.BROAD_NEGATIVE_TERMS.first())
     private val inconclusiveTest = ihcTest(item = PROTEIN, scoreText = "something")

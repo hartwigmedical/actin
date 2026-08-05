@@ -2,13 +2,16 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.jupiter.api.Test
 
 class HasOvarianBorderlineTumorTest {
-    
-    private val function = HasOvarianBorderlineTumor(TestDoidModelFactory.createMinimalTestDoidModel())
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val function = HasOvarianBorderlineTumor(TestDoidModelFactory.createMinimalTestDoidModel(), labels)
     private val targetedType = HasOvarianBorderlineTumor.BORDERLINE_TERMS.first()
 
     @Test

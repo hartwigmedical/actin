@@ -1,14 +1,16 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withWHO
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import org.junit.jupiter.api.Test
 
 class HasSevereConcomitantIllnessTest {
 
-    val function = HasSevereConcomitantIllness()
+    val function = HasSevereConcomitantIllness(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity)
 
     @Test
     fun `Should warn when WHO is at least 3`() {

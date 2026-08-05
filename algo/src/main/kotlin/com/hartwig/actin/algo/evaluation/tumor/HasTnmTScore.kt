@@ -2,13 +2,14 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.TumorStage
 import com.hartwig.actin.datamodel.clinical.TnmT
 
-class HasTnmTScore(private val targetTnmTs: Set<TnmT>) : EvaluationFunction {
+class HasTnmTScore(private val targetTnmTs: Set<TnmT>, private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
     private val t1 = setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C)
     private val t2A = setOf(TnmT.T2, TnmT.T2A)
     private val t2B = setOf(TnmT.T2, TnmT.T2B)
@@ -33,13 +34,13 @@ class HasTnmTScore(private val targetTnmTs: Set<TnmT>) : EvaluationFunction {
         val possibleTnmTs = stages?.mapNotNull { stageMap[it] }?.flatten()?.toSet() ?: emptySet()
 
         return when {
-            stages.isNullOrEmpty() -> EvaluationFactory.undetermined("No tumor stage or derived tumor stage found. Tnm T scores not determined.")
+            stages.isNullOrEmpty() -> EvaluationFactory.undetermined(labels.hasTnmTScoreUndeterminedNoStage())
             setOf(TumorStage.IV, TumorStage.IVA, TumorStage.IVB, TumorStage.IVC).containsAll(stages) ->
-                EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification ${show(targetTnmTs)}")
-            targetTnmTs.containsAll(possibleTnmTs) -> EvaluationFactory.pass("Tumor has TNT T-classification ${show(possibleTnmTs)}")
+                EvaluationFactory.undetermined(labels.hasTnmTScoreUndeterminedMetastatic(show(targetTnmTs)))
+            targetTnmTs.containsAll(possibleTnmTs) -> EvaluationFactory.pass(labels.hasTnmTScorePass(show(possibleTnmTs)))
             targetTnmTs.intersect(possibleTnmTs).isNotEmpty() ->
-                EvaluationFactory.undetermined("Undetermined if TNM T-classification is of ${show(targetTnmTs)}- derived T's based on tumor stage are ${show(possibleTnmTs)}")
-            else -> EvaluationFactory.fail("Tumor is not of stage ${show(targetTnmTs)}")
+                EvaluationFactory.undetermined(labels.hasTnmTScoreUndetermined(show(targetTnmTs), show(possibleTnmTs)))
+            else -> EvaluationFactory.fail(labels.hasTnmTScoreFail(show(targetTnmTs)))
         }
     }
 

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -18,11 +20,12 @@ class HasSufficientDerivedCreatinineClearanceTest {
 
     private val referenceDate = LocalDateTime.of(2020, 1, 1, 12, 30, 0)
     private val minimumValidDateForBodyWeight = referenceDate.minusMonths(1).toLocalDate()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
 
     @Test
     fun `Should evaluate correctly using MDRD`() {
         val function =
-            HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0, minimumValidDateForBodyWeight)
+            HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_MDRD, 100.0, minimumValidDateForBodyWeight, labels)
         val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
 
         // MDRD between 103 and 125
@@ -37,7 +40,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
     @Test
     fun `Should evaluate correctly using CKDEPI`() {
         val function =
-            HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100.0, minimumValidDateForBodyWeight)
+            HasSufficientDerivedCreatinineClearance(2021, CreatinineClearanceMethod.EGFR_CKD_EPI, 100.0, minimumValidDateForBodyWeight, labels)
         val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
 
         // CDK-EPI between 104 and 125
@@ -52,7 +55,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
     @Test
     fun `Should evaluate correctly using Cockcroft Gault with light weight`() {
         val function = HasSufficientDerivedCreatinineClearance(
-            2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0, minimumValidDateForBodyWeight
+            2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0, minimumValidDateForBodyWeight, labels
         )
         val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
         val weights = listOf(
@@ -72,7 +75,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
     @Test
     fun `Should evaluate correctly using Cockcroft Gault with heavy weight`() {
         val function = HasSufficientDerivedCreatinineClearance(
-            2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0, minimumValidDateForBodyWeight
+            2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 100.0, minimumValidDateForBodyWeight, labels
         )
 
         val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
@@ -90,7 +93,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
     @Test
     fun `Should evaluate correctly using Cockcroft Gault without weight`() {
         val function = HasSufficientDerivedCreatinineClearance(
-            2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 80.0, minimumValidDateForBodyWeight
+            2021, CreatinineClearanceMethod.COCKCROFT_GAULT, 80.0, minimumValidDateForBodyWeight, labels
         )
         val creatinine: LabValue = LabTestFactory.create(LabMeasurement.CREATININE, 70.0)
 

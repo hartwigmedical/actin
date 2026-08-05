@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
@@ -18,7 +19,10 @@ enum class IhcExpressionComparisonType {
 }
 
 class ProteinExpressionByIhcFunctions(
-    private val protein: String, private val referenceExpressionLevel: Int, private val comparisonType: IhcExpressionComparisonType
+    private val protein: String,
+    private val referenceExpressionLevel: Int,
+    private val comparisonType: IhcExpressionComparisonType,
+    private val labels: EvaluationLabels.Molecular
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -39,24 +43,29 @@ class ProteinExpressionByIhcFunctions(
 
         return when {
             ihcTestEvaluation.filteredTests.isEmpty() -> {
-                EvaluationFactory.undetermined("No $protein IHC test result", isMissingMolecularResultForEvaluation = true)
+                EvaluationFactory.undetermined(
+                    labels.proteinExpressionByIhcFunctionsUndeterminedNoResult(protein),
+                    isMissingMolecularResultForEvaluation = true
+                )
             }
 
             EvaluationResult.PASS in evaluationsVersusReference -> {
                 EvaluationFactory.pass(
-                    "$protein has expression of $comparisonText $referenceExpressionLevel by IHC",
+                    labels.proteinExpressionByIhcFunctionsPass(protein, comparisonText, referenceExpressionLevel),
                     inclusionEvents = setOf("IHC $protein expression")
                 )
             }
 
             EvaluationResult.UNDETERMINED in evaluationsVersusReference || hasPositiveOrNegativeResult -> {
                 EvaluationFactory.warn(
-                    "Undetermined if $protein expression is $comparisonText $referenceExpressionLevel by IHC",
+                    labels.proteinExpressionByIhcFunctionsWarn(protein, comparisonText, referenceExpressionLevel),
                     inclusionEvents = setOf("Potential IHC $protein expression")
                 )
             }
 
-            else -> EvaluationFactory.fail("$protein expression not $comparisonText $referenceExpressionLevel by IHC")
+            else -> EvaluationFactory.fail(
+                labels.proteinExpressionByIhcFunctionsFail(protein, comparisonText, referenceExpressionLevel)
+            )
         }
     }
 

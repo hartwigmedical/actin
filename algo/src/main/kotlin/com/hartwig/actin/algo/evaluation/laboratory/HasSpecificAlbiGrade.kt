@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AlbiGrade
@@ -14,7 +15,8 @@ import kotlin.math.log10
 class HasSpecificAlbiGrade(
     private val grade: AlbiGrade,
     private val minValidLabDate: LocalDate,
-    private val minPassLabDate: LocalDate
+    private val minPassLabDate: LocalDate,
+    private val labels: EvaluationLabels.Laboratory
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -24,20 +26,18 @@ class HasSpecificAlbiGrade(
 
         return when {
             !LabEvaluation.isValid(albumin, LabMeasurement.ALBUMIN, minValidLabDate) -> {
-                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.ALBUMIN, albumin, minValidLabDate)
+                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.ALBUMIN, albumin, minValidLabDate, labels)
             }
 
             !LabEvaluation.isValid(bilirubin, LabMeasurement.TOTAL_BILIRUBIN, minValidLabDate) -> {
-                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.TOTAL_BILIRUBIN, bilirubin, minValidLabDate)
+                LabEvaluation.evaluateInvalidLabValue(LabMeasurement.TOTAL_BILIRUBIN, bilirubin, minValidLabDate, labels)
             }
 
             else -> {
                 val albiScore = calculateAlbiScore(albumin!!, bilirubin!!)
 
                 if (albiScore == null) {
-                    EvaluationFactory.recoverableUndetermined(
-                        "ALBI score cannot be calculated since albumin or bilirubin not in expected unit and not able to convert"
-                    )
+                    EvaluationFactory.recoverableUndetermined(labels.hasSpecificAlbiGradeCannotCalculate())
                 }
 
                 val albiGrade = when {
@@ -47,16 +47,16 @@ class HasSpecificAlbiGrade(
                 }
 
                 if (albiGrade == grade) {
-                    val message = "ALBI grade sufficient" +
+                    val message = labels.hasSpecificAlbiGradePass() +
                             if (albumin.date.isBefore(minPassLabDate) || bilirubin.date.isBefore(minPassLabDate)) {
-                        " but measurement occurred before $minPassLabDate"
+                        labels.hasSpecificAlbiGradeOccurredBeforeSuffix(minPassLabDate)
                     } else {
                         ""
                     }
                     EvaluationFactory.recoverablePass(message)
                 } else {
                     EvaluationFactory.recoverableFail(
-                        "ALBI grade (${albiGrade.display()}) insufficient - should be ${grade.display()}"
+                        labels.hasSpecificAlbiGradeRecoverableFail(albiGrade.display(), grade.display())
                     )
                 }
             }

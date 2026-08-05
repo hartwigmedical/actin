@@ -2,12 +2,13 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasDocumentationOfTumorType(val type: String) : EvaluationFunction {
+class HasDocumentationOfTumorType(val type: String, private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.pass("Assumed that ${type.lowercase()} documentation of tumor type has been done or can be done")
+        return EvaluationFactory.pass(labels.hasDocumentationOfTumorTypePass(type))
     }
 }

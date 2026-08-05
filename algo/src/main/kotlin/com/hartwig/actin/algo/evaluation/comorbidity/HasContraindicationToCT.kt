@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
@@ -10,7 +11,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFunction {
+class HasContraindicationToCT(private val icdModel: IcdModel, private val labels: EvaluationLabels.Comorbidity) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetIcdCode = setOf(IcdCode(IcdConstants.KIDNEY_FAILURE_BLOCK))
@@ -24,16 +25,19 @@ class HasContraindicationToCT(private val icdModel: IcdModel) : EvaluationFuncti
         }
 
         val conditionString = Format.concatItemsWithAnd(matchingComorbidities)
-        val messageStart = "Potential CT contraindication: "
 
         return when {
-            matchingComorbidities.isNotEmpty() -> EvaluationFactory.recoverablePass(messageStart + conditionString)
+            matchingComorbidities.isNotEmpty() -> EvaluationFactory.recoverablePass(
+                labels.hasContraindicationToCtRecoverablePass(conditionString)
+            )
 
             comorbiditiesMatchingString.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass(messageStart + Format.concatItemsWithAnd(comorbiditiesMatchingString))
+                EvaluationFactory.recoverablePass(
+                    labels.hasContraindicationToCtRecoverablePass(Format.concatItemsWithAnd(comorbiditiesMatchingString))
+                )
             }
 
-            else -> EvaluationFactory.fail("No potential contraindications to CT")
+            else -> EvaluationFactory.fail(labels.hasContraindicationToCtFail())
         }
     }
 

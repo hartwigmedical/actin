@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -10,13 +12,14 @@ import org.junit.jupiter.api.Test
 
 class HasHadAdjuvantTreatmentWithCategoryTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val matchCategory = TreatmentCategory.TARGETED_THERAPY
     private val referenceDate = LocalDate.of(2024, 7, 30)
     private val minDate = referenceDate.minusMonths(6)
     private val recentDate = referenceDate.minusMonths(3)
     private val olderDate = referenceDate.minusMonths(14)
-    private val functionWithDate = HasHadAdjuvantTreatmentWithCategory(matchCategory, minDate, 6)
-    private val functionWithoutDate = HasHadAdjuvantTreatmentWithCategory(matchCategory, null, null)
+    private val functionWithDate = HasHadAdjuvantTreatmentWithCategory(matchCategory, minDate, 6, labels)
+    private val functionWithoutDate = HasHadAdjuvantTreatmentWithCategory(matchCategory, null, null, labels)
 
     @Test
     fun `Should fail with no treatment history`() {

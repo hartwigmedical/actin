@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -16,7 +18,9 @@ private val MATCHING_TYPES = setOf(DrugType.HER2_ANTIBODY, DrugType.ANTIBODY_DRU
 
 class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
 
-    private val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+
+    private val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1, labels)
 
     @Test
     fun `Should pass when treatment history contains treatments of all requested types`() {
@@ -46,7 +50,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
 
     @Test
     fun `Should pass for recent correct treatment category with incorrect types in treatment history entry but medication with correct types`() {
-        val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1)
+        val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1, labels)
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
@@ -132,7 +136,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
 
     @Test
     fun `Should fail when medication entry has drug with correct category but not of all requested types`() {
-        val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1)
+        val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1, labels)
         val medication = WashoutTestFactory.medication().copy(
             drug = Drug(
                 name = "", category = MATCHING_CATEGORY, drugTypes = setOf(DrugType.HER2_ANTIBODY)
@@ -177,7 +181,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
 
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
-        val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 1)
+        val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 1, labels)
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.TRANSPLANTATION)),
             isTrial = true

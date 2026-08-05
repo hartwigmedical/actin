@@ -3,15 +3,16 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-class HasMeasurableDiseasePercist(private val doidModel: DoidModel) : EvaluationFunction {
+class HasMeasurableDiseasePercist(private val doidModel: DoidModel, private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasMeasurableDisease = record.tumor.hasMeasurableDisease
-            ?: return EvaluationFactory.recoverableUndetermined("Measurable disease by PERCIST undetermined (data missing)")
+            ?: return EvaluationFactory.recoverableUndetermined(labels.hasMeasurableDiseasePercistRecoverableUndetermined())
 
         return if (hasMeasurableDisease && DoidEvaluationFunctions.isOfAtLeastOneDoidType(
                 doidModel,
@@ -23,11 +24,11 @@ class HasMeasurableDiseasePercist(private val doidModel: DoidModel) : Evaluation
                 setOf(DoidConstants.LYMPHOMA_DOID)
             )
         ) {
-            EvaluationFactory.warn("Has measurable disease but with this tumor type unknown if by PERCIST")
+            EvaluationFactory.warn(labels.hasMeasurableDiseasePercistWarn())
         } else if (hasMeasurableDisease) {
-            EvaluationFactory.recoverablePass("Has measurable disease")
+            EvaluationFactory.recoverablePass(labels.hasMeasurableDiseasePercistPass())
         } else {
-            EvaluationFactory.recoverableFail("Has no measurable disease")
+            EvaluationFactory.recoverableFail(labels.hasMeasurableDiseasePercistRecoverableFail())
         }
     }
 

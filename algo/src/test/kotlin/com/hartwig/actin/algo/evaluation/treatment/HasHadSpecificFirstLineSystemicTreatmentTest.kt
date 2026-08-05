@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -9,10 +11,11 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
 class HasHadSpecificFirstLineSystemicTreatmentTest {
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val matchingTreatment =
         treatmentHistoryEntry(setOf(treatment("matching treatment", categories = setOf(TreatmentCategory.CHEMOTHERAPY), isSystemic = true)))
     private val otherTreatment = treatmentHistoryEntry(setOf(treatment("other treatment", true)))
-    private val function = HasHadSpecificFirstLineSystemicTreatment(matchingTreatment.treatments.first())
+    private val function = HasHadSpecificFirstLineSystemicTreatment(matchingTreatment.treatments.first(), labels)
 
     @Test
     fun `Should fail for empty treatments`() {

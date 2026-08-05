@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
@@ -10,9 +11,10 @@ import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.MolecularTestTarget
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 
-class GeneHasVariantInCodon(override val gene: String, private val codons: List<String>) :
+class GeneHasVariantInCodon(override val gene: String, private val codons: List<String>, labels: EvaluationLabels.Molecular) :
     MolecularEvaluationFunction(
-        targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, "Mutation in codons ${codons.joinToString()} in")
+        targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, labels.geneHasVariantInCodonMessagePrefix(codons)),
+        labels = labels
     ) {
 
     private enum class VariantClassification {
@@ -76,8 +78,9 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
         return when {
             canonicalReportableVariantMatches.isNotEmpty() && reportableOtherVariantMatches.isEmpty() && canonicalReportableSubclonalVariantMatches.isEmpty() -> {
                 EvaluationFactory.pass(
-                    "Variant(s) ${concatVariants(canonicalReportableVariantMatches, gene)} in codon(s) " +
-                            "${concat(canonicalCodonMatches)} in $gene in canonical transcript",
+                    labels.geneHasVariantInCodonPass(
+                        concatVariants(canonicalReportableVariantMatches, gene), concat(canonicalCodonMatches), gene
+                    ),
                     inclusionEvents = canonicalReportableVariantMatches
                 )
             }
@@ -90,11 +93,9 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
                     canonicalReportableSubclonalCodonMatches
                 )
                 EvaluationFactory.warn(
-                    "Variant(s) ${concatVariants(canonicalReportableVariantMatches, gene)} in codon(s) ${
-                        concat(
-                            canonicalCodonMatches
-                        )
-                    } in $gene in canonical transcript together with " + extension,
+                    labels.geneHasVariantInCodonWarnExtended(
+                        concatVariants(canonicalReportableVariantMatches, gene), concat(canonicalCodonMatches), gene, extension
+                    ),
                     inclusionEvents = canonicalReportableVariantMatches + reportableOtherVariantMatches + canonicalReportableSubclonalVariantMatches,
                 )
             }
@@ -109,7 +110,7 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
                 )
 
                 potentialWarnEvaluation ?: EvaluationFactory.fail(
-                    "No variants in codon(s) ${Format.concatWithCommaAndOr(codons)} in $gene"
+                    labels.geneHasVariantInCodonFail(Format.concatWithCommaAndOr(codons), gene)
                 )
             }
         }
@@ -124,16 +125,17 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
             listOf(
                 EventsWithMessages(
                     canonicalReportableSubclonalVariantMatches,
-                    "Variant(s) in codon(s) ${concatVariants(canonicalReportableSubclonalVariantMatches, gene)} in $gene in " +
-                            "canonical transcript but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
+                    labels.geneHasVariantInCodonWarnSubclonal(
+                        concatVariants(canonicalReportableSubclonalVariantMatches, gene), gene, percentage(1 - CLONAL_CUTOFF)
+                    )
                 ),
                 EventsWithMessages(
                     canonicalUnreportableVariantMatches,
-                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene in canonical transcript but not considered reportable"
+                    labels.geneHasVariantInCodonWarnUnreportable(concat(canonicalCodonMatches), gene)
                 ),
                 EventsWithMessages(
                     reportableOtherVariantMatches,
-                    "Variant(s) in codon(s) ${concat(reportableOtherCodonMatches)} in $gene but in non-canonical transcript"
+                    labels.geneHasVariantInCodonWarnNonCanonical(concat(reportableOtherCodonMatches), gene)
                 )
             )
         )
@@ -147,14 +149,16 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
     ): String {
         val message = listOfNotNull(
             if (reportableOtherVariantMatches.isNotEmpty()) {
-                "variant(s) ${concatVariants(reportableOtherVariantMatches, gene)} in codon(s) ${
-                    concat(reportableOtherCodonMatches)
-                } but in non-canonical transcript"
+                labels.geneHasVariantInCodonExtensionNonCanonical(
+                    concatVariants(reportableOtherVariantMatches, gene), concat(reportableOtherCodonMatches)
+                )
             } else null,
             if (canonicalReportableSubclonalVariantMatches.isNotEmpty()) {
-                "variant(s) ${concatVariants(canonicalReportableSubclonalVariantMatches, gene)} in codon(s) ${
-                    concat(canonicalReportableSubclonalCodonMatches)
-                } in canonical transcript" + " but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
+                labels.geneHasVariantInCodonExtensionSubclonal(
+                    concatVariants(canonicalReportableSubclonalVariantMatches, gene),
+                    concat(canonicalReportableSubclonalCodonMatches),
+                    percentage(1 - CLONAL_CUTOFF)
+                )
             } else null
         )
         return concat(message)

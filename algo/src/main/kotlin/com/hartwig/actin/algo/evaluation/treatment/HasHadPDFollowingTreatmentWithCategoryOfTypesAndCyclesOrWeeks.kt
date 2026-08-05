@@ -6,6 +6,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.recoverableUndetermin
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.warn
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
@@ -15,7 +16,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     private val category: TreatmentCategory,
-    private val types: Set<TreatmentType>, private val minCycles: Int?, private val minWeeks: Int?
+    private val types: Set<TreatmentType>, private val minCycles: Int?, private val minWeeks: Int?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -56,35 +58,41 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                undetermined(hasTreatmentMessage(" but unknown nr of cycles"))
+                undetermined(hasTreatmentMessage(labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksSuffixUnknownCycles()))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                undetermined(hasTreatmentMessage(" but unknown nr of weeks"))
+                undetermined(hasTreatmentMessage(labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksSuffixUnknownWeeks()))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD")
+                recoverableUndetermined(
+                    labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksRecoverableUndeterminedUncertainPd(treatment())
+                )
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD & unknown nr of cycles")
+                recoverableUndetermined(
+                    labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksRecoverableUndeterminedUncertainPdUnknownCycles(treatment())
+                )
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD & unclear nr of weeks")
+                recoverableUndetermined(
+                    labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksRecoverableUndeterminedUncertainPdUnclearWeeks(treatment())
+                )
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                undetermined("Undetermined if patient received ${treatment()}")
+                undetermined(labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksUndeterminedIfReceived(treatment()))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_INSUFFICIENT_CYCLES in treatmentEvaluations -> {
-                warn(hasTreatmentMessage(" but less than $minCycles cycles"))
+                warn(hasTreatmentMessage(labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksSuffixLessThanCycles(minCycles)))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_INSUFFICIENT_WEEKS in treatmentEvaluations -> {
-                fail(hasTreatmentMessage(" but less than $minWeeks weeks"))
+                fail(hasTreatmentMessage(labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksSuffixLessThanWeeks(minWeeks)))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> fail(hasNoPDAfterMessage(suffix()))
@@ -94,25 +102,28 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "Has had ${treatment()} with PD$suffix"
+        return labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksMessage(treatment(), suffix)
     }
 
     private fun hasNoPDAfterMessage(suffix: String = ""): String {
-        return "No PD after ${category.display()}$suffix"
+        return labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksFailNoPdAfter(category.display(), suffix)
     }
 
     private fun hasNoTreatmentMessage(suffix: String = ""): String {
-        return "No ${treatment()} with PD$suffix"
+        return labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksFailNoTreatment(treatment(), suffix)
     }
 
     private fun suffix(): String = when {
         minCycles == null && minWeeks == null -> ""
-        minCycles != null -> " and at least $minCycles cycles"
-        else -> " for at least $minWeeks weeks"
+        minCycles != null -> labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksSuffixAndAtLeastCycles(minCycles)
+        else -> labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksSuffixForAtLeastWeeks(minWeeks!!)
     }
 
     private fun treatment(): String {
-        return "${Format.concatItemsWithOr(types)} ${category.display()} treatment"
+        return labels.hasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTreatmentDescription(
+            Format.concatItemsWithOr(types),
+            category.display()
+        )
     }
 
     private enum class PDFollowingTreatmentEvaluation {

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -12,7 +14,8 @@ private val TREATMENT_TO_MATCH = treatment("Treat1", true)
 
 class HasHadSomeSpecificTreatmentsWithDoseReductionTest {
 
-    val function = HasHadSomeSpecificTreatmentsWithDoseReduction(TREATMENT_TO_MATCH)
+    val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    val function = HasHadSomeSpecificTreatmentsWithDoseReduction(TREATMENT_TO_MATCH, labels)
 
     @Test
     fun `Should be undetermined with specific message when patient has received treatment`() {

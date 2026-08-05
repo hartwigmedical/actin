@@ -1,10 +1,12 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN
 import com.hartwig.actin.algo.evaluation.laboratory.LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
@@ -19,6 +21,7 @@ class LabEvaluationTest {
     private val minValidDate = refDate.minusDays(90)
     private val measurement = LabMeasurement.CREATININE
     private val labValue = LabTestFactory.create(LabMeasurement.CREATININE, value = 100.0, refDate, refLimitUp = 100.0)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
 
     @Test
     fun `Should return cannot be determined result for minimum LLN evaluation when reference limit not provided`() {
@@ -123,14 +126,14 @@ class LabEvaluationTest {
     //Tests for fun evaluateInvalidLabValue
     @Test
     fun `Should evaluate to undetermined with specific message if lab value is null`() {
-        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, null, minValidDate)
+        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, null, minValidDate, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No measurement found for ${measurement.display}")
     }
 
     @Test
     fun `Should evaluate to undetermined with specific message if lab value unit is different from default`() {
-        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(unit = LabUnit.GRAMS), minValidDate)
+        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(unit = LabUnit.GRAMS), minValidDate, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Unexpected unit specified for ${measurement.display}: ${LabUnit.GRAMS.display()}"
@@ -139,7 +142,8 @@ class LabEvaluationTest {
 
     @Test
     fun `Should evaluate to undetermined with specific message if lab value is too old`() {
-        val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(date = minValidDate.minusDays(1)), minValidDate)
+        val evaluation =
+            LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(date = minValidDate.minusDays(1)), minValidDate, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Most recent measurement too old for ${measurement.display}"

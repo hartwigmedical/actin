@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.height
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.weight
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -11,7 +13,9 @@ import org.junit.jupiter.api.Test
 
 class HasBMIUpToLimitTest {
 
-    private val function: HasBMIUpToLimit = HasBMIUpToLimit(40, LocalDate.of(2023, 12, 1))
+    private val function: HasBMIUpToLimit = HasBMIUpToLimit(
+        40, LocalDate.of(2023, 12, 1), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).vitalFunction
+    )
     private val referenceDate = LocalDateTime.of(2023, 12, 2, 0, 0)
 
     @Test

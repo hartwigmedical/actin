@@ -2,7 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -21,9 +23,10 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
     private val alwaysUndeterminedMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
         every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
     }
-    private val functionMetastaticCancer = IsEligibleForFirstLinePalliativeChemotherapy(alwaysPassMetastaticCancerEvaluation)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val functionMetastaticCancer = IsEligibleForFirstLinePalliativeChemotherapy(alwaysPassMetastaticCancerEvaluation, labels)
     private val functionUndeterminedMetastaticCancer =
-        IsEligibleForFirstLinePalliativeChemotherapy(alwaysUndeterminedMetastaticCancerEvaluation)
+        IsEligibleForFirstLinePalliativeChemotherapy(alwaysUndeterminedMetastaticCancerEvaluation, labels)
     private val palliativeChemotherapy = patientRecordWithTreatmentWithCategoryAndIntent(TreatmentCategory.CHEMOTHERAPY, Intent.PALLIATIVE)
     private val palliativeTargetedTherapy =
         patientRecordWithTreatmentWithCategoryAndIntent(TreatmentCategory.TARGETED_THERAPY, Intent.PALLIATIVE)
@@ -35,7 +38,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         val alwaysFailsMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
-        val function = IsEligibleForFirstLinePalliativeChemotherapy(alwaysFailsMetastaticCancerEvaluation)
+        val function = IsEligibleForFirstLinePalliativeChemotherapy(alwaysFailsMetastaticCancerEvaluation, labels)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(palliativeChemotherapy))
     }
 

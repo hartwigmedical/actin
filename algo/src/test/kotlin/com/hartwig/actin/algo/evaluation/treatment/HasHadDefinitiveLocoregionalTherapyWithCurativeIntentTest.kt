@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -12,7 +14,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import org.junit.jupiter.api.Test
 
 class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
-    
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val radiotherapy = TreatmentTestFactory.treatment("Radiotherapy", true, setOf(TreatmentCategory.RADIOTHERAPY))
     private val surgery = TreatmentTestFactory.treatment("Surgery", true, setOf(TreatmentCategory.SURGERY))
     private val chemotherapy = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
@@ -28,14 +31,14 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
     }
 
     private fun evaluate(patientRecord: PatientRecord): Evaluation {
-        return HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(patientRecord)
+        return HasHadDefinitiveLocoregionalTherapyWithCurativeIntent(labels).evaluate(patientRecord)
     }
 
     @Test
     fun `Should be UNDETERMINED when treatment history is empty`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(withTreatmentHistory(emptyList()))
+            HasHadDefinitiveLocoregionalTherapyWithCurativeIntent(labels).evaluate(withTreatmentHistory(emptyList()))
         )
     }
 

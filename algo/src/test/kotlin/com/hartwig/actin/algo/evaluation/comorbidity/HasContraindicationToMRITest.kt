@@ -1,17 +1,21 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.intolerance
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withOtherCondition
 import com.hartwig.actin.algo.evaluation.comorbidity.HasContraindicationToMRI.Companion.COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.jupiter.api.Test
 
 class HasContraindicationToMRITest {
-    private val function = HasContraindicationToMRI(TestIcdFactory.createTestModel())
+    private val function = HasContraindicationToMRI(
+        TestIcdFactory.createTestModel(), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    )
 
 
     @Test

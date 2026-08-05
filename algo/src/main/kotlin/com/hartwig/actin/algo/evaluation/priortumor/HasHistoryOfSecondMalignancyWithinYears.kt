@@ -2,11 +2,13 @@ package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import java.time.LocalDate
 
-class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : EvaluationFunction {
+class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate, private val labels: EvaluationLabels.PriorTumor) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasMatch = false
@@ -27,16 +29,12 @@ class HasHistoryOfSecondMalignancyWithinYears(private val minDate: LocalDate) : 
                 }
             }
         }
-        return if (hasMatch) {
-            EvaluationFactory.pass("Has other malignancy in recent history")
-        } else if (hasPotentialMatch) {
-            EvaluationFactory.undetermined("Has history of previous malignancy but undetermined whether it is considered recent")
-        } else {
-            if (record.priorPrimaries.isEmpty() || hasUsableData) {
-                EvaluationFactory.fail("No recent other malignancy")
-            } else {
-                EvaluationFactory.undetermined("Undetermined if previous malignancy was recent (date unknown)")
-            }
+
+        return when {
+            hasMatch -> EvaluationFactory.pass(labels.hasHistoryOfSecondMalignancyWithinYearsPass())
+            hasPotentialMatch -> EvaluationFactory.undetermined(labels.hasHistoryOfSecondMalignancyWithinYearsUndeterminedPotentialMatch())
+            record.priorPrimaries.isEmpty() || hasUsableData -> EvaluationFactory.fail(labels.hasHistoryOfSecondMalignancyWithinYearsFail())
+            else -> EvaluationFactory.undetermined(labels.hasHistoryOfSecondMalignancyWithinYearsUndeterminedUnknownDate())
         }
     }
 }

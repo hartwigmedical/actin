@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -10,8 +12,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
 class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
-    private val function = HasHadTreatmentWithCategoryOfTypesAsMostRecent(TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR_GEN_3))
-    private val functionWithoutType = HasHadTreatmentWithCategoryOfTypesAsMostRecent(TreatmentCategory.TARGETED_THERAPY, null)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function =
+        HasHadTreatmentWithCategoryOfTypesAsMostRecent(TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR_GEN_3), labels)
+    private val functionWithoutType = HasHadTreatmentWithCategoryOfTypesAsMostRecent(TreatmentCategory.TARGETED_THERAPY, null, labels)
 
     @Test
     fun `Should fail if treatment history empty`() {

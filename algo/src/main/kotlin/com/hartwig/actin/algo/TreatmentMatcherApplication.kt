@@ -4,26 +4,27 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
-import com.hartwig.actin.configuration.AlgoConfiguration
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.datamodel.trial.TrialConfig
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
 import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.EligibilityFactory
 import com.hartwig.actin.trial.TrialIngestion
 import com.hartwig.actin.utils.monad.getOrNull
+import io.github.oshai.kotlinlogging.KotlinLogging
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.system.exitProcess
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import io.github.oshai.kotlinlogging.KotlinLogging
-import java.nio.file.Files
-import java.nio.file.Path
-import kotlin.system.exitProcess
 
 class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
@@ -39,8 +40,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
 
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
-        val configuration = AlgoConfiguration.create(config.overridesYaml)
-        logger.info { "Loaded algo config: $configuration" }
+        val envConfiguration = EnvironmentConfiguration.create(config.overridesYaml)
+        logger.info { "Loaded algo config: ${envConfiguration.algo}" }
+        val evaluationLabels = EvaluationLabels.load(envConfiguration.report.intendedUse)
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
@@ -50,7 +52,8 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             atcTree = inputData.atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = config.treatmentEfficacyPredictionJson,
-            algoConfiguration = configuration
+            algoConfiguration = envConfiguration.algo,
+            evaluationLabels = evaluationLabels
         )
         val evidenceEntries = EfficacyEntryFactory(treatmentDatabase).extractEfficacyEvidenceFromCkbFile(config.extendedEfficacyJson)
 

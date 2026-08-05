@@ -2,13 +2,15 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasHadOrganTransplant(private val icdModel: IcdModel, private val minYear: Int?) : EvaluationFunction {
+class HasHadOrganTransplant(private val icdModel: IcdModel, private val minYear: Int?, private val labels: EvaluationLabels.Comorbidity) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val matchingComorbidities = icdModel.findInstancesMatchingAnyIcdCode(
@@ -23,15 +25,15 @@ class HasHadOrganTransplant(private val icdModel: IcdModel, private val minYear:
 
         return when {
             passesDateRequirement.isNotEmpty() -> {
-                val dateMessage = minYear?.let { " since $minYear" } ?: ""
-                EvaluationFactory.pass("Has had an organ transplant$dateMessage")
+                val dateMessage = minYear?.let { labels.hasHadOrganTransplantSinceSuffix(it) } ?: ""
+                EvaluationFactory.pass(labels.hasHadOrganTransplantPass(dateMessage))
             }
 
             !withUnknownDate.isNullOrEmpty() -> {
-                EvaluationFactory.undetermined("Has had an organ transplant but unclear if after $minYear (date unknown)")
+                EvaluationFactory.undetermined(labels.hasHadOrganTransplantUndetermined(minYear.toString()))
             }
 
-            else -> EvaluationFactory.fail("No history of organ transplant")
+            else -> EvaluationFactory.fail(labels.hasHadOrganTransplantFail())
         }
     }
 }

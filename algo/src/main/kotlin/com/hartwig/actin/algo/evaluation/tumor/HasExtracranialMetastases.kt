@@ -2,11 +2,12 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasExtracranialMetastases : EvaluationFunction {
+class HasExtracranialMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasNonCnsMetastases = with(record.tumor) {
@@ -22,19 +23,19 @@ class HasExtracranialMetastases : EvaluationFunction {
 
         return when {
             hasNonCnsMetastases || uncategorizedLesions.any(::isExtraCranialLesion) -> {
-                EvaluationFactory.pass("Has extracranial metastases")
+                EvaluationFactory.pass(labels.hasExtracranialMetastasesPass())
             }
 
             hasSuspectedNonCnsMetastases || uncategorizedSuspectedLesions.any(::isExtraCranialLesion) -> {
-                EvaluationFactory.warn("Has extracranial metastases but only suspected lesions")
+                EvaluationFactory.warn(labels.hasExtracranialMetastasesWarn())
             }
 
             uncategorizedLesions.isNotEmpty() || anyCategorizedLesionUnknown -> {
-                EvaluationFactory.undetermined("Undetermined if extracranial metastases present")
+                EvaluationFactory.undetermined(labels.hasExtracranialMetastasesUndetermined())
             }
 
             else -> {
-                EvaluationFactory.fail("No extracranial metastases present")
+                EvaluationFactory.fail(labels.hasExtracranialMetastasesFail())
             }
         }
     }

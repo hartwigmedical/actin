@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
@@ -9,7 +10,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
+class HasEcgAberration(private val icdModel: IcdModel, private val labels: EvaluationLabels.CardiacFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ecgsIcdCodes = record.ecgs.flatMap { it.icdCodes }
@@ -23,22 +24,24 @@ class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
         return when {
             record.ecgs.isNotEmpty() && cardiacArrhythmiaComorbidities.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "ECG abnormalities ($aberrations) and cardiac arrhythmia (${Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)}) in history"
+                    labels.hasEcgAberrationRecoverablePassBoth(
+                        aberrations, Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)
+                    )
                 )
             }
 
             record.ecgs.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass("ECG abnormalities present ($aberrations)")
+                EvaluationFactory.recoverablePass(labels.hasEcgAberrationRecoverablePassEcgOnly(aberrations))
             }
 
             cardiacArrhythmiaComorbidities.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Cardiac arrhythmia in history (${Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)})"
+                    labels.hasEcgAberrationRecoverablePassArrhythmiaOnly(Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities))
                 )
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No known ECG abnormalities")
+                EvaluationFactory.recoverableFail(labels.hasEcgAberrationRecoverableFail())
             }
         }
     }

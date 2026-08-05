@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndOr
@@ -17,13 +18,14 @@ class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
     private val cuppaToDoidMapping: CuppaToDoidMapping,
     private val doidsToMatch: Set<String>,
-    private val specificQuery: String?
+    private val specificQuery: String?,
+    private val labels: EvaluationLabels.Tumor
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            EvaluationFactory.undetermined("Unknown tumor type")
+            EvaluationFactory.undetermined(labels.primaryTumorLocationBelongsToDoidUndeterminedUnknownType())
         } else {
             val doidsTumorBelongsTo =
                 DoidEvaluationFunctions.createFullExpandedParentsDoidTree(doidModel, tumorDoids).intersect(doidsToMatch.toSet())
@@ -32,32 +34,41 @@ class PrimaryTumorLocationBelongsToDoid(
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
 
             when {
-                !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined("Unknown tumor type")
+                !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) ->
+                    EvaluationFactory.undetermined(labels.primaryTumorLocationBelongsToDoidUndeterminedUnknownType())
 
                 doidsTumorBelongsTo.isNotEmpty() && specificQuery != null -> {
                     val name = record.tumor.name
                     when {
                         name.lowercase().contains(specificQuery.lowercase()) ->
-                            EvaluationFactory.pass("Tumor belongs to $doidTermsTumorBelongsTo with specific request '$specificQuery'")
+                            EvaluationFactory.pass(
+                                labels.primaryTumorLocationBelongsToDoidPassSpecificQuery(doidTermsTumorBelongsTo, specificQuery)
+                            )
 
-                        else -> EvaluationFactory.warn("Tumor belongs to $doidTermsTumorBelongsTo but undetermined if '$specificQuery'")
+                        else -> EvaluationFactory.warn(
+                            labels.primaryTumorLocationBelongsToDoidWarnSpecificQuery(doidTermsTumorBelongsTo, specificQuery)
+                        )
                     }
                 }
 
-                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass("Tumor belongs to DOID term(s) $doidTermsTumorBelongsTo")
+                doidsTumorBelongsTo.isNotEmpty() -> EvaluationFactory.pass(
+                    labels.primaryTumorLocationBelongsToDoidPass(doidTermsTumorBelongsTo)
+                )
 
                 potentialAdenoSquamousMatches.isNotEmpty() -> {
                     val potentialAdenoSquamousMatchesString = concatLowercaseWithCommaAndOr(doidsToTerms(potentialAdenoSquamousMatches))
-                    EvaluationFactory.warn("Unclear if tumor type is considered $potentialAdenoSquamousMatchesString")
+                    EvaluationFactory.warn(labels.primaryTumorLocationBelongsToDoidWarnAdenoSquamous(potentialAdenoSquamousMatchesString))
                 }
 
                 undeterminedUnderMainCancerTypes.isNotEmpty() -> {
                     val terms = concatLowercaseWithCommaAndOr(doidsToTerms(undeterminedUnderMainCancerTypes.toSet()))
-                    EvaluationFactory.undetermined("Undetermined if $terms")
+                    EvaluationFactory.undetermined(labels.primaryTumorLocationBelongsToDoidUndetermined(terms))
                 }
 
                 else -> {
-                    evaluateCuppaPrediction(record) ?: EvaluationFactory.fail("No ${concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch))}")
+                    evaluateCuppaPrediction(record) ?: EvaluationFactory.fail(
+                        labels.primaryTumorLocationBelongsToDoidFail(concatLowercaseWithCommaAndOr(doidsToTerms(doidsToMatch)))
+                    )
                 }
             }
         }
@@ -82,7 +93,7 @@ class PrimaryTumorLocationBelongsToDoid(
                     .firstOrNull()
                     ?.let {
                         val likelihoodPct = (predictedTumorOrigin.likelihood() * 100).toInt()
-                        EvaluationFactory.warn("Tumor type unknown but CUPPA predicts $cancerType ($likelihoodPct%)")
+                        EvaluationFactory.warn(labels.primaryTumorLocationBelongsToDoidWarnCuppa(cancerType, likelihoodPct))
                     }
             }
     }

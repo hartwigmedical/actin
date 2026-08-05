@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -9,8 +11,9 @@ import org.junit.jupiter.api.Test
 
 class HasLesionsCloseToOrInvolvingAirwayTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
     private val function = HasLesionsCloseToOrInvolvingAirway(
-        TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.TRACHEAL_CANCER_DOID, "tracheal cancer")
+        TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.TRACHEAL_CANCER_DOID, "tracheal cancer"), labels
     )
 
     @Test

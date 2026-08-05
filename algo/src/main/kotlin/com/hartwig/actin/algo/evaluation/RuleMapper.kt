@@ -9,15 +9,17 @@ import com.hartwig.actin.medication.AtcTree
 
 abstract class RuleMapper(val resources: RuleMappingResources) {
 
-    protected fun referenceDateProvider(): ReferenceDateProvider = resources.referenceDateProvider
+    protected val referenceDateProvider: ReferenceDateProvider = resources.referenceDateProvider
 
-    protected fun doidModel(): DoidModel = resources.doidModel
+    protected val doidModel: DoidModel = resources.doidModel
 
-    protected fun cuppaToDoidMapping(): CuppaToDoidMapping = resources.cuppaToDoidMapping
+    protected val cuppaToDoidMapping: CuppaToDoidMapping = resources.cuppaToDoidMapping
 
-    protected fun icdModel(): IcdModel = resources.icdModel
+    protected val icdModel: IcdModel = resources.icdModel
 
-    protected fun atcTree(): AtcTree = resources.atcTree
+    protected val atcTree: AtcTree = resources.atcTree
+
+    protected val evaluationLabels: EvaluationLabels = resources.evaluationLabels
 
     abstract fun createMappings(): Map<EligibilityRule, FunctionCreator>
 }

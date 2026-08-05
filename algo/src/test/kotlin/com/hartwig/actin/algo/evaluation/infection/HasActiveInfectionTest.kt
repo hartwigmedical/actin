@@ -1,10 +1,12 @@
 package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -30,7 +32,9 @@ class HasActiveInfectionTest {
         month = referenceDate.monthValue,
         icdMainCode = IcdConstants.UNSPECIFIED_INFECTION_CODE
     )
-    private val function = HasActiveInfection(AtcTestFactory.createProperAtcTree(), referenceDate, icdModel)
+    private val function = HasActiveInfection(
+        AtcTestFactory.createProperAtcTree(), referenceDate, icdModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).infection
+    )
     private val systemicAntimicrobialAtc = "J01"
 
     @Test

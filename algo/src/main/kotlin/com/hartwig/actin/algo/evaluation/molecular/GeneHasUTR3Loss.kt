@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.util.Format.concatVariants
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,8 +11,9 @@ import com.hartwig.actin.datamodel.molecular.driver.Disruption
 import com.hartwig.actin.datamodel.molecular.driver.RegionType
 import com.hartwig.actin.datamodel.molecular.driver.VariantEffect
 
-class GeneHasUTR3Loss(override val gene: String): MolecularEvaluationFunction(
-    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, "3' UTR loss in")
+class GeneHasUTR3Loss(override val gene: String, labels: EvaluationLabels.Molecular): MolecularEvaluationFunction(
+    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, labels.geneHasUtr3LossMessagePrefix()),
+    labels = labels
 ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
@@ -36,12 +38,12 @@ class GeneHasUTR3Loss(override val gene: String): MolecularEvaluationFunction(
 
         if (cavsIn3UTR.isNotEmpty()) {
             return EvaluationFactory.pass(
-                "3' UTR cancer-associated variant(s) ${concatVariants(cavsIn3UTR, gene)} in " + gene + " should lead to 3' UTR loss",
+                labels.geneHasUtr3LossPass(concatVariants(cavsIn3UTR, gene), gene),
                 inclusionEvents = cavsIn3UTR
             )
         }
         val potentialWarnEvaluation = evaluatePotentialWarns(cavsIn3UTRUnreportable, vusIn3UTR, disruptionsIn3UTR)
-        return potentialWarnEvaluation ?: EvaluationFactory.fail("No 3' UTR loss of $gene")
+        return potentialWarnEvaluation ?: EvaluationFactory.fail(labels.geneHasUtr3LossFail(gene))
     }
 
     private fun evaluatePotentialWarns(
@@ -51,16 +53,15 @@ class GeneHasUTR3Loss(override val gene: String): MolecularEvaluationFunction(
             listOf(
                 EventsWithMessages(
                     cavsIn3UTRUnreportable,
-                    "Cancer-associated variant(s) ${concatVariants(cavsIn3UTRUnreportable, gene)} in 3' UTR region of $gene which may " +
-                            "lead to 3' UTR loss but mutation is not considered reportable"
+                    labels.geneHasUtr3LossWarnUnreportable(concatVariants(cavsIn3UTRUnreportable, gene), gene)
                 ),
                 EventsWithMessages(
                     vusIn3UTR,
-                    "VUS mutation(s) ${concatVariants(vusIn3UTR, gene)} in 3' UTR region of $gene which may lead to 3' UTR loss"
+                    labels.geneHasUtr3LossWarnVus(concatVariants(vusIn3UTR, gene), gene)
                 ),
                 EventsWithMessages(
                     disruptionsIn3UTR,
-                    "Disruption(s) ${concatVariants(disruptionsIn3UTR, gene)} in 3' UTR region of $gene which may lead to 3' UTR loss"
+                    labels.geneHasUtr3LossWarnDisruption(concatVariants(disruptionsIn3UTR, gene), gene)
                 )
             )
         )

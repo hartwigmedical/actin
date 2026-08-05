@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,7 +14,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
     private val category1: TreatmentCategory,
     private val types1: Set<TreatmentType>,
     private val category2: TreatmentCategory,
-    private val types2: Set<TreatmentType>
+    private val types2: Set<TreatmentType>,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -22,20 +24,23 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
         val hadCombinationWithTrialWithUnknownType = hadCombinationWithTrialWithUnknownType(record)
         val hadTrialWithUnspecifiedTreatment = record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
-        val treatmentDesc =
-            "${concatItemsWithAnd(types1)} ${category1.display()} combined with ${concatItemsWithAnd(types2)} ${category2.display()}"
+        val treatmentDesc = labels.hasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesDescription(
+            concatItemsWithAnd(types1), category1.display(), concatItemsWithAnd(types2), category2.display()
+        )
 
         return when {
             hadCombination -> {
-                EvaluationFactory.pass("Has received $treatmentDesc")
+                EvaluationFactory.pass(labels.hasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesPass(treatmentDesc))
             }
 
             hadCombinationWithUnknownType || hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
-                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc")
+                EvaluationFactory.undetermined(
+                    labels.hasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesUndetermined(treatmentDesc)
+                )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received $treatmentDesc")
+                EvaluationFactory.fail(labels.hasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesFail(treatmentDesc))
             }
         }
     }

@@ -1,12 +1,15 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class HasSoftTissueMetastasesTest {
 
-    private val function = HasSoftTissueMetastases()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val function = HasSoftTissueMetastases(labels)
 
     @Test
     fun `Should be undetermined if other lesions are unknown`() {

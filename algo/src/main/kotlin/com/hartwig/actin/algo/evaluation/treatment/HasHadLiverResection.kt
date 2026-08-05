@@ -2,12 +2,13 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-class HasHadLiverResection : EvaluationFunction {
+class HasHadLiverResection(private val labels: EvaluationLabels.Treatment) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorSurgeries = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.SURGERY) }
@@ -28,15 +29,15 @@ class HasHadLiverResection : EvaluationFunction {
 
         return when {
             hadResectionToTargetLocation -> {
-                EvaluationFactory.pass("Has had liver resection")
+                EvaluationFactory.pass(labels.hasHadLiverResectionPass())
             }
 
             hadResectionToUnknownLocation || hadSurgeryWithUnknownNamePotentiallyToTargetLocation -> {
-                EvaluationFactory.undetermined("Undetermined if received surgery was liver resection")
+                EvaluationFactory.undetermined(labels.hasHadLiverResectionUndetermined())
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had liver resection")
+                EvaluationFactory.fail(labels.hasHadLiverResectionFail())
             }
         }
     }

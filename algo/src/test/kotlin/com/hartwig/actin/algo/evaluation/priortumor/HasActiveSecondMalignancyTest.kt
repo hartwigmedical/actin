@@ -1,13 +1,15 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStatus
 import org.junit.jupiter.api.Test
 
 class HasActiveSecondMalignancyTest {
 
-    private val function = HasActiveSecondMalignancy()
+    private val function = HasActiveSecondMalignancy(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).priorTumor)
 
     @Test
     fun `Should fail on no second primaries`() {

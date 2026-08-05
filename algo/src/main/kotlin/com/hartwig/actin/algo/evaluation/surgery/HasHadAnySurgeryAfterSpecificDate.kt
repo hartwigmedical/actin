@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.algo.evaluation.util.Format.date
 import com.hartwig.actin.datamodel.PatientRecord
@@ -10,7 +11,11 @@ import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 
-class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private val evaluationDate: LocalDate) : EvaluationFunction {
+class HasHadAnySurgeryAfterSpecificDate(
+    private val minDate: LocalDate,
+    private val evaluationDate: LocalDate,
+    private val labels: EvaluationLabels.Surgery
+) : EvaluationFunction {
 
     private enum class SurgeryEvent {
         HAS_FINISHED_SURGERY_BETWEEN_MIN_AND_EVAL,
@@ -38,35 +43,35 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
 
         return when {
             SurgeryEvent.HAS_FINISHED_SURGERY_BETWEEN_MIN_AND_EVAL in summary -> {
-                EvaluationFactory.pass("Has had surgery after ${date(minDate)}")
+                EvaluationFactory.pass(labels.hasHadAnySurgeryAfterSpecificDatePass(date(minDate)))
             }
 
             surgicalTreatmentsOccurredAfterMinDate.any { it == true } -> {
-                EvaluationFactory.pass("Has had surgery after ${date(minDate)}")
+                EvaluationFactory.pass(labels.hasHadAnySurgeryAfterSpecificDatePass(date(minDate)))
             }
 
             SurgeryEvent.HAS_PLANNED_SURGERY_AFTER_EVAL in summary -> {
-                EvaluationFactory.warn("Has surgery planned")
+                EvaluationFactory.warn(labels.hasHadAnySurgeryAfterSpecificDateWarnPlanned())
             }
 
             SurgeryEvent.HAS_UNEXPECTED_SURGERY in summary -> {
-                EvaluationFactory.warn("Has potential recent surgery")
+                EvaluationFactory.warn(labels.hasHadAnySurgeryAfterSpecificDateWarnUnexpected())
             }
 
             surgicalTreatmentsOccurredAfterMinDate.any { it == null } -> {
-                EvaluationFactory.undetermined("Undetermined if previous surgery is recent")
+                EvaluationFactory.undetermined(labels.hasHadAnySurgeryAfterSpecificDateUndeterminedRecent())
             }
 
             record.surgeries.isNotEmpty() and record.surgeries.any { it.endDate == null } -> {
-                EvaluationFactory.undetermined("Undetermined when surgery occurred")
+                EvaluationFactory.undetermined(labels.hasHadAnySurgeryAfterSpecificDateUndeterminedWhen())
             }
 
             SurgeryEvent.HAS_CANCELLED_SURGERY in summary -> {
-                EvaluationFactory.fail("Recent surgery got cancelled")
+                EvaluationFactory.fail(labels.hasHadAnySurgeryAfterSpecificDateFailCancelled())
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received surgery after ${date(minDate)}")
+                EvaluationFactory.fail(labels.hasHadAnySurgeryAfterSpecificDateFail(date(minDate)))
             }
         }
     }

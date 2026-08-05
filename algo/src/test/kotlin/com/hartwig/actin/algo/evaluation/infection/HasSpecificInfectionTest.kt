@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ClinicalStatus
@@ -14,7 +16,10 @@ import org.junit.jupiter.api.Test
 
 class HasSpecificInfectionTest {
     private val targetCodes = setOf(IcdConstants.ACUTE_HEPATITIS_B_CODE, IcdConstants.CHRONIC_HEPATITIS_B_CODE).map { IcdCode(it) }.toSet()
-    private val function = HasSpecificInfection(TestIcdFactory.createTestModel(), targetCodes, "hepatitis B virus")
+    private val function = HasSpecificInfection(
+        TestIcdFactory.createTestModel(), targetCodes,
+        "hepatitis B virus", EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).infection
+    )
 
     @Test
     fun `Should fail with no prior conditions`() {
@@ -35,7 +40,8 @@ class HasSpecificInfectionTest {
         val function = HasSpecificInfection(
             TestIcdFactory.createTestModel(),
             setOf(IcdCode(IcdConstants.ACUTE_HEPATITIS_B_CODE, "extension")),
-            "hepatitis B virus"
+            "hepatitis B virus",
+            EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).infection
         )
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.ACUTE_HEPATITIS_B_CODE)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))

@@ -2,43 +2,48 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.evaluateIfDrugHadPDResponse
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 
-class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : EvaluationFunction {
+class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>, private val labels: EvaluationLabels.Treatment) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val treatmentEvaluation = evaluateIfDrugHadPDResponse(record.oncologicalHistory, drugsToMatch)
-        val toxicityMessage = if (treatmentEvaluation.matchesWithToxicity) "(stop reason toxicity) " else ""
+        val toxicitySuffix = if (treatmentEvaluation.matchesWithToxicity) labels.hasAcquiredResistanceToAnyDrugToxicitySuffix() else ""
 
         return when {
             treatmentEvaluation.matchingDrugsWithPD.isNotEmpty() -> {
-                EvaluationFactory.pass("Has potential acquired resistance to ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}")
+                EvaluationFactory.pass(
+                    labels.hasAcquiredResistanceToAnyDrugPass(Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD))
+                )
             }
 
             treatmentEvaluation.possibleTrialMatch -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined resistance to ${Format.concatItemsWithOr(drugsToMatch)} since unknown if drug was included in previous trial"
+                    labels.hasAcquiredResistanceToAnyDrugUndeterminedTrial(Format.concatItemsWithOr(drugsToMatch))
                 )
             }
 
             treatmentEvaluation.matchesWithUnclearPD || treatmentEvaluation.matchesWithToxicity -> {
-                EvaluationFactory.undetermined("Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage")
+                EvaluationFactory.undetermined(
+                    labels.hasAcquiredResistanceToAnyDrugUndetermined(Format.concatItemsWithOr(drugsToMatch), toxicitySuffix)
+                )
             }
 
             treatmentEvaluation.matchingDrugs.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but " +
-                            "no progressive disease"
+                    labels.hasAcquiredResistanceToAnyDrugFailReceivedNoPD(Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs))
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since drug not in treatment history")
+                EvaluationFactory.fail(labels.hasAcquiredResistanceToAnyDrugFail(Format.concatItemsWithOr(drugsToMatch)))
             }
         }
     }

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
@@ -9,7 +10,11 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasChildPughScore(private val icdModel: IcdModel, private val requestedScores: List<String>) : EvaluationFunction {
+class HasChildPughScore(
+    private val icdModel: IcdModel,
+    private val requestedScores: List<String>,
+    private val labels: EvaluationLabels.Comorbidity
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasLiverCirrhosis = icdModel.findInstancesMatchingAnyIcdCode(
@@ -19,9 +24,9 @@ class HasChildPughScore(private val icdModel: IcdModel, private val requestedSco
         val formattedRequestedScores = Format.concatWithCommaAndOr(requestedScores)
 
         return if (hasLiverCirrhosis) {
-            EvaluationFactory.warn("Patient has liver cirrhosis - undetermined if Child-Pugh score $formattedRequestedScores")
+            EvaluationFactory.warn(labels.hasChildPughScoreWarn(formattedRequestedScores))
         } else {
-            EvaluationFactory.undetermined("Undetermined if Child-Pugh score $formattedRequestedScores")
+            EvaluationFactory.undetermined(labels.hasChildPughScoreUndetermined(formattedRequestedScores))
         }
     }
 }

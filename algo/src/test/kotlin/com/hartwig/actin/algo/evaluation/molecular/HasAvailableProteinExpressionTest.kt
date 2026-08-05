@@ -1,14 +1,17 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 private const val PROTEIN = "protein 1"
 
 class HasAvailableProteinExpressionTest {
-    
-    private val function = HasAvailableProteinExpression(PROTEIN)
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = HasAvailableProteinExpression(PROTEIN, labels)
 
     @Test
     fun `Should pass if record contains IHC test for protein`() {

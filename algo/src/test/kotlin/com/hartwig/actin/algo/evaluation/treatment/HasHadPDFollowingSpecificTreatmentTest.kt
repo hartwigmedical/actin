@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
@@ -69,6 +71,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
     companion object {
         private val MATCHING_TREATMENTS = listOf(treatment("treatment", true, setOf(TreatmentCategory.IMMUNOTHERAPY)))
         private val NON_MATCHING_TREATMENTS = setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY))
-        private val FUNCTION = HasHadPDFollowingSpecificTreatment(MATCHING_TREATMENTS)
+        private val LABELS = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+        private val FUNCTION = HasHadPDFollowingSpecificTreatment(MATCHING_TREATMENTS, LABELS)
     }
 }

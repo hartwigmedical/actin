@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -21,11 +23,13 @@ private val MATCHING_DRUG_TREATMENT = drugTreatment("Target drug", MATCHING_CATE
 
 class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTest {
 
+    val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
         MATCHING_DRUG_TREATMENT.drugs.first(),
         MATCHING_CATEGORY,
         MATCHING_TYPES,
-        6
+        6,
+        labels
     )
 
     @Test
@@ -105,7 +109,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
     fun `Should return undetermined for combination of target drug and treatment with target category and type but missing stop reason`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)))
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6, labels
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -119,7 +123,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             startMonth = 3
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6, labels
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -170,7 +174,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             setOf(drugTreatment("other", TreatmentCategory.IMMUNOTHERAPY)), startYear = 2022, startMonth = 8
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6, labels
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
     }
@@ -186,7 +190,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopMonth = 8
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6, labels
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -202,7 +206,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopMonth = 8
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6, labels
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -222,7 +226,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopMonth = 8
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 6, labels
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }

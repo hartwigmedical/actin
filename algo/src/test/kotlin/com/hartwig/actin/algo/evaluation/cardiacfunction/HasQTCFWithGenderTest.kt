@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withValueAndUnit
 import com.hartwig.actin.algo.evaluation.general.GeneralTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Gender
 import org.assertj.core.api.Assertions.assertThat
@@ -10,8 +12,11 @@ import org.junit.jupiter.api.Test
 
 class HasQTCFWithGenderTest {
 
-    private val hasQTCFOfAtLeastWithGenderFunction = HasQtcfWithGender(450.0, Gender.MALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
-    private val hasQTCFOfAtMostWithGenderFunction = HasQtcfWithGender(450.0, Gender.MALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).cardiacFunction
+    private val hasQTCFOfAtLeastWithGenderFunction =
+        HasQtcfWithGender(450.0, Gender.MALE, { EcgMeasureEvaluationFunctions.hasSufficientQtcf(it, labels) }, labels)
+    private val hasQTCFOfAtMostWithGenderFunction =
+        HasQtcfWithGender(450.0, Gender.MALE, { EcgMeasureEvaluationFunctions.hasLimitedQtcf(it, labels) }, labels)
 
     @Test
     fun `Should fail with incorrect gender`() {

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.containsTreatment
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
@@ -9,7 +10,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
 class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
-    private val treatment: Treatment, private val minCycles: Int
+    private val treatment: Treatment, private val minCycles: Int, private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -34,39 +35,45 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
             hasMinCycles = targetTreatment?.treatmentHistoryDetails?.cycles?.let { it >= minCycles }
         )
 
-        val messageStartNegative = "Has not received ${treatment.display()}"
-        val messageStartPositive = "Has received ${treatment.display()}"
-        val asFirstLine = " as first-line treatment"
-        val messageEnd = " without PD and with at least $minCycles cycles"
+        val treatmentDisplay = treatment.display()
 
         return when (evaluation) {
             TreatmentEvaluation.FIRST_LINE_WITHOUT_PD_AND_SUFFICIENT_CYCLES -> {
-                EvaluationFactory.pass(messageStartPositive + asFirstLine + messageEnd)
+                EvaluationFactory.pass(labels.hasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesPass(treatmentDisplay, minCycles))
             }
 
             TreatmentEvaluation.UNDETERMINED_IF_FIRST_LINE -> {
-                EvaluationFactory.undetermined("$messageStartPositive but undetermined if first line (dates missing)")
+                EvaluationFactory.undetermined(
+                    labels.hasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesUndeterminedDatesMissing(treatmentDisplay)
+                )
             }
 
             TreatmentEvaluation.UNDETERMINED_PD_STATUS -> {
-                EvaluationFactory.undetermined("$messageStartPositive$asFirstLine but undetermined if without PD")
+                EvaluationFactory.undetermined(
+                    labels.hasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesUndeterminedPdStatus(treatmentDisplay)
+                )
             }
 
             TreatmentEvaluation.UNDETERMINED_CYCLES -> {
-                EvaluationFactory.undetermined("$messageStartPositive$asFirstLine but undetermined if with at least $minCycles cycles")
+                EvaluationFactory.undetermined(
+                    labels.hasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesUndeterminedCycles(treatmentDisplay, minCycles)
+                )
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TRIAL_TREATMENT -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if has received first line ${treatment.display()} treatment (first line is unknown trial treatment)"
+                    labels.hasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesUndeterminedTrial(treatmentDisplay)
                 )
             }
 
             TreatmentEvaluation.FIRST_LINE_WITHOUT_PD_AND_INSUFFICIENT_CYCLES -> {
-                EvaluationFactory.warn("$messageStartPositive$asFirstLine without PD but less than $minCycles cycles")
+                EvaluationFactory.warn(
+                    labels.hasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesWarnInsufficientCycles(treatmentDisplay, minCycles)
+                )
             }
 
-            TreatmentEvaluation.DOES_NOT_MEET_CRITERIA -> EvaluationFactory.fail(messageStartNegative + asFirstLine + messageEnd)
+            TreatmentEvaluation.DOES_NOT_MEET_CRITERIA ->
+                EvaluationFactory.fail(labels.hasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesFail(treatmentDisplay, minCycles))
         }
     }
 

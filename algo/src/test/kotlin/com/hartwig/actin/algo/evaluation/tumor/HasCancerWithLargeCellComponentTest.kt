@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.jupiter.api.Test
 
 class HasCancerWithLargeCellComponentTest {
 
-    private val function = HasCancerWithLargeCellComponent(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function = HasCancerWithLargeCellComponent(
+        TestDoidModelFactory.createMinimalTestDoidModel(), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    )
 
     @Test
     fun `Should evaluate to undetermined if no tumor doids configured`() {

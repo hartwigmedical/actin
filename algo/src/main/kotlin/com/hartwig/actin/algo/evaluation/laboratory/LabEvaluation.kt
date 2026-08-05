@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -56,29 +57,34 @@ internal object LabEvaluation {
         return value != null && value.unit == measurement.defaultUnit && !value.date.isBefore(minValidDate)
     }
 
-    fun firstInvalidLabValue(minValidDate: LocalDate, vararg values: Pair<LabValue?, LabMeasurement>): Evaluation? {
+    fun firstInvalidLabValue(
+        minValidDate: LocalDate,
+        labels: EvaluationLabels.Laboratory,
+        vararg values: Pair<LabValue?, LabMeasurement>
+    ): Evaluation? {
         return values.firstOrNull { (value, measurement) -> !isValid(value, measurement, minValidDate) }
-            ?.let { (value, measurement) -> evaluateInvalidLabValue(measurement, value, minValidDate) }
+            ?.let { (value, measurement) -> evaluateInvalidLabValue(measurement, value, minValidDate, labels) }
     }
 
     fun evaluateInvalidLabValue(
         measurement: LabMeasurement,
         mostRecent: LabValue?,
-        minValidDate: LocalDate
+        minValidDate: LocalDate,
+        labels: EvaluationLabels.Laboratory
     ): Evaluation {
         return when {
             mostRecent == null -> {
-                EvaluationFactory.recoverableUndetermined("No measurement found for ${measurement.display()}")
+                EvaluationFactory.recoverableUndetermined(labels.evaluateInvalidLabValueNoMeasurement(measurement.display()))
             }
 
             mostRecent.unit != measurement.defaultUnit -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Unexpected unit specified for ${measurement.display()}: ${mostRecent.unit.display()}"
+                    labels.evaluateInvalidLabValueUnexpectedUnit(measurement.display(), mostRecent.unit.display())
                 )
             }
 
             mostRecent.date.isBefore(minValidDate) -> {
-                EvaluationFactory.recoverableUndetermined("Most recent measurement too old for ${measurement.display()}")
+                EvaluationFactory.recoverableUndetermined(labels.evaluateInvalidLabValueTooOld(measurement.display()))
             }
 
             else -> {

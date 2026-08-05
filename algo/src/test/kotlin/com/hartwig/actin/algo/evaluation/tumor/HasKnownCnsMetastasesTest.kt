@@ -1,12 +1,15 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class HasKnownCnsMetastasesTest {
 
-    private val function = HasKnownCnsMetastases()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val function = HasKnownCnsMetastases(labels)
 
     @Test
     fun `Should return undetermined when both CNS and brain lesion data are missing`() {

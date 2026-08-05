@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -14,7 +16,8 @@ private val MATCHING_TREATMENT_SET = setOf(TreatmentTestFactory.drugTreatment("t
 
 class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
 
-    private val function = HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadLimitedWeeksOfTreatmentOfCategoryWithTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6, labels)
 
     @Test
     fun `Should pass for right category type within requested amount of weeks`() {
@@ -74,7 +77,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
     fun `Should ignore trial matches when looking for unlikely trial categories`() {
         val function = HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC),
-            null, null
+            null, null, labels
         )
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("test", true)), isTrial = true)

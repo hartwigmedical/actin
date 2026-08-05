@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
@@ -16,7 +18,8 @@ private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 
 class HasHadTreatmentWithDrugAndDoseReductionTest {
 
-    private val function = HasHadTreatmentWithDrugAndDoseReduction(drugWithName(MATCHING_DRUG_NAME))
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadTreatmentWithDrugAndDoseReduction(drugWithName(MATCHING_DRUG_NAME), labels)
 
     fun drugWithName(drugName: String): Drug = Drug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
 

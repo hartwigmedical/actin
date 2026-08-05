@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.algo.evaluation.util.Format.concat
@@ -13,8 +14,8 @@ import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.molecular.util.GeneConstants
 
-class HasFusionInGene(override val gene: String) :
-    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.FUSION, "Fusion in")) {
+class HasFusionInGene(override val gene: String, labels: EvaluationLabels.Molecular) :
+    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.FUSION, labels.hasFusionInGeneMessagePrefix()), labels = labels) {
 
     override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val matchingFusions: MutableSet<String> = mutableSetOf()
@@ -64,22 +65,22 @@ class HasFusionInGene(override val gene: String) :
                 fusionsWithNoHighDriverLikelihood,
                 unreportableFusionsWithGainOfFunction
             ).all { it.isEmpty() } -> {
-                EvaluationFactory.pass("Fusion(s) ${concatFusions(matchingFusions)} in $gene", inclusionEvents = matchingFusions)
+                EvaluationFactory.pass(labels.hasFusionInGenePass(concatFusions(matchingFusions), gene), inclusionEvents = matchingFusions)
             }
 
             matchingFusions.isNotEmpty() -> {
                 val eventWarningDescriptions = concat(
                     listOf(
-                        fusionsWithNoEffect.map { event -> "$event (no protein effect)" },
-                        fusionsWithNoHighDriverLikelihood.map { event -> "$event (no high driver likelihood)" },
-                        unreportableFusionsWithGainOfFunction.map { event -> "$event (gain-of-function evidence but not considered reportable)" },
-                        ihcEventsThatQualify.map { finding -> "$finding (may indicate a fusion)" },
-                        ihcEventsThatAreIndeterminate.map { finding -> "$finding (undetermined if this may indicate a fusion)" },
+                        fusionsWithNoEffect.map { event -> labels.hasFusionInGeneDescriptionNoEffect(event) },
+                        fusionsWithNoHighDriverLikelihood.map { event -> labels.hasFusionInGeneDescriptionNonHighDriver(event) },
+                        unreportableFusionsWithGainOfFunction.map { event -> labels.hasFusionInGeneDescriptionUnreportableGainOfFunction(event) },
+                        ihcEventsThatQualify.map { finding -> labels.hasFusionInGeneDescriptionIhcQualify(finding) },
+                        ihcEventsThatAreIndeterminate.map { finding -> labels.hasFusionInGeneDescriptionIhcIndeterminate(finding) },
                     ).flatten()
                 )
 
                 EvaluationFactory.warn(
-                    "Fusion(s) ${concatFusions(matchingFusions)} in $gene together with other fusion events(s): " + eventWarningDescriptions,
+                    labels.hasFusionInGeneWarnWithOther(concatFusions(matchingFusions), gene, eventWarningDescriptions),
                     inclusionEvents = matchingFusions + fusionsWithNoEffect + fusionsWithNoHighDriverLikelihood + unreportableFusionsWithGainOfFunction + ihcEventsThatQualify + ihcEventsThatAreIndeterminate
                 )
             }
@@ -94,7 +95,7 @@ class HasFusionInGene(override val gene: String) :
                     evidenceSource
                 )
 
-                potentialWarnEvaluation ?: EvaluationFactory.fail("No fusion in $gene")
+                potentialWarnEvaluation ?: EvaluationFactory.fail(labels.hasFusionInGeneFail(gene))
             }
         }
     }
@@ -111,25 +112,25 @@ class HasFusionInGene(override val gene: String) :
             listOf(
                 EventsWithMessages(
                     fusionsWithNoEffect,
-                    "Fusion(s) ${concatFusions(fusionsWithNoEffect)} in $gene but annotated with having no protein effect evidence " +
-                            "in $evidenceSource"
+                    labels.hasFusionInGeneWarnNoEffect(concatFusions(fusionsWithNoEffect), gene, evidenceSource)
                 ),
                 EventsWithMessages(
                     fusionsWithNoHighDriverLikelihood,
-                    "Fusion(s) ${concatFusions(fusionsWithNoHighDriverLikelihood)} in $gene but not with high driver likelihood",
+                    labels.hasFusionInGeneWarnNonHighDriver(concatFusions(fusionsWithNoHighDriverLikelihood), gene),
                 ),
                 EventsWithMessages(
                     unreportableFusionsWithGainOfFunction,
-                    "Unreportable fusion(s) ${concatFusions(unreportableFusionsWithGainOfFunction)} in $gene"
-                            + " however annotated with having gain-of-function evidence in $evidenceSource"
+                    labels.hasFusionInGeneWarnUnreportableGainOfFunction(
+                        concatFusions(unreportableFusionsWithGainOfFunction), gene, evidenceSource
+                    )
                 ),
                 EventsWithMessages(
                     ihcEventsThatQualify,
-                    "$gene IHC result(s) may indicate $gene fusion"
+                    labels.hasFusionInGeneWarnIhcQualify(gene)
                 ),
                 EventsWithMessages(
                     ihcEventsThatAreIndeterminate,
-                    "$gene IHC result(s) are indeterminate - undetermined if this may indicate $gene fusion"
+                    labels.hasFusionInGeneWarnIhcIndeterminate(gene)
                 )
             )
         )

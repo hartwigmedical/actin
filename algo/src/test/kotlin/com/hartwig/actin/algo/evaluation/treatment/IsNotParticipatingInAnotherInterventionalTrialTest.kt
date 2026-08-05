@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory.medication
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -12,10 +14,12 @@ import org.junit.jupiter.api.Test
 
 class IsNotParticipatingInAnotherInterventionalTrialTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val referenceDate = LocalDate.of(2025, 2, 2)
     private val alwaysActiveMedicationFunction = IsNotParticipatingInAnotherInterventionalTrial(
         MedicationTestFactory.alwaysActive(),
-        referenceDate.minusWeeks(2)
+        referenceDate.minusWeeks(2),
+        labels
     )
 
     @Test
@@ -47,7 +51,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
     @Test
     fun `Should pass when patient received non recent trial medication`() {
         val alwaysStoppedMedicationFunction =
-            IsNotParticipatingInAnotherInterventionalTrial(MedicationTestFactory.alwaysStopped(), referenceDate)
+            IsNotParticipatingInAnotherInterventionalTrial(MedicationTestFactory.alwaysStopped(), referenceDate, labels)
         val medications = listOf(medication(isTrialMedication = true))
         assertEvaluation(
             EvaluationResult.PASS,

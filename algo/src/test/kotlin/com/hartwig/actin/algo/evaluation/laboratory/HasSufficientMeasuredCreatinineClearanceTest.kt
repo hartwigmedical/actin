@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import org.junit.jupiter.api.Test
@@ -132,7 +134,9 @@ class HasSufficientMeasuredCreatinineClearanceTest {
         vararg pairs: Pair<LabMeasurement, Double>,
         comparatorOverrides: Map<LabMeasurement, String> = emptyMap(),
         minValue: Double = MIN_CREATININE_CLEARANCE,
-    ) = HasSufficientMeasuredCreatinineClearance(minValue, method).evaluate(
+    ) = HasSufficientMeasuredCreatinineClearance(
+        minValue, method, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+    ).evaluate(
         LabTestFactory.withLabValues(emptyList()),
         pairs.associate { (measurement, value) ->
             measurement to LabTestFactory.create(measurement, value = value).let {

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import java.time.LocalDate
@@ -18,8 +20,11 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
         mapOf(ignoreDoid to parentDoid),
         mapOf(ignoreDoid to ignoreTerm, parentDoid to parentTerm),
     )
-    private val functionWithoutMinDate = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(ignoreDoid), minDate = null)
-    private val functionWithMinDate = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(ignoreDoid), minDate = minDate)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).priorTumor
+    private val functionWithoutMinDate =
+        HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(ignoreDoid), null, labels)
+    private val functionWithMinDate =
+        HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(ignoreDoid), minDate, labels)
 
     @Test
     fun `Should fail when no prior tumors present`() {
@@ -35,7 +40,7 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
     @Test
     fun `Should fail when prior tumors present in history but doid is child of doid to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid))
-        val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(parentDoid), minDate = null)
+        val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(parentDoid), null, labels)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
     }
 

@@ -2,18 +2,21 @@ package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.clinical.interpretation.asRange
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasMinimumLanskyKarnofskyScore internal constructor(private val performanceScore: PerformanceScore, private val minScore: Int) :
-    EvaluationFunction {
+class HasMinimumLanskyKarnofskyScore internal constructor(
+    private val performanceScore: PerformanceScore,
+    private val minScore: Int,
+    private val labels: EvaluationLabels.General
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
+        val scoreDisplay = performanceScore.display()
         val who = record.performanceStatus.latestWho
-            ?: return EvaluationFactory.undetermined(
-                "Undetermined if ${performanceScore.display()} score based on WHO status is at least $minScore (WHO data missing)"
-            )
+            ?: return EvaluationFactory.undetermined(labels.hasMinimumLanskyKarnofskyScoreUndeterminedMissing(scoreDisplay, minScore))
         val whoRange = who.asRange()
         val passScore = toMinScoreForWHO(whoRange.last)
         val undeterminedScore = toMaxScoreForWHO(whoRange.first)
@@ -21,18 +24,18 @@ class HasMinimumLanskyKarnofskyScore internal constructor(private val performanc
 
         return when {
             passScore >= minScore -> {
-                EvaluationFactory.pass("${performanceScore.display()} score based on WHO status is at least $minScore")
+                EvaluationFactory.pass(labels.hasMinimumLanskyKarnofskyScorePass(scoreDisplay, minScore))
             }
 
             undeterminedScore >= minScore -> {
-                EvaluationFactory.undetermined("Undetermined if ${performanceScore.display()} score is at least $minScore")
+                EvaluationFactory.undetermined(labels.hasMinimumLanskyKarnofskyScoreUndetermined(scoreDisplay, minScore))
             }
 
             warnScore >= minScore -> {
-                EvaluationFactory.recoverableFail("${performanceScore.display()} score based on WHO status below requested score of $minScore")
+                EvaluationFactory.recoverableFail(labels.hasMinimumLanskyKarnofskyScoreRecoverableFail(scoreDisplay, minScore))
             }
 
-            else -> EvaluationFactory.fail("${performanceScore.display()} score based on WHO status is below $minScore")
+            else -> EvaluationFactory.fail(labels.hasMinimumLanskyKarnofskyScoreFail(scoreDisplay, minScore))
         }
     }
 

@@ -3,9 +3,10 @@ package com.hartwig.actin.algo.soc
 import com.hartwig.actin.PatientPrinter
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.configuration.EnvironmentConfiguration
 import com.hartwig.actin.doid.CuppaToDoidMapping
-import com.hartwig.actin.configuration.AlgoConfiguration
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.datamodel.DoidEntry
@@ -15,12 +16,12 @@ import com.hartwig.actin.icd.serialization.CsvReader
 import com.hartwig.actin.icd.serialization.IcdDeserializer
 import com.hartwig.actin.medication.AtcTree
 import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
+import kotlin.system.exitProcess
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import io.github.oshai.kotlinlogging.KotlinLogging
-import kotlin.system.exitProcess
 
 class StandardOfCareApplication(private val config: StandardOfCareConfig) {
 
@@ -49,7 +50,10 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
 
         val referenceDateProvider = ReferenceDateProviderFactory.create(patient, config.runHistorically)
-        val configuration = AlgoConfiguration.create(config.overridesYaml)
+        val envConfiguration = EnvironmentConfiguration.create(config.overridesYaml)
+        val configuration = envConfiguration.algo
+        logger.info { "Loaded algo config: $configuration" }
+        val evaluationLabels = EvaluationLabels.load(envConfiguration.report.intendedUse)
 
         val resources = RuleMappingResources(
             referenceDateProvider = referenceDateProvider,
@@ -59,7 +63,8 @@ class StandardOfCareApplication(private val config: StandardOfCareConfig) {
             atcTree = atcTree,
             treatmentDatabase = treatmentDatabase,
             treatmentEfficacyPredictionJson = null,
-            algoConfiguration = configuration
+            algoConfiguration = configuration,
+            evaluationLabels = evaluationLabels
         )
         val standardOfCareEvaluator = StandardOfCareEvaluatorFactory(resources).create()
 

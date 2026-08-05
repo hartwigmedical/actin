@@ -20,14 +20,19 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             EligibilityRule.HAS_INTOLERANCE_WITH_ICD_TITLE_X to hasIntoleranceWithSpecificIcdTitleCreator(),
             EligibilityRule.HAS_INTOLERANCE_TO_PLATINUM_COMPOUNDS to {
                 HasDrugIntoleranceWithAnyIcdCodeOrName(
-                    icdModel(),
+                    icdModel,
                     IcdConstants.PLATINUM_COMPOUND_CODE,
                     platinumCompoundsSet,
-                    "platinum compounds"
+                    evaluationLabels.toxicity.descriptionPlatinumCompounds(),
+                    evaluationLabels.toxicity
                 )
             },
             EligibilityRule.HAS_INTOLERANCE_TO_TAXANE to
-                    { HasDrugIntoleranceWithAnyIcdCodeOrName(icdModel(), IcdConstants.TAXANE_CODE, taxaneSet, "taxanes") },
+                    {
+                        HasDrugIntoleranceWithAnyIcdCodeOrName(
+                            icdModel, IcdConstants.TAXANE_CODE, taxaneSet, evaluationLabels.toxicity.descriptionTaxanes(), evaluationLabels.toxicity
+                        )
+                    },
             EligibilityRule.HAS_INTOLERANCE_RELATED_TO_STUDY_MEDICATION to hasIntoleranceRelatedToStudyMedicationCreator(),
             EligibilityRule.HAS_INTOLERANCE_FOR_PD_1_OR_PD_L1_INHIBITORS to hasIntoleranceToPD1OrPDL1InhibitorsCreator(),
             EligibilityRule.HAS_HISTORY_OF_ANAPHYLAXIS to hasHistoryAnaphylaxisCreator(),
@@ -43,31 +48,31 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
     private fun hasIntoleranceWithSpecificNameCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val termToFind = function.param<StringParameter>(0).value
-            HasIntoleranceWithSpecificName(termToFind)
+            HasIntoleranceWithSpecificName(termToFind, evaluationLabels.toxicity)
         }
     }
 
     private fun hasIntoleranceWithSpecificIcdTitleCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val icdTitle = function.param<IcdTitleParameter>(0).value
-            HasIntoleranceWithSpecificIcdTitle(icdModel(), icdTitle)
+            HasIntoleranceWithSpecificIcdTitle(icdModel, icdTitle, evaluationLabels.toxicity)
         }
     }
 
     private fun hasIntoleranceRelatedToStudyMedicationCreator(): FunctionCreator {
-        return { HasIntoleranceRelatedToStudyMedication(icdModel()) }
+        return { HasIntoleranceRelatedToStudyMedication(icdModel, evaluationLabels.toxicity) }
     }
 
     private fun hasIntoleranceToPD1OrPDL1InhibitorsCreator(): FunctionCreator {
-        return { HasIntoleranceForPD1OrPDL1Inhibitors(icdModel()) }
+        return { HasIntoleranceForPD1OrPDL1Inhibitors(icdModel, evaluationLabels.toxicity) }
     }
 
     private fun hasHistoryAnaphylaxisCreator(): FunctionCreator {
-        return { HasHistoryOfAnaphylaxis(icdModel()) }
+        return { HasHistoryOfAnaphylaxis(icdModel, evaluationLabels.toxicity) }
     }
 
     private fun hasExperiencedImmunotherapyRelatedAdverseEventsCreator(): FunctionCreator {
-        return { HasExperiencedImmunotherapyRelatedAdverseEvents(icdModel()) }
+        return { HasExperiencedImmunotherapyRelatedAdverseEvents(icdModel, evaluationLabels.toxicity) }
     }
 
     private fun hasToxicityWithGradeCreator(): FunctionCreator {
@@ -100,19 +105,20 @@ class ToxicityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources
             function.expectTypes(Parameter.Type.STRING, Parameter.Type.INTEGER)
             val name = function.param<StringParameter>(0).value
             val grade = function.param<IntegerParameter>(1).value
-            HadToxicityWithGradeDuringPreviousTreatment(name, grade)
+            HadToxicityWithGradeDuringPreviousTreatment(name, grade, evaluationLabels.toxicity)
         }
     }
 
     private fun createHasToxicityWithGrade(
         minGrade: Int, targetIcdTitles: List<String>? = null, icdTitlesToIgnore: List<String> = emptyList()
     ) = HasToxicityWithGrade(
-        icdModel(),
+        icdModel,
         minGrade,
         targetIcdTitles,
         icdTitlesToIgnore,
         resources.algoConfiguration.warnIfToxicitiesNotFromQuestionnaire,
-        referenceDateProvider().date()
+        referenceDateProvider.date(),
+        evaluationLabels.toxicity
     )
 
     private val platinumCompoundsSet =

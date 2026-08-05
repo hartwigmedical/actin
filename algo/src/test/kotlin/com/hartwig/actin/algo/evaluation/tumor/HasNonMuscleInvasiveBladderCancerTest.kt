@@ -2,7 +2,9 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.HasNonMuscleInvasiveBladderCancer.Companion.NON_MUSCLE_INVASIVE_TERMS
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.jupiter.api.Test
@@ -10,7 +12,8 @@ import org.junit.jupiter.api.Test
 class HasNonMuscleInvasiveBladderCancerTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val function = HasNonMuscleInvasiveBladderCancer(doidModel)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    val function = HasNonMuscleInvasiveBladderCancer(doidModel, labels)
     val targetType = NON_MUSCLE_INVASIVE_TERMS.first()
 
     @Test

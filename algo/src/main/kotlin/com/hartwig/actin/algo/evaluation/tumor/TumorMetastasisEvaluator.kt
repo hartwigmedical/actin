@@ -1,24 +1,25 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 internal object TumorMetastasisEvaluator {
 
-    fun evaluate(hasLesions: Boolean?, hasSuspectedLesions: Boolean?, metastasisType: String): Evaluation {
+    fun evaluate(hasLesions: Boolean?, hasSuspectedLesions: Boolean?, metastasisType: String, labels: EvaluationLabels.Tumor): Evaluation {
         return when {
             hasLesions == true -> {
-                EvaluationFactory.pass("Has $metastasisType metastases")
+                EvaluationFactory.pass(labels.tumorMetastasisEvaluatorPass(metastasisType))
             }
 
             hasSuspectedLesions == true -> {
-                EvaluationFactory.warn("Has suspected $metastasisType metastases and not yet confirmed")
+                EvaluationFactory.warn(labels.tumorMetastasisEvaluatorWarn(metastasisType))
             }
 
-            hasLesions == null -> EvaluationFactory.undetermined("Undetermined if patient has $metastasisType metastases (missing lesion data)")
+            hasLesions == null -> EvaluationFactory.undetermined(labels.tumorMetastasisEvaluatorUndetermined(metastasisType))
 
             else -> {
-                EvaluationFactory.fail("No $metastasisType metastases")
+                EvaluationFactory.fail(labels.tumorMetastasisEvaluatorFail(metastasisType))
             }
         }
     }

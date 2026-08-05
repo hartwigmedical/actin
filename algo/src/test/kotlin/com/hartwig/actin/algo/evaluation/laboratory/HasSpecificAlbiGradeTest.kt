@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AlbiGrade
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -13,7 +15,9 @@ class HasSpecificAlbiGradeTest {
     private val targetGrade = AlbiGrade.GRADE_2
     private val minValidDate = LocalDate.of(2025, 1, 1)
     private val minPassDate = LocalDate.of(2025, 2, 1)
-    private val function = HasSpecificAlbiGrade(targetGrade, minValidDate, minPassDate)
+    private val function = HasSpecificAlbiGrade(
+        targetGrade, minValidDate, minPassDate, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+    )
     private val albumin = LabTestFactory.create(LabMeasurement.ALBUMIN, 35.0, minPassDate)
     private val bilirubin = LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, 10.0, minPassDate)
 

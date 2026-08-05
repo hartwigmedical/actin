@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -9,7 +11,8 @@ private const val MAX_PDL1 = 2.0
 
 class HasLimitedPDL1ByIhcTest {
 
-    private val function = HasLimitedPDL1ByIhc(Pdl1Measure.TPS, MAX_PDL1)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = HasLimitedPDL1ByIhc(Pdl1Measure.TPS, MAX_PDL1, labels = labels)
     private val pdl1Test = MolecularTestFactory.ihcTest(item = "PD-L1", measure = "TPS")
 
     @Test

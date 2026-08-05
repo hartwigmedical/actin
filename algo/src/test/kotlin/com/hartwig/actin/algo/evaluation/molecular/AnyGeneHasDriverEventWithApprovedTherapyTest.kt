@@ -3,7 +3,9 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunctionFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.RuleMappingResourcesTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
@@ -30,13 +32,15 @@ private val INCORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
 class AnyGeneHasDriverEventWithApprovedTherapyTest {
     
     private val resources = RuleMappingResourcesTestFactory.create()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
     private val function = AnyGeneHasDriverEventWithApprovedTherapy(
-        setOf(CORRECT_GENE), createMinimalTestDoidModel(), EvaluationFunctionFactory.create(resources)
+        setOf(CORRECT_GENE), createMinimalTestDoidModel(), EvaluationFunctionFactory.create(resources), labels
     )
     private val functionRequestingInvalidGenes = AnyGeneHasDriverEventWithApprovedTherapy(
         setOf(CORRECT_GENE, INCORRECT_GENE, "Other"),
         createMinimalTestDoidModel(),
-        EvaluationFunctionFactory.create(resources)
+        EvaluationFunctionFactory.create(resources),
+        labels
     )
 
     @Test

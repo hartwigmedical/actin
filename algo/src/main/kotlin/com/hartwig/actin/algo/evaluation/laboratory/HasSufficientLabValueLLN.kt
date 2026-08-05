@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.labReferenceWithLimit
 import com.hartwig.actin.algo.evaluation.util.Format.labValue
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -8,7 +9,8 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.LabValue
 
-class HasSufficientLabValueLLN(private val minLLNFactor: Double) : SingleLabValueEvaluationFunction {
+class HasSufficientLabValueLLN(private val minLLNFactor: Double, private val labels: EvaluationLabels.Laboratory) :
+    SingleLabValueEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val labValueString = labValue(labMeasurement, labValue.value, labValue.unit)
@@ -16,19 +18,23 @@ class HasSufficientLabValueLLN(private val minLLNFactor: Double) : SingleLabValu
 
         return when (LabEvaluation.evaluateVersusMinLLN(labValue, minLLNFactor)) {
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_AND_OUTSIDE_MARGIN -> {
-                EvaluationFactory.recoverableFail("$labValueString below min of $referenceString")
+                EvaluationFactory.recoverableFail(labels.hasSufficientLabValueLlnExceedsMin(labValueString, referenceString))
             }
 
             LabEvaluation.LabEvaluationResult.EXCEEDS_THRESHOLD_BUT_WITHIN_MARGIN -> {
-                EvaluationFactory.recoverableUndetermined("$labValueString below min of $referenceString")
+                EvaluationFactory.recoverableUndetermined(labels.hasSufficientLabValueLlnExceedsMin(labValueString, referenceString))
             }
 
             LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED -> {
-                EvaluationFactory.recoverableUndetermined("${labMeasurement.display().replaceFirstChar { it.uppercase() }} undetermined")
+                EvaluationFactory.recoverableUndetermined(
+                    labels.hasSufficientLabValueLlnRecoverableUndeterminedCannotDetermine(
+                        labMeasurement.display().replaceFirstChar { it.uppercase() }
+                    )
+                )
             }
 
             LabEvaluation.LabEvaluationResult.WITHIN_THRESHOLD -> {
-                EvaluationFactory.recoverablePass("$labValueString exceeds min of $referenceString")
+                EvaluationFactory.recoverablePass(labels.hasSufficientLabValueLlnPass(labValueString, referenceString))
             }
         }
     }

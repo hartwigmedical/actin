@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -12,7 +14,8 @@ import org.junit.jupiter.api.Test
 class HasNonSquamousNsclcTest {
 
     private val doidModel = TestDoidModelFactory.createWithOneParentChild("parent", "child")
-    private val function = HasNonSquamousNsclc(doidModel)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val function = HasNonSquamousNsclc(doidModel, labels)
 
     @Test
     fun `Should return undetermined when no tumor doids configured`() {

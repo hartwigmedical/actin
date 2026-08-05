@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
@@ -14,7 +15,8 @@ class HasDrugIntoleranceWithAnyIcdCodeOrName(
     private val icdModel: IcdModel,
     private val extensionCode: String,
     private val names: Set<String>,
-    private val description: String
+    private val description: String,
+    private val labels: EvaluationLabels.Toxicity
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -28,14 +30,16 @@ class HasDrugIntoleranceWithAnyIcdCodeOrName(
 
         return when {
             matchingAllergies.isNotEmpty() -> {
-                EvaluationFactory.pass("Has allergy to $description (${Format.concatItemsWithAnd(matchingAllergies)})")
+                EvaluationFactory.pass(
+                    labels.hasDrugIntoleranceWithAnyIcdCodeOrNamePass(description, Format.concatItemsWithAnd(matchingAllergies))
+                )
             }
 
             undeterminedDrugAllergies.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Undetermined if drug allergy in history is $description allergy (drug type unknown)")
+                EvaluationFactory.undetermined(labels.hasDrugIntoleranceWithAnyIcdCodeOrNameUndetermined(description))
             }
 
-            else -> EvaluationFactory.fail("No known allergy to $description")
+            else -> EvaluationFactory.fail(labels.hasDrugIntoleranceWithAnyIcdCodeOrNameFail(description))
         }
     }
 }

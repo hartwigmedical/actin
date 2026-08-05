@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.molecular.MolecularVariantUtil.toProteinImpact
 import com.hartwig.actin.algo.evaluation.molecular.MolecularVariantUtil.variantTypesForInput
 import com.hartwig.actin.algo.evaluation.util.Format
@@ -15,19 +16,19 @@ import com.hartwig.actin.datamodel.molecular.driver.GeneRole
 import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.trial.VariantTypeInput
 
-private enum class ActivationWarningType(val description: String? = null) {
+private enum class ActivationWarningType {
     NON_ONCOGENE,
-    NO_CANCER_ASSOCIATED_VARIANT(
-        "Potentially activating mutation(s) that have high driver likelihood " +
-                "but is not a cancer-associated variant"
-    ),
-    SUBCLONAL(
-        "Potentially activating mutation(s) that have high driver likelihood " +
-                "but also have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)}"
-    ),
+    NO_CANCER_ASSOCIATED_VARIANT,
+    SUBCLONAL,
     NON_HIGH_DRIVER_SUBCLONAL,
     NON_HIGH_DRIVER,
     OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT,
+}
+
+private fun ActivationWarningType.description(subclonalPercentage: String, labels: EvaluationLabels.Molecular): String? = when (this) {
+    ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT -> labels.geneHasActivatingMutationDescriptionNoCav()
+    ActivationWarningType.SUBCLONAL -> labels.geneHasActivatingMutationDescriptionSubclonal(subclonalPercentage)
+    else -> null
 }
 
 private data class ActivationProfile(
@@ -44,9 +45,11 @@ class GeneHasActivatingMutation(
     private val inKinaseDomain: Boolean = false,
     private val proteinImpactsToIgnore: Set<String>? = null,
     private val variantTypeToIgnore: VariantTypeInput? = null,
-    private val exonToIgnore: Int? = null
+    private val exonToIgnore: Int? = null,
+    labels: EvaluationLabels.Molecular
 ) : MolecularEvaluationFunction(
-    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = "Activating mutation in")
+    targetCoveragePredicate = specific(MolecularTestTarget.MUTATION, messagePrefix = labels.geneHasActivatingMutationMessagePrefix()),
+    labels = labels
 ) {
     override fun evaluate(test: MolecularTest): Evaluation {
         val hasHighMutationalLoad = test.characteristics.tumorMutationalLoad?.isHigh
@@ -71,24 +74,28 @@ class GeneHasActivatingMutation(
 
         val variantsString = concatVariants(activatingVariants, gene)
         val inKinaseDomainString = if (inKinaseDomain) " but undetermined if in kinase domain" else ""
+        val subclonalPercentage = Format.percentage(1 - CLONAL_CUTOFF)
 
         return when {
             activatingVariants.isNotEmpty() && potentiallyActivatingWarnings.isEmpty() -> {
                 if (!inKinaseDomain)
                     EvaluationFactory.pass(
-                        "$gene activating mutation(s): $variantsString",
+                        labels.geneHasActivatingMutationPass(gene, variantsString),
                         inclusionEvents = activatingVariants
                     ) else EvaluationFactory.warn(
-                    "$gene activating mutation(s): $variantsString$inKinaseDomainString",
+                    labels.geneHasActivatingMutationWarnKinase(gene, variantsString, inKinaseDomainString),
                     inclusionEvents = activatingVariants
                 )
             }
 
             activatingVariants.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$gene activating mutation(s): $variantsString " +
-                            "together with potentially activating mutation(s) " +
-                            concat(potentiallyActivatingWarnings.map { (event, type) -> "$event (${type.description})$inKinaseDomainString" }),
+                    labels.geneHasActivatingMutationWarnWithOther(
+                        gene, variantsString,
+                        concat(potentiallyActivatingWarnings.map { (event, type) ->
+                            "$event (${type.description(subclonalPercentage, labels)})$inKinaseDomainString"
+                        })
+                    ),
                     inclusionEvents = activatingVariants + potentiallyActivatingWarnings.map { (event, _) -> event }
                 )
             }
@@ -104,7 +111,7 @@ class GeneHasActivatingMutation(
                     evidenceSource
                 )
 
-                potentialWarnEvaluation ?: EvaluationFactory.fail("No $gene activating mutation(s)")
+                potentialWarnEvaluation ?: EvaluationFactory.fail(labels.geneHasActivatingMutationFail(gene))
             }
         }
     }
@@ -165,45 +172,52 @@ class GeneHasActivatingMutation(
         evidenceSource: String
     ): Evaluation? {
         val inKinaseDomainString = if (inKinaseDomain) " and undetermined if in kinase domain" else ""
+        val percentage = Format.percentage(1 - CLONAL_CUTOFF)
 
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOf(
                 EventsWithMessages(
                     activatingVariantsInNonOncogene,
-                    "$gene activating mutation(s) ${activatingVariantsInNonOncogene?.let { concatVariants(it, gene) }} " +
-                            "- however gene known as TSG in $evidenceSource$inKinaseDomainString"
+                    labels.geneHasActivatingMutationWarnNonOncogene(
+                        gene,
+                        activatingVariantsInNonOncogene?.let { concatVariants(it, gene) }.orEmpty(),
+                        evidenceSource,
+                        inKinaseDomainString
+                    )
                 ),
                 EventsWithMessages(
                     activatingVariantsNoCavAndNoGainOfFunction,
-                    "$gene potentially activating mutation(s) ${
-                        activatingVariantsNoCavAndNoGainOfFunction?.let {
-                            concatVariants(it, gene)
-                        }
-                    } with high driver likelihood - however not a cancer-associated variant$inKinaseDomainString"
+                    labels.geneHasActivatingMutationWarnNoCav(
+                        gene,
+                        activatingVariantsNoCavAndNoGainOfFunction?.let { concatVariants(it, gene) }.orEmpty(),
+                        inKinaseDomainString
+                    )
                 ),
                 EventsWithMessages(
                     activatingSubclonalVariants,
-                    gene + " potentially activating mutation(s) " + activatingSubclonalVariants?.let { concatVariants(it, gene) } +
-                            " but subclonal likelihood > ${Format.percentage(1 - CLONAL_CUTOFF)}$inKinaseDomainString"
+                    labels.geneHasActivatingMutationWarnSubclonal(
+                        gene, activatingSubclonalVariants?.let { concatVariants(it, gene) }.orEmpty(), percentage, inKinaseDomainString
+                    )
                 ),
                 EventsWithMessages(
                     nonHighDriverSubclonalVariants,
-                    "$gene potentially activating mutation(s) " + nonHighDriverSubclonalVariants?.let { concatVariants(it, gene) } +
-                            " have subclonal likelihood of > ${Format.percentage(1 - CLONAL_CUTOFF)} and no high driver likelihood$inKinaseDomainString"
+                    labels.geneHasActivatingMutationWarnNonHighDriverSubclonal(
+                        gene, nonHighDriverSubclonalVariants?.let { concatVariants(it, gene) }.orEmpty(), percentage, inKinaseDomainString
+                    )
                 ),
                 EventsWithMessages(
                     nonHighDriverVariants,
-                    "$gene potentially activating mutation(s) " + nonHighDriverVariants?.let { concatVariants(it, gene) } +
-                            " but no high driver likelihood$inKinaseDomainString"
+                    labels.geneHasActivatingMutationWarnNonHighDriver(
+                        gene, nonHighDriverVariants?.let { concatVariants(it, gene) }.orEmpty(), inKinaseDomainString
+                    )
                 ),
                 EventsWithMessages(
                     otherMissenseOrCancerAssociatedVariants,
-                    "$gene potentially activating mutation(s) " + otherMissenseOrCancerAssociatedVariants?.let {
-                        concatVariants(
-                            it,
-                            gene
-                        )
-                    } + " that are missense or have cancer-associated variant status but are not considered reportable$inKinaseDomainString"
+                    labels.geneHasActivatingMutationWarnOtherMissense(
+                        gene,
+                        otherMissenseOrCancerAssociatedVariants?.let { concatVariants(it, gene) }.orEmpty(),
+                        inKinaseDomainString
+                    )
                 )
             )
         )

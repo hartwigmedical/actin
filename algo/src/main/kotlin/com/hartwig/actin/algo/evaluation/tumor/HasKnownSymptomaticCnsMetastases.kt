@@ -2,34 +2,34 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasKnownSymptomaticCnsMetastases : EvaluationFunction {
+class HasKnownSymptomaticCnsMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val unknownIfSymptomatic = hasSymptomaticCnsLesions == null && hasSymptomaticBrainLesions == null
-            val undeterminedMessage = "CNS metastases present but unknown if symptomatic (data missing)"
 
             return when {
                 unknownIfSymptomatic && (hasCnsLesions == true || hasBrainLesions == true) -> {
-                    EvaluationFactory.undetermined(undeterminedMessage)
+                    EvaluationFactory.undetermined(labels.hasKnownSymptomaticCnsMetastasesUndetermined())
                 }
 
                 unknownIfSymptomatic && (hasSuspectedCnsLesions == true || hasSuspectedBrainLesions == true) -> {
-                    EvaluationFactory.undetermined("Suspected $undeterminedMessage")
+                    EvaluationFactory.undetermined(labels.hasKnownSymptomaticCnsMetastasesUndeterminedSuspected())
                 }
 
                 unknownIfSymptomatic && (hasCnsLesions == null && hasBrainLesions == null) -> {
-                    EvaluationFactory.undetermined("Undetermined if symptomatic CNS metastases present (data missing)")
+                    EvaluationFactory.undetermined(labels.hasKnownSymptomaticCnsMetastasesUndeterminedMissing())
                 }
 
-                hasSymptomaticCnsLesions == true -> EvaluationFactory.pass("Has symptomatic CNS metastases")
+                hasSymptomaticCnsLesions == true -> EvaluationFactory.pass(labels.hasKnownSymptomaticCnsMetastasesPass())
 
-                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass("Has symptomatic CNS (Brain) metastases")
+                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass(labels.hasKnownSymptomaticCnsMetastasesPassBrain())
 
-                else -> EvaluationFactory.fail("No known symptomatic CNS metastases present")
+                else -> EvaluationFactory.fail(labels.hasKnownSymptomaticCnsMetastasesFail())
             }
         }
     }

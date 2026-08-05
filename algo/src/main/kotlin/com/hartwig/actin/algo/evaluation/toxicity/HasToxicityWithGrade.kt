@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -18,7 +19,8 @@ class HasToxicityWithGrade(
     private val targetIcdTitles: List<String>?,
     private val icdTitlesToIgnore: List<String>,
     private val warnIfToxicitiesNotFromQuestionnaire: Boolean,
-    private val referenceDate: LocalDate
+    private val referenceDate: LocalDate,
+    private val labels: EvaluationLabels.Toxicity
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -48,20 +50,20 @@ class HasToxicityWithGrade(
             matchingToxicities.isNotEmpty() &&
                     (matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE } || !warnIfToxicitiesNotFromQuestionnaire) -> {
                 val toxicityString = formatToxicities(matchingToxicities)
-                EvaluationFactory.recoverablePass("Has toxicities grade >= $minGrade$toxicityString")
+                EvaluationFactory.recoverablePass(labels.hasToxicityWithGradePassOrWarn(minGrade, toxicityString))
             }
 
             matchingToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(matchingToxicities)
-                EvaluationFactory.warn("Has toxicities grade >= $minGrade$toxicityString")
+                EvaluationFactory.warn(labels.hasToxicityWithGradePassOrWarn(minGrade, toxicityString))
             }
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                EvaluationFactory.undetermined("Has toxicities$toxicityString but unknown if grade >= $minGrade")
+                EvaluationFactory.undetermined(labels.hasToxicityWithGradeUndetermined(toxicityString, minGrade))
             }
 
-            else -> EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
+            else -> EvaluationFactory.fail(labels.hasToxicityWithGradeFail(icdTitleText, minGrade))
         }
     }
 

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.algo.icd.IcdConstants
@@ -10,7 +11,8 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : EvaluationFunction {
+class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel, private val labels: EvaluationLabels.Toxicity) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val targetCodes = IcdConstants.DRUG_ALLERGY_SET.flatMap { mainCode ->
@@ -35,32 +37,28 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
             IcdConstants.AUTOIMMUNE_DISEASE_SET.map { IcdCode(it) }
         ).fullMatches
 
-        val undeterminedMessage = "intolerance in history - undetermined if PD-1/PD-L1 intolerance"
-
         return when {
             matchingIntolerances.isNotEmpty() -> {
-                EvaluationFactory.pass("Has PD-1/PD-L1 intolerance(s): " + Format.concatItemsWithAnd(matchingIntolerances))
+                EvaluationFactory.pass(labels.hasIntoleranceForPd1OrPdl1InhibitorsPass(Format.concatItemsWithAnd(matchingIntolerances)))
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Drug $undeterminedMessage (drug type unknown)")
+                EvaluationFactory.undetermined(labels.hasIntoleranceForPd1OrPdl1InhibitorsUndeterminedDrug())
             }
 
             monoClonalAntibodyIntolerances.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Monoclonal antibody $undeterminedMessage: " + Format.concatItemsWithAnd(
-                        monoClonalAntibodyIntolerances)
+                    labels.hasIntoleranceForPd1OrPdl1InhibitorsUndeterminedMonoclonal(
+                        Format.concatItemsWithAnd(monoClonalAntibodyIntolerances)
+                    )
                 )
             }
 
             autoImmuneHistory.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Possible PD-1/PD-L1 intolerance due to autoimmune disease " +
-                            "(${Format.concatItemsWithAnd(autoImmuneHistory)})"
-                )
+                EvaluationFactory.warn(labels.hasIntoleranceForPd1OrPdl1InhibitorsWarn(Format.concatItemsWithAnd(autoImmuneHistory)))
             }
 
-            else -> EvaluationFactory.fail("No PD-1/PD-L1 intolerance")
+            else -> EvaluationFactory.fail(labels.hasIntoleranceForPd1OrPdl1InhibitorsFail())
         }
     }
 

@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.algo.evaluation.tumor.IhcTestFactory
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -28,9 +30,10 @@ private const val IHC_TEST_ITEM = "HER2"
 
 class HasHER2ExpressionByIhcTest {
 
-    val positiveFunction = HasHER2ExpressionByIhc(IhcTestResult.POSITIVE)
-    val negativeFunction = HasHER2ExpressionByIhc(IhcTestResult.NEGATIVE)
-    val lowFunction = HasHER2ExpressionByIhc(IhcTestResult.LOW)
+    val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    val positiveFunction = HasHER2ExpressionByIhc(IhcTestResult.POSITIVE, labels)
+    val negativeFunction = HasHER2ExpressionByIhc(IhcTestResult.NEGATIVE, labels)
+    val lowFunction = HasHER2ExpressionByIhc(IhcTestResult.LOW, labels)
 
     @Test
     fun `Should evaluate to undetermined when no prior molecular tests available`() {

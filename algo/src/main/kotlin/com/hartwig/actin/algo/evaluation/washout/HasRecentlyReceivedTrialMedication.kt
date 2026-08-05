@@ -2,8 +2,9 @@ package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.evaluation.medication.medicationNotProvided
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -11,12 +12,15 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import java.time.LocalDate
 
 class HasRecentlyReceivedTrialMedication(
-    private val selector: MedicationSelector, private val minStopDate: LocalDate
+    private val selector: MedicationSelector,
+    private val minStopDate: LocalDate,
+    private val washoutLabels: EvaluationLabels.Washout,
+    private val medicationLabels: EvaluationLabels.Medication
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         if (minStopDate.isBefore(record.patient.registrationDate)) {
-            return EvaluationFactory.undetermined("Recent trial medication undetermined (required stop date prior to registration date)")
+            return EvaluationFactory.undetermined(washoutLabels.hasRecentlyReceivedTrialMedicationUndeterminedRegistration())
         }
 
         val hadRecentTrialTreatment =
@@ -26,7 +30,7 @@ class HasRecentlyReceivedTrialMedication(
             record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
 
         if (!(hadRecentTrialTreatment || hadTrialTreatmentWithUnknownDate) && record.medications == null) {
-            return MEDICATION_NOT_PROVIDED
+            return medicationNotProvided(medicationLabels)
         }
 
         val hasActiveOrRecentlyStoppedTrialMedication =
@@ -34,15 +38,15 @@ class HasRecentlyReceivedTrialMedication(
 
         return when {
             hasActiveOrRecentlyStoppedTrialMedication || hadRecentTrialTreatment -> {
-                EvaluationFactory.pass("Recent trial medication - pay attention to washout period")
+                EvaluationFactory.pass(washoutLabels.hasRecentlyReceivedTrialMedicationPass())
             }
 
             hadTrialTreatmentWithUnknownDate -> {
-                EvaluationFactory.undetermined("Received trial medication but date unknown")
+                EvaluationFactory.undetermined(washoutLabels.hasRecentlyReceivedTrialMedicationUndeterminedUnknownDate())
             }
 
             else -> {
-                EvaluationFactory.fail("No recent trial medication")
+                EvaluationFactory.fail(washoutLabels.hasRecentlyReceivedTrialMedicationFail())
             }
         }
     }

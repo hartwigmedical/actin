@@ -2,13 +2,15 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
 
 class HasHadProgressionFollowingLatestTreatmentLine(
-    private val mustBeRadiological: Boolean = true
+    private val mustBeRadiological: Boolean = true,
+    private val labels: EvaluationLabels.Treatment
 ) :
     EvaluationFunction {
 
@@ -25,28 +27,28 @@ class HasHadProgressionFollowingLatestTreatmentLine(
 
         return when {
             systemicTreatments.isEmpty() -> {
-                EvaluationFactory.fail("No systemic treatments found in treatment history")
+                EvaluationFactory.fail(labels.hasHadProgressionFollowingLatestTreatmentLineFailNoSystemic())
             }
 
             systemicTreatments.all { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
-                EvaluationFactory.pass("Has had progressive disease following latest treatment line")
+                EvaluationFactory.pass(labels.hasHadProgressionFollowingLatestTreatmentLinePassAllPd())
             }
 
             treatmentWithoutDateDiffersInPDStatusFromLastTreatment -> {
-                EvaluationFactory.undetermined("Unable to determine radiological progression following latest treatment line due to treatments without start date")
+                EvaluationFactory.undetermined(labels.hasHadProgressionFollowingLatestTreatmentLineUndeterminedNoStartDate())
             }
 
             lastTreatmentResultedInPD == true -> {
                 val radiologicalNote = if (mustBeRadiological) " (assumed PD is radiological)" else ""
-                EvaluationFactory.pass("Last systemic treatment resulted in PD$radiologicalNote")
+                EvaluationFactory.pass(labels.hasHadProgressionFollowingLatestTreatmentLinePass(radiologicalNote))
             }
 
             lastTreatmentResultedInPD == false -> {
-                EvaluationFactory.fail("Last systemic treatment did not result in progressive disease")
+                EvaluationFactory.fail(labels.hasHadProgressionFollowingLatestTreatmentLineFail())
             }
 
             else -> {
-                EvaluationFactory.recoverableUndetermined("Radiological progression following latest treatment line undetermined")
+                EvaluationFactory.recoverableUndetermined(labels.hasHadProgressionFollowingLatestTreatmentLineRecoverableUndetermined())
             }
         }
     }

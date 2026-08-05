@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.molecular.MolecularVariantUtil.toProteinImpact
 import com.hartwig.actin.algo.evaluation.util.Format.concat
@@ -22,12 +23,14 @@ private data class VariantAndProteinImpact(val variant: Variant, val proteinImpa
 
 class GeneHasVariantWithProteinImpact(
     override val gene: String,
-    private val allowedProteinImpacts: Set<String>
+    private val allowedProteinImpacts: Set<String>,
+    labels: EvaluationLabels.Molecular
 ) : MolecularEvaluationFunction(
     targetCoveragePredicate = specific(
         MolecularTestTarget.MUTATION,
-        "Mutation with protein impact(s) ${allowedProteinImpacts.joinToString()} in"
-    )
+        labels.geneHasVariantWithProteinImpactMessagePrefix(allowedProteinImpacts)
+    ),
+    labels = labels
 ) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
@@ -57,7 +60,7 @@ class GeneHasVariantWithProteinImpact(
             ?.let { canonicalReportableImpactMatches ->
                 val impactString = concat(canonicalReportableImpactMatches.map { it.proteinImpact })
                 EvaluationFactory.pass(
-                    "$impactString in $gene in canonical transcript",
+                    labels.geneHasVariantWithProteinImpactPass(impactString, gene),
                     inclusionEvents = canonicalReportableImpactMatches.map { it.variant.event }.toSet()
                 )
             }
@@ -66,7 +69,7 @@ class GeneHasVariantWithProteinImpact(
                 canonicalImpactClassifications[VariantClassification.CANONICAL_UNREPORTABLE],
                 reportableOtherProteinImpactMatches
             )
-            ?: EvaluationFactory.fail("${concat(allowedProteinImpacts)} not detected in $gene")
+            ?: EvaluationFactory.fail(labels.geneHasVariantWithProteinImpactFail(concat(allowedProteinImpacts), gene))
     }
 
     private fun evaluatePotentialWarns(
@@ -76,12 +79,12 @@ class GeneHasVariantWithProteinImpact(
     ): Evaluation? {
         val subclonalWarning = eventsWithMessagesForVariantsAndImpacts(
             canonicalReportableSubclonalMatches,
-            { "Variant(s) $it in $gene but subclonal likelihood of > " + percentage(1 - CLONAL_CUTOFF) })
+            { labels.geneHasVariantWithProteinImpactWarnSubclonal(it, gene, percentage(1 - CLONAL_CUTOFF)) })
         val unreportableWarning =
-            eventsWithMessagesForVariantsAndImpacts(canonicalUnreportableMatches, { "$it detected in $gene but not reportable" })
+            eventsWithMessagesForVariantsAndImpacts(canonicalUnreportableMatches, { labels.geneHasVariantWithProteinImpactWarnUnreportable(it, gene) })
         val reportableOtherWarning = eventsWithMessagesForVariantsAndImpacts(
             reportableOtherProteinMatches,
-            { "$it detected in non-canonical transcript of $gene" })
+            { labels.geneHasVariantWithProteinImpactWarnNonCanonical(it, gene) })
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(
             listOfNotNull(subclonalWarning, unreportableWarning, reportableOtherWarning)
         )

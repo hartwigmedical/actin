@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
@@ -9,9 +11,10 @@ class IsEligibleForIntensiveTreatmentTest {
 
     @Test
     fun `Should evaluate to undetermined`() {
+        val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            IsEligibleForIntensiveTreatment().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            IsEligibleForIntensiveTreatment(labels).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
         )
     }
 }

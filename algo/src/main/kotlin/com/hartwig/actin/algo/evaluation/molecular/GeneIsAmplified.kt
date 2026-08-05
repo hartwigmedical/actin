@@ -1,5 +1,6 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -81,8 +82,11 @@ private enum class AmplificationEvaluation {
     }
 }
 
-class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?) :
-    MolecularEvaluationFunction(targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, "Amplification of")) {
+class GeneIsAmplified(override val gene: String, private val requestedMinCopyNumber: Int?, labels: EvaluationLabels.Molecular) :
+    MolecularEvaluationFunction(
+        targetCoveragePredicate = specific(MolecularTestTarget.AMPLIFICATION, labels.geneIsAmplifiedMessagePrefix()),
+        labels = labels
+    ) {
 
     override fun evaluate(test: MolecularTest, ihcTests: List<IhcTest>): Evaluation {
         val evaluatedCopyNumbers: Map<AmplificationEvaluation, Set<String>> =
@@ -110,30 +114,30 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
 
         return when {
             eligibleAmplification != null -> {
-                EvaluationFactory.pass("$gene is amplified$requestedCopiesMessage", inclusionEvents = eligibleAmplification)
+                EvaluationFactory.pass(labels.geneIsAmplifiedPass(gene, requestedCopiesMessage), inclusionEvents = eligibleAmplification)
             }
 
             fullAmplificationWithUnknownCopyNumber != null -> {
                 when {
                     requestedMinCopyNumber == null ->
-                        EvaluationFactory.pass("$gene is amplified", inclusionEvents = fullAmplificationWithUnknownCopyNumber)
+                        EvaluationFactory.pass(labels.geneIsAmplifiedPass(gene, requestedCopiesMessage), inclusionEvents = fullAmplificationWithUnknownCopyNumber)
 
                     requestedMinCopyNumber <= ASSUMED_AMP_MIN_COPY_NR ->
                         EvaluationFactory.pass(
-                            "$gene is amplified hence assumed gene is amplified$requestedCopiesMessage",
+                            labels.geneIsAmplifiedPassFullAmpAssumed(gene, requestedCopiesMessage),
                             inclusionEvents = fullAmplificationWithUnknownCopyNumber
                         )
 
                     else ->
                         EvaluationFactory.warn(
-                            "$gene is amplified but undetermined if$requestedCopiesMessage",
+                            labels.geneIsAmplifiedWarnFullAmpUndetermined(gene, requestedCopiesMessage),
                             inclusionEvents = fullAmplificationWithUnknownCopyNumber
                         )
                 }
             }
 
             else -> evaluatePotentialOtherWarns(evaluatedCopyNumbers, test.evidenceSource, requestedCopiesMessage, hasPositiveIhcEvaluation)
-                ?: EvaluationFactory.fail("No amplification of $gene$requestedCopiesMessage")
+                ?: EvaluationFactory.fail(labels.geneIsAmplifiedFail(gene, requestedCopiesMessage))
         }
     }
 
@@ -146,42 +150,40 @@ class GeneIsAmplified(override val gene: String, private val requestedMinCopyNum
         val eventGroupsWithMessages = listOf(
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.FULL_AMP_WITH_LOSS_OF_FUNCTION],
-                "$gene is amplified$requestedCopiesMessage but gene associated with loss-of-function protein impact in $evidenceSource",
+                labels.geneIsAmplifiedWarnLossOfFunction(gene, requestedCopiesMessage, evidenceSource),
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.FULL_AMP_ON_TSG],
-                "$gene is amplified$requestedCopiesMessage but gene known as TSG in $evidenceSource"
+                labels.geneIsAmplifiedWarnTsg(gene, requestedCopiesMessage, evidenceSource)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.PARTIAL_AMP],
-                "$gene is amplified$requestedCopiesMessage but only partially"
+                labels.geneIsAmplifiedWarnPartial(gene, requestedCopiesMessage)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.NON_CANONICAL_AMP],
-                "$gene is amplified$requestedCopiesMessage but on non-canonical transcript"
+                labels.geneIsAmplifiedWarnNonCanonical(gene, requestedCopiesMessage)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.NON_AMP_BUT_COPY_NR_MEETS_AMPLIFICATION_CUTOFF],
-                "$gene is not annotated as amp but meets amplification threshold of $PLOIDY_AMPLIFICATION_FACTOR * (assumed) ploidy"
+                labels.geneIsAmplifiedWarnMeetsCutoff(gene, PLOIDY_AMPLIFICATION_FACTOR)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.NON_AMP_BUT_COPY_NR_MEETS_REQUESTED_COPY_NUMBER],
-                "$gene is not annotated as amp but meets requested copy nr of >= $requestedMinCopyNumber copies"
+                labels.geneIsAmplifiedWarnMeetsRequested(gene, requestedMinCopyNumber)
             ),
             EventsWithMessages(
                 evaluatedCopyNumbers[AmplificationEvaluation.PARTIAL_AMP_WITH_UNKNOWN_COPY_NUMBER],
-                "$gene is amplified but partially and undetermined if copy nr meets threshold of >= $requestedMinCopyNumber copies"
+                labels.geneIsAmplifiedWarnPartialUnknown(gene, requestedMinCopyNumber)
             ),
         )
 
         val finalEventGroupsWithMessages = if (hasPositiveIhcEvaluation) eventGroupsWithMessages +
                 EventsWithMessages(
                     setOf("Possible $gene amp"),
-                    "$gene may be amplified$requestedCopiesMessage - based on positive ${
-                        GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.getValue(
-                            gene
-                        )
-                    } IHC result"
+                    labels.geneIsAmplifiedWarnIhc(
+                        gene, requestedCopiesMessage, GeneConstants.IHC_AMP_EVALUABLE_GENES_TO_PROTEINS.getValue(gene)
+                    )
                 ) else eventGroupsWithMessages
 
         return MolecularEventUtil.evaluatePotentialWarnsForEventGroups(finalEventGroupsWithMessages)

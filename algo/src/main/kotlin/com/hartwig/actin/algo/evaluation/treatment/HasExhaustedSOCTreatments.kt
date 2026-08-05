@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
 import com.hartwig.actin.datamodel.PatientRecord
@@ -10,7 +11,9 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
 class HasExhaustedSOCTreatments(
-    private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory, private val doidModel: DoidModel
+    private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory,
+    private val doidModel: DoidModel,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -23,61 +26,56 @@ class HasExhaustedSOCTreatments(
                     .joinToString(", ") { it.treatmentCandidate.treatment.display() }
                 when {
                     remainingNonOptionalTreatments.isEmpty() -> {
-                        EvaluationFactory.pass("Has exhausted SOC")
+                        EvaluationFactory.pass(labels.hasExhaustedSocTreatmentsPass())
                     }
 
                     treatmentEvaluation.isMissingTreatmentsWithPotentialIntoleranceOnly() -> {
                         EvaluationFactory.warn(
-                            "Has potentially exhausted SOC - remaining options ($remainingNonOptionalTreatments) may not have " +
-                                    "been given due to drug intolerance"
+                            labels.hasExhaustedSocTreatmentsWarnPotentialIntolerance(remainingNonOptionalTreatments)
                         )
                     }
 
                     treatmentEvaluation.isMissingMolecularResultForEvaluation() -> {
                         EvaluationFactory.warn(
-                            "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) " +
-                                    "but some corresponding molecular results are missing",
+                            labels.hasExhaustedSocTreatmentsWarnMissingMolecular(remainingNonOptionalTreatments),
                             isMissingMolecularResultForEvaluation = true
                         )
                     }
 
                     else -> {
-                        EvaluationFactory.fail(
-                            "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
-                        )
+                        EvaluationFactory.fail(labels.hasExhaustedSocTreatmentsFail(remainingNonOptionalTreatments))
                     }
                 }
             }
 
             DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID) -> {
                 val treatmentHistoryAnalysis = TreatmentHistoryAnalysis.create(record, ignoreCurativeNeoAdjuvantOrAdjuvant = true)
-                val messageStart = "SOC considered exhausted"
                 when {
                     treatmentHistoryAnalysis.receivedPlatinumDoublet() || treatmentHistoryAnalysis.receivedPlatinumTripletOrAbove() -> {
-                        EvaluationFactory.pass("$messageStart (platinum doublet in history)")
+                        EvaluationFactory.pass(labels.hasExhaustedSocTreatmentsPassPlatinumDoublet())
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {
-                        EvaluationFactory.pass("$messageStart (chemoradiation in history)")
+                        EvaluationFactory.pass(labels.hasExhaustedSocTreatmentsPassChemoradiation())
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemoImmunotherapy() -> {
-                        EvaluationFactory.pass("$messageStart (chemo-immunotherapy in history)")
+                        EvaluationFactory.pass(labels.hasExhaustedSocTreatmentsPassChemoImmunotherapy())
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemotherapy() -> {
-                        EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in history)")
+                        EvaluationFactory.undetermined(labels.hasExhaustedSocTreatmentsUndeterminedChemotherapy())
                     }
 
-                    else -> EvaluationFactory.warn("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
+                    else -> EvaluationFactory.warn(labels.hasExhaustedSocTreatmentsWarnNoPlatinumDoublet())
                 }
             }
 
             record.oncologicalHistory.isEmpty() -> {
-                EvaluationFactory.undetermined("Exhaustion of SOC undetermined (no prior cancer treatment)")
+                EvaluationFactory.undetermined(labels.hasExhaustedSocTreatmentsUndeterminedNoHistory())
             }
 
-            else -> EvaluationFactory.pass("Assumed that SOC is exhausted (had prior cancer treatment)")
+            else -> EvaluationFactory.pass(labels.hasExhaustedSocTreatmentsPassAssumed())
         }
     }
 }

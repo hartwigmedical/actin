@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
@@ -12,11 +14,12 @@ import org.junit.jupiter.api.Test
 
 class HasAcquiredResistanceToAnyDrugTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     val targetDrugTreatment =
         TreatmentTestFactory.drugTreatment("Osimertinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR))
     val wrongDrugTreatment =
         TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
-    val function = HasAcquiredResistanceToAnyDrug(targetDrugTreatment.drugs)
+    val function = HasAcquiredResistanceToAnyDrug(targetDrugTreatment.drugs, labels)
 
     @Test
     fun `Should pass if target drug in treatment history with stop reason progressive disease`() {

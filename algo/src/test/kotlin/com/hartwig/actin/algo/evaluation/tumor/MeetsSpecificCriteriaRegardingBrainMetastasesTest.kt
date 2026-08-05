@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
@@ -55,6 +57,6 @@ class MeetsSpecificCriteriaRegardingBrainMetastasesTest {
     }
 
     companion object {
-        private val FUNCTION = MeetsSpecificCriteriaRegardingBrainMetastases()
+        private val FUNCTION = MeetsSpecificCriteriaRegardingBrainMetastases(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor)
     }
 }

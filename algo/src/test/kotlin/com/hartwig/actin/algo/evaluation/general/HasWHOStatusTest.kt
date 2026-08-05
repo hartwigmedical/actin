@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import org.assertj.core.api.Assertions.assertThat
@@ -8,7 +10,7 @@ import org.junit.jupiter.api.Test
 
 class HasWHOStatusTest {
 
-    private val function = HasWHOStatus(2)
+    private val function = HasWHOStatus(2, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).general)
 
     @Test
     fun `Should be undetermined when WHO is null`() {

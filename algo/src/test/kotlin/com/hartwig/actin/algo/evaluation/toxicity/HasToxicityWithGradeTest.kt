@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -163,7 +165,8 @@ class HasToxicityWithGradeTest {
         warnIfToxicitiesNotFromQuestionnaire: Boolean = true
     ): HasToxicityWithGrade {
         return HasToxicityWithGrade(
-            icd, minGrade, targetIcdTitles, ignoreFilters, warnIfToxicitiesNotFromQuestionnaire, referenceDate
+            icd, minGrade, targetIcdTitles, ignoreFilters, warnIfToxicitiesNotFromQuestionnaire, referenceDate,
+            EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).toxicity
         )
     }
 

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
@@ -46,6 +48,8 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
 
     private fun createFunction(selector: MedicationSelector): CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication {
         val types = listOf("TYPE-A", "type-B", "TYPE-C")
-        return CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication(selector, types)
+        return CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication(
+            selector, types, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+        )
     }
 }

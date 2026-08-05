@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.laboratory.LabTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import java.time.LocalDate
@@ -16,7 +18,9 @@ class HasPotentialSymptomaticHypercalcemiaTest {
     private val ionizedCalciumValue = LabTestFactory.create(LabMeasurement.IONIZED_CALCIUM, date = referenceDate, refLimitUp = refLimitUp)
     private val correctedCalciumValue =
         LabTestFactory.create(LabMeasurement.CORRECTED_CALCIUM, date = referenceDate, refLimitUp = refLimitUp)
-    private val function = HasPotentialSymptomaticHypercalcemia(minValidDate)
+    private val function = HasPotentialSymptomaticHypercalcemia(
+        minValidDate, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    )
 
     @Test
     fun `Should warn if calcium is above ULN`() {

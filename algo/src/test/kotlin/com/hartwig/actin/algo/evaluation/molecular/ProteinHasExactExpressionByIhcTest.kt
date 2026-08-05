@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
@@ -8,7 +10,8 @@ private const val PROTEIN = "protein 1"
 
 class ProteinHasExactExpressionByIhcTest {
 
-    private val function = ProteinHasExactExpressionByIhc(PROTEIN, 2)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = ProteinHasExactExpressionByIhc(PROTEIN, 2, labels)
 
     @Test
     fun `Should fail when there are no prior tests`() {

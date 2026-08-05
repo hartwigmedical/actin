@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -131,8 +133,10 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
     companion object {
         private const val MATCHING_DRUG_NAME = "match"
         private val TREATMENT_CATEGORY = TreatmentCategory.TARGETED_THERAPY
+        private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
         private val FUNCTION = HasHadTreatmentWithDrugFromSetAsMostRecent(
-            setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet()))
+            setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
+            labels
         )
     }
 

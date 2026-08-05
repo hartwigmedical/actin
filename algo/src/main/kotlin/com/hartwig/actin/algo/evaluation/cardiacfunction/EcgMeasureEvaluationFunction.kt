@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,22 +14,13 @@ class EcgMeasureEvaluationFunction internal constructor(
     private val threshold: Double,
     private val expectedUnit: EcgUnit,
     private val extractingEcgMeasure: (Ecg) -> EcgMeasure?,
-    private val thresholdCriteria: ThresholdCriteria
+    private val thresholdCriteria: ThresholdCriteria,
+    private val labels: EvaluationLabels.CardiacFunction
 ) : EvaluationFunction {
 
-    internal enum class ThresholdCriteria(
-        val comparator: Comparator<Number>, val failMessageTemplate: String, val passMessageTemplate: String
-    ) {
-        MAXIMUM(
-            Comparator.comparingDouble { obj: Number -> obj.toDouble() }.reversed(),
-            "%s of %s %s is above or equal to max threshold of %s",
-            "%s of %s %s does not exceed max threshold of %s",
-        ),
-        MINIMUM(
-            Comparator.comparingDouble { obj: Number -> obj.toDouble() },
-            "%s of %s %s is below or equal to min threshold of %s",
-            "%s of %s %s exceeds min threshold of %s",
-        )
+    internal enum class ThresholdCriteria(val comparator: Comparator<Number>) {
+        MAXIMUM(Comparator.comparingDouble { obj: Number -> obj.toDouble() }.reversed()),
+        MINIMUM(Comparator.comparingDouble { obj: Number -> obj.toDouble() })
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -36,11 +28,11 @@ class EcgMeasureEvaluationFunction internal constructor(
         val filtered = ecgMeasures.filter { it.second.unit == expectedUnit.symbol() }
 
         return when {
-            ecgMeasures.isEmpty() -> EvaluationFactory.recoverableUndetermined(String.format("No %s interval known", measureName))
+            ecgMeasures.isEmpty() -> EvaluationFactory.recoverableUndetermined(labels.ecgMeasureEvaluationFunctionNoIntervalKnown(measureName))
             filtered.isEmpty() -> {
                 val units = Format.concat(ecgMeasures.map { it.second.unit })
                 EvaluationFactory.recoverableUndetermined(
-                    "${measureName.name} measure in $units instead of required ${expectedUnit.symbol()}"
+                    measureName.name + labels.ecgMeasureEvaluationFunctionWrongUnit(units, expectedUnit.symbol())
                 )
             }
             filtered.size == 1 || filtered.all { with(it.first) { year != null && month != null } } -> {
@@ -51,7 +43,7 @@ class EcgMeasureEvaluationFunction internal constructor(
                 if (evaluations.map(Evaluation::result).toSet().size == 1) {
                     evaluations.first()
                 } else {
-                    EvaluationFactory.undetermined("Conflicting evaluations for ${measureName.name} with unknown dates")
+                    EvaluationFactory.undetermined(labels.ecgMeasureEvaluationFunctionConflicting(measureName.name))
                 }
             }
         }
@@ -59,13 +51,17 @@ class EcgMeasureEvaluationFunction internal constructor(
 
     private fun evaluate(measure: EcgMeasure): Evaluation {
         return if (thresholdCriteria.comparator.compare(measure.value, threshold) >= 0) {
-            EvaluationFactory.recoverablePass(
-                String.format(thresholdCriteria.passMessageTemplate, measureName, measure.value, measure.unit, threshold)
-            )
+            val message = when (thresholdCriteria) {
+                ThresholdCriteria.MAXIMUM -> labels.ecgMeasureEvaluationFunctionMaximumPass(measureName, measure.value, measure.unit, threshold)
+                ThresholdCriteria.MINIMUM -> labels.ecgMeasureEvaluationFunctionMinimumPass(measureName, measure.value, measure.unit, threshold)
+            }
+            EvaluationFactory.recoverablePass(message)
         } else {
-            EvaluationFactory.recoverableFail(
-                String.format(thresholdCriteria.failMessageTemplate, measureName, measure.value, measure.unit, threshold)
-            )
+            val message = when (thresholdCriteria) {
+                ThresholdCriteria.MAXIMUM -> labels.ecgMeasureEvaluationFunctionMaximumFail(measureName, measure.value, measure.unit, threshold)
+                ThresholdCriteria.MINIMUM -> labels.ecgMeasureEvaluationFunctionMinimumFail(measureName, measure.value, measure.unit, threshold)
+            }
+            EvaluationFactory.recoverableFail(message)
         }
     }
 }

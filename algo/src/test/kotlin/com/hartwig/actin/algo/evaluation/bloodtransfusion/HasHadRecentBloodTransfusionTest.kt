@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import java.time.LocalDate
@@ -10,7 +12,9 @@ class HasHadRecentBloodTransfusionTest {
     @Test
     fun canEvaluate() {
         val minDate = LocalDate.of(2020, 3, 30)
-        val function = HasHadRecentBloodTransfusion(TransfusionProduct.THROMBOCYTE, minDate)
+        val function = HasHadRecentBloodTransfusion(
+            TransfusionProduct.THROMBOCYTE, minDate, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).bloodTransfusion
+        )
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())))
         val tooOld = create(TransfusionProduct.THROMBOCYTE, minDate.minusWeeks(4))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(tooOld)))

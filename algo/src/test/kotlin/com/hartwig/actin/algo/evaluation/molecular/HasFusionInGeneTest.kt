@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluationConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -20,8 +22,9 @@ private val MATCHING_GENE_IHC = GeneConstants.IHC_FUSION_EVALUABLE_GENES.first()
 
 class HasFusionInGeneTest {
 
-    val function = HasFusionInGene(MATCHING_GENE)
-    val ihcFunction = HasFusionInGene(MATCHING_GENE_IHC)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    val function = HasFusionInGene(MATCHING_GENE, labels)
+    val ihcFunction = HasFusionInGene(MATCHING_GENE_IHC, labels)
 
     private val matchingFusion = TestFusionFactory.createMinimal().copy(
         geneStart = MATCHING_GENE,

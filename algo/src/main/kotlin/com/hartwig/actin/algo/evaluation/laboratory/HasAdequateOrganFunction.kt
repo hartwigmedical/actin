@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -9,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
 import java.time.LocalDate
 
-class HasAdequateOrganFunction(private val minValidDate: LocalDate) : EvaluationFunction {
+class HasAdequateOrganFunction(private val minValidDate: LocalDate, private val labels: EvaluationLabels.Laboratory) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val interpretation = LabInterpretation.interpret(record.labValues)
@@ -50,30 +51,27 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate) : Evaluation
             .filter { it.second == LabEvaluation.LabEvaluationResult.CANNOT_BE_DETERMINED }
             .map { it.first }
 
-        val messageStart = "Possible inadequate organ function"
-
         return when {
             valuesUnderLowerLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concat(valuesUnderLowerLimit.map { it.first.display })} below LLN)"
+                    labels.hasAdequateOrganFunctionWarnBelowLln(Format.concat(valuesUnderLowerLimit.map { it.first.display }))
                 )
             }
 
             valuesAboveUpperLimit.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "$messageStart (${Format.concat(valuesAboveUpperLimit.map { it.first.display() })} above ULN)"
+                    labels.hasAdequateOrganFunctionWarnAboveUln(Format.concat(valuesAboveUpperLimit.map { it.first.display() }))
                 )
             }
 
             undeterminedLabValues.isNotEmpty() -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Undetermined if adequate organ function " +
-                            "(lab value(s) (${Format.concat(undeterminedLabValues.map { it.display })}) undetermined)"
+                    labels.hasAdequateOrganFunctionRecoverableUndetermined(Format.concat(undeterminedLabValues.map { it.display }))
                 )
             }
 
             else -> {
-                EvaluationFactory.recoverablePass("No indication of inadequate organ function")
+                EvaluationFactory.recoverablePass(labels.hasAdequateOrganFunctionPass())
             }
         }
     }

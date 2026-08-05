@@ -1,17 +1,21 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import org.junit.jupiter.api.Test
 
 class HasMinimumLesionsInSpecificBodyLocationTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
     private val evaluableCategory = BodyLocationCategory.LUNG
     private val nonEvaluableCategory = BodyLocationCategory.BLADDER
-    private val functionRequiringTwoLesionsInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(2, evaluableCategory)
-    private val functionRequiringOneLesionInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, evaluableCategory)
-    private val functionRequiringOneLesionInNonEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, nonEvaluableCategory)
+    private val functionRequiringTwoLesionsInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(2, evaluableCategory, labels)
+    private val functionRequiringOneLesionInEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, evaluableCategory, labels)
+    private val functionRequiringOneLesionInNonEvaluableCategory =
+        HasMinimumLesionsInSpecificBodyLocation(1, nonEvaluableCategory, labels)
 
     @Test
     fun `Should be pass in case of known lesions in requested body location and requiring at most one lesion`() {

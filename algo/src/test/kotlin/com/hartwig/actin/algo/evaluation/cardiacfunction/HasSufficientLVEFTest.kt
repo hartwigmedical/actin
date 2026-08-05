@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -11,7 +13,7 @@ class HasSufficientLVEFTest {
 
     @Test
     fun canEvaluate() {
-        val function = HasSufficientLVEF(0.71)
+        val function = HasSufficientLVEF(0.71, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).cardiacFunction)
 
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)))

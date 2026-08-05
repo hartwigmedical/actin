@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -16,7 +17,8 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
     private val category: TreatmentCategory,
     private val intentsToFind: Set<Intent>,
     private val allowedTypes: Set<TreatmentType>? = null,
-    private val minDate: LocalDate? = null
+    private val minDate: LocalDate? = null,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -31,18 +33,28 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
             when {
                 hasSpecificMatch() -> {
                     EvaluationFactory.pass(
-                        "Has received $intentsList${drugTypeString(specificMatches)} ${category.display()} " +
-                                "(${specificMatches.joinToString(", ") { it.treatmentDisplay() }})"
+                        labels.hasHadSomeTreatmentsWithCategoryAndTypeWithIntentsPass(
+                            intentsList,
+                            drugTypeString(specificMatches),
+                            category.display(),
+                            specificMatches.map { it.treatmentDisplay() }
+                        )
                     )
                 }
 
                 hasApproximateMatch() -> {
-                    EvaluationFactory.undetermined("Undetermined if received$allowedTypesString ${category.display()} is $intentsList")
+                    EvaluationFactory.undetermined(
+                        labels.hasHadSomeTreatmentsWithCategoryAndTypeWithIntentsUndeterminedApproximate(
+                            allowedTypesString, category.display(), intentsList
+                        )
+                    )
                 }
 
                 hasPossibleTrialMatch() -> {
                     EvaluationFactory.undetermined(
-                        "Undetermined if treatment received in previous trial included $intentsList$allowedTypesString ${category.display()}"
+                        labels.hasHadSomeTreatmentsWithCategoryAndTypeWithIntentsUndeterminedTrial(
+                            intentsList, allowedTypesString, category.display()
+                        )
                     )
                 }
 
@@ -53,10 +65,16 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
                         ).specificMatches.ifEmpty { null }
                     }?.let { unknownDateMatches ->
                         EvaluationFactory.undetermined(
-                            "Has received $intentsList${drugTypeString(unknownDateMatches)} ${category.display()} " +
-                                    "(${unknownDateMatches.joinToString(", ") { it.treatmentDisplay()}}) with unknown date"
+                            labels.hasHadSomeTreatmentsWithCategoryAndTypeWithIntentsUndeterminedUnknownDate(
+                                intentsList,
+                                drugTypeString(unknownDateMatches),
+                                category.display(),
+                                unknownDateMatches.map { it.treatmentDisplay() }
+                            )
                         )
-                    } ?: EvaluationFactory.fail("Has not received $intentsList$allowedTypesString ${category.display()}")
+                    } ?: EvaluationFactory.fail(
+                        labels.hasHadSomeTreatmentsWithCategoryAndTypeWithIntentsFail(intentsList, allowedTypesString, category.display())
+                    )
                 }
             }
         }

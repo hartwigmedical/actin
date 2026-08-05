@@ -2,13 +2,15 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
-    private val category: TreatmentCategory, private val types: Set<TreatmentType>?
+    private val category: TreatmentCategory, private val types: Set<TreatmentType>?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -27,27 +29,35 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
 
         return when {
             priorAntiCancerDrugs.isEmpty() -> {
-                EvaluationFactory.fail("Has not received prior anti cancer drugs")
+                EvaluationFactory.fail(labels.hasHadTreatmentWithCategoryOfTypesAsMostRecentFailNoPriorDrugs())
             }
 
             types != null && mostRecentAntiCancerDrug?.matchesTypeFromSet(types) == true -> {
-                EvaluationFactory.pass("Has received$typeString ${category.display()} as most recent treatment line")
+                EvaluationFactory.pass(
+                    labels.hasHadTreatmentWithCategoryOfTypesAsMostRecentPassWithTypes(typeString, category.display())
+                )
             }
 
             types == null && mostRecentAntiCancerDrug?.categories()?.contains(category) == true -> {
-                EvaluationFactory.pass("Has received ${category.display()} as most recent treatment line")
+                EvaluationFactory.pass(labels.hasHadTreatmentWithCategoryOfTypesAsMostRecentPass(category.display()))
             }
 
             treatmentMatch.any { it.startYear == null } -> {
-                EvaluationFactory.undetermined("Has received$typeString ${category.display()} but undetermined if most recent (date unknown)")
+                EvaluationFactory.undetermined(
+                    labels.hasHadTreatmentWithCategoryOfTypesAsMostRecentUndetermined(typeString, category.display())
+                )
             }
 
             treatmentMatch.isNotEmpty() -> {
-                EvaluationFactory.fail("Has received$typeString ${category.display()} but not as the most recent treatment line")
+                EvaluationFactory.fail(
+                    labels.hasHadTreatmentWithCategoryOfTypesAsMostRecentFailNotMostRecent(typeString, category.display())
+                )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received$typeString ${category.display()} as prior therapy")
+                EvaluationFactory.fail(
+                    labels.hasHadTreatmentWithCategoryOfTypesAsMostRecentFailNotReceived(typeString, category.display())
+                )
             }
         }
     }

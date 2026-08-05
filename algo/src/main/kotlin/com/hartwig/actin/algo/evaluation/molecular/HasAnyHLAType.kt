@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.molecular.MolecularTest
@@ -11,19 +12,20 @@ private const val HLA_PRESENCE_MIN_COPY_NUMBER = 0.5
 
 class HasAnyHLAType(
     private val hlaAllelesToFind: Set<String>,
-    private val matchOnHlaGroup: Boolean = false
-) : MolecularEvaluationFunction(true) {
+    private val matchOnHlaGroup: Boolean = false,
+    labels: EvaluationLabels.Molecular
+) : MolecularEvaluationFunction(useInsufficientQualityRecords = true, labels = labels) {
 
     override fun evaluate(test: MolecularTest): Evaluation {
         val immunology = test.immunology
         return when {
             immunology == null -> EvaluationFactory.undetermined(
-                "HLA type not tested",
+                labels.hasAnyHlaTypeUndeterminedNotTested(),
                 isMissingMolecularResultForEvaluation = true
             )
 
             !immunology.isReliable -> EvaluationFactory.undetermined(
-                "HLA typing unreliable",
+                labels.hasAnyHlaTypeUndeterminedUnreliable(),
                 isMissingMolecularResultForEvaluation = true
             )
 
@@ -36,11 +38,11 @@ class HasAnyHLAType(
         val requiredTypes = Format.concatLowercaseWithCommaAndOr(hlaAllelesToFind)
 
         return when {
-            matchingHlaAlleles.isEmpty() -> EvaluationFactory.fail("Does not have HLA type $requiredTypes")
+            matchingHlaAlleles.isEmpty() -> EvaluationFactory.fail(labels.hasAnyHlaTypeFail(requiredTypes))
             !test.hasSufficientQuality -> {
                 val matchedEvents = matchingHlaAlleles.map(HlaAllele::event).toSet()
                 EvaluationFactory.warn(
-                    "Has required HLA type ${Format.concatLowercaseWithCommaAndAnd(matchedEvents)} however undetermined whether allele is present in tumor",
+                    labels.hasAnyHlaTypeWarnQuality(Format.concatLowercaseWithCommaAndAnd(matchedEvents)),
                     inclusionEvents = matchedEvents
                 )
             }
@@ -57,22 +59,22 @@ class HasAnyHLAType(
             matchingHlaAlleles.any { allele ->
                 allele.tumorCopyNumber?.let { it >= HLA_PRESENCE_MIN_COPY_NUMBER } == true && allele.hasSomaticMutations == false
             } -> EvaluationFactory.pass(
-                "Has HLA type $matchingAllelesString (allele present without somatic variants in tumor)",
+                labels.hasAnyHlaTypePassNoSomatic(matchingAllelesString),
                 inclusionEvents = inclusionEvents
             )
 
             matchingHlaAlleles.any { it.hasSomaticMutations == true } -> EvaluationFactory.warn(
-                "Has required HLA type $matchingAllelesString but somatic mutation present in this allele in tumor",
+                labels.hasAnyHlaTypeWarnSomatic(matchingAllelesString),
                 inclusionEvents = inclusionEvents
             )
 
             matchingHlaAlleles.any { it.tumorCopyNumber?.let { cn -> cn < HLA_PRESENCE_MIN_COPY_NUMBER } == true } -> EvaluationFactory.warn(
-                "Has required HLA type $matchingAllelesString but allele has low copy number in tumor",
+                labels.hasAnyHlaTypeWarnLowCopyNumber(matchingAllelesString),
                 inclusionEvents = inclusionEvents
             )
 
             else -> EvaluationFactory.pass(
-                "Has HLA type $matchingAllelesString",
+                labels.hasAnyHlaTypePass(matchingAllelesString),
                 inclusionEvents = inclusionEvents
             )
         }

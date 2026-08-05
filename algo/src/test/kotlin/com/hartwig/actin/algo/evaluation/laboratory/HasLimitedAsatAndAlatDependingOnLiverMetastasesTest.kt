@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
@@ -11,13 +13,14 @@ import org.junit.jupiter.api.Test
 
 class HasLimitedAsatAndAlatDependingOnLiverMetastasesTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
     private val limitWithoutLiverMetastases = 2.0
     private val limitWithLiverMetastases = 5.0
     private val refDate = LocalDate.of(2024, 7, 4)
     private val minValidDate = refDate.minusDays(90)
     private val minPassDate = refDate.minusDays(30)
     private val function = HasLimitedAsatAndAlatDependingOnLiverMetastases(
-        limitWithoutLiverMetastases, limitWithLiverMetastases, minValidDate, minPassDate
+        limitWithoutLiverMetastases, limitWithLiverMetastases, minValidDate, minPassDate, labels
     )
     private val recordWithLiverLesions = TumorTestFactory.withLiverLesions(true)
     private val recordWithoutLiverLesions = TumorTestFactory.withLiverLesions(false)

@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -16,8 +18,10 @@ private val MATCHING_ICD_MAIN_CODE = IcdConstants.DRUG_ALLERGY_SET.first()
 private val OTHER_MATCHING_ICD_MAIN_CODE = IcdConstants.DRUG_ALLERGY_SET.last()
 
 class HasIntoleranceForPD1OrPDL1InhibitorsTest {
-    
-    private val function = HasIntoleranceForPD1OrPDL1Inhibitors(TestIcdFactory.createTestModel())
+
+    private val function = HasIntoleranceForPD1OrPDL1Inhibitors(
+        TestIcdFactory.createTestModel(), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).toxicity
+    )
 
     @Test
     fun `Should pass when patient has intolerance matching name`() {

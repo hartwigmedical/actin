@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -12,7 +13,8 @@ import java.time.LocalDate
 class HasHadAdjuvantTreatmentWithCategory(
     private val category: TreatmentCategory,
     private val minDate: LocalDate?,
-    private val weeksAgo: Int?
+    private val weeksAgo: Int?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -26,23 +28,25 @@ class HasHadAdjuvantTreatmentWithCategory(
 
         return when {
             minDate == null && treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()}")
+                EvaluationFactory.pass(labels.hasHadAdjuvantTreatmentWithCategoryPass(category.display()))
             }
 
             minDate?.let { treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, false) } } == true -> {
-                EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()} within the last $weeksAgo weeks")
+                EvaluationFactory.pass(labels.hasHadAdjuvantTreatmentWithCategoryPassWithinWeeks(category.display(), weeksAgo))
             }
 
             minDate?.let { treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, true) } } == true -> {
-                EvaluationFactory.undetermined("Received adjuvant treatment(s) of ${category.display()} but date unknown")
+                EvaluationFactory.undetermined(labels.hasHadAdjuvantTreatmentWithCategoryUndetermined(category.display()))
             }
 
             !treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.fail("Has not received adjuvant treatment(s) of ${category.display()}")
+                EvaluationFactory.fail(labels.hasHadAdjuvantTreatmentWithCategoryFail(category.display()))
             }
 
             else -> {
-                EvaluationFactory.fail("All received adjuvant treatment(s) of ${category.display()} are administered more than $weeksAgo weeks ago")
+                EvaluationFactory.fail(
+                    labels.hasHadAdjuvantTreatmentWithCategoryFailTooLongAgo(category.display(), weeksAgo)
+                )
             }
         }
     }

@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.general
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.general.GeneralTestFactory.withWHO
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import org.assertj.core.api.Assertions.assertThat
@@ -9,9 +11,11 @@ import org.junit.jupiter.api.Test
 
 class HasMinimumLanskyKarnofskyScoreTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).general
+
     @Test
     fun `Should evaluate LANSKY performance based on different exact who values `() {
-        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 70)
+        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 70, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withWHO(null)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withWHO(0)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withWHO(1)))
@@ -20,7 +24,7 @@ class HasMinimumLanskyKarnofskyScoreTest {
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(4)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(5)))
 
-        val function2 = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80)
+        val function2 = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80, labels)
         assertEvaluation(EvaluationResult.PASS, function2.evaluate(withWHO(0)))
         assertEvaluation(EvaluationResult.PASS, function2.evaluate(withWHO(1)))
         assertEvaluation(EvaluationResult.FAIL, function2.evaluate(withWHO(2)))
@@ -29,7 +33,7 @@ class HasMinimumLanskyKarnofskyScoreTest {
 
     @Test
     fun `Should evaluate LANSKY performance based on different maximum (at most) who values`() {
-        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80)
+        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80, labels)
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withWHO(0, WhoStatusPrecision.AT_MOST)))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withWHO(1, WhoStatusPrecision.AT_MOST)))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withWHO(2, WhoStatusPrecision.AT_MOST)))
@@ -37,7 +41,7 @@ class HasMinimumLanskyKarnofskyScoreTest {
 
     @Test
     fun `Should evaluate LANSKY performance based on different minimum (at least) who values`() {
-        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80)
+        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withWHO(0, WhoStatusPrecision.AT_LEAST)))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withWHO(1, WhoStatusPrecision.AT_LEAST)))
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(2, WhoStatusPrecision.AT_LEAST)))
@@ -46,7 +50,7 @@ class HasMinimumLanskyKarnofskyScoreTest {
 
     @Test
     fun `Should be recoverable fail when WHO difference is exactly one`() {
-        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80)
+        val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80, labels)
         val evaluation = function.evaluate(withWHO(2, WhoStatusPrecision.AT_LEAST))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
         assertThat(evaluation.recoverable).isTrue()

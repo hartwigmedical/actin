@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentBeforeMaxDate
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
@@ -17,7 +18,8 @@ class HasHadSystemicTherapyWithAnyIntent(
     private val intents: Set<Intent>?,
     private val refDate: LocalDate?,
     private val weeks: Int?,
-    private val evaluateWithinWeeks: Boolean?
+    private val evaluateWithinWeeks: Boolean?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -30,39 +32,40 @@ class HasHadSystemicTherapyWithAnyIntent(
 
         return when {
             refDate == null && matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.pass("Received $intentsLowercase systemic therapy")
+                EvaluationFactory.pass(labels.hasHadSystemicTherapyWithAnyIntentPassAny(intentsLowercase))
             }
 
             evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::treatmentSinceMinDate, false) -> {
-                EvaluationFactory.pass("Received $intentsLowercase systemic therapy within the last $weeks weeks")
+                EvaluationFactory.pass(labels.hasHadSystemicTherapyWithAnyIntentPassWithinWeeks(intentsLowercase, weeks))
             }
 
             evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::treatmentBeforeMaxDate, false) -> {
-                EvaluationFactory.pass("Received $intentsLowercase systemic therapy at least $weeks weeks ago")
+                EvaluationFactory.pass(labels.hasHadSystemicTherapyWithAnyIntentPassAtLeastWeeksAgo(intentsLowercase, weeks))
             }
 
             (evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::treatmentSinceMinDate, true)) ||
                     (evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::treatmentBeforeMaxDate, true)) -> {
-                EvaluationFactory.undetermined("Received $intentsLowercase systemic therapy but date unknown")
+                EvaluationFactory.undetermined(labels.hasHadSystemicTherapyWithAnyIntentUndeterminedDateUnknown(intentsLowercase))
             }
 
             (evaluateWithinWeeks != false && matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true) ||
                     (evaluateWithinWeeks != true && matchingTreatments[null]?.let(::anyTreatmentPotentiallyBeforeMaxDate) == true) -> {
                 EvaluationFactory.undetermined(
-                    "Has received systemic treatment (${Format.concat(systemicTreatments.map { it.treatmentDisplay() })}) " +
-                            "but undetermined if intent is $intentsLowercase"
+                    labels.hasHadSystemicTherapyWithAnyIntentUndeterminedIntentUnknown(
+                        Format.concat(systemicTreatments.map { it.treatmentDisplay() }), intentsLowercase
+                    )
                 )
             }
 
             !matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.fail("No $intentsLowercase systemic therapy in prior tumor history")
+                EvaluationFactory.fail(labels.hasHadSystemicTherapyWithAnyIntentFailNoTherapy(intentsLowercase))
             }
 
             else -> EvaluationFactory.fail(
                 if (evaluateWithinWeeks == true)
-                    "All $intentsLowercase systemic therapy is administered more than $weeks weeks ago"
+                    labels.hasHadSystemicTherapyWithAnyIntentFailMoreThanWeeksAgo(intentsLowercase, weeks)
                 else
-                    "All $intentsLowercase systemic therapy is not administered at least $weeks weeks ago"
+                    labels.hasHadSystemicTherapyWithAnyIntentFailNotAtLeastWeeksAgo(intentsLowercase, weeks)
             )
         }
     }

@@ -2,11 +2,16 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String, private val lines: Int?) : EvaluationFunction {
+class HasHadRadiotherapyToSomeBodyLocation(
+    private val bodyLocation: String,
+    private val lines: Int?,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorRadiotherapies = record.oncologicalHistory
@@ -17,19 +22,19 @@ class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String, pri
                 radiotherapy.treatmentHistoryDetails?.bodyLocations?.any { it.lowercase().contains(bodyLocation.lowercase()) } == true
             }
 
-        val messageEnding = lines?.let { " for at least $it lines" } ?: ""
+        val messageEnding = lines?.let { labels.hasHadRadiotherapyToSomeBodyLocationSuffixForAtLeastLines(it) } ?: ""
 
         return when {
             radiotherapyToTargetLocationCount >= (lines ?: 1) -> {
-                EvaluationFactory.pass("Has had prior radiotherapy to $bodyLocation$messageEnding")
+                EvaluationFactory.pass(labels.hasHadRadiotherapyToSomeBodyLocationPass(bodyLocation, messageEnding))
             }
 
             priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {
-                EvaluationFactory.recoverableUndetermined("Has received radiotherapy but undetermined if target location was $bodyLocation")
+                EvaluationFactory.recoverableUndetermined(labels.hasHadRadiotherapyToSomeBodyLocationRecoverableUndetermined(bodyLocation))
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received prior radiation therapy to $bodyLocation$messageEnding")
+                EvaluationFactory.fail(labels.hasHadRadiotherapyToSomeBodyLocationFail(bodyLocation, messageEnding))
             }
         }
     }

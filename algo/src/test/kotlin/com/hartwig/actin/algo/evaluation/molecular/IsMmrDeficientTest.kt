@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -17,7 +19,8 @@ import org.junit.jupiter.api.Test
 class IsMmrDeficientTest {
 
     private val mmrGene = GeneConstants.MMR_GENES.first()
-    private val function = IsMmrDeficient()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    private val function = IsMmrDeficient(labels)
 
     @Test
     fun `Should evaluate to undetermined with unknown MSI and no MSI alteration`() {

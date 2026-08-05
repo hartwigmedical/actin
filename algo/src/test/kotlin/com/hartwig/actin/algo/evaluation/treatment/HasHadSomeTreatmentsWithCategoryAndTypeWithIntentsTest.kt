@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
@@ -15,13 +17,15 @@ import org.junit.jupiter.api.Test
 
 class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val matchingCategory = TreatmentCategory.TARGETED_THERAPY
     private val matchingTypes = setOf(DrugType.ALK_INHIBITOR, DrugType.EGFR_INHIBITOR)
     private val matchingIntents = setOf(Intent.PALLIATIVE)
     private val minDate = LocalDate.of(2022, 4, 1)
-    private val function = HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, matchingTypes)
+    private val function =
+        HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, matchingTypes, labels = labels)
     private val functionWithDate =
-        HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, matchingTypes, minDate)
+        HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, matchingTypes, minDate, labels)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -102,7 +106,8 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
                 )
             )
         )
-        val evaluation = HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, allowedTypes = null)
+        val evaluation =
+            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, allowedTypes = null, labels = labels)
             .evaluate(patientRecord)
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessagesStrings()).containsExactly("Has received palliative targeted therapy (Matching)")

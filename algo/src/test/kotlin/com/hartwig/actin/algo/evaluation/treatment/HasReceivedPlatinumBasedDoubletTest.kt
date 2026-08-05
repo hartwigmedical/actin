@@ -2,7 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
@@ -16,13 +18,15 @@ import org.junit.jupiter.api.Test
 
 class HasReceivedPlatinumBasedDoubletTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val function = HasReceivedPlatinumBasedDoublet(
         TestDoidModelFactory.createWithChildToParentMap(
             mapOf(
                 DoidConstants.LUNG_ADENOCARCINOMA_DOID to DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID,
                 DoidConstants.OVARIAN_CARCINOMA_DOID to DoidConstants.FEMALE_REPRODUCTIVE_ORGAN_CANCER_DOID
             )
-        )
+        ),
+        labels
     )
 
     private val platinumDoublet =
