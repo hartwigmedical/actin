@@ -168,7 +168,6 @@ CREATE TABLE `heartMeasurement`
     `year` int,
     `month` int,
     `day` int,
-    `isECG` BOOLEAN,
     `value` double precision,
     `unit` varchar(50),
     `measurementType` varchar(50),

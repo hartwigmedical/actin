@@ -309,7 +309,6 @@ class ClinicalDAO(private val context: DSLContext) {
                 Tables.HEARTMEASUREMENT.YEAR,
                 Tables.HEARTMEASUREMENT.MONTH,
                 Tables.HEARTMEASUREMENT.DAY,
-                Tables.HEARTMEASUREMENT.ISECG,
                 Tables.HEARTMEASUREMENT.VALUE,
                 Tables.HEARTMEASUREMENT.UNIT,
                 Tables.HEARTMEASUREMENT.MEASUREMENTTYPE
@@ -321,10 +320,9 @@ class ClinicalDAO(private val context: DSLContext) {
                     heartMeasurement.year,
                     heartMeasurement.month,
                     heartMeasurement.day,
-                    heartMeasurement.isECG,
                     heartMeasurement.value,
                     heartMeasurement.unit,
-                    heartMeasurement.measurementType?.name
+                    heartMeasurement.measurementType.name
 
                 )
                 .execute()
