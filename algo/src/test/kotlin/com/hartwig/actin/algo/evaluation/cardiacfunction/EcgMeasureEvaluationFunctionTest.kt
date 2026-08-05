@@ -70,7 +70,12 @@ class EcgMeasureEvaluationFunctionTest {
     @Test
     fun `Should return undetermined when multiple evaluations are produced with some unknown dates`() {
         val ecgs =
-            listOf(THRESHOLD / 2, THRESHOLD * 2).map { HeartMeasurement("test", emptySet(), true, it, EcgUnit.MILLISECONDS.symbol(), null) }
+            listOf(THRESHOLD / 2, THRESHOLD * 2).map {
+                HeartMeasurement(
+                    "test", emptySet(), it, EcgUnit.MILLISECONDS.symbol(),
+                    HeartMeasurementType.OTHER_ECG
+                )
+            }
         val evaluation = withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(withHeartMeasurements(ecgs))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
@@ -80,8 +85,8 @@ class EcgMeasureEvaluationFunctionTest {
     ): Evaluation {
         val patient = withValueAndUnit(value)
         val measurement = patient.heartMeasurements.single()
-        val irrelevant = HeartMeasurement(null, emptySet(), true, 1.0, "irrelevant", HeartMeasurementType.JTC)
-        val wrongUnit = HeartMeasurement(null, emptySet(), true, 1.0, "incorrect", HeartMeasurementType.QTCF)
+        val irrelevant = HeartMeasurement(null, emptySet(), 1.0, "irrelevant", HeartMeasurementType.JTC)
+        val wrongUnit = HeartMeasurement(null, emptySet(), 1.0, "incorrect", HeartMeasurementType.QTCF)
         val function = withThresholdCriteria(thresholdCriteria)
 
         val evaluations = listOf(

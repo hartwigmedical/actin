@@ -173,6 +173,7 @@
     {
       "name": null,
       "icdCodes": [],
+      "measurementType": "OTHER_ECG",
       "comorbidityClass": "HEART_MEASUREMENT"
     }
   ],
