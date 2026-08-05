@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,7 +14,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 class HasHadCombinedTreatmentNamesWithCycles(
     private val treatments: List<Treatment>,
     private val minCycles: Int,
-    private val maxCycles: Int?
+    private val maxCycles: Int?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -86,35 +88,48 @@ class HasHadCombinedTreatmentNamesWithCycles(
             }
 
         return if (matchingHistoryEntries.isEmpty()) {
-            EvaluationFactory.fail("No prior treatments found matching $treatmentName and ${cyclesRequirementDescription()} cycles")
+            EvaluationFactory.fail(labels.hasHadCombinedTreatmentNamesWithCyclesFailNoMatching(treatmentName, cyclesRequirementDescription()))
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
-                "Found matching treatments (${formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true)}" +
-                        " and ${cyclesRequirementDescription()} cycles"
+                labels.hasHadCombinedTreatmentNamesWithCyclesPass(
+                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true, labels),
+                    cyclesRequirementDescription()
+                )
             )
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.UNDETERMINED)) {
             EvaluationFactory.undetermined(
-                "Unknown cycles for matching treatments: " + formatTreatmentList(
-                    matchingHistoryEntries[EvaluationResult.UNDETERMINED]!!,
-                    false
+                labels.hasHadCombinedTreatmentNamesWithCyclesUndetermined(
+                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.UNDETERMINED]!!, false, labels)
                 )
             )
         } else {
             EvaluationFactory.warn(
-                "Matching treatments did not have ${cyclesRequirementDescription()} cycles: " +
-                        formatTreatmentList(matchingHistoryEntries[EvaluationResult.WARN]!!, true)
+                labels.hasHadCombinedTreatmentNamesWithCyclesWarn(
+                    cyclesRequirementDescription(),
+                    formatTreatmentList(matchingHistoryEntries[EvaluationResult.WARN]!!, true, labels)
+                )
             )
         }
     }
 
     private fun cyclesRequirementDescription(): String {
-        return if (maxCycles != null) "between $minCycles and $maxCycles" else "at least $minCycles"
+        return if (maxCycles != null) {
+            labels.hasHadCombinedTreatmentNamesWithCyclesDescriptionBetween(minCycles, maxCycles)
+        } else {
+            labels.hasHadCombinedTreatmentNamesWithCyclesDescriptionAtLeast(minCycles)
+        }
     }
 
     companion object {
-        private fun formatTreatmentList(treatmentHistoryEntries: List<TreatmentHistoryEntry>, includeCycles: Boolean): String {
+        private fun formatTreatmentList(
+            treatmentHistoryEntries: List<TreatmentHistoryEntry>,
+            includeCycles: Boolean,
+            labels: EvaluationLabels.Treatment
+        ): String {
             return treatmentHistoryEntries.joinToString(", ") { entry ->
-                val cycleString = if (includeCycles) " (${entry.treatmentHistoryDetails?.cycles} cycles)" else ""
+                val cycleString = if (includeCycles) {
+                    labels.hasHadCombinedTreatmentNamesWithCyclesCycleSuffix(entry.treatmentHistoryDetails?.cycles.toString())
+                } else ""
                 entry.treatments.joinToString("+") { it.display() } + cycleString
 
             }

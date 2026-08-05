@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,7 +11,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 import com.hartwig.actin.medication.MedicationToTreatmentConverter
 
 class HasHadSomeTreatmentsWithCategoryOfAllTypes(
-    private val category: TreatmentCategory, private val types: Set<TreatmentType>, private val minTreatmentLines: Int
+    private val category: TreatmentCategory,
+    private val types: Set<TreatmentType>,
+    private val minTreatmentLines: Int,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -21,23 +25,26 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
         )
 
         val typesList = Format.concatItemsWithAnd(types)
-        val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
 
         return when {
             treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
-                EvaluationFactory.pass("Has $baseMessage")
+                EvaluationFactory.pass(labels.hasHadSomeTreatmentsWithCategoryOfAllTypesPass(minTreatmentLines, typesList, category.display()))
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if $baseMessage")
+                EvaluationFactory.undetermined(
+                    labels.hasHadSomeTreatmentsWithCategoryOfAllTypesUndetermined(minTreatmentLines, typesList, category.display())
+                )
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}")
+                EvaluationFactory.undetermined(
+                    labels.hasHadSomeTreatmentsWithCategoryOfAllTypesUndeterminedTrial(minTreatmentLines, category.display())
+                )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not $baseMessage")
+                EvaluationFactory.fail(labels.hasHadSomeTreatmentsWithCategoryOfAllTypesFail(minTreatmentLines, typesList, category.display()))
             }
         }
     }

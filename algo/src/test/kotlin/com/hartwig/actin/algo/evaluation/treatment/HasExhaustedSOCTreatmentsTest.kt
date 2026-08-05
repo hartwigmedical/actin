@@ -3,10 +3,12 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluation
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluator
 import com.hartwig.actin.algo.soc.StandardOfCareEvaluatorFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
@@ -29,10 +31,12 @@ import org.junit.jupiter.api.Test
 
 class HasExhaustedSOCTreatmentsTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val standardOfCareEvaluator = mockk<StandardOfCareEvaluator>()
     private val standardOfCareEvaluatorFactory =
         mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
-    private val function = HasExhaustedSOCTreatments(standardOfCareEvaluatorFactory, TestDoidModelFactory.createMinimalTestDoidModel())
+    private val function =
+        HasExhaustedSOCTreatments(standardOfCareEvaluatorFactory, TestDoidModelFactory.createMinimalTestDoidModel(), labels)
     private val nonEmptyTreatmentList = listOf(
         EvaluatedTreatment(
             TreatmentCandidate(

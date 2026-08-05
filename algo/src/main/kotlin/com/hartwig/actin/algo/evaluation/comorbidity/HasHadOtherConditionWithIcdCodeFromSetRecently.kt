@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.datamodel.PatientRecord
@@ -17,7 +18,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
     private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
     private val minDate: LocalDate,
-    private val maxMonthsAgo: Int
+    private val maxMonthsAgo: Int,
+    private val labels: EvaluationLabels.Comorbidity
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -29,32 +31,39 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
 
         return when {
             fullMatchSummary.containsKey(EvaluationResult.PASS) -> {
-                EvaluationFactory.pass("Recent $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.PASS)}")
+                EvaluationFactory.pass(
+                    labels.hasHadOtherConditionWithIcdCodeFromSetRecentlyPass(
+                        diseaseDescription, displayConditions(fullMatchSummary, EvaluationResult.PASS)
+                    )
+                )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.WARN) -> {
                 EvaluationFactory.warn(
-                    "History of $diseaseDescription within last $maxMonthsAgo months" +
-                            displayConditions(fullMatchSummary, EvaluationResult.WARN, true)
+                    labels.hasHadOtherConditionWithIcdCodeFromSetRecentlyWarn(
+                        diseaseDescription, maxMonthsAgo, displayConditions(fullMatchSummary, EvaluationResult.WARN, true)
+                    )
                 )
             }
 
             fullMatchSummary.containsKey(EvaluationResult.UNDETERMINED) -> {
                 EvaluationFactory.undetermined(
-                    "History of $diseaseDescription${displayConditions(fullMatchSummary, EvaluationResult.UNDETERMINED, true)}" +
-                            " but undetermined if less than $maxMonthsAgo months ago"
+                    labels.hasHadOtherConditionWithIcdCodeFromSetRecentlyUndeterminedWithinMonths(
+                        diseaseDescription, displayConditions(fullMatchSummary, EvaluationResult.UNDETERMINED, true), maxMonthsAgo
+                    )
                 )
             }
 
             mainMatchesWithUnknownExtension.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Recent ${Format.concatItemsWithAnd(mainMatchesWithUnknownExtension, true)} " +
-                            "but undetermined if history of $diseaseDescription"
+                    labels.hasHadOtherConditionWithIcdCodeFromSetRecentlyUndeterminedUnknownExtension(
+                        Format.concatItemsWithAnd(mainMatchesWithUnknownExtension, true), diseaseDescription
+                    )
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No recent $diseaseDescription")
+                EvaluationFactory.fail(labels.hasHadOtherConditionWithIcdCodeFromSetRecentlyFail(diseaseDescription))
             }
         }
     }

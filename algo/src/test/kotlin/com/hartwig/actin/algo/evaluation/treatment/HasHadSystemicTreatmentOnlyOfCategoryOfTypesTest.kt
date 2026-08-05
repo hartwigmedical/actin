@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -103,7 +105,8 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(EvaluationResult.PASS, function.evaluate(makeRecordWithMatchingAndAdditionalEntry()))
     }
 
-    private val function = HasHadSystemicTreatmentOnlyOfCategoryOfTypes(matchingCategory, matchingTypes)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadSystemicTreatmentOnlyOfCategoryOfTypes(matchingCategory, matchingTypes, labels)
 
     private fun makeRecordWithMatchingAndAdditionalEntry(
         category: TreatmentCategory = matchingCategory,

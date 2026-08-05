@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory.createMinimalTestWGSPatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -47,7 +49,9 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             )
         )
     )
-    private val function = HasExperiencedImmunotherapyRelatedAdverseEvents(icdModel)
+    private val function = HasExperiencedImmunotherapyRelatedAdverseEvents(
+        icdModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).toxicity
+    )
 
     @Test
     fun `Should fail with no treatmentHistory`() {

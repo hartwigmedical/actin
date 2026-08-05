@@ -1,15 +1,19 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class HasRapidProgressiveDiseaseTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+
     @Test
     fun `Should evaluate to undetermined for minimal patient record`() {
-        val function = HasRapidProgressiveDisease()
+        val function = HasRapidProgressiveDisease(labels)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())

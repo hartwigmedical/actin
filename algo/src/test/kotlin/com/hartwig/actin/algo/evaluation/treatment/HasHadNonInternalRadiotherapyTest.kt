@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -9,8 +11,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import org.junit.jupiter.api.Test
 
 class HasHadNonInternalRadiotherapyTest {
-    
-    private val function = HasHadNonInternalRadiotherapy()
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadNonInternalRadiotherapy(labels)
 
     @Test
     fun `Should fail for empty treatment history`() {

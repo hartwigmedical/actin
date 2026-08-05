@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
@@ -16,7 +17,8 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
     private val treatmentResponses: Set<TreatmentResponse>,
     private val targetTreatments: List<Treatment>? = null,
     private val category: TreatmentCategory? = null,
-    private val types: Set<TreatmentType>? = null
+    private val types: Set<TreatmentType>? = null,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -56,71 +58,99 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             .let { (withResponse, otherResponse) -> withResponse.flatMap { it.value } to otherResponse.mapNotNull { it.key } }
 
         val responseMessage =
-            if (evaluateClinicalBenefit) " objective benefit from treatment" else " ${Format.concatWithCommaAndOr(treatmentResponses.map { it.display() })} from treatment"
-        val similarDrugMessage = "receive exact treatment but received similar drugs " +
-                "(${treatmentsSimilarToTargetTreatment?.joinToString(",") { it.treatmentDisplay() }})"
+            if (evaluateClinicalBenefit) {
+                labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesResponseMessageObjectiveBenefit()
+            } else {
+                labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesResponseMessageOther(
+                    Format.concatWithCommaAndOr(treatmentResponses.map { it.display() })
+                )
+            }
+        val similarTreatmentsDisplay = treatmentsSimilarToTargetTreatment?.joinToString(",") { it.treatmentDisplay() }.toString()
+        val similarDrugMessage =
+            labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesSimilarDrugMessage(similarTreatmentsDisplay)
         val hadSimilarTreatmentsWithPD = treatmentsSimilarToTargetTreatment.takeIf { !it.isNullOrEmpty() }
             ?.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true }
 
         return when {
             !evaluateClinicalBenefit && otherResponses.isNotEmpty() && treatmentsWithResponse.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Uncertain$responseMessage${treatmentDisplay()} - also had ${
-                        Format.concatLowercaseWithCommaAndAnd(
-                            otherResponses.map { it.display() })
-                    }"
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesWarnUncertainWithOther(
+                        responseMessage, treatmentDisplay(), Format.concatLowercaseWithCommaAndAnd(otherResponses.map { it.display() })
+                    )
                 )
             }
 
             evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == false -> {
-                EvaluationFactory.undetermined("Clinical benefit from treatment${treatmentDisplay()} undetermined - did not $similarDrugMessage")
+                EvaluationFactory.undetermined(
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesUndeterminedClinicalBenefit(
+                        treatmentDisplay(), similarDrugMessage
+                    )
+                )
             }
 
             evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == true -> {
-                EvaluationFactory.fail("Did not $similarDrugMessage with PD as best response")
+                EvaluationFactory.fail(
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesFailSimilarWithPd(similarDrugMessage)
+                )
             }
 
             targetTreatmentsToResponseMap.isEmpty() -> {
-                EvaluationFactory.fail("Has not received treatment${treatmentDisplay()}")
+                EvaluationFactory.fail(
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesFailNotReceived(treatmentDisplay())
+                )
             }
 
             treatmentsWithResponse.isNotEmpty() -> {
-                EvaluationFactory.pass("Has had$responseMessage${treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))}")
+                EvaluationFactory.pass(
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesPass(
+                        responseMessage, treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))
+                    )
+                )
             }
 
             evaluateClinicalBenefit && TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
-                    "Uncertain$responseMessage" +
-                            "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.STABLE_DISEASE]))} " +
-                            "(best response: stable disease)"
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesWarnStableDisease(
+                        responseMessage, treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.STABLE_DISEASE]))
+                    )
                 )
             }
 
             evaluateClinicalBenefit && TreatmentResponse.MIXED in targetTreatmentsToResponseMap -> {
                 EvaluationFactory.warn(
-                    "Uncertain$responseMessage" +
-                            "${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.MIXED]))} " +
-                            "(best response: mixed)"
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesWarnMixed(
+                        responseMessage, treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[TreatmentResponse.MIXED]))
+                    )
                 )
             }
 
             targetTreatmentsToResponseMap.containsKey(null) -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined$responseMessage${treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[null]))}"
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesUndeterminedUnknownResponse(
+                        responseMessage, treatmentDisplay(treatmentsInHistory(targetTreatmentsToResponseMap[null]))
+                    )
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No$responseMessage${treatmentDisplay()}")
+                EvaluationFactory.fail(
+                    labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesFailNoResponse(responseMessage, treatmentDisplay())
+                )
             }
         }
     }
 
     private fun treatmentDisplay(treatments: List<Treatment>? = targetTreatments): String {
         return when {
-            targetTreatments != null && treatments != null -> " with ${Format.concatItemsWithOr(treatments)}"
-            category != null && types != null -> " of category ${category.display()} and type(s) ${Format.concatItemsWithOr(types)}"
-            category != null -> " of category ${category.display()}"
+            targetTreatments != null && treatments != null ->
+                labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesDisplayWithTreatments(Format.concatItemsWithOr(treatments))
+
+            category != null && types != null ->
+                labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesDisplayOfCategoryAndTypes(
+                    category.display(), Format.concatItemsWithOr(types)
+                )
+
+            category != null -> labels.hasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesDisplayOfCategory(category.display())
             else -> ""
         }
     }

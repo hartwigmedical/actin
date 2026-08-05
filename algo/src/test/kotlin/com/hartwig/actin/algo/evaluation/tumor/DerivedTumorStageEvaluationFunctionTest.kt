@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -13,11 +15,12 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class DerivedTumorStageEvaluationFunctionTest {
-    
+
     private val properTestPatientRecord = TestPatientFactory.createProperTestPatientRecord()
     private val minimalTestPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val evaluationFunction: EvaluationFunction = mockk()
-    private val derivedFunction = DerivedTumorStageEvaluationFunction(evaluationFunction, "something")
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val derivedFunction = DerivedTumorStageEvaluationFunction(evaluationFunction, "something", labels)
 
     @Test
     fun `Should return original function when tumor details not null`() {

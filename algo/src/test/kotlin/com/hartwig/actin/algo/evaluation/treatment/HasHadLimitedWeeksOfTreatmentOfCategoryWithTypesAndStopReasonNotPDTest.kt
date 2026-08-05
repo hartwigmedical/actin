@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -131,7 +133,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
     fun `Should ignore trial matches when looking for unlikely trial categories`() {
         val function = HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC),
-            null, null
+            null, null, LABELS
         )
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("test", true)), isTrial = true)
@@ -173,12 +175,13 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
     }
 
     companion object {
+        private val LABELS = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
         private val MATCHING_TREATMENT_SET = setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET))
         private val functionWithWeeks =
-            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6)
+            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, 6, LABELS)
         private val functionWithoutWeeks =
-            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, null)
+            HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(MATCHING_CATEGORY, MATCHING_TYPE_SET, null, LABELS)
     }
 }

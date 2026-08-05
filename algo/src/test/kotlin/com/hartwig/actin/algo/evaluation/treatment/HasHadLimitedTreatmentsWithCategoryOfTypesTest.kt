@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
@@ -28,13 +30,16 @@ private val TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES =
 private val RARE_CATEGORY = TreatmentCategory.TRANSPLANTATION
 
 class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
-    
-    private val functionTreatmentOptional = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, false)
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val functionTreatmentOptional =
+        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, false, labels)
     private val functionTreatmentOptionalWithTypes =
-        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, false)
-    private val functionTreatmentRequired = HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, true)
+        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, false, labels)
+    private val functionTreatmentRequired =
+        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, null, MAX_TREATMENT_LINES, true, labels)
     private val functionTreatmentRequiredWithTypes =
-        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, true)
+        HasHadLimitedTreatmentsWithCategoryOfTypes(MATCHING_CATEGORY, MATCHING_TYPE_SET, MAX_TREATMENT_LINES, true, labels)
 
     @Test
     fun `Should pass in case patient had no treatments and treatment is optional`() {
@@ -152,7 +157,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should ignore trial matches and pass when looking for unlikely trial categories and treatment is optional`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, null, 1, false).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, null, 1, false, labels).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
@@ -160,7 +165,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, MATCHING_TYPE_SET, 1, false).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, MATCHING_TYPE_SET, 1, false, labels).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
@@ -172,7 +177,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should ignore trial matches and fail when looking for unlikely trial categories and treatment is required`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, null, 1, true).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, null, 1, true, labels).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
@@ -180,7 +185,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, MATCHING_TYPE_SET, 1, true).evaluate(
+            HasHadLimitedTreatmentsWithCategoryOfTypes(RARE_CATEGORY, MATCHING_TYPE_SET, 1, true, labels).evaluate(
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -9,7 +10,7 @@ import java.time.LocalDate
 
 val RESECTION_KEYWORDS = setOf("resection", "ectomy")
 
-class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction {
+class HasHadRecentResection(private val minDate: LocalDate, private val labels: EvaluationLabels.Treatment) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         var hasHadResectionAfterMinDate = false
@@ -41,13 +42,13 @@ class HasHadRecentResection(private val minDate: LocalDate) : EvaluationFunction
         }
 
         return when {
-            hasHadResectionAfterMinDate -> EvaluationFactory.pass("Has had recent resection")
+            hasHadResectionAfterMinDate -> EvaluationFactory.pass(labels.hasHadRecentResectionPass())
 
-            hasHadResectionAfterMoreLenientMinDate -> EvaluationFactory.warn("Has had reasonably recent resection")
+            hasHadResectionAfterMoreLenientMinDate -> EvaluationFactory.warn(labels.hasHadRecentResectionWarn())
 
-            mayHaveHadResectionAfterMinDate -> EvaluationFactory.undetermined("May have had a recent resection")
+            mayHaveHadResectionAfterMinDate -> EvaluationFactory.undetermined(labels.hasHadRecentResectionUndetermined())
 
-            else -> EvaluationFactory.fail("Has not had recent resection")
+            else -> EvaluationFactory.fail(labels.hasHadRecentResectionFail())
         }
     }
 }

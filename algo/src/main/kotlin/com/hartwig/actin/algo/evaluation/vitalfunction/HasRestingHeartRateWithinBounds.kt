@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import java.time.LocalDate
 
 class HasRestingHeartRateWithinBounds(
-    private val minMedianRestingHeartRate: Double, private val maxMedianRestingHeartRate: Double, private val minimumDate: LocalDate
+    private val minMedianRestingHeartRate: Double,
+    private val maxMedianRestingHeartRate: Double,
+    private val minimumDate: LocalDate,
+    private val labels: EvaluationLabels.VitalFunction
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -18,7 +22,11 @@ class HasRestingHeartRateWithinBounds(
 
         if (relevant.isEmpty()) {
             return EvaluationFactory.undetermined(
-                if (wrongUnit.isEmpty()) "No (recent) heart rate data found" else "Heart rates not measured in $HEART_RATE_EXPECTED_UNIT"
+                if (wrongUnit.isEmpty()) {
+                    labels.hasRestingHeartRateWithinBoundsUndeterminedNoData()
+                } else {
+                    labels.hasRestingHeartRateWithinBoundsUndeterminedWrongUnit(HEART_RATE_EXPECTED_UNIT)
+                }
             )
         }
 
@@ -29,20 +37,23 @@ class HasRestingHeartRateWithinBounds(
         return when (median) {
             in minMedianRestingHeartRate..maxMedianRestingHeartRate -> {
                 EvaluationFactory.recoverablePass(
-                    "Median heart rate ($median bpm) within range ($minMedianRestingHeartRate - $maxMedianRestingHeartRate)"
+                    labels.hasRestingHeartRateWithinBoundsRecoverablePass(
+                        median, minMedianRestingHeartRate, maxMedianRestingHeartRate
+                    )
                 )
             }
 
             in minHeartRateWithMargin..maxHeartRateWithMargin -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Median heart rate ($median bpm) outside range ($minMedianRestingHeartRate - $maxMedianRestingHeartRate) " +
-                            "but within margin of error"
+                    labels.hasRestingHeartRateWithinBoundsRecoverableUndetermined(
+                        median, minMedianRestingHeartRate, maxMedianRestingHeartRate
+                    )
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "Median heart rate ($median bpm) outside range ($minMedianRestingHeartRate - $maxMedianRestingHeartRate)"
+                    labels.hasRestingHeartRateWithinBoundsRecoverableFail(median, minMedianRestingHeartRate, maxMedianRestingHeartRate)
                 )
             }
         }

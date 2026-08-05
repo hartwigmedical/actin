@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -10,11 +12,13 @@ import org.junit.jupiter.api.Test
 
 class HasRecentlyReceivedMedicationOfAtcLevelTest {
     private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
     private val function = HasRecentlyReceivedMedicationOfAtcLevel(
         MedicationTestFactory.alwaysActive(),
         "category to find",
         setOf(AtcLevel(code = "category to find", name = "")),
-        evaluationDate.plusDays(1)
+        evaluationDate.plusDays(1),
+        labels
     )
     
     @Test
@@ -42,7 +46,8 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
             MedicationTestFactory.alwaysStopped(),
             "category to find",
             setOf(AtcLevel(code = "category to find", name = "")),
-            evaluationDate.minusDays(1)
+            evaluationDate.minusDays(1),
+            labels
         )
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
@@ -55,7 +60,8 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
             MedicationTestFactory.alwaysStopped(),
             "category to find",
             setOf(AtcLevel(code = "category to find", name = "")),
-            evaluationDate.minusWeeks(2)
+            evaluationDate.minusWeeks(2),
+            labels
         )
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))

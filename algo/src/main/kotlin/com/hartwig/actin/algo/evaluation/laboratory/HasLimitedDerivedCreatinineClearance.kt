@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.evaluateVersusMaxValue
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
@@ -13,7 +14,8 @@ import java.time.LocalDate
 
 class HasLimitedDerivedCreatinineClearance internal constructor(
     private val referenceYear: Int, private val method: CreatinineClearanceMethod,
-    private val maxCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate
+    private val maxCreatinineClearance: Double, private val minimumDateForBodyWeights: LocalDate,
+    private val labels: EvaluationLabels.Laboratory
 ) : SingleLabValueEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
@@ -59,18 +61,24 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
         return when {
             result == EvaluationResult.FAIL && weight == null -> EvaluationFactory.recoverableUndetermined(
-                "Cockcroft-Gault may be above max but body weight unknown"
+                labels.hasLimitedDerivedCreatinineClearanceRecoverableUndeterminedUnknownWeightFail()
             )
 
-            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail("Cockcroft-Gault above max of $maxCreatinineClearance")
+            result == EvaluationResult.FAIL -> EvaluationFactory.recoverableFail(
+                labels.hasLimitedDerivedCreatinineClearanceRecoverableFail("Cockcroft-Gault", maxCreatinineClearance)
+            )
 
-            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined("Cockcroft-Gault evaluation undetermined")
+            result == EvaluationResult.UNDETERMINED -> EvaluationFactory.recoverableUndetermined(
+                labels.hasLimitedDerivedCreatinineClearanceRecoverableUndetermined("Cockcroft-Gault")
+            )
 
             result == EvaluationResult.PASS && weight == null -> EvaluationFactory.recoverableUndetermined(
-                "Cockcroft-Gault most likely below max of $maxCreatinineClearance but body weight unknown"
+                labels.hasLimitedDerivedCreatinineClearanceRecoverableUndeterminedUnknownWeightPass(maxCreatinineClearance)
             )
 
-            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass("Cockcroft-Gault below max of $maxCreatinineClearance")
+            result == EvaluationResult.PASS -> EvaluationFactory.recoverablePass(
+                labels.hasLimitedDerivedCreatinineClearancePass("Cockcroft-Gault", maxCreatinineClearance)
+            )
 
             else -> Evaluation(result = result, recoverable = true)
         }
@@ -81,15 +89,15 @@ class HasLimitedDerivedCreatinineClearance internal constructor(
 
         return when (val result = CreatinineFunctions.interpretEGFREvaluations(evaluations)) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.recoverableFail("$code exceeds max of $maxCreatinineClearance")
+                EvaluationFactory.recoverableFail(labels.hasLimitedDerivedCreatinineClearanceRecoverableFail(code, maxCreatinineClearance))
             }
 
             EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.recoverableUndetermined("$code evaluation undetermined")
+                EvaluationFactory.recoverableUndetermined(labels.hasLimitedDerivedCreatinineClearanceRecoverableUndetermined(code))
             }
 
             EvaluationResult.PASS -> {
-                EvaluationFactory.recoverablePass("$code below max of $maxCreatinineClearance")
+                EvaluationFactory.recoverablePass(labels.hasLimitedDerivedCreatinineClearancePass(code, maxCreatinineClearance))
             }
 
             else -> {

@@ -1,12 +1,14 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class HasBoneMetastasesTest {
-    
-    private val function: HasBoneMetastases = HasBoneMetastases()
+
+    private val function: HasBoneMetastases = HasBoneMetastases(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor)
 
     @Test
     fun shouldBeUndeterminedWhenHasBoneLesionsIsNull() {

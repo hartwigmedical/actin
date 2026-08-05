@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
@@ -12,14 +14,15 @@ private const val TREATMENT_NAME_MATCHING = "Matching"
 private const val TREATMENT_NAME_TEST = "Test"
 
 class HasHadCombinedTreatmentNamesWithCyclesTest {
-    
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val matchingPriorTreatment = treatmentHistoryEntry(TREATMENT_NAME_MATCHING, 11)
     private val testTreatmentWithWrongCycles = treatmentHistoryEntry(TREATMENT_NAME_TEST, 3)
     private val testTreatmentWithNullCycles = treatmentHistoryEntry(TREATMENT_NAME_TEST, null)
     private val nonMatchingTreatment = treatmentHistoryEntry("unknown", 10)
 
     private val function = HasHadCombinedTreatmentNamesWithCycles(
-        listOf(chemotherapyWithName(TREATMENT_NAME_MATCHING), chemotherapyWithName(TREATMENT_NAME_TEST)), 8, 12
+        listOf(chemotherapyWithName(TREATMENT_NAME_MATCHING), chemotherapyWithName(TREATMENT_NAME_TEST)), 8, 12, labels
     )
 
     @Test

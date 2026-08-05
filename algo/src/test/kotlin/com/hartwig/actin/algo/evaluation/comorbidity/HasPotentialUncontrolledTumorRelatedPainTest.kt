@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
@@ -22,10 +24,14 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
     private val targetNode = IcdNode(targetCode, emptyList(), "Cancer-related pain")
     private val childOfTargetNode = IcdNode("childCode", listOf(targetCode), "Child of cancer-related pain")
     private val icdModel = IcdModel.create(listOf(targetNode, childOfTargetNode))
-    private val alwaysActiveFunction =
-        HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysActive(), setOf(OPIOIDS_ATC_LEVEL), icdModel)
-    private val alwaysPlannedFunction =
-        HasPotentialUncontrolledTumorRelatedPain(MedicationTestFactory.alwaysPlanned(), setOf(OPIOIDS_ATC_LEVEL), icdModel)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    private val medicationLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+    private val alwaysActiveFunction = HasPotentialUncontrolledTumorRelatedPain(
+        MedicationTestFactory.alwaysActive(), setOf(OPIOIDS_ATC_LEVEL), icdModel, labels, medicationLabels
+    )
+    private val alwaysPlannedFunction = HasPotentialUncontrolledTumorRelatedPain(
+        MedicationTestFactory.alwaysPlanned(), setOf(OPIOIDS_ATC_LEVEL), icdModel, labels, medicationLabels
+    )
 
     @Test
     fun `Should warn if patient uses severe pain medication`() {

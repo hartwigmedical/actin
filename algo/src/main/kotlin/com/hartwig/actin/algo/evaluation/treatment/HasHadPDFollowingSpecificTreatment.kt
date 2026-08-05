@@ -2,13 +2,14 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions.treatmentResultedInPD
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
-class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>) : EvaluationFunction {
+class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>, private val labels: EvaluationLabels.Treatment) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val treatmentNamesToMatch = treatments.map { it.name.lowercase() }.toSet()
@@ -16,18 +17,18 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
         return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has had PD after receiving ${concatItemsWithAnd(treatmentEvaluation.matchingTreatmentsWithPD)} treatment"
+                labels.hasHadPDFollowingSpecificTreatmentPass(concatItemsWithAnd(treatmentEvaluation.matchingTreatmentsWithPD))
             )
         } else if (treatmentEvaluation.includesTrial) {
-            EvaluationFactory.undetermined("Undetermined if received ${concatItemsWithAnd(treatments)} treatment in trial")
+            EvaluationFactory.undetermined(labels.hasHadPDFollowingSpecificTreatmentUndeterminedTrial(concatItemsWithAnd(treatments)))
         } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
-                "Has received ${concatItemsWithAnd(treatmentEvaluation.matchingTreatments)} treatment but undetermined if PD"
+                labels.hasHadPDFollowingSpecificTreatmentUndeterminedUnclearPd(concatItemsWithAnd(treatmentEvaluation.matchingTreatments))
             )
         } else if (treatmentEvaluation.matchingTreatments.isNotEmpty()) {
-            EvaluationFactory.fail("Has received ${concatItemsWithAnd(treatmentEvaluation.matchingTreatments)} treatment but no PD")
+            EvaluationFactory.fail(labels.hasHadPDFollowingSpecificTreatmentFailNoPd(concatItemsWithAnd(treatmentEvaluation.matchingTreatments)))
         } else {
-            EvaluationFactory.fail("Has not received ${concatItemsWithAnd(treatments)} treatment")
+            EvaluationFactory.fail(labels.hasHadPDFollowingSpecificTreatmentFailNotReceived(concatItemsWithAnd(treatments)))
         }
     }
 

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants.FAMILY_HISTORY_OF_OTHER_SPECIFIED_HEALTH_PROBLEMS_CODE
 import com.hartwig.actin.algo.icd.IcdConstants.FAMILY_HISTORY_OF_UNSPECIFIED_HEALTH_PROBLEMS_CODE
@@ -15,7 +16,8 @@ class HasSpecificFamilyHistory(
     private val icdModel: IcdModel,
     private val conditionDescription: String,
     private val passFamilyConditions: PassFamilyConditions = PassFamilyConditions("", emptySet()),
-    private val undeterminedFamilyConditions: UndeterminedFamilyConditions = UndeterminedFamilyConditions("", emptySet())
+    private val undeterminedFamilyConditions: UndeterminedFamilyConditions = UndeterminedFamilyConditions("", emptySet()),
+    private val labels: EvaluationLabels.Comorbidity
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -33,22 +35,22 @@ class HasSpecificFamilyHistory(
 
         return when {
             passFamilyConditions.isNotEmpty() -> {
-                EvaluationFactory.pass("Has family history of $conditionDescription")
+                EvaluationFactory.pass(labels.hasSpecificFamilyHistoryPass(conditionDescription))
             }
 
             undeterminedFamilyHistoryConditions.isNotEmpty() -> {
                 createUndetermined(undeterminedFamilyConditions.description, undeterminedFamilyHistoryConditions)
             }
 
-            unspecifiedFamilyHistory.isNotEmpty() -> createUndetermined("unspecified disease", unspecifiedFamilyHistory)
+            unspecifiedFamilyHistory.isNotEmpty() -> createUndetermined(labels.descriptionUnspecifiedDisease(), unspecifiedFamilyHistory)
 
-            else -> EvaluationFactory.fail("No presence of family history of $conditionDescription")
+            else -> EvaluationFactory.fail(labels.hasSpecificFamilyHistoryFail(conditionDescription))
         }
     }
 
     private fun createUndetermined(diseaseType: String, conditions: List<Displayable>): Evaluation {
         return EvaluationFactory.undetermined(
-            "Has family history of $diseaseType (${Format.concatItemsWithAnd(conditions)}) - undetermined if $conditionDescription"
+            labels.hasSpecificFamilyHistoryUndetermined(diseaseType, Format.concatItemsWithAnd(conditions), conditionDescription)
         )
     }
 }

@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.bloodtransfusion
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.bloodtransfusion.RequiresRegularHematopoieticSupport.Companion.hematopoieticMedicationCategories
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -83,7 +85,13 @@ class RequiresRegularHematopoieticSupportTest {
     companion object {
         private val MIN_DATE: LocalDate = LocalDate.of(2020, 2, 1)
         private val MAX_DATE = MIN_DATE.plusMonths(2)
-        private val FUNCTION = RequiresRegularHematopoieticSupport(AtcTestFactory.createProperAtcTree(), MIN_DATE, MAX_DATE)
+        private val FUNCTION = RequiresRegularHematopoieticSupport(
+            AtcTestFactory.createProperAtcTree(),
+            MIN_DATE,
+            MAX_DATE,
+            EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).bloodTransfusion,
+            EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+        )
 
         private fun support(startDate: LocalDate, stopDate: LocalDate?, atc: AtcClassification? = null): Medication {
             return TestMedicationFactory.createMinimal().copy(

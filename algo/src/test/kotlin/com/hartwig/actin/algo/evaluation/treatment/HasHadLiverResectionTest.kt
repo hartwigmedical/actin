@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -9,7 +11,8 @@ import org.junit.jupiter.api.Test
 
 class HasHadLiverResectionTest {
 
-    private val function = HasHadLiverResection()
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadLiverResection(labels)
 
     @Test
     fun `Should fail with no treatment history`() {

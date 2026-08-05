@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
@@ -20,7 +21,8 @@ class HasHadComorbidityWithIcdCode(
     private val icdModel: IcdModel,
     private val targetIcdCodes: Set<IcdCode>,
     private val diseaseDescription: String,
-    private val referenceDate: LocalDate
+    private val referenceDate: LocalDate,
+    private val labels: EvaluationLabels.Comorbidity
 ) : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val (relevantToxicities, relevantToxicitiesUnknownGrade) = ToxicityFunctions.selectRelevantToxicities(record, referenceDate)
@@ -39,9 +41,9 @@ class HasHadComorbidityWithIcdCode(
                 val (intolerances, other) = icdMatches.fullMatches.partition { it is Intolerance }
                 val passMessages = listOfNotNull(
                     intolerances.takeIf { it.isNotEmpty() }
-                        ?.let { icdMatch -> "Has intolerance to ${concat(icdMatch.map { it.display() })}" },
+                        ?.let { icdMatch -> labels.hasHadComorbidityWithIcdCodeIntolerancePassPart(concat(icdMatch.map { it.display() })) },
                     other.takeIf { it.isNotEmpty() }
-                        ?.let { icdMatch -> "Has history of ${concat(icdMatch.map { it.display() })}" }
+                        ?.let { icdMatch -> labels.hasHadComorbidityWithIcdCodeHistoryPassPart(concat(icdMatch.map { it.display() })) }
                 )
                 Evaluation(
                     result = EvaluationResult.PASS,
@@ -51,21 +53,24 @@ class HasHadComorbidityWithIcdCode(
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension, true)} " +
-                        "but undetermined if history of $diseaseDescription"
+                labels.hasHadComorbidityWithIcdCodeUndeterminedUnknownExtension(
+                    concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension, true), diseaseDescription
+                )
             )
 
             icdMatchesToxicitiesWithUnknownGrade.fullMatches.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${concatItemsWithAnd(icdMatchesToxicitiesWithUnknownGrade.fullMatches, true)} " +
-                        "but grade unknown"
+                labels.hasHadComorbidityWithIcdCodeUndeterminedUnknownGrade(
+                    concatItemsWithAnd(icdMatchesToxicitiesWithUnknownGrade.fullMatches, true)
+                )
             )
 
             icdMatchesToxicitiesWithUnknownGrade.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${concatItemsWithAnd(icdMatchesToxicitiesWithUnknownGrade.mainCodeMatchesWithUnknownExtension, true)} " +
-                        "but undetermined if history of $diseaseDescription and grade unknown"
+                labels.hasHadComorbidityWithIcdCodeUndeterminedUnknownExtensionAndGrade(
+                    concatItemsWithAnd(icdMatchesToxicitiesWithUnknownGrade.mainCodeMatchesWithUnknownExtension, true), diseaseDescription
+                )
             )
 
-            else -> EvaluationFactory.fail("Has no comorbidity belonging to category $diseaseDescription")
+            else -> EvaluationFactory.fail(labels.hasHadComorbidityWithIcdCodeFail(diseaseDescription))
         }
     }
 }

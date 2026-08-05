@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.vitalFunction
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import java.time.LocalDate
@@ -10,7 +12,9 @@ import org.junit.jupiter.api.Test
 
 class HasLimitedBloodPressureTest {
 
-    private val function = HasLimitedBloodPressure(BloodPressureCategory.SYSTOLIC, 140, LocalDate.of(2023, 12, 1))
+    private val function = HasLimitedBloodPressure(
+        BloodPressureCategory.SYSTOLIC, 140, LocalDate.of(2023, 12, 1), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).vitalFunction
+    )
 
     @Test
     fun `Should fail when systolic blood pressure above maximum and outside margin of error`() {

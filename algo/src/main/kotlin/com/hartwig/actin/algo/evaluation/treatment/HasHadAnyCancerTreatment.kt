@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -10,7 +11,8 @@ import com.hartwig.actin.medication.MedicationToTreatmentConverter
 
 class HasHadAnyCancerTreatment(
     private val categoriesToIgnore: Set<TreatmentCategory>,
-    private val atcLevelsToFind: Set<AtcLevel>
+    private val atcLevelsToFind: Set<AtcLevel>,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -31,15 +33,15 @@ class HasHadAnyCancerTreatment(
 
         return when {
             hasHadPriorCancerTreatment -> {
-                EvaluationFactory.pass("Has received prior cancer treatment(s)")
+                EvaluationFactory.pass(labels.hasHadAnyCancerTreatmentPass())
             }
 
             hasHadTrial -> {
-                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment because participated in trial")
+                EvaluationFactory.undetermined(labels.hasHadAnyCancerTreatmentUndetermined())
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had any prior cancer treatment")
+                EvaluationFactory.fail(labels.hasHadAnyCancerTreatmentFail())
             }
         }
     }

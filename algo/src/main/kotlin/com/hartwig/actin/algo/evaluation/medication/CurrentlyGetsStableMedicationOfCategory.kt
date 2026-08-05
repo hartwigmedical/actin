@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,11 +11,12 @@ import com.hartwig.actin.datamodel.clinical.Medication
 
 class CurrentlyGetsStableMedicationOfCategory(
     private val selector: MedicationSelector,
-    private val categoriesToFind: Map<String, Set<AtcLevel>>
+    private val categoriesToFind: Map<String, Set<AtcLevel>>,
+    private val labels: EvaluationLabels.Medication
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val medications = record.medications ?: return medicationNotProvided(labels)
         val categoryNamesToFind = categoriesToFind.keys
         var hasFoundOnePassingCategory = false
         for (categoryToFind in categoriesToFind) {
@@ -39,9 +41,9 @@ class CurrentlyGetsStableMedicationOfCategory(
         }
 
         return if (hasFoundOnePassingCategory) {
-            EvaluationFactory.recoverablePass("Gets stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind))
+            EvaluationFactory.recoverablePass(labels.currentlyGetsStableMedicationOfCategoryRecoverablePass(concatLowercaseWithAnd(categoryNamesToFind)))
         } else {
-            EvaluationFactory.recoverableFail("No stable dosing of " + concatLowercaseWithAnd(categoryNamesToFind))
+            EvaluationFactory.recoverableFail(labels.currentlyGetsStableMedicationOfCategoryRecoverableFail(concatLowercaseWithAnd(categoryNamesToFind)))
         }
     }
 }

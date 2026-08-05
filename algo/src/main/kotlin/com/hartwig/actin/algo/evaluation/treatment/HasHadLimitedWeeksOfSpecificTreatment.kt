@@ -1,11 +1,16 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
-class HasHadLimitedWeeksOfSpecificTreatment(private val treatmentToFind: Treatment, private val maxWeeks: Int?) : EvaluationFunction {
+class HasHadLimitedWeeksOfSpecificTreatment(
+    private val treatmentToFind: Treatment,
+    private val maxWeeks: Int?,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return TreatmentDurationEvaluator(
@@ -14,7 +19,8 @@ class HasHadLimitedWeeksOfSpecificTreatment(private val treatmentToFind: Treatme
             treatmentToFind.categories(),
             treatmentToFind.display().lowercase(),
             TreatmentDurationType.LIMITED,
-            maxWeeks
+            maxWeeks,
+            labels
         ).evaluate(record)
     }
 }

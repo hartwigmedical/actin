@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabUnit
@@ -14,8 +16,9 @@ class SameDateLabValueSelectorTest {
     private val measurement2 = LabMeasurement.entries[1]
     private val today = LocalDate.now()
     private val minValidDate = today.minusDays(90)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
 
-    private fun selector() = SameDateLabValueSelector(setOf(measurement1, measurement2))
+    private fun selector() = SameDateLabValueSelector(setOf(measurement1, measurement2), labels)
 
     @Test
     fun `Should return Found when both measurements share a valid date`() {
@@ -109,7 +112,7 @@ class SameDateLabValueSelectorTest {
                 LabTestFactory.create(creatinine, date = today).copy(unit = LabUnit.MILLIGRAMS_PER_DECILITER, value = 1.0)
             )
         )
-        val result = SameDateLabValueSelector(setOf(albumin, creatinine)).select(LabInterpretation.interpret(record.labValues), minValidDate)
+        val result = SameDateLabValueSelector(setOf(albumin, creatinine), labels).select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.Found::class.java)
         result as LabValueSelectionResult.Found
         assertThat(result.values[albumin]!!.unit).isEqualTo(albumin.defaultUnit)
@@ -126,7 +129,7 @@ class SameDateLabValueSelectorTest {
                 LabTestFactory.create(creatinine, date = today).copy(unit = LabUnit.MILLIGRAMS_PER_DECILITER, value = 1.0)
             )
         )
-        val result = SameDateLabValueSelector(setOf(albumin, creatinine)).select(LabInterpretation.interpret(record.labValues), minValidDate)
+        val result = SameDateLabValueSelector(setOf(albumin, creatinine), labels).select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
         assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
     }

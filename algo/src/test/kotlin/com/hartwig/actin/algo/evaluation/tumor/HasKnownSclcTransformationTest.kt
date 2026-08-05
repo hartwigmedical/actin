@@ -22,7 +22,8 @@ class HasKnownSclcTransformationTest {
 
     private val doidModel =
         TestDoidModelFactory.createWithOneParentChild(DoidConstants.LUNG_CANCER_DOID, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-    private val function = HasKnownSclcTransformation(doidModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular)
+    private val evaluationLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    private val function = HasKnownSclcTransformation(doidModel, evaluationLabels.molecular, evaluationLabels.tumor)
 
     @Test
     fun `Should pass if tumor is NSCLC and positive SCLC transformation results`() {

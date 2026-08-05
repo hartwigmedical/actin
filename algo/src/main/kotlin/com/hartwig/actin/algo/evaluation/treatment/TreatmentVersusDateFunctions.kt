@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
@@ -12,23 +13,27 @@ import java.time.LocalDate
 object TreatmentVersusDateFunctions {
 
     fun evaluateTreatmentMatchingPredicateSinceDate(
-        record: PatientRecord, minDate: LocalDate, predicateDescription: String, predicate: (Treatment) -> Boolean
+        record: PatientRecord,
+        minDate: LocalDate,
+        predicateDescription: String,
+        labels: EvaluationLabels.Treatment,
+        predicate: (Treatment) -> Boolean
     ): Evaluation {
         val matchingTreatments = record.oncologicalHistory
             .mapNotNull { entry -> TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate) }
 
         return when {
             matchingTreatments.any { treatmentSinceMinDate(it, minDate, false) } ->
-                EvaluationFactory.pass("Treatment $predicateDescription administered since ${Format.date(minDate)}")
+                EvaluationFactory.pass(labels.treatmentVersusDateFunctionsPass(predicateDescription, Format.date(minDate)))
 
             matchingTreatments.any { treatmentSinceMinDate(it, minDate, true) } ->
-                EvaluationFactory.undetermined("Treatment $predicateDescription administered with unknown date")
+                EvaluationFactory.undetermined(labels.treatmentVersusDateFunctionsUndetermined(predicateDescription))
 
             matchingTreatments.isNotEmpty() ->
-                EvaluationFactory.fail("All treatments $predicateDescription administered before ${Format.date(minDate)}")
+                EvaluationFactory.fail(labels.treatmentVersusDateFunctionsFailBeforeDate(predicateDescription, Format.date(minDate)))
 
             else ->
-                EvaluationFactory.fail("No treatments $predicateDescription in prior history")
+                EvaluationFactory.fail(labels.treatmentVersusDateFunctionsFailNoTreatments(predicateDescription))
         }
     }
 

@@ -2,8 +2,9 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
+import com.hartwig.actin.algo.evaluation.medication.medicationNotProvided
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
@@ -15,7 +16,9 @@ import com.hartwig.actin.icd.IcdModel
 class HasPotentialUncontrolledTumorRelatedPain(
     private val selector: MedicationSelector,
     private val severePainMedication: Set<AtcLevel>,
-    private val icdModel: IcdModel
+    private val icdModel: IcdModel,
+    private val comorbidityLabels: EvaluationLabels.Comorbidity,
+    private val medicationLabels: EvaluationLabels.Medication
 ) :
     EvaluationFunction {
 
@@ -27,7 +30,7 @@ class HasPotentialUncontrolledTumorRelatedPain(
             icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, setOf(IcdCode(code))).fullMatches.isNotEmpty()
         }
 
-        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val medications = record.medications ?: return medicationNotProvided(medicationLabels)
         val (activePainMedications, plannedPainMedications) = selector.extractActiveAndPlannedWithCategory(
             medications,
             severePainMedication
@@ -35,29 +38,29 @@ class HasPotentialUncontrolledTumorRelatedPain(
 
         return when {
             hasCancerRelatedPainConditionOrHistory -> {
-                EvaluationFactory.undetermined("Has tumor related pain in history - undetermined if uncontrolled")
+                EvaluationFactory.undetermined(comorbidityLabels.hasPotentialUncontrolledTumorRelatedPainUndeterminedHistory())
             }
 
             hasAcutePainConditionOrHistory -> {
-                EvaluationFactory.undetermined("Has acute pain in history - undetermined if uncontrolled")
+                EvaluationFactory.undetermined(comorbidityLabels.hasPotentialUncontrolledTumorRelatedPainUndeterminedAcute())
             }
 
             activePainMedications.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Possible uncontrolled tumor related pain "
-                            + "(${Format.concatLowercaseWithCommaAndAnd(activePainMedications)} usage)"
+                    comorbidityLabels.hasPotentialUncontrolledTumorRelatedPainWarn(Format.concatLowercaseWithCommaAndAnd(activePainMedications))
                 )
             }
 
             plannedPainMedications.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Possible uncontrolled tumor related pain "
-                            + "(planned ${Format.concatLowercaseWithCommaAndAnd(plannedPainMedications)} usage)"
+                    comorbidityLabels.hasPotentialUncontrolledTumorRelatedPainWarnPlanned(
+                        Format.concatLowercaseWithCommaAndAnd(plannedPainMedications)
+                    )
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No indication for uncontrolled tumor related pain")
+                EvaluationFactory.fail(comorbidityLabels.hasPotentialUncontrolledTumorRelatedPainFail())
             }
         }
     }

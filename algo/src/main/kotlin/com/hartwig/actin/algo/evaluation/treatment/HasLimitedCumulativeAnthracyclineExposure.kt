@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,7 +11,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.doid.DoidModel
 
-class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel) : EvaluationFunction {
+class HasLimitedCumulativeAnthracyclineExposure(
+    private val doidModel: DoidModel,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasSuspectPriorTumorWithSuspectTreatmentHistory = record.priorPrimaries.any {
@@ -24,25 +28,19 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
 
         return when {
             anthracyclineSummary.hasSpecificMatch() -> {
-                EvaluationFactory.undetermined("Exact dosage of received anthracycline chemotherapy undetermined")
+                EvaluationFactory.undetermined(labels.hasLimitedCumulativeAnthracyclineExposureUndeterminedDosage())
             }
 
             anthracyclineSummary.hasApproximateMatch() && hasSuspectPrimaryTumor -> {
-                EvaluationFactory.undetermined(
-                    "Cancer type is associated with potential anthracycline chemotherapy -  "
-                            + "undetermined if anthracycline chemotherapy has been given"
-                )
+                EvaluationFactory.undetermined(labels.hasLimitedCumulativeAnthracyclineExposureUndeterminedCancerType())
             }
 
             hasSuspectPriorTumorWithSuspectTreatmentHistory -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if prior anthracycline exposure within permitted limit " +
-                            "(prior tumor in history associated with anthracycline chemotherapy)"
-                )
+                EvaluationFactory.undetermined(labels.hasLimitedCumulativeAnthracyclineExposureUndeterminedPriorTumor())
             }
 
             else -> {
-                EvaluationFactory.pass("Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)")
+                EvaluationFactory.pass(labels.hasLimitedCumulativeAnthracyclineExposurePass())
             }
         }
     }

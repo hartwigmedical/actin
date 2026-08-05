@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.QTProlongatingRisk
@@ -10,8 +12,9 @@ import org.junit.jupiter.api.Test
 
 class CurrentlyGetsQTProlongatingMedicationTest {
 
-    private val alwaysActiveFunction = CurrentlyGetsQTProlongatingMedication(MedicationTestFactory.alwaysActive())
-    private val alwaysPlannedFunction = CurrentlyGetsQTProlongatingMedication(MedicationTestFactory.alwaysPlanned())
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+    private val alwaysActiveFunction = CurrentlyGetsQTProlongatingMedication(MedicationTestFactory.alwaysActive(), labels)
+    private val alwaysPlannedFunction = CurrentlyGetsQTProlongatingMedication(MedicationTestFactory.alwaysPlanned(), labels)
 
     @Test
     fun `Should pass when patient uses known QT prolongating medication`() {

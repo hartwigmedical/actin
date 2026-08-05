@@ -29,21 +29,21 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     private fun hasSufficientBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
         return { function: EligibilityFunction ->
             val minMedianBloodPressure = function.param<IntegerParameter>(0).value
-            HasSufficientBloodPressure(category, minMedianBloodPressure, minimumDateForVitalFunction())
+            HasSufficientBloodPressure(category, minMedianBloodPressure, minimumDateForVitalFunction(), evaluationLabels.vitalFunction)
         }
     }
 
     private fun hasLimitedBloodPressureCreator(category: BloodPressureCategory): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxMedianBloodPressure = function.param<IntegerParameter>(0).value
-            HasLimitedBloodPressure(category, maxMedianBloodPressure, minimumDateForVitalFunction())
+            HasLimitedBloodPressure(category, maxMedianBloodPressure, minimumDateForVitalFunction(), evaluationLabels.vitalFunction)
         }
     }
 
     private fun hasSufficientPulseOximetryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minMedianPulseOximetry = function.param<DoubleParameter>(0).value
-            HasSufficientPulseOximetry(minMedianPulseOximetry, minimumDateForVitalFunction())
+            HasSufficientPulseOximetry(minMedianPulseOximetry, minimumDateForVitalFunction(), evaluationLabels.vitalFunction)
         }
     }
 
@@ -52,37 +52,37 @@ class VitalFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
             function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
             val minHeartRate = function.param<DoubleParameter>(0).value
             val maxHeartRate = function.param<DoubleParameter>(1).value
-            HasRestingHeartRateWithinBounds(minHeartRate, maxHeartRate, minimumDateForVitalFunction())
+            HasRestingHeartRateWithinBounds(minHeartRate, maxHeartRate, minimumDateForVitalFunction(), evaluationLabels.vitalFunction)
         }
     }
 
     private fun hasSufficientBodyWeightCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minBodyWeight = function.param<DoubleParameter>(0).value
-            HasSufficientBodyWeight(minBodyWeight, minimumDateForBodyWeight())
+            HasSufficientBodyWeight(minBodyWeight, minimumDateForBodyWeight(), evaluationLabels.vitalFunction)
         }
     }
 
     private fun hasLimitedBodyWeightCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxBodyWeight = function.param<DoubleParameter>(0).value
-            HasLimitedBodyWeight(maxBodyWeight, minimumDateForBodyWeight())
+            HasLimitedBodyWeight(maxBodyWeight, minimumDateForBodyWeight(), evaluationLabels.vitalFunction)
         }
     }
 
     private fun hasBMIUpToLimitCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val maximumBMI = function.param<IntegerParameter>(0).value
-            HasBMIUpToLimit(maximumBMI, minimumDateForBodyWeight())
+            HasBMIUpToLimit(maximumBMI, minimumDateForBodyWeight(), evaluationLabels.vitalFunction)
         }
     }
 
     private fun minimumDateForVitalFunction(): LocalDate {
-        return referenceDateProvider().date().minusMonths(VITAL_FUNCTION_MAX_AGE_MONTHS.toLong())
+        return referenceDateProvider.date().minusMonths(VITAL_FUNCTION_MAX_AGE_MONTHS.toLong())
     }
 
     private fun minimumDateForBodyWeight(): LocalDate {
-        return referenceDateProvider().date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
+        return referenceDateProvider.date().minusMonths(BODY_WEIGHT_MAX_AGE_MONTHS.toLong())
     }
 
     companion object {

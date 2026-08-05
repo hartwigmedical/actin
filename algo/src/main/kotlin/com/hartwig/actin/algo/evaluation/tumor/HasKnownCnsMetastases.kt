@@ -2,34 +2,35 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasKnownCnsMetastases : EvaluationFunction {
+class HasKnownCnsMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
 
             return when {
                 hasCnsLesions == true -> {
-                    EvaluationFactory.pass("Has CNS metastases")
+                    EvaluationFactory.pass(labels.hasKnownCnsMetastasesPass())
                 }
 
                 hasBrainLesions == true -> {
-                    EvaluationFactory.pass("Has brain metastases")
+                    EvaluationFactory.pass(labels.hasKnownCnsMetastasesPassBrain())
                 }
 
                 hasSuspectedCnsLesions == true || hasSuspectedBrainLesions == true -> {
-                    val message = "CNS metastases present but suspected lesions only"
+                    val message = labels.hasKnownCnsMetastasesWarn()
                     EvaluationFactory.warn(message)
                 }
 
                 hasCnsLesions == null || hasBrainLesions == null -> {
-                    val message = "Undetermined if CNS metastases present (data missing)"
+                    val message = labels.hasKnownCnsMetastasesUndetermined()
                     EvaluationFactory.undetermined(message)
                 }
 
-                else -> EvaluationFactory.fail("No known CNS metastases present")
+                else -> EvaluationFactory.fail(labels.hasKnownCnsMetastasesFail())
             }
         }
     }

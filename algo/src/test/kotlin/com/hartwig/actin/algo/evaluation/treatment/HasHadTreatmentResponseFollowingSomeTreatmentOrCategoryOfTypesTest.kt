@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -31,42 +33,50 @@ private val COMPLETE_RESPONSE = TreatmentResponse.COMPLETE_RESPONSE
 
 class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+
     private val functionWithSpecificTreatmentsAndClinicalBenefit =
         HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
-            listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT)
+            targetTreatments = listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT),
+            labels = labels
         )
     private val functionWithSpecificCategoryAndTypeAndClinicalBenefit =
         HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
             category = TARGET_CATEGORY,
-            types = TARGET_TYPES
+            types = TARGET_TYPES,
+            labels = labels
         )
     private val functionWithSpecificCategoryAndClinicalBenefit = HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
         treatmentResponses = TreatmentResponse.BENEFIT_RESPONSES,
-        category = TARGET_CATEGORY
+        category = TARGET_CATEGORY,
+        labels = labels
     )
 
     private val functionWithSpecificTreatmentsAndCompleteResponse =
         HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             treatmentResponses = setOf(COMPLETE_RESPONSE),
-            listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT)
+            targetTreatments = listOf(CORRECT_TREATMENT, OTHER_CORRECT_TREATMENT),
+            labels = labels
         )
     private val functionWithSpecificCategoryAndTypeAndCompleteResponse =
         HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
             treatmentResponses = setOf(COMPLETE_RESPONSE),
             category = TARGET_CATEGORY,
-            types = TARGET_TYPES
+            types = TARGET_TYPES,
+            labels = labels
         )
     private val functionWithSpecificCategoryAndCompleteResponse = HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
         treatmentResponses = setOf(COMPLETE_RESPONSE),
-        category = TARGET_CATEGORY
+        category = TARGET_CATEGORY,
+        labels = labels
     )
 
     @Test
     fun `Should throw an illegal state exception when specific treatment and category and type not specified in function`() {
         Assertions.assertThatIllegalStateException().isThrownBy {
-            HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(emptySet(), null, null, null)
+            HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(emptySet(), null, null, null, labels)
                 .evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
         }.withMessage("Treatment or category must be provided")
     }

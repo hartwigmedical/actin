@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
@@ -12,7 +14,8 @@ class HasCancerOfUnknownPrimaryTest {
     private val tumorType = TumorTypeInput.ADENOCARCINOMA
     private val childDoid = "child"
     private val doidModel = TestDoidModelFactory.createWithOneParentChild(tumorType.doid(), childDoid)
-    private val function = HasCancerOfUnknownPrimary(doidModel, tumorType)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val function = HasCancerOfUnknownPrimary(doidModel, tumorType, labels)
 
     @Test
     fun `Should be undetermined if no doids configured`() {

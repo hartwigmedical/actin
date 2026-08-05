@@ -2,13 +2,14 @@ package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType.CYTOREDUCTIVE_SURGERY
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType.DEBULKING_SURGERY
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-class HasHadCytoreductiveSurgery : EvaluationFunction {
+class HasHadCytoreductiveSurgery(private val labels: EvaluationLabels.Surgery) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val oncologicalHistory = record.oncologicalHistory
@@ -28,19 +29,19 @@ class HasHadCytoreductiveSurgery : EvaluationFunction {
 
         return when {
             hasHadCytoreductiveSurgery -> {
-                EvaluationFactory.pass("Has had cytoreductive surgery")
+                EvaluationFactory.pass(labels.hasHadCytoreductiveSurgeryPass())
             }
 
             undeterminedSurgery -> {
-                EvaluationFactory.undetermined("Undetermined if performed surgery was cytoreductive")
+                EvaluationFactory.undetermined(labels.hasHadCytoreductiveSurgeryUndeterminedCytoreductive())
             }
 
             hasHadDebulkingSurgery -> {
-                EvaluationFactory.undetermined("Undetermined if performed debulking surgery meets the criteria of cytoreductive surgery")
+                EvaluationFactory.undetermined(labels.hasHadCytoreductiveSurgeryUndeterminedDebulking())
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received cytoreductive surgery")
+                EvaluationFactory.fail(labels.hasHadCytoreductiveSurgeryFail())
             }
 
         }

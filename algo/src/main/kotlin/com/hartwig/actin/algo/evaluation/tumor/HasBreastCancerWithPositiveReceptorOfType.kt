@@ -10,48 +10,57 @@ import com.hartwig.actin.datamodel.clinical.ReceptorType
 import com.hartwig.actin.doid.DoidModel
 
 class HasBreastCancerWithPositiveReceptorOfType(
-    private val doidModel: DoidModel, private val receptorType: ReceptorType, private val labels: EvaluationLabels.Molecular
+    private val doidModel: DoidModel,
+    private val receptorType: ReceptorType,
+    private val molecularLabels: EvaluationLabels.Molecular,
+    private val tumorLabels: EvaluationLabels.Tumor
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined if $receptorType positive breast cancer (tumor doids missing)")
+            return EvaluationFactory.undetermined(
+                tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeUndeterminedDoidsMissing(receptorType.toString())
+            )
         }
 
         val breastCancerReceptorEvaluation = BreastCancerReceptorsEvaluator(doidModel).evaluate(tumorDoids!!, record.ihcTests, receptorType)
-        val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record, labels)
+        val targetHer2AndErbb2Amplified = receptorType == ReceptorType.HER2 && geneIsAmplifiedForPatient("ERBB2", record, molecularLabels)
 
         val warnInclusionEvents = setOf("Potential IHC ${receptorType.display()} positive")
 
         return when (breastCancerReceptorEvaluation) {
-            BreastCancerReceptorEvaluation.NOT_BREAST_CANCER -> EvaluationFactory.fail("No breast cancer")
+            BreastCancerReceptorEvaluation.NOT_BREAST_CANCER ->
+                EvaluationFactory.fail(tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeFailNotBreastCancer())
 
             BreastCancerReceptorEvaluation.DATA_MISSING -> {
                 if (targetHer2AndErbb2Amplified) {
                     EvaluationFactory.undetermined(
-                        "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
+                        tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeUndeterminedDataMissingHer2Amp(receptorType.display())
                     )
                 } else {
-                    EvaluationFactory.undetermined("${receptorType.display()}-status unknown (data missing)")
+                    EvaluationFactory.undetermined(
+                        tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeUndeterminedDataMissing(receptorType.display())
+                    )
                 }
             }
 
             BreastCancerReceptorEvaluation.INCONSISTENT_DATA -> {
-                EvaluationFactory.undetermined("${receptorType.display()}-status undetermined (DOID and/or IHC data inconsistent)")
+                EvaluationFactory.undetermined(
+                    tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeUndeterminedInconsistentData(receptorType.display())
+                )
             }
 
             BreastCancerReceptorEvaluation.POSITIVE -> {
                 EvaluationFactory.pass(
-                    "Has ${receptorType.display()}-positive breast cancer",
+                    tumorLabels.hasBreastCancerWithPositiveReceptorOfTypePass(receptorType.display()),
                     inclusionEvents = setOf("IHC ${receptorType.display()} positive")
                 )
             }
 
             BreastCancerReceptorEvaluation.BORDERLINE -> {
                 EvaluationFactory.undetermined(
-                    "No ${receptorType.display()}-positive breast cancer but ${receptorType.display()}-score is " +
-                            "2+ hence FISH may be useful",
+                    tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeUndeterminedBorderline(receptorType.display()),
                     isMissingMolecularResultForEvaluation = true
                 )
             }
@@ -60,22 +69,20 @@ class HasBreastCancerWithPositiveReceptorOfType(
                 when {
                     targetHer2AndErbb2Amplified -> {
                         EvaluationFactory.warn(
-                            "Undetermined if ${receptorType.display()}-positive breast cancer " +
-                                    "(HER2 low IHC inconsistent with ERBB2 gene amp)",
+                            tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeWarnLowHer2Amp(receptorType.display()),
                             inclusionEvents = warnInclusionEvents
                         )
                     }
 
                     receptorType == ReceptorType.HER2 -> {
                         EvaluationFactory.fail(
-                            "No ${receptorType.display()}-positive breast cancer"
+                            tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeFail(receptorType.display())
                         )
                     }
 
                     else -> {
                         EvaluationFactory.warn(
-                            "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
-                                    "(${receptorType.display()}-score under 10%)",
+                            tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeWarnLowClinicalRelevanceUnknown(receptorType.display()),
                             inclusionEvents = warnInclusionEvents
                         )
                     }
@@ -85,11 +92,11 @@ class HasBreastCancerWithPositiveReceptorOfType(
             BreastCancerReceptorEvaluation.NEGATIVE -> {
                 if (targetHer2AndErbb2Amplified) {
                     EvaluationFactory.warn(
-                        "Undetermined if ${receptorType.display()}-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)",
+                        tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeWarnNegativeHer2Amp(receptorType.display()),
                         inclusionEvents = warnInclusionEvents
                     )
                 } else {
-                    EvaluationFactory.fail("No ${receptorType.display()}-positive breast cancer")
+                    EvaluationFactory.fail(tumorLabels.hasBreastCancerWithPositiveReceptorOfTypeFail(receptorType.display()))
                 }
             }
         }

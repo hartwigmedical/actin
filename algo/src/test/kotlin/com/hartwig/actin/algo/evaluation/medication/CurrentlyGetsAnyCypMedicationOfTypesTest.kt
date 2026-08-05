@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -8,13 +10,16 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class CurrentlyGetsAnyCypMedicationOfTypesTest {
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
     private val alwaysActiveFunction = CurrentlyGetsAnyCypMedicationOfTypes(
         MedicationTestFactory.alwaysActive(),
-        setOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR)
+        setOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR),
+        labels
     )
     private val alwaysPlannedFunction = CurrentlyGetsAnyCypMedicationOfTypes(
         MedicationTestFactory.alwaysPlanned(),
-        setOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR)
+        setOf(DrugInteraction.Type.INDUCER, DrugInteraction.Type.INHIBITOR),
+        labels
     )
 
     @Test

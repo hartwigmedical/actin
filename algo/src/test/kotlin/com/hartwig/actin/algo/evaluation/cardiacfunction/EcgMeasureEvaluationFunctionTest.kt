@@ -1,10 +1,12 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withEcg
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withEcgs
 import com.hartwig.actin.algo.evaluation.cardiacfunction.CardiacFunctionTestFactory.withValueAndUnit
 import com.hartwig.actin.algo.evaluation.cardiacfunction.EcgMeasureEvaluationFunction.ThresholdCriteria
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Ecg
@@ -105,7 +107,8 @@ class EcgMeasureEvaluationFunctionTest {
             THRESHOLD,
             EcgUnit.MILLISECONDS,
             Ecg::qtcfMeasure,
-            thresholdCriteria
+            thresholdCriteria,
+            EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).cardiacFunction
         )
     }
 }

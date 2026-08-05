@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
@@ -8,8 +10,9 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import org.junit.jupiter.api.Test
 
 class HasHadLimitedSystemicTreatmentsTest {
-    
-    private val function = HasHadLimitedSystemicTreatments(1)
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadLimitedSystemicTreatments(1, labels)
 
     @Test
     fun shouldPassWhenTreatmentHistoryEmpty() {

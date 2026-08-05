@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions
 import com.hartwig.actin.algo.evaluation.util.Format
@@ -14,7 +15,10 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import java.time.LocalDate
 
 class HasRecentlyReceivedCancerTherapyWithDrug(
-    private val drugsToFind: Set<Drug>, private val interpreter: MedicationStatusInterpreter, private val minDate: LocalDate
+    private val drugsToFind: Set<Drug>,
+    private val interpreter: MedicationStatusInterpreter,
+    private val minDate: LocalDate,
+    private val labels: EvaluationLabels.Washout
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -44,19 +48,17 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
             medicationsFound.isNotEmpty() || matchingTreatments.any {
                 TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate, false)
             } -> {
-                EvaluationFactory.pass("Has recently received treatment with medication ${Format.concat(namesFound)} " +
-                        "- pay attention to washout period"
-                )
+                EvaluationFactory.pass(labels.hasRecentlyReceivedCancerTherapyWithDrugPass(Format.concat(namesFound)))
             }
 
             matchingTreatments.any { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate, true) } -> {
                 EvaluationFactory.undetermined(
-                    "Treatment containing '${Format.concatItemsWithOr(drugsToFind)}' administered with unknown date"
+                    labels.hasRecentlyReceivedCancerTherapyWithDrugUndetermined(Format.concatItemsWithOr(drugsToFind))
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind))
+                EvaluationFactory.fail(labels.hasRecentlyReceivedCancerTherapyWithDrugFail(Format.concatItemsWithOr(drugsToFind)))
             }
         }
     }

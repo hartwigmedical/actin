@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -12,9 +14,11 @@ import org.junit.jupiter.api.Test
 
 class HasLimitedBilirubinPercentageOfTotalTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+
     @Test
     fun canEvaluate() {
-        val function = HasLimitedBilirubinPercentageOfTotal(50.0, LocalDate.of(2020, 3, 3))
+        val function = HasLimitedBilirubinPercentageOfTotal(50.0, LocalDate.of(2020, 3, 3), labels)
         val validBilirubin: LabValue =
             LabTestFactory.create(LabMeasurement.TOTAL_BILIRUBIN, 10.0, LocalDate.of(2020, 4, 4))
         val valid = LabTestFactory.withLabValue(validBilirubin)
@@ -47,7 +51,7 @@ class HasLimitedBilirubinPercentageOfTotalTest {
 
     @Test
     fun crashOnWrongInputLabValue() {
-        val function = HasLimitedBilirubinPercentageOfTotal(50.0, LocalDate.of(2020, 3, 3))
+        val function = HasLimitedBilirubinPercentageOfTotal(50.0, LocalDate.of(2020, 3, 3), labels)
         assertThrows(IllegalStateException::class.java) {
             function.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord(),

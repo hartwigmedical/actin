@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
@@ -73,7 +75,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
 
     @Test
     fun `Should ignore trial matches when looking for unlikely trial categories`() {
-        val function = HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.TRANSPLANTATION)
+        val function = HasHadPDFollowingTreatmentWithCategory(TreatmentCategory.TRANSPLANTATION, LABELS)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -81,6 +83,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
     companion object {
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val MATCHING_TREATMENT_SET = setOf(drugTreatment("test", MATCHING_CATEGORY))
-        private val FUNCTION = HasHadPDFollowingTreatmentWithCategory(MATCHING_CATEGORY)
+        private val LABELS = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+        private val FUNCTION = HasHadPDFollowingTreatmentWithCategory(MATCHING_CATEGORY, LABELS)
     }
 }

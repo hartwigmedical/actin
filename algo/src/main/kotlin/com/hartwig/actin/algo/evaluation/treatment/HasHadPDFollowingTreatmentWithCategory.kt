@@ -4,12 +4,16 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.fail
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 
-class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCategory) : EvaluationFunction {
+class HasHadPDFollowingTreatmentWithCategory(
+    private val category: TreatmentCategory,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val history = record.oncologicalHistory
@@ -22,13 +26,13 @@ class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCate
         )
 
         return if (treatmentSummary.hasSpecificMatch()) {
-            pass("Has had " + category.display() + " treatment with PD")
+            pass(labels.hasHadPDFollowingTreatmentWithCategoryPass(category.display()))
         } else if (treatmentSummary.hasApproximateMatch()) {
-            undetermined("Has had " + category.display() + " treatment but undetermined PD status")
+            undetermined(labels.hasHadPDFollowingTreatmentWithCategoryUndeterminedApproximate(category.display()))
         } else if (treatmentSummary.hasPossibleTrialMatch()) {
-            undetermined("Undetermined if treatment received in previous trial included $category")
+            undetermined(labels.hasHadPDFollowingTreatmentWithCategoryUndeterminedTrial(category.toString()))
         } else {
-            fail("Has not had " + category.display() + " treatment with PD")
+            fail(labels.hasHadPDFollowingTreatmentWithCategoryFail(category.display()))
         }
     }
 }

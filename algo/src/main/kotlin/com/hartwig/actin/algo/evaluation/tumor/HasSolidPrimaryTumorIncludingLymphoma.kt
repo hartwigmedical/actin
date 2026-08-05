@@ -3,17 +3,19 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.DoidModel
 
-class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : EvaluationFunction {
+class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel, private val labels: EvaluationLabels.Tumor) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Solid primary tumor undetermined (tumor type missing)")
+            return EvaluationFactory.undetermined(labels.hasSolidPrimaryTumorIncludingLymphomaUndetermined())
         }
         val result = DoidEvaluationFunctions.evaluateAllDoidsMatchWithFailAndWarns(
             doidModel,
@@ -24,15 +26,15 @@ class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : 
         )
         return when (result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("No solid primary tumor")
+                EvaluationFactory.fail(labels.hasSolidPrimaryTumorIncludingLymphomaFail())
             }
 
             EvaluationResult.WARN -> {
-                EvaluationFactory.warn("Unclear if primary tumor is considered solid")
+                EvaluationFactory.warn(labels.hasSolidPrimaryTumorIncludingLymphomaWarn())
             }
 
             EvaluationResult.PASS -> {
-                EvaluationFactory.pass("Has solid primary tumor (including lymphoma)")
+                EvaluationFactory.pass(labels.hasSolidPrimaryTumorIncludingLymphomaPass())
             }
 
             else -> {

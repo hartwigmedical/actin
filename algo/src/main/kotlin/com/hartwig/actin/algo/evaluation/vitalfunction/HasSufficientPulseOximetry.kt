@@ -2,13 +2,16 @@ package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionRuleMapper.Companion.VITAL_FUNCTION_NEGATIVE_MARGIN_OF_ERROR
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
 import java.time.LocalDate
 
-class HasSufficientPulseOximetry internal constructor(private val minMedianPulseOximetry: Double, private val minimumDate: LocalDate) :
+class HasSufficientPulseOximetry internal constructor(
+    private val minMedianPulseOximetry: Double, private val minimumDate: LocalDate, private val labels: EvaluationLabels.VitalFunction
+) :
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -18,9 +21,9 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
         if (relevant.isEmpty()) {
             return EvaluationFactory.undetermined(
                 if (wrongUnit.isEmpty()) {
-                    "No (recent) pulse oximetry data found"
+                    labels.hasSufficientPulseOximetryUndeterminedNoData()
                 } else {
-                    "Pulse oximetry measurements not in correct unit (${EXPECTED_UNIT})"
+                    labels.hasSufficientPulseOximetryUndeterminedWrongUnit(EXPECTED_UNIT)
                 }
             )
         }
@@ -30,15 +33,17 @@ class HasSufficientPulseOximetry internal constructor(private val minMedianPulse
 
         return when {
             median >= minMedianPulseOximetry -> {
-                EvaluationFactory.recoverablePass("Median pulse oximetry ($median%) above $minMedianPulseOximetry")
+                EvaluationFactory.recoverablePass(labels.hasSufficientPulseOximetryRecoverablePass(median, minMedianPulseOximetry))
             }
 
             (median >= referenceWithMargin) -> {
-                EvaluationFactory.recoverableUndetermined("Median pulse oximetry ($median%) below $minMedianPulseOximetry but within margin of error")
+                EvaluationFactory.recoverableUndetermined(
+                    labels.hasSufficientPulseOximetryRecoverableUndetermined(median, minMedianPulseOximetry)
+                )
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("Median pulse oximetry ($median%) below $minMedianPulseOximetry")
+                EvaluationFactory.recoverableFail(labels.hasSufficientPulseOximetryRecoverableFail(median, minMedianPulseOximetry))
             }
         }
     }

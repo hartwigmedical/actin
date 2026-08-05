@@ -1,11 +1,13 @@
 package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class HasNormalCardiacFunctionByMugaOrTteTest {
-    private val function = HasNormalCardiacFunctionByMugaOrTte()
+    private val function = HasNormalCardiacFunctionByMugaOrTte(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).cardiacFunction)
 
     @Test
     fun `Should be undetermined for unknown LVEF`() {

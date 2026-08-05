@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -20,12 +22,15 @@ private val MATCHING_DRUG_TREATMENT = drugTreatment(MATCHING_DRUG_NAME, TREATMEN
 
 class HasHadTreatmentWithDrugAndCyclesTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val functionWithoutCycles = HasHadTreatmentWithDrugAndCycles(
         setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
-        null
+        null,
+        labels
     )
-    private val functionWithCycles =
-        HasHadTreatmentWithDrugAndCycles(setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 3)
+    private val functionWithCycles = HasHadTreatmentWithDrugAndCycles(
+        setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 3, labels
+    )
 
     @Test
     fun `Should fail for empty treatment history`() {

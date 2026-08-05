@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,6 +14,7 @@ internal class LabMeasurementEvaluator(
     private val function: LabEvaluationFunction,
     private val minValidDate: LocalDate,
     private val minPassDate: LocalDate,
+    private val labels: EvaluationLabels.Laboratory
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -27,7 +29,7 @@ internal class LabMeasurementEvaluator(
                         result = EvaluationResult.PASS,
                         recoverable = true,
                         passMessages = evaluation.passMessages
-                            .map { StaticMessage("$it but measurement occurred before ${Format.date(minPassDate)}") }
+                            .map { StaticMessage("$it" + labels.labMeasurementEvaluatorOccurredBeforeSuffix(Format.date(minPassDate))) }
                             .toSet()
                     )
                 } else evaluation

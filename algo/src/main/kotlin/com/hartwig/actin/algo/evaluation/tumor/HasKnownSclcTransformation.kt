@@ -11,7 +11,11 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-class HasKnownSclcTransformation(private val doidModel: DoidModel, private val labels: EvaluationLabels.Molecular) : EvaluationFunction {
+class HasKnownSclcTransformation(
+    private val doidModel: DoidModel,
+    private val molecularLabels: EvaluationLabels.Molecular,
+    private val tumorLabels: EvaluationLabels.Tumor
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val isLungCancer = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_CANCER_DOID)
@@ -29,32 +33,35 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel, private val l
             listOf("SCLC transformation", "small cell transformation").map { IhcTestEvaluation.create(it, record.ihcTests) }
 
         val indicativeGenes = setOf("TP53", "RB1")
-        val allIndicativeGenesInactivated = indicativeGenes.all { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, labels) }
+        val allIndicativeGenesInactivated =
+            indicativeGenes.all { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record, molecularLabels) }
 
         return when {
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
-                EvaluationFactory.pass("Has SCLC transformation", inclusionEvents = setOf("small cell transformation"))
+                EvaluationFactory.pass(tumorLabels.hasKnownSclcTransformationPass(), inclusionEvents = setOf("small cell transformation"))
             }
 
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasPossiblePositiveResultsForItem) -> {
-                EvaluationFactory.warn("Has NSCLC with potential SCLC transformation (unclear results)")
+                EvaluationFactory.warn(tumorLabels.hasKnownSclcTransformationWarn())
             }
 
             isNsclc && (isSclc || hasSmallCellComponent) -> {
-                EvaluationFactory.undetermined("Has NSCLC with small cell component - undetermined if this is considered SCLC transformation")
+                EvaluationFactory.undetermined(tumorLabels.hasKnownSclcTransformationUndeterminedSmallCellComponent())
             }
 
             isNsclc && allIndicativeGenesInactivated -> {
-                EvaluationFactory.undetermined("Undetermined if SCLC transformation may have occurred (${Format.concat(indicativeGenes)} inactivation detected)")
+                EvaluationFactory.undetermined(
+                    tumorLabels.hasKnownSclcTransformationUndeterminedInactivation(Format.concat(indicativeGenes))
+                )
             }
 
             isOfUncertainLungCancerType -> {
-                EvaluationFactory.undetermined("Undetermined if tumor type is NSCLC and if there may be SCLC transformation")
+                EvaluationFactory.undetermined(tumorLabels.hasKnownSclcTransformationUndeterminedUncertainType())
             }
 
-            !isLungCancer -> EvaluationFactory.fail("No lung cancer thus no SCLC transformation")
+            !isLungCancer -> EvaluationFactory.fail(tumorLabels.hasKnownSclcTransformationFail())
 
-            else -> EvaluationFactory.recoverableFail("No indication of SCLC transformation in molecular or tumor type data")
+            else -> EvaluationFactory.recoverableFail(tumorLabels.hasKnownSclcTransformationRecoverableFail())
         }
     }
 }

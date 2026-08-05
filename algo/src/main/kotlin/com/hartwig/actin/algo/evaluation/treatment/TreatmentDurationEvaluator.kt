@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -63,12 +64,16 @@ class TreatmentDurationEvaluator(
     private val potentialTrialCategories: Set<TreatmentCategory>,
     private val treatmentMessage: String,
     private val treatmentDurationType: TreatmentDurationType,
-    private val weeks: Int?
+    private val weeks: Int?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     private val durationMessageParts = when (treatmentDurationType) {
-        TreatmentDurationType.LIMITED -> DurationQualifier("more than", "less than")
-        TreatmentDurationType.SUFFICIENT -> DurationQualifier("less than", "at least")
+        TreatmentDurationType.LIMITED ->
+            DurationQualifier(labels.treatmentDurationEvaluatorMoreThan(), labels.treatmentDurationEvaluatorLessThan())
+
+        TreatmentDurationType.SUFFICIENT ->
+            DurationQualifier(labels.treatmentDurationEvaluatorLessThan(), labels.treatmentDurationEvaluatorAtLeast())
     }
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -107,35 +112,37 @@ class TreatmentDurationEvaluator(
                 )
         }
 
-        val weeksString = if (weeks != null) " for ${durationMessageParts.acceptable} $weeks weeks" else ""
+        val weeksString = if (weeks != null) labels.treatmentDurationEvaluatorWeeksSuffix(durationMessageParts.acceptable, weeks) else ""
         return when {
             treatmentDurationType == TreatmentDurationType.LIMITED && TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $weeks weeks")
+                EvaluationFactory.fail(labels.treatmentDurationEvaluatorFailIncorrectWeeks(treatmentMessage, weeks))
             }
 
             weeks != null && treatmentEvaluations.size > 1 -> {
-                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentMessage is counted as received for ${durationMessageParts.unacceptable} $weeks weeks")
+                EvaluationFactory.undetermined(
+                    labels.treatmentDurationEvaluatorUndeterminedMultiple(treatmentMessage, durationMessageParts.unacceptable, weeks)
+                )
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.pass("Has received $treatmentMessage$weeksString")
+                EvaluationFactory.pass(labels.treatmentDurationEvaluatorPass(treatmentMessage, weeksString))
 
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Has received $treatmentMessage but unknown nb of weeks")
+                EvaluationFactory.undetermined(labels.treatmentDurationEvaluatorUndeterminedUnclearWeeks(treatmentMessage))
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received contained $treatmentMessage$weeksString")
+                EvaluationFactory.undetermined(labels.treatmentDurationEvaluatorUndeterminedUnclearTreatment(treatmentMessage, weeksString))
             }
 
             TreatmentEvaluation.HAS_HAD_POTENTIALLY_MATCHING_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage$weeksString")
+                EvaluationFactory.undetermined(labels.treatmentDurationEvaluatorUndeterminedTrial(treatmentMessage, weeksString))
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received $treatmentMessage")
+                EvaluationFactory.fail(labels.treatmentDurationEvaluatorFailNotReceived(treatmentMessage))
             }
         }
     }

@@ -1,15 +1,18 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class CurrentlyGetsHerbalMedicationTest {
-    private val alwaysActiveFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysActive())
-    private val alwaysPlannedFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysPlanned())
-    private val alwaysInactiveFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysInactive())
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+    private val alwaysActiveFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysActive(), labels)
+    private val alwaysPlannedFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysPlanned(), labels)
+    private val alwaysInactiveFunction = CurrentlyGetsHerbalMedication(MedicationTestFactory.alwaysInactive(), labels)
 
     @Test
     fun `Should fail when patient uses no medications`() {

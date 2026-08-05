@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -24,10 +26,11 @@ private val MIN_DATE = LocalDate.of(2022, 4, 1)
 class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
 
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val functionWithTypes =
-        HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, MATCHING_TYPE_SET, MIN_DATE, interpreter)
+        HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, MATCHING_TYPE_SET, MIN_DATE, interpreter, labels)
     private val functionWithoutTypes =
-        HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, null, MIN_DATE, interpreter)
+        HasHadTreatmentWithCategoryOfTypesRecently(TreatmentCategory.TARGETED_THERAPY, null, MIN_DATE, interpreter, labels)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -119,13 +122,15 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             TreatmentCategory.TRANSPLANTATION,
             setOf(OtherTreatmentType.ALLOGENIC),
             MIN_DATE,
-            interpreter
+            interpreter,
+            labels
         )
         val functionWithoutTypes = HasHadTreatmentWithCategoryOfTypesRecently(
             TreatmentCategory.TRANSPLANTATION,
             null,
             MIN_DATE,
-            interpreter
+            interpreter,
+            labels
         )
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(treatment("", true, emptySet(), emptySet())),
@@ -142,7 +147,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             TreatmentCategory.TRANSPLANTATION,
             setOf(OtherTreatmentType.ALLOGENIC),
             MIN_DATE,
-            interpreter
+            interpreter,
+            labels
         )
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("transplantation", TreatmentCategory.TRANSPLANTATION, types = emptySet())),

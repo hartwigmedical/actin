@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -20,7 +22,8 @@ private val IGNORE_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
 
 class HasHadTreatmentWithCategoryButNotOfTypesTest {
 
-    private val function = HasHadTreatmentWithCategoryButNotOfTypes(MATCHING_CATEGORY, IGNORE_TYPE_SET)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadTreatmentWithCategoryButNotOfTypes(MATCHING_CATEGORY, IGNORE_TYPE_SET, labels)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -47,7 +50,8 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
 
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
-        val function = HasHadTreatmentWithCategoryButNotOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC))
+        val function =
+            HasHadTreatmentWithCategoryButNotOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), labels)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }

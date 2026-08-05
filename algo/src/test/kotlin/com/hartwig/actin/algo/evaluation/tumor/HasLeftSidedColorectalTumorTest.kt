@@ -2,7 +2,9 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory.withDoids
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -57,6 +59,8 @@ class HasLeftSidedColorectalTumorTest {
     }
 
     companion object {
+        private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+
         private fun patientWithTumorName(name: String): PatientRecord {
             return TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, name)
         }
@@ -64,7 +68,7 @@ class HasLeftSidedColorectalTumorTest {
         private fun function(): HasLeftSidedColorectalTumor {
             val doidModel: DoidModel =
                 TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.COLORECTAL_CANCER_DOID, "colorectal cancer")
-            return HasLeftSidedColorectalTumor(doidModel)
+            return HasLeftSidedColorectalTumor(doidModel, labels)
         }
     }
 }

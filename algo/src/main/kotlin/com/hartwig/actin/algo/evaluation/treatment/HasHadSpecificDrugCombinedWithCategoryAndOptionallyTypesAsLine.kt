@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -12,7 +13,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
     private val drugToFind: Drug,
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>?,
-    private val line: Int?
+    private val line: Int?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -28,15 +30,16 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
         val treatmentDesc = specificDrugCombinedWithCategoryAndTypesEvaluator.treatmentString()
 
         return when {
-            hadSpecificCombination && line != null -> EvaluationFactory.undetermined("Has received $treatmentDesc but unknown if in line $line")
+            hadSpecificCombination && line != null ->
+                EvaluationFactory.undetermined(labels.hasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineUndeterminedLine(treatmentDesc, line))
 
-            hadSpecificCombination -> EvaluationFactory.pass("Has received $treatmentDesc")
+            hadSpecificCombination -> EvaluationFactory.pass(labels.hasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLinePass(treatmentDesc))
 
             hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
-                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc")
+                EvaluationFactory.undetermined(labels.hasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineUndetermined(treatmentDesc))
             }
 
-            else -> EvaluationFactory.fail("Has not received $treatmentDesc")
+            else -> EvaluationFactory.fail(labels.hasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineFail(treatmentDesc))
         }
     }
 }

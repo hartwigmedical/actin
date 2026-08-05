@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -13,11 +15,12 @@ private const val MAX_MONTHS_BEFORE_NEXT_LINE = 3
 
 class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val referenceDate = LocalDate.of(2025, 12, 1)
     private val function = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths
-        .createForMinimumTreatmentLines(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
+        .createForMinimumTreatmentLines(2, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate, labels)
     private val minimalOneLineFunction = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths
-        .createForMinimumTreatmentLines(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate)
+        .createForMinimumTreatmentLines(1, MAX_MONTHS_BEFORE_NEXT_LINE, referenceDate, labels)
 
     @Test
     fun `Should pass with correct comparator in message when unknown intent systemic treatments reach threshold`() {
@@ -37,7 +40,8 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
         val evaluation = HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths.createForMaximumTreatmentLines(
             2,
             MAX_MONTHS_BEFORE_NEXT_LINE,
-            referenceDate
+            referenceDate,
+            labels
         ).evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at most 2 systemic treatments"))

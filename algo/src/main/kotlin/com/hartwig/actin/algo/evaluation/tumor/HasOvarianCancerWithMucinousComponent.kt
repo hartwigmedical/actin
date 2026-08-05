@@ -3,25 +3,27 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-class HasOvarianCancerWithMucinousComponent(private val doidModel: DoidModel) : EvaluationFunction {
+class HasOvarianCancerWithMucinousComponent(private val doidModel: DoidModel, private val labels: EvaluationLabels.Tumor) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Ovarian mucinous cancer undetermined (tumor type missing)")
+            return EvaluationFactory.undetermined(labels.hasOvarianCancerWithMucinousComponentUndetermined())
         }
         val isOvarianMucinousType = DoidEvaluationFunctions.isOfAtLeastOneDoidType(
             doidModel, tumorDoids, OVARIAN_MUCINOUS_DOIDS
         )
         val hasSpecificOvarianMucinousCombination = DoidEvaluationFunctions.isOfDoidCombinationType(tumorDoids, OVARIAN_MUCINOUS_DOID_SET)
         return if (isOvarianMucinousType || hasSpecificOvarianMucinousCombination) {
-            EvaluationFactory.pass("Has ovarian cancer with mucinous component")
+            EvaluationFactory.pass(labels.hasOvarianCancerWithMucinousComponentPass())
         } else
-            EvaluationFactory.fail("No ovarian cancer with mucinous component")
+            EvaluationFactory.fail(labels.hasOvarianCancerWithMucinousComponentFail())
     }
 
     companion object {

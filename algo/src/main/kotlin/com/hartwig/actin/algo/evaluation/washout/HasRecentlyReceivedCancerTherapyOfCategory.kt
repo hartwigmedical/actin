@@ -2,11 +2,12 @@ package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.algo.evaluation.medication.medicationNotProvided
 import com.hartwig.actin.algo.evaluation.treatment.TrialFunctions
-import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseUnlessNumericWithAnd
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithAnd
+import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
@@ -44,7 +45,9 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
     private val categoriesToIgnore: Map<String, Set<AtcLevel>>,
     private val drugsToIgnore: Set<Drug>,
     private val interpreter: MedicationStatusInterpreter,
-    private val minDate: LocalDate
+    private val minDate: LocalDate,
+    private val washoutLabels: EvaluationLabels.Washout,
+    private val medicationLabels: EvaluationLabels.Medication
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -54,7 +57,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             treatmentAssessment.hasHadValidTreatment || treatmentAssessment.hasInconclusiveDate || treatmentAssessment.hasHadTrialAfterMinDate
 
         if (!matchingTreatmentFound && record.medications == null) {
-            return MEDICATION_NOT_PROVIDED
+            return medicationNotProvided(medicationLabels)
         }
 
         val activeMedications =
@@ -69,27 +72,30 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return when {
             foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use $foundMedicationString" +
-                            " - pay attention to washout period"
+                    washoutLabels.hasRecentlyReceivedCancerTherapyOfCategoryPass(
+                        concatLowercaseWithAnd(foundCategories), foundMedicationString
+                    )
                 )
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received '${concatLowercaseWithAnd(categoryNames)}' treatment but inconclusive date")
+                EvaluationFactory.undetermined(
+                    washoutLabels.hasRecentlyReceivedCancerTherapyOfCategoryUndeterminedInconclusiveDate(
+                        concatLowercaseWithAnd(
+                            categoryNames
+                        )
+                    )
+                )
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || foundTrialMedication -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if treatment received in previous trial included ${
-                        concatLowercaseWithAnd(
-                            categoryNames
-                        )
-                    }"
+                    washoutLabels.hasRecentlyReceivedCancerTherapyOfCategoryUndeterminedTrial(concatLowercaseWithAnd(categoryNames))
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No recent '${concatLowercaseWithAnd(categoryNames)}' drug use")
+                EvaluationFactory.fail(washoutLabels.hasRecentlyReceivedCancerTherapyOfCategoryFail(concatLowercaseWithAnd(categoryNames)))
             }
         }
     }

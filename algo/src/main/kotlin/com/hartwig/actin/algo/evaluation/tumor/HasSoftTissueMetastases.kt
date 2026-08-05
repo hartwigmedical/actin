@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasSoftTissueMetastases : EvaluationFunction {
+class HasSoftTissueMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val certainSoftTissueMetastasesEvaluation = TumorEvaluationFunctions.hasSoftTissueMetastases(record.tumor)
@@ -13,14 +14,14 @@ class HasSoftTissueMetastases : EvaluationFunction {
 
         return when {
             certainSoftTissueMetastasesEvaluation == null && suspectedSoftTissueMetastasesEvaluation != true -> {
-                EvaluationFactory.undetermined("Soft tissue metastases undetermined (metastases data missing)")
+                EvaluationFactory.undetermined(labels.hasSoftTissueMetastasesUndetermined())
             }
 
-            certainSoftTissueMetastasesEvaluation == true -> EvaluationFactory.pass("Has soft tissue metastases")
+            certainSoftTissueMetastasesEvaluation == true -> EvaluationFactory.pass(labels.hasSoftTissueMetastasesPass())
 
-            suspectedSoftTissueMetastasesEvaluation == true -> EvaluationFactory.warn("Has suspected soft tissue metastases")
+            suspectedSoftTissueMetastasesEvaluation == true -> EvaluationFactory.warn(labels.hasSoftTissueMetastasesWarn())
 
-            else -> EvaluationFactory.fail("No soft tissue metastases")
+            else -> EvaluationFactory.fail(labels.hasSoftTissueMetastasesFail())
         }
     }
 }

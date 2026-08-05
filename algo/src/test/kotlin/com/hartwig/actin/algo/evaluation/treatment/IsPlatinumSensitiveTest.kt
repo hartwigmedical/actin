@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -14,9 +16,10 @@ import org.junit.jupiter.api.Test
 
 class IsPlatinumSensitiveTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val referenceDate = LocalDate.of(2025, 2, 5)
     private val recentDate = LocalDate.of(2025, 2, 5).minusMonths(2)
-    private val function = IsPlatinumSensitive(referenceDate)
+    private val function = IsPlatinumSensitive(referenceDate, labels)
 
     private val platinum = DrugTreatment(
         name = "Carboplatin",

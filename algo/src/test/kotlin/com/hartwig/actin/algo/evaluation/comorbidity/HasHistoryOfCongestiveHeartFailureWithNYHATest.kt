@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import com.hartwig.actin.trial.input.datamodel.NyhaClass
@@ -9,7 +11,9 @@ import org.junit.jupiter.api.Test
 
 class HasHistoryOfCongestiveHeartFailureWithNYHATest {
 
-    private val function = HasHistoryOfCongestiveHeartFailureWithNYHA(NyhaClass.III, TestIcdFactory.createTestModel())
+    private val function = HasHistoryOfCongestiveHeartFailureWithNYHA(
+        NyhaClass.III, TestIcdFactory.createTestModel(), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    )
 
     @Test
     fun `Should pass if congestive heart failure with at least requested NYHA class in history`() {

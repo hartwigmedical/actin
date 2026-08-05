@@ -33,7 +33,9 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             EligibilityRule.HAS_NORMAL_CARDIAC_FUNCTION_BY_MUGA_OR_TTE to hasNormalCardiacFunctionByMUGAOrTTECreator(),
             EligibilityRule.HAS_FAMILY_HISTORY_OF_IDIOPATHIC_SUDDEN_DEATH to hasFamilyHistoryOfIdiopathicSuddenDeathCreator(),
             EligibilityRule.HAS_FAMILY_HISTORY_OF_LONG_QT_SYNDROME to hasFamilyHistoryOfLongQTSyndromeCreator(),
-            EligibilityRule.MEETS_REQUIREMENTS_DURING_CARDIAC_STRESS_TEST to { MeetsCardiacStressTestRequirements() },
+            EligibilityRule.MEETS_REQUIREMENTS_DURING_CARDIAC_STRESS_TEST to {
+                MeetsCardiacStressTestRequirements(evaluationLabels.cardiacFunction)
+            },
         )
     }
 
@@ -41,13 +43,14 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
         return {
             Or(
                 listOf(
-                    HasEcgAberration(icdModel()),
+                    HasEcgAberration(icdModel, evaluationLabels.cardiacFunction),
                     HasHadComorbidityWithIcdCode(
-                        icdModel(),
+                        icdModel,
                         IcdConstants.HEART_DISEASE_SET.filterNot { it == IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK }.map { IcdCode(it) }
                             .toSet(),
-                        "potential significant heart disease",
-                        referenceDateProvider().date()
+                        evaluationLabels.cardiacFunction.descriptionPotentialSignificantHeartDisease(),
+                        referenceDateProvider.date(),
+                        evaluationLabels.comorbidity
                     )
                 )
             )
@@ -55,18 +58,18 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     }
 
     private fun hasECGAberrationCreator(): FunctionCreator {
-        return { HasEcgAberration(icdModel()) }
+        return { HasEcgAberration(icdModel, evaluationLabels.cardiacFunction) }
     }
 
     private fun hasSufficientLVEFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasSufficientLVEF(function.param<DoubleParameter>(0).value)
+            HasSufficientLVEF(function.param<DoubleParameter>(0).value, evaluationLabels.cardiacFunction)
         }
     }
 
     private fun hasLimitedQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasLimitedQtcf(function.param<DoubleParameter>(0).value)
+            EcgMeasureEvaluationFunctions.hasLimitedQtcf(function.param<DoubleParameter>(0).value, evaluationLabels.cardiacFunction)
         }
     }
 
@@ -75,10 +78,15 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
             val femaleQTCF = function.param<DoubleParameter>(0).value
             val maleQTCF = function.param<DoubleParameter>(1).value
+            val cardiacFunctionLabels = evaluationLabels.cardiacFunction
             Or(
                 listOf(
-                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf),
-                    HasQtcfWithGender(maleQTCF, Gender.MALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
+                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, {
+                        EcgMeasureEvaluationFunctions.hasLimitedQtcf(it, cardiacFunctionLabels)
+                    }, cardiacFunctionLabels),
+                    HasQtcfWithGender(maleQTCF, Gender.MALE, {
+                        EcgMeasureEvaluationFunctions.hasLimitedQtcf(it, cardiacFunctionLabels)
+                    }, cardiacFunctionLabels)
                 )
             )
         }
@@ -86,7 +94,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasSufficientQtcf(function.param<DoubleParameter>(0).value)
+            EcgMeasureEvaluationFunctions.hasSufficientQtcf(function.param<DoubleParameter>(0).value, evaluationLabels.cardiacFunction)
         }
     }
 
@@ -95,10 +103,15 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             function.expectTypes(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
             val femaleQTCF = function.param<DoubleParameter>(0).value
             val maleQTCF = function.param<DoubleParameter>(1).value
+            val cardiacFunctionLabels = evaluationLabels.cardiacFunction
             Or(
                 listOf(
-                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf),
-                    HasQtcfWithGender(maleQTCF, Gender.MALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
+                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, {
+                        EcgMeasureEvaluationFunctions.hasSufficientQtcf(it, cardiacFunctionLabels)
+                    }, cardiacFunctionLabels),
+                    HasQtcfWithGender(maleQTCF, Gender.MALE, {
+                        EcgMeasureEvaluationFunctions.hasSufficientQtcf(it, cardiacFunctionLabels)
+                    }, cardiacFunctionLabels)
                 )
             )
         }
@@ -106,38 +119,40 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientJTcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasSufficientJTc(function.param<DoubleParameter>(0).value)
+            EcgMeasureEvaluationFunctions.hasSufficientJTc(function.param<DoubleParameter>(0).value, evaluationLabels.cardiacFunction)
         }
     }
 
     private fun hasLongQTSyndromeCreator(): FunctionCreator {
-        return { HasLongQTSyndrome(icdModel()) }
+        return { HasLongQTSyndrome(icdModel, evaluationLabels.cardiacFunction) }
     }
 
     private fun hasTorsadesDePointesCreator(): FunctionCreator {
         return {
             HasHadComorbidityWithIcdCode(
-                icdModel(),
+                icdModel,
                 setOf(IcdCode(IcdConstants.TORSADES_DE_POINTES_CODE)),
-                "Torsades de Pointes",
-                referenceDateProvider().date()
+                evaluationLabels.cardiacFunction.descriptionTorsadesDePointes(),
+                referenceDateProvider.date(),
+                evaluationLabels.comorbidity
             )
         }
     }
 
     private fun hasNormalCardiacFunctionByMUGAOrTTECreator(): FunctionCreator {
-        return { HasNormalCardiacFunctionByMugaOrTte() }
+        return { HasNormalCardiacFunctionByMugaOrTte(evaluationLabels.cardiacFunction) }
     }
 
     private fun hasFamilyHistoryOfIdiopathicSuddenDeathCreator(): FunctionCreator {
         return {
             HasSpecificFamilyHistory(
-                icdModel(),
-                "idiopathic sudden death",
+                icdModel,
+                evaluationLabels.cardiacFunction.descriptionIdiopathicSuddenDeath(),
                 undeterminedFamilyConditions = UndeterminedFamilyConditions(
-                    "cardiovascular disease",
+                    evaluationLabels.cardiacFunction.descriptionCardiovascularDisease(),
                     setOf(IcdCode(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE))
-                )
+                ),
+                labels = evaluationLabels.comorbidity
             )
         }
     }
@@ -145,12 +160,13 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
     private fun hasFamilyHistoryOfLongQTSyndromeCreator(): FunctionCreator {
         return {
             HasSpecificFamilyHistory(
-                icdModel(),
-                "long QT syndrome",
+                icdModel,
+                evaluationLabels.cardiacFunction.descriptionLongQtSyndrome(),
                 undeterminedFamilyConditions = UndeterminedFamilyConditions(
-                    "cardiovascular disease",
+                    evaluationLabels.cardiacFunction.descriptionCardiovascularDisease(),
                     setOf(IcdCode(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE))
-                )
+                ),
+                labels = evaluationLabels.comorbidity
             )
         }
     }

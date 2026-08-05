@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,7 +11,9 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.icd.IcdModel
 
-class HasExperiencedImmunotherapyRelatedAdverseEvents(private val icdModel: IcdModel) : EvaluationFunction {
+class HasExperiencedImmunotherapyRelatedAdverseEvents(
+    private val icdModel: IcdModel, private val labels: EvaluationLabels.Toxicity
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val immunotherapyTreatmentList = record.oncologicalHistory.filter { it.categories().contains(TreatmentCategory.IMMUNOTHERAPY) }
@@ -31,31 +34,29 @@ class HasExperiencedImmunotherapyRelatedAdverseEvents(private val icdModel: IcdM
         )).toSet()
         val unknownDrugIntolerances = matchingComorbidities.mainCodeMatchesWithUnknownExtension
 
-        val warnMessageStart = "Possible immunotherapy related adverse events in history"
-
         return when {
             immunotherapyTreatmentList.isNotEmpty() && potentialImmunotherapyAdverseEvents.isNotEmpty() -> {
                 val allergyString = potentialImmunotherapyAdverseEvents.joinToString(", ", prefix = " (", postfix = ")") { it.display() }
-                EvaluationFactory.warn(warnMessageStart + allergyString)
+                EvaluationFactory.warn(labels.hasExperiencedImmunotherapyRelatedAdverseEventsWarnStart() + allergyString)
             }
 
             hasHadImmunotherapyWithStopReasonToxicity -> {
-                EvaluationFactory.warn("$warnMessageStart (prior immunotherapy with stop reason toxicity)")
+                EvaluationFactory.warn(labels.hasExperiencedImmunotherapyRelatedAdverseEventsWarnStopReason())
             }
 
             (immunotherapyTreatmentList.isNotEmpty() && stopReasonUnknown) -> {
-                EvaluationFactory.recoverableUndetermined("Prior immunotherapy related adverse events undetermined")
+                EvaluationFactory.recoverableUndetermined(labels.hasExperiencedImmunotherapyRelatedAdverseEventsRecoverableUndeterminedPrior())
             }
 
             immunotherapyTreatmentList.isNotEmpty() && unknownDrugIntolerances.isNotEmpty() -> {
                 val allergyString = unknownDrugIntolerances.joinToString(", ", prefix = " (", postfix = ")") { it.display() }
                 EvaluationFactory.recoverableUndetermined(
-                    "Drug allergy$allergyString in history but undetermined if immunotherapy-related AE (drug type unknown)"
+                    labels.hasExperiencedImmunotherapyRelatedAdverseEventsRecoverableUndeterminedDrugAllergy(allergyString)
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No experience of immunotherapy related adverse events")
+                EvaluationFactory.fail(labels.hasExperiencedImmunotherapyRelatedAdverseEventsFail())
             }
         }
     }

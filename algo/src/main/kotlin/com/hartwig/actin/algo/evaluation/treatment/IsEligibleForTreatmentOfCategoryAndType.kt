@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,7 +11,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class IsEligibleForTreatmentOfCategoryAndType(
     private val category: TreatmentCategory,
-    private val types: Set<TreatmentType>
+    private val types: Set<TreatmentType>,
+    private val labels: EvaluationLabels.Treatment
 ): EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -21,15 +23,13 @@ class IsEligibleForTreatmentOfCategoryAndType(
         return when {
             treatmentSummary.hasSpecificMatch() -> {
                 EvaluationFactory.warn(
-                    "Has already received treatment of category ${category.display()} " +
-                            "and type(s) ${Format.concatItemsWithOr(types)} and may therefore not be eligible anymore for this treatment",
+                    labels.isEligibleForTreatmentOfCategoryAndTypeWarn(category.display(), Format.concatItemsWithOr(types))
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Undetermined if patient is eligible for treatment of category ${category.display()} " +
-                            "and type(s) ${Format.concatItemsWithOr(types)}"
+                    labels.isEligibleForTreatmentOfCategoryAndTypeRecoverableUndetermined(category.display(), Format.concatItemsWithOr(types))
                 )
             }
         }

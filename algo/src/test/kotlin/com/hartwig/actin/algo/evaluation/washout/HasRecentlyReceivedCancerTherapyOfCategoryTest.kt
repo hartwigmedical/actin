@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -31,7 +33,9 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         mapOf("categories to ignore" to setOf(AtcLevel(code = "category to ignore", name = ""))),
         setOf(DRUG_TO_IGNORE),
         INTERPRETER,
-        REFERENCE_DATE
+        REFERENCE_DATE,
+        EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).washout,
+        EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
     )
 
     @Test

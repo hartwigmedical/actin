@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgeriesAndOncologicalHistory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Surgery
@@ -15,7 +17,7 @@ import org.junit.jupiter.api.Test
 
 class HasHadCytoreductiveSurgeryTest {
 
-    private val function = HasHadCytoreductiveSurgery()
+    private val function = HasHadCytoreductiveSurgery(EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).surgery)
 
     @Test
     fun `Should fail with no surgeries in history`() {

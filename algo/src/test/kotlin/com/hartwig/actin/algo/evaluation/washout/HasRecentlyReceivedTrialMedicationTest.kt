@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory.medication
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Medication
@@ -15,7 +17,10 @@ import org.junit.jupiter.api.Test
 class HasRecentlyReceivedTrialMedicationTest {
 
     private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
-    private val functionActive = HasRecentlyReceivedTrialMedication(MedicationTestFactory.alwaysActive(), evaluationDate.plusDays(1))
+    private val washoutLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).washout
+    private val medicationLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+    private val functionActive =
+        HasRecentlyReceivedTrialMedication(MedicationTestFactory.alwaysActive(), evaluationDate.plusDays(1), washoutLabels, medicationLabels)
 
     @Test
     fun `Should fail when no medication`() {
@@ -39,7 +44,9 @@ class HasRecentlyReceivedTrialMedicationTest {
     fun `Should pass when medication has correct date`() {
         val function = HasRecentlyReceivedTrialMedication(
             MedicationTestFactory.alwaysStopped(),
-            evaluationDate.minusDays(1)
+            evaluationDate.minusDays(1),
+            washoutLabels,
+            medicationLabels
         )
         val medications = listOf(medication(isTrialMedication = true, stopDate = evaluationDate))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
@@ -67,7 +74,9 @@ class HasRecentlyReceivedTrialMedicationTest {
     fun `Should evaluate to undetermined when medication stopped after min stop date`() {
         val function = HasRecentlyReceivedTrialMedication(
             MedicationTestFactory.alwaysStopped(),
-            evaluationDate.minusWeeks(2)
+            evaluationDate.minusWeeks(2),
+            washoutLabels,
+            medicationLabels
         )
         val medications = listOf(medication(isTrialMedication = true, stopDate = evaluationDate))
         assertEvaluation(

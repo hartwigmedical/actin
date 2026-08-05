@@ -2,13 +2,14 @@ package com.hartwig.actin.algo.evaluation.cardiacfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasLongQTSyndrome(private val icdModel: IcdModel) : EvaluationFunction {
+class HasLongQTSyndrome(private val icdModel: IcdModel, private val labels: EvaluationLabels.CardiacFunction) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasLongQTSyndrome = icdModel.findInstancesMatchingAnyIcdCode(
@@ -16,8 +17,8 @@ class HasLongQTSyndrome(private val icdModel: IcdModel) : EvaluationFunction {
         ).fullMatches.isNotEmpty()
 
         return when {
-            hasLongQTSyndrome -> EvaluationFactory.pass("Presence of long QT syndrome")
-            else -> EvaluationFactory.fail("No presence of long QT syndrome")
+            hasLongQTSyndrome -> EvaluationFactory.pass(labels.hasLongQtSyndromePass())
+            else -> EvaluationFactory.fail(labels.hasLongQtSyndromeFail())
         }
     }
 }

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -82,7 +84,9 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
     companion object {
         private val WARN_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
-        private val FUNCTION = HasHadAdjuvantTreatmentWithCategoryOfTypes(MATCHING_TYPE_SET, WARN_CATEGORY)
+        private val FUNCTION = HasHadAdjuvantTreatmentWithCategoryOfTypes(
+            MATCHING_TYPE_SET, WARN_CATEGORY, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+        )
     }
 }
 

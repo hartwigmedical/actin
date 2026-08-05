@@ -1,10 +1,12 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.DIASTOLIC
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureCategory.SYSTOLIC
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMaximumBloodPressure
 import com.hartwig.actin.algo.evaluation.vitalfunction.BloodPressureFunctions.evaluatePatientMinimumBloodPressure
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
@@ -17,6 +19,7 @@ class BloodPressureFunctionsTest {
 
     private val minimumValidDate = LocalDate.of(2023, 12, 1)
     private val referenceDateTime = minimumValidDate.atStartOfDay().plusDays(1)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).vitalFunction
 
     @Test
     fun `Should evaluate to undetermined when no blood pressures known`() {
@@ -26,7 +29,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 60,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
         assertEvaluation(EvaluationResult.UNDETERMINED,
@@ -34,7 +37,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -51,7 +54,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -69,7 +72,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 80,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -81,7 +84,7 @@ class BloodPressureFunctionsTest {
             systolic(referenceDateTime.plusDays(1), 100.0)
         )
         val evaluation = evaluatePatientMinimumBloodPressure(
-            VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100, minimumValidDate
+            VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100, minimumValidDate, labels
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.recoverable).isTrue()
@@ -94,7 +97,7 @@ class BloodPressureFunctionsTest {
             systolic(referenceDateTime.plusDays(1), 140.0)
         )
         val evaluation = evaluatePatientMaximumBloodPressure(
-            VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 120, minimumValidDate
+            VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 120, minimumValidDate, labels
         )
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.recoverable).isTrue()
@@ -113,7 +116,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -131,7 +134,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 75,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -149,7 +152,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 DIASTOLIC,
                 100,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -167,7 +170,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 130,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -188,7 +191,7 @@ class BloodPressureFunctionsTest {
                 VitalFunctionTestFactory.withVitalFunctions(bloodPressures),
                 SYSTOLIC,
                 100,
-                minimumValidDate
+                minimumValidDate, labels
             )
         )
     }
@@ -197,7 +200,7 @@ class BloodPressureFunctionsTest {
     fun `Should evaluate to undetermined when wrong blood pressure category`() {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientMaximumBloodPressure(
             VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic(referenceDateTime, 110.0))),
-            SYSTOLIC, 100, minimumValidDate
+            SYSTOLIC, 100, minimumValidDate, labels
         )
         )
     }

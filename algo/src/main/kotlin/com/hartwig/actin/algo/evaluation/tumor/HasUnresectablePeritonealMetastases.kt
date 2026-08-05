@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasUnresectablePeritonealMetastases : EvaluationFunction {
+class HasUnresectablePeritonealMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val certainPeritonealMetastasesEvaluation = TumorEvaluationFunctions.hasPeritonealMetastases(record.tumor)
@@ -13,16 +14,17 @@ class HasUnresectablePeritonealMetastases : EvaluationFunction {
 
         return when {
             certainPeritonealMetastasesEvaluation == null && suspectedPeritonealMetastasesEvaluation != true -> {
-                EvaluationFactory.undetermined("Unresectable peritoneal metastases undetermined (metastases data missing)")
+                EvaluationFactory.undetermined(labels.hasUnresectablePeritonealMetastasesUndeterminedMissing())
             }
 
             certainPeritonealMetastasesEvaluation == true || suspectedPeritonealMetastasesEvaluation == true -> {
-                val suspectedString = if (certainPeritonealMetastasesEvaluation != true) " (suspected)" else ""
-                EvaluationFactory.warn("Undetermined if$suspectedString peritoneal metastases are unresectable")
+                val suspectedString =
+                    if (certainPeritonealMetastasesEvaluation != true) labels.hasUnresectablePeritonealMetastasesSuffixSuspected() else ""
+                EvaluationFactory.warn(labels.hasUnresectablePeritonealMetastasesWarn(suspectedString))
             }
 
             else -> {
-                EvaluationFactory.fail("No unresectable peritoneal metastases")
+                EvaluationFactory.fail(labels.hasUnresectablePeritonealMetastasesFail())
             }
         }
     }

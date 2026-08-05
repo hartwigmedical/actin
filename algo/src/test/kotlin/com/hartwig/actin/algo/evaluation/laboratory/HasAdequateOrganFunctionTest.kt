@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -14,7 +16,8 @@ private val VALID_DATE = LocalDate.of(2024, 12, 1)
 
 class HasAdequateOrganFunctionTest {
 
-    private val function = HasAdequateOrganFunction(VALID_DATE)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+    private val function = HasAdequateOrganFunction(VALID_DATE, labels)
     private val upperLimitLabMeasurementList = listOf(
         LabMeasurement.LACTATE_DEHYDROGENASE,
         LabMeasurement.TOTAL_BILIRUBIN,

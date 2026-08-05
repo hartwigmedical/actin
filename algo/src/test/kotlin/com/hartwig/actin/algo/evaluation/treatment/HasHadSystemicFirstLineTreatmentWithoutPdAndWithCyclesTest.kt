@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -26,7 +28,8 @@ private val NON_MATCHING_HISTORY_ENTRY = treatmentHistoryEntry(setOf(treatment("
 
 class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
 
-    private val function = HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(MATCHING_TREATMENT, MIN_CYCLES)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(MATCHING_TREATMENT, MIN_CYCLES, labels)
 
     @Test
     fun `Should fail for empty treatments`() {

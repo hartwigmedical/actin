@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -12,8 +14,12 @@ private const val TARGET_CYP = "9A9"
 
 class HasRecentlyReceivedCypXInducingMedicationTest {
     private val evaluationDate = TestClinicalFactory.createMinimalTestClinicalRecord().patient.registrationDate.plusWeeks(1)
-    private val function =
-        HasRecentlyReceivedCypXInducingMedication(MedicationTestFactory.alwaysStopped(), TARGET_CYP, evaluationDate.minusDays(1))
+    private val function = HasRecentlyReceivedCypXInducingMedication(
+        MedicationTestFactory.alwaysStopped(),
+        TARGET_CYP,
+        evaluationDate.minusDays(1),
+        EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+    )
     
     @Test
     fun `Should pass when patient recently received CYP-inducing medication`() {

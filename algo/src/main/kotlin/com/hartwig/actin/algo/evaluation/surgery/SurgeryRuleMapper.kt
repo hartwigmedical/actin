@@ -21,42 +21,42 @@ class SurgeryRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun hasHadRecentSurgeryCreator(): FunctionCreator {
-        val evaluationDate = referenceDateProvider().date()
+        val evaluationDate = referenceDateProvider.date()
         val minDate = evaluationDate.minusMonths(2)
-        return { HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate) }
+        return { HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate, evaluationLabels.surgery) }
     }
 
     private fun hasHadSurgeryInPastWeeksCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val evaluationDate = referenceDateProvider().date()
+            val evaluationDate = referenceDateProvider.date()
             val maxAgeWeeks = function.param<IntegerParameter>(0).value
             val minDate = evaluationDate.minusWeeks(maxAgeWeeks.toLong()).plusWeeks(2)
-            HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
+            HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate, evaluationLabels.surgery)
         }
     }
 
     private fun hasHadSurgeryInPastMonthsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val evaluationDate = referenceDateProvider().date()
+            val evaluationDate = referenceDateProvider.date()
             val maxAgeMonths = function.param<IntegerParameter>(0).value
             val minDate = evaluationDate.minusMonths(maxAgeMonths.toLong())
-            HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
+            HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate, evaluationLabels.surgery)
         }
     }
 
     private fun hasPlannedSurgeryCreator(): FunctionCreator {
-        val evaluationDate = referenceDateProvider().date()
-        return { HasHadAnySurgeryAfterSpecificDate(evaluationDate, evaluationDate) }
+        val evaluationDate = referenceDateProvider.date()
+        return { HasHadAnySurgeryAfterSpecificDate(evaluationDate, evaluationDate, evaluationLabels.surgery) }
     }
 
     private fun hasHadCytoreductiveSurgeryCreator(): FunctionCreator {
-        return { HasHadCytoreductiveSurgery() }
+        return { HasHadCytoreductiveSurgery(evaluationLabels.surgery) }
     }
 
     private fun hasHadOncologicalSurgeryInSpecificBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val bodyLocations = function.param<ManyBodyLocationsParameter>(0).value
-            HasHadOncologicalSurgeryInSpecificBodyLocation(bodyLocations)
+            HasHadOncologicalSurgeryInSpecificBodyLocation(bodyLocations, evaluationLabels.surgery)
         }
     }
 }

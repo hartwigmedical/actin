@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
@@ -27,11 +29,13 @@ class HasHadComorbidityWithIcdCodeTest {
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(name = OTHER_CONDITION_NAME, icdMainCode = parentCode)
     private val conditionWithChildOfTargetCode = conditionWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
     private val function = HasHadComorbidityWithIcdCode(
         icdModel,
         targetIcdCodes + setOf(IcdCode(parentCode)),
         diseaseDescription,
-        referenceDate
+        referenceDate,
+        labels
     )
 
     @Test
@@ -47,7 +51,8 @@ class HasHadComorbidityWithIcdCodeTest {
             TestIcdFactory.createTestModel(),
             setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, "extensionCode")),
             "respiratory compromise",
-            referenceDate
+            referenceDate,
+            labels
         )
         val comorbidities = ComorbidityTestFactory.otherCondition(
             "pneumonitis",
@@ -81,7 +86,8 @@ class HasHadComorbidityWithIcdCodeTest {
             TestIcdFactory.createTestModel(),
             setOf(IcdCode(IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK, "extensionCode")),
             "respiratory compromise",
-            referenceDate
+            referenceDate,
+            labels
         )
 
         val toxicities = ComorbidityTestFactory.toxicity(

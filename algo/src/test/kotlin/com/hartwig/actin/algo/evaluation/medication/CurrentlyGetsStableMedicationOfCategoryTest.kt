@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -24,8 +26,10 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
     private val atcCategory1 = AtcTestFactory.atcClassification(CATEGORY_1)
     private val atcCategory2 = AtcTestFactory.atcClassification(CATEGORY_2)
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+
     private val oneCategoryFunction = CurrentlyGetsStableMedicationOfCategory(
-        MedicationTestFactory.alwaysActive(), mapOf(CATEGORY_1 to setOf(AtcLevel(code = CATEGORY_1, name = "")))
+        MedicationTestFactory.alwaysActive(), mapOf(CATEGORY_1 to setOf(AtcLevel(code = CATEGORY_1, name = ""))), labels
     )
 
     private val multipleCategoriesFunction = CurrentlyGetsStableMedicationOfCategory(
@@ -33,7 +37,8 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
         mapOf(
             CATEGORY_1 to setOf(AtcLevel(code = CATEGORY_1, name = "")),
             CATEGORY_2 to setOf(AtcLevel(code = CATEGORY_2, name = ""))
-        )
+        ),
+        labels
     )
 
     @Test

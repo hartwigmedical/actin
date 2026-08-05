@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
@@ -12,7 +13,8 @@ import java.time.LocalDate
 class HasLimitedSystemicImmuneInflammationIndex(
     private val index: Double,
     private val minValidLabDate: LocalDate,
-    private val minPassLabDate: LocalDate
+    private val minPassLabDate: LocalDate,
+    private val labels: EvaluationLabels.Laboratory
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -23,6 +25,7 @@ class HasLimitedSystemicImmuneInflammationIndex(
 
         val invalidLabValue = LabEvaluation.firstInvalidLabValue(
             minValidLabDate,
+            labels,
             neutrophils to LabMeasurement.NEUTROPHILS_ABS,
             thrombocytes to LabMeasurement.THROMBOCYTES_ABS,
             lymphocytes to LabMeasurement.LYMPHOCYTES_ABS
@@ -33,21 +36,18 @@ class HasLimitedSystemicImmuneInflammationIndex(
         }
 
         val calculatedIndex = calculateSystemicImmuneInflammationIndex(neutrophils!!, thrombocytes!!, lymphocytes!!)
-            ?: return EvaluationFactory.recoverableUndetermined(
-                "Systemic immune-inflammation index cannot be calculated since neutrophils and/or thrombocytes and/or lymphocytes " +
-                        "not in expected unit and not able to convert"
-            )
+            ?: return EvaluationFactory.recoverableUndetermined(labels.hasLimitedSystemicImmuneInflammationIndexCannotCalculate())
 
         return if (calculatedIndex <= index) {
-            val message = "Systemic immune-inflammation index at most $index" +
+            val message = labels.hasLimitedSystemicImmuneInflammationIndexPass(index) +
                     if (neutrophils.date.isBefore(minPassLabDate) || thrombocytes.date.isBefore(minPassLabDate) || lymphocytes.date.isBefore(minPassLabDate)) {
-                        " but measurement occurred before $minPassLabDate"
+                        labels.hasLimitedSystemicImmuneInflammationIndexOccurredBeforeSuffix(minPassLabDate)
                     } else {
                         ""
                     }
             EvaluationFactory.recoverablePass(message)
         } else {
-            EvaluationFactory.recoverableFail("Systemic immune-inflammation index above $index")
+            EvaluationFactory.recoverableFail(labels.hasLimitedSystemicImmuneInflammationIndexRecoverableFail(index))
         }
     }
 

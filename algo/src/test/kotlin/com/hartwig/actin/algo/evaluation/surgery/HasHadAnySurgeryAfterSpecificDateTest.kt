@@ -1,9 +1,11 @@
 package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.surgery
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgeries
 import com.hartwig.actin.algo.evaluation.surgery.SurgeryTestFactory.withSurgery
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.SurgeryStatus
@@ -15,10 +17,12 @@ import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
 class HasHadAnySurgeryAfterSpecificDateTest {
-    
+
     private val evaluationDate = LocalDate.of(2020, 4, 20)
     private val minDate = evaluationDate.minusMonths(2)
-    private val function = HasHadAnySurgeryAfterSpecificDate(minDate, evaluationDate)
+    private val function = HasHadAnySurgeryAfterSpecificDate(
+        minDate, evaluationDate, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).surgery
+    )
 
     @Test
     fun `Should fail with no surgeries`() {

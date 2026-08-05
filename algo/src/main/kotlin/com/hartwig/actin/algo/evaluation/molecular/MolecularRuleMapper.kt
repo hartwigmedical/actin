@@ -52,7 +52,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_ANY_GENES_X_WITH_APPROVED_THERAPY_AVAILABLE to
                     hasMolecularDriverEventInSomeGenesWithApprovedTherapyAvailableCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC to
-                    { HasMolecularDriverEventInNsclc(null, emptySet(), false, false, evaluationLabels().molecular) },
+                    { HasMolecularDriverEventInNsclc(null, emptySet(), false, false, evaluationLabels.molecular) },
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_ANY_GENES_X to
                     hasMolecularDriverEventInNSCLCInSpecificGenesCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_IN_AT_LEAST_GENES_X to
@@ -67,7 +67,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                     hasMolecularEventInNSCLCWithAvailableSocFirstLineCreator(),
             EligibilityRule.HAS_MOLECULAR_DRIVER_EVENT_IN_NSCLC_WITH_AVAILABLE_SOC_FIRST_LINE_EXCLUDING_GENES_X to
                     hasMolecularEventInNSCLCWithAvailableSocFirstLineExcludingSomeGenesCreator(),
-            EligibilityRule.HAS_DELETION_OF_MTAP to { HasMtapDeletion(evaluationLabels().molecular) },
+            EligibilityRule.HAS_DELETION_OF_MTAP to { HasMtapDeletion(evaluationLabels.molecular) },
             EligibilityRule.ACTIVATION_OR_AMPLIFICATION_OF_GENE_X to geneIsActivatedOrAmplifiedCreator(),
             EligibilityRule.INACTIVATION_OF_GENE_X to geneIsInactivatedCreator(onlyDeletions = false),
             EligibilityRule.DELETION_OF_GENE_X to geneIsInactivatedCreator(onlyDeletions = true),
@@ -87,8 +87,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.FUSION_IN_GENE_X to hasFusionInGeneCreator(),
             EligibilityRule.WILDTYPE_OF_GENE_X to geneIsWildTypeCreator(),
             EligibilityRule.EXON_SKIPPING_GENE_X_EXON_Y to geneHasSpecificExonSkippingCreator(),
-            EligibilityRule.MMR_DEFICIENT to { IsMmrDeficient(evaluationLabels().molecular) },
-            EligibilityRule.HRD_SIGNATURE to { IsHomologousRecombinationDeficient(evaluationLabels().molecular) },
+            EligibilityRule.MMR_DEFICIENT to { IsMmrDeficient(evaluationLabels.molecular) },
+            EligibilityRule.HRD_SIGNATURE to { IsHomologousRecombinationDeficient(evaluationLabels.molecular) },
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_OR_WITH_VUS_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(),
             EligibilityRule.HRD_SIGNATURE_WITHOUT_MUTATION_IN_GENES_X to isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(),
             EligibilityRule.TMB_OF_AT_LEAST_X to hasSufficientTumorMutationalBurdenCreator(),
@@ -97,9 +97,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_ANY_HLA_TYPE_X to hasAnyHLATypeCreator(),
             EligibilityRule.HAS_HLA_GROUP_X to hasSpecificHLAGroupCreator(),
             EligibilityRule.HAS_UGT1A1_HAPLOTYPE_X to hasUGT1A1HaplotypeCreator(),
-            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(evaluationLabels().molecular) },
-            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(evaluationLabels().molecular) },
-            EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus(evaluationLabels().molecular) },
+            EligibilityRule.HAS_HOMOZYGOUS_DPYD_DEFICIENCY to { HasHomozygousDPYDDeficiency(evaluationLabels.molecular) },
+            EligibilityRule.HAS_HETEROZYGOUS_DPYD_DEFICIENCY to { HasHeterozygousDPYDDeficiency(evaluationLabels.molecular) },
+            EligibilityRule.HAS_KNOWN_HPV_STATUS to { HasKnownHPVStatus(evaluationLabels.molecular) },
             EligibilityRule.OVEREXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsOverExpressedCreator(),
             EligibilityRule.NON_EXPRESSION_OF_ANY_GENE_X to anyGeneFromSetIsNotExpressedCreator(),
             EligibilityRule.SPECIFIC_MRNA_EXPRESSION_REQUIREMENTS_MET_FOR_GENES_X to genesFromSetMeetMrnaExpressionRequirementsCreator(),
@@ -115,20 +115,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.PD_L1_SCORE_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_LEAST_X to hasSufficientPDL1ByMeasureByIhcCreator(Pdl1Measure.CPS),
             EligibilityRule.PD_L1_SCORE_CPS_OF_AT_MOST_X to hasLimitedPDL1ByMeasureByIhcCreator(Pdl1Measure.CPS),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TPS, doidModel()),
-            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TPS, doidModel()),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TPS, doidModel),
+            EligibilityRule.PD_L1_SCORE_TPS_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TPS, doidModel),
             EligibilityRule.PD_L1_SCORE_TAP_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TAP),
             EligibilityRule.PD_L1_SCORE_TAP_OF_AT_MOST_X to hasLimitedPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TAP),
             EligibilityRule.PD_L1_SCORE_IC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.IC),
             EligibilityRule.PD_L1_SCORE_TC_OF_AT_LEAST_X to hasSufficientPDL1ByDoubleMeasureByIhcCreator(Pdl1Measure.TC),
-            EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to { HasAvailablePDL1Status(evaluationLabels().molecular) },
+            EligibilityRule.PD_L1_STATUS_MUST_BE_AVAILABLE to { HasAvailablePDL1Status(evaluationLabels.molecular) },
             EligibilityRule.HAS_POSITIVE_PET_SCAN_FOR_TRACER_X to hasPositivePETScanForTracerCreator(),
-            EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable(evaluationLabels().molecular) },
+            EligibilityRule.MOLECULAR_RESULTS_MUST_BE_AVAILABLE to { MolecularResultsAreGenerallyAvailable(evaluationLabels.molecular) },
             EligibilityRule.MOLECULAR_TEST_RESULT_IS_KNOWN_FOR_GENE_X to molecularResultsAreKnownForGeneCreator(),
             EligibilityRule.MOLECULAR_TEST_RESULT_IS_KNOWN_FOR_PROMOTER_OF_GENE_X to molecularResultsAreKnownForPromoterOfGeneCreator(),
-            EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable(evaluationLabels().molecular) },
-            EligibilityRule.HRD_STATUS_IS_AVAILABLE to { HrdStatusIsAvailable(evaluationLabels().molecular) },
-            EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable(evaluationLabels().molecular) },
+            EligibilityRule.MMR_STATUS_IS_AVAILABLE to { MmrStatusIsAvailable(evaluationLabels.molecular) },
+            EligibilityRule.HRD_STATUS_IS_AVAILABLE to { HrdStatusIsAvailable(evaluationLabels.molecular) },
+            EligibilityRule.HAS_KNOWN_NSCLC_DRIVER_GENE_STATUSES to { NsclcDriverGeneStatusesAreAvailable(evaluationLabels.molecular) },
             EligibilityRule.HAS_EGFR_PACC_MUTATION to hasEgfrPaccMutationCreator(),
             EligibilityRule.HAS_CODELETION_OF_CHROMOSOME_ARMS_X_AND_Y to hasCoDeletionOfChromosomeArmsCreator(),
             EligibilityRule.HAS_PROTEIN_X_POLYMORPHISM_Y to hasProteinPolymorphismCreator()
@@ -139,9 +139,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return {
             AnyGeneHasDriverEventWithApprovedTherapy(
                 null,
-                doidModel(),
+                doidModel,
                 EvaluationFunctionFactory.create(resources),
-                evaluationLabels().molecular
+                evaluationLabels.molecular
             )
         }
     }
@@ -151,9 +151,9 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val genes = function.param<ManyGenesParameter>(0).value
             AnyGeneHasDriverEventWithApprovedTherapy(
                 genes,
-                doidModel(),
+                doidModel,
                 EvaluationFunctionFactory.create(resources),
-                evaluationLabels().molecular
+                evaluationLabels.molecular
             )
         }
     }
@@ -161,21 +161,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun hasMolecularDriverEventInNSCLCInSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            HasMolecularDriverEventInNsclc(genes, emptySet(), false, false, evaluationLabels().molecular)
+            HasMolecularDriverEventInNsclc(genes, emptySet(), false, false, evaluationLabels.molecular)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInAtLeastSpecificGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            HasMolecularDriverEventInNsclc(genes, emptySet(), true, false, evaluationLabels().molecular)
+            HasMolecularDriverEventInNsclc(genes, emptySet(), true, false, evaluationLabels.molecular)
         }
     }
 
     private fun hasMolecularDriverEventInNSCLCInExcludingSomeGenesCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            HasMolecularDriverEventInNsclc(null, genes, false, false, evaluationLabels().molecular)
+            HasMolecularDriverEventInNsclc(null, genes, false, false, evaluationLabels.molecular)
         }
     }
 
@@ -186,7 +186,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 emptySet(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true,
-                labels = evaluationLabels().molecular
+                labels = evaluationLabels.molecular
             )
         }
     }
@@ -199,7 +199,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 emptySet(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true,
-                labels = evaluationLabels().molecular
+                labels = evaluationLabels.molecular
             )
         }
     }
@@ -211,7 +211,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 emptySet(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true,
-                labels = evaluationLabels().molecular
+                labels = evaluationLabels.molecular
             )
         }
     }
@@ -224,7 +224,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 emptySet(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = true,
-                labels = evaluationLabels().molecular
+                labels = evaluationLabels.molecular
             )
         }
     }
@@ -234,8 +234,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val gene = function.param<GeneParameter>(0).value
             Or(
                 listOf(
-                    GeneHasActivatingMutation(gene, labels = evaluationLabels().molecular),
-                    GeneIsAmplified(gene, null, evaluationLabels().molecular)
+                    GeneHasActivatingMutation(gene, labels = evaluationLabels.molecular),
+                    GeneIsAmplified(gene, null, evaluationLabels.molecular)
                 )
             )
         }
@@ -246,7 +246,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             GeneIsInactivated(
                 gene = function.param<GeneParameter>(0).value,
                 onlyDeletions = onlyDeletions,
-                labels = evaluationLabels().molecular
+                labels = evaluationLabels.molecular
             )
         }
     }
@@ -254,7 +254,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
     private fun anyGeneHasActivatingMutationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            Or(genes.map { GeneHasActivatingMutation(it, labels = evaluationLabels().molecular) })
+            Or(genes.map { GeneHasActivatingMutation(it, labels = evaluationLabels.molecular) })
         }
     }
 
@@ -266,14 +266,14 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val gene = function.param<GeneParameter>(0).value
             val codons = function.param<ManyCodonsParameter>(1).value.toSet()
-            GeneHasActivatingMutation(gene, codonsToIgnore = codons, labels = evaluationLabels().molecular)
+            GeneHasActivatingMutation(gene, codonsToIgnore = codons, labels = evaluationLabels.molecular)
         }
     }
 
     private fun anyGeneHasActivatingMutationInKinaseDomainCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            Or(genes.map { GeneHasActivatingMutation(it, inKinaseDomain = true, labels = evaluationLabels().molecular) })
+            Or(genes.map { GeneHasActivatingMutation(it, inKinaseDomain = true, labels = evaluationLabels.molecular) })
         }
     }
 
@@ -285,7 +285,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val gene = function.param<GeneParameter>(0).value
             val proteinImpacts = function.param<ManyProteinImpactsParameter>(1).value
-            GeneHasVariantWithProteinImpact(gene, proteinImpacts, evaluationLabels().molecular)
+            GeneHasVariantWithProteinImpact(gene, proteinImpacts, evaluationLabels.molecular)
         }
     }
 
@@ -297,7 +297,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val gene = function.param<GeneParameter>(0).value
             val codons = function.param<ManyCodonsParameter>(1).value
-            GeneHasVariantInCodon(gene, codons, evaluationLabels().molecular)
+            GeneHasVariantInCodon(gene, codons, evaluationLabels.molecular)
         }
     }
 
@@ -309,7 +309,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val gene = function.param<GeneParameter>(0).value
             val exon = function.param<IntegerParameter>(1).value
-            GeneHasVariantInExonRangeOfType(gene, exon, exon, null, evaluationLabels().molecular)
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, null, evaluationLabels.molecular)
         }
     }
 
@@ -323,7 +323,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val gene = function.param<GeneParameter>(0).value
             val minExon = function.param<IntegerParameter>(1).value
             val maxExon = function.param<IntegerParameter>(2).value
-            GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null, evaluationLabels().molecular)
+            GeneHasVariantInExonRangeOfType(gene, minExon, maxExon, null, evaluationLabels.molecular)
         }
     }
 
@@ -337,7 +337,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val gene = function.param<GeneParameter>(0).value
             val exon = function.param<IntegerParameter>(1).value
             val variantType = function.param<VariantTypeParameter>(2).value
-            GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType, evaluationLabels().molecular)
+            GeneHasVariantInExonRangeOfType(gene, exon, exon, variantType, evaluationLabels.molecular)
         }
     }
 
@@ -358,20 +358,20 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 proteinImpactsToIgnore = proteinImpacts,
                 variantTypeToIgnore = variantType,
                 exonToIgnore = exon,
-                labels = evaluationLabels().molecular
+                labels = evaluationLabels.molecular
             )
         }
     }
 
     private fun geneHasUTR3LossCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneHasUTR3Loss(function.param<GeneParameter>(0).value, evaluationLabels().molecular)
+            GeneHasUTR3Loss(function.param<GeneParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
     private fun geneIsAmplifiedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsAmplified(function.param<GeneParameter>(0).value, null, evaluationLabels().molecular)
+            GeneIsAmplified(function.param<GeneParameter>(0).value, null, evaluationLabels.molecular)
         }
     }
 
@@ -383,7 +383,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val gene = function.param<GeneParameter>(0).value
             val minCopies = function.param<IntegerParameter>(1).value
-            GeneIsAmplified(gene, minCopies, evaluationLabels().molecular)
+            GeneIsAmplified(gene, minCopies, evaluationLabels.molecular)
         }
     }
 
@@ -395,19 +395,19 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val gene = function.param<GeneParameter>(0).value
             val minCopies = function.param<IntegerParameter>(1).value
-            GeneHasSufficientCopyNumber(gene, minCopies, evaluationLabels().molecular)
+            GeneHasSufficientCopyNumber(gene, minCopies, evaluationLabels.molecular)
         }
     }
 
     private fun hasFusionInGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasFusionInGene(function.param<GeneParameter>(0).value, evaluationLabels().molecular)
+            HasFusionInGene(function.param<GeneParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
     private fun geneIsWildTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            GeneIsWildType(function.param<GeneParameter>(0).value, evaluationLabels().molecular)
+            GeneIsWildType(function.param<GeneParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
@@ -419,21 +419,21 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val gene = function.param<GeneParameter>(0).value
             val exon = function.param<IntegerParameter>(1).value
-            GeneHasSpecificExonSkipping(gene, exon, evaluationLabels().molecular)
+            GeneHasSpecificExonSkipping(gene, exon, evaluationLabels.molecular)
         }
     }
 
     private fun hasSufficientTumorMutationalBurdenCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minTumorMutationalBurden = function.param<DoubleParameter>(0).value
-            HasSufficientTumorMutationalBurden(minTumorMutationalBurden, evaluationLabels().molecular)
+            HasSufficientTumorMutationalBurden(minTumorMutationalBurden, evaluationLabels.molecular)
         }
     }
 
     private fun hasSufficientTumorMutationalLoadCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val minTumorMutationalLoad = function.param<IntegerParameter>(0).value
-            HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null, evaluationLabels().molecular)
+            HasTumorMutationalLoadWithinRange(minTumorMutationalLoad, null, evaluationLabels.molecular)
         }
     }
 
@@ -445,61 +445,61 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val start = function.param<IntegerParameter>(0).value
             val end = function.param<IntegerParameter>(1).value
-            HasTumorMutationalLoadWithinRange(start, end, evaluationLabels().molecular)
+            HasTumorMutationalLoadWithinRange(start, end, evaluationLabels.molecular)
         }
     }
 
     private fun hasSpecificHLAGroupCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val hlaGroupToFind = function.param<HlaGroupParameter>(0).value
-            HasAnyHLAType(setOf(hlaGroupToFind), matchOnHlaGroup = true, labels = evaluationLabels().molecular)
+            HasAnyHLAType(setOf(hlaGroupToFind), matchOnHlaGroup = true, labels = evaluationLabels.molecular)
         }
     }
 
     private fun hasAnyHLATypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val hlaAllelesToFind = function.param<ManyHlaAllelesParameter>(0).value
-            HasAnyHLAType(hlaAllelesToFind, labels = evaluationLabels().molecular)
+            HasAnyHLAType(hlaAllelesToFind, labels = evaluationLabels.molecular)
         }
     }
 
     private fun hasUGT1A1HaplotypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val haplotypeToFind = function.param<HaplotypeParameter>(0).value
-            HasUGT1A1Haplotype(haplotypeToFind, evaluationLabels().molecular)
+            HasUGT1A1Haplotype(haplotypeToFind, evaluationLabels.molecular)
         }
     }
 
     private fun anyGeneFromSetIsOverExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            AnyGeneFromSetIsOverexpressed(genes, evaluationLabels().molecular)
+            AnyGeneFromSetIsOverexpressed(genes, evaluationLabels.molecular)
         }
     }
 
     private fun anyGeneFromSetIsNotExpressedCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val geneSet = function.param<ManyGenesParameter>(0).value
-            AnyGeneFromSetIsNotExpressed(geneSet, evaluationLabels().molecular)
+            AnyGeneFromSetIsNotExpressed(geneSet, evaluationLabels.molecular)
         }
     }
 
     private fun genesFromSetMeetMrnaExpressionRequirementsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genes = function.param<ManyGenesParameter>(0).value
-            GenesMeetSpecificMrnaExpressionRequirements(genes, evaluationLabels().molecular)
+            GenesMeetSpecificMrnaExpressionRequirements(genes, evaluationLabels.molecular)
         }
     }
 
     private fun proteinIsLostByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsLostByIhc(function.param<ProteinParameter>(0).value, evaluationLabels().molecular)
+            ProteinIsLostByIhc(function.param<ProteinParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
     private fun proteinIsExpressedByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsExpressedByIhc(function.param<ProteinParameter>(0).value, evaluationLabels().molecular)
+            ProteinIsExpressedByIhc(function.param<ProteinParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
@@ -511,7 +511,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val protein = function.param<ProteinParameter>(0).value
             val expressionLevel = function.param<IntegerParameter>(1).value
-            ProteinHasExactExpressionByIhc(protein, expressionLevel, evaluationLabels().molecular)
+            ProteinHasExactExpressionByIhc(protein, expressionLevel, evaluationLabels.molecular)
         }
     }
 
@@ -523,26 +523,26 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val protein = function.param<ProteinParameter>(0).value
             val expressionLevel = function.param<IntegerParameter>(1).value
-            ProteinHasSufficientExpressionByIhc(protein, expressionLevel, evaluationLabels().molecular)
+            ProteinHasSufficientExpressionByIhc(protein, expressionLevel, evaluationLabels.molecular)
         }
     }
 
     private fun proteinIsWildTypeByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            ProteinIsWildTypeByIhc(function.param<ProteinParameter>(0).value, evaluationLabels().molecular)
+            ProteinIsWildTypeByIhc(function.param<ProteinParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
     private fun hasAvailableProteinExpressionCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasAvailableProteinExpression(function.param<ProteinParameter>(0).value, evaluationLabels().molecular)
+            HasAvailableProteinExpression(function.param<ProteinParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
     private fun hasHER2ExpressionByIhcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val ihcTestResult = function.param<IhcTestResultParameter>(0).value
-            HasHER2ExpressionByIhc(ihcTestResult, evaluationLabels().molecular)
+            HasHER2ExpressionByIhc(ihcTestResult, evaluationLabels.molecular)
         }
     }
 
@@ -554,47 +554,47 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val protein = function.param<ProteinParameter>(0).value
             val expressionLevel = function.param<IntegerParameter>(1).value
-            ProteinHasLimitedExpressionByIhc(protein, expressionLevel, evaluationLabels().molecular)
+            ProteinHasLimitedExpressionByIhc(protein, expressionLevel, evaluationLabels.molecular)
         }
     }
 
     private fun hasSufficientPDL1ByMeasureByIhcCreator(measure: Pdl1Measure? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val minPDL1 = function.param<IntegerParameter>(0).value
-            HasSufficientPDL1ByIhc(measure, minPDL1.toDouble(), labels = evaluationLabels().molecular)
+            HasSufficientPDL1ByIhc(measure, minPDL1.toDouble(), labels = evaluationLabels.molecular)
         }
     }
 
     private fun hasLimitedPDL1ByMeasureByIhcCreator(measure: Pdl1Measure? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPDL1 = function.param<IntegerParameter>(0).value
-            HasLimitedPDL1ByIhc(measure, maxPDL1.toDouble(), labels = evaluationLabels().molecular)
+            HasLimitedPDL1ByIhc(measure, maxPDL1.toDouble(), labels = evaluationLabels.molecular)
         }
     }
 
     private fun hasSufficientPDL1ByDoubleMeasureByIhcCreator(measure: Pdl1Measure, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val minPDL1 = function.param<DoubleParameter>(0).value
-            HasSufficientPDL1ByIhc(measure, minPDL1, doidModel, evaluationLabels().molecular)
+            HasSufficientPDL1ByIhc(measure, minPDL1, doidModel, evaluationLabels.molecular)
         }
     }
 
     private fun hasLimitedPDL1ByDoubleMeasureByIhcCreator(measure: Pdl1Measure, doidModel: DoidModel? = null): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxPDL1 = function.param<DoubleParameter>(0).value
-            HasLimitedPDL1ByIhc(measure, maxPDL1, doidModel, evaluationLabels().molecular)
+            HasLimitedPDL1ByIhc(measure, maxPDL1, doidModel, evaluationLabels.molecular)
         }
     }
 
     private fun molecularResultsAreKnownForGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            MolecularResultsAreKnownForGene(function.param<GeneParameter>(0).value, evaluationLabels().molecular)
+            MolecularResultsAreKnownForGene(function.param<GeneParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
     private fun molecularResultsAreKnownForPromoterOfGeneCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            MolecularResultsAreKnownForPromoterOfGene(function.param<GeneParameter>(0).value, evaluationLabels().molecular)
+            MolecularResultsAreKnownForPromoterOfGene(function.param<GeneParameter>(0).value, evaluationLabels.molecular)
         }
     }
 
@@ -602,8 +602,8 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         return {
             Or(
                 listOf(
-                    GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_PROTEIN_IMPACTS, evaluationLabels().molecular),
-                    GeneHasVariantInCodon("EGFR", EGFR_PACC_CODON_VARIANTS, evaluationLabels().molecular)
+                    GeneHasVariantWithProteinImpact("EGFR", EGFR_PACC_PROTEIN_IMPACTS, evaluationLabels.molecular),
+                    GeneHasVariantInCodon("EGFR", EGFR_PACC_CODON_VARIANTS, evaluationLabels.molecular)
                 )
             )
         }
@@ -617,7 +617,7 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val chromosome1 = function.param<StringParameter>(0).value
             val chromosome2 = function.param<StringParameter>(1).value
-            HasCodeletionOfChromosomeArms(chromosome1, chromosome2, evaluationLabels().molecular)
+            HasCodeletionOfChromosomeArms(chromosome1, chromosome2, evaluationLabels.molecular)
         }
     }
 
@@ -629,27 +629,27 @@ class MolecularRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             )
             val protein = function.param<ProteinParameter>(0).value
             val polymorphism = function.param<StringParameter>(1).value
-            ProteinHasPolymorphism(protein, polymorphism, evaluationLabels().molecular)
+            ProteinHasPolymorphism(protein, polymorphism, evaluationLabels.molecular)
         }
     }
 
     private fun isHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = function.param<ManyGenesParameter>(0).value
-            IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind, evaluationLabels().molecular)
+            IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX(genesToFind, evaluationLabels.molecular)
         }
     }
 
     private fun isHomologousRecombinationDeficientWithoutMutationInGenesXCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val genesToFind = function.param<ManyGenesParameter>(0).value
-            IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind, evaluationLabels().molecular)
+            IsHomologousRecombinationDeficientWithoutMutationInGenesX(genesToFind, evaluationLabels.molecular)
         }
     }
 
     private fun hasPositivePETScanForTracerCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasPositivePETScanForTracer(function.param<StringParameter>(0).value, evaluationLabels().molecular)
+            HasPositivePETScanForTracer(function.param<StringParameter>(0).value, evaluationLabels.molecular)
         }
     }
 }

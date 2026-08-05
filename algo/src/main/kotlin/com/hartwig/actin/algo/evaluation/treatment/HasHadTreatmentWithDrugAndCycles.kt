@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.datamodel.PatientRecord
@@ -12,7 +13,11 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.medication.MedicationToTreatmentConverter
 
-class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, private val minCycles: Int?) : EvaluationFunction {
+class HasHadTreatmentWithDrugAndCycles(
+    private val drugsToFind: Set<Drug>,
+    private val minCycles: Int?,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(record.medications, record.oncologicalHistory)
@@ -33,30 +38,30 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
 
         return when {
             drugsMatchingCycles != null -> {
-                val cyclesString = minCycles?.let { " for at least $minCycles cycles" } ?: ""
-                EvaluationFactory.pass("Has received treatments with ${concatItemsWithAnd(drugsMatchingCycles)}$cyclesString")
+                val cyclesSuffix = minCycles?.let { labels.hasHadTreatmentWithDrugAndCyclesCyclesSuffix(it) } ?: ""
+                EvaluationFactory.pass(
+                    labels.hasHadTreatmentWithDrugAndCyclesPass(concatItemsWithAnd(drugsMatchingCycles), cyclesSuffix)
+                )
             }
 
             drugsWithUnknownCycles != null -> {
                 EvaluationFactory.undetermined(
-                    "Has received treatments with ${concatItemsWithAnd(drugsWithUnknownCycles)} " +
-                            "but undetermined if at least $minCycles cycles"
+                    labels.hasHadTreatmentWithDrugAndCyclesUndeterminedCycles(concatItemsWithAnd(drugsWithUnknownCycles), minCycles)
                 )
             }
 
             effectiveTreatmentHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, drugsToFind.map(Drug::category)) } -> {
-                EvaluationFactory.undetermined("Undetermined if received any treatments containing $drugList")
+                EvaluationFactory.undetermined(labels.hasHadTreatmentWithDrugAndCyclesUndeterminedTrial(drugList))
             }
 
             drugsNotMatchingCycles != null -> {
                 EvaluationFactory.warn(
-                    "Has received treatments with ${concatItemsWithAnd(drugsNotMatchingCycles)} " +
-                            "but not at least $minCycles cycles"
+                    labels.hasHadTreatmentWithDrugAndCyclesWarn(concatItemsWithAnd(drugsNotMatchingCycles), minCycles)
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received any treatments containing $drugList")
+                EvaluationFactory.fail(labels.hasHadTreatmentWithDrugAndCyclesFail(drugList))
             }
         }
     }

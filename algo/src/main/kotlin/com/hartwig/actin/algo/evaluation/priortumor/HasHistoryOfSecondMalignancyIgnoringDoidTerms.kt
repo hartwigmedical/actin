@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.priortumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,7 +11,10 @@ import com.hartwig.actin.doid.DoidModel
 import java.time.LocalDate
 
 class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
-    private val doidModel: DoidModel, private val doidsToIgnore: Set<String>, private val minDate: LocalDate?
+    private val doidModel: DoidModel,
+    private val doidsToIgnore: Set<String>,
+    private val minDate: LocalDate?,
+    private val labels: EvaluationLabels.PriorTumor
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -23,20 +27,27 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
         val (priorPrimaryDoidsOfInterestWithUnknownDate, _) =
             partitionDoidsOfInterest(priorPrimariesByDate[null] ?: emptyList(), doidsToIgnore)
 
-        val recentMessage = if (minDate != null) " recent" else ""
+        val recentMessage = if (minDate != null) labels.hasHistoryOfSecondMalignancyIgnoringDoidTermsSuffixRecent() else ""
 
-        return if (priorPrimaryDoidsOfInterest.isNotEmpty()) {
-            val priorPrimaryMessage = buildDoidTermList(priorPrimaryDoidsOfInterest)
-            EvaluationFactory.pass("Has history of$recentMessage previous malignancy$priorPrimaryMessage")
-        } else if (priorPrimaryDoidsOfInterestWithUnknownDate.isNotEmpty()) {
-            val priorPrimaryMessage = buildDoidTermList(priorPrimaryDoidsOfInterestWithUnknownDate)
-            val dateMessage = "but undetermined if recent (date unknown)"
-            EvaluationFactory.undetermined("Has history of previous malignancy$priorPrimaryMessage $dateMessage")
-        } else if (otherSecondPrimaryDoids.isNotEmpty()) {
-            val message = otherSecondPrimaryDoids.map { doidModel.resolveTermForDoid(it) }.joinToString(", ")
-            EvaluationFactory.fail("No$recentMessage history of previous malignancy excluding $message")
-        } else {
-            EvaluationFactory.fail("No$recentMessage history of other malignancy")
+        return when {
+            priorPrimaryDoidsOfInterest.isNotEmpty() -> {
+                val priorPrimaryMessage = buildDoidTermList(priorPrimaryDoidsOfInterest)
+                EvaluationFactory.pass(labels.hasHistoryOfSecondMalignancyIgnoringDoidTermsPass(recentMessage, priorPrimaryMessage))
+            }
+
+            priorPrimaryDoidsOfInterestWithUnknownDate.isNotEmpty() -> {
+                val priorPrimaryMessage = buildDoidTermList(priorPrimaryDoidsOfInterestWithUnknownDate)
+                EvaluationFactory.undetermined(labels.hasHistoryOfSecondMalignancyIgnoringDoidTermsUndetermined(priorPrimaryMessage))
+            }
+
+            otherSecondPrimaryDoids.isNotEmpty() -> {
+                val message = otherSecondPrimaryDoids.map { doidModel.resolveTermForDoid(it) }.joinToString(", ")
+                EvaluationFactory.fail(labels.hasHistoryOfSecondMalignancyIgnoringDoidTermsFailExcluding(recentMessage, message))
+            }
+
+            else -> {
+                EvaluationFactory.fail(labels.hasHistoryOfSecondMalignancyIgnoringDoidTermsFailOther(recentMessage))
+            }
         }
     }
 

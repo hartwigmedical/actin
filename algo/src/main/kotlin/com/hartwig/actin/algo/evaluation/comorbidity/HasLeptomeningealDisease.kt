@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
@@ -9,7 +10,7 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.IcdModel
 
-class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunction {
+class HasLeptomeningealDisease(private val icdModel: IcdModel, private val labels: EvaluationLabels.Comorbidity) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasConfirmedLeptomeningealDisease = icdModel.findInstancesMatchingAnyIcdCode(
@@ -21,18 +22,18 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
 
         return when {
             hasConfirmedLeptomeningealDisease -> {
-                EvaluationFactory.pass("Has leptomeningeal disease")
+                EvaluationFactory.pass(labels.hasLeptomeningealDiseasePass())
             }
 
             filterPotentiallyMeningealLesions(tumorDetails.hasConfirmedCnsLesions(), otherLesions).isNotEmpty() -> {
-                createWarnEvaluation(suspected = false, otherLesions)
+                createWarnEvaluation(suspected = false, otherLesions, labels)
             }
 
             filterPotentiallyMeningealLesions(tumorDetails.hasSuspectedCnsLesions, otherLesions).isNotEmpty() -> {
-                createWarnEvaluation(suspected = true, otherLesions)
+                createWarnEvaluation(suspected = true, otherLesions, labels)
             }
 
-            else -> EvaluationFactory.fail("No leptomeningeal disease")
+            else -> EvaluationFactory.fail(labels.hasLeptomeningealDiseaseFail())
         }
     }
 
@@ -45,12 +46,9 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
             } else emptySet()
         }
 
-        private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>): Evaluation {
+        private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>, labels: EvaluationLabels.Comorbidity): Evaluation {
             val suspectedString = if (suspected) " suspected" else ""
-            return EvaluationFactory.warn(
-                "Has$suspectedString lesions '${Format.concatLowercaseWithAnd(lesions)}'" +
-                        " potentially indicating leptomeningeal disease"
-            )
+            return EvaluationFactory.warn(labels.hasLeptomeningealDiseaseWarn(suspectedString, Format.concatLowercaseWithAnd(lesions)))
         }
     }
 }

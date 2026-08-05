@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.surgery
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -11,7 +13,9 @@ import org.junit.jupiter.api.Test
 class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
 
     private val matchingCategory = BodyLocationCategory.LUNG
-    private val function = HasHadOncologicalSurgeryInSpecificBodyLocation(setOf(matchingCategory, BodyLocationCategory.KIDNEY))
+    private val function = HasHadOncologicalSurgeryInSpecificBodyLocation(
+        setOf(matchingCategory, BodyLocationCategory.KIDNEY), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).surgery
+    )
     private val correctHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
         treatments = setOf(TreatmentTestFactory.treatment("lung surgery", false, setOf(TreatmentCategory.SURGERY), emptySet())),
         bodyLocationCategory = setOf(matchingCategory)

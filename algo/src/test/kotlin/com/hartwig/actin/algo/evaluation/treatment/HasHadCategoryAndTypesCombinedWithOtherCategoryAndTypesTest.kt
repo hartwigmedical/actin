@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -21,7 +23,8 @@ private val PLATINUM = drugTreatment("other drug", CATEGORY_2, TYPES_2)
 
 class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
 
-    private val function = HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, TYPES_2)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, TYPES_2, labels)
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {
@@ -76,7 +79,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
             CATEGORY_2,
             TYPES_2,
             CATEGORY_1,
-            setOf(TYPES_1.first())
+            setOf(TYPES_1.first()),
+            labels
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }

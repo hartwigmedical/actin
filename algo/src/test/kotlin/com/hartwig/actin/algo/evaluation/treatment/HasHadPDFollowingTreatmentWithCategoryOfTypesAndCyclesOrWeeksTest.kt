@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
@@ -106,7 +108,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     fun `Should ignore trial matches when looking for unlikely trial categories`() {
         val function = HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC),
-            null, null
+            null, null, LABELS
         )
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
@@ -167,13 +169,14 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     }
 
     companion object {
+        private val LABELS = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
         private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
         private val MATCHING_TYPE_SET = setOf(DrugType.HER2_ANTIBODY)
         private val MATCHING_TREATMENT_SET = setOf(drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET))
 
         private fun function(minCycles: Int? = null, minWeeks: Int? = null): HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks {
             return HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
-                MATCHING_CATEGORY, MATCHING_TYPE_SET, minCycles, minWeeks
+                MATCHING_CATEGORY, MATCHING_TYPE_SET, minCycles, minWeeks, LABELS
             )
         }
     }

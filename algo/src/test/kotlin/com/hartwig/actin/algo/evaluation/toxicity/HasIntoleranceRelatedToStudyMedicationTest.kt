@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.IcdModel
@@ -20,7 +22,9 @@ class HasIntoleranceRelatedToStudyMedicationTest {
             )
         )
     )
-    private val function = HasIntoleranceRelatedToStudyMedication(icdModel)
+    private val function = HasIntoleranceRelatedToStudyMedication(
+        icdModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).toxicity
+    )
     private val matchingIcdCodes = IcdConstants.DRUG_ALLERGY_SET
 
     @Test

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -19,11 +21,13 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
     private val referenceDate = LocalDate.of(2024, 11, 26)
     private val recentDate = referenceDate.minusMonths(1)
     private val nonRecentDate = recentDate.minusMonths(7)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val function = HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         referenceDate,
         intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
         categoryToIgnore = CATEGORY_TO_IGNORE,
-        settingDescription = "metastatic"
+        settingDescription = "metastatic",
+        labels = labels
     )
     private val nonRecentTreatment = createTreatment(
         intent = null, isSystemic = true, "Treatment a", stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue

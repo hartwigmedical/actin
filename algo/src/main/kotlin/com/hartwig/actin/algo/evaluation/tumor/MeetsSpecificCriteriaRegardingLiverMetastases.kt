@@ -2,19 +2,19 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class MeetsSpecificCriteriaRegardingLiverMetastases : EvaluationFunction {
+class MeetsSpecificCriteriaRegardingLiverMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasLiverMetastases = record.tumor.hasLiverLesions
-            ?: return EvaluationFactory.undetermined("Unknown if patient has liver lesions hence undetermined " +
-                    "if specific criteria regarding liver metastases are met")
+            ?: return EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingLiverMetastasesUndeterminedMissing())
         return if (hasLiverMetastases) {
-            EvaluationFactory.undetermined("Undetermined if study specific criteria regarding liver metastases are met")
+            EvaluationFactory.undetermined(labels.meetsSpecificCriteriaRegardingLiverMetastasesUndetermined())
         } else {
-            EvaluationFactory.fail("No liver metastases present hence won't meet study specific criteria regarding liver metastases")
+            EvaluationFactory.fail(labels.meetsSpecificCriteriaRegardingLiverMetastasesFail())
         }
     }
 }

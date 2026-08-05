@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasCategory
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasDrugType
 import com.hartwig.actin.calendar.DateComparison.isAfterDate
@@ -16,7 +17,8 @@ import java.time.LocalDate
 
 class HasHadTreatmentWithCategoryButNotOfTypesRecently(
     private val category: TreatmentCategory, private val ignoreTypes: Set<TreatmentType>,
-    private val minDate: LocalDate, private val interpreter: MedicationStatusInterpreter
+    private val minDate: LocalDate, private val interpreter: MedicationStatusInterpreter,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -50,24 +52,34 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
 
         return when {
             treatmentAssessment.hasHadValidTreatment || hadCancerMedicationWithCategoryButNotOfTypes -> {
-                EvaluationFactory.pass("Has received ${category.display()} treatment ignoring $ignoringTypesList")
+                EvaluationFactory.pass(
+                    labels.hasHadTreatmentWithCategoryButNotOfTypesRecentlyPass(category.display(), ignoringTypesList)
+                )
             }
 
             treatmentAssessment.hasPotentiallyValidTreatment -> {
-                EvaluationFactory.undetermined("Has potentially received ${category.display()} treatment ignoring $ignoringTypesList - exact drug type of patient's treatment unknown")
+                EvaluationFactory.undetermined(
+                    labels.hasHadTreatmentWithCategoryButNotOfTypesRecentlyUndeterminedPotential(category.display(), ignoringTypesList)
+                )
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received ${category.display()} treatment ignoring $ignoringTypesList but inconclusive date")
+                EvaluationFactory.undetermined(
+                    labels.hasHadTreatmentWithCategoryButNotOfTypesRecentlyUndeterminedInconclusiveDate(
+                        category.display(), ignoringTypesList
+                    )
+                )
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || activeOrRecentlyStoppedMedications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}")
+                EvaluationFactory.undetermined(
+                    labels.hasHadTreatmentWithCategoryButNotOfTypesRecentlyUndeterminedTrial(category.display())
+                )
             }
 
             else -> {
                 EvaluationFactory.fail(
-                    "Has not had recent ${category.display()} treatment ignoring $ignoringTypesList"
+                    labels.hasHadTreatmentWithCategoryButNotOfTypesRecentlyFail(category.display(), ignoringTypesList)
                 )
             }
         }

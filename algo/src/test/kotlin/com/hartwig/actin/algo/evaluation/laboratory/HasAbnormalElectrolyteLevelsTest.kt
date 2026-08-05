@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.clinical.LabValue
@@ -8,10 +10,11 @@ import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
 class HasAbnormalElectrolyteLevelsTest {
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
     private val refDate = LocalDate.of(2024, 7, 30)
     private val minValidDate = refDate.minusDays(90)
     private val minPassDate = refDate.minusDays(30)
-    private val function = HasAbnormalElectrolyteLevels(minValidDate, minPassDate)
+    private val function = HasAbnormalElectrolyteLevels(minValidDate, minPassDate, labels)
     private val labMeasurements = listOf(
         LabMeasurement.CALCIUM,
         LabMeasurement.PHOSPHATE,

@@ -17,18 +17,18 @@ class ReproductionRuleMapper(resources: RuleMappingResources) : RuleMapper(resou
     }
 
     private fun isBreastfeedingCreator(): FunctionCreator {
-        return { IsBreastfeeding() }
+        return { IsBreastfeeding(evaluationLabels.reproduction) }
     }
 
     private fun isPregnantCreator(): FunctionCreator {
-        return { IsPregnant() }
+        return { IsPregnant(evaluationLabels.reproduction) }
     }
 
     private fun canUseAdequateAnticonceptionCreator(): FunctionCreator {
-        return { CanUseAdequateAnticonception() }
+        return { CanUseAdequateAnticonception(evaluationLabels.reproduction) }
     }
 
     private fun willingToAdhereToDonationPrescriptionsCreator(): FunctionCreator {
-        return { WillingToAdhereToDonationPrescriptions() }
+        return { WillingToAdhereToDonationPrescriptions(evaluationLabels.reproduction) }
     }
 }

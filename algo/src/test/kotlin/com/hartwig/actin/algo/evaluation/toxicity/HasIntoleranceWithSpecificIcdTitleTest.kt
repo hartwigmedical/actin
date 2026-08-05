@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
@@ -14,7 +16,9 @@ class HasIntoleranceWithSpecificIcdTitleTest {
         TestIcdFactory.createModelWithSpecificNodes(listOf("target", "targetParent", "targetExtension", "targetExtensionParent"))
     private val targetIcdCode = icdModel.resolveCodeForTitle(targetIcdTitle)!!
     private val childCode = icdModel.resolveCodeForTitle("targetTitle&targetExtensionTitle")!!
-    private val function = HasIntoleranceWithSpecificIcdTitle(icdModel, targetIcdTitle)
+    private val function = HasIntoleranceWithSpecificIcdTitle(
+        icdModel, targetIcdTitle, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).toxicity
+    )
 
     @Test
     fun `Should fail for no comorbidities`() {

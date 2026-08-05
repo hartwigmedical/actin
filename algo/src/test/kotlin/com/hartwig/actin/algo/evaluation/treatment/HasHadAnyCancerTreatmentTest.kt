@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -15,8 +17,10 @@ private val ATC_LEVELS = AtcLevel(code = "category to find", name = "")
 
 class HasHadAnyCancerTreatmentTest {
 
-    private val functionWithoutCategoriesToIgnore = HasHadAnyCancerTreatment(emptySet(), setOf(ATC_LEVELS))
-    private val functionWithCategoriesToIgnore = HasHadAnyCancerTreatment(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.HORMONE_THERAPY), setOf(ATC_LEVELS))
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val functionWithoutCategoriesToIgnore = HasHadAnyCancerTreatment(emptySet(), setOf(ATC_LEVELS), labels)
+    private val functionWithCategoriesToIgnore =
+        HasHadAnyCancerTreatment(setOf(TreatmentCategory.CHEMOTHERAPY, TreatmentCategory.HORMONE_THERAPY), setOf(ATC_LEVELS), labels)
 
     @Test
     fun `Should fail when treatment history is empty`() {

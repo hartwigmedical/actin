@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.treatmentHistoryEntryIsSystemic
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -13,7 +14,8 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
     private val maxMonthsBeforeNextLine: Int,
     private val referenceDate: LocalDate,
     private val comparator: (Int, Int) -> Boolean,
-    private val comparatorMessage: String
+    private val comparatorMessage: String,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -40,21 +42,25 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
 
         return when {
             comparator(minCertainCount, referenceTreatmentCount) ->
-                EvaluationFactory.pass("Received at $comparatorMessage $referenceTreatmentCount systemic treatments")
-
+                EvaluationFactory.pass(
+                    labels.hasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsPass(comparatorMessage, referenceTreatmentCount)
+                )
 
             comparator(maxPotentialCount, referenceTreatmentCount) -> {
                 val undeterminedMessageEnding = curativeAdjuvantOrNeoadjuvantEntriesWithAmbiguousTiming.takeIf { it.isNotEmpty() }
                     ?.let {
-                        " since it is unclear if (neo)adjuvant treatment(s) resulted in PD within $maxMonthsBeforeNextLine months after " +
-                                "stopping (incomplete date information)"
+                        labels.hasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsUndeterminedEnding(maxMonthsBeforeNextLine)
                     } ?: ""
                 EvaluationFactory.undetermined(
-                    "Undetermined if received at $comparatorMessage $referenceTreatmentCount systemic treatments$undeterminedMessageEnding"
+                    labels.hasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsUndetermined(
+                        comparatorMessage, referenceTreatmentCount, undeterminedMessageEnding
+                    )
                 )
             }
 
-            else -> EvaluationFactory.fail("Has not received at $comparatorMessage $referenceTreatmentCount systemic treatments")
+            else -> EvaluationFactory.fail(
+                labels.hasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsFail(comparatorMessage, referenceTreatmentCount)
+            )
         }
     }
 
@@ -62,28 +68,32 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
         fun createForMinimumTreatmentLines(
             referenceTreatmentCount: Int,
             maxMonthsBeforeNextLine: Int,
-            referenceDate: LocalDate
+            referenceDate: LocalDate,
+            labels: EvaluationLabels.Treatment
         ): EvaluationFunction {
             return HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
                 referenceTreatmentCount,
                 maxMonthsBeforeNextLine,
                 referenceDate,
                 { count, reference -> count >= reference },
-                "least"
+                "least",
+                labels
             )
         }
 
         fun createForMaximumTreatmentLines(
             referenceTreatmentCount: Int,
             maxMonthsBeforeNextLine: Int,
-            referenceDate: LocalDate
+            referenceDate: LocalDate,
+            labels: EvaluationLabels.Treatment
         ): EvaluationFunction {
             return HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
                 referenceTreatmentCount,
                 maxMonthsBeforeNextLine,
                 referenceDate,
                 { count, reference -> count <= reference },
-                "most"
+                "most",
+                labels
             )
         }
     }

@@ -1,26 +1,31 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.LabValue
 
-class HasLabValueWithinInstitutionalNormalLimit: SingleLabValueEvaluationFunction {
+class HasLabValueWithinInstitutionalNormalLimit(private val labels: EvaluationLabels.Laboratory) : SingleLabValueEvaluationFunction {
 
     override fun evaluate(record: PatientRecord, labMeasurement: LabMeasurement, labValue: LabValue): Evaluation {
         val isOutsideRef = labValue.isOutsideRef
             ?: return EvaluationFactory.recoverableUndetermined(
-                "Undetermined if ${labMeasurement.display()} is within institutional normal limits"
+                labels.hasLabValueWithinInstitutionalNormalLimitRecoverableUndetermined(labMeasurement.display())
             )
 
         return if (isOutsideRef) {
             EvaluationFactory.recoverableFail(
-                "${labMeasurement.display().replaceFirstChar { it.uppercase() }} exceeds institutional normal limits"
+                labels.hasLabValueWithinInstitutionalNormalLimitRecoverableFail(
+                    labMeasurement.display().replaceFirstChar { it.uppercase() }
+                )
             )
         } else {
             EvaluationFactory.recoverablePass(
-                "${labMeasurement.display().replaceFirstChar { it.uppercase() }} within institutional normal limits"
+                labels.hasLabValueWithinInstitutionalNormalLimitPass(
+                    labMeasurement.display().replaceFirstChar { it.uppercase() }
+                )
             )
         }
     }

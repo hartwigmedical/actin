@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
@@ -9,8 +11,9 @@ import org.junit.jupiter.api.Test
 
 class HasTumorStageTest {
 
-    private val function = HasTumorStage(setOf(TumorStage.IIIB))
-    private val functionWithMultipleStages = HasTumorStage(setOf(TumorStage.IIIB, TumorStage.IVA))
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val function = HasTumorStage(setOf(TumorStage.IIIB), labels)
+    private val functionWithMultipleStages = HasTumorStage(setOf(TumorStage.IIIB, TumorStage.IVA), labels)
 
     @Test
     fun `Should be undetermined if stage is null`() {

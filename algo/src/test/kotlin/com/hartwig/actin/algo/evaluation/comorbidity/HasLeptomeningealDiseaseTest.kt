@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
@@ -14,7 +16,7 @@ class HasLeptomeningealDiseaseTest {
     private val targetNode = IcdNode(targetCode, emptyList(), "Leptomeningeal metastasis")
     private val childOfTargetNode = IcdNode("childCode", listOf(targetCode), "Child leptomeningeal metastasis")
     private val icdModel = IcdModel.create(listOf(targetNode, childOfTargetNode))
-    private val function = HasLeptomeningealDisease(icdModel)
+    private val function = HasLeptomeningealDisease(icdModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity)
 
     @Test
     fun `Should pass when record contains other condition with direct or parent match on target icd code`() {

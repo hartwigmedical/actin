@@ -2,10 +2,14 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasPreviouslyParticipatedInTrial(private val acronym: String) : EvaluationFunction {
+class HasPreviouslyParticipatedInTrial(
+    private val acronym: String,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val trialEntries = record.oncologicalHistory.filter { it.isTrial }
@@ -13,15 +17,15 @@ class HasPreviouslyParticipatedInTrial(private val acronym: String) : Evaluation
 
         return when {
             matchingTrial.isNotEmpty() -> {
-                EvaluationFactory.pass("Has previously participated in trial $acronym")
+                EvaluationFactory.pass(labels.hasPreviouslyParticipatedInTrialPass(acronym))
             }
 
             trialEntries.any { it.trialAcronym == null } -> {
-                EvaluationFactory.undetermined("Previous trial participation but unknown if trial $acronym")
+                EvaluationFactory.undetermined(labels.hasPreviouslyParticipatedInTrialUndetermined(acronym))
             }
 
             else -> {
-                EvaluationFactory.fail("Has not participated in trial $acronym")
+                EvaluationFactory.fail(labels.hasPreviouslyParticipatedInTrialFail(acronym))
             }
         }
     }

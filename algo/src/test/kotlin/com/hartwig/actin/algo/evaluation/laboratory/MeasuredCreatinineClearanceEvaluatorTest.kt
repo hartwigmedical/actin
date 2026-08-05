@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import org.junit.jupiter.api.Test
@@ -11,9 +13,10 @@ class MeasuredCreatinineClearanceEvaluatorTest {
     private val today = LocalDate.now()
     private val minValidDate = today.minusDays(90)
     private val minPassDate = today.minusDays(30)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
 
     private fun evaluator(minValue: Double = 60.0) =
-        MeasuredCreatinineClearanceEvaluator(minValue, minValidDate, minPassDate)
+        MeasuredCreatinineClearanceEvaluator(minValue, minValidDate, minPassDate, labels)
 
     @Test
     fun `Should pass using direct measurement when CREATININE_CLEARANCE_24H is present`() {

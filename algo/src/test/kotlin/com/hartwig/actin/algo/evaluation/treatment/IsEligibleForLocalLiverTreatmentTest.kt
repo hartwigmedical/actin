@@ -2,14 +2,17 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.jupiter.api.Test
 
 class IsEligibleForLocalLiverTreatmentTest {
 
-    private val function = IsEligibleForLocalLiverTreatment(TestDoidModelFactory.createMinimalTestDoidModel())
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = IsEligibleForLocalLiverTreatment(TestDoidModelFactory.createMinimalTestDoidModel(), labels)
 
     @Test
     fun `Should fail when no liver lesions`() {

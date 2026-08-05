@@ -1,8 +1,10 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.AtcTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
@@ -31,6 +33,7 @@ private val IMMUNOTHERAPY_TREATMENT = TreatmentTestFactory.drugTreatment(
 
 class HasHadAnyCancerTreatmentSinceDateTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
     private val function = HasHadAnyCancerTreatmentSinceDate(
         MIN_DATE,
@@ -39,7 +42,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         interpreter,
         CATEGORY_TO_IGNORE,
         TYPE_TO_IGNORE,
-        false
+        false,
+        labels
     )
     private val functionOnlySystemic =
         HasHadAnyCancerTreatmentSinceDate(
@@ -49,7 +53,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             interpreter,
             CATEGORY_TO_IGNORE,
             TYPE_TO_IGNORE,
-            true
+            true,
+            labels
         )
 
     @Test

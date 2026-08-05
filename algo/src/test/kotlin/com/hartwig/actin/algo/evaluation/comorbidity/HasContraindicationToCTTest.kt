@@ -1,18 +1,22 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.intolerance
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withIntolerances
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withOtherCondition
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.withOtherConditions
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.jupiter.api.Test
 
 class HasContraindicationToCTTest {
-    private val function = HasContraindicationToCT(TestIcdFactory.createTestModel())
+    private val function = HasContraindicationToCT(
+        TestIcdFactory.createTestModel(), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    )
     private val correctCode = IcdConstants.KIDNEY_FAILURE_BLOCK
 
     @Test

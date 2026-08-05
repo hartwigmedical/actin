@@ -1,10 +1,12 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMaximumBodyWeight
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.evaluatePatientForMinimumBodyWeight
 import com.hartwig.actin.algo.evaluation.vitalfunction.BodyWeightFunctions.selectMedianBodyWeightPerDay
 import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.weight
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyWeight
 import java.time.LocalDate
@@ -15,17 +17,18 @@ class BodyWeightFunctionsTest {
 
     private val minimumValidDate = LocalDate.of(2023, 12, 1)
     private val referenceDateTime = minimumValidDate.atStartOfDay().plusDays(1)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).vitalFunction
 
     @Test
     fun `Should evaluate to undetermined on no body weight documented`() {
         val weights: List<BodyWeight> = emptyList()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate, labels)
         )
     }
 
@@ -36,11 +39,11 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate, labels)
         )
     }
 
@@ -53,7 +56,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
     }
 
@@ -63,7 +66,7 @@ class BodyWeightFunctionsTest {
             weight(referenceDateTime, 151.0),
             weight(referenceDateTime.plusDays(1), 152.0)
         )
-        val evaluation = evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+        val evaluation = evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.recoverable).isTrue()
     }
@@ -76,7 +79,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
     }
 
@@ -88,7 +91,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
     }
 
@@ -99,7 +102,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
     }
 
@@ -111,7 +114,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
     }
 
@@ -123,7 +126,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate, labels)
         )
     }
 
@@ -133,7 +136,7 @@ class BodyWeightFunctionsTest {
             weight(referenceDateTime, 38.0),
             weight(referenceDateTime.plusDays(1), 40.0)
         )
-        val evaluation = evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+        val evaluation = evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.recoverable).isTrue()
     }
@@ -146,7 +149,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate, labels)
         )
     }
 
@@ -158,7 +161,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate, labels)
         )
     }
 
@@ -175,7 +178,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
     }
 
@@ -188,7 +191,7 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate, labels)
         )
     }
 

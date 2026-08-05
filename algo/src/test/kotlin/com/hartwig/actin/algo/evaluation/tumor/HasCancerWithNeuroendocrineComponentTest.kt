@@ -17,9 +17,11 @@ import org.junit.jupiter.api.Test
 
 class HasCancerWithNeuroendocrineComponentTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
     private val function = HasCancerWithNeuroendocrineComponent(
         TestDoidModelFactory.createMinimalTestDoidModel(),
-        EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+        labels.molecular,
+        labels.tumor
     )
 
     @Test

@@ -8,39 +8,39 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
 
-class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel, private val labels: EvaluationLabels.Molecular) :
-    EvaluationFunction {
+class HasCancerWithNeuroendocrineComponent(
+    private val doidModel: DoidModel, private val molecularLabels: EvaluationLabels.Molecular, private val tumorLabels: EvaluationLabels.Tumor
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Neuroendocrine component undetermined (tumor type missing)")
+            return EvaluationFactory.undetermined(tumorLabels.hasCancerWithNeuroendocrineComponentUndeterminedTumorTypeMissing())
         }
         val (hasNeuroendocrineProfile, inactivatedGenes) = hasNeuroendocrineMolecularProfile(record)
 
         return when {
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.pass("Has cancer with neuroendocrine component")
+                EvaluationFactory.pass(tumorLabels.hasCancerWithNeuroendocrineComponentPass())
             }
 
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.undetermined("Neuroendocrine component undetermined (small cell component present)")
+                EvaluationFactory.undetermined(tumorLabels.hasCancerWithNeuroendocrineComponentUndeterminedSmallCellComponent())
             }
 
             hasNeuroendocrineProfile -> {
                 EvaluationFactory.undetermined(
-                    "Neuroendocrine molecular profile (inactivated genes: ${inactivatedGenes.joinToString(", ")}) -" +
-                            " undetermined if may be considered cancer with neuroendocrine component"
+                    tumorLabels.hasCancerWithNeuroendocrineComponentUndeterminedMolecularProfile(inactivatedGenes)
                 )
             }
 
-            else -> EvaluationFactory.fail("Has no cancer with neuroendocrine component")
+            else -> EvaluationFactory.fail(tumorLabels.hasCancerWithNeuroendocrineComponentFail())
         }
     }
 
     private fun hasNeuroendocrineMolecularProfile(record: PatientRecord): Pair<Boolean, List<String>> {
         val genes = listOf("TP53", "PTEN", "RB1")
-        val inactivatedGenes = genes.filter { geneIsInactivatedForPatient(it, record, labels) }
+        val inactivatedGenes = genes.filter { geneIsInactivatedForPatient(it, record, molecularLabels) }
         return Pair(inactivatedGenes.size >= 2, inactivatedGenes)
     }
 }

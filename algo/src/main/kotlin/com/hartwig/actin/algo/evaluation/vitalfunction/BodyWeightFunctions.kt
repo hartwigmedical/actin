@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.clinical.sort.BodyWeightDescendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,28 +11,32 @@ import kotlin.math.ceil
 
 object BodyWeightFunctions {
 
-    fun evaluatePatientForMaximumBodyWeight(record: PatientRecord, maxBodyWeight: Double, minimumDate: LocalDate): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false, minimumDate)
+    fun evaluatePatientForMaximumBodyWeight(
+        record: PatientRecord, maxBodyWeight: Double, minimumDate: LocalDate, labels: EvaluationLabels.VitalFunction
+    ): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, maxBodyWeight, false, minimumDate, labels)
         }
 
-    fun evaluatePatientForMinimumBodyWeight(record: PatientRecord, minBodyWeight: Double, minimumDate: LocalDate): Evaluation {
-        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true, minimumDate)
+    fun evaluatePatientForMinimumBodyWeight(
+        record: PatientRecord, minBodyWeight: Double, minimumDate: LocalDate, labels: EvaluationLabels.VitalFunction
+    ): Evaluation {
+        return evaluatePatientBodyWeightAgainstReference(record, minBodyWeight, true, minimumDate, labels)
     }
 
     private fun evaluatePatientBodyWeightAgainstReference(
-        record: PatientRecord, referenceBodyWeight: Double, referenceIsMinimum: Boolean, minimumDate: LocalDate
+        record: PatientRecord,
+        referenceBodyWeight: Double,
+        referenceIsMinimum: Boolean,
+        minimumDate: LocalDate,
+        labels: EvaluationLabels.VitalFunction
     ): Evaluation {
         val relevant = selectMedianBodyWeightPerDay(record, minimumDate)
             ?: return if (record.bodyWeights.isNotEmpty() &&
                 record.bodyWeights.none { weight -> EXPECTED_UNITS.any { it.equals(weight.unit, ignoreCase = true) } }
             ) {
-                EvaluationFactory.undetermined(
-                    "Body weights not measured in ${EXPECTED_UNITS.joinToString(" or ")}"
-                )
+                EvaluationFactory.undetermined(labels.bodyWeightFunctionsWrongUnit(EXPECTED_UNITS.joinToString(" or ")))
             } else {
-                EvaluationFactory.recoverableUndetermined(
-                    "No (recent) body weights found"
-                )
+                EvaluationFactory.recoverableUndetermined(labels.bodyWeightFunctionsNoData())
             }
 
         val median = determineMedianBodyWeight(relevant)
@@ -44,11 +49,11 @@ object BodyWeightFunctions {
         return when {
             (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
                     || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
-                EvaluationFactory.recoverableUndetermined("Median body weight ($median kg) below $referenceBodyWeight kg")
+                EvaluationFactory.recoverableUndetermined(labels.bodyWeightFunctionsBelowReference(median, referenceBodyWeight))
             }
 
             comparisonWithoutMargin < 0 -> {
-                val message = "Median body weight ($median kg) below $referenceBodyWeight kg"
+                val message = labels.bodyWeightFunctionsBelowReference(median, referenceBodyWeight)
                 if (referenceIsMinimum) {
                     EvaluationFactory.recoverableFail(message)
                 } else {
@@ -57,11 +62,11 @@ object BodyWeightFunctions {
             }
 
             comparisonWithoutMargin == 0 -> {
-                return EvaluationFactory.recoverablePass("Median body weight ($median kg) equal to $referenceBodyWeight kg")
+                EvaluationFactory.recoverablePass(labels.bodyWeightFunctionsEqualToReference(median, referenceBodyWeight))
             }
 
             else -> {
-                val message = "Median body weight ($median kg) above $referenceBodyWeight kg"
+                val message = labels.bodyWeightFunctionsAboveReference(median, referenceBodyWeight)
                 if (referenceIsMinimum) {
                     EvaluationFactory.recoverablePass(message)
                 } else {

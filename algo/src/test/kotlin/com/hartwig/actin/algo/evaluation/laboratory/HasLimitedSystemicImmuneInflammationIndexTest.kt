@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import java.time.LocalDate
@@ -11,7 +13,9 @@ class HasLimitedSystemicImmuneInflammationIndexTest {
 
     private val minValidDate = LocalDate.of(2025, 1, 1)
     private val minPassDate = LocalDate.of(2025, 2, 1)
-    private val function = HasLimitedSystemicImmuneInflammationIndex(900.0, minValidDate, minPassDate)
+    private val function = HasLimitedSystemicImmuneInflammationIndex(
+        900.0, minValidDate, minPassDate, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
+    )
     private val neutrophils = LabTestFactory.create(LabMeasurement.NEUTROPHILS_ABS, 2.5, minPassDate)
     private val thrombocytes = LabTestFactory.create(LabMeasurement.THROMBOCYTES_ABS, 50.0, minPassDate)
     private val lymphocytes = LabTestFactory.create(LabMeasurement.LYMPHOCYTES_ABS, 1.0, minPassDate)

@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
@@ -11,7 +12,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
 class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
     private val category: TreatmentCategory, private val types: Set<TreatmentType>,
-    private val maxWeeks: Int?
+    private val maxWeeks: Int?,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -46,50 +48,68 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
 
         return when {
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITHOUT_PD_AND_WEEKS in treatmentEvaluations -> {
-                val suffix = if (maxWeeks != null) " for less than $maxWeeks weeks" else ""
+                val suffix =
+                    if (maxWeeks != null) labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDSuffixForLessThanWeeks(maxWeeks) else ""
                 EvaluationFactory.pass(hasTreatmentMessage(suffix))
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITHOUT_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                undetermined("without stop reason PD but unknown nr of weeks")
+                undetermined(labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDSuffixUnknownWeeks())
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                val weekMessage = if (maxWeeks != null) "for less than $maxWeeks weeks " else ""
-                val suffix = weekMessage + "but uncertain if there has been PD"
+                val weekMessage =
+                    if (maxWeeks != null) {
+                        labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDWeekMessageForLessThan(maxWeeks) + " "
+                    } else {
+                        ""
+                    }
+                val suffix = weekMessage + labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDButUncertainIfPD()
                 undetermined(suffix)
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                val weekMessage = if (maxWeeks != null) " & unclear nr of weeks " else ""
-                val suffix = "but uncertain if there has been PD$weekMessage"
+                val weekMessage =
+                    if (maxWeeks != null) {
+                        labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDWeekMessageUnclearWeeks() + " "
+                    } else {
+                        ""
+                    }
+                val suffix = labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDButUncertainIfPD() + weekMessage
                 undetermined(suffix)
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Unclear if received " + category.display())
+                EvaluationFactory.undetermined(
+                    labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDUndeterminedUnclearCategory(category.display())
+                )
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has received ${treatment()} with stop reason PD")
+                EvaluationFactory.fail(labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDFail(treatment()))
             }
 
             else -> {
-                EvaluationFactory.fail("No ${treatment()} treatment with PD")
+                EvaluationFactory.fail(labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDFailNoTreatment(treatment()))
             }
         }
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "Has had ${treatment()}$suffix without stop reason PD"
+        return labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDPass(treatment(), suffix)
     }
 
     private fun undetermined(suffix: String): Evaluation {
-        return EvaluationFactory.undetermined("Has received ${treatment()} $suffix")
+        return EvaluationFactory.undetermined(
+            labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDUndetermined(treatment(), suffix)
+        )
     }
 
     private fun treatment(): String {
-        return "${Format.concatItemsWithOr(types)} ${category.display()} treatment"
+        return labels.hasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTreatmentDescription(
+            Format.concatItemsWithOr(types),
+            category.display()
+        )
     }
 
     private enum class PDFollowingTreatmentEvaluation {

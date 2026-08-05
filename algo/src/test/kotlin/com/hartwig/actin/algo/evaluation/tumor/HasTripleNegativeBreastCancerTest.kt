@@ -12,7 +12,11 @@ import org.junit.jupiter.api.Test
 class HasTripleNegativeBreastCancerTest {
 
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val function = HasTripleNegativeBreastCancer(doidModel, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular)
+    val function = HasTripleNegativeBreastCancer(
+        doidModel,
+        EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular,
+        EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    )
 
     @Test
     fun `Should evaluate to undetermined when no tumor doids configured`() {

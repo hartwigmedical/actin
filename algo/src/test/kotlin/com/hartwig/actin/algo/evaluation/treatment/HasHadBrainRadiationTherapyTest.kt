@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -13,6 +15,7 @@ import org.junit.jupiter.api.Test
 
 class HasHadBrainRadiationTherapyTest {
 
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     private val radiotherapy = setOf(Radiotherapy("Radiotherapy"))
 
     @Test
@@ -23,7 +26,7 @@ class HasHadBrainRadiationTherapyTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            HasHadBrainRadiationTherapy().evaluate(withTreatmentHistory(history))
+            HasHadBrainRadiationTherapy(labels).evaluate(withTreatmentHistory(history))
         )
     }
 
@@ -34,7 +37,7 @@ class HasHadBrainRadiationTherapyTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            HasHadBrainRadiationTherapy().evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            HasHadBrainRadiationTherapy(labels).evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
         )
     }
 
@@ -45,7 +48,7 @@ class HasHadBrainRadiationTherapyTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadBrainRadiationTherapy().evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            HasHadBrainRadiationTherapy(labels).evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
         )
     }
 
@@ -58,7 +61,7 @@ class HasHadBrainRadiationTherapyTest {
             )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasHadBrainRadiationTherapy().evaluate(history)
+            HasHadBrainRadiationTherapy(labels).evaluate(history)
         )
     }
 
@@ -71,7 +74,7 @@ class HasHadBrainRadiationTherapyTest {
             )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasHadBrainRadiationTherapy().evaluate(history)
+            HasHadBrainRadiationTherapy(labels).evaluate(history)
         )
     }
 
@@ -85,7 +88,7 @@ class HasHadBrainRadiationTherapyTest {
             )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadBrainRadiationTherapy().evaluate(history)
+            HasHadBrainRadiationTherapy(labels).evaluate(history)
         )
     }
 
@@ -98,7 +101,7 @@ class HasHadBrainRadiationTherapyTest {
             )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadBrainRadiationTherapy().evaluate(history)
+            HasHadBrainRadiationTherapy(labels).evaluate(history)
         )
     }
 
@@ -114,7 +117,7 @@ class HasHadBrainRadiationTherapyTest {
             )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadBrainRadiationTherapy().evaluate(history)
+            HasHadBrainRadiationTherapy(labels).evaluate(history)
         )
     }
 
@@ -122,7 +125,7 @@ class HasHadBrainRadiationTherapyTest {
     fun `Should fail if oncological history is empty`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            HasHadBrainRadiationTherapy().evaluate(withTreatmentHistory(emptyList()))
+            HasHadBrainRadiationTherapy(labels).evaluate(withTreatmentHistory(emptyList()))
         )
     }
 }

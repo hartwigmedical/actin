@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -10,11 +11,12 @@ import com.hartwig.actin.datamodel.clinical.DrugInteraction
 class CurrentlyGetsTransporterInteractingMedication(
     private val selector: MedicationSelector,
     private val termToFind: String,
-    private val type: DrugInteraction.Type
+    private val type: DrugInteraction.Type,
+    private val labels: EvaluationLabels.Medication
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val medications = record.medications ?: return MEDICATION_NOT_PROVIDED
+        val medications = record.medications ?: return medicationNotProvided(labels)
         val transporterInteractingMedicationActive =
             selector.activeWithInteraction(medications, termToFind, type, DrugInteraction.Group.TRANSPORTER).map { it.name }
         val transporterInteractingMedicationPlanned =
@@ -25,19 +27,23 @@ class CurrentlyGetsTransporterInteractingMedication(
         return when {
             transporterInteractingMedicationActive.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Active $termToFind $typeText medication use (${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationActive)})"
+                    labels.currentlyGetsTransporterInteractingMedicationRecoverablePass(
+                        termToFind, typeText, concatLowercaseWithCommaAndAnd(transporterInteractingMedicationActive)
+                    )
                 )
             }
 
             transporterInteractingMedicationPlanned.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Planned $termToFind $typeText medication use (${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationPlanned)})"
+                    labels.currentlyGetsTransporterInteractingMedicationWarn(
+                        termToFind, typeText, concatLowercaseWithCommaAndAnd(transporterInteractingMedicationPlanned)
+                    )
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "No current $termToFind $typeText medication use"
+                    labels.currentlyGetsTransporterInteractingMedicationRecoverableFail(termToFind, typeText)
                 )
             }
         }

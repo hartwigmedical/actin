@@ -2,8 +2,10 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.tumor.HasMetastaticCancer
 import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import io.mockk.every
 import io.mockk.mockk
@@ -12,13 +14,14 @@ import org.junit.jupiter.api.Test
 class IsEligibleForLocalTreatmentOfMetastasesTest {
 
     private val patientRecord = TumorTestFactory.withTumorStage(null)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
 
     @Test
     fun `Should fail when no metastatic cancer`() {
         val alwaysFailsMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
-        val function = IsEligibleForLocalTreatmentOfMetastases(alwaysFailsMetastaticCancerEvaluation)
+        val function = IsEligibleForLocalTreatmentOfMetastases(alwaysFailsMetastaticCancerEvaluation, labels)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
     }
 
@@ -27,7 +30,7 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
         val alwaysUndeterminedMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
-        val function = IsEligibleForLocalTreatmentOfMetastases(alwaysUndeterminedMetastaticCancerEvaluation)
+        val function = IsEligibleForLocalTreatmentOfMetastases(alwaysUndeterminedMetastaticCancerEvaluation, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 
@@ -36,7 +39,7 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
         val alwaysPassMetastaticCancerEvaluation = mockk<HasMetastaticCancer> {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
-        val function = IsEligibleForLocalTreatmentOfMetastases(alwaysPassMetastaticCancerEvaluation)
+        val function = IsEligibleForLocalTreatmentOfMetastases(alwaysPassMetastaticCancerEvaluation, labels)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
     }
 }

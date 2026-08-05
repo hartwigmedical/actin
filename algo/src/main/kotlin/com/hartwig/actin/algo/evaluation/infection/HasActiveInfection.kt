@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.infection
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.algo.icd.IcdConstants
@@ -17,7 +18,10 @@ import com.hartwig.actin.medication.MedicationCategories
 import java.time.LocalDate
 
 class HasActiveInfection(
-    private val atcTree: AtcTree, private val referenceDate: LocalDate, private val icdModel: IcdModel
+    private val atcTree: AtcTree,
+    private val referenceDate: LocalDate,
+    private val icdModel: IcdModel,
+    private val labels: EvaluationLabels.Infection
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -35,26 +39,23 @@ class HasActiveInfection(
 
         return when {
             infectionStatus?.hasActiveInfection == true -> {
-                EvaluationFactory.recoverablePass("Has active infection (${description(infectionStatus)})")
+                EvaluationFactory.recoverablePass(labels.hasActiveInfectionRecoverablePass(description(infectionStatus)))
             }
 
             currentlyUsesAntimicrobials -> {
-                EvaluationFactory.warn("Possible active infection (antimicrobials usage)")
+                EvaluationFactory.warn(labels.hasActiveInfectionWarnAntimicrobials())
             }
 
             infectionComorbidity.fullMatches.isNotEmpty() -> {
-                EvaluationFactory.warn(
-                    "Has infection(s) in history - unknown if active " +
-                            "(${concatItemsWithAnd(infectionComorbidity.fullMatches)})"
-                )
+                EvaluationFactory.warn(labels.hasActiveInfectionWarnHistory(concatItemsWithAnd(infectionComorbidity.fullMatches)))
             }
 
             infectionStatus == null -> {
-                EvaluationFactory.recoverableUndetermined("Infection status data is missing")
+                EvaluationFactory.recoverableUndetermined(labels.hasActiveInfectionRecoverableUndetermined())
             }
 
             else -> {
-                EvaluationFactory.fail("No active infection present")
+                EvaluationFactory.fail(labels.hasActiveInfectionFail())
             }
         }
     }

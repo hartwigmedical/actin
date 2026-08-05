@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -47,7 +49,9 @@ class LabMeasurementEvaluatorTest {
         selector: LabValueSelector,
         function: LabEvaluationFunction = passingLabEvaluationFunction,
         minPassDate: LocalDate = TEST_DATE.plusDays(20)
-    ) = LabMeasurementEvaluator(selector, function, TEST_DATE.minusDays(20), minPassDate)
+    ) = LabMeasurementEvaluator(selector, function, TEST_DATE.minusDays(20), minPassDate, labels)
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).laboratory
 
     private val notFoundSelector = mockk<LabValueSelector>().also {
         every { it.select(any(), any()) } returns LabValueSelectionResult.NotFound(

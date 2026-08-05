@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.washout
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
@@ -23,7 +25,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                 category = TreatmentCategory.CHEMOTHERAPY,
                 drugTypes = setOf(DrugType.ALKYLATING_AGENT)
             )
-        ), interpreter, MIN_DATE
+        ), interpreter, MIN_DATE, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).washout
     )
 
     @Test

@@ -2,36 +2,36 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasKnownActiveCnsMetastases : EvaluationFunction {
+class HasKnownActiveCnsMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val unknownIfActive = hasActiveCnsLesions == null && hasActiveBrainLesions == null
-            val undeterminedMessage = "CNS metastases present but unknown if active (data missing)"
 
             return when {
                 unknownIfActive && (hasCnsLesions == true || hasBrainLesions == true) -> {
-                    EvaluationFactory.undetermined(undeterminedMessage)
+                    EvaluationFactory.undetermined(labels.hasKnownActiveCnsMetastasesUndetermined())
                 }
 
                 unknownIfActive && (hasSuspectedCnsLesions == true || hasSuspectedBrainLesions == true) -> {
-                    EvaluationFactory.undetermined("Suspected $undeterminedMessage")
+                    EvaluationFactory.undetermined(labels.hasKnownActiveCnsMetastasesUndeterminedSuspected())
                 }
 
                 unknownIfActive && (hasCnsLesions == null && hasBrainLesions == null) -> {
-                    EvaluationFactory.undetermined("Undetermined if (active) CNS metastases present (data missing)")
+                    EvaluationFactory.undetermined(labels.hasKnownActiveCnsMetastasesUndeterminedMissing())
                 }
 
-                hasActiveCnsLesions == true -> EvaluationFactory.pass("Has active CNS metastases")
+                hasActiveCnsLesions == true -> EvaluationFactory.pass(labels.hasKnownActiveCnsMetastasesPass())
 
                 hasActiveBrainLesions == true -> {
-                    EvaluationFactory.pass("Has active CNS (Brain) metastases")
+                    EvaluationFactory.pass(labels.hasKnownActiveCnsMetastasesPassBrain())
                 }
 
-                else -> EvaluationFactory.fail("No known active CNS metastases present")
+                else -> EvaluationFactory.fail(labels.hasKnownActiveCnsMetastasesFail())
             }
         }
     }

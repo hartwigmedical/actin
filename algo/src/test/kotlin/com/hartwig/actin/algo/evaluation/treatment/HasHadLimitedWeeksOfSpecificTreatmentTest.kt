@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
@@ -15,8 +17,9 @@ private val MATCHING_TREATMENT = treatment(MATCHING_TREATMENT_NAME, true)
 
 class HasHadLimitedWeeksOfSpecificTreatmentTest {
 
-    private val functionWithMaxWeeks = HasHadLimitedWeeksOfSpecificTreatment(MATCHING_TREATMENT, 6)
-    private val functionWithoutMaxWeeks = HasHadLimitedWeeksOfSpecificTreatment(treatment(MATCHING_TREATMENT_NAME, true), null)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val functionWithMaxWeeks = HasHadLimitedWeeksOfSpecificTreatment(MATCHING_TREATMENT, 6, labels)
+    private val functionWithoutMaxWeeks = HasHadLimitedWeeksOfSpecificTreatment(treatment(MATCHING_TREATMENT_NAME, true), null, labels)
 
     @Test
     fun `Should fail for empty treatments`() {

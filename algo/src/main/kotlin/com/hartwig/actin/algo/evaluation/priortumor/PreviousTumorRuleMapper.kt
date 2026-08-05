@@ -25,34 +25,34 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
     }
 
     private fun hasActiveSecondMalignancyCreator(): FunctionCreator {
-        return { HasActiveSecondMalignancy() }
+        return { HasActiveSecondMalignancy(evaluationLabels.priorTumor) }
     }
 
     private fun hasHistoryOfSecondMalignancyCreator(): FunctionCreator {
-        return { HasHistoryOfSecondMalignancy() }
+        return { HasHistoryOfSecondMalignancy(evaluationLabels.priorTumor) }
     }
 
     private fun hasHistoryOfSecondMalignancyIgnoringSomeDoidsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidInputsToIgnore = function.param<ManyDoidTermsParameter>(0).value
-            val doidsToIgnore = doidInputsToIgnore.map { doidModel().toDoid(it) }.toSet()
-            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidsToIgnore, minDate = null)
+            val doidsToIgnore = doidInputsToIgnore.map { doidModel.toDoid(it) }.toSet()
+            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, doidsToIgnore, null, evaluationLabels.priorTumor)
         }
     }
 
     private fun hasHistoryOfSecondMalignancyWithDoidTermCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val doidInputToMatch = function.param<DoidTermParameter>(0).value
-            val doidToMatch = doidModel().toDoid(doidInputToMatch)
-            HasHistoryOfSecondMalignancyWithDoid(doidModel(), doidToMatch)
+            val doidToMatch = doidModel.toDoid(doidInputToMatch)
+            HasHistoryOfSecondMalignancyWithDoid(doidModel, doidToMatch, evaluationLabels.priorTumor)
         }
     }
 
     private fun hasHistoryOfSecondMalignancyWithinYearsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val maxYears = function.param<IntegerParameter>(0).value
-            val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
-            HasHistoryOfSecondMalignancyWithinYears(minDate)
+            val minDate = referenceDateProvider.date().minusYears(maxYears.toLong())
+            HasHistoryOfSecondMalignancyWithinYears(minDate, evaluationLabels.priorTumor)
         }
     }
 
@@ -61,9 +61,9 @@ class PreviousTumorRuleMapper(resources: RuleMappingResources) : RuleMapper(reso
             function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.MANY_DOID_TERMS)
             val maxYears = function.param<IntegerParameter>(0).value
             val doidInputsToIgnore = function.param<ManyDoidTermsParameter>(1).value
-            val doidsToIgnore = doidInputsToIgnore.map { doidModel().toDoid(it) }.toSet()
-            val minDate = referenceDateProvider().date().minusYears(maxYears.toLong())
-            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel(), doidsToIgnore, minDate)
+            val doidsToIgnore = doidInputsToIgnore.map { doidModel.toDoid(it) }.toSet()
+            val minDate = referenceDateProvider.date().minusYears(maxYears.toLong())
+            HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, doidsToIgnore, minDate, evaluationLabels.priorTumor)
         }
     }
 }

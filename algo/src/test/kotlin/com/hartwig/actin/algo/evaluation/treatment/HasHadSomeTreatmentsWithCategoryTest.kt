@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -17,7 +19,8 @@ private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 
 class HasHadSomeTreatmentsWithCategoryTest {
 
-    private val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 2)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 2, labels)
 
     @Test
     fun `Should fail for no treatments`() {
@@ -43,7 +46,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
 
     @Test
     fun `Should pass for treatment history entry with incorrect treatment category but correct category type in medication entry`() {
-        val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 1)
+        val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 1, labels)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         val medication = WashoutTestFactory.medication().copy(drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = emptySet()))
         assertEvaluation(
@@ -54,7 +57,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
 
     @Test
     fun `Should evaluate to undetermined when trial in medication entry`() {
-        val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 1)
+        val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 1, labels)
         val medication = WashoutTestFactory.medication().copy(isTrialMedication = true)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MedicationTestFactory.withMedications(listOf(medication))))
     }
@@ -70,7 +73,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
 
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
-        val function = HasHadSomeTreatmentsWithCategory(TreatmentCategory.TRANSPLANTATION, 2)
+        val function = HasHadSomeTreatmentsWithCategory(TreatmentCategory.TRANSPLANTATION, 2, labels)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))

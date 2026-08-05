@@ -1,13 +1,15 @@
 package com.hartwig.actin.algo.evaluation.toxicity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import org.junit.jupiter.api.Test
 
 class HasIntoleranceWithSpecificNameTest {
-    
-    private val function = HasIntoleranceWithSpecificName("allergy")
+
+    private val function = HasIntoleranceWithSpecificName("allergy", EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).toxicity)
 
     @Test
     fun `Should fail with no intolerances`() {

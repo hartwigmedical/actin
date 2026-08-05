@@ -2,10 +2,11 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 
-class HasSpleenMetastases : EvaluationFunction {
+class HasSpleenMetastases(private val labels: EvaluationLabels.Tumor) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val certainSpleenMetastasesEvaluation = TumorEvaluationFunctions.hasSpleenMetastases(record.tumor)
@@ -13,14 +14,14 @@ class HasSpleenMetastases : EvaluationFunction {
 
         return when {
             certainSpleenMetastasesEvaluation == null && suspectedSpleenMetastasesEvaluation != true -> {
-                EvaluationFactory.undetermined("Spleen metastases undetermined (metastases data missing)")
+                EvaluationFactory.undetermined(labels.hasSpleenMetastasesUndetermined())
             }
 
-            certainSpleenMetastasesEvaluation == true -> EvaluationFactory.pass("Has spleen metastases")
+            certainSpleenMetastasesEvaluation == true -> EvaluationFactory.pass(labels.hasSpleenMetastasesPass())
 
-            suspectedSpleenMetastasesEvaluation == true -> EvaluationFactory.warn("Has suspected spleen metastases")
+            suspectedSpleenMetastasesEvaluation == true -> EvaluationFactory.warn(labels.hasSpleenMetastasesWarn())
 
-            else -> EvaluationFactory.fail("No spleen metastases")
+            else -> EvaluationFactory.fail(labels.hasSpleenMetastasesFail())
         }
     }
 }

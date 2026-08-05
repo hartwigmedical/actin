@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -41,7 +42,8 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
     private val drugToFind: Drug,
     private val category: TreatmentCategory,
     private val types: Set<TreatmentType>?,
-    private val minWeeks: Int
+    private val minWeeks: Int,
+    private val labels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -84,32 +86,42 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
 
         return when {
             treatmentEvaluations.size > 1 -> {
-                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentDesc is counted as received for at least $minWeeks weeks")
+                EvaluationFactory.undetermined(
+                    labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksUndeterminedMultiple(treatmentDesc, minWeeks)
+                )
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_PD_AND_SUFFICIENT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.pass("Has received $treatmentDesc with PD for at least $minWeeks weeks")
+                EvaluationFactory.pass(labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksPass(treatmentDesc, minWeeks))
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Has received $treatmentDesc with PD but unknown nr of weeks")
+                EvaluationFactory.undetermined(
+                    labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksUndeterminedUnknownWeeks(treatmentDesc)
+                )
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Has received $treatmentDesc but uncertain if there has been PD")
+                EvaluationFactory.undetermined(
+                    labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksUndeterminedUncertainPd(treatmentDesc)
+                )
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc")
+                EvaluationFactory.undetermined(
+                    labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksUndeterminedIfReceived(treatmentDesc)
+                )
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_PD_AND_INSUFFICIENT_WEEKS in treatmentEvaluations -> EvaluationFactory.fail(
-                "Has received $treatmentDesc with PD but for less than $minWeeks weeks"
+                labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksFailInsufficientWeeks(treatmentDesc, minWeeks)
             )
 
-            PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_NO_PD in treatmentEvaluations -> EvaluationFactory.fail("No PD after $treatmentDesc")
+            PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_NO_PD in treatmentEvaluations -> EvaluationFactory.fail(
+                labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksFailNoPd(treatmentDesc)
+            )
 
-            else -> EvaluationFactory.fail("Has not received $treatmentDesc")
+            else -> EvaluationFactory.fail(labels.hasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksFailNotReceived(treatmentDesc))
         }
     }
 }

@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -10,7 +12,9 @@ import com.hartwig.actin.icd.TestIcdFactory
 import org.junit.jupiter.api.Test
 
 class HasPotentialDisruptionOfLymphaticDrainageTest {
-    private val function = HasPotentialDisruptionOfLymphaticDrainage(TestIcdFactory.createTestModel())
+    private val function = HasPotentialDisruptionOfLymphaticDrainage(
+        TestIcdFactory.createTestModel(), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+    )
     private val correctIcd = IcdConstants.LYMPHATIC_DRAINAGE_SET.iterator().next()
     private val wrongIcdMainCode = "wrong"
     private val correctCondition = ComorbidityTestFactory.otherCondition(icdMainCode = correctIcd)

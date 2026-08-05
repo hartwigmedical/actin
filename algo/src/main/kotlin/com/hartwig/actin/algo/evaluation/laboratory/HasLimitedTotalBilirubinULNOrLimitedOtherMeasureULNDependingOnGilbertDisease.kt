@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.laboratory
 
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.clinical.LabMeasurement
 import com.hartwig.actin.datamodel.PatientRecord
@@ -15,7 +16,8 @@ class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisea
     private val maxULNWithGilbertDisease: Double,
     private val minValidLabDate: LocalDate,
     private val minPassLabDate: LocalDate,
-    private val icdModel: IcdModel
+    private val icdModel: IcdModel,
+    private val labels: EvaluationLabels.Laboratory
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
@@ -29,7 +31,12 @@ class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisea
             LabMeasurement.TOTAL_BILIRUBIN to maxULNWithoutGilbertDisease
         }
 
-        return LabMeasurementEvaluator(SingleLabValueSelector(applicableMeasure), HasLimitedLabValueULN(applicableULN), minValidLabDate, minPassLabDate)
-            .evaluate(record)
+        return LabMeasurementEvaluator(
+            SingleLabValueSelector(applicableMeasure, labels = labels),
+            HasLimitedLabValueULN(applicableULN, labels),
+            minValidLabDate,
+            minPassLabDate,
+            labels
+        ).evaluate(record)
     }
 }

@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
@@ -14,7 +16,8 @@ import org.junit.jupiter.api.Test
 class HasHadRecentResectionTest {
 
     private val minDate = LocalDate.of(2022, 10, 12)
-    private val function = HasHadRecentResection(minDate)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
+    private val function = HasHadRecentResection(minDate, labels)
     private val matchingTreatmentName = "some form of " + RESECTION_KEYWORDS.first()
     private val matchingTreatment = setOf(treatment(matchingTreatmentName, false))
 

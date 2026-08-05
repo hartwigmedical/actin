@@ -49,12 +49,17 @@ class IsEligibleForOnLabelTreatmentTest {
         mockk<StandardOfCareEvaluatorFactory> { every { create() } returns standardOfCareEvaluator }
     private val targetTreatment = treatment("TREATMENT", true)
     val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    val molecularLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).molecular
+    val treatmentLabels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
     val function =
-        IsEligibleForOnLabelTreatment(targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE, labels)
+        IsEligibleForOnLabelTreatment(
+            targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE,
+            molecularLabels = molecularLabels, treatmentLabels = treatmentLabels
+        )
     private val functionWithIntent =
         IsEligibleForOnLabelTreatment(
-            targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE, labels, intent = Intent.CURATIVE
+            targetTreatment, standardOfCareEvaluatorFactory, doidModel, MIN_DATE, intent = Intent.CURATIVE,
+            molecularLabels = molecularLabels, treatmentLabels = treatmentLabels
         )
     private val functionEvaluatingOsimertinib =
         IsEligibleForOnLabelTreatment(
@@ -62,7 +67,8 @@ class IsEligibleForOnLabelTreatmentTest {
             standardOfCareEvaluatorFactory,
             doidModel,
             MIN_DATE,
-            labels
+            molecularLabels = molecularLabels,
+            treatmentLabels = treatmentLabels
         )
     private val functionEvaluatingOsimertinibWithIntent =
         IsEligibleForOnLabelTreatment(
@@ -70,15 +76,17 @@ class IsEligibleForOnLabelTreatmentTest {
             standardOfCareEvaluatorFactory,
             doidModel,
             MIN_DATE,
-            labels,
-            Intent.CURATIVE
+            Intent.CURATIVE,
+            molecularLabels,
+            treatmentLabels
         )
     private val functionEvaluatingPembrolizumab = IsEligibleForOnLabelTreatment(
         PEMBROLIZUMAB,
         standardOfCareEvaluatorFactory,
         doidModel,
         MIN_DATE,
-        labels
+        molecularLabels = molecularLabels,
+        treatmentLabels = treatmentLabels
     )
 
     private val colorectalCancerPatient = TumorTestFactory.withDoidAndName(DoidConstants.COLORECTAL_CANCER_DOID, "left")

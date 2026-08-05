@@ -1,11 +1,15 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.junit.jupiter.api.Test
 
 class HasHadSomeSystemicTreatmentsTest {
+
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment
 
     @Test
     fun shouldFailWhenTreatmentHistoryEmpty() {
@@ -35,13 +39,13 @@ class HasHadSomeSystemicTreatmentsTest {
 
     @Test
     fun shouldBeUndeterminedInCaseOfAmbiguousTimeline() {
-        val function = HasHadSomeSystemicTreatments(2)
+        val function = HasHadSomeSystemicTreatments(2, labels)
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("treatment", true)))
         val treatments = listOf(treatmentHistoryEntry, treatmentHistoryEntry)
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
     }
 
     companion object {
-        private val FUNCTION = HasHadSomeSystemicTreatments(1)
+        private val FUNCTION = HasHadSomeSystemicTreatments(1, EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).treatment)
     }
 }

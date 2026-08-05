@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.vitalfunction
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.VitalFunction
 import com.hartwig.actin.datamodel.clinical.VitalFunctionCategory
@@ -11,7 +13,9 @@ import org.junit.jupiter.api.Test
 class HasRestingHeartRateWithinBoundsTest {
 
     private val referenceDateTime = LocalDateTime.of(2023, 12, 2, 0, 0)
-    private val function = HasRestingHeartRateWithinBounds(60.0, 80.0, LocalDate.of(2023, 12, 1))
+    private val function = HasRestingHeartRateWithinBounds(
+        60.0, 80.0, LocalDate.of(2023, 12, 1), EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).vitalFunction
+    )
 
     @Test
     fun `Should evaluate to undetermined when no heart rate measurements present`() {

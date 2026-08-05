@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.assertj.core.api.Assertions.assertThat
@@ -10,7 +12,8 @@ import org.junit.jupiter.api.Test
 class HasMeasurableDiseaseRanoTest {
 
     private val doidModel = TestDoidModelFactory.createWithOneParentChild(DoidConstants.CNS_CANCER_DOID, DoidConstants.BRAIN_CANCER_DOID)
-    private val function = HasMeasurableDiseaseRano(doidModel)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).tumor
+    private val function = HasMeasurableDiseaseRano(doidModel, labels)
 
     @Test
     fun `Should pass when has measurable disease is true and brain cancer`() {

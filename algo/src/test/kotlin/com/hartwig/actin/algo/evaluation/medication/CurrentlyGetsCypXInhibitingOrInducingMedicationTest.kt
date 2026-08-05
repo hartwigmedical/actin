@@ -1,6 +1,8 @@
 package com.hartwig.actin.algo.evaluation.medication
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.DrugInteraction
@@ -10,8 +12,11 @@ import org.junit.jupiter.api.Test
 private const val TARGET_CYP = "9A9"
 
 class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
-    private val alwaysActiveFunction = CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive(), TARGET_CYP)
-    private val alwaysPlannedFunction = CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysPlanned(), TARGET_CYP)
+    private val labels = EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).medication
+    private val alwaysActiveFunction =
+        CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysActive(), TARGET_CYP, labels)
+    private val alwaysPlannedFunction =
+        CurrentlyGetsCypXInhibitingOrInducingMedication(MedicationTestFactory.alwaysPlanned(), TARGET_CYP, labels)
 
     @Test
     fun `Should pass when CYP inhibiting or inducing medication`() {

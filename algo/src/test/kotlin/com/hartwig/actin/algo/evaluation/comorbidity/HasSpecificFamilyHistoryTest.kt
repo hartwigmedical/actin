@@ -1,7 +1,9 @@
 package com.hartwig.actin.algo.evaluation.comorbidity
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.icd.IcdConstants
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.TestIcdFactory
@@ -14,7 +16,13 @@ class HasSpecificFamilyHistoryTest {
         UndeterminedFamilyConditions("cardiovascular disease", setOf(IcdCode(IcdConstants.FAMILY_HISTORY_OF_CARDIOVASCULAR_DISEASE_CODE)))
     private val passConditions = PassFamilyConditions("sudden death", setOf(IcdCode("familySuddenDeathCode")))
     private val function =
-        HasSpecificFamilyHistory(TestIcdFactory.createTestModel(), "idiopathic sudden death", passConditions, undeterminedConditions)
+        HasSpecificFamilyHistory(
+            TestIcdFactory.createTestModel(),
+            "idiopathic sudden death",
+            passConditions,
+            undeterminedConditions,
+            EvaluationLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY).comorbidity
+        )
 
     @Test
     fun `Should fail when no prior conditions present`() {

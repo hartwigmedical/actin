@@ -31,14 +31,15 @@ class IsEligibleForOnLabelTreatment(
     private val standardOfCareEvaluatorFactory: StandardOfCareEvaluatorFactory,
     private val doidModel: DoidModel,
     private val minTreatmentDate: LocalDate,
-    private val labels: EvaluationLabels.Molecular,
-    private val intent: Intent? = null
+    private val intent: Intent? = null,
+    private val molecularLabels: EvaluationLabels.Molecular,
+    private val treatmentLabels: EvaluationLabels.Treatment
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
         val treatmentDisplay = intent?.let { "${intent.name.lowercase()} ${treatment.display()}" } ?: treatment.display()
-        val undeterminedMessage = "Undetermined if patient is eligible for on-label $treatmentDisplay"
+        val undeterminedMessage = treatmentLabels.isEligibleForOnLabelTreatmentUndetermined(treatmentDisplay)
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
 
         return when {
@@ -48,7 +49,7 @@ class IsEligibleForOnLabelTreatment(
                 if (potentiallyEligibleTreatments.any { it.treatmentCandidate.treatment.name.equals(treatment.name, ignoreCase = true) }) {
                     EvaluationFactory.undetermined(undeterminedMessage)
                 } else {
-                    EvaluationFactory.fail("Not eligible for on-label $treatmentDisplay")
+                    EvaluationFactory.fail(treatmentLabels.isEligibleForOnLabelTreatmentFail(treatmentDisplay))
                 }
             }
 
@@ -56,22 +57,20 @@ class IsEligibleForOnLabelTreatment(
                 when (evaluate(record, treatmentNameToEvaluationFunctionsForNSCLC[treatmentDisplay]!!).result) {
                     EvaluationResult.PASS -> {
                         if (intent == null) {
-                            EvaluationFactory.pass("Eligible for on-label $treatmentDisplay")
+                            EvaluationFactory.pass(treatmentLabels.isEligibleForOnLabelTreatmentPass(treatmentDisplay))
                         } else {
                             EvaluationFactory.undetermined(undeterminedMessage)
                         }
                     }
 
-                    EvaluationResult.FAIL -> EvaluationFactory.fail("Not eligible for on-label $treatmentDisplay")
+                    EvaluationResult.FAIL -> EvaluationFactory.fail(treatmentLabels.isEligibleForOnLabelTreatmentFail(treatmentDisplay))
 
                     else -> EvaluationFactory.undetermined(undeterminedMessage)
                 }
             }
 
             record.oncologicalHistory.flatMap { it.allTreatments() }.any { it.name.equals(treatment.name, ignoreCase = true) } -> {
-                EvaluationFactory.warn(
-                    "Patient might be ineligible for on-label $treatmentDisplay since this treatment was already administered"
-                )
+                EvaluationFactory.warn(treatmentLabels.isEligibleForOnLabelTreatmentWarn(treatmentDisplay))
             }
 
             else -> EvaluationFactory.undetermined(undeterminedMessage)
@@ -85,8 +84,8 @@ class IsEligibleForOnLabelTreatment(
                 Not(
                     Or(
                         listOf(
-                            HasHadSpecificTreatmentSinceDate(treatment, minTreatmentDate),
-                            HasHadPDFollowingSpecificTreatment(listOf(treatment))
+                            HasHadSpecificTreatmentSinceDate(treatment, minTreatmentDate, treatmentLabels),
+                            HasHadPDFollowingSpecificTreatment(listOf(treatment), treatmentLabels)
                         )
                     )
                 )
@@ -99,40 +98,44 @@ class IsEligibleForOnLabelTreatment(
             listOf(
                 And(
                     listOf(
-                        GeneHasActivatingMutation("EGFR", null, labels = labels),
-                        Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT, labels))
+                        GeneHasActivatingMutation("EGFR", null, labels = molecularLabels),
+                        Not(GeneHasVariantInExonRangeOfType("EGFR", 20, 20, VariantTypeInput.INSERT, molecularLabels))
                     )
                 ),
                 And(
                     listOf(
-                        GeneHasVariantWithProteinImpact("EGFR", setOf("T790M"), labels),
+                        GeneHasVariantWithProteinImpact("EGFR", setOf("T790M"), molecularLabels),
                         HasHadSomeTreatmentsWithCategoryOfTypes(
                             TreatmentCategory.TARGETED_THERAPY,
                             setOf(DrugType.TYROSINE_KINASE_INHIBITOR_GEN_1, DrugType.TYROSINE_KINASE_INHIBITOR_GEN_2),
-                            1
+                            1,
+                            treatmentLabels
                         )
                     )
                 )
             )
         ),
-        "Pembrolizumab" to PembrolizumabEvaluationFunction(doidModel, labels)
+        "Pembrolizumab" to PembrolizumabEvaluationFunction(doidModel, molecularLabels, treatmentLabels)
     )
 
-    private class PembrolizumabEvaluationFunction(private val doidModel: DoidModel, private val labels: EvaluationLabels.Molecular) :
-        EvaluationFunction {
+    private class PembrolizumabEvaluationFunction(
+        private val doidModel: DoidModel,
+        private val molecularLabels: EvaluationLabels.Molecular,
+        private val treatmentLabels: EvaluationLabels.Treatment
+    ) : EvaluationFunction {
         override fun evaluate(record: PatientRecord): Evaluation {
-            val isTreatmentNaive = HasHadLimitedSystemicTreatments(0).evaluate(record).result == EvaluationResult.PASS
+            val isTreatmentNaive = HasHadLimitedSystemicTreatments(0, treatmentLabels).evaluate(record).result == EvaluationResult.PASS
             val egfrOrAlkDriverEvaluationResult = HasMolecularDriverEventInNsclc(
                 setOf("EGFR", "ALK"),
                 emptySet(),
                 warnForMatchesOutsideGenesToInclude = false,
                 withAvailableSoc = false,
-                labels = labels
+                labels = molecularLabels
             ).evaluate(record).result
             val hasNoEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult == EvaluationResult.FAIL
             val hasEgfrOrAlkDriver = egfrOrAlkDriverEvaluationResult == EvaluationResult.PASS
             val hasPdl1Above50 =
-                HasSufficientPDL1ByIhc(Pdl1Measure.TPS, 50.0, doidModel, labels).evaluate(record).result == EvaluationResult.PASS
+                HasSufficientPDL1ByIhc(Pdl1Measure.TPS, 50.0, doidModel, molecularLabels).evaluate(record).result == EvaluationResult.PASS
 
             return when {
                 isTreatmentNaive && hasNoEgfrOrAlkDriver && hasPdl1Above50 -> EvaluationFactory.pass("")

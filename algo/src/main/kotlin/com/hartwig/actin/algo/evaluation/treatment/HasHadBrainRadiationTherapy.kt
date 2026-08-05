@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.algo.evaluation.util.ValueComparison.stringCaseInsensitivelyMatchesQueryCollection
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -9,7 +10,7 @@ import com.hartwig.actin.datamodel.clinical.BodyLocationCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
-class HasHadBrainRadiationTherapy : EvaluationFunction {
+class HasHadBrainRadiationTherapy(private val labels: EvaluationLabels.Treatment) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDetails = record.tumor
@@ -20,17 +21,16 @@ class HasHadBrainRadiationTherapy : EvaluationFunction {
         val brainRadiotherapy = hasHadBrainRadiotherapy(priorRadiotherapies)
 
         return when {
-            brainRadiotherapy == true -> EvaluationFactory.pass("Has had brain radiation therapy")
+            brainRadiotherapy == true -> EvaluationFactory.pass(labels.hasHadBrainRadiationTherapyPass())
 
-            brainRadiotherapy == false && anyRadiotherapy -> EvaluationFactory.fail("Has received radiotherapy but not to the brain")
+            brainRadiotherapy == false && anyRadiotherapy -> EvaluationFactory.fail(labels.hasHadBrainRadiationTherapyFailNotToBrain())
 
             (hasConfirmedBrainOrCNSMetastases || hasSuspectedBrainOrCNSMetastases) && anyRadiotherapy -> {
-                val suspectedMessage = if (!hasConfirmedBrainOrCNSMetastases) " suspected" else ""
-                EvaluationFactory.undetermined("Has$suspectedMessage brain and/or CNS metastases and received radiotherapy " +
-                        "- undetermined if brain radiation therapy")
+                val suspectedSuffix = if (!hasConfirmedBrainOrCNSMetastases) labels.hasHadBrainRadiationTherapySuspectedSuffix() else ""
+                EvaluationFactory.undetermined(labels.hasHadBrainRadiationTherapyUndetermined(suspectedSuffix))
             }
 
-            else -> EvaluationFactory.fail("Has not received prior brain radiation therapy")
+            else -> EvaluationFactory.fail(labels.hasHadBrainRadiationTherapyFail())
         }
     }
 

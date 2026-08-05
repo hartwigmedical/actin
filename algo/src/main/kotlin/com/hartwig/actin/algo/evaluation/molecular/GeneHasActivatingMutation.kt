@@ -25,7 +25,7 @@ private enum class ActivationWarningType {
     OTHER_MISSENSE_OR_CANCER_ASSOCIATED_VARIANT,
 }
 
-private fun ActivationWarningType.description(labels: EvaluationLabels.Molecular, subclonalPercentage: String): String? = when (this) {
+private fun ActivationWarningType.description(subclonalPercentage: String, labels: EvaluationLabels.Molecular): String? = when (this) {
     ActivationWarningType.NO_CANCER_ASSOCIATED_VARIANT -> labels.geneHasActivatingMutationDescriptionNoCav()
     ActivationWarningType.SUBCLONAL -> labels.geneHasActivatingMutationDescriptionSubclonal(subclonalPercentage)
     else -> null
@@ -93,7 +93,7 @@ class GeneHasActivatingMutation(
                     labels.geneHasActivatingMutationWarnWithOther(
                         gene, variantsString,
                         concat(potentiallyActivatingWarnings.map { (event, type) ->
-                            "$event (${type.description(labels, subclonalPercentage)})$inKinaseDomainString"
+                            "$event (${type.description(subclonalPercentage, labels)})$inKinaseDomainString"
                         })
                     ),
                     inclusionEvents = activatingVariants + potentiallyActivatingWarnings.map { (event, _) -> event }

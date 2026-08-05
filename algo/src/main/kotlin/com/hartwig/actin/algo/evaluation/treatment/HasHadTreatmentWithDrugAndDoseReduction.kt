@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.medication.MedicationToTreatmentConverter
 
-class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : EvaluationFunction {
+class HasHadTreatmentWithDrugAndDoseReduction(
+    private val drug: Drug,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
 
@@ -21,10 +25,10 @@ class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : Evaluati
 
         return when {
             hasHadDrug -> {
-                EvaluationFactory.undetermined("Undetermined if patient may have had a dose reduction during $drug treatment")
+                EvaluationFactory.undetermined(labels.hasHadTreatmentWithDrugAndDoseReductionUndetermined(drug.toString()))
             }
 
-            else -> EvaluationFactory.fail("Patient did not dose reduction receive $drug during treatment")
+            else -> EvaluationFactory.fail(labels.hasHadTreatmentWithDrugAndDoseReductionFail(drug.toString()))
         }
     }
 }

@@ -2,13 +2,17 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.EvaluationLabels
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.NSCLC_SOC_TARGETED_THERAPY_DRUG_TYPES
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
 
-class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: Set<String>) : EvaluationFunction {
+class HasHadSOCTargetedTherapyForNSCLC(
+    private val genesToIgnore: Set<String>,
+    private val labels: EvaluationLabels.Treatment
+) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val drugTypeSet = returnDrugTypeSet(genesToIgnore)
@@ -21,10 +25,10 @@ class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: Set<String>) :
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Has received SOC targeted therapy for NSCLC ($matches)")
+                EvaluationFactory.pass(labels.hasHadSOCTargetedTherapyForNSCLCPass(matches))
             }
             else -> {
-                EvaluationFactory.fail("Has not received SOC targeted therapy for NSCLC")
+                EvaluationFactory.fail(labels.hasHadSOCTargetedTherapyForNSCLCFail())
             }
         }
     }
