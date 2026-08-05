@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
@@ -10,6 +11,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
 import com.itextpdf.layout.element.Table
 import java.time.LocalDate
@@ -22,10 +24,11 @@ private const val VALUE_WIDTH = 200f
 class PatientClinicalHistoryGeneratorTest {
 
     private val report = TestReportFactory.createMinimalTestReport()
+    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
 
     @Test
     fun `Should return title clinical summary`() {
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, labels)
         assertThat(clinicalSummaryGenerator.title()).isEqualTo("Clinical summary")
     }
 
@@ -133,7 +136,7 @@ class PatientClinicalHistoryGeneratorTest {
     }
 
     private fun generateHistoryAndReturnTableWithText(report: Report, cellToFind: String): Table {
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH)
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, labels)
         val cells = clinicalSummaryGenerator.contentsAsList()
         val otherHistoryCell = cells.dropWhile { extractTextFromCell(it) != cellToFind }.drop(1).first()
         return otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")

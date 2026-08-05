@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Styles
@@ -8,10 +9,14 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.pdf.action.PdfAction
 import com.itextpdf.layout.element.Table
 
-class ResistanceEvidenceGenerator(private val treatments: Set<AnnotatedTreatmentMatch>, private val width: Float) : TableGenerator {
+class ResistanceEvidenceGenerator(
+    private val treatments: Set<AnnotatedTreatmentMatch>,
+    private val width: Float,
+    private val labels: ReportLabels
+) : TableGenerator {
 
     override fun title(): String {
-        return "Resistance evidence"
+        return labels.efficacyEvidence.socResistanceTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -21,23 +26,21 @@ class ResistanceEvidenceGenerator(private val treatments: Set<AnnotatedTreatment
     override fun contents(): Table {
         return if (treatments.isEmpty()) {
             Tables.createSingleColWithWidth(width)
-                .addCell(Cells.createContentNoBorder("There are no standard of care treatment options for this patient"))
+                .addCell(Cells.createContentNoBorder(labels.efficacyEvidence.socNoOptions()))
         } else {
             val treatmentToEvidence = treatments.flatMap { it.resistanceEvidence }.groupBy({ it.treatmentName }, { it })
             if (treatmentToEvidence.isEmpty()) {
                 Tables.createSingleColWithWidth(width)
                     .addCell(
-                        Cells.createContentNoBorder(
-                            "No resistance evidence found for the standard of care treatment options of this patient"
-                        )
+                        Cells.createContentNoBorder(labels.efficacyEvidence.socNoResistance())
                     )
             } else {
                 val table = Tables.createRelativeWidthCols(3f, 3f, 2f, 2f, 3f).setWidth(width)
-                table.addHeaderCell(Cells.createHeader("Treatment"))
-                table.addHeaderCell(Cells.createHeader("Mutation"))
-                table.addHeaderCell(Cells.createHeader("Evidence source"))
-                table.addHeaderCell(Cells.createHeader("Evidence level"))
-                table.addHeaderCell(Cells.createHeader("Found in molecular analysis"))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColTreatment()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColMutation()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColEvidenceSource()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColEvidenceLevel()))
+                table.addHeaderCell(Cells.createHeader(labels.efficacyEvidence.socColFoundInMolecular()))
                 treatmentToEvidence.forEach { entry ->
                     table.addCell(Cells.createContentBold(entry.key))
                     val subTable = Tables.createRelativeWidthCols(660f, 1f, 1f, 1f, 250f, 400f, 400f).setWidth((width / 3) * 2)
@@ -73,9 +76,9 @@ class ResistanceEvidenceGenerator(private val treatments: Set<AnnotatedTreatment
 
     private fun booleanToString(isFound: Boolean?): String {
         return when (isFound) {
-            true -> "Yes"
-            false -> "No"
-            null -> "NA"
+            true -> labels.misc.yes()
+            false -> labels.misc.no()
+            null -> labels.misc.notAvailable()
         }
     }
 }

@@ -12,6 +12,8 @@ import java.time.format.DateTimeFormatter
 object Formats {
 
     const val VALUE_UNKNOWN = "Unknown"
+    const val VALUE_YES = "Yes"
+    const val VALUE_NO = "No"
     const val VALUE_NONE = "None"
     const val VALUE_NOT_AVAILABLE = "N/A"
     const val COMMA_SEPARATOR = ", "
@@ -56,7 +58,7 @@ object Formats {
         if (bool == null) {
             return VALUE_UNKNOWN
         }
-        return if (bool) "Yes" else "No"
+        return if (bool) VALUE_YES else VALUE_NO
     }
 
     fun valueOrDefault(value: String, defaultValue: String): String {

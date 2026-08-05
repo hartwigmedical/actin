@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.tables.molecular
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -12,9 +13,10 @@ import com.itextpdf.layout.element.Table
 class ImmunologyGenerator(
     private val molecular: MolecularTest,
     private val displayMode: ImmunologyDisplayMode = ImmunologyDisplayMode.DETAILED_TABLE,
-    private val title: String = "Immunology",
+    private val title: String,
     private val keyWidth: Float,
     private val valueWidth: Float,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     override fun title(): String {
@@ -36,10 +38,10 @@ class ImmunologyGenerator(
     private fun createDetailedTable(): Table {
         val table = Tables.createRelativeWidthCols(2f, 3f, 2f, 2f, 5f)
 
-        table.addHeaderCell(Cells.createHeaderWithBorder("HLA gene"))
-        table.addHeaderCell(Cells.createHeaderWithBorder("Type"))
-        table.addHeaderCell(Cells.createHeaderWithBorder("Tumor copy number"))
-        table.addHeaderCell(Cells.createHeaderWithBorder("Mutated in tumor"))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colHlaGene()))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colType()))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colTumorCopyNumber()))
+        table.addHeaderCell(Cells.createHeaderWithBorder(labels.molecular.colMutatedInTumor()))
 
         addHlaAAlleles(table)
 
@@ -72,11 +74,11 @@ class ImmunologyGenerator(
             if (alleles.isNotEmpty()) {
                 table.addCell(Cells.createValue(alleles.joinToString(", ", transform = ::alleleCompactString)))
             } else {
-                table.addCell(Cells.createValue("No HLA-A alleles detected"))
+                table.addCell(Cells.createValue(labels.molecular.immunologyNoHlaAlleles()))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createValue("HLA typing not available"))
+            table.addCell(Cells.createValue(labels.molecular.immunologyHlaTypingNotAvailable()))
         }
     }
 
@@ -109,13 +111,13 @@ class ImmunologyGenerator(
                 }
             } else {
                 table.addCell(Cells.createKey("HLA-A"))
-                table.addCell(Cells.createContentNoBorder("No HLA-A alleles detected"))
+                table.addCell(Cells.createContentNoBorder(labels.molecular.immunologyNoHlaAlleles()))
                 table.addCell(Cells.createContentNoBorder(""))
                 table.addCell(Cells.createContentNoBorder(""))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createContentNoBorder("HLA typing not available"))
+            table.addCell(Cells.createContentNoBorder(labels.molecular.immunologyHlaTypingNotAvailable()))
             table.addCell(Cells.createContentNoBorder(""))
             table.addCell(Cells.createContentNoBorder(""))
         }
@@ -132,11 +134,11 @@ class ImmunologyGenerator(
                 }
             } else {
                 table.addCell(Cells.createKey("HLA-A"))
-                table.addCell(Cells.createValue("No HLA-A alleles detected"))
+                table.addCell(Cells.createValue(labels.molecular.immunologyNoHlaAlleles()))
             }
         } ?: run {
             table.addCell(Cells.createKey("HLA-A"))
-            table.addCell(Cells.createValue("HLA typing not available"))
+            table.addCell(Cells.createValue(labels.molecular.immunologyHlaTypingNotAvailable()))
         }
     }
 

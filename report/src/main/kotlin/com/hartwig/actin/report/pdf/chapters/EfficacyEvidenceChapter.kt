@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.datamodel.algo.ShapDetail
 import com.hartwig.actin.datamodel.algo.SimilarPatientsSummary
 import com.hartwig.actin.report.datamodel.Report
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.molecular.OffLabelMolecularClinicalEvidenceGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OnLabelMolecularClinicalEvidenceGenerator
@@ -25,6 +26,12 @@ import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.svg.converter.SvgConverter
+import java.io.ByteArrayInputStream
+import kotlin.io.path.absolutePathString
+import kotlin.io.path.createTempFile
+import kotlin.io.path.readBytes
+import kotlin.math.abs
+import kotlin.math.sign
 import org.jetbrains.letsPlot.Stat
 import org.jetbrains.letsPlot.export.ggsave
 import org.jetbrains.letsPlot.geom.geomBar
@@ -37,23 +44,22 @@ import org.jetbrains.letsPlot.pos.positionDodge
 import org.jetbrains.letsPlot.scale.guides
 import org.jetbrains.letsPlot.scale.scaleFillManual
 import org.jetbrains.letsPlot.scale.scaleYContinuous
-import java.io.ByteArrayInputStream
-import kotlin.io.path.absolutePathString
-import kotlin.io.path.createTempFile
-import kotlin.io.path.readBytes
-import kotlin.math.abs
-import kotlin.math.sign
 
-class EfficacyEvidenceChapter(private val report: Report, private val configuration: ReportConfiguration) : ReportChapter {
+class EfficacyEvidenceChapter(
+    private val report: Report,
+    private val configuration: ReportConfiguration,
+    private val labels: ReportLabels
+) : ReportChapter {
 
     private val molecularTests = report.patientRecord.molecularTests
-    private val treatmentEvidenceRanking = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig())).rank(report.patientRecord)
+    private val treatmentEvidenceRanking = TreatmentRankingModel(EvidenceScoringModel(createScoringConfig()))
+        .rank(report.patientRecord)
 
     private val plotWidth = contentWidth() - 50
     private val plotHeight = contentHeight() - 100
 
     override fun name(): String {
-        return "Efficacy evidence"
+        return labels.efficacyEvidence.title()
     }
 
     override fun pageSize(): PageSize {
@@ -93,16 +99,14 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
 
     private fun addStandardOfCareEfficacyEvidence(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val efficacyEvidenceGenerator = EfficacyEvidenceGenerator(report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() })
+        val efficacyEvidenceGenerator = EfficacyEvidenceGenerator(
+            report.treatmentMatch.standardOfCareMatches?.filter { it.eligible() },
+            labels
+        )
 
         // TODO (KD): Fit in standard structure.
         table.addCell(Cells.createTitle(efficacyEvidenceGenerator.title()))
-        table.addCell(
-            Cells.createKey(
-                "The following standard of care treatment(s) could be an option for this patient. "
-                        + "For further details per study see 'SOC literature details' section in extended report."
-            )
-        )
+        table.addCell(Cells.createKey(labels.efficacyEvidence.socTreatmentNote()))
         table.addCell(Cells.create(efficacyEvidenceGenerator.contents()))
         document.add(table)
     }
@@ -115,11 +119,12 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
         val allAnnotations = socMatches?.flatMap { it.annotations } ?: emptyList()
         if (allAnnotations.isNotEmpty()) {
             val generators =
-                allAnnotations.distinctBy { it.acronym }.map { annotation -> EfficacyEvidenceDetailsGenerator(annotation = annotation) }
+                allAnnotations.distinctBy { it.acronym }
+                    .map { annotation -> EfficacyEvidenceDetailsGenerator(annotation = annotation, labels = labels) }
             TableGeneratorFunctions.addGenerators(generators, table, overrideTitleFormatToSubtitle = true)
             document.add(table)
         } else {
-            document.add(Paragraph("There are no standard of care treatment options for this patient").addStyle(Styles.tableContentStyle()))
+            document.add(Paragraph(labels.efficacyEvidence.socNoOptions()).addStyle(Styles.tableContentStyle()))
         }
     }
 
@@ -128,7 +133,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
             ?.toSet() ?: emptySet()
 
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = ResistanceEvidenceGenerator(eligibleSocTreatments, contentWidth())
+        val generator = ResistanceEvidenceGenerator(eligibleSocTreatments, contentWidth(), labels)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = false)
         document.add(table)
     }
@@ -164,7 +169,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
 
         val plot = letsPlot { x = survivalTime; y = survivalProbability; color = group } +
                 geomLine() +
-                labs(x = "Time (months)", y = "Survival Probability") +
+                labs(x = labels.efficacyEvidence.chartSurvivalX(), y = labels.efficacyEvidence.chartSurvivalY()) +
                 ggsize(width = plotWidth, height = plotHeight)
 
         val tmpFile = createTempFile("plot", ".svg")
@@ -191,7 +196,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
                     )
                 ) +
                 guides(fill = "none") +
-                ggtitle("SHAP values for treatment: $treatmentName") +
+                ggtitle(labels.efficacyEvidence.chartShapTitle(treatmentName)) +
                 ggsize(width = plotWidth, height = plotHeight)
 
         val tmpFile = createTempFile("shap_plot", ".svg")
@@ -218,7 +223,7 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
                     y = "proportion"
                     fill = "group"
                 } +
-                ggtitle("Treatment Distribution in 25 Most Similar Patients vs Overall Population") +
+                ggtitle(labels.efficacyEvidence.chartTreatmentDistributionTitle()) +
                 scaleYContinuous(limits = 0.0 to 1.0) +
                 ggsize(width = plotWidth, height = plotHeight)
 
@@ -230,15 +235,15 @@ class EfficacyEvidenceChapter(private val report: Report, private val configurat
 
     private fun addMolecularEvidence(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularTests)
-        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularTests)
+        val onLabelGenerator = OnLabelMolecularClinicalEvidenceGenerator(molecularTests, labels)
+        val offLabelGenerator = OffLabelMolecularClinicalEvidenceGenerator(molecularTests, labels)
         TableGeneratorFunctions.addGenerators(listOf(onLabelGenerator, offLabelGenerator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
-    
+
     private fun addMolecularEvidenceRanking(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val generator = TreatmentRankingGenerator(treatmentEvidenceRanking)
+        val generator = TreatmentRankingGenerator(treatmentEvidenceRanking, labels)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)
     }
