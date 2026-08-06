@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test
 
 private const val THRESHOLD = 450.0
 
-class EcgMeasureEvaluationFunctionTest {
+class HeartMeasurementEvaluationFunctionTest {
 
     @Test
     fun `Should evaluate to recoverable undetermined when no ECG present`() {
@@ -69,13 +69,9 @@ class EcgMeasureEvaluationFunctionTest {
 
     @Test
     fun `Should return undetermined when multiple evaluations are produced with some unknown dates`() {
-        val ecgs =
-            listOf(THRESHOLD / 2, THRESHOLD * 2).map {
-                HeartMeasurement(
-                    "test", emptySet(), it, EcgUnit.MILLISECONDS.symbol(),
-                    HeartMeasurementType.OTHER_ECG
-                )
-            }
+        val ecgs = listOf(THRESHOLD / 2, THRESHOLD * 2).map {
+            HeartMeasurement("test", emptySet(), it, EcgUnit.MILLISECONDS.symbol(), HeartMeasurementType.OTHER_ECG)
+        }
         val evaluation = withThresholdCriteria(ThresholdCriteria.MAXIMUM).evaluate(withHeartMeasurements(ecgs))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
     }
