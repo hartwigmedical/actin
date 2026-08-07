@@ -138,7 +138,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
     }
 
     @Test
-    fun `Should be undetermined for therapy containing matching drug if requiring current administration`() {
+    fun `Should be undetermined for therapy containing matching drug if requiring current administration and missing stop date`() {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(
                 setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), startYear = 2022
@@ -148,6 +148,19 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         val evaluation = FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Has received match as most recent treatment but unknown if currently still administered")
+    }
+
+    @Test
+    fun `Should fail for therapy containing matching drug if requiring current administration when there is a stop date`() {
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), stopYear = 2022
+            )
+        )
+
+        val evaluation = FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Does not currently receive match (treatment has stopped)")
     }
 
     private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {

@@ -30,17 +30,23 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
         val matchingDrugsInUnknownTreatmentLines =
             historyWithoutDates.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.toSet()
 
-        val matchingDrugsInMostRecentLine = when {
-            matchingDrugsInMostRecentLineWithDate.isNotEmpty() && historyWithoutDates.isEmpty() -> matchingDrugsInMostRecentLineWithDate
-            matchingDrugsInUnknownTreatmentLines.isNotEmpty() && history.size == 1 -> matchingDrugsInUnknownTreatmentLines
-            else -> emptyList()
+        val mostRecentMatchingEntry = when {
+            matchingDrugsInMostRecentLineWithDate.isNotEmpty() && historyWithoutDates.isEmpty() -> mostRecentTreatmentEntry
+            matchingDrugsInUnknownTreatmentLines.isNotEmpty() && history.size == 1 -> historyWithoutDates.firstOrNull()
+            else -> null
         }
+        val mostRecentMatchingEntryHasStopDate = mostRecentMatchingEntry?.treatmentHistoryDetails?.stopYear != null
+        val matchingDrugsInMostRecentLine = mostRecentMatchingEntry?.let {
+            selectMatchingDrugsFromEntry(it, drugNamesToMatch)
+        } ?: emptySet()
 
         return when {
             matchingDrugsInMostRecentLine.isNotEmpty() -> {
                 val matchingDrugDisplay = Format.concatItemsWithAnd(matchingDrugsInMostRecentLine)
                 if (!requireCurrentAdministration) {
                     EvaluationFactory.pass("Has received $matchingDrugDisplay as most recent treatment")
+                } else if (mostRecentMatchingEntryHasStopDate) {
+                    EvaluationFactory.fail("Does not currently receive $matchingDrugDisplay (treatment has stopped)")
                 } else {
                     EvaluationFactory.undetermined("Has received $matchingDrugDisplay as most recent treatment but unknown if currently still administered")
                 }
