@@ -18,17 +18,44 @@ object TreatmentVersusDateFunctions {
             .mapNotNull { entry -> TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate) }
 
         return when {
-            matchingTreatments.any { treatmentSinceMinDate(it, minDate, false) } ->
+            matchingTreatments.any { treatmentSinceMinDate(it, minDate, false) } -> {
                 EvaluationFactory.pass("Treatment $predicateDescription administered since ${Format.date(minDate)}")
+            }
 
-            matchingTreatments.any { treatmentSinceMinDate(it, minDate, true) } ->
-                EvaluationFactory.undetermined("Treatment $predicateDescription administered with unknown date")
+            matchingTreatments.any { treatmentSinceMinDate(it, minDate, true) } -> {
+                EvaluationFactory.undetermined("Treatment $predicateDescription administered with unknown date hence " +
+                        "undetermined if administered since ${Format.date(minDate)}")
+            }
 
-            matchingTreatments.isNotEmpty() ->
+            matchingTreatments.any {
+                isMostRecentTreatment(
+                    it,
+                    record.oncologicalHistory
+                ) == true
+            } -> {
+                EvaluationFactory.undetermined(
+                    "Undetermined if treatment $predicateDescription may have been administered since " +
+                            "${Format.date(minDate)} because it is the last treatment line and stop date missing"
+                )
+            }
+
+            matchingTreatments.any {
+                isMostRecentTreatment(
+                    it,
+                    record.oncologicalHistory
+                ) == null
+            } -> {
+                EvaluationFactory.undetermined(
+                    "Undetermined if treatment $predicateDescription may have been administered since " +
+                            "${Format.date(minDate)} because it is undetermined if treatment may be the last treatment line"
+                )
+            }
+
+            matchingTreatments.isNotEmpty() -> {
                 EvaluationFactory.fail("All treatments $predicateDescription administered before ${Format.date(minDate)}")
+            }
 
-            else ->
-                EvaluationFactory.fail("No treatments $predicateDescription in prior history")
+            else -> EvaluationFactory.fail("No treatments $predicateDescription in prior history")
         }
     }
 
@@ -45,5 +72,15 @@ object TreatmentVersusDateFunctions {
             maxDate, treatment.treatmentHistoryDetails?.stopYear, treatment.treatmentHistoryDetails?.stopMonth
         )
             ?: includeUnknown
+    }
+
+    private fun isMostRecentTreatment(entry: TreatmentHistoryEntry, history: List<TreatmentHistoryEntry>): Boolean? {
+        val (historyWithoutDates, historyWithDates) = history.partition { it.startYear == null }
+
+        return if (historyWithoutDates.isNotEmpty() && historyWithDates.maxWithOrNull(TreatmentHistoryEntryStartDateComparator()) == entry) {
+            null
+        } else {
+            historyWithDates.maxWithOrNull(TreatmentHistoryEntryStartDateComparator()) == entry
+        }
     }
 }
