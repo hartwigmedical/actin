@@ -5,6 +5,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -85,7 +86,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if most recent line is trial without a treatment specified`() {
+    fun `Should be undetermined if most recent line is trial without a treatment specified`() {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet(), isTrial = true))
         evaluateFunctions(
             EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
@@ -136,6 +137,23 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         assertEvaluation(EvaluationResult.PASS, evaluation)
         assertThat(evaluation.passMessagesStrings()).containsExactly("Has received match as most recent treatment")
     }
+
+    @Test
+    fun `Should ignore radiotherapy and pass when containing matching drug if not requiring current administration`() {
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY)), startYear = 2022
+            ),
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(Radiotherapy(name = "radiotherapy", isInternal = true)), startYear = 2023
+            )
+        )
+
+        val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Has received match as most recent treatment")
+    }
+
 
     @Test
     fun `Should be undetermined for therapy containing matching drug if requiring current administration and missing stop date`() {

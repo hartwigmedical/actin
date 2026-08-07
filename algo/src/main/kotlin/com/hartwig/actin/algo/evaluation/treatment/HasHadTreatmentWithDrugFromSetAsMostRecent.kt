@@ -15,13 +15,15 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val history = record.oncologicalHistory
+        val relevantHistory = record.oncologicalHistory.filter { entry ->
+            entry.allTreatments().isEmpty() || entry.allTreatments().any { it is DrugTreatment }
+        }
         val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
-        if (history.isEmpty()) {
+        if (relevantHistory.isEmpty()) {
             return EvaluationFactory.fail("Has not $drugsToMatchDisplay")
         }
 
-        val (historyWithoutDates, historyWithDates) = history.partition { it.startYear == null }
+        val (historyWithoutDates, historyWithDates) = relevantHistory.partition { it.startYear == null }
         val mostRecentTreatmentEntry = historyWithDates.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
 
         val drugNamesToMatch = drugsToMatch.map { drug -> drug.name.lowercase() }.toSet()
@@ -32,7 +34,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
 
         val mostRecentMatchingEntry = when {
             matchingDrugsInMostRecentLineWithDate.isNotEmpty() && historyWithoutDates.isEmpty() -> mostRecentTreatmentEntry
-            matchingDrugsInUnknownTreatmentLines.isNotEmpty() && history.size == 1 -> historyWithoutDates.firstOrNull()
+            matchingDrugsInUnknownTreatmentLines.isNotEmpty() && relevantHistory.size == 1 -> historyWithoutDates.firstOrNull()
             else -> null
         }
         val mostRecentMatchingEntryHasStopDate = mostRecentMatchingEntry?.treatmentHistoryDetails?.stopYear != null
@@ -62,7 +64,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
                 EvaluationFactory.undetermined("$display (date unknown)$currentlyDisplay")
             }
 
-            possibleTrialMatch(if (history.size == 1) history.first() else mostRecentTreatmentEntry) -> {
+            possibleTrialMatch(if (relevantHistory.size == 1) relevantHistory.first() else mostRecentTreatmentEntry) -> {
                 val currentlyDisplay = if (requireCurrentAdministration) " and unknown if currently still administered" else ""
                 EvaluationFactory.undetermined(
                     "Undetermined if treatment received in previous trial included " +
@@ -70,7 +72,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
                 )
             }
 
-            history.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.isNotEmpty() -> {
+            relevantHistory.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.isNotEmpty() -> {
                 val currentlyDisplay = if (requireCurrentAdministration) " and hence not currently administered" else ""
                 EvaluationFactory.fail("Has $drugsToMatchDisplay but not as most recent line$currentlyDisplay")
             }
