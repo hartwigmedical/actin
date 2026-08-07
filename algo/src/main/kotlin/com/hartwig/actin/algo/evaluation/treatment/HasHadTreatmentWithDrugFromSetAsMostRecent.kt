@@ -62,11 +62,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
             possibleTrialMatch(if (history.size == 1) history.first() else mostRecentTreatmentEntry) -> {
                 val currentlyDisplay = if (requireCurrentAdministration) " and unknown if currently still administered" else ""
                 EvaluationFactory.undetermined(
-                    "Undetermined if treatment received in previous trial included ${
-                        Format.concatItemsWithOr(
-                            drugsToMatch
-                        )
-                    }$currentlyDisplay"
+                    "Undetermined if treatment received in previous trial included " +
+                            "${Format.concatItemsWithOr(drugsToMatch)}$currentlyDisplay"
                 )
             }
 
