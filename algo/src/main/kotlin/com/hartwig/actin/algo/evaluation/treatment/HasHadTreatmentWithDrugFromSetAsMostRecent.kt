@@ -11,12 +11,14 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
-class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<Drug>) : EvaluationFunction {
+class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<Drug>, private val requireCurrentAdministration: Boolean) :
+    EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val history = record.oncologicalHistory
+        val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
         if (history.isEmpty()) {
-            return EvaluationFactory.fail("No prior treatments in history")
+            return EvaluationFactory.fail("Has not $drugsToMatchDisplay")
         }
 
         val (historyWithoutDates, historyWithDates) = history.partition { it.startYear == null }
@@ -34,31 +36,40 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
             else -> emptyList()
         }
 
-        val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
-
         return when {
             matchingDrugsInMostRecentLine.isNotEmpty() -> {
                 val matchingDrugDisplay = Format.concatItemsWithAnd(matchingDrugsInMostRecentLine)
-                EvaluationFactory.pass("Has received $matchingDrugDisplay as most recent treatment")
+                if (!requireCurrentAdministration) {
+                    EvaluationFactory.pass("Has received $matchingDrugDisplay as most recent treatment")
+                } else {
+                    EvaluationFactory.undetermined("Has received $matchingDrugDisplay as most recent treatment but unknown if currently still administered")
+                }
             }
 
             matchingDrugsInUnknownTreatmentLines.isNotEmpty() || matchingDrugsInMostRecentLineWithDate.isNotEmpty() -> {
                 val drugList = Format.concatItemsWithAnd(matchingDrugsInUnknownTreatmentLines + matchingDrugsInMostRecentLineWithDate)
                 val display = "Has received $drugList but undetermined if most recent"
-                EvaluationFactory.undetermined("$display (date unknown)")
+                val currentlyDisplay = if (requireCurrentAdministration) " and unknown if currently still administered" else ""
+                EvaluationFactory.undetermined("$display (date unknown)$currentlyDisplay")
             }
 
             possibleTrialMatch(if (history.size == 1) history.first() else mostRecentTreatmentEntry) -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${Format.concatItemsWithOr(drugsToMatch)}")
+                val currentlyDisplay = if (requireCurrentAdministration) " and unknown if currently still administered" else ""
+                EvaluationFactory.undetermined(
+                    "Undetermined if treatment received in previous trial included ${
+                        Format.concatItemsWithOr(
+                            drugsToMatch
+                        )
+                    }$currentlyDisplay"
+                )
             }
 
             history.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.isNotEmpty() -> {
-                EvaluationFactory.fail("Has $drugsToMatchDisplay but not as most recent line")
+                val currentlyDisplay = if (requireCurrentAdministration) " and hence not currently administered" else ""
+                EvaluationFactory.fail("Has $drugsToMatchDisplay but not as most recent line$currentlyDisplay")
             }
 
-            else -> {
-                EvaluationFactory.fail("Has not $drugsToMatchDisplay")
-            }
+            else -> EvaluationFactory.fail("Has not $drugsToMatchDisplay")
         }
     }
 
