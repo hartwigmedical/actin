@@ -60,6 +60,22 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     }
 
     @Test
+    fun `Should fail when matching treatment has unknown start date and known stop date before min date`() {
+        val treatmentHistory = listOf(matchingTreatment(stopYear = OLDER_DATE.year, stopMonth = OLDER_DATE.monthValue))
+        assertEvaluation(EvaluationResult.FAIL, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
+    fun `Should be undetermined when most recent line stops in min date year with unknown stop month`() {
+        val treatmentHistory = listOf(
+            matchingTreatment(
+                stopYear = TARGET_DATE.year, stopMonth = null, startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
     fun `Should pass when treatment history includes matching treatment within range`() {
         val treatmentHistory =
             listOf(NON_MATCHING_RECENT_TREATMENT, matchingOlderTreatment(), matchingTreatment(RECENT_DATE.year, RECENT_DATE.monthValue))
