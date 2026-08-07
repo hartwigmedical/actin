@@ -16,7 +16,9 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevantHistory = record.oncologicalHistory.filterNot { entry -> entry.allTreatments().all { it is Radiotherapy } }
+        val relevantHistory = record.oncologicalHistory.filterNot { entry ->
+            entry.allTreatments().isNotEmpty() && entry.allTreatments().all { it is Radiotherapy }
+        }
         val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
         if (relevantHistory.isEmpty()) {
             return EvaluationFactory.fail("Has not $drugsToMatchDisplay")
