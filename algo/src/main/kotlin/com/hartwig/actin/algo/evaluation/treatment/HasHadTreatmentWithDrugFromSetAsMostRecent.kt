@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Drug.Companion.UNKNOWN_PREFIX
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
-import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
@@ -16,8 +15,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
     EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val relevantHistory = record.oncologicalHistory.filterNot { entry ->
-            entry.allTreatments().isNotEmpty() && entry.allTreatments().all { it is Radiotherapy }
+        val relevantHistory = record.oncologicalHistory.filter { entry ->
+            entry.allTreatments().isEmpty() || entry.allTreatments().any { it is DrugTreatment }
         }
         val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
         if (relevantHistory.isEmpty()) {
