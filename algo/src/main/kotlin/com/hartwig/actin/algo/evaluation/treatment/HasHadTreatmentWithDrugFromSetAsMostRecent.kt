@@ -43,12 +43,15 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
         return when {
             matchingDrugsInMostRecentLine.isNotEmpty() -> {
                 val matchingDrugDisplay = Format.concatItemsWithAnd(matchingDrugsInMostRecentLine)
-                if (!requireCurrentAdministration) {
-                    EvaluationFactory.pass("Has received $matchingDrugDisplay as most recent treatment")
-                } else if (mostRecentMatchingEntryHasStopDate) {
-                    EvaluationFactory.fail("Does not currently receive $matchingDrugDisplay (treatment has stopped)")
-                } else {
-                    EvaluationFactory.undetermined("Has received $matchingDrugDisplay as most recent treatment but unknown if currently still administered")
+                when (requireCurrentAdministration) {
+                    false -> EvaluationFactory.pass("Has received $matchingDrugDisplay as most recent treatment")
+                    true -> {
+                        if (mostRecentMatchingEntryHasStopDate) {
+                            EvaluationFactory.fail("Does not currently receive $matchingDrugDisplay (treatment has stopped)")
+                        } else {
+                            EvaluationFactory.undetermined("Has received $matchingDrugDisplay as most recent treatment but unknown if currently still administered")
+                        }
+                    }
                 }
             }
 
