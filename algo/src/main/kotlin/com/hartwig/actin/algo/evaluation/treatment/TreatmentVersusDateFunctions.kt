@@ -26,11 +26,6 @@ object TreatmentVersusDateFunctions {
                 EvaluationFactory.pass("Treatment $predicateDescription administered since ${Format.date(minDate)}")
             }
 
-            matchingTreatments.any { treatmentSinceMinDate(it, minDate, true) } -> {
-                EvaluationFactory.undetermined("Treatment $predicateDescription administered with unknown date hence " +
-                        "undetermined if administered since ${Format.date(minDate)}")
-            }
-
             matchingPortionOfMostRecentTreatment?.let { stopDateCouldBeSinceMinDate(it, minDate) } == true -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if treatment $predicateDescription may have been administered since " +
@@ -38,11 +33,16 @@ object TreatmentVersusDateFunctions {
                 )
             }
 
+            matchingTreatments.any { treatmentSinceMinDate(it, minDate, true) } -> {
+                EvaluationFactory.undetermined("Treatment $predicateDescription administered with unknown date hence " +
+                        "undetermined if administered since ${Format.date(minDate)}")
+            }
+
             matchingTreatments.isNotEmpty() -> {
                 EvaluationFactory.fail("All treatments $predicateDescription administered before ${Format.date(minDate)}")
             }
 
-            else -> EvaluationFactory.fail("No treatments $predicateDescription in prior history")
+            else -> EvaluationFactory.fail("No treatments $predicateDescription in history")
         }
     }
 

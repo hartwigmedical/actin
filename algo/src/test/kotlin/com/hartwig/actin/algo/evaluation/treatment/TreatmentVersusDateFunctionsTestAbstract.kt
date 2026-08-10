@@ -13,8 +13,8 @@ import org.junit.jupiter.api.Test
 
 private const val YEARS_TO_SUBTRACT = 3
 
-private val CURRENT_DATE = LocalDate.of(2025, 6, 1)
-private val TARGET_DATE = CURRENT_DATE.minusYears(1)
+private val REFERENCE_DATE = LocalDate.of(2025, 6, 1)
+private val TARGET_DATE = REFERENCE_DATE.minusYears(1)
 private val RECENT_DATE = TARGET_DATE.plusYears(1)
 private val OLDER_DATE = TARGET_DATE.minusYears(1)
 private val NON_MATCHING_RECENT_TREATMENT = treatmentHistoryEntry(
@@ -98,14 +98,14 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     fun `Should pass when prior treatment has unknown stop date but start date within range`() {
         val treatmentHistory = listOf(
             NON_MATCHING_RECENT_TREATMENT,
-            matchingTreatment(CURRENT_DATE.year, CURRENT_DATE.monthValue, RECENT_DATE.year, RECENT_DATE.monthValue)
+            matchingTreatment(REFERENCE_DATE.year, REFERENCE_DATE.monthValue, RECENT_DATE.year, RECENT_DATE.monthValue)
         )
         assertEvaluation(EvaluationResult.PASS, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
     }
 
     @Test
     fun `Should fail when prior treatment has unknown stop date and older start date and not most recent treatment line`() {
-        val olderDate = CURRENT_DATE.minusYears(YEARS_TO_SUBTRACT.toLong())
+        val olderDate = REFERENCE_DATE.minusYears(YEARS_TO_SUBTRACT.toLong())
         val treatmentHistory = listOf(NON_MATCHING_RECENT_TREATMENT, matchingTreatment(null, null, olderDate.year, olderDate.monthValue))
         assertEvaluation(EvaluationResult.FAIL, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
     }
@@ -154,8 +154,8 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     private fun function() = functionForDate(TARGET_DATE)
 
     private fun matchingOlderTreatment() = matchingTreatment(
-        startYear = CURRENT_DATE.minusYears((YEARS_TO_SUBTRACT + 1).toLong()).year,
-        stopYear = CURRENT_DATE.minusYears(YEARS_TO_SUBTRACT.toLong()).year,
+        startYear = REFERENCE_DATE.minusYears((YEARS_TO_SUBTRACT + 1).toLong()).year,
+        stopYear = REFERENCE_DATE.minusYears(YEARS_TO_SUBTRACT.toLong()).year,
         stopMonth = null
     )
 }
