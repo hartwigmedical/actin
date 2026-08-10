@@ -98,7 +98,7 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     fun `Should pass when prior treatment has unknown stop date but start date within range`() {
         val treatmentHistory = listOf(
             NON_MATCHING_RECENT_TREATMENT,
-            matchingTreatment(REFERENCE_DATE.year, REFERENCE_DATE.monthValue, RECENT_DATE.year, RECENT_DATE.monthValue)
+            matchingTreatment(startYear = RECENT_DATE.year, startMonth = RECENT_DATE.monthValue, stopYear = null, stopMonth = null)
         )
         assertEvaluation(EvaluationResult.PASS, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
     }
