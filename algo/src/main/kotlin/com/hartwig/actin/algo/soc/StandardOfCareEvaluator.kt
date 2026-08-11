@@ -11,7 +11,8 @@ import com.hartwig.actin.doid.DoidModel
 private val EXCLUDED_TUMOR_DOIDS = setOf(
     DoidConstants.RECTUM_NEUROENDOCRINE_NEOPLASM_DOID,
     DoidConstants.NEUROENDOCRINE_TUMOR_DOID,
-    DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID
+    DoidConstants.NEUROENDOCRINE_CARCINOMA_DOID,
+    DoidConstants.SARCOMA_DOID
 )
 
 class StandardOfCareEvaluator(
