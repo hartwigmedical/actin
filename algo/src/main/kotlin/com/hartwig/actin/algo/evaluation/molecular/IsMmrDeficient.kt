@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
+import com.hartwig.actin.algo.evaluation.IhcTestItemConstants
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -16,7 +17,7 @@ import java.time.LocalDate
 class IsMmrDeficient: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val mmrIhcTestEvaluation = IhcTestEvaluation.create("MMR", record.ihcTests)
+        val mmrIhcTestEvaluation = IhcTestEvaluation.create(IhcTestItemConstants.MMR_TERM, record.ihcTests)
         val isMmrDeficientIhcResult = isMmrDeficientIhc(mmrIhcTestEvaluation)
         val isMmrProficientIhcResult = isMmrProficientIhc(mmrIhcTestEvaluation)
 

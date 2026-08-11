@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
+import com.hartwig.actin.algo.evaluation.IhcTestItemConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
@@ -30,7 +31,7 @@ class HasNonSquamousNsclc(private val doidModel: DoidModel) : EvaluationFunction
         val isExactLungCarcinoma = DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.LUNG_CARCINOMA_DOID)
         val isExactLungCancer = DoidEvaluationFunctions.isOfExactDoid(tumorDoids, DoidConstants.LUNG_CANCER_DOID)
 
-        val ihcTestEvaluation = IhcTestEvaluation.create(item = "SCC transformation", ihcTests = record.ihcTests)
+        val ihcTestEvaluation = IhcTestEvaluation.create(item = IhcTestItemConstants.SCC_TRANSFORMATION_TERM, ihcTests = record.ihcTests)
 
         return when {
             isSquamousNsclc -> EvaluationFactory.fail("Has no non-squamous NSCLC")
