@@ -34,8 +34,10 @@ class PrimaryTumorLocationBelongsToDoid(
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
             val undeterminedTumorTypes = tumorDoids.intersect(UNDETERMINED_TUMOR_TYPES)
             val mainCancerTypesToMatchTumorBelongsTo = mainCancerTypesToMatchTumorBelongsTo(doidsTumorBelongsTo, doidsToMatch)
-            val undeterminedTumorTypeMatchesOnlyMainCancerType = undeterminedTumorTypes.isNotEmpty() && mainCancerTypesToMatchTumorBelongsTo.isNotEmpty()
-                    && (doidsTumorBelongsTo - mainCancerTypesToMatchTumorBelongsTo).isEmpty() && doidsToMatch.intersect(tumorDoids).isEmpty()
+            val undeterminedTumorTypeMatchesOnlyMainCancerType =
+                undeterminedTumorTypes.isNotEmpty() && mainCancerTypesToMatchTumorBelongsTo.isNotEmpty()
+                        && (doidsTumorBelongsTo - mainCancerTypesToMatchTumorBelongsTo).isEmpty() && doidsToMatch.intersect(tumorDoids)
+                    .isEmpty()
 
             when {
                 !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined("Unknown tumor type")
