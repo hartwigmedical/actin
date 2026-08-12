@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions.isOfAtLeastOneDoidType
 import com.hartwig.actin.algo.evaluation.util.Format
+import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndAnd
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseWithCommaAndOr
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
@@ -12,6 +13,7 @@ import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
 
+val UNDETERMINED_TUMOR_TYPES = setOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, DoidConstants.SARCOMA_DOID)
 
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
@@ -30,9 +32,19 @@ class PrimaryTumorLocationBelongsToDoid(
             val doidTermsTumorBelongsTo = Format.concat(doidsToTerms(doidsTumorBelongsTo))
             val potentialAdenoSquamousMatches = isPotentialAdenoSquamousMatch(tumorDoids!!, doidsToMatch)
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
+            val undeterminedTumorTypes = tumorDoids.intersect(UNDETERMINED_TUMOR_TYPES)
+            val mainCancerTypesToMatchTumorBelongsTo = mainCancerTypesToMatchTumorBelongsTo(doidsTumorBelongsTo, doidsToMatch)
+            val undeterminedTumorTypeMatchesOnlyMainCancerType = undeterminedTumorTypes.isNotEmpty() && mainCancerTypesToMatchTumorBelongsTo.isNotEmpty()
+                    && (doidsTumorBelongsTo - mainCancerTypesToMatchTumorBelongsTo).isEmpty() && doidsToMatch.intersect(tumorDoids).isEmpty()
 
             when {
                 !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined("Unknown tumor type")
+
+                undeterminedTumorTypeMatchesOnlyMainCancerType -> {
+                    val tumorTypeTerms = concatLowercaseWithCommaAndAnd(doidsToTerms(undeterminedTumorTypes))
+                    val terms = concatLowercaseWithCommaAndOr(doidsToTerms(mainCancerTypesToMatchTumorBelongsTo))
+                    EvaluationFactory.undetermined("Undetermined if $tumorTypeTerms is considered $terms")
+                }
 
                 doidsTumorBelongsTo.isNotEmpty() && specificQuery != null -> {
                     val name = record.tumor.name
@@ -110,6 +122,11 @@ class PrimaryTumorLocationBelongsToDoid(
     private fun hasNeuroendocrineDoidAndNoNeuroendocrineDoidToMatch(tumorDoids: Set<String>, fullDoidToMatchTree: Set<String>): Boolean {
         return tumorDoids.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isNotEmpty()
                 && fullDoidToMatchTree.intersect(DoidConstants.NEUROENDOCRINE_DOIDS).isEmpty()
+    }
+
+    private fun mainCancerTypesToMatchTumorBelongsTo(doidsTumorBelongsTo: Set<String>, doidsToMatch: Set<String>): Set<String> {
+        return doidsToMatch.filter { doidToMatch -> doidToMatch in doidModel.mainCancerDoids(doidToMatch) && doidToMatch in doidsTumorBelongsTo }
+            .toSet()
     }
 
     private fun doidsToTerms(doids: Set<String>): Set<String> {
