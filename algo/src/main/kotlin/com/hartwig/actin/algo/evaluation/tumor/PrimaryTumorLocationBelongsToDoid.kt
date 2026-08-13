@@ -13,7 +13,7 @@ import com.hartwig.actin.doid.CuppaToDoidMapping
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.molecular.interpretation.TumorOriginInterpreter
 
-val UNDETERMINED_TUMOR_TYPES = setOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, DoidConstants.SARCOMA_DOID)
+val TUMOR_TYPES_WITH_SOC_BY_TUMOR_TYPE = setOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, DoidConstants.SARCOMA_DOID)
 
 class PrimaryTumorLocationBelongsToDoid(
     private val doidModel: DoidModel,
@@ -32,18 +32,18 @@ class PrimaryTumorLocationBelongsToDoid(
             val doidTermsTumorBelongsTo = Format.concat(doidsToTerms(doidsTumorBelongsTo))
             val potentialAdenoSquamousMatches = isPotentialAdenoSquamousMatch(tumorDoids!!, doidsToMatch)
             val undeterminedUnderMainCancerTypes = isUndeterminedUnderMainCancerType(tumorDoids, doidsToMatch)
-            val undeterminedTumorTypes = tumorDoids.intersect(UNDETERMINED_TUMOR_TYPES)
+            val tumorTypesWithSocByTumorType = tumorDoids.intersect(TUMOR_TYPES_WITH_SOC_BY_TUMOR_TYPE)
             val mainCancerTypesToMatchTumorBelongsTo = mainCancerTypesToMatchTumorBelongsTo(doidsTumorBelongsTo, doidsToMatch)
-            val undeterminedTumorTypeMatchesOnlyMainCancerType =
-                undeterminedTumorTypes.isNotEmpty() && mainCancerTypesToMatchTumorBelongsTo.isNotEmpty()
+            val hasTumorTypeWithSocMatchingOnlyMainCancerType =
+                tumorTypesWithSocByTumorType.isNotEmpty() && mainCancerTypesToMatchTumorBelongsTo.isNotEmpty()
                         && (doidsTumorBelongsTo - mainCancerTypesToMatchTumorBelongsTo).isEmpty() && doidsToMatch.intersect(tumorDoids)
                     .isEmpty()
 
             when {
                 !DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids) -> EvaluationFactory.undetermined("Unknown tumor type")
 
-                undeterminedTumorTypeMatchesOnlyMainCancerType -> {
-                    val tumorTypeTerms = concatLowercaseWithCommaAndAnd(doidsToTerms(undeterminedTumorTypes))
+                hasTumorTypeWithSocMatchingOnlyMainCancerType -> {
+                    val tumorTypeTerms = concatLowercaseWithCommaAndAnd(doidsToTerms(tumorTypesWithSocByTumorType))
                     val terms = concatLowercaseWithCommaAndOr(doidsToTerms(mainCancerTypesToMatchTumorBelongsTo))
                     EvaluationFactory.undetermined("Undetermined if $tumorTypeTerms is considered $terms")
                 }
