@@ -25,7 +25,16 @@ class IhcTestInterpreterTest {
 
     @Test
     fun `Should interpret IHC test based score value`() {
-        val result = interpreter.interpret(ihcTests = listOf(ihcMolecularTest("HER2", scoreLowerBound = 90.0, scoreUpperBound = 90.0, scoreValueUnit = "%")))
+        val result = interpreter.interpret(
+            ihcTests = listOf(
+                ihcMolecularTest(
+                    "HER2",
+                    scoreLowerBound = 90.0,
+                    scoreUpperBound = 90.0,
+                    scoreValueUnit = "%"
+                )
+            )
+        )
         assertThat(result).containsExactly(
             IhcTestInterpretation(
                 "IHC",
@@ -171,11 +180,39 @@ class IhcTestInterpreterTest {
     }
 
     @Test
+    fun `Should keep both measures for PD-L1 when they are both recent but have different measures`() {
+        val result = interpreter.interpret(
+            ihcTests = listOf(
+                ihcMolecularTest("PD-L1", scoreUpperBound = 1.0, scoreValueUnit = "%", isUpperBoundInclusive = false)
+                    .copy(measure = "TPS", measureDate = MORE_RECENT_DATE),
+                ihcMolecularTest("PD-L1", scoreLowerBound = 1.0, scoreUpperBound = 1.0)
+                    .copy(measure = "CPS", measureDate = MORE_RECENT_DATE),
+                ihcMolecularTest("PD-L1", scoreLowerBound = 10.0, scoreUpperBound = 1.0)
+                    .copy(measure = "CPS", measureDate = DEFAULT_DATE)
+            )
+        )
+        assertThat(result).containsExactly(
+            IhcTestInterpretation(
+                "IHC",
+                listOf(
+                    IhcTestResultInterpretation("PD-L1", "Score TPS < 1%", MORE_RECENT_DATE, 0),
+                    IhcTestResultInterpretation("PD-L1", "Score CPS 1", MORE_RECENT_DATE, 0)
+                )
+            )
+        )
+    }
+
+    @Test
     fun `Should interpret IHC test with exclusive upper bound`() {
         val result = interpreter.interpret(
             ihcTests = listOf(
-                ihcMolecularTest("PD-L1", scoreLowerBound = null, scoreUpperBound = 30.0, scoreValueUnit = "%",
-                    isUpperBoundInclusive = false)
+                ihcMolecularTest(
+                    "PD-L1",
+                    scoreLowerBound = null,
+                    scoreUpperBound = 30.0,
+                    scoreValueUnit = "%",
+                    isUpperBoundInclusive = false
+                )
             )
         )
         assertThat(result).containsExactly(
