@@ -39,6 +39,16 @@ class PrimaryTumorLocationBelongsToDoidTest {
             PARENT_DOID_2 to "parent term 2"
         ),
     )
+
+    private val sarcomaDoidModel = TestDoidModelFactory.createWithParentChildAndTermPerDoidMaps(
+        mapOf(DoidConstants.RECTUM_SARCOMA_DOID to DoidConstants.COLORECTAL_CANCER_DOID),
+        mapOf(
+            DoidConstants.RECTUM_SARCOMA_DOID to "rectum sarcoma",
+            DoidConstants.COLORECTAL_CANCER_DOID to "colorectal cancer",
+            DoidConstants.SARCOMA_DOID to "sarcoma"
+        )
+    ).copy(doidManualConfig = TestDoidManualConfigFactory.createWithOneMainCancerDoid(DoidConstants.COLORECTAL_CANCER_DOID))
+
     private val cuppaToDoidMapping = CuppaToDoidMapping(
         mapOf(
             CUPPA_RESULT_CHILD_1 to CuppaDoids(included = setOf(CHILD_DOID_1)),
@@ -83,6 +93,22 @@ class PrimaryTumorLocationBelongsToDoidTest {
         assertResultForDoid(EvaluationResult.PASS, function, stomachAdenocarcinoma)
         assertResultForDoids(EvaluationResult.PASS, function, setOf("something else", stomachAdenocarcinoma))
         assertResultForDoids(EvaluationResult.PASS, function, setOf(esophagusCancer, stomachAdenocarcinoma))
+    }
+
+    @Test
+    fun `Should be undetermined when patient has sarcoma doid and doid that is a child of the main cancer type doid to match`() {
+        val function = PrimaryTumorLocationBelongsToDoid(
+            sarcomaDoidModel, cuppaToDoidMapping, setOf(DoidConstants.COLORECTAL_CANCER_DOID), null
+        )
+        assertResultForDoids(EvaluationResult.UNDETERMINED, function, setOf(DoidConstants.RECTUM_SARCOMA_DOID, DoidConstants.SARCOMA_DOID))
+    }
+
+    @Test
+    fun `Should pass for sarcoma when sarcoma subtype is requested next to main cancer type`() {
+        val function = PrimaryTumorLocationBelongsToDoid(
+            sarcomaDoidModel, cuppaToDoidMapping, setOf(DoidConstants.COLORECTAL_CANCER_DOID, DoidConstants.RECTUM_SARCOMA_DOID), null
+        )
+        assertResultForDoids(EvaluationResult.PASS, function, setOf(DoidConstants.RECTUM_SARCOMA_DOID, DoidConstants.SARCOMA_DOID))
     }
 
     @Test
