@@ -231,7 +231,7 @@ class IhcTestInterpreterTest {
         val result = interpreter.interpret(
             ihcTests = listOf(
                 ihcMolecularTest("PD-L1", scoreUpperBound = 1.0, scoreValueUnit = "%", isUpperBoundInclusive = false)
-                    .copy(measure = null, measureDate = MORE_RECENT_DATE),
+                    .copy(measure = null, measureDate = DEFAULT_DATE),
                 ihcMolecularTest("PD-L1", scoreLowerBound = 10.0, scoreUpperBound = 10.0)
                     .copy(measure = "CPS", measureDate = DEFAULT_DATE)
             )
@@ -240,7 +240,7 @@ class IhcTestInterpreterTest {
             IhcTestInterpretation(
                 "IHC",
                 listOf(
-                    IhcTestResultInterpretation("PD-L1", "Score < 1%", MORE_RECENT_DATE, 0),
+                    IhcTestResultInterpretation("PD-L1", "Score < 1%", DEFAULT_DATE, 0),
                     IhcTestResultInterpretation("PD-L1", "Score CPS 10", DEFAULT_DATE, 0),
                 )
             )
