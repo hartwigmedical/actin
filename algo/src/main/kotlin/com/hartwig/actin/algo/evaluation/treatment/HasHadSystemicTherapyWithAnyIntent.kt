@@ -2,8 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentBeforeMaxDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.certainTreatmentBeforeMaxDate
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.certainTreatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
@@ -39,22 +40,14 @@ class HasHadSystemicTherapyWithAnyIntent(
             }
 
             evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments) { entry, date ->
-                treatmentBeforeMaxDate(
-                    entry,
-                    date,
-                    false
-                )
+                certainTreatmentBeforeMaxDate(entry, date)
             } -> {
                 EvaluationFactory.pass("Received $intentsLowercase systemic therapy at least $weeks weeks ago")
             }
 
             (evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::potentialTreatmentSinceMinDate)) ||
                     (evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments) { entry, date ->
-                        treatmentBeforeMaxDate(
-                            entry,
-                            date,
-                            true
-                        )
+                        potentialTreatmentBeforeMaxDate(entry, date)
                     }) -> {
                 EvaluationFactory.undetermined("Received $intentsLowercase systemic therapy but date unknown")
             }
@@ -85,7 +78,7 @@ class HasHadSystemicTherapyWithAnyIntent(
     }
 
     private fun anyTreatmentPotentiallyBeforeMaxDate(treatmentEntries: Iterable<TreatmentHistoryEntry>): Boolean {
-        return refDate == null || treatmentEntries.any { treatmentBeforeMaxDate(it, refDate, true) }
+        return refDate == null || treatmentEntries.any { certainTreatmentBeforeMaxDate(it, refDate) }
     }
 
     private fun evaluateTreatments(

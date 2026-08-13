@@ -97,33 +97,113 @@ class TreatmentVersusDateFunctionsTest {
     }
 
     @Test
-    fun `Should return true for treatmentBeforeMaxDate if stop date is before target date`() {
-        val treatment = treatment(stopYear = OLDER_DATE.year, stopMonth = OLDER_DATE.monthValue)
-        val result = TreatmentVersusDateFunctions.treatmentBeforeMaxDate(treatment, TARGET_DATE, false)
+    fun `Should return true for certainTreatmentBeforeMaxDate if start date is before target date`() {
+        val treatment = treatment(startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.certainTreatmentBeforeMaxDate(treatment, TARGET_DATE)
 
         assertThat(result).isTrue
     }
 
     @Test
-    fun `Should return false for treatmentBeforeMaxDate if stop date is after target date`() {
+    fun `Should return false for certainTreatmentBeforeMaxDate if start date is after target date`() {
+        val treatment = treatment(startYear = RECENT_DATE.year, startMonth = RECENT_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.certainTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isFalse
+    }
+
+    @Test
+    fun `Should return true for certainTreatmentBeforeMaxDate if stop date is before target date`() {
+        val treatment = treatment(stopYear = OLDER_DATE.year, stopMonth = OLDER_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.certainTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return false for certainTreatmentBeforeMaxDate if stop date is after target date`() {
         val treatment = treatment(stopYear = RECENT_DATE.year, stopMonth = RECENT_DATE.monthValue)
-        val result = TreatmentVersusDateFunctions.treatmentBeforeMaxDate(treatment, TARGET_DATE, false)
+        val result = TreatmentVersusDateFunctions.certainTreatmentBeforeMaxDate(treatment, TARGET_DATE)
 
         assertThat(result).isFalse
     }
 
     @Test
-    fun `Should return false for treatmentBeforeMaxDate if stop date is unknown and includeUnknown is false`() {
-        val treatment = treatment()
-        val result = TreatmentVersusDateFunctions.treatmentBeforeMaxDate(treatment, TARGET_DATE, false)
+    fun `Should return false for potentialTreatmentBeforeMaxDate if start date is after target date`() {
+        val treatment = treatment(startYear = RECENT_DATE.year, startMonth = RECENT_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
 
         assertThat(result).isFalse
     }
 
     @Test
-    fun `Should return true for treatmentBeforeMaxDate if stop date is unknown and includeUnknown is true`() {
+    fun `Should return true for potentialTreatmentBeforeMaxDate if start date is before target date`() {
+        val treatment = treatment(startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return true for potentialTreatmentBeforeMaxDate if stop date is before target date`() {
+        val treatment = treatment(stopYear = OLDER_DATE.year, stopMonth = OLDER_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return true for potentialTreatmentBeforeMaxDate if stop date is after target date`() {
+        val treatment = treatment(stopYear = RECENT_DATE.year, stopMonth = RECENT_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return true for potentialTreatmentBeforeMaxDate if all dates unknown`() {
         val treatment = treatment()
-        val result = TreatmentVersusDateFunctions.treatmentBeforeMaxDate(treatment, TARGET_DATE, true)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return true for potentialTreatmentBeforeMaxDate if maxStopDate is before target date`() {
+        val treatment = treatment(maxStopYear = OLDER_DATE.year, maxStopMonth = OLDER_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return true for potentialTreatmentBeforeMaxDate if maxStopDate is after target date`() {
+        val treatment = treatment(maxStopYear = RECENT_DATE.year, maxStopMonth = RECENT_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return false for potentialTreatmentBeforeMaxDate if both start date and stop date are after target date`() {
+        val treatment = treatment(stopYear = RECENT_DATE.year, stopMonth = RECENT_DATE.monthValue, startYear = RECENT_DATE.year, startMonth = RECENT_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isFalse
+    }
+
+    @Test
+    fun `Should return true for potentialTreatmentBeforeMaxDate if stop date is after target date but start date is before target date`() {
+        val treatment = treatment(stopYear = RECENT_DATE.year, stopMonth = RECENT_DATE.monthValue, startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
+
+        assertThat(result).isTrue
+    }
+
+    @Test
+    fun `Should return true for potentialTreatmentBeforeMaxDate if stop date is after target date and start date is unknown`() {
+        val treatment = treatment(stopYear = RECENT_DATE.year, stopMonth = RECENT_DATE.monthValue)
+        val result = TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate(treatment, TARGET_DATE)
 
         assertThat(result).isTrue
     }

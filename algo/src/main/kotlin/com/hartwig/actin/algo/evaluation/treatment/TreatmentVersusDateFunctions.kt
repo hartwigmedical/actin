@@ -20,14 +20,16 @@ object TreatmentVersusDateFunctions {
         return DateComparison.isAfterDate(minDate, treatment.stopYear(), treatment.stopMonth()) != false
     }
 
-    fun treatmentBeforeMaxDate(treatment: TreatmentHistoryEntry, maxDate: LocalDate, includeUnknown: Boolean): Boolean {
-        // The maxStopDate might be more recent than the actual stopDate. Using stopYear() and stopMonth() here could result
-        // in incorrect evaluation to 'false'
-        return DateComparison.isBeforeDate(
+    fun certainTreatmentBeforeMaxDate(treatment: TreatmentHistoryEntry, maxDate: LocalDate): Boolean {
+        return DateComparison.isBeforeDate(maxDate, treatment.startYear, treatment.startMonth) ?: DateComparison.isBeforeDate(
             maxDate,
             treatment.treatmentHistoryDetails?.stopYear,
             treatment.treatmentHistoryDetails?.stopMonth
         )
-            ?: includeUnknown
+        ?: false
+    }
+
+    fun potentialTreatmentBeforeMaxDate(treatment: TreatmentHistoryEntry, maxDate: LocalDate): Boolean {
+        return DateComparison.isBeforeDate(maxDate, treatment.startYear, treatment.startMonth) != false
     }
 }
