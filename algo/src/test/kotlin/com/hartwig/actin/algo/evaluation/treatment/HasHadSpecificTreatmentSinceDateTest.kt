@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import java.time.LocalDate
 
 class HasHadSpecificTreatmentSinceDateTest : TreatmentVersusDateFunctionsTestAbstract() {
-    
+
     private val treatmentQuery = DrugTreatment(
         name = "treatment", drugs = setOf(Drug(name = "Chemo drug", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
     )
@@ -18,7 +18,22 @@ class HasHadSpecificTreatmentSinceDateTest : TreatmentVersusDateFunctionsTestAbs
         return HasHadSpecificTreatmentSinceDate(treatmentQuery, minDate)
     }
 
-    override fun matchingTreatment(stopYear: Int?, stopMonth: Int?, startYear: Int?, startMonth: Int?): TreatmentHistoryEntry {
-        return treatmentHistoryEntry(setOf(treatmentQuery), startYear, startMonth, stopYear = stopYear, stopMonth = stopMonth)
+    override fun matchingTreatment(
+        stopYear: Int?,
+        stopMonth: Int?,
+        startYear: Int?,
+        startMonth: Int?,
+        maxStopYear: Int?,
+        maxStopMonth: Int?
+    ): TreatmentHistoryEntry {
+        return treatmentHistoryEntry(
+            setOf(treatmentQuery),
+            startYear,
+            startMonth,
+            stopYear = stopYear,
+            stopMonth = stopMonth,
+            maxStopYear = maxStopYear,
+            maxStopMonth = maxStopMonth
+        )
     }
 }

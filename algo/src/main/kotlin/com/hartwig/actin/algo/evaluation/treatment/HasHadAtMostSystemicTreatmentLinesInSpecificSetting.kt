@@ -20,10 +20,12 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
         val (_, includedIntentTreatments) = SystemicTreatmentAnalyser.partitionByIntent(priorSystemicTreatments, intentsToIgnore)
         val palliativeIntentTreatments = includedIntentTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
         val nonPalliativeIncludedTreatments = includedIntentTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) != true }
-        val (recentUncertainTreatments, _) =
-            SystemicTreatmentAnalyser.partitionRecentTreatments(nonPalliativeIncludedTreatments, referenceDate.minusMonths(6), true)
+        val (recentAndPotentiallyRecentTreatments, _) = SystemicTreatmentAnalyser.potentialRecentTreatments(
+            nonPalliativeIncludedTreatments,
+            referenceDate.minusMonths(6)
+        )
         val settingMessage = "$settingDescription setting"
-        val probableCount = palliativeIntentTreatments.size + recentUncertainTreatments.size
+        val probableCount = palliativeIntentTreatments.size + (recentAndPotentiallyRecentTreatments).toSet().size
 
         return when {
             includedIntentTreatments.isEmpty() ->
@@ -36,24 +38,23 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
 
             probableCount > maximumLines + 1 ->
                 EvaluationFactory.fail(
-                        "Likely exceeded maximum of $maximumLines systemic treatment line(s) in $settingMessage" +
-                                " ($probableCount lines likely in $settingMessage)"
+                    "Likely exceeded maximum of $maximumLines systemic treatment line(s) in $settingMessage" +
+                            " ($probableCount lines likely in $settingMessage)"
                 )
 
             probableCount > maximumLines ->
                 EvaluationFactory.undetermined(
-                        "Uncertain whether maximum of $maximumLines systemic treatment line(s) in $settingMessage is exceeded" +
-                                " ($probableCount lines likely in $settingMessage, setting unclear for some)"
+                    "Uncertain whether maximum of $maximumLines systemic treatment line(s) in $settingMessage is exceeded" +
+                            " ($probableCount lines likely in $settingMessage, setting unclear for some)"
                 )
 
             includedIntentTreatments.size > maximumLines ->
                 EvaluationFactory.undetermined(
-                        "Uncertain whether maximum of $maximumLines systemic treatment line(s) in $settingMessage is exceeded" +
-                                " (${includedIntentTreatments.size} lines with non-excluded intent, setting unclear for older lines)"
+                    "Uncertain whether maximum of $maximumLines systemic treatment line(s) in $settingMessage is exceeded" +
+                            " (${includedIntentTreatments.size} lines with non-excluded intent, setting unclear for older lines)"
                 )
 
-            else ->
-                EvaluationFactory.pass("Has had at most $maximumLines systemic treatment line(s) in $settingMessage")
+            else -> EvaluationFactory.pass("Has had at most $maximumLines systemic treatment line(s) in $settingMessage")
         }
     }
 }

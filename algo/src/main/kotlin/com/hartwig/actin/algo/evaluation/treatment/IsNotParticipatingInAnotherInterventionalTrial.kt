@@ -15,14 +15,22 @@ class IsNotParticipatingInAnotherInterventionalTrial(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hadRecentTrialTreatment =
-            record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
-
+            record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.certainTreatmentSinceMinDate(it, minStopDate) }
         val hasActiveOrRecentlyStoppedTrialMedication =
             selector.activeOrRecentlyStopped(record.medications ?: emptyList(), minStopDate).any(Medication::isTrialMedication)
 
         return when {
             hadRecentTrialTreatment || hasActiveOrRecentlyStoppedTrialMedication -> {
                 EvaluationFactory.warn("Recent trial treatment - undetermined if patient is participating in another interventional trial")
+            }
+
+            record.oncologicalHistory.any {
+                it.isTrial && TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(
+                    it,
+                    minStopDate
+                )
+            } -> {
+                EvaluationFactory.undetermined("Undetermined if patient may be participating in another interventional trial (missing stop date)")
             }
 
             else -> EvaluationFactory.pass("Assumed that patient is not participating in another interventional trial")

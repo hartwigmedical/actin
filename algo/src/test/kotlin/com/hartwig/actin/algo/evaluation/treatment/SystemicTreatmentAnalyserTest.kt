@@ -6,7 +6,8 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.las
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.maxSystemicTreatments
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.minSystemicTreatments
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.partitionByIntent
-import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.partitionRecentTreatments
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.potentialRecentTreatments
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.certainRecentTreatments
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -205,21 +206,32 @@ class SystemicTreatmentAnalyserTest {
     }
 
     @Test
-    fun `Should place treatments stopped within minDate in recent partition`() {
+    fun `Should place treatments in certainRecentTreatments and potentialRecentTreatments correctly`() {
         val minDate = referenceDate.minusMonths(6)
         val recent = treatmentHistoryEntry(
             setOf(systemicTreatment),
             stopYear = referenceDate.minusMonths(1).year,
             stopMonth = referenceDate.minusMonths(1).monthValue
         )
+        val recentPotentially = treatmentHistoryEntry(
+            setOf(systemicTreatment),
+            maxStopYear = referenceDate.minusMonths(1).year,
+            maxStopMonth = referenceDate.minusMonths(1).monthValue
+        )
         val nonRecent = treatmentHistoryEntry(
             setOf(systemicTreatment),
             stopYear = referenceDate.minusMonths(8).year,
             stopMonth = referenceDate.minusMonths(8).monthValue
         )
-        val (recentPartition, nonRecentPartition) = partitionRecentTreatments(listOf(recent, nonRecent), minDate, false)
-        assertThat(recentPartition).containsExactly(recent)
-        assertThat(nonRecentPartition).containsExactly(nonRecent)
+        val treatments = listOf(recent, recentPotentially, nonRecent)
+
+        val (certainRecentPartition, otherCertain) = certainRecentTreatments(treatments, minDate)
+        assertThat(certainRecentPartition).containsExactly(recent)
+        assertThat(otherCertain).containsExactly(recentPotentially, nonRecent)
+
+        val (potentialRecentPartition, otherPotential) = potentialRecentTreatments(treatments, minDate)
+        assertThat(potentialRecentPartition).containsExactly(recent, recentPotentially)
+        assertThat(otherPotential).containsExactly(nonRecent)
     }
 
     @Test
@@ -227,11 +239,11 @@ class SystemicTreatmentAnalyserTest {
         val minDate = referenceDate.minusMonths(6)
         val unknownDate = treatmentHistoryEntry(setOf(systemicTreatment))
 
-        val (recentWhenIncluded, nonRecentWhenIncluded) = partitionRecentTreatments(listOf(unknownDate), minDate, true)
+        val (recentWhenIncluded, nonRecentWhenIncluded) = potentialRecentTreatments(listOf(unknownDate), minDate)
         assertThat(recentWhenIncluded).containsExactly(unknownDate)
         assertThat(nonRecentWhenIncluded).isEmpty()
 
-        val (recentWhenExcluded, nonRecentWhenExcluded) = partitionRecentTreatments(listOf(unknownDate), minDate, false)
+        val (recentWhenExcluded, nonRecentWhenExcluded) = certainRecentTreatments(listOf(unknownDate), minDate)
         assertThat(recentWhenExcluded).isEmpty()
         assertThat(nonRecentWhenExcluded).containsExactly(unknownDate)
     }

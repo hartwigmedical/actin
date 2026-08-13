@@ -20,7 +20,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val oncologicalHistory = if (minDate == null) record.oncologicalHistory else historyAfterDate(record, false)
+        val oncologicalHistory = if (minDate == null) record.oncologicalHistory else certainHistoryAfterDate(record)
         val treatmentSummary =
             TreatmentSummaryForCategory.createForTreatmentHistory(oncologicalHistory, category, ::hasAnyMatchingTypeAndIntent)
 
@@ -49,12 +49,13 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
                 else -> {
                     minDate?.let {
                         TreatmentSummaryForCategory.createForTreatmentHistory(
-                            historyAfterDate(record, true), category, ::hasAnyMatchingTypeAndIntent
+                            potentialHistoryAfterDate(record), category, ::hasAnyMatchingTypeAndIntent
                         ).specificMatches.ifEmpty { null }
                     }?.let { unknownDateMatches ->
                         EvaluationFactory.undetermined(
                             "Has received $intentsList${drugTypeString(unknownDateMatches)} ${category.display()} " +
-                                    "(${unknownDateMatches.joinToString(", ") { it.treatmentDisplay()}}) with unknown date"
+                                    "(${unknownDateMatches.joinToString(", ") { it.treatmentDisplay() }}) " +
+                                    "but unknown if since $minDate"
                         )
                     } ?: EvaluationFactory.fail("Has not received $intentsList$allowedTypesString ${category.display()}")
                 }
@@ -69,11 +70,16 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
 
     private fun drugTypeString(entries: List<TreatmentHistoryEntry>): String {
         return allowedTypes?.let {
-            " ${Format.concatItemsWithAnd(it.intersect(entries.flatMap { e -> e.treatments }.flatMap { t -> t.types() }.toSet()))}"
+            val types = Format.concatItemsWithAnd(it.intersect(entries.flatMap { e -> e.treatments }.flatMap { t -> t.types() }.toSet()))
+            if (types.isNotEmpty()) " $types" else ""
         } ?: ""
     }
 
-    private fun historyAfterDate(record: PatientRecord, includeUnknown: Boolean): List<TreatmentHistoryEntry> {
-        return record.oncologicalHistory.filter { TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minDate!!, includeUnknown) }
+    private fun certainHistoryAfterDate(record: PatientRecord): List<TreatmentHistoryEntry> {
+        return record.oncologicalHistory.filter { TreatmentVersusDateFunctions.certainTreatmentSinceMinDate(it, minDate!!) }
+    }
+
+    private fun potentialHistoryAfterDate(record: PatientRecord): List<TreatmentHistoryEntry> {
+        return record.oncologicalHistory.filter { TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(it, minDate!!) }
     }
 }

@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.certainTreatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpretation
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
@@ -45,7 +46,7 @@ class HasHadAnyCancerTreatmentSinceDate(
         val ignoringString = if (typesToIgnore.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(typesToIgnore)}" else ""
 
         return when {
-            effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, false) } -> {
+            effectiveTreatmentHistory.any { certainTreatmentSinceMinDate(it, minDate) } -> {
                 EvaluationFactory.pass("Received$systemicMessage anti-cancer therapy within the last $monthsAgo months")
             }
 
@@ -53,17 +54,15 @@ class HasHadAnyCancerTreatmentSinceDate(
                 EvaluationFactory.undetermined("Inconclusive if patient had any prior$systemicMessage cancer treatment because participated in trial")
             }
 
-            effectiveTreatmentHistory.any { treatmentSinceMinDate(it, minDate, true) } -> {
-                EvaluationFactory.undetermined("Received$systemicMessage anti-cancer therapy but undetermined if in the last $monthsAgo months (date unknown)")
+            effectiveTreatmentHistory.any { potentialTreatmentSinceMinDate(it, minDate) } -> {
+                EvaluationFactory.undetermined("Received$systemicMessage anti-cancer therapy but undetermined if in the last $monthsAgo months")
             }
 
             effectiveTreatmentHistory.isEmpty() -> {
                 EvaluationFactory.fail("Has not received$systemicMessage anti-cancer therapy within $monthsAgo months$ignoringString")
             }
 
-            else -> {
-                EvaluationFactory.fail("Has not had any prior$systemicMessage cancer treatment$ignoringString")
-            }
+            else -> EvaluationFactory.fail("Has not had any prior$systemicMessage cancer treatment$ignoringString")
         }
     }
 }

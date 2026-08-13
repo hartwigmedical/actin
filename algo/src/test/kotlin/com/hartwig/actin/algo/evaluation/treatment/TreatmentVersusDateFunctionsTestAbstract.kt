@@ -20,9 +20,6 @@ private val OLDER_DATE = TARGET_DATE.minusYears(1)
 private val NON_MATCHING_RECENT_TREATMENT = treatmentHistoryEntry(
     setOf(treatment("other", false)), startYear = RECENT_DATE.year, startMonth = RECENT_DATE.monthValue
 )
-private val NON_MATCHING_OLDER_TREATMENT = treatmentHistoryEntry(
-    setOf(treatment("other", false)), startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue
-)
 private val NON_MATCHING_TREATMENT_NO_DATE = treatmentHistoryEntry(
     setOf(treatment("other", false)), startYear = null, startMonth = null
 )
@@ -32,7 +29,12 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     abstract fun functionForDate(minDate: LocalDate): EvaluationFunction
 
     abstract fun matchingTreatment(
-        stopYear: Int?, stopMonth: Int?, startYear: Int? = null, startMonth: Int? = null
+        stopYear: Int?,
+        stopMonth: Int?,
+        startYear: Int? = null,
+        startMonth: Int? = null,
+        maxStopYear: Int? = null,
+        maxStopMonth: Int? = null
     ): TreatmentHistoryEntry
 
     @Test
@@ -83,6 +85,12 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     }
 
     @Test
+    fun `Should be undetermined when all dates are unknown`() {
+        val treatmentHistory = listOf(NON_MATCHING_RECENT_TREATMENT, matchingTreatment(null, null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+    }
+
+    @Test
     fun `Should be undetermined when matching treatment has unknown start and stop year`() {
         val treatmentHistory = listOf(NON_MATCHING_RECENT_TREATMENT, matchingOlderTreatment(), matchingTreatment(null, 10))
         assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
@@ -104,13 +112,6 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     }
 
     @Test
-    fun `Should fail when prior treatment has unknown stop date and older start date and not most recent treatment line`() {
-        val olderDate = REFERENCE_DATE.minusYears(YEARS_TO_SUBTRACT.toLong())
-        val treatmentHistory = listOf(NON_MATCHING_RECENT_TREATMENT, matchingTreatment(null, null, olderDate.year, olderDate.monthValue))
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
-    }
-
-    @Test
     fun `Should fail when matching treatment is most recent line but stop date known and before min date`() {
         val treatmentHistory = listOf(
             matchingTreatment(
@@ -124,31 +125,39 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
     }
 
     @Test
-    fun `Should be undetermined when matching treatment has unknown stop date and older start date but is most recent line`() {
+    fun `Should be undetermined when matching treatment has older start date but max stop date is after min date`() {
         val treatmentHistory = listOf(
-            NON_MATCHING_OLDER_TREATMENT,
-            matchingTreatment(startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue + 1, stopYear = null, stopMonth = null)
+            NON_MATCHING_TREATMENT_NO_DATE,
+            matchingTreatment(
+                startYear = OLDER_DATE.year,
+                startMonth = OLDER_DATE.monthValue + 1,
+                stopYear = null,
+                stopMonth = null,
+                maxStopYear = RECENT_DATE.year,
+                maxStopMonth = RECENT_DATE.monthValue
+            )
         )
         val evaluation = function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if treatment matching 'Treatment' may have been " +
-                    "administered since 01-Jun-2024 because it is the last treatment line and stop date missing"
+            "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 (missing stop date)"
         )
     }
 
     @Test
-    fun `Should be undetermined when matching treatment is most recent line but there are treatments with unknown date`() {
+    fun `Should fail when prior treatment has unknown stop date but older start date and max stop date`() {
         val treatmentHistory = listOf(
-            NON_MATCHING_TREATMENT_NO_DATE,
-            matchingTreatment(startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue + 1, stopYear = null, stopMonth = null)
+            NON_MATCHING_RECENT_TREATMENT,
+            matchingTreatment(
+                startYear = OLDER_DATE.year,
+                startMonth = OLDER_DATE.monthValue,
+                stopYear = null,
+                stopMonth = null,
+                maxStopYear = OLDER_DATE.year,
+                maxStopMonth = OLDER_DATE.monthValue
+            )
         )
-        val evaluation = function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if treatment matching 'Treatment' may have been " +
-                    "administered since 01-Jun-2024 because it is the last treatment line and stop date missing"
-        )
+        assertEvaluation(EvaluationResult.FAIL, function().evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
     }
 
     private fun function() = functionForDate(TARGET_DATE)

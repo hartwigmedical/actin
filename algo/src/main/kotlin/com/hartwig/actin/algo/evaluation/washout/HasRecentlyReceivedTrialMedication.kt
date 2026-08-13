@@ -19,13 +19,17 @@ class HasRecentlyReceivedTrialMedication(
             return EvaluationFactory.undetermined("Recent trial medication undetermined (required stop date prior to registration date)")
         }
 
-        val hadRecentTrialTreatment =
-            record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minStopDate, false) }
+        val hadRecentTrialTreatment = record.oncologicalHistory.any {
+            it.isTrial && TreatmentVersusDateFunctions.certainTreatmentSinceMinDate(
+                it,
+                minStopDate
+            )
+        }
 
-        val hadTrialTreatmentWithUnknownDate =
-            record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.treatmentSinceMinDate(it, minStopDate, true) }
+        val hadPotentiallyRecentTrialTreatment =
+            record.oncologicalHistory.any { it.isTrial && TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(it, minStopDate) }
 
-        if (!(hadRecentTrialTreatment || hadTrialTreatmentWithUnknownDate) && record.medications == null) {
+        if (!(hadRecentTrialTreatment || hadPotentiallyRecentTrialTreatment) && record.medications == null) {
             return MEDICATION_NOT_PROVIDED
         }
 
@@ -33,12 +37,12 @@ class HasRecentlyReceivedTrialMedication(
             selector.activeOrRecentlyStopped(record.medications ?: emptyList(), minStopDate).any(Medication::isTrialMedication)
 
         return when {
-            hasActiveOrRecentlyStoppedTrialMedication || hadRecentTrialTreatment -> {
+            hadRecentTrialTreatment || hasActiveOrRecentlyStoppedTrialMedication -> {
                 EvaluationFactory.pass("Recent trial medication - pay attention to washout period")
             }
 
-            hadTrialTreatmentWithUnknownDate -> {
-                EvaluationFactory.undetermined("Received trial medication but date unknown")
+            hadPotentiallyRecentTrialTreatment -> {
+                EvaluationFactory.undetermined("Received trial treatment but unknown if recent (missing stop date)")
             }
 
             else -> {
