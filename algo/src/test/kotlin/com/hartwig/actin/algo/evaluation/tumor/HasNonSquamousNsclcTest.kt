@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
+import com.hartwig.actin.algo.evaluation.IhcTestItemConstants
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IhcTest
@@ -43,7 +44,7 @@ class HasNonSquamousNsclcTest {
     fun `Should return warn when known non-squamous NSCLC type but possible SCC transformation`() {
         val evaluation = function.evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
-                listOf(IhcTest(item = "SCC transformation", scoreText = "Possible")),
+                listOf(IhcTest(item = IhcTestItemConstants.SCC_TRANSFORMATION_TERM, scoreText = "Possible")),
                 setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)
             )
         )
@@ -55,7 +56,7 @@ class HasNonSquamousNsclcTest {
     fun `Should return warn when known non-squamous NSCLC type but certain SCC transformation`() {
         val evaluation = function.evaluate(
             TumorTestFactory.withIhcTestsAndDoids(
-                listOf(IhcTest(item = "SCC transformation", scoreText = "Positive")),
+                listOf(IhcTest(item = IhcTestItemConstants.SCC_TRANSFORMATION_TERM, scoreText = "Positive")),
                 setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)
             )
         )

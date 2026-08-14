@@ -491,7 +491,7 @@ class ClinicalDAO(private val context: DSLContext) {
                 Tables.BLOODTRANSFUSION.DATE,
                 Tables.BLOODTRANSFUSION.PRODUCT
             )
-                .values(patientId, bloodTransfusion.date, bloodTransfusion.product)
+                .values(patientId, bloodTransfusion.date, bloodTransfusion.product.display())
                 .execute()
         }
     }

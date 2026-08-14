@@ -14,10 +14,10 @@ class IhcTestInterpreter {
     private val interpretationBuilder = IhcTestInterpretationBuilder()
 
     fun interpret(ihcTests: List<IhcTest>): List<IhcTestInterpretation> {
-        val latestIhcTestsByItem = ihcTests.groupBy { it.item }.map { (_, tests) ->
+        val latestIhcTestsByItemAndMeasure = ihcTests.groupBy { Pair(it.item, it.measure) }.map { (_, tests) ->
             tests.maxByOrNull { it.measureDate ?: LocalDate.MIN } ?: tests.first()
         }
-        latestIhcTestsByItem.forEach(::interpret)
+        latestIhcTestsByItemAndMeasure.forEach(::interpret)
         return interpretationBuilder.build()
     }
 
@@ -32,7 +32,7 @@ class IhcTestInterpreter {
                 interpretationBuilder.addInterpretation(type, item, formatValueAndTextBasedIhcTest(test), date)
             }
 
-            scoreText != null -> interpretationBuilder.addInterpretation(type, item, scoreText, date)
+            scoreText != null -> interpretationBuilder.addInterpretation(type, item, formatTextBasedIhcTest(test), date)
             hasNumericScore -> interpretationBuilder.addInterpretation(type, item, formatValueBasedIhcTest(test), date)
             else -> logger.error { "IHC test is neither text-based nor value-based: $test" }
         }
@@ -40,6 +40,11 @@ class IhcTestInterpreter {
 
     private fun formatValueAndTextBasedIhcTest(valueTest: IhcTest): String {
         return "${valueTest.scoreText}, ${formatValueBasedIhcTest(valueTest).replaceFirstChar { it.lowercase() }}"
+    }
+
+
+    private fun formatTextBasedIhcTest(valueTest: IhcTest): String {
+        return valueTest.measure?.let { "$it ${valueTest.scoreText}" } ?: "${valueTest.scoreText}"
     }
 
     private fun formatValueBasedIhcTest(valueTest: IhcTest): String {

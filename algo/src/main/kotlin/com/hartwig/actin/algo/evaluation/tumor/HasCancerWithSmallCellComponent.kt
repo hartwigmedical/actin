@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
+import com.hartwig.actin.algo.evaluation.IhcTestItemConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.doid.DoidModel
@@ -16,18 +17,19 @@ class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : Evalua
             return EvaluationFactory.undetermined("Undetermined if tumor may have small cell component")
         }
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
-        val ihcTestEvaluation = IhcTestEvaluation.create(item = "SCLC transformation", ihcTests = record.ihcTests)
+        val ihcTestEvaluations =
+            IhcTestItemConstants.SMALL_CELL_TRANSFORMATION_TERMS.map { IhcTestEvaluation.create(it, record.ihcTests) }
 
         return when {
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, tumorDoids, record.tumor.name) -> {
                 EvaluationFactory.pass("Has cancer with small cell component")
             }
 
-            isNsclc && ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() -> {
+            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
                 EvaluationFactory.warn("Has potentially cancer with small cell component (positive SCLC transformation)")
             }
 
-            isNsclc && ihcTestEvaluation.hasPossiblePositiveResultsForItem() -> {
+            isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasPossiblePositiveResultsForItem) -> {
                 EvaluationFactory.warn("Has potentially cancer with small cell component (possible SCLC transformation)")
             }
 
