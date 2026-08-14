@@ -173,9 +173,8 @@
     {
       "name": null,
       "icdCodes": [],
-      "qtcfValue": null,
-      "qtcfUnit": null,
-      "comorbidityClass": "ECG"
+      "measurementType": "OTHER_ECG",
+      "comorbidityClass": "HEART_MEASUREMENT"
     }
   ],
   "ihcTests": [
