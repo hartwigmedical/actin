@@ -9,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.BloodTransfusion
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
+import com.hartwig.actin.datamodel.clinical.TransfusionProduct
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
@@ -96,7 +97,7 @@ class RequiresRegularHematopoieticSupportTest {
         }
 
         private fun create(date: LocalDate): BloodTransfusion {
-            return BloodTransfusion(product = "", date = date)
+            return BloodTransfusion(product = TransfusionProduct.ERYTHROCYTE, date = date)
         }
     }
 }

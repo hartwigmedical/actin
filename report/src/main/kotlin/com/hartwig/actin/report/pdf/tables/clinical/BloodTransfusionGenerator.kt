@@ -28,7 +28,7 @@ class BloodTransfusionGenerator(
         table.addHeaderCell(Cells.createHeader(""))
 
         for (bloodTransfusion in bloodTransfusions) {
-            table.addCell(Cells.createContent(bloodTransfusion.product))
+            table.addCell(Cells.createContent(bloodTransfusion.product.display()))
             table.addCell(Cells.createContent(date(bloodTransfusion.date)))
             table.addCell(Cells.createContent(""))
         }
