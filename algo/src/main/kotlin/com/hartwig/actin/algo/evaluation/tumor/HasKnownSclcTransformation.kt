@@ -4,6 +4,7 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.IhcTestEvaluation
+import com.hartwig.actin.algo.evaluation.IhcTestItemConstants
 import com.hartwig.actin.algo.evaluation.molecular.MolecularRuleEvaluator
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
@@ -25,7 +26,7 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationF
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, record.tumor.doids, record.tumor.name)
 
         val ihcTestEvaluations =
-            listOf("SCLC transformation", "small cell transformation").map { IhcTestEvaluation.create(it, record.ihcTests) }
+            IhcTestItemConstants.SMALL_CELL_TRANSFORMATION_TERMS.map { IhcTestEvaluation.create(it, record.ihcTests) }
 
         val indicativeGenes = setOf("TP53", "RB1")
         val allIndicativeGenesInactivated = indicativeGenes.all { MolecularRuleEvaluator.geneIsInactivatedForPatient(it, record) }

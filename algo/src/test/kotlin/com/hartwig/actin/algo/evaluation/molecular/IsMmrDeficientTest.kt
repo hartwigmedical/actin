@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
+import com.hartwig.actin.algo.evaluation.IhcTestItemConstants
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.driver.CopyNumberType
@@ -13,6 +14,8 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.molecular.util.GeneConstants
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+
+private const val MMR_TERM = IhcTestItemConstants.MMR_TERM
 
 class IsMmrDeficientTest {
 
@@ -146,7 +149,7 @@ class IsMmrDeficientTest {
 
     @Test
     fun `Should pass with IHC MMR deficient test result`() {
-        val result = function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))
+        val result = function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Deficient")))
 
         assertMolecularEvaluation(EvaluationResult.PASS, result)
         assertThat(result.passMessagesStrings()).containsExactly("dMMR by IHC")
@@ -156,7 +159,7 @@ class IsMmrDeficientTest {
     fun `Should fail with IHC MMR proficient test result`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")))
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Proficient")))
         )
     }
 
@@ -181,7 +184,7 @@ class IsMmrDeficientTest {
             MolecularTestFactory.withOnlyIhcTests(
                 listOf(
                     MolecularTestFactory.ihcTest(
-                        "MMR",
+                        MMR_TERM,
                         scoreText = "Proficient",
                         impliesIndeterminate = true
                     )
@@ -200,7 +203,7 @@ class IsMmrDeficientTest {
                 MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(
                     listOf(
                         MolecularTestFactory.ihcTest(
-                            "MMR",
+                            MMR_TERM,
                             scoreText = "Proficient"
                         )
                     ), true, msiVariant(isReportable = true, isBiallelic = true)
@@ -217,7 +220,7 @@ class IsMmrDeficientTest {
                 MolecularTestFactory.withIhcTestsMicrosatelliteStabilityAndVariant(
                     listOf(
                         MolecularTestFactory.ihcTest(
-                            "MMR",
+                            MMR_TERM,
                             scoreText = "Deficient"
                         )
                     ), false, msiVariant(isReportable = true)
@@ -240,7 +243,7 @@ class IsMmrDeficientTest {
             EvaluationResult.PASS,
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord()
-                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Deficient")))
+                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Deficient")))
             )
         )
     }
@@ -251,7 +254,7 @@ class IsMmrDeficientTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord()
-                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient")))
+                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Proficient")))
             )
         )
     }
@@ -262,7 +265,7 @@ class IsMmrDeficientTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord()
-                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest("MMR", scoreText = "Proficient", impliesIndeterminate = true)))
+                    .copy(ihcTests = listOf(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Proficient", impliesIndeterminate = true)))
             )
         )
     }

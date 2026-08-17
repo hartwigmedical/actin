@@ -12,22 +12,23 @@ import com.hartwig.actin.icd.IcdModel
 class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val ecgsIcdCodes = record.ecgs.flatMap { it.icdCodes }
+        val ecgs = record.ecgs
+        val ecgsIcdCodes = ecgs.flatMap { it.icdCodes }.toSet()
         val cardiacArrhythmiaComorbidities = icdModel.findInstancesMatchingAnyIcdCode(
             record.comorbidities,
             listOf(IcdCode(IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK))
-        ).fullMatches.filterNot { it.icdCodes.any { icdCode -> icdCode in ecgsIcdCodes } }
+        ).fullMatches.filterNot { it.icdCodes.any(ecgsIcdCodes::contains) }
 
-        val aberrations = Format.concat(record.ecgs.map { it.name ?: "details unknown" })
+        val aberrations = Format.concat(ecgs.map { it.name ?: "details unknown" })
 
         return when {
-            record.ecgs.isNotEmpty() && cardiacArrhythmiaComorbidities.isNotEmpty() -> {
+            ecgs.isNotEmpty() && cardiacArrhythmiaComorbidities.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
                     "ECG abnormalities ($aberrations) and cardiac arrhythmia (${Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)}) in history"
                 )
             }
 
-            record.ecgs.isNotEmpty() -> {
+            ecgs.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass("ECG abnormalities present ($aberrations)")
             }
 

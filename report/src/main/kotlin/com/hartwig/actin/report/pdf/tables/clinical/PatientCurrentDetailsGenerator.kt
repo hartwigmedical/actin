@@ -3,7 +3,8 @@ package com.hartwig.actin.report.pdf.tables.clinical
 import com.hartwig.actin.algo.evaluation.toxicity.ToxicityFunctions
 import com.hartwig.actin.clinical.sort.SurgeryDescendingDateComparator
 import com.hartwig.actin.datamodel.PatientRecord
-import com.hartwig.actin.datamodel.clinical.EcgMeasure
+import com.hartwig.actin.datamodel.clinical.HeartMeasurement
+import com.hartwig.actin.datamodel.clinical.HeartMeasurementType
 import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.Surgery
 import com.hartwig.actin.datamodel.clinical.Toxicity
@@ -50,13 +51,12 @@ class PatientCurrentDetailsGenerator(
             val description = aberration ?: labels.clinicalDetails.valueEcgUnknown()
             table.addCell(Cells.createValue(description))
 
-            val qtcfMeasure = ecg.qtcfMeasure
-            if (qtcfMeasure != null) {
-                createMeasureCells(table, labels.clinicalDetails.keyQtcf(), qtcfMeasure)
+            if (ecg.measurementType == HeartMeasurementType.QTCF) {
+                createMeasureCells(table, labels.clinicalDetails.keyQtcf(), ecg)
             }
-            val jtcMeasure = ecg.jtcMeasure
-            if (jtcMeasure != null) {
-                createMeasureCells(table, labels.clinicalDetails.keyJtc(), jtcMeasure)
+
+            if (ecg.measurementType == HeartMeasurementType.JTC) {
+                createMeasureCells(table, labels.clinicalDetails.keyJtc(), ecg)
             }
         }
         if (record.clinicalStatus.lvef != null) {
@@ -72,9 +72,9 @@ class PatientCurrentDetailsGenerator(
         return table
     }
 
-    private fun createMeasureCells(table: Table, key: String, measure: EcgMeasure) {
+    private fun createMeasureCells(table: Table, key: String, measure: HeartMeasurement) {
         table.addCell(Cells.createKey(key))
-        table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value.toDouble())).toString() + " " + measure.unit)
+        table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value!!)).toString() + " " + measure.unit)
     }
 
     private fun toxicities(record: PatientRecord): String {
