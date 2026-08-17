@@ -13,6 +13,8 @@ private const val DEFAULT_CODE = "1A"
 
 class IcdDeserializerTest {
 
+    private val defaultTestNodes = CsvReader.readFromFile(ResourceLocator.resourceOnClasspath("icd/example_icd.tsv"))
+
     @Test
     fun `Should correctly solve codes of full parent tree for regular chapters`() {
         val chapter = createRawNode(classKind = ClassKind.CHAPTER)
@@ -49,10 +51,7 @@ class IcdDeserializerTest {
 
     @Test
     fun `Should correctly return ICD Node with full parent tree for extension chapters`() {
-        val extensionNodes =
-            CsvReader.readFromFile(ResourceLocator.resourceOnClasspath("icd/example_icd.tsv")).filter { it.chapterNo == "X" }
-
-        val result = IcdDeserializer.deserialize(extensionNodes)
+        val result = IcdDeserializer.deserialize(defaultTestNodes.filter { it.chapterNo == "X" })
         assertThat(result).hasSize(8)
         assertThat(result[0].parentTreeCodes).isEmpty()
         assertThat(result[1].parentTreeCodes).containsExactly("X")
@@ -66,8 +65,7 @@ class IcdDeserializerTest {
 
     @Test
     fun `Should mark nodes from the extension chapter as extension and all other nodes as main`() {
-        val rawNodes = CsvReader.readFromFile(ResourceLocator.resourceOnClasspath("icd/example_icd.tsv"))
-        val result = IcdDeserializer.deserialize(rawNodes).associateBy { it.title }
+        val result = IcdDeserializer.deserialize(defaultTestNodes).associateBy { it.title }
 
         assertThat(result["Test category"]!!.isExtension).isFalse()
         assertThat(result["Test chapter 1"]!!.isExtension).isFalse()
