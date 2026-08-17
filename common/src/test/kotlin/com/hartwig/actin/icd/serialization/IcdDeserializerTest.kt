@@ -65,6 +65,18 @@ class IcdDeserializerTest {
     }
 
     @Test
+    fun `Should mark nodes from the extension chapter as extension and all other nodes as main`() {
+        val rawNodes = CsvReader.readFromFile(ResourceLocator.resourceOnClasspath("icd/example_icd.tsv"))
+        val result = IcdDeserializer.deserialize(rawNodes).associateBy { it.title }
+
+        assertThat(result["Test category"]!!.isExtension).isFalse()
+        assertThat(result["Test chapter 1"]!!.isExtension).isFalse()
+        assertThat(result["Extension chapter X"]!!.isExtension).isTrue()
+        assertThat(result["Extension block X1"]!!.isExtension).isTrue()
+        assertThat(result["Extension category X1"]!!.isExtension).isTrue()
+    }
+
+    @Test
     fun `Should remove leading hyphens from titles before adding to IcdNode object`() {
         val rawNodes = listOf(
             createRawNode(title = "  -title"),

@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test
 class HasIntoleranceWithSpecificIcdTitleTest {
 
     private val targetIcdTitle = "targetParentTitle&targetExtensionParentTitle"
-    private val icdModel =
-        TestIcdFactory.createModelWithSpecificNodes(listOf("target", "targetParent", "targetExtension", "targetExtensionParent"))
+    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(
+        mainNodePrefixes = listOf("target", "targetParent"),
+        extensionNodePrefixes = listOf("targetExtension", "targetExtensionParent")
+    )
     private val targetIcdCode = icdModel.resolveCodeForTitle(targetIcdTitle)!!
     private val childCode = icdModel.resolveCodeForTitle("targetTitle&targetExtensionTitle")!!
     private val function = HasIntoleranceWithSpecificIcdTitle(icdModel, targetIcdTitle)

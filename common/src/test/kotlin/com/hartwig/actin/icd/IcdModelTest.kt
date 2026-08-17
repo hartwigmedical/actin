@@ -6,6 +6,7 @@ import com.hartwig.actin.datamodel.clinical.Intolerance
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
+import com.hartwig.actin.icd.datamodel.IcdNode
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalStateException
@@ -14,8 +15,10 @@ import org.junit.jupiter.api.Test
 class IcdModelTest {
 
     private val date = LocalDate.of(2024, 12, 1)
-    private val icdModel =
-        TestIcdFactory.createModelWithSpecificNodes(listOf("targetMain", "targetExtension", "targetMainParent", "targetExtensionParent"))
+    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(
+        mainNodePrefixes = listOf("targetMain", "targetMainParent"),
+        extensionNodePrefixes = listOf("targetExtension", "targetExtensionParent")
+    )
     private val correctMainCode = "targetMainParentCode"
     private val childOfCorrectMainCode = "targetMainCode"
     private val correctExtensionCode = "targetExtensionParentCode"
@@ -49,12 +52,74 @@ class IcdModelTest {
     @Test
     fun `Should handle title validation correctly for regular and extended titles`() {
         assertThat(icdModel.isValidIcdTitle("targetMainTitle")).isTrue()
-        assertThat(icdModel.isValidIcdTitle("targetExtensionTitle")).isTrue()
         assertThat(icdModel.isValidIcdTitle("targetMainTitle&targetExtensionTitle")).isTrue()
         assertThat(icdModel.isValidIcdTitle("targetMainTitle|targetExtensionTitle")).isFalse()
         assertThat(icdModel.isValidIcdTitle("invalidTitle")).isFalse()
         assertThat(icdModel.isValidIcdTitle("targetMainTitle&invalidTitle")).isFalse()
         assertThat(icdModel.isValidIcdTitle("targetMainTitle&targetExtensionTitle&targetExtensionParentTitle")).isFalse()
+    }
+
+    @Test
+    fun `Should reject extension title used as main title`() {
+        assertThat(icdModel.isValidIcdTitle("targetExtensionTitle")).isFalse()
+        assertThat(icdModel.resolveCodeForTitle("targetExtensionTitle")).isNull()
+        assertThat(icdModel.invalidTitleReason("targetExtensionTitle"))
+            .isEqualTo("ICD title [targetExtensionTitle] is an extension title and cannot be used as a main title")
+    }
+
+    @Test
+    fun `Should reject main title used as extension title`() {
+        assertThat(icdModel.isValidIcdTitle("targetMainTitle&targetMainParentTitle")).isFalse()
+        assertThat(icdModel.resolveCodeForTitle("targetMainTitle&targetMainParentTitle")).isNull()
+        assertThat(icdModel.invalidTitleReason("targetMainTitle&targetMainParentTitle"))
+            .isEqualTo("ICD title [targetMainParentTitle] is a main title and cannot be used as an extension title")
+    }
+
+    @Test
+    fun `Should reject codes assigned to the wrong slot`() {
+        assertThat(icdModel.isValidIcdCode("targetExtensionCode")).isFalse()
+        assertThat(icdModel.isValidIcdCode("targetMainCode&targetMainParentCode")).isFalse()
+    }
+
+    @Test
+    fun `Should identify main and extension codes`() {
+        assertThat(icdModel.isMainCode("targetMainCode")).isTrue()
+        assertThat(icdModel.isMainCode("targetExtensionCode")).isFalse()
+        assertThat(icdModel.isExtensionCode("targetExtensionCode")).isTrue()
+        assertThat(icdModel.isExtensionCode("targetMainCode")).isFalse()
+        assertThat(icdModel.isMainCode("unknownCode")).isFalse()
+        assertThat(icdModel.isExtensionCode("unknownCode")).isFalse()
+    }
+
+    @Test
+    fun `Should return no reason for valid titles`() {
+        assertThat(icdModel.invalidTitleReason("targetMainTitle")).isNull()
+        assertThat(icdModel.invalidTitleReason("targetMainTitle&targetExtensionTitle")).isNull()
+    }
+
+    @Test
+    fun `Should report unknown titles separately from misplaced titles`() {
+        assertThat(icdModel.invalidTitleReason("invalidTitle"))
+            .isEqualTo("ICD title [invalidTitle] is not known - check for existence in ICD model")
+        assertThat(icdModel.invalidTitleReason("targetMainTitle&targetExtensionTitle&targetExtensionParentTitle"))
+            .isEqualTo(
+                "ICD title [targetMainTitle&targetExtensionTitle&targetExtensionParentTitle] must be a single main title, " +
+                        "optionally followed by '&' and one extension title"
+            )
+    }
+
+    @Test
+    fun `Should resolve titles for the same code in both slots when a title exists in both`() {
+        val collidingTitle = "colliding"
+        val model = IcdModel.create(
+            listOf(
+                IcdNode("mainCode", emptyList(), collidingTitle),
+                IcdNode("extensionCode", emptyList(), collidingTitle, isExtension = true)
+            )
+        )
+
+        assertThat(model.resolveCodeForTitle(collidingTitle)).isEqualTo(IcdCode("mainCode", null))
+        assertThat(model.resolveCodeForTitle("$collidingTitle&$collidingTitle")).isEqualTo(IcdCode("mainCode", "extensionCode"))
     }
 
     @Test
@@ -67,6 +132,12 @@ class IcdModelTest {
     @Test
     fun `Should ignore case in code to title resolution`() {
         assertThat(icdModel.resolveCodeForTitle("TargetMainTitle&targetEXTENSIONTitle"))
+            .isEqualTo(IcdCode("targetMainCode", "targetExtensionCode"))
+    }
+
+    @Test
+    fun `Should resolve titles surrounded by whitespace in both slots`() {
+        assertThat(icdModel.resolveCodeForTitle("targetMainTitle & targetExtensionTitle"))
             .isEqualTo(IcdCode("targetMainCode", "targetExtensionCode"))
     }
 
