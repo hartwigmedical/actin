@@ -35,13 +35,14 @@ class IcdModel(
 
     fun isValidIcdCode(icdCode: String): Boolean = resolveCodeForCodeString(icdCode) != null
 
-    fun resolveCodeForTitle(icdTitle: String): IcdCode? {
-        val slots = splitSlots(icdTitle)
-        val mainCode = slots?.first?.let { mainTitleToCodeMap[it.lowercase()] }
-        val extensionCode = slots?.second?.let { extensionTitleToCodeMap[it.lowercase()] }
+    fun resolveCodeForTitle(icdTitle: String): IcdCode? =
+        splitSlots(icdTitle)?.let { (mainTitle, extensionTitle) ->
+            val mainCode = mainTitleToCodeMap[mainTitle.lowercase()]
+            val extensionCode = extensionTitle?.let { extensionTitleToCodeMap[it.lowercase()] }
+            val slotsAreValid = mainCode != null && (extensionTitle == null || extensionCode != null)
 
-        return if (slots != null && mainCode != null) IcdCode(mainCode, extensionCode) else null
-    }
+            if (slotsAreValid) IcdCode(mainCode, extensionCode) else null
+        }
 
     private fun splitSlots(input: String): Pair<String, String?>? {
         val slots = input.split(SLOT_SEPARATOR).map(String::trim)
@@ -56,10 +57,11 @@ class IcdModel(
         return IcdCode(mainCode, extensionCode).takeIf { slotsAreValid }
     }
 
-    fun invalidTitleReason(icdTitle: String): String =
-        splitSlots(icdTitle)?.let { (mainTitle, extensionTitle) ->
-            invalidMainTitleReason(mainTitle) ?: extensionTitle?.let(::invalidExtensionTitleReason)
-        } ?: malformedTitleReason(icdTitle)
+    fun invalidTitleReason(icdTitle: String): String? =
+        when (val slots = splitSlots(icdTitle)) {
+            null -> malformedTitleReason(icdTitle)
+            else -> invalidMainTitleReason(slots.first) ?: slots.second?.let(::invalidExtensionTitleReason)
+        }
 
     private fun invalidMainTitleReason(mainTitle: String): String? =
         unknownOrMisplacedTitleReason(mainTitle, mainTitleToCodeMap, extensionTitleToCodeMap, EXTENSION_SLOT, MAIN_SLOT)
