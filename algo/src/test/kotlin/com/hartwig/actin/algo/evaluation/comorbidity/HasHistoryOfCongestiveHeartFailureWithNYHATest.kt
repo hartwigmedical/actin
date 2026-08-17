@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.comorbidity
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.trial.NyhaClass
 import com.hartwig.actin.icd.TestIcdFactory
-import com.hartwig.actin.trial.input.datamodel.NyhaClass
 import org.junit.jupiter.api.Test
 
 class HasHistoryOfCongestiveHeartFailureWithNYHATest {
