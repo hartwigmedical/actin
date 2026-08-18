@@ -3,13 +3,13 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
+import com.hartwig.actin.datamodel.trial.TumorType
 import com.hartwig.actin.doid.TestDoidModelFactory
-import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 import org.junit.jupiter.api.Test
 
 class HasCancerOfUnknownPrimaryTest {
 
-    private val tumorType = TumorTypeInput.ADENOCARCINOMA
+    private val tumorType = TumorType.ADENOCARCINOMA
     private val childDoid = "child"
     private val doidModel = TestDoidModelFactory.createWithOneParentChild(tumorType.doid(), childDoid)
     private val function = HasCancerOfUnknownPrimary(doidModel, tumorType)

@@ -16,9 +16,9 @@ import com.hartwig.actin.datamodel.trial.ManyTumorStagesParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.ReceptorTypeParameter
 import com.hartwig.actin.datamodel.trial.StringParameter
+import com.hartwig.actin.datamodel.trial.TumorType
 import com.hartwig.actin.datamodel.trial.TumorTypeParameter
 import com.hartwig.actin.trial.input.EligibilityRule
-import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
 
 class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
@@ -147,7 +147,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasCancerOfUnknownPrimaryCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val tumorType = function.param<TumorTypeParameter>(0).value
-            HasCancerOfUnknownPrimary(doidModel(), TumorTypeInput.fromString(tumorType))
+            HasCancerOfUnknownPrimary(doidModel(), TumorType.fromString(tumorType))
         }
     }
 
