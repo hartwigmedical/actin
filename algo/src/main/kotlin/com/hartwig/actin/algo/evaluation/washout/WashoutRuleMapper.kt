@@ -196,19 +196,6 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun mapMedicationCategories(categoryNames: List<String>): Map<String, Set<AtcLevel>> {
-        return categoryNames.associate { category -> toMedicationCategoryMap(category) }
-    }
-
-    private fun toMedicationCategoryMap(category: String): Pair<String, Set<AtcLevel>> {
-        throwExceptionIfAtcCategoryNotMapped(category)
-        return categories.resolveCategoryName(category) to categories.resolve(category)
-    }
-
-    private fun throwExceptionIfAtcCategoryNotMapped(category: String) {
-        val hasMapping = MedicationCategories.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.containsKey(category)
-                || MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.containsKey(category)
-        if (MedicationCategories.ANTI_CANCER_ATC_CODES.any { category.startsWith(it) } && !hasMapping) {
-            throw IllegalStateException("No treatment category or drug type mapping for ATC code $category")
-        }
+        return categoryNames.associate { category -> categories.resolveCategoryName(category) to categories.resolve(category) }
     }
 }

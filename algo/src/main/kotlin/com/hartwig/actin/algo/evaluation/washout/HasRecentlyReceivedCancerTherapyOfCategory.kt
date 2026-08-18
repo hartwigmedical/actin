@@ -13,11 +13,11 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Medication
+import com.hartwig.actin.datamodel.clinical.MedicationCategoryMappings
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.medication.MedicationCategories
 import java.time.LocalDate
 
 data class TreatmentAssessmentExtended(
@@ -113,11 +113,11 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         categoryNames: Set<String>,
         drugsToIgnore: Set<Drug>
     ): TreatmentAssessmentExtended {
-        val categoryToDrugTypes = MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.filter { categoryNames.contains(it.key) }
+        val categoryToDrugTypes = MedicationCategoryMappings.MEDICATION_CATEGORIES_TO_DRUG_TYPES.filter { categoryNames.contains(it.key) }
         val drugTypesToFind = categoryToDrugTypes.flatMap { it.value }.toSet()
 
         val categoryToTreatmentCategories =
-            MedicationCategories.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.filter { categoryNames.contains(it.key) }
+            MedicationCategoryMappings.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.filter { categoryNames.contains(it.key) }
         val treatmentCategoriesToFind = categoryToTreatmentCategories.flatMap { it.value }.toSet()
 
         return record.oncologicalHistory.map { treatmentHistoryEntry ->
