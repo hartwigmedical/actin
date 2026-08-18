@@ -29,9 +29,5 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
         private fun convertToAtcLevel(atcCodes: Set<String>, atcTree: AtcTree): Set<AtcLevel> {
             return atcCodes.map(atcTree::resolve).toSet()
         }
-
-        fun isAntiCancerMedication(atcCode: String?): Boolean {
-            return atcCode != null && MedicationCategoryMappings.isAntiCancerAtcCode(atcCode) && !atcCode.startsWith("L01XD")
-        }
     }
 }
