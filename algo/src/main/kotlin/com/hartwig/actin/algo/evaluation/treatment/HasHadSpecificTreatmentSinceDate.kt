@@ -13,12 +13,9 @@ import java.time.LocalDate
 class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private val minDate: LocalDate) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val matchingTreatments = record.oncologicalHistory
-            .mapNotNull { entry ->
-                TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(
-                    entry,
-                    { it.name == treatment.name })
-            }
+        val matchingTreatments = record.oncologicalHistory.mapNotNull { entry ->
+            TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) { it.name == treatment.name }
+        }
         val predicateDescription = "matching '${treatment.display()}'"
         val formattedMinDate = Format.date(minDate)
 

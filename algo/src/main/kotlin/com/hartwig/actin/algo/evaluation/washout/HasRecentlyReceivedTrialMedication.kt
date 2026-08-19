@@ -20,10 +20,7 @@ class HasRecentlyReceivedTrialMedication(
         }
 
         val hadRecentTrialTreatment = record.oncologicalHistory.any {
-            it.isTrial && TreatmentVersusDateFunctions.certainTreatmentSinceMinDate(
-                it,
-                minStopDate
-            )
+            it.isTrial && TreatmentVersusDateFunctions.certainTreatmentSinceMinDate(it, minStopDate)
         }
 
         val hadPotentiallyRecentTrialTreatment =

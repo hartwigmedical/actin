@@ -19,12 +19,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorSystemicTreatments = record.oncologicalHistory.filter { it.treatments.any(Treatment::isSystemic) }
         val (_, includedIntentTreatments) = SystemicTreatmentAnalyser.partitionTreatmentsByIntent(priorSystemicTreatments, intentsToIgnore)
-        val palliativeIntentTreatments = includedIntentTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
-        val nonPalliativeIncludedTreatments = includedIntentTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) != true }
+        val (palliativeIntentTreatments, nonPalliativeIncludedTreatments) = includedIntentTreatments.partition { it.intents?.contains(Intent.PALLIATIVE) == true }
         val recentAndPotentiallyRecentNonPalliativeTreatments = nonPalliativeIncludedTreatments.filter {
             potentialTreatmentSinceMinDate(
                 it,
-                referenceDate.minusMonths(6)
+                referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
             )
         }
         val settingMessage = "$settingDescription setting"

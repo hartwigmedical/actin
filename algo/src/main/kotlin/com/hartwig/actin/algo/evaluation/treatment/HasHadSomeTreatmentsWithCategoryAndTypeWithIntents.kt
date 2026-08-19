@@ -5,6 +5,7 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
@@ -69,9 +70,12 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
     }
 
     private fun drugTypeString(entries: List<TreatmentHistoryEntry>): String {
-        return allowedTypes?.let {
-            val types = Format.concatItemsWithAnd(it.intersect(entries.flatMap { e -> e.treatments }.flatMap { t -> t.types() }.toSet()))
-            if (types.isNotEmpty()) " $types" else ""
+        return allowedTypes?.let { allowedTypes ->
+            entries.flatMap(TreatmentHistoryEntry::treatments)
+                .flatMap(Treatment::types)
+                .filter(allowedTypes::contains)
+                .ifEmpty { null }
+                ?.let { " ${Format.concatItemsWithAnd(it)}" }
         } ?: ""
     }
 

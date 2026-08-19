@@ -39,16 +39,12 @@ class HasHadSystemicTherapyWithAnyIntent(
                 EvaluationFactory.pass("Received $intentsLowercase systemic therapy within the last $weeks weeks")
             }
 
-            evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments) { entry, date ->
-                certainTreatmentBeforeMaxDate(entry, date)
-            } -> {
+            evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::certainTreatmentBeforeMaxDate) -> {
                 EvaluationFactory.pass("Received $intentsLowercase systemic therapy at least $weeks weeks ago")
             }
 
             (evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::potentialTreatmentSinceMinDate)) ||
-                    (evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments) { entry, date ->
-                        potentialTreatmentBeforeMaxDate(entry, date)
-                    }) -> {
+                    (evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::potentialTreatmentBeforeMaxDate)) -> {
                 EvaluationFactory.undetermined("Received $intentsLowercase systemic therapy but date unknown")
             }
 
@@ -78,7 +74,7 @@ class HasHadSystemicTherapyWithAnyIntent(
     }
 
     private fun anyTreatmentPotentiallyBeforeMaxDate(treatmentEntries: Iterable<TreatmentHistoryEntry>): Boolean {
-        return refDate == null || treatmentEntries.any { certainTreatmentBeforeMaxDate(it, refDate) }
+        return refDate == null || treatmentEntries.any { potentialTreatmentBeforeMaxDate(it, refDate) }
     }
 
     private fun evaluateTreatments(
