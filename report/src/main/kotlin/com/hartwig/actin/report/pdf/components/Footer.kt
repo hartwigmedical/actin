@@ -13,7 +13,7 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
 import java.time.LocalDate
 
-private const val FOOTER_PARAGRAPH_X = 30f
+private const val FOOTER_PARAGRAPH_X = 25f
 private const val FOOTER_PARAGRAPH_WIDTH = 425f
 
 class Footer(private val reportDate: LocalDate, private val labels: ReportLabels) {
@@ -23,7 +23,7 @@ class Footer(private val reportDate: LocalDate, private val labels: ReportLabels
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageNumber = page.document.getPageNumber(page)
-        val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 40f))
+        val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 35f))
         canvas.addXObjectAt(template, 50f, 18f)
         footerTemplates.add(FooterTemplate(pageNumber, template, reportDate, labels))
         canvas.release()
@@ -52,12 +52,12 @@ class Footer(private val reportDate: LocalDate, private val labels: ReportLabels
             val researchDisclaimerParagraph = Paragraph(labels.footer.researchDisclaimer())
                 .setMaxWidth(FOOTER_PARAGRAPH_WIDTH)
                 .addStyle(Styles.disclaimerStyle())
-            canvas.showTextAligned(researchDisclaimerParagraph, FOOTER_PARAGRAPH_X, 27f, TextAlignment.LEFT)
+            canvas.showTextAligned(researchDisclaimerParagraph, FOOTER_PARAGRAPH_X, 20f, TextAlignment.LEFT)
 
             val ctgovDisclaimerParagraph = Paragraph(labels.footer.ctgovDisclaimer(Formats.date(reportDate)))
                 .setMaxWidth(FOOTER_PARAGRAPH_WIDTH)
                 .addStyle(Styles.disclaimerStyle())
-            canvas.showTextAligned(ctgovDisclaimerParagraph, FOOTER_PARAGRAPH_X, 10f, TextAlignment.LEFT)
+            canvas.showTextAligned(ctgovDisclaimerParagraph, FOOTER_PARAGRAPH_X, 7f, TextAlignment.LEFT)
 
             val attributionsParagraph = Paragraph(labels.footer.attributions())
                 .setMaxWidth(FOOTER_PARAGRAPH_WIDTH)
