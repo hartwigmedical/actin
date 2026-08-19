@@ -5,7 +5,8 @@ import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory
 import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.otherCondition
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.clinical.Ecg
+import com.hartwig.actin.datamodel.clinical.HeartMeasurement
+import com.hartwig.actin.datamodel.clinical.HeartMeasurementType
 import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -38,7 +39,7 @@ class HasEcgAberrationTest {
                 otherCondition(
                     name = "cardiac arrhythmia",
                     icdMainCode = IcdConstants.CARDIAC_ARRHYTHMIA_BLOCK
-                ), Ecg("ecg abnormality", null, null)
+                ), HeartMeasurement("ecg abnormality", emptySet(), null, "", HeartMeasurementType.OTHER_ECG)
             )
         )
         val evaluation = function.evaluate(record)

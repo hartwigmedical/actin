@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.bloodtransfusion
 import com.hartwig.actin.algo.evaluation.FunctionCreator
 import com.hartwig.actin.algo.evaluation.RuleMapper
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
+import com.hartwig.actin.datamodel.clinical.TransfusionProduct
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.trial.input.EligibilityRule

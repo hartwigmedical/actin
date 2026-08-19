@@ -173,9 +173,8 @@
     {
       "name": null,
       "icdCodes": [],
-      "qtcfValue": null,
-      "qtcfUnit": null,
-      "comorbidityClass": "ECG"
+      "measurementType": "OTHER_ECG",
+      "comorbidityClass": "HEART_MEASUREMENT"
     }
   ],
   "ihcTests": [
@@ -241,7 +240,7 @@
   "bloodTransfusions": [
     {
       "date": "2018-01-01",
-      "product": "white blood cells"
+      "product": "ERYTHROCYTE"
     }
   ],
   "medications": [

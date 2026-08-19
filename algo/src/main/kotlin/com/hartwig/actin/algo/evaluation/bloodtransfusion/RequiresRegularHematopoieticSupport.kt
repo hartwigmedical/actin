@@ -17,7 +17,7 @@ class RequiresRegularHematopoieticSupport(
     override fun evaluate(record: PatientRecord): Evaluation {
         for (transfusion in record.bloodTransfusions) {
             if (transfusion.date.isAfter(minDate) && transfusion.date.isBefore(maxDate)) {
-                return EvaluationFactory.pass("Has received recent hematopoietic support (${transfusion.product})")
+                return EvaluationFactory.pass("Has received recent hematopoietic support (${transfusion.product.display()})")
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)

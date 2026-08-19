@@ -66,7 +66,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasLimitedQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasLimitedQtcf(function.param<DoubleParameter>(0).value)
+            HeartMeasurementEvaluationFunctions.hasLimitedQtcf(function.param<DoubleParameter>(0).value)
         }
     }
 
@@ -77,8 +77,8 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             val maleQTCF = function.param<DoubleParameter>(1).value
             Or(
                 listOf(
-                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf),
-                    HasQtcfWithGender(maleQTCF, Gender.MALE, EcgMeasureEvaluationFunctions::hasLimitedQtcf)
+                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, HeartMeasurementEvaluationFunctions::hasLimitedQtcf),
+                    HasQtcfWithGender(maleQTCF, Gender.MALE, HeartMeasurementEvaluationFunctions::hasLimitedQtcf)
                 )
             )
         }
@@ -86,7 +86,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientQTCFCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasSufficientQtcf(function.param<DoubleParameter>(0).value)
+            HeartMeasurementEvaluationFunctions.hasSufficientQtcf(function.param<DoubleParameter>(0).value)
         }
     }
 
@@ -97,8 +97,8 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
             val maleQTCF = function.param<DoubleParameter>(1).value
             Or(
                 listOf(
-                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf),
-                    HasQtcfWithGender(maleQTCF, Gender.MALE, EcgMeasureEvaluationFunctions::hasSufficientQtcf)
+                    HasQtcfWithGender(femaleQTCF, Gender.FEMALE, HeartMeasurementEvaluationFunctions::hasSufficientQtcf),
+                    HasQtcfWithGender(maleQTCF, Gender.MALE, HeartMeasurementEvaluationFunctions::hasSufficientQtcf)
                 )
             )
         }
@@ -106,7 +106,7 @@ class CardiacFunctionRuleMapper(resources: RuleMappingResources) : RuleMapper(re
 
     private fun hasSufficientJTcCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            EcgMeasureEvaluationFunctions.hasSufficientJTc(function.param<DoubleParameter>(0).value)
+            HeartMeasurementEvaluationFunctions.hasSufficientJTc(function.param<DoubleParameter>(0).value)
         }
     }
 
