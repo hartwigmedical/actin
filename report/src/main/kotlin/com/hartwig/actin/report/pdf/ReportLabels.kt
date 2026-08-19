@@ -28,7 +28,7 @@ class ReportLabels(private val properties: Properties) {
     inner class Footer {
         fun researchDisclaimer() = get("footer.research.disclaimer")
         fun ctgovDisclaimer(date: String) = format("footer.ctgov.disclaimer", date)
-        fun ckbAttribution() = get("footer.ckb.attribution")
+        fun attributions() = get("footer.attributions")
     }
 
     inner class Summary {
