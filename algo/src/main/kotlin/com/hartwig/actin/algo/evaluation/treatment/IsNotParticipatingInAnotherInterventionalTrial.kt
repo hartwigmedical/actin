@@ -25,10 +25,7 @@ class IsNotParticipatingInAnotherInterventionalTrial(
             }
 
             record.oncologicalHistory.any {
-                it.isTrial && TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(
-                    it,
-                    minStopDate
-                )
+                it.isTrial && TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(it, minStopDate)
             } -> {
                 EvaluationFactory.undetermined("Undetermined if patient may be participating in another interventional trial (missing stop date)")
             }

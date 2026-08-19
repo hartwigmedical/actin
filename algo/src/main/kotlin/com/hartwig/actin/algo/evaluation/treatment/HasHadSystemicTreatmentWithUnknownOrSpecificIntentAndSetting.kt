@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
@@ -26,16 +27,16 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val priorSystemicTreatments =
             priorTreatments.filter { it.treatments.any(Treatment::isSystemic) && !it.categories().contains(categoryToIgnore) }
-        val (excludedIntentTreatments, includedIntentTreatments) =
-            SystemicTreatmentAnalyser.partitionByIntent(priorSystemicTreatments, intentsToIgnore)
-        val (certainRecentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) = SystemicTreatmentAnalyser.certainRecentTreatments(
+        val (excludedIntentTreatments, includedIntentTreatments) = SystemicTreatmentAnalyser.partitionTreatmentsByIntent(
+            priorSystemicTreatments,
+            intentsToIgnore
+        )
+        val (certainRecentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) = SystemicTreatmentAnalyser.partitionTreatmentsByCertainlySinceMinDate(
             includedIntentTreatments,
             referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
         )
-        val (potentiallyRecentPotentiallyCorrectIntentTreatments, _) = SystemicTreatmentAnalyser.potentialRecentTreatments(
-            includedIntentTreatments,
-            referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
-        )
+        val potentiallyRecentPotentiallyCorrectIntentTreatments =
+            includedIntentTreatments.filter { potentialTreatmentSinceMinDate(it, referenceDate.minusMonths(MONTHS_TO_SUBTRACT)) }
         val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = includedIntentTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
         val settingMessage = "$settingDescription setting"

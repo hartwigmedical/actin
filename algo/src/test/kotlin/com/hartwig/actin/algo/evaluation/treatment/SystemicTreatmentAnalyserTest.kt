@@ -5,9 +5,8 @@ import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.fir
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.lastSystemicTreatment
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.maxSystemicTreatments
 import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.minSystemicTreatments
-import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.partitionByIntent
-import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.potentialRecentTreatments
-import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.certainRecentTreatments
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.partitionTreatmentsByIntent
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser.partitionTreatmentsByCertainlySinceMinDate
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -186,7 +185,7 @@ class SystemicTreatmentAnalyserTest {
         val curative = systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.CURATIVE))
         val palliative = systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.PALLIATIVE))
         val nullIntent = systemicTreatmentHistoryEntry.copy(intents = null)
-        val (excluded, included) = partitionByIntent(
+        val (excluded, included) = partitionTreatmentsByIntent(
             listOf(curative, palliative, nullIntent),
             Intent.curativeAdjuvantNeoadjuvantSet()
         )
@@ -200,13 +199,13 @@ class SystemicTreatmentAnalyserTest {
             systemicTreatmentHistoryEntry.copy(intents = setOf(Intent.CURATIVE)),
             systemicTreatmentHistoryEntry.copy(intents = null)
         )
-        val (excluded, included) = partitionByIntent(entries, emptySet())
+        val (excluded, included) = partitionTreatmentsByIntent(entries, emptySet())
         assertThat(excluded).isEmpty()
         assertThat(included).containsExactlyElementsOf(entries)
     }
 
     @Test
-    fun `Should place treatments in certainRecentTreatments and potentialRecentTreatments correctly`() {
+    fun `Should place treatments in partitionTreatmentsByCertainlySinceMinDate correctly`() {
         val minDate = referenceDate.minusMonths(6)
         val recent = treatmentHistoryEntry(
             setOf(systemicTreatment),
@@ -225,27 +224,9 @@ class SystemicTreatmentAnalyserTest {
         )
         val treatments = listOf(recent, recentPotentially, nonRecent)
 
-        val (certainRecentPartition, otherCertain) = certainRecentTreatments(treatments, minDate)
-        assertThat(certainRecentPartition).containsExactly(recent)
-        assertThat(otherCertain).containsExactly(recentPotentially, nonRecent)
-
-        val (potentialRecentPartition, otherPotential) = potentialRecentTreatments(treatments, minDate)
-        assertThat(potentialRecentPartition).containsExactly(recent, recentPotentially)
-        assertThat(otherPotential).containsExactly(nonRecent)
-    }
-
-    @Test
-    fun `Should place unknown-date treatments according to includeUnknown flag`() {
-        val minDate = referenceDate.minusMonths(6)
-        val unknownDate = treatmentHistoryEntry(setOf(systemicTreatment))
-
-        val (recentWhenIncluded, nonRecentWhenIncluded) = potentialRecentTreatments(listOf(unknownDate), minDate)
-        assertThat(recentWhenIncluded).containsExactly(unknownDate)
-        assertThat(nonRecentWhenIncluded).isEmpty()
-
-        val (recentWhenExcluded, nonRecentWhenExcluded) = certainRecentTreatments(listOf(unknownDate), minDate)
-        assertThat(recentWhenExcluded).isEmpty()
-        assertThat(nonRecentWhenExcluded).containsExactly(unknownDate)
+        val (certainRecent, other) = partitionTreatmentsByCertainlySinceMinDate(treatments, minDate)
+        assertThat(certainRecent).containsExactly(recent)
+        assertThat(other).containsExactly(recentPotentially, nonRecent)
     }
 
     private fun assertNameForSystemicTreatmentHistoryEntry(

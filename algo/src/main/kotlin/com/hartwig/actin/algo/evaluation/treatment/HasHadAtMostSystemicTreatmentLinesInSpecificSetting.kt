@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -17,15 +18,17 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorSystemicTreatments = record.oncologicalHistory.filter { it.treatments.any(Treatment::isSystemic) }
-        val (_, includedIntentTreatments) = SystemicTreatmentAnalyser.partitionByIntent(priorSystemicTreatments, intentsToIgnore)
+        val (_, includedIntentTreatments) = SystemicTreatmentAnalyser.partitionTreatmentsByIntent(priorSystemicTreatments, intentsToIgnore)
         val palliativeIntentTreatments = includedIntentTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
         val nonPalliativeIncludedTreatments = includedIntentTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) != true }
-        val (recentAndPotentiallyRecentTreatments, _) = SystemicTreatmentAnalyser.potentialRecentTreatments(
-            nonPalliativeIncludedTreatments,
-            referenceDate.minusMonths(6)
-        )
+        val recentAndPotentiallyRecentNonPalliativeTreatments = nonPalliativeIncludedTreatments.filter {
+            potentialTreatmentSinceMinDate(
+                it,
+                referenceDate.minusMonths(6)
+            )
+        }
         val settingMessage = "$settingDescription setting"
-        val probableCount = palliativeIntentTreatments.size + (recentAndPotentiallyRecentTreatments).toSet().size
+        val probableCount = palliativeIntentTreatments.size + recentAndPotentiallyRecentNonPalliativeTreatments.size
 
         return when {
             includedIntentTreatments.isEmpty() ->
