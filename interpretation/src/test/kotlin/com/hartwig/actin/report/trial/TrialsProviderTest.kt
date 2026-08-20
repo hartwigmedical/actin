@@ -83,7 +83,7 @@ class TrialsProviderTest {
     }
 
     @Test
-    fun `Should filter phase I trials running in hospitals to filter`() {
+    fun `Should filter Dutch early phase trials`() {
         val filteredTrial = createExternalTrialSummaryWithHospitalsAndPhase(
             NETHERLANDS to mapOf(AMSTERDAM to setOf(NKI)),
             phase = TrialPhase.PHASE_1
