@@ -59,7 +59,7 @@ class EligibleTrialGeneratorTest {
         )
 
         assertThat(result.cohortSize()).isEqualTo(2)
-        assertThat(result.title()).isEqualTo("Phase 1/2 (or unknown phase) trials in NL that are open and match the search criteria (2 trials)")
+        assertThat(result.title()).isEqualTo("Phase 1/2 trials in NL that are open and match the search criteria (2 trials)")
     }
 
     @Test
@@ -89,7 +89,7 @@ class EligibleTrialGeneratorTest {
         )
 
         assertThat(result.cohortSize()).isEqualTo(1)
-        assertThat(result.title()).isEqualTo("Phase 2/3+ trials in NL that are open and match the search criteria (1 trial)")
+        assertThat(result.title()).isEqualTo("Phase 2/3+ (or unknown phase) trials in NL that are open and match the search criteria (1 trial)")
     }
 
     @Test

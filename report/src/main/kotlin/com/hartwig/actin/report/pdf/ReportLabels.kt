@@ -30,7 +30,7 @@ class ReportLabels(private val properties: Properties) {
     inner class Footer {
         fun researchDisclaimer() = get("footer.research.disclaimer")
         fun ctgovDisclaimer(date: String) = format("footer.ctgov.disclaimer", date)
-        fun ckbAttribution() = get("footer.ckb.attribution")
+        fun attributions() = get("footer.attributions")
     }
 
     inner class Summary {
@@ -137,7 +137,6 @@ class ReportLabels(private val properties: Properties) {
         fun title() = get("clinical.title")
         fun summaryTitle() = get("clinical.summary.title")
         fun patientDetailsTitle() = get("clinical.patient.details.title")
-        fun bloodTransfusionTitle() = get("clinical.blood.transfusion.title")
         fun medicationTitle() = get("clinical.medication.title")
         fun tumorDetailsTitle() = get("clinical.tumor.details.title")
         fun sectionSystemicHistory() = get("clinical.section.systemic.history")
@@ -157,8 +156,6 @@ class ReportLabels(private val properties: Properties) {
         fun keyNoLesions() = get("clinical.key.no.lesions")
         fun valueInfectionUnknown() = get("clinical.value.infection.unknown")
         fun valueEcgUnknown() = get("clinical.value.ecg.unknown")
-        fun colProduct() = get("clinical.col.product")
-        fun colDate() = get("clinical.col.date")
         fun colMedication() = get("clinical.col.medication")
         fun colAdminRoute() = get("clinical.col.admin.route")
         fun colStartDate() = get("clinical.col.start.date")

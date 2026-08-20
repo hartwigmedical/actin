@@ -31,6 +31,7 @@ object Styles {
     const val REGULAR_FONT_SIZE = 8f
     const val SUB_FONT_SIZE = 7f
     const val SMALL_FONT_SIZE = 6f
+    const val SMALLER_FONT_SIZE = 5f
     const val TABLE_HEADER_FONT_SIZE = 7f
 
     private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
@@ -115,7 +116,7 @@ object Styles {
     }
 
     fun disclaimerStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(SMALL_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
+        return Style().setFont(fontRegular()).setFontSize(SMALLER_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
     }
 
     fun urlStyle(): Style {
@@ -144,7 +145,6 @@ object Styles {
         return try {
             FontProgramFactory.createFont(resourcePath)
         } catch (exception: IOException) {
-            // Should never happen, fonts are loaded from code
             throw IllegalStateException(exception)
         }
     }

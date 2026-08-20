@@ -21,7 +21,6 @@ import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.LongitudinalMolecularHistoryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.OrangeMolecularRecordGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportFunctions
-import com.hartwig.actin.report.pdf.tables.molecular.PathologyReportGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.WgsSummaryGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
@@ -29,7 +28,6 @@ import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.report.trial.TrialsProvider
 import com.itextpdf.kernel.geom.PageSize
 import com.itextpdf.layout.Document
-import com.itextpdf.layout.element.Div
 import com.itextpdf.layout.element.Table
 
 class MolecularDetailsChapter(
@@ -60,7 +58,6 @@ class MolecularDetailsChapter(
             configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
         ) {
             addMolecularDetails(document)
-            addPathologyReport(document)
         }
 
         if (configuration.molecularChapterType == MolecularChapterType.LONGITUDINAL ||
@@ -173,24 +170,6 @@ class MolecularDetailsChapter(
                 ImmunologyGenerator(molecularTest, displayMode, labels.molecular.immunologyTitle(), keyWidth, valueWidth, labels)
             } else null
         }
-    }
-
-    private fun addPathologyReport(document: Document) {
-        val testReportsHash = with(report.patientRecord) {
-            molecularTests.map { it.reportHash } + ihcTests.map { it.reportHash }
-        }.filterNotNull()
-        report.patientRecord.pathologyReports
-            ?.takeIf { reports -> reports.any { it.report.isNotBlank() } }
-            ?.filter { it.reportHash in testReportsHash }
-            ?.let {
-                document.add(Div().setHeight(20F))
-                val table = Tables.createSingleColWithWidth(contentWidth())
-                val generator = PathologyReportGenerator(it)
-                // KD: This table doesn't fit in the typical generator format since it contains one row but with a lot of lines.
-                table.addCell(Cells.createTitle(generator.title()))
-                table.addCell(Cells.create(generator.contents()))
-                document.add(table)
-            }
     }
 
     private fun addLongitudinalMolecularHistoryTable(document: Document) {
