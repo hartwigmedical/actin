@@ -25,7 +25,6 @@ private const val UTRECHT = "Utrecht"
 
 private val NKI = Hospital("NKI-AvL", isChildrensHospital = false)
 private val PMC = Hospital("PMC", isChildrensHospital = true)
-private val UMCU = Hospital("UMCU", isChildrensHospital = false)
 private val NETHERLANDS = CountryDetails(country = Country.NETHERLANDS, hospitalsPerCity = mapOf(AMSTERDAM to setOf(NKI)))
 private val BELGIUM = CountryDetails(country = Country.BELGIUM, hospitalsPerCity = emptyMap())
 private val EGFR_ACTIONABLE = TestVariantFactory.createMinimal().copy(event = EGFR_TARGET)
