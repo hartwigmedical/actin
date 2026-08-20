@@ -17,7 +17,11 @@ class HasExtensiveAbdominalTumorSpreadTest {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
         val function = HasExtensiveAbdominalTumorSpread(alwaysFailsMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patientRecord),
+            "No metastatic cancer hence no extensive abdominal tumor spread"
+        )
     }
 
     @Test
@@ -26,7 +30,11 @@ class HasExtensiveAbdominalTumorSpreadTest {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
         val function = HasExtensiveAbdominalTumorSpread(alwaysUndeterminedMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Metastatic cancer undetermined and therefore undetermined if extensive abdominal tumor spread"
+        )
     }
 
     @Test
@@ -35,6 +43,10 @@ class HasExtensiveAbdominalTumorSpreadTest {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
         val function = HasExtensiveAbdominalTumorSpread(alwaysPassMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Undetermined if extensive abdominal tumor spread"
+        )
     }
 }

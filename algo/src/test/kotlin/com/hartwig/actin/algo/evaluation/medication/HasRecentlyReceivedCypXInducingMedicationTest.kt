@@ -22,7 +22,11 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
                 TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, evaluationDate
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent CYP9A9 inducing medication use ()"
+        )
     }
 
     @Test
@@ -32,7 +36,11 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
                 "3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, evaluationDate
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No recent CYP9A9 inducing medication use"
+        )
     }
 
     @Test
@@ -42,7 +50,11 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
                 TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, evaluationDate.minusWeeks(3)
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No recent CYP9A9 inducing medication use"
+        )
     }
 
     @Test
@@ -52,12 +64,20 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
                 TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG, evaluationDate
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No recent CYP9A9 inducing medication use"
+        )
     }
 
     @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No recent CYP9A9 inducing medication use"
+        )
     }
 
     @Test
@@ -65,7 +85,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }
 }

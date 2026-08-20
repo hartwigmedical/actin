@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFactory.pass
 import com.hartwig.actin.algo.evaluation.EvaluationFactory.undetermined
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class DerivedTumorStageEvaluationTest {
@@ -19,7 +18,6 @@ class DerivedTumorStageEvaluationTest {
                 TumorStage.II to undetermined("Undetermined message")
             ), EvaluationFactory::undetermined
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsOnly("Undetermined message")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined message")
     }
 }

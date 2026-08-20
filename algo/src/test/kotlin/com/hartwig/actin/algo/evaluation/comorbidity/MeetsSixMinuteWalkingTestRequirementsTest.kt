@@ -12,7 +12,8 @@ class MeetsSixMinuteWalkingTestRequirementsTest {
         val function = MeetsSixMinuteWalkingTestRequirements()
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if patient meets 6 min walking test requirements"
         )
     }
 }

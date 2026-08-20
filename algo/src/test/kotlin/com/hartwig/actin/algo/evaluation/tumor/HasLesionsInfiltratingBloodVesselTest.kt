@@ -10,6 +10,6 @@ class HasLesionsInfiltratingBloodVesselTest {
     @Test
     fun `Should evaluate to undetermined`() {
         val evaluation = HasLesionsInfiltratingBloodVessel().evaluate(TestPatientFactory.createProperTestPatientRecord())
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if tumor infiltrates blood vessels")
     }
 }

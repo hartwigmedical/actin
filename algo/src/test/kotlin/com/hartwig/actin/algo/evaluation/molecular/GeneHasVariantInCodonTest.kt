@@ -19,7 +19,11 @@ class GeneHasVariantInCodonTest {
 
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No variants in codon(s) A100 or B200 in gene A"
+        )
     }
 
     @Test
@@ -31,7 +35,8 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal()
                         .copy(isReportable = true, gene = TARGET_GENE)
                 )
-            )
+            ),
+            "No variants in codon(s) A100 or B200 in gene A"
         )
     }
 
@@ -47,7 +52,8 @@ class GeneHasVariantInCodonTest {
                         canonicalImpact = impactWithCodon(OTHER_CODON)
                     )
                 )
-            )
+            ),
+            "No variants in codon(s) A100 or B200 in gene A"
         )
     }
 
@@ -63,7 +69,8 @@ class GeneHasVariantInCodonTest {
                         canonicalImpact = impactWithCodon(MATCHING_CODON),
                     )
                 )
-            )
+            ),
+            "Variant(s)  in codon(s) A100 in gene A in canonical transcript"
         )
     }
 
@@ -77,7 +84,8 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE, isReportable = false, canonicalImpact = impactWithCodon(MATCHING_CODON)
                     )
                 )
-            )
+            ),
+            "Variant(s) in codon(s) A100 in gene A in canonical transcript but not considered reportable"
         )
     }
 
@@ -94,7 +102,8 @@ class GeneHasVariantInCodonTest {
                         clonalLikelihood = 0.3
                     )
                 )
-            )
+            ),
+            "Variant(s) in codon(s)  in gene A in canonical transcript but subclonal likelihood of > 50%"
         )
     }
 
@@ -111,7 +120,8 @@ class GeneHasVariantInCodonTest {
                         otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON)),
                     )
                 )
-            )
+            ),
+            "Variant(s) in codon(s) A100 in gene A but in non-canonical transcript"
         )
     }
 
@@ -133,7 +143,8 @@ class GeneHasVariantInCodonTest {
                         otherImpacts = setOf(impactWithCodon(MATCHING_CODON))
                     )
                 )
-            )
+            ),
+            "Variant(s)  in codon(s) A100 in gene A in canonical transcript together with variant(s)  in codon(s) A100 but in non-canonical transcript"
         )
     }
 
@@ -155,7 +166,8 @@ class GeneHasVariantInCodonTest {
                         canonicalImpact = impactWithCodon(MATCHING_CODON)
                     )
                 )
-            )
+            ),
+            "Variant(s)  in codon(s) A100 in gene A in canonical transcript together with variant(s)  in codon(s) A100 in canonical transcript but subclonal likelihood of > 50%"
         )
     }
 
@@ -172,7 +184,8 @@ class GeneHasVariantInCodonTest {
                         otherImpacts = setOf(impactWithCodon(MATCHING_CODON))
                     )
                 )
-            )
+            ),
+            "Variant(s)  in codon(s) A100 in gene A in canonical transcript"
         )
     }
 

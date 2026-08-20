@@ -31,7 +31,12 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
 
     @Test
     fun `Should fail for no treatments`() {
-        assertBothFunctions(EvaluationResult.FAIL, withTreatmentHistory(emptyList()))
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            withTreatmentHistory(emptyList()),
+            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
+            "Has not had targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
@@ -39,7 +44,12 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), startYear = MIN_DATE.year + 1
         )
-        assertBothFunctions(EvaluationResult.FAIL, withTreatmentHistory(listOf(treatmentHistoryEntry)))
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            withTreatmentHistory(listOf(treatmentHistoryEntry)),
+            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
+            "Has not had targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
@@ -47,7 +57,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR))), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had HER2 antibody targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
@@ -55,7 +69,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has potentially received HER2 antibody targeted therapy treatment within requested time frame - exact drug type of patient's treatment unknown"
+        )
     }
 
     @Test
@@ -63,19 +81,31 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
     fun `Should fail for trial treatment with unknown date when types requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
-        assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had HER2 antibody targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
     fun `Should be undetermined for trial treatment with unknown date when types not requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received targeted therapy treatment but inconclusive if within requested time frame"
+        )
     }
 
     @Test
@@ -83,7 +113,12 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true, startYear = MIN_DATE.year - 1
         )
-        assertBothFunctions(EvaluationResult.FAIL, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
+            "Has not had targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
@@ -91,7 +126,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true, startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has potentially received HER2 antibody targeted therapy treatment within requested time frame - exact drug type of patient's treatment unknown"
+        )
     }
 
     @Test
@@ -99,7 +138,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true, startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
@@ -110,7 +153,12 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
                 startYear = MIN_DATE.year + 1
             )
 
-        assertBothFunctions(EvaluationResult.UNDETERMINED, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertBothFunctions(
+            EvaluationResult.UNDETERMINED,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Undetermined if treatment received in previous trial may have included targeted therapy",
+            "Undetermined if treatment received in previous trial may have included targeted therapy"
+        )
     }
 
     @Test
@@ -132,8 +180,16 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             isTrial = true, startYear = MIN_DATE.year + 1
         )
 
-        assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
-        assertEvaluation(EvaluationResult.FAIL, functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had allogenic transplantation treatment within requested time frame"
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had transplantation treatment within requested time frame"
+        )
     }
 
     @Test
@@ -149,7 +205,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             isTrial = true,
             startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has potentially received allogenic transplantation treatment within requested time frame - exact drug type of patient's treatment unknown"
+        )
     }
 
     @Test
@@ -157,13 +217,23 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)), startYear = MIN_DATE.year - 1
         )
-        assertBothFunctions(EvaluationResult.FAIL, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
+            "Has not had targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
     fun `Should return undetermined for treatment with correct category and matching type (or not requiring type) and unknown date`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)))
-        assertBothFunctions(EvaluationResult.UNDETERMINED, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertBothFunctions(
+            EvaluationResult.UNDETERMINED,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has received HER2 antibody targeted therapy treatment but inconclusive if within requested time frame",
+            "Has received targeted therapy treatment but inconclusive if within requested time frame"
+        )
     }
 
     @Test
@@ -171,7 +241,11 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received HER2 antibody targeted therapy treatment within requested time frame"
+        )
     }
 
     @Test
@@ -186,12 +260,15 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         )
         assertBothFunctions(
             EvaluationResult.PASS,
-            withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))
+            withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)),
+            "Has received HER2 antibody targeted therapy treatment within requested time frame", "Has received targeted therapy treatment within requested time frame"
         )
     }
 
-    private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {
-        assertEvaluation(result, functionWithTypes.evaluate(record))
-        assertEvaluation(result, functionWithoutTypes.evaluate(record))
+    private fun assertBothFunctions(
+        result: EvaluationResult, record: PatientRecord, expectedMessageWithTypes: String, expectedMessageWithoutTypes: String
+    ) {
+        assertEvaluation(result, functionWithTypes.evaluate(record), expectedMessageWithTypes)
+        assertEvaluation(result, functionWithoutTypes.evaluate(record), expectedMessageWithoutTypes)
     }
 }

@@ -19,6 +19,25 @@ object EvaluationAssert {
         }
     }
 
+    fun assertMolecularEvaluation(expected: EvaluationResult, actual: Evaluation, vararg expectedMessages: String) {
+        assertMolecularEvaluation(expected, actual)
+        assertThat(messagesForResult(actual)).containsExactlyInAnyOrder(*expectedMessages)
+    }
+
+    fun assertEvaluation(expected: EvaluationResult, actual: Evaluation, vararg expectedMessages: String) {
+        assertEvaluation(expected, actual)
+        assertThat(messagesForResult(actual)).containsExactlyInAnyOrder(*expectedMessages)
+    }
+
+    private fun messagesForResult(actual: Evaluation): Set<String> {
+        return when (actual.result) {
+            EvaluationResult.PASS -> actual.passMessagesStrings()
+            EvaluationResult.WARN -> actual.warnMessagesStrings()
+            EvaluationResult.UNDETERMINED -> actual.undeterminedMessagesStrings()
+            EvaluationResult.FAIL -> actual.failMessagesStrings()
+        }
+    }
+
     fun assertEvaluation(expected: EvaluationResult, actual: Evaluation) {
         assertThat(actual.result).isEqualTo(expected)
         when (actual.result) {

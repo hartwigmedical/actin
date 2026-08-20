@@ -20,35 +20,45 @@ class HasToxicityWithGradeTest {
 
     @Test
     fun `Should fail with no toxicities`() {
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(ComorbidityTestFactory.withToxicities(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function().evaluate(ComorbidityTestFactory.withToxicities(emptyList())),
+            "No toxicities  found with grade 2 or higher"
+        )
     }
 
     @Test
     fun `Should fail with grade 1 questionnaire toxicity`() {
         val toxicities = listOf(toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 1))
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function().evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "No toxicities  found with grade 2 or higher"
+        )
     }
 
     @Test
     fun `Should warn for grade 2 EHR toxicity`() {
         val toxicities = listOf(toxicity(source = ToxicitySource.EHR, grade = 2))
-        assertEvaluation(EvaluationResult.WARN, function().evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function().evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "Has toxicities grade >= 2"
+        )
     }
 
     @Test
     fun `Should pass for grade 2 questionnaire toxicity`() {
         val toxicities = listOf(toxicity(name = "tox", source = ToxicitySource.QUESTIONNAIRE, grade = 2))
         val evaluation = function().evaluate(ComorbidityTestFactory.withToxicities(toxicities))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Has toxicities grade >= 2 (tox)")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has toxicities grade >= 2 (tox)")
     }
 
     @Test
     fun `Should pass by default with questionnaire toxicity without grade`() {
         val toxicities = listOf(toxicity(source = ToxicitySource.QUESTIONNAIRE))
         val evaluation = function().evaluate(ComorbidityTestFactory.withToxicities(toxicities))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Has toxicities grade >= 2")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has toxicities grade >= 2")
     }
 
     @Test
@@ -56,7 +66,8 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(toxicity(source = ToxicitySource.QUESTIONNAIRE))
         val function = function(minGrade = DEFAULT_QUESTIONNAIRE_GRADE + 1)
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities))
+            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "Has toxicities but unknown if grade >= 3"
         )
     }
 
@@ -65,7 +76,8 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(toxicity(source = ToxicitySource.EHR))
         val function = function(minGrade = 4)
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities))
+            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "Has toxicities but unknown if grade >= 4"
         )
     }
 
@@ -75,7 +87,11 @@ class HasToxicityWithGradeTest {
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = DEFAULT_QUESTIONNAIRE_GRADE + 2)
         )
         val function = function(minGrade = DEFAULT_QUESTIONNAIRE_GRADE + 1)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "Has toxicities grade >= 3"
+        )
     }
 
     @Test
@@ -85,12 +101,17 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me", icdMainCode = "ignoreCode"),
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "No toxicities  found with grade 2 or higher"
+        )
 
         val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "keep me", icdMainCode = "keepCode")
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities + matchingToxicity))
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities + matchingToxicity)),
+            "Has toxicities grade >= 2 (keep me)"
         )
     }
 
@@ -101,10 +122,18 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "not a target", icdMainCode = "nonTargetCode"),
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "No toxicities in targettitle found with grade 2 or higher"
+        )
 
         val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "targetTox", icdMainCode = "targetCode")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities + matchingToxicity)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities + matchingToxicity)),
+            "Has toxicities grade >= 2 (targetTox)"
+        )
     }
 
     @Test
@@ -119,7 +148,11 @@ class HasToxicityWithGradeTest {
         val toxicities = listOf(
             toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "target tox", icdMainCode = "targetCode"),
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "Has toxicities grade >= 2 (target tox)"
+        )
     }
 
     @Test
@@ -130,7 +163,7 @@ class HasToxicityWithGradeTest {
             )
         )
         val evaluation = function().evaluate(ComorbidityTestFactory.withToxicities(toxicities))
-        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertEvaluation(EvaluationResult.WARN, evaluation, "Has toxicities grade >= 2 (toxicity 1)")
     }
 
     @Test
@@ -140,7 +173,7 @@ class HasToxicityWithGradeTest {
             toxicity(ToxicitySource.EHR, DEFAULT_QUESTIONNAIRE_GRADE + 1, "toxicity 1")
         )
         val evaluation = function.evaluate(ComorbidityTestFactory.withToxicities(toxicities))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has toxicities grade >= 2 (toxicity 1)")
         assertThat(evaluation.recoverable).isTrue
     }
 
@@ -152,7 +185,11 @@ class HasToxicityWithGradeTest {
                 ToxicitySource.QUESTIONNAIRE, DEFAULT_QUESTIONNAIRE_GRADE, "toxicity 1", evaluatedDate = LocalDate.of(2022, 1, 2)
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "No toxicities  found with grade 2 or higher"
+        )
     }
 
     private fun function(

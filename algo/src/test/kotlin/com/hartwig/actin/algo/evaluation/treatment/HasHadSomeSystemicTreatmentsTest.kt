@@ -9,19 +9,31 @@ class HasHadSomeSystemicTreatmentsTest {
 
     @Test
     fun shouldFailWhenTreatmentHistoryEmpty() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received at least 1 systemic treatments"
+        )
     }
 
     @Test
     fun shouldFailWhenOnlyNonSystemicTreatments() {
         val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", false))))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Has not received at least 1 systemic treatments"
+        )
     }
 
     @Test
     fun shouldPassWhenSystemicTreatmentsEqualThreshold() {
         val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true))))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Received at least 1 systemic treatments"
+        )
     }
 
     @Test
@@ -30,7 +42,11 @@ class HasHadSomeSystemicTreatmentsTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", true))),
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("2", true)))
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Received at least 1 systemic treatments"
+        )
     }
 
     @Test
@@ -38,7 +54,11 @@ class HasHadSomeSystemicTreatmentsTest {
         val function = HasHadSomeSystemicTreatments(2)
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("treatment", true)))
         val treatments = listOf(treatmentHistoryEntry, treatmentHistoryEntry)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Undetermined if received at least 2 systemic treatments"
+        )
     }
 
     companion object {

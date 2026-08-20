@@ -33,13 +33,18 @@ class HasFusionInGeneTest {
 
     @Test
     fun `Should fail on minimal test patient record`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No fusion in gene A"
+        )
     }
 
     @Test
     fun `Should pass on high driver reportable gain of function matching fusion`() {
         assertMolecularEvaluation(
-            EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(matchingFusion))
+            EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(matchingFusion)),
+            "Fusion(s)  in gene A"
         )
     }
 
@@ -49,7 +54,8 @@ class HasFusionInGeneTest {
             EvaluationResult.PASS, function.evaluate(
                 MolecularTestFactory.withDrivers(matchingFusion)
                     .copy(ihcTests = listOf(IhcTest(MATCHING_GENE_IHC, scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first())))
-            )
+            ),
+            "Fusion(s)  in gene A"
         )
     }
 
@@ -57,7 +63,8 @@ class HasFusionInGeneTest {
     fun `Should fail on three gene match when type five promiscuous`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene A")))
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene A"))),
+            "No fusion in gene A"
         )
     }
 
@@ -65,7 +72,8 @@ class HasFusionInGeneTest {
     fun `Should fail if exon del dup on different gene`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene B")))
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(geneStart = "gene B", geneEnd = "gene B"))),
+            "No fusion in gene A"
         )
     }
 
@@ -73,14 +81,16 @@ class HasFusionInGeneTest {
     fun `Should fail on five gene match when type is three promiscuous`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverType = FusionDriverType.PROMISCUOUS_3)))
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(driverType = FusionDriverType.PROMISCUOUS_3))),
+            "No fusion in gene A"
         )
     }
 
     @Test
     fun `Should warn on unreportable gain of function match`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false)))
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false))),
+            "Unreportable fusion(s)  in gene A however annotated with having gain-of-function evidence in "
         )
     }
 
@@ -90,7 +100,8 @@ class HasFusionInGeneTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false, proteinEffect = ProteinEffect.NO_EFFECT))
-            )
+            ),
+            "No fusion in gene A"
         )
     }
 
@@ -98,7 +109,8 @@ class HasFusionInGeneTest {
     fun `Should warn on high driver fusion with no effect`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)))
+            function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT))),
+            "Fusion(s)  in gene A but annotated with having no protein effect evidence in "
         )
     }
 
@@ -110,7 +122,8 @@ class HasFusionInGeneTest {
                     matchingFusion,
                     matchingFusion.copy(isReportable = false)
                 )
-            )
+            ),
+            "Fusion(s)  in gene A together with other fusion events(s):  (gain-of-function evidence but not considered reportable)"
         )
     }
 
@@ -122,7 +135,8 @@ class HasFusionInGeneTest {
                     matchingFusion,
                     matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)
                 )
-            )
+            ),
+            "Fusion(s)  in gene A together with other fusion events(s):  (no protein effect)"
         )
     }
 
@@ -134,7 +148,8 @@ class HasFusionInGeneTest {
                     matchingFusion,
                     matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT, driverLikelihood = DriverLikelihood.LOW)
                 )
-            )
+            ),
+            "Fusion(s)  in gene A together with other fusion events(s):  (no high driver likelihood)"
         )
     }
 
@@ -148,7 +163,7 @@ class HasFusionInGeneTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertMolecularEvaluation(EvaluationResult.WARN, result, "ALK IHC result(s) may indicate ALK fusion")
         assertThat(result.warnMessagesStrings()).containsExactly("ALK IHC result(s) may indicate ALK fusion")
     }
 
@@ -163,7 +178,7 @@ class HasFusionInGeneTest {
             )
         )
 
-        assertMolecularEvaluation(EvaluationResult.FAIL, result)
+        assertMolecularEvaluation(EvaluationResult.FAIL, result, "No fusion in gene A")
         assertThat(result.failMessagesStrings()).containsExactly("No fusion in gene A")
     }
 
@@ -177,8 +192,16 @@ class HasFusionInGeneTest {
         val result = ihcFunction.evaluate(MolecularTestFactory.withIhcTests(test))
         val resultOnlyIhcTests = ihcFunction.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(test)))
 
-        assertMolecularEvaluation(EvaluationResult.WARN, result)
-        assertMolecularEvaluation(EvaluationResult.WARN, resultOnlyIhcTests)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            result,
+            "ALK IHC result(s) are indeterminate - undetermined if this may indicate ALK fusion"
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            resultOnlyIhcTests,
+            "ALK IHC result(s) are indeterminate - undetermined if this may indicate ALK fusion"
+        )
 
         val message = "ALK IHC result(s) are indeterminate - undetermined if this may indicate ALK fusion"
         assertThat(result.warnMessagesStrings()).containsExactly(message)
@@ -191,8 +214,8 @@ class HasFusionInGeneTest {
         val result = ihcFunction.evaluate(MolecularTestFactory.withIhcTests(test))
         val resultOnlyIhcTests = ihcFunction.evaluate(MolecularTestFactory.withOnlyIhcTests(listOf(test)))
 
-        assertMolecularEvaluation(EvaluationResult.FAIL, result)
-        assertMolecularEvaluation(EvaluationResult.FAIL, resultOnlyIhcTests)
+        assertMolecularEvaluation(EvaluationResult.FAIL, result, "No fusion in ALK")
+        assertMolecularEvaluation(EvaluationResult.FAIL, resultOnlyIhcTests, "No fusion in ALK")
 
         val message = "No fusion in $MATCHING_GENE_IHC"
         assertThat(result.failMessagesStrings()).containsExactly(message)

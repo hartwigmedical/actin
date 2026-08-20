@@ -56,7 +56,7 @@ class HasExhaustedSOCTreatmentsTest {
                 )
             )
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(platinumDoublet)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "SOC considered exhausted (platinum doublet in history)")
     }
 
     @Test
@@ -76,7 +76,11 @@ class HasExhaustedSOCTreatmentsTest {
                 platinumDoublet,
                 intents = setOf(intent)
             )
-            assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+            assertEvaluation(
+                EvaluationResult.WARN,
+                function.evaluate(record),
+                "SOC potentially not exhausted (no platinum doublet in metastatic setting)"
+            )
         }
     }
 
@@ -105,7 +109,8 @@ class HasExhaustedSOCTreatmentsTest {
                 function.evaluate(
                     TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
                         .copy(oncologicalHistory = listOf(it))
-                )
+                ),
+                "SOC considered exhausted (chemoradiation in history)"
             )
         }
     }
@@ -138,7 +143,8 @@ class HasExhaustedSOCTreatmentsTest {
                     function.evaluate(
                         TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
                             .copy(oncologicalHistory = listOf(it))
-                    )
+                    ),
+                    "SOC potentially not exhausted (no platinum doublet in metastatic setting)"
                 )
             }
         }
@@ -150,7 +156,7 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(
             TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "SOC considered exhausted (chemo-immunotherapy in history)")
     }
 
     @Test
@@ -161,7 +167,11 @@ class HasExhaustedSOCTreatmentsTest {
             val record = createHistoryWithNSCLCAndTreatmentWithIntents(
                 TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY), setOf(intent)
             )
-            assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+            assertEvaluation(
+                EvaluationResult.WARN,
+                function.evaluate(record),
+                "SOC potentially not exhausted (no platinum doublet in metastatic setting)"
+            )
         }
     }
 
@@ -171,7 +181,11 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(
             TreatmentTestFactory.drugTreatment("CHEMOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Undetermined if SOC exhausted (undefined chemotherapy in history)"
+        )
     }
 
     @Test
@@ -181,9 +195,7 @@ class HasExhaustedSOCTreatmentsTest {
             TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(treatment)
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings())
-            .containsExactly("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
+        assertEvaluation(EvaluationResult.WARN, evaluation, "SOC potentially not exhausted (no platinum doublet in metastatic setting)")
     }
 
     @Test
@@ -191,16 +203,18 @@ class HasExhaustedSOCTreatmentsTest {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(null)
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings())
-            .containsExactly("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
+        assertEvaluation(EvaluationResult.WARN, evaluation, "SOC potentially not exhausted (no platinum doublet in metastatic setting)")
     }
 
     @Test
     fun `Should return undetermined for empty treatment list when SOC cannot be evaluated`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(emptyList())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Exhaustion of SOC undetermined (no prior cancer treatment)"
+        )
     }
 
     @Test
@@ -208,21 +222,33 @@ class HasExhaustedSOCTreatmentsTest {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(nonEmptyTreatmentList)
         val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Assumed that SOC is exhausted (had prior cancer treatment)"
+        )
     }
 
     @Test
     fun `Should pass when patient is known to have exhausted SOC`() {
         setStandardOfCareCanBeEvaluatedForPatient(true)
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(emptyList())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has exhausted SOC"
+        )
     }
 
     @Test
     fun `Should fail when patient is known to have not exhausted SOC`() {
         setStandardOfCareCanBeEvaluatedForPatient(true)
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(nonEmptyTreatmentList)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not exhausted SOC (remaining options: Pembrolizumab)"
+        )
         assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessagesStrings())
             .containsExactly("Has not exhausted SOC (remaining options: Pembrolizumab)")
     }
@@ -244,9 +270,11 @@ class HasExhaustedSOCTreatmentsTest {
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(treatments)
 
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings())
-            .containsExactly("Has potentially not exhausted SOC (Pembrolizumab) but some corresponding molecular results are missing")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Has potentially not exhausted SOC (Pembrolizumab) but some corresponding molecular results are missing"
+        )
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
 
@@ -266,8 +294,11 @@ class HasExhaustedSOCTreatmentsTest {
         every { standardOfCareEvaluator.evaluateRequiredTreatments(any()) } returns StandardOfCareEvaluation(treatments)
 
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).containsExactly("Has potentially exhausted SOC - remaining options (Capecitabine+Oxaliplatin) may not have been given due to drug intolerance")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Has potentially exhausted SOC - remaining options (Capecitabine+Oxaliplatin) may not have been given due to drug intolerance"
+        )
     }
 
     private fun setStandardOfCareCanBeEvaluatedForPatient(canBeEvaluated: Boolean) {

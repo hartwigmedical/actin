@@ -13,10 +13,18 @@ class HasHistoryOfSecondMalignancyTest {
 
         // No active prior tumors.
         val priorTumors: MutableList<PriorPrimary> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No previous second malignancy"
+        )
 
         // One prior tumor
         priorTumors.add(PriorTumorTestFactory.priorPrimary())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "Presence of second malignancy"
+        )
     }
 }

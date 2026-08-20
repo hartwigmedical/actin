@@ -28,7 +28,11 @@ class SingleLabValueSelectorTest {
         val interpretation = LabInterpretation.interpret(record.labValues)
         val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "No measurement found for albumin"
+        )
     }
 
     @Test
@@ -37,7 +41,11 @@ class SingleLabValueSelectorTest {
         val interpretation = LabInterpretation.interpret(record.labValues)
         val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "Most recent measurement too old for albumin"
+        )
     }
 
     @Test
@@ -46,7 +54,11 @@ class SingleLabValueSelectorTest {
         val interpretation = LabInterpretation.interpret(record.labValues)
         val result = SingleLabValueSelector(measurement).select(interpretation, minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "Unexpected unit specified for albumin: sec"
+        )
     }
 
     @Test

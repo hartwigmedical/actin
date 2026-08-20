@@ -23,41 +23,60 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     fun `Should pass when patient has intolerance matching name`() {
         HasIntoleranceForPD1OrPDL1Inhibitors.INTOLERANCE_TERMS.forEach { term: String ->
             val record = patient(listOf(ComorbidityTestFactory.intolerance(name = "intolerance to " + term.uppercase())))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(record),
+                "Has PD-1/PD-L1 intolerance(s): intolerance to ${term.uppercase()}"
+            )
         }
     }
 
     @Test
     fun `Should pass when patient has any comorbidity matching main and extension code`() {
-        assertResultForIcdCodes(EvaluationResult.PASS, MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.first())
+        assertResultForIcdCodes(EvaluationResult.PASS, MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.first()) { name ->
+            "Has PD-1/PD-L1 intolerance(s): $name"
+        }
     }
 
     @Test
     fun `Should evaluate to undetermined if any comorbidity matches on ICD main code but extension code unknown`() {
-        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, MATCHING_ICD_MAIN_CODE, null)
+        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, MATCHING_ICD_MAIN_CODE, null) {
+            "Drug intolerance in history - undetermined if PD-1/PD-L1 intolerance (drug type unknown)"
+        }
     }
 
     @Test
     fun `Should evaluate to undetermined if any comorbidity matches on ICD main code and extension code monoclonal antibodies`() {
-        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK)
+        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK) { name ->
+            "Monoclonal antibody intolerance in history - undetermined if PD-1/PD-L1 intolerance: $name"
+        }
     }
 
     @Test
     fun `Should warn when patient has prior condition belonging to autoimmune disease ICD code`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(patient(emptyList(), AUTOIMMUNE_ICD_MAIN_CODE)))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(patient(emptyList(), AUTOIMMUNE_ICD_MAIN_CODE)),
+            "Possible PD-1/PD-L1 intolerance due to autoimmune disease ()"
+        )
     }
 
     @Test
     fun `Should fail when patient has no matching intolerance or autoimmune disease condition`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(patient(listOf(ComorbidityTestFactory.intolerance(name = "other")), "123"))
+            function.evaluate(patient(listOf(ComorbidityTestFactory.intolerance(name = "other")), "123")),
+            "No PD-1/PD-L1 intolerance"
         )
     }
 
     @Test
     fun `Should fail for empty intolerance list`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
+            "No PD-1/PD-L1 intolerance"
+        )
     }
 
     private fun patient(intolerances: List<Intolerance>, icdMainCode: String = ""): PatientRecord {
@@ -66,13 +85,18 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
         )
     }
 
-    private fun assertResultForIcdCodes(expectedResult: EvaluationResult, icdMainCode: String, icdExtensionCode: String?) {
+    private fun assertResultForIcdCodes(
+        expectedResult: EvaluationResult,
+        icdMainCode: String,
+        icdExtensionCode: String?,
+        expectedMessage: (String?) -> String
+    ) {
         listOf(
             ComorbidityTestFactory.intolerance("unspecified", icdMainCode, icdExtensionCode),
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode, icdExtensionCode),
             ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode)
         ).forEach { match ->
-            assertEvaluation(expectedResult, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
+            assertEvaluation(expectedResult, function.evaluate(ComorbidityTestFactory.withComorbidity(match)), expectedMessage(match.name))
         }
     }
 }

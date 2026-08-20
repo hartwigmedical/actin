@@ -66,7 +66,12 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should fail without any alterations for both functions`() {
-        assertBothFunctions(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            TestPatientFactory.createMinimalTestWGSPatientRecord(),
+            "No gene A inactivation",
+            "No gene A deletion"
+        )
     }
 
     @Test
@@ -80,7 +85,12 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should pass with matching TSG homozygous disruption for both functions`() {
-        assertBothFunctions(EvaluationResult.PASS, MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption))
+        assertBothFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption),
+            "gene A inactivation (event)",
+            "gene A deletion (event)"
+        )
     }
 
     @Test
@@ -96,7 +106,8 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG homozygous disruption is not reportable for both functions`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(isReportable = false))
+            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(isReportable = false)),
+            "Inactivation event(s) event for gene A but event(s) not reportable", "Deletion event(s) event for gene A but event(s) not reportable"
         )
     }
 
@@ -115,7 +126,8 @@ class GeneIsInactivatedTest {
     fun `Should warn when homozygously disrupted gene is an oncogene`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(geneRole = GeneRole.ONCO))
+            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(geneRole = GeneRole.ONCO)),
+            "Inactivation event(s) event for gene A however gene is oncogene in ", "Deletion event(s) event for gene A however gene is oncogene in "
         )
     }
 
@@ -123,7 +135,8 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG homozygous disruption implies gain of function`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
+            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)),
+            "Inactivation event(s) event for gene A however event(s) annotated with gain-of-function protein impact in ", "Deletion event(s) event for gene A however event(s) annotated with gain-of-function protein impact in "
         )
     }
 
@@ -131,19 +144,26 @@ class GeneIsInactivatedTest {
     fun `Should warn when TSG homozygous disruption implies no protein effect`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.NO_EFFECT))
+            MolecularTestFactory.withHomozygousDisruption(matchingHomDisruption.copy(proteinEffect = ProteinEffect.NO_EFFECT)),
+            "Inactivation event(s) event for gene A however event(s) annotated with no protein effect in ", "Deletion event(s) event for gene A however event(s) annotated with no protein effect in "
         )
     }
 
     @Test
     fun `Should pass with matching TSG deletion`() {
-        assertBothFunctions(EvaluationResult.PASS, MolecularTestFactory.withCopyNumber(matchingDel))
+        assertBothFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withCopyNumber(matchingDel),
+            "gene A inactivation ()",
+            "gene A deletion ()"
+        )
     }
 
     @Test
     fun `Should warn when TSG deletion is not reportable`() {
         assertBothFunctions(
-            EvaluationResult.WARN, MolecularTestFactory.withCopyNumber(matchingDel.copy(isReportable = false))
+            EvaluationResult.WARN, MolecularTestFactory.withCopyNumber(matchingDel.copy(isReportable = false)),
+            "Inactivation event(s)  for gene A but event(s) not reportable", "Deletion event(s)  for gene A but event(s) not reportable"
         )
     }
 
@@ -151,7 +171,8 @@ class GeneIsInactivatedTest {
     fun `Should warn when lost gene is an oncogene`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(matchingDel.copy(geneRole = GeneRole.ONCO))
+            MolecularTestFactory.withCopyNumber(matchingDel.copy(geneRole = GeneRole.ONCO)),
+            "Inactivation event(s)  for gene A however gene is oncogene in ", "Deletion event(s)  for gene A however gene is oncogene in "
         )
     }
 
@@ -159,7 +180,8 @@ class GeneIsInactivatedTest {
     fun `Should warn when lost gene implies gain of function`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
+            MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION)),
+            "Inactivation event(s)  for gene A however event(s) annotated with gain-of-function protein impact in ", "Deletion event(s)  for gene A however event(s) annotated with gain-of-function protein impact in "
         )
     }
 
@@ -167,7 +189,8 @@ class GeneIsInactivatedTest {
     fun `Should warn when lost gene implies no protein effect`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.NO_EFFECT))
+            MolecularTestFactory.withCopyNumber(matchingDel.copy(proteinEffect = ProteinEffect.NO_EFFECT)),
+            "Inactivation event(s)  for gene A however event(s) annotated with no protein effect in ", "Deletion event(s)  for gene A however event(s) annotated with no protein effect in "
         )
     }
 
@@ -178,7 +201,7 @@ class GeneIsInactivatedTest {
             onlyDeletions = false
         ).evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
 
-        assertMolecularEvaluation(EvaluationResult.PASS, result)
+        assertMolecularEvaluation(EvaluationResult.PASS, result, "MSH2 inactivation (MSH2 loss by IHC)")
         assertThat(result.passMessagesStrings()).containsExactly("MSH2 inactivation (MSH2 loss by IHC)")
     }
 
@@ -189,7 +212,7 @@ class GeneIsInactivatedTest {
             onlyDeletions = true
         ).evaluate(MolecularTestFactory.withIhcTests(matchingIhcResult))
 
-        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertMolecularEvaluation(EvaluationResult.WARN, result, "MSH2 loss by IHC may indicate MSH2 gene deletion")
         assertThat(result.warnMessagesStrings()).containsExactly("MSH2 loss by IHC may indicate MSH2 gene deletion")
     }
 
@@ -197,7 +220,8 @@ class GeneIsInactivatedTest {
     fun `Should warn with potentially eligible IHC event for both functions`() {
         assertBothFunctionsForIhc(
             EvaluationResult.WARN,
-            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(scoreText = "possible loss"))
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(scoreText = "possible loss")),
+            "MSH2 potential loss by IHC may indicate inactivation but unclear how to interpret IHC result", "MSH2 potential loss by IHC may indicate deletion but unclear how to interpret IHC result"
         )
     }
 
@@ -205,18 +229,24 @@ class GeneIsInactivatedTest {
     fun `Should fail with potentially eligible IHC event for both functions if correct result but on wrong gene`() {
         assertBothFunctionsForIhc(
             EvaluationResult.FAIL,
-            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE))
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)),
+            "No MSH2 inactivation", "No MSH2 deletion"
         )
     }
 
     @Test
     fun `Should fail with matching IHC event for both functions if gene is not considered for IHC`() {
-        assertBothFunctions(EvaluationResult.FAIL, MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)))
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)),
+            "No gene A inactivation",
+            "No gene A deletion"
+        )
     }
 
     @Test
     fun `Should pass with matching TSG variant when requesting inactivation`() {
-        assertResultForVariantForInactivation(EvaluationResult.PASS, matchingVariant)
+        assertResultForVariantForInactivation(EvaluationResult.PASS, matchingVariant, "gene A inactivation ()")
     }
 
     @Test
@@ -226,7 +256,11 @@ class GeneIsInactivatedTest {
 
     @Test
     fun `Should warn with matching TSG variant when unknown if biallelic`() {
-        assertResultForVariantForInactivation(EvaluationResult.WARN, matchingVariant.copy(isBiallelic = null))
+        assertResultForVariantForInactivation(
+            EvaluationResult.WARN,
+            matchingVariant.copy(isBiallelic = null),
+            "Inactivation event(s)  for gene A but unknown if event(s) are biallelic"
+        )
     }
 
     @Test
@@ -238,7 +272,8 @@ class GeneIsInactivatedTest {
     fun `Should pass with matching TSG variant when unknown if clonal`() {
         assertResultForVariantForInactivation(
             EvaluationResult.PASS,
-            matchingVariant.copy(clonalLikelihood = null)
+            matchingVariant.copy(clonalLikelihood = null),
+            "gene A inactivation ()"
         )
     }
 
@@ -246,40 +281,62 @@ class GeneIsInactivatedTest {
     fun `Should fail with matching TSG variant but not clonal`() {
         assertResultForVariantForInactivation(
             EvaluationResult.FAIL,
-            matchingVariant.copy(clonalLikelihood = 0.4)
+            matchingVariant.copy(clonalLikelihood = 0.4),
+            "No gene A inactivation"
         )
     }
 
     @Test
     fun `Should warn when TSG variant is not reportable`() {
-        assertResultForVariantForInactivation(EvaluationResult.WARN, matchingVariant.copy(isReportable = false))
+        assertResultForVariantForInactivation(
+            EvaluationResult.WARN,
+            matchingVariant.copy(isReportable = false),
+            "Inactivation event(s)  for gene A but event(s) not reportable"
+        )
     }
 
     @Test
     fun `Should warn when variant affects oncogene`() {
-        assertResultForVariantForInactivation(EvaluationResult.WARN, matchingVariant.copy(geneRole = GeneRole.ONCO))
+        assertResultForVariantForInactivation(
+            EvaluationResult.WARN,
+            matchingVariant.copy(geneRole = GeneRole.ONCO),
+            "Inactivation event(s)  for gene A however gene is oncogene in "
+        )
     }
 
     @Test
     fun `Should warn when TSG variant implies gain of function`() {
-        assertResultForVariantForInactivation(EvaluationResult.WARN, matchingVariant.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION))
+        assertResultForVariantForInactivation(
+            EvaluationResult.WARN,
+            matchingVariant.copy(proteinEffect = ProteinEffect.GAIN_OF_FUNCTION),
+            "Inactivation event(s)  for gene A however event(s) annotated with gain-of-function protein impact in "
+        )
     }
 
     @Test
     fun `Should warn when TSG variant implies no protein effect`() {
-        assertResultForVariantForInactivation(EvaluationResult.WARN, matchingVariant.copy(proteinEffect = ProteinEffect.NO_EFFECT))
+        assertResultForVariantForInactivation(
+            EvaluationResult.WARN,
+            matchingVariant.copy(proteinEffect = ProteinEffect.NO_EFFECT),
+            "Inactivation event(s)  for gene A however event(s) annotated with no protein effect in "
+        )
     }
 
     @Test
     fun `Should warn when TSG variant has no high driver likelihood`() {
-        assertResultForVariantForInactivation(EvaluationResult.WARN, matchingVariant.copy(driverLikelihood = DriverLikelihood.MEDIUM))
+        assertResultForVariantForInactivation(
+            EvaluationResult.WARN,
+            matchingVariant.copy(driverLikelihood = DriverLikelihood.MEDIUM),
+            "Potential inactivation event(s)  for gene A but event(s) are not of high driver likelihood"
+        )
     }
 
     @Test
     fun `Should warn when TSG variant is not biallelic`() {
         assertResultForVariantForInactivation(
             EvaluationResult.WARN,
-            matchingVariant.copy(isBiallelic = false)
+            matchingVariant.copy(isBiallelic = false),
+            "Inactivation event(s)  for gene A but event(s) are not biallelic"
         )
     }
 
@@ -292,7 +349,8 @@ class GeneIsInactivatedTest {
                     canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(),
                     otherImpacts = setOf(TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.PARTIAL_DEL))
                 )
-            )
+            ),
+            "Inactivation event(s)  for gene A but only on non-canonical transcript", "Deletion event(s)  for gene A but only on non-canonical transcript"
         )
     }
 
@@ -301,34 +359,38 @@ class GeneIsInactivatedTest {
         assertResultForVariantForInactivation(
             EvaluationResult.FAIL, matchingVariant.copy(
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.NONE)
-            )
+            ),
+            "No gene A inactivation"
         )
     }
 
     @Test
     fun `Should pass when TSG variant in high TML sample`() {
-        assertResultForMutationalLoadAndVariantForInactivation(EvaluationResult.PASS, true, matchingVariant)
+        assertResultForMutationalLoadAndVariantForInactivation(EvaluationResult.PASS, true, matchingVariant, "gene A inactivation ()")
     }
 
     @Test
     fun `Should fail when TSG variant is non biallelic and non high driver`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionInactivation.evaluate(MolecularTestFactory.withVariant(nonHighDriverNonBiallelicMatchingVariant))
+            functionInactivation.evaluate(MolecularTestFactory.withVariant(nonHighDriverNonBiallelicMatchingVariant)),
+            "No gene A inactivation"
         )
     }
 
     @Test
     fun `Should fail when TSG variant has no high driver likelihood in high TML sample`() {
         assertResultForMutationalLoadAndVariantForInactivation(
-            EvaluationResult.FAIL, true, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
+            EvaluationResult.FAIL, true, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW),
+            "No gene A inactivation"
         )
     }
 
     @Test
     fun `Should warn when TSG variant has no high driver likelihood in low TML sample`() {
         assertResultForMutationalLoadAndVariantForInactivation(
-            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
+            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW),
+            "Potential inactivation event(s)  for gene A but event(s) are not of high driver likelihood"
         )
     }
 
@@ -339,7 +401,8 @@ class GeneIsInactivatedTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 withMicrosatelliteStabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
-            )
+            ),
+            "Potential inactivation event(s)  for EPCAM but event(s) are not biallelic and not of high driver likelihood"
         )
     }
 
@@ -350,7 +413,8 @@ class GeneIsInactivatedTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withMicrosatelliteStabilityAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
-            )
+            ),
+            "No EPCAM deletion"
         )
     }
 
@@ -361,7 +425,8 @@ class GeneIsInactivatedTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withMicrosatelliteStabilityAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = mmrGene))
-            )
+            ),
+            "No EPCAM inactivation"
         )
     }
 
@@ -372,7 +437,8 @@ class GeneIsInactivatedTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 withHomologousRecombinationAndVariant(true, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrGene))
-            )
+            ),
+            "Potential inactivation event(s)  for BRCA1 but event(s) are not biallelic and not of high driver likelihood"
         )
     }
 
@@ -383,14 +449,16 @@ class GeneIsInactivatedTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withHomologousRecombinationAndVariant(false, nonHighDriverNonBiallelicMatchingVariant.copy(gene = hrGene))
-            )
+            ),
+            "No BRCA1 inactivation"
         )
     }
 
     @Test
     fun `Should warn when TSG variant is non high driver but biallelic in low TML sample`() {
         assertResultForMutationalLoadAndVariantForInactivation(
-            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW)
+            EvaluationResult.WARN, false, matchingVariant.copy(driverLikelihood = DriverLikelihood.LOW),
+            "Potential inactivation event(s)  for gene A but event(s) are not of high driver likelihood"
         )
     }
 
@@ -401,7 +469,8 @@ class GeneIsInactivatedTest {
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true, variantWithPhaseGroups(setOf(1)), variantWithPhaseGroups(setOf(1, 2))
                 )
-            )
+            ),
+            "No gene A inactivation"
         )
     }
 
@@ -412,7 +481,8 @@ class GeneIsInactivatedTest {
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(
                     true, variantWithPhaseGroups(setOf(1)), variantWithPhaseGroups(setOf(2))
                 )
-            )
+            ),
+            "Multiple events for gene A () that potentially together cause inactivation of the gene"
         )
     }
 
@@ -424,7 +494,8 @@ class GeneIsInactivatedTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN, functionInactivation.evaluate(
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariants(true, variant1, variant2)
-            )
+            ),
+            "Multiple events for gene A () that potentially together cause inactivation of the gene"
         )
     }
 
@@ -438,7 +509,8 @@ class GeneIsInactivatedTest {
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(
                     true, variantWithPhaseGroups(setOf(1)), disruption
                 )
-            )
+            ),
+            "Multiple events for gene A () that potentially together cause inactivation of the gene"
         )
     }
 
@@ -452,7 +524,8 @@ class GeneIsInactivatedTest {
                 MolecularTestFactory.withHasTumorMutationalLoadAndVariantAndDisruption(
                     true, variantWithPhaseGroups(setOf(1)), disruption
                 )
-            )
+            ),
+            "No gene A deletion"
         )
     }
 
@@ -481,30 +554,39 @@ class GeneIsInactivatedTest {
     }
 
     private fun assertResultForVariantForDeletion(result: EvaluationResult, variant: Variant) {
-        assertMolecularEvaluation(result, functionDeletion.evaluate(MolecularTestFactory.withVariant(variant)))
+        assertMolecularEvaluation(result, functionDeletion.evaluate(MolecularTestFactory.withVariant(variant)), "No gene A deletion")
     }
 
-    private fun assertResultForVariantForInactivation(result: EvaluationResult, variant: Variant) {
-        assertMolecularEvaluation(result, functionInactivation.evaluate(MolecularTestFactory.withVariant(variant)))
+    private fun assertResultForVariantForInactivation(result: EvaluationResult, variant: Variant, expectedMessage: String) {
+        assertMolecularEvaluation(result, functionInactivation.evaluate(MolecularTestFactory.withVariant(variant)), expectedMessage)
     }
 
     private fun assertResultForMutationalLoadAndVariantForInactivation(
-        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: Variant
+        result: EvaluationResult, hasHighTumorMutationalLoad: Boolean, variant: Variant, expectedMessage: String
     ) {
         assertMolecularEvaluation(
             result,
-            functionInactivation.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant))
+            functionInactivation.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTumorMutationalLoad, variant)),
+            expectedMessage
         )
     }
 
-    private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, functionInactivation.evaluate(record))
-        assertMolecularEvaluation(result, functionDeletion.evaluate(record))
+    private fun assertBothFunctions(
+        result: EvaluationResult, record: PatientRecord, expectedInactivationMessage: String, expectedDeletionMessage: String
+    ) {
+        assertMolecularEvaluation(result, functionInactivation.evaluate(record), expectedInactivationMessage)
+        assertMolecularEvaluation(result, functionDeletion.evaluate(record), expectedDeletionMessage)
     }
 
-    private fun assertBothFunctionsForIhc(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = false).evaluate(record))
-        assertMolecularEvaluation(result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = true).evaluate(record))
+    private fun assertBothFunctionsForIhc(
+        result: EvaluationResult, record: PatientRecord, expectedInactivationMessage: String, expectedDeletionMessage: String
+    ) {
+        assertMolecularEvaluation(
+            result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = false).evaluate(record), expectedInactivationMessage
+        )
+        assertMolecularEvaluation(
+            result, GeneIsInactivated(gene = IHC_EVALUABLE_GENE, onlyDeletions = true).evaluate(record), expectedDeletionMessage
+        )
     }
 
     private fun variantWithPhaseGroups(phaseGroups: Set<Int>?) = TestVariantFactory.createMinimal().copy(

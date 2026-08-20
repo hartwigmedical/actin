@@ -12,7 +12,8 @@ class HasRapidProgressiveDiseaseTest {
         val function = HasRapidProgressiveDisease()
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if patient may have rapid progressive disease"
         )
     }
 }

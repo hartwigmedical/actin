@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.comorbidity.ComorbidityTestFactory.with
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.icd.TestIcdFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasChildPughScoreTest {
@@ -20,8 +19,7 @@ class HasChildPughScoreTest {
         )
         val result = function.evaluate(withOtherConditions(conditions))
 
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if Child-Pugh score A or B")
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined if Child-Pugh score A or B")
     }
 
     @Test
@@ -30,6 +28,10 @@ class HasChildPughScoreTest {
             otherCondition(icdMainCode = IcdConstants.LUNG_INFECTIONS_BLOCK),
             otherCondition(icdMainCode = IcdConstants.LIVER_CIRRHOSIS_CODE)
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(withOtherConditions(conditions)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(withOtherConditions(conditions)),
+            "Patient has liver cirrhosis - undetermined if Child-Pugh score A or B"
+        )
     }
 }

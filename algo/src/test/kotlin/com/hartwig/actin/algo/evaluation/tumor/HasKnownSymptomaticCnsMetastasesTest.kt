@@ -19,7 +19,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = null,
                     hasSymptomaticCnsLesions = null
                 )
-            )
+            ),
+            "Undetermined if symptomatic CNS metastases present (data missing)"
         )
     }
 
@@ -34,7 +35,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = true,
                     hasSymptomaticCnsLesions = null
                 )
-            )
+            ),
+            "CNS metastases present but unknown if symptomatic (data missing)"
         )
     }
 
@@ -49,7 +51,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = false,
                     hasSymptomaticCnsLesions = null
                 )
-            )
+            ),
+            "CNS metastases present but unknown if symptomatic (data missing)"
         )
     }
 
@@ -65,7 +68,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasSymptomaticCnsLesions = null,
                     hasSuspectedBrainLesions = true
                 )
-            )
+            ),
+            "Suspected CNS metastases present but unknown if symptomatic (data missing)"
         )
     }
 
@@ -81,7 +85,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasSymptomaticCnsLesions = null,
                     hasSuspectedCnsLesions = true
                 )
-            )
+            ),
+            "Suspected CNS metastases present but unknown if symptomatic (data missing)"
         )
     }
 
@@ -96,7 +101,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = false,
                     hasSymptomaticCnsLesions = null
                 )
-            )
+            ),
+            "No known symptomatic CNS metastases present"
         )
     }
 
@@ -111,7 +117,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = true,
                     hasSymptomaticCnsLesions = false
                 )
-            )
+            ),
+            "No known symptomatic CNS metastases present"
         )
     }
 
@@ -126,7 +133,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = true,
                     hasSymptomaticCnsLesions = true
                 )
-            )
+            ),
+            "Has symptomatic CNS metastases"
         )
     }
 
@@ -141,7 +149,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = false,
                     hasSymptomaticCnsLesions = false
                 )
-            )
+            ),
+            "Has symptomatic CNS (Brain) metastases"
         )
     }
 
@@ -156,7 +165,8 @@ class HasKnownSymptomaticCnsMetastasesTest {
                     hasCnsLesions = true,
                     hasSymptomaticCnsLesions = false
                 )
-            )
+            ),
+            "Has symptomatic CNS (Brain) metastases"
         )
     }
 }

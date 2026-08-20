@@ -16,7 +16,11 @@ class IsEligibleForTreatmentOfCategoryAndTypeTest {
 
     @Test
     fun `Should evaluate to undetermined for empty treatment history`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Undetermined if patient is eligible for treatment of category chemotherapy and type(s) anthracycline or platinum compound"
+        )
     }
 
     @Test
@@ -25,20 +29,29 @@ class IsEligibleForTreatmentOfCategoryAndTypeTest {
             createTreatmentHistoryEntry(TreatmentCategory.IMMUNOTHERAPY, setOf(DrugType.PLATINUM_COMPOUND)),
             createTreatmentHistoryEntry(TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ALKYLATING_AGENT))
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList)),
+            "Undetermined if patient is eligible for treatment of category chemotherapy and type(s) anthracycline or platinum compound"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined for entry with correct category but no type configured`() {
         val treatmentList = listOf(createTreatmentHistoryEntry(TreatmentCategory.CHEMOTHERAPY, emptySet()))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList)),
+            "Undetermined if patient is eligible for treatment of category chemotherapy and type(s) anthracycline or platinum compound"
+        )
     }
 
     @Test
     fun `Should warn when treatment history contains entry with correct category and type`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(createTreatmentHistoryEntry(TARGET_CATEGORY, TARGET_TYPES))))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(createTreatmentHistoryEntry(TARGET_CATEGORY, TARGET_TYPES)))),
+            "Has already received treatment of category chemotherapy and type(s) anthracycline or platinum compound and may therefore not be eligible anymore for this treatment"
         )
     }
 

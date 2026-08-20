@@ -12,7 +12,8 @@ class HasSoftTissueMetastasesTest {
     fun `Should be undetermined if other lesions are unknown`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withOtherLesions(null))
+            function.evaluate(TumorTestFactory.withOtherLesions(null)),
+            "Soft tissue metastases undetermined (metastases data missing)"
         )
     }
 
@@ -21,7 +22,8 @@ class HasSoftTissueMetastasesTest {
         listOf("abdominal lesion", "Lymph node").forEach {
             EvaluationAssert.assertEvaluation(
                 EvaluationResult.FAIL,
-                function.evaluate(TumorTestFactory.withOtherLesions(listOf(it)))
+                function.evaluate(TumorTestFactory.withOtherLesions(listOf(it))),
+                "No soft tissue metastases"
             )
         }
     }
@@ -30,7 +32,8 @@ class HasSoftTissueMetastasesTest {
     fun `Should fail if patient has no other lesions`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(emptyList()))
+            function.evaluate(TumorTestFactory.withOtherLesions(emptyList())),
+            "No soft tissue metastases"
         )
     }
 
@@ -38,15 +41,18 @@ class HasSoftTissueMetastasesTest {
     fun `Should pass if patient has soft tissue metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Soft tissue metastases")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Soft tissue metastases"))),
+            "Has soft tissue metastases"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intramuscular depositions")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intramuscular depositions"))),
+            "Has soft tissue metastases"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("skin")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("skin"))),
+            "Has soft tissue metastases"
         )
     }
 
@@ -54,7 +60,8 @@ class HasSoftTissueMetastasesTest {
     fun `Should warn if patient has suspected soft tissue metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("soft tissue")))
+            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("soft tissue"))),
+            "Has suspected soft tissue metastases"
         )
     }
 }

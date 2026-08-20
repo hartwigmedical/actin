@@ -14,36 +14,56 @@ class HasLeftSidedColorectalTumorTest {
     
     @Test
     fun `Should return undetermined when no tumor DOIDs configured`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if left-sided colorectal cancer"
+        )
     }
 
     @Test
     fun `Should fail when tumor is not colorectal`() {
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(withDoids(DoidConstants.PROSTATE_CANCER_DOID)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function().evaluate(withDoids(DoidConstants.PROSTATE_CANCER_DOID)),
+            "Has no left-sided colorectal cancer"
+        )
     }
 
     @Test
     fun `Should pass when name does contain a left string`() {
         HasLeftSidedColorectalTumor.LEFT_SUB_LOCATIONS.forEach { name: String ->
-            assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName("text $name other text")))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function().evaluate(patientWithTumorName("text $name other text")),
+                "Has left-sided CRC tumor (text $name other text)"
+            )
         }
     }
 
     @Test
     fun `Should pass when name contains rectum`() {
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName(("rectum"))))
+        assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName(("rectum"))), "Has left-sided CRC tumor (rectum)")
     }
 
     @Test
     fun `Should fail when name contains a right string`() {
         HasLeftSidedColorectalTumor.RIGHT_SUB_LOCATIONS.forEach { name: String? ->
-            assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("text $name other text"))))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                function().evaluate(patientWithTumorName(("text $name other text"))),
+                "Has no left-sided CRC tumor but right-sided tumor (text $name other text)"
+            )
         }
     }
 
     @Test
     fun `Should fail when name contains colorectum cecum`() {
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(patientWithTumorName(("colorectum cecum"))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function().evaluate(patientWithTumorName(("colorectum cecum"))),
+            "Has no left-sided CRC tumor but right-sided tumor (colorectum cecum)"
+        )
     }
 
     @Test
@@ -51,7 +71,8 @@ class HasLeftSidedColorectalTumorTest {
         listOf("", "unknown", "some string").forEach { name: String ->
             assertEvaluation(
                 EvaluationResult.UNDETERMINED,
-                function().evaluate(patientWithTumorName(name))
+                function().evaluate(patientWithTumorName(name)),
+                "Undetermined if tumor $name is left-sided"
             )
         }
     }

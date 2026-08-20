@@ -30,7 +30,8 @@ class HasHistoryOfAnaphylaxisTest {
                         ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.ANAPHYLAXIS_CODE)
                     )
                 )
-            )
+            ),
+            "Has history of anaphylaxis: "
         )
     }
 
@@ -44,14 +45,16 @@ class HasHistoryOfAnaphylaxisTest {
                         ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_INDUCED_ANAPHYLAXIS_CODE)
                     )
                 )
-            )
+            ),
+            "Has history of anaphylaxis: "
         )
     }
 
     @Test
     fun `Should fail for empty history and no intolerances`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(testPatient.copy(comorbidities = emptyList()))
+            EvaluationResult.FAIL, function.evaluate(testPatient.copy(comorbidities = emptyList())),
+            "No known history of anaphylaxis"
         )
     }
 
@@ -66,7 +69,8 @@ class HasHistoryOfAnaphylaxisTest {
                         ComorbidityTestFactory.otherCondition(icdMainCode = "wrong")
                     )
                 )
-            )
+            ),
+            "No known history of anaphylaxis"
         )
     }
 }

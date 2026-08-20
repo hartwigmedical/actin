@@ -12,7 +12,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
     @Test
     fun `Should fail with no conditions`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())),
+            "No history of (typically) inherited predisposition to bleeding or thrombosis"
         )
     }
 
@@ -23,7 +24,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
                 ComorbidityTestFactory.withOtherConditions(
                     listOf(ComorbidityTestFactory.otherCondition(icdMainCode = "wrong"))
                 )
-            )
+            ),
+            "No history of (typically) inherited predisposition to bleeding or thrombosis"
         )
     }
 
@@ -35,7 +37,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
                 ComorbidityTestFactory.withOtherCondition(
                     ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
                 )
-            )
+            ),
+            "Has history of (typically) inherited predisposition to bleeding or thrombosis: "
         )
     }
 
@@ -47,7 +50,8 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
         )
 
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherConditions(conditions))
+            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherConditions(conditions)),
+            "Has history of (typically) inherited predisposition to bleeding or thrombosis: Factor V Leiden"
         )
     }
 }

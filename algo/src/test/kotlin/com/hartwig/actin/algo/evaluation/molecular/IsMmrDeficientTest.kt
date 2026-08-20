@@ -25,7 +25,8 @@ class IsMmrDeficientTest {
     @Test
     fun `Should evaluate to undetermined with unknown MSI and no MSI alteration`() {
         assertMolecularEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(null, msiVariant()))
+            EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(null, msiVariant())),
+            "No MSI test result"
         )
     }
 
@@ -35,7 +36,8 @@ class IsMmrDeficientTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteStabilityAndVariant(null, msiVariant(isReportable = true, isBiallelic = true))
-            )
+            ),
+            "No MSI test result but biallelic driver event(s) in MMR gene(s) (EPCAM) detected"
         )
     }
 
@@ -43,7 +45,8 @@ class IsMmrDeficientTest {
     fun `Should be undetermined with reportable non-biallelic MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(null, msiVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(null, msiVariant(isReportable = true))),
+            "No MSI test result but non-biallelic driver event(s) in MMR gene(s) (EPCAM) detected"
         )
     }
 
@@ -51,7 +54,8 @@ class IsMmrDeficientTest {
     fun `Should warn with MSI true and reportable non-biallelic MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(true, msiVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(true, msiVariant(isReportable = true))),
+            "Tumor is MSI but with only non-biallelic driver event(s) in MMR gene(s) (EPCAM)"
         )
     }
 
@@ -61,7 +65,8 @@ class IsMmrDeficientTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withMicrosatelliteStabilityAndVariant(true, msiVariant(isReportable = true, isBiallelic = true))
-            )
+            ),
+            "Tumor is MSI with biallelic driver event(s) in MMR gene(s) (EPCAM)"
         )
     }
 
@@ -77,7 +82,8 @@ class IsMmrDeficientTest {
                         gene = mmrGene
                     )
                 )
-            )
+            ),
+            "Tumor is MSI with biallelic driver event(s) in MMR gene(s) (EPCAM)"
         )
     }
 
@@ -89,7 +95,8 @@ class IsMmrDeficientTest {
                 MolecularTestFactory.withMicrosatelliteStabilityAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = mmrGene)
                 )
-            )
+            ),
+            "Tumor is MSI with biallelic driver event(s) in MMR gene(s) (EPCAM)"
         )
     }
 
@@ -100,14 +107,16 @@ class IsMmrDeficientTest {
                 MolecularTestFactory.withMicrosatelliteStabilityAndDisruption(
                     true, TestDisruptionFactory.createMinimal().copy(gene = mmrGene)
                 )
-            )
+            ),
+            "Tumor is MSI but without known driver event(s) in MMR gene(s)"
         )
     }
 
     @Test
     fun `Should warn with MSI true and non-reportable non-biallelic MSI variant`() {
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(true, msiVariant()))
+            EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(true, msiVariant())),
+            "Tumor is MSI but without known driver event(s) in MMR gene(s)"
         )
     }
 
@@ -123,7 +132,8 @@ class IsMmrDeficientTest {
                         isBiallelic = false
                     )
                 )
-            )
+            ),
+            "Tumor is MSI but without known driver event(s) in MMR gene(s)"
         )
     }
 
@@ -131,7 +141,8 @@ class IsMmrDeficientTest {
     fun `Should fail with MSI false and reportable MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(false, msiVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withMicrosatelliteStabilityAndVariant(false, msiVariant(isReportable = true))),
+            "Tumor is not dMMR"
         )
     }
 
@@ -151,7 +162,7 @@ class IsMmrDeficientTest {
     fun `Should pass with IHC MMR deficient test result`() {
         val result = function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Deficient")))
 
-        assertMolecularEvaluation(EvaluationResult.PASS, result)
+        assertMolecularEvaluation(EvaluationResult.PASS, result, "dMMR by IHC")
         assertThat(result.passMessagesStrings()).containsExactly("dMMR by IHC")
     }
 
@@ -159,7 +170,8 @@ class IsMmrDeficientTest {
     fun `Should fail with IHC MMR proficient test result`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Proficient")))
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Proficient"))),
+            "Tumor is not dMMR"
         )
     }
 
@@ -174,7 +186,11 @@ class IsMmrDeficientTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if tumor is dMMR by IHC - but loss detected of MMR gene by IHC"
+        )
         assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if tumor is dMMR by IHC - but loss detected of MMR gene by IHC")
     }
 
@@ -191,7 +207,7 @@ class IsMmrDeficientTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined dMMR result by IHC")
         assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined dMMR result by IHC")
     }
 
@@ -208,7 +224,8 @@ class IsMmrDeficientTest {
                         )
                     ), true, msiVariant(isReportable = true, isBiallelic = true)
                 )
-            )
+            ),
+            "Tumor is MMR proficient by IHC but MSI by molecular test"
         )
     }
 
@@ -225,7 +242,8 @@ class IsMmrDeficientTest {
                         )
                     ), false, msiVariant(isReportable = true)
                 )
-            )
+            ),
+            "Tumor is dMMR by IHC but MSS by molecular test"
         )
     }
 
@@ -233,7 +251,8 @@ class IsMmrDeficientTest {
     fun `Should resolve to undetermined when MMR deficiency test results are missing`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+            function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()),
+            "Undetermined dMMR result by IHC"
         )
     }
 
@@ -244,7 +263,8 @@ class IsMmrDeficientTest {
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord()
                     .copy(ihcTests = listOf(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Deficient")))
-            )
+            ),
+            "Tumor is dMMR by IHC"
         )
     }
 
@@ -255,7 +275,8 @@ class IsMmrDeficientTest {
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord()
                     .copy(ihcTests = listOf(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Proficient")))
-            )
+            ),
+            "Tumor is not dMMR by IHC"
         )
     }
 
@@ -266,7 +287,8 @@ class IsMmrDeficientTest {
             function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord()
                     .copy(ihcTests = listOf(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Proficient", impliesIndeterminate = true)))
-            )
+            ),
+            "Undetermined dMMR result by IHC"
         )
     }
 

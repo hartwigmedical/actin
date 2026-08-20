@@ -20,8 +20,12 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should pass when patient has liver metastases only`() {
         val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true))
 
-        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record))
-        assertEvaluation(EvaluationResult.PASS, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record), "Has only liver metastases")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
+            "Has only liver and/or lymph node and/or lung metastases"
+        )
     }
 
     @Test
@@ -33,15 +37,20 @@ class HasSpecificMetastasesOnlyTest {
             )
         )
 
-        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record))
-        assertEvaluation(EvaluationResult.PASS, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record), "Has only liver metastases")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
+            "Has only liver and/or lymph node and/or lung metastases"
+        )
     }
 
     @Test
     fun `Should pass when patient has only lymph node metastases`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLymphNodeLesions = true)))
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLymphNodeLesions = true))),
+            "Has only liver and/or lymph node and/or lung metastases"
         )
     }
 
@@ -57,7 +66,8 @@ class HasSpecificMetastasesOnlyTest {
                         hasLungLesions = true
                     )
                 )
-            )
+            ),
+            "Has only liver and/or lymph node and/or lung metastases"
         )
     }
 
@@ -65,7 +75,8 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should fail when patient has no liver metastases`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withConfirmedLesions(hasLiverLesions = false))
+            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withConfirmedLesions(hasLiverLesions = false)),
+            "Does not have only liver metastases"
         )
     }
 
@@ -79,7 +90,8 @@ class HasSpecificMetastasesOnlyTest {
                     hasLymphNodeLesions = false,
                     hasLungLesions = false
                 )
-            )
+            ),
+            "Does not have only liver and/or lymph node and/or lung metastases"
         )
     }
 
@@ -87,16 +99,24 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should fail when patient has liver lesion but also bone metastases`() {
         val record = TumorTestFactory.withConfirmedLesions(hasLiverLesions = true, hasBoneLesions = true)
 
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record))
-        assertEvaluation(EvaluationResult.FAIL, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record), "Does not have only liver metastases")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
+            "Does not have only liver and/or lymph node and/or lung metastases"
+        )
     }
 
     @Test
     fun `Should fail when patient has liver lesion but also other lesion`() {
         val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(otherLesions = listOf("skin")))
 
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record))
-        assertEvaluation(EvaluationResult.FAIL, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record), "Does not have only liver metastases")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
+            "Does not have only liver and/or lymph node and/or lung metastases"
+        )
     }
 
     @Test
@@ -105,11 +125,18 @@ class HasSpecificMetastasesOnlyTest {
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationSingle,
+            "Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationMultiple,
+            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
+        )
 
         assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)")
-        assertThat(evaluationMultiple.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)")
     }
 
     @Test
@@ -118,11 +145,18 @@ class HasSpecificMetastasesOnlyTest {
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationSingle,
+            "Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationMultiple,
+            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
+        )
 
         assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)")
-        assertThat(evaluationMultiple.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)")
     }
 
     @Test
@@ -132,8 +166,16 @@ class HasSpecificMetastasesOnlyTest {
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationSingle,
+            "Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationMultiple,
+            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
+        )
     }
 
     @Test
@@ -142,11 +184,18 @@ class HasSpecificMetastasesOnlyTest {
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationSingle,
+            "Undetermined if patient has only liver metastases (missing lesion data)"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationMultiple,
+            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (missing lesion data)"
+        )
 
         assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (missing lesion data)")
-        assertThat(evaluationMultiple.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver and/or lymph node and/or lung metastases (missing lesion data)")
     }
 
     @Test
@@ -155,8 +204,16 @@ class HasSpecificMetastasesOnlyTest {
         val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
         val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationSingle,
+            "Undetermined if patient has only liver metastases (missing lesion data)"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationMultiple,
+            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (missing lesion data)"
+        )
     }
 
     private fun withNoOutsideLesions(

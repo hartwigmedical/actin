@@ -25,14 +25,19 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
 
     @Test
     fun `Should pass with no prior systemic treatment`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has had no prior systemic treatment in metastatic setting - thus within maximum of 2 line(s)"
+        )
     }
 
     @Test
     fun `Should pass with only excluded intent treatments`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.CURATIVE))))
+            function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.CURATIVE)))),
+            "Has had no prior systemic treatment in metastatic setting - thus within maximum of 2 line(s)"
         )
     }
 
@@ -42,7 +47,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             listOf(Intent.PALLIATIVE, Intent.PALLIATIVE, Intent.PALLIATIVE).map { createTreatment(it) }
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "Has had more than 2 systemic treatment line(s) with palliative intent in metastatic setting"
+        )
         assertThat(evaluation.failMessagesStrings()).containsExactly("Has had more than 2 systemic treatment line(s) with palliative " +
                 "intent in metastatic setting")
     }
@@ -58,7 +67,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             )
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "Likely exceeded maximum of 2 systemic treatment line(s) in metastatic setting (4 lines likely in metastatic setting)"
+        )
         assertThat(evaluation.failMessagesStrings()).containsExactly("Likely exceeded maximum of 2 systemic treatment line(s) in " +
                 "metastatic setting (4 lines likely in metastatic setting)")
     }
@@ -73,7 +86,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             )
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Uncertain whether maximum of 2 systemic treatment line(s) " +
                 "in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some)")
     }
@@ -88,7 +105,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             )
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded" +
                     " (3 lines likely in metastatic setting, setting unclear for some)"
@@ -106,7 +127,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             )
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "Likely exceeded maximum of 2 systemic treatment line(s) in metastatic setting (4 lines likely in metastatic setting)"
+        )
         assertThat(evaluation.failMessagesStrings()).containsExactly(
             "Likely exceeded maximum of 2 systemic treatment line(s) in metastatic setting" +
                     " (4 lines likely in metastatic setting)"
@@ -123,7 +148,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             )
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded (3 lines with non-excluded intent, setting unclear for older lines)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Uncertain whether maximum of 2 systemic treatment line(s) " +
                 "in metastatic setting is exceeded (3 lines with non-excluded intent, setting unclear for older lines)")
     }
@@ -136,7 +165,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
                 createTreatment(Intent.MAINTENANCE, stopYear = recentDate.year, stopMonth = recentDate.monthValue)
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "Has had at most 2 systemic treatment line(s) in metastatic setting"
+        )
     }
 
     @Test
@@ -147,7 +180,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
                 createTreatment(null, stopYear = nonRecentDate.year, stopMonth = nonRecentDate.monthValue)
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "Has had at most 2 systemic treatment line(s) in metastatic setting"
+        )
     }
 
     @Test
@@ -155,7 +192,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         val record = withTreatmentHistory(
             listOf(Intent.PALLIATIVE, Intent.PALLIATIVE).map { createTreatment(it) }
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "Has had at most 2 systemic treatment line(s) in metastatic setting"
+        )
     }
 
     private fun createTreatment(intent: Intent?, stopYear: Int? = null, stopMonth: Int? = null): TreatmentHistoryEntry {

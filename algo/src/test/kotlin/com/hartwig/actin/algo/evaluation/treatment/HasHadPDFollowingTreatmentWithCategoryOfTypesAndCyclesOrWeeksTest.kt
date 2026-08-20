@@ -19,7 +19,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
 
     @Test
     fun `Should fail for empty treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function().evaluate(withTreatmentHistory(emptyList())),
+            "No HER2 antibody targeted therapy treatment with PD"
+        )
     }
 
     @Test
@@ -27,7 +31,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", TreatmentCategory.RADIOTHERAPY)), stopReason = StopReason.PROGRESSIVE_DISEASE
         )
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "No HER2 antibody targeted therapy treatment with PD"
+        )
     }
 
     @Test
@@ -48,7 +56,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     fun `Should fail for right category and type but no PD`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.TOXICITY, bestResponse = TreatmentResponse.MIXED)
-        assertEvaluation(EvaluationResult.FAIL, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "No PD after targeted therapy"
+        )
     }
 
     @Test
@@ -68,38 +80,62 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
     fun `Should return undetermined for right category and missing type with PD`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), stopReason = StopReason.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if patient received HER2 antibody targeted therapy treatment"
+        )
     }
 
     @Test
     fun `Should return undetermined for right category type and missing stop reason`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received HER2 antibody targeted therapy treatment but uncertain if there has been PD"
+        )
     }
 
     @Test
     fun `Should pass for right category type with no stop reason but subsequent treatment line within 26 weeks`() {
         val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopYear = 2020, stopMonth = 6)
         val subsequentEntry = treatmentHistoryEntry(setOf(drugTreatment("other", TreatmentCategory.CHEMOTHERAPY)), startYear = 2020, startMonth = 9)
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function().evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
+            "Has had HER2 antibody targeted therapy treatment with PD"
+        )
     }
 
     @Test
     fun `Should pass for right category type and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD"
+        )
     }
 
     @Test
     fun `Should pass for matching treatment when PD is indicated in best response`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD"
+        )
     }
 
     @Test
     fun `Should return undetermined with trial treatment entry in history`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if patient received HER2 antibody targeted therapy treatment"
+        )
     }
 
     @Test
@@ -109,13 +145,21 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
             null, null
         )
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "No allogenic transplantation treatment with PD"
+        )
     }
 
     @Test
     fun `Should return undetermined for right category type and stop reason PD when cycles are required and missing`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD but unknown nr of cycles"
+        )
     }
 
     @Test
@@ -123,7 +167,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE, numCycles = 4
         )
-        assertEvaluation(EvaluationResult.WARN, function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD but less than 5 cycles"
+        )
     }
 
     @Test
@@ -131,13 +179,21 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE, numCycles = 5
         )
-        assertEvaluation(EvaluationResult.PASS, function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD and at least 5 cycles"
+        )
     }
 
     @Test
     fun `Should return undetermined for right category type and stop reason PD when min weeks required and unknown`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD but unknown nr of weeks"
+        )
     }
 
     @Test
@@ -150,7 +206,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
             stopYear = 2022,
             stopMonth = 5
         )
-        assertEvaluation(EvaluationResult.FAIL, function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD but less than 5 weeks"
+        )
     }
 
     @Test
@@ -163,7 +223,11 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
             stopYear = 2022,
             stopMonth = 6
         )
-        assertEvaluation(EvaluationResult.PASS, function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment with PD for at least 5 weeks"
+        )
     }
 
     companion object {

@@ -11,7 +11,8 @@ class HasMinimumMouthOpeningTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasMinimumMouthOpening(10).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            HasMinimumMouthOpening(10).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined whether mouth opening is at least 10 mm"
         )
     }
 }

@@ -45,38 +45,56 @@ class GeneHasSpecificExonSkippingTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 TestPatientFactory.createEmptyMolecularTestPatientRecord()
-            )
+            ),
+            "No molecular results of sufficient quality"
         )
     }
 
     @Test
     fun `Should fail when no variants in patient record`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No gene_A exon 2 skipping"
+        )
     }
 
     @Test
     fun `Should warn on splice variant in specific exon`() {
-        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT)))
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT)),
+            "Potential gene_A exon 2 skipping detected: "
+        )
     }
 
     @Test
     fun `Should pass when exon skipping is confirmed for splice variant in specific exon`() {
         val confirmedVariant = SPLICE_VARIANT.copy(exonSkippingIsConfirmed = true)
 
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withVariant(confirmedVariant)))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withVariant(confirmedVariant)),
+            "Confirmed gene_A exon 2 skipping detected: "
+        )
     }
 
     @Test
     fun `Should pass when exon skipping is confirmed without splice coding effect`() {
         val confirmedPotentialVariant = POTENTIAL_SPLICE_VARIANT.copy(exonSkippingIsConfirmed = true)
 
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withVariant(confirmedPotentialVariant)))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withVariant(confirmedPotentialVariant)),
+            "Confirmed gene_A exon 2 skipping detected: c.potential"
+        )
     }
 
     @Test
     fun `Should fail on splice variant in specific exon that is not reportable`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT.copy(isReportable = false)))
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT.copy(isReportable = false))),
+            "No gene_A exon 2 skipping"
         )
     }
 
@@ -84,20 +102,29 @@ class GeneHasSpecificExonSkippingTest {
     fun `Should warn on splice variant in specific exon that is not a splice effect variant but is in splice region`() {
         val result = function.evaluate(MolecularTestFactory.withVariant(POTENTIAL_SPLICE_VARIANT))
 
-        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            result,
+            "Potential gene_A exon 2 skipping: variant(s) c.potential detected in splice region of exon 2 although unknown relevance (not annotated with splice coding effect)"
+        )
         assertThat(result.warnMessagesStrings())
             .containsExactly("Potential gene_A exon 2 skipping: variant(s) c.potential detected in splice region of exon 2 although unknown relevance (not annotated with splice coding effect)")
     }
 
     @Test
     fun `Should pass on fusion skipping specific exon`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION)))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION)),
+            "gene_A exon 2 skipping detected: "
+        )
     }
 
     @Test
     fun `Should fail on fusion skipping specific exon that is not reportable`() {
         assertMolecularEvaluation(
-            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(isReportable = false)))
+            EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION.copy(isReportable = false))),
+            "No gene_A exon 2 skipping"
         )
     }
 
@@ -109,7 +136,8 @@ class GeneHasSpecificExonSkippingTest {
                 MolecularTestFactory.withFusion(
                     EXON_SKIPPING_FUSION.copy(fusedExonDown = 5)
                 )
-            )
+            ),
+            "No gene_A exon 2 skipping"
         )
     }
 
@@ -119,7 +147,8 @@ class GeneHasSpecificExonSkippingTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDrivers(EXON_SKIPPING_FUSION, POTENTIAL_SPLICE_VARIANT)
-            )
+            ),
+            "gene_A exon 2 skipping detected:  together with potential additional exon 2 skipping variant(s) ()"
         )
     }
 
@@ -129,7 +158,8 @@ class GeneHasSpecificExonSkippingTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withDrivers(EXON_SKIPPING_FUSION, SPLICE_VARIANT.copy(exonSkippingIsConfirmed = true))
-            )
+            ),
+            "gene_A exon 2 skipping detected:  together with confirmed additional exon 2 skipping variant(s) ()"
         )
     }
 

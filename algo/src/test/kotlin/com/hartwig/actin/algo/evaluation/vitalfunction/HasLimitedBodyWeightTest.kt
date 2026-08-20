@@ -18,7 +18,11 @@ class HasLimitedBodyWeightTest {
             weight(referenceDate.plusDays(1), 155.0),
             weight(referenceDate.plusDays(2), 165.0)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)),
+            "Median body weight (160.0 kg) above 150.0 kg"
+        )
     }
 
     @Test
@@ -27,6 +31,10 @@ class HasLimitedBodyWeightTest {
             weight(referenceDate.plusDays(1), 151.0),
             weight(referenceDate.plusDays(2), 148.0)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(VitalFunctionTestFactory.withBodyWeights(weights)),
+            "Median body weight (149.5 kg) below 150.0 kg"
+        )
     }
 }
