@@ -20,6 +20,13 @@ object TreatmentVersusDateFunctions {
         return DateComparison.isAfterDate(minDate, treatment.stopYear(), treatment.stopMonth()) != false
     }
 
+    fun partitionTreatmentsByCertainOccurrenceSinceMinDate(
+        treatments: List<TreatmentHistoryEntry>,
+        minDate: LocalDate
+    ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
+        return treatments.partition { certainTreatmentSinceMinDate(it, minDate) }
+    }
+
     fun certainTreatmentBeforeMaxDate(treatment: TreatmentHistoryEntry, maxDate: LocalDate): Boolean {
         return DateComparison.isBeforeDate(maxDate, treatment.startYear, treatment.startMonth) ?: DateComparison.isBeforeDate(
             maxDate,

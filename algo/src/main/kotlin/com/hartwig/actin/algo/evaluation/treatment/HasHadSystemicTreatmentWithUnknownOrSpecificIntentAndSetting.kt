@@ -27,14 +27,15 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val priorSystemicTreatments =
             priorTreatments.filter { it.treatments.any(Treatment::isSystemic) && !it.categories().contains(categoryToIgnore) }
-        val (excludedIntentTreatments, includedIntentTreatments) = SystemicTreatmentAnalyser.partitionTreatmentsByIntent(
+        val (excludedIntentTreatments, includedIntentTreatments) = TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent(
             priorSystemicTreatments,
             intentsToIgnore
         )
-        val (certainRecentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) = SystemicTreatmentAnalyser.partitionTreatmentsByCertainlySinceMinDate(
-            includedIntentTreatments,
-            referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
-        )
+        val (certainRecentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) =
+            TreatmentVersusDateFunctions.partitionTreatmentsByCertainOccurrenceSinceMinDate(
+                includedIntentTreatments,
+                referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
+            )
         val potentiallyRecentPotentiallyCorrectIntentTreatments =
             includedIntentTreatments.filter { potentialTreatmentSinceMinDate(it, referenceDate.minusMonths(MONTHS_TO_SUBTRACT)) }
         val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = includedIntentTreatments.filter { it.stopYear() == null }

@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
 import java.time.YearMonth
@@ -20,20 +19,6 @@ object SystemicTreatmentAnalyser {
         OUTSIDE,
         AMBIGUOUS,
         UNKNOWN
-    }
-
-    fun partitionTreatmentsByIntent(
-        treatments: List<TreatmentHistoryEntry>,
-        intentsToIgnore: Set<Intent>
-    ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
-        return treatments.partition { it.intents?.any { intent -> intentsToIgnore.contains(intent) } == true }
-    }
-
-    fun partitionTreatmentsByCertainlySinceMinDate(
-        treatments: List<TreatmentHistoryEntry>,
-        minDate: LocalDate
-    ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
-        return treatments.partition { TreatmentVersusDateFunctions.certainTreatmentSinceMinDate(it, minDate) }
     }
 
     fun maxSystemicTreatments(treatmentHistory: List<TreatmentHistoryEntry>): Int {

@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -18,16 +17,20 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorSystemicTreatments = record.oncologicalHistory.filter { it.treatments.any(Treatment::isSystemic) }
-        val (_, includedIntentTreatments) = SystemicTreatmentAnalyser.partitionTreatmentsByIntent(priorSystemicTreatments, intentsToIgnore)
-        val (palliativeIntentTreatments, nonPalliativeIncludedTreatments) = includedIntentTreatments.partition { it.intents?.contains(Intent.PALLIATIVE) == true }
-        val recentAndPotentiallyRecentNonPalliativeTreatments = nonPalliativeIncludedTreatments.filter {
-            potentialTreatmentSinceMinDate(
-                it,
-                referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
+        val (_, includedIntentTreatments) = TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent(
+            priorSystemicTreatments,
+            intentsToIgnore
+        )
+        val (palliativeIntentTreatments, nonPalliativeIncludedTreatments) =
+            TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent(
+                includedIntentTreatments,
+                setOf(Intent.PALLIATIVE)
             )
+        val potentiallyRecentNonPalliativeTreatments = nonPalliativeIncludedTreatments.filter {
+            TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(it, referenceDate.minusMonths(MONTHS_TO_SUBTRACT))
         }
         val settingMessage = "$settingDescription setting"
-        val probableCount = palliativeIntentTreatments.size + recentAndPotentiallyRecentNonPalliativeTreatments.size
+        val probableCount = palliativeIntentTreatments.size + potentiallyRecentNonPalliativeTreatments.size
 
         return when {
             includedIntentTreatments.isEmpty() ->
