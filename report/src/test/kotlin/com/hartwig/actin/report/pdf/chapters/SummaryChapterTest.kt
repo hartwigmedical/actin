@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
@@ -75,7 +74,7 @@ class SummaryChapterTest {
 
     private fun createTestSummaryChapter(report: Report): SummaryChapter {
         val configuration = ReportConfiguration()
-        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+        val labels = ReportLabels.load(configuration.reportType)
         return SummaryChapter(report, configuration, createTrialsProvider(report, configuration), labels)
     }
 

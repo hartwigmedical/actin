@@ -33,7 +33,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         logger.debug { "Initializing output styles" }
         Styles.initialize()
 
-        val labels = ReportLabels.load(configuration.intendedUse)
+        val labels = ReportLabels.load(configuration.reportType)
         val chapters = ReportContentProvider(report, configuration, doidModel, labels).provideChapters()
         writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, report.reportDate, addExtendedSuffix, labels)
     }
@@ -46,7 +46,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         addExtendedSuffix: Boolean,
         labels: ReportLabels
     ) {
-        val doc = initializeReport(patientId, addExtendedSuffix)
+        val doc = initializeReport(patientId, addExtendedSuffix, labels)
         val pdfDocument = doc.pdfDocument
         val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
@@ -65,7 +65,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdfDocument.close()
     }
 
-    private fun initializeReport(patientId: String, addExtendedSuffix: Boolean): Document {
+    private fun initializeReport(patientId: String, addExtendedSuffix: Boolean, labels: ReportLabels): Document {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath =
@@ -84,7 +84,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
 
         val pdf = PdfDocument(writer)
         pdf.defaultPageSize = PageSize.A4
-        pdf.documentInfo.title = Constants.METADATA_TITLE
+        pdf.documentInfo.title = labels.report.metadataTitle()
         pdf.documentInfo.author = Constants.METADATA_AUTHOR
         val document = Document(pdf)
         document.setMargins(

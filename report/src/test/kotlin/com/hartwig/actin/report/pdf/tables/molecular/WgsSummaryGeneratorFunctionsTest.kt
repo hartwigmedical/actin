@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.configuration.ReportIntendedUse
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.CupPrediction
 import com.hartwig.actin.datamodel.molecular.characteristics.CuppaMode
@@ -27,7 +27,7 @@ import org.junit.jupiter.api.Test
 class WgsSummaryGeneratorFunctionsTest {
 
     private val molecularRecord = TestMolecularFactory.createProperWholeGenomeTest()
-    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    private val labels = ReportLabels.load(ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
     private val inconclusivePredictions = listOf(
         CupPrediction(
             cancerType = "Melanoma",

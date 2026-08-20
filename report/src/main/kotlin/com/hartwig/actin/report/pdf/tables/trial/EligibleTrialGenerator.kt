@@ -146,7 +146,7 @@ class EligibleTrialGenerator(
             val filteredSuffix = " " + labels.trialMatching.footnoteFilteredSuffix()
             val footNote = if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG) {
                 relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                    labels.trialMatching.footnoteDutchLung(formatCountWithLabel(count, labels.misc.trial())) + filteredSuffix
+                    labels.trialMatching.footnoteDutchLung(count) + filteredSuffix
                 }
             } else {
                 listOfNotNull(
@@ -197,7 +197,7 @@ class EligibleTrialGenerator(
             val footNote =
                 if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG && isNational) {
                     externalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        labels.trialMatching.footnoteDutchLung(formatCountWithLabel(count, trialLabel)) + filteredSuffix
+                        labels.trialMatching.footnoteDutchLung(count) + filteredSuffix
                     }
                 } else {
                     listOfNotNull(

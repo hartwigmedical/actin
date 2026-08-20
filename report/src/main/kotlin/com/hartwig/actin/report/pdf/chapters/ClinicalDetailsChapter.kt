@@ -10,7 +10,6 @@ import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
 import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Tables
@@ -56,13 +55,6 @@ class ClinicalDetailsChapter(
                 includeAdditionalFields = true,
                 keyWidth = keyWidth,
                 valueWidth = valueWidth,
-                labels = labels
-            ),
-            PatientCurrentDetailsGenerator(
-                record = report.patientRecord,
-                keyWidth = keyWidth,
-                valueWidth = valueWidth,
-                referenceDate = report.treatmentMatch.referenceDate,
                 labels = labels
             ),
             TumorDetailsGenerator(record = report.patientRecord, keyWidth = keyWidth, valueWidth = valueWidth, labels = labels),

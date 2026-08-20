@@ -2,6 +2,7 @@ package com.hartwig.actin.report.pdf.util
 
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.report.pdf.util.Formats.styleForTableValue
+import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.layout.Style
 import com.itextpdf.layout.borders.Border
 import com.itextpdf.layout.borders.SolidBorder
@@ -9,9 +10,11 @@ import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.IBlockElement
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
+import com.itextpdf.layout.properties.VerticalAlignment
 
 private const val MEDIUM_FONT = 7f
 private const val SMALL_FONT = 6f
+private const val HEADER_CELL_HEIGHT = 23f
 
 object Cells {
 
@@ -52,8 +55,10 @@ object Cells {
     }
 
     fun createHeader(text: String): Cell {
-        val cell = create(Paragraph(text))
+        val cell = create(Paragraph(text.uppercase(ApplicationConfig.LOCALE)))
         cell.addStyle(Styles.tableHeaderStyle())
+        cell.setHeight(HEADER_CELL_HEIGHT)
+        cell.setVerticalAlignment(VerticalAlignment.BOTTOM)
         return cell
     }
 
@@ -135,6 +140,10 @@ object Cells {
         val cell = create(Paragraph(text))
         cell.addStyle(styleForTableValue(text))
         return cell
+    }
+
+    fun createCellWithoutStyle(text: String): Cell {
+        return create(Paragraph(text))
     }
 
     fun createValue(paragraphs: List<Paragraph>): Cell {

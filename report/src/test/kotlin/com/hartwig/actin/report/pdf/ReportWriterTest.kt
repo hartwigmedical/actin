@@ -13,7 +13,7 @@ class ReportWriterTest {
         TestReportFactory.createExhaustiveTestReport(),
         TestReportFactory.createExhaustiveTestReportWithOtherLocations()
     )
-    private val memoryWriter = ReportWriterFactory.createInMemoryReportWriter()
+    private val memoryWriter = ReportWriterFactory.createProductionReportWriter("/Users/andreia/hmf/repos/actin/report")
 
     @Test
     fun `Should generate in-memory reports`() {
