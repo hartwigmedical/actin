@@ -41,6 +41,19 @@ class TreatmentHistoryEntryFunctionsTest {
     }
 
     @Test
+    fun `Should return all treatments in non-matching list when intent list is empty`() {
+        val treatment = treatmentHistoryEntry(setOf(TARGET_DRUG_TREATMENT), 2022, 5)
+        val entries = listOf(
+            treatment.copy(intents = setOf(Intent.CURATIVE)),
+            treatment.copy(intents = null),
+            treatment.copy(intents = emptySet())
+        )
+        val (included, excluded) = partitionTreatmentsByIntent(entries, emptySet())
+        assertThat(included).isEmpty()
+        assertThat(excluded).containsExactlyElementsOf(entries)
+    }
+
+    @Test
     fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`() {
         assertThat(evaluateIfDrugHadPDResponse(emptyList(), TARGET_DRUG_SET)).isEqualTo(
             TreatmentHistoryEntryFunctions.TreatmentHistoryEvaluation(
