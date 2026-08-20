@@ -7,7 +7,6 @@ import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.TableGeneratorFunctions
-import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
@@ -72,9 +71,7 @@ class ClinicalDetailsChapter(
                     interpreter = MedicationStatusInterpreterOnEvaluationDate(report.treatmentMatch.referenceDate, null),
                     labels = labels
                 )
-            },
-            if (report.patientRecord.bloodTransfusions.isEmpty()) null else
-                BloodTransfusionGenerator(bloodTransfusions = report.patientRecord.bloodTransfusions, labels = labels)
+            }
         )
     }
 }
