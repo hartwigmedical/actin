@@ -135,7 +135,6 @@ class ReportLabels(private val properties: Properties) {
         fun title() = get("clinical.title")
         fun summaryTitle() = get("clinical.summary.title")
         fun patientDetailsTitle(date: String) = format("clinical.patient.details.title", date)
-        fun bloodTransfusionTitle() = get("clinical.blood.transfusion.title")
         fun medicationTitle() = get("clinical.medication.title")
         fun tumorDetailsTitle(date: String) = format("clinical.tumor.details.title", date)
         fun sectionSystemicHistory() = get("clinical.section.systemic.history")
