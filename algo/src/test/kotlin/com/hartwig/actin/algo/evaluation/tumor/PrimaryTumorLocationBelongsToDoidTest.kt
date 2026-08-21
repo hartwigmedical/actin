@@ -83,19 +83,20 @@ class PrimaryTumorLocationBelongsToDoidTest {
             stomachAdenocarcinoma to stomachCarcinoma, stomachCarcinoma to stomachCancer,
             stomachLymphoma to stomachCancer, stomachCancer to cancer
         )
-        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(stomachCancer, childToParentMap)
+        val termPerDoidMap: Map<String, String> = mapOf(stomachCarcinoma to "stomach carcinoma", esophagusCancer to "esophagus cancer", stomachAdenocarcinoma to "stomach adenocarcinoma")
+        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentMap(stomachCancer, childToParentMap, termPerDoidMap)
         val function = PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, setOf(stomachCarcinoma, esophagusCancer), null)
-        assertResultForDoid(EvaluationResult.FAIL, function, "something else", "No ")
-        assertResultForDoid(EvaluationResult.FAIL, function, cancer, "No ")
-        assertResultForDoid(EvaluationResult.FAIL, function, stomachLymphoma, "No ")
-        assertResultForDoid(EvaluationResult.UNDETERMINED, function, stomachCancer, "Undetermined if ")
-        assertResultForDoid(EvaluationResult.PASS, function, stomachCarcinoma, "Tumor belongs to DOID term(s) ")
-        assertResultForDoid(EvaluationResult.PASS, function, stomachAdenocarcinoma, "Tumor belongs to DOID term(s) ")
+        assertResultForDoid(EvaluationResult.FAIL, function, "something else", "No esophagus cancer or stomach carcinoma")
+        assertResultForDoid(EvaluationResult.FAIL, function, cancer, "No esophagus cancer or stomach carcinoma")
+        assertResultForDoid(EvaluationResult.FAIL, function, stomachLymphoma, "No esophagus cancer or stomach carcinoma")
+        assertResultForDoid(EvaluationResult.UNDETERMINED, function, stomachCancer, "Undetermined if stomach carcinoma")
+        assertResultForDoid(EvaluationResult.PASS, function, stomachCarcinoma, "Tumor belongs to DOID term(s) stomach carcinoma")
+        assertResultForDoid(EvaluationResult.PASS, function, stomachAdenocarcinoma, "Tumor belongs to DOID term(s) stomach carcinoma")
         assertResultForDoids(
-            EvaluationResult.PASS, function, setOf("something else", stomachAdenocarcinoma), "Tumor belongs to DOID term(s) "
+            EvaluationResult.PASS, function, setOf("something else", stomachAdenocarcinoma), "Tumor belongs to DOID term(s) stomach carcinoma"
         )
         assertResultForDoids(
-            EvaluationResult.PASS, function, setOf(esophagusCancer, stomachAdenocarcinoma), "Tumor belongs to DOID term(s) "
+            EvaluationResult.PASS, function, setOf(esophagusCancer, stomachAdenocarcinoma), "Tumor belongs to DOID term(s) esophagus cancer and stomach carcinoma"
         )
     }
 
