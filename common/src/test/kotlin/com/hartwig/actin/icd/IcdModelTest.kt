@@ -100,7 +100,7 @@ class IcdModelTest {
     @Test
     fun `Should report unknown titles separately from misplaced titles`() {
         assertThat(icdModel.invalidTitleReason("invalidTitle"))
-            .isEqualTo("ICD title [invalidTitle] is not known - check for existence in ICD model")
+            .isEqualTo("ICD title [invalidTitle] is not known. Check for existence in ICD model")
         assertThat(icdModel.invalidTitleReason("targetMainTitle&targetExtensionTitle&targetExtensionParentTitle"))
             .isEqualTo(
                 "ICD title [targetMainTitle&targetExtensionTitle&targetExtensionParentTitle] must be a single main title, " +
