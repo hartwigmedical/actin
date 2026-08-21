@@ -6,9 +6,10 @@ import com.hartwig.actin.configuration.ClinicalChapterType
 import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
 import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.configuration.ReportContentType
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.configuration.TrialMatchingChapterType
+import com.hartwig.actin.configuration.extended
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.ReportFactory
@@ -138,7 +139,7 @@ object ExampleFunctions {
         )
         writer.write(
             report = report,
-            configuration = ReportConfiguration.extended(),
+            configuration = configuration.extended(),
             TestDoidModelFactory.createMinimalTestDoidModel(),
             addExtendedSuffix = true
         )
