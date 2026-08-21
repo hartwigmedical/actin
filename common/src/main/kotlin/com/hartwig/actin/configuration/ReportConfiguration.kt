@@ -34,17 +34,19 @@ enum class TrialMatchingChapterType {
     DETAILED_ALL_TRIALS
 }
 
-enum class ReportIntendedUse {
-    RESEARCH_USE_ONLY,
-    NON_MEDICAL
-}
-
 enum class ExternalTrialTumorType(val tumorDoids: Set<String>?) {
     LUNG(setOf(DoidConstants.LUNG_CANCER_DOID, DoidConstants.PLEURAL_MESOTHELIOMA_DOID)),
     NONE(null);
 }
 
+enum class ReportType {
+    PERSONALISATION,
+    TRIAL_MATCHING_NON_MEDICAL,
+    TRIAL_MATCHING_RESEARCH_USE_ONLY
+}
+
 data class ReportConfiguration(
+    val reportType: ReportType = ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY,
     val patientDetailsType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val clinicalSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val molecularSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
@@ -57,28 +59,26 @@ data class ReportConfiguration(
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS,
     val hospitalOfReference: String? = null,
-    val dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE,
-    val intendedUse: ReportIntendedUse = ReportIntendedUse.RESEARCH_USE_ONLY
+    val dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE
 ) {
 
     companion object {
         fun create(environmentConfigFile: String?): ReportConfiguration {
             return EnvironmentConfiguration.create(environmentConfigFile).report
         }
-
-        fun extended(): ReportConfiguration {
-            return ReportConfiguration(
-                patientDetailsType = ReportContentType.COMPREHENSIVE,
-                clinicalSummaryType = ReportContentType.COMPREHENSIVE,
-                molecularSummaryType = ReportContentType.COMPREHENSIVE,
-                standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
-                trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
-                molecularChapterType = MolecularChapterType.STANDARD_AND_LONGITUDINAL,
-                efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
-                clinicalChapterType = ClinicalChapterType.COMPLETE,
-                trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS,
-                intendedUse = ReportIntendedUse.RESEARCH_USE_ONLY
-            )
-        }
     }
+}
+
+fun ReportConfiguration.extended(): ReportConfiguration {
+    return copy(
+        patientDetailsType = ReportContentType.COMPREHENSIVE,
+        clinicalSummaryType = ReportContentType.COMPREHENSIVE,
+        molecularSummaryType = ReportContentType.COMPREHENSIVE,
+        standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
+        trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
+        molecularChapterType = MolecularChapterType.STANDARD_AND_LONGITUDINAL,
+        efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
+        clinicalChapterType = ClinicalChapterType.COMPLETE,
+        trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS
+    )
 }

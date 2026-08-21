@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.configuration.extended
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import org.junit.jupiter.api.Test
@@ -20,7 +21,7 @@ class ReportWriterTest {
         reports.forEach {
             memoryWriter.write(
                 it,
-                configuration = ReportConfiguration.extended(),
+                configuration = ReportConfiguration().extended(),
                 TestDoidModelFactory.createMinimalTestDoidModel(),
                 addExtendedSuffix = true
             )
