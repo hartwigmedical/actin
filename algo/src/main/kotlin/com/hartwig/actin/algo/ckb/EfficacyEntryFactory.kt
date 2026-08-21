@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.ckb
 
-import com.google.gson.Gson
-import com.google.gson.JsonSyntaxException
+import com.fasterxml.jackson.core.JacksonException
+import com.fasterxml.jackson.core.type.TypeReference
 import com.hartwig.actin.algo.ckb.json.CkbAnalysisGroup
 import com.hartwig.actin.algo.ckb.json.CkbDerivedMetric
 import com.hartwig.actin.algo.ckb.json.CkbEndPointMetric
@@ -25,6 +25,7 @@ import com.hartwig.actin.datamodel.efficacy.TrialReference
 import com.hartwig.actin.datamodel.efficacy.ValuePercentage
 import com.hartwig.actin.datamodel.efficacy.VariantRequirement
 import com.hartwig.actin.treatment.database.TreatmentDatabase
+import com.hartwig.actin.util.json.ActinObjectMapper
 
 class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
@@ -132,8 +133,8 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
 
     fun convertPrimaryTumorLocation(primaryTumorLocations: String): Map<String, Int> {
         return try {
-            primaryTumorLocations.let { Gson().fromJson(it, hashMapOf<String, Int>()::class.java) }
-        } catch (_: JsonSyntaxException) {
+            mapper.readValue(primaryTumorLocations, object : TypeReference<Map<String, Int>>() {})
+        } catch (_: JacksonException) {
             val regex = """^(\w+): (\d+)(?: \(\d+(?:\.\d+)?%\))?$""".toRegex()
             primaryTumorLocations.split(", ").associate { item ->
                 regex.find(item)?.let {
@@ -244,5 +245,9 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
         } else {
             throw IllegalStateException("Incorrect confidence interval found: $confidenceInterval")
         }
+    }
+
+    companion object {
+        private val mapper by lazy { ActinObjectMapper.create() }
     }
 }

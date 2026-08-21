@@ -5,8 +5,11 @@
     "acronym": "IEMOEN",
     "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
     "nctId": "NCT00000001",
-    "phase": "1",
-    "locations": []
+    "phase": "PHASE_1",
+    "locations": [],
+    "sources": [
+      "EXAMPLE"
+    ]
   },
   "generalEligibility": [
     {
@@ -108,25 +111,27 @@
       "metadata": {
         "cohortId": "A",
         "evaluable": true,
-        "open": true,
-        "slotsAvailable": false,
+        "cohortAvailability": {
+          "open": true,
+          "slotsAvailable": false
+        },
         "ignore": false,
         "description": "Dose escalation - monotherapy"
       },
-      "eligibility": [
-      ]
+      "eligibility": []
     },
     {
       "metadata": {
         "cohortId": "B",
         "evaluable": true,
-        "open": false,
-        "slotsAvailable": false,
+        "cohortAvailability": {
+          "open": false,
+          "slotsAvailable": false
+        },
         "ignore": false,
         "description": "Dose expansion - monotherapy"
       },
-      "eligibility": [
-      ]
+      "eligibility": []
     }
   ]
 }
