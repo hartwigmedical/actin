@@ -2,6 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.partitionTreatmentsByCertainOccurrenceSinceMinDate
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
@@ -27,15 +29,10 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val priorSystemicTreatments =
             priorTreatments.filter { it.treatments.any(Treatment::isSystemic) && !it.categories().contains(categoryToIgnore) }
-        val (excludedIntentTreatments, includedIntentTreatments) = TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent(
-            priorSystemicTreatments,
-            intentsToIgnore
+        val (excludedIntentTreatments, includedIntentTreatments) = priorSystemicTreatments.partitionTreatmentsByIntent(intentsToIgnore)
+        val (certainRecentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) = includedIntentTreatments.partitionTreatmentsByCertainOccurrenceSinceMinDate(
+            referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
         )
-        val (certainRecentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) =
-            TreatmentVersusDateFunctions.partitionTreatmentsByCertainOccurrenceSinceMinDate(
-                includedIntentTreatments,
-                referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
-            )
         val potentiallyRecentPotentiallyCorrectIntentTreatments =
             includedIntentTreatments.filter { potentialTreatmentSinceMinDate(it, referenceDate.minusMonths(MONTHS_TO_SUBTRACT)) }
         val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = includedIntentTreatments.filter { it.stopYear() == null }

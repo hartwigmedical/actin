@@ -100,7 +100,7 @@ class TreatmentVersusDateFunctionsTest {
         )
         val treatments = listOf(recent, recentPotentially, nonRecent)
 
-        val (certainRecent, other) = partitionTreatmentsByCertainOccurrenceSinceMinDate(treatments, TARGET_DATE)
+        val (certainRecent, other) = treatments.partitionTreatmentsByCertainOccurrenceSinceMinDate(TARGET_DATE)
         assertThat(certainRecent).containsExactly(recent)
         assertThat(other).containsExactly(recentPotentially, nonRecent)
     }

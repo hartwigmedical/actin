@@ -2,6 +2,7 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
@@ -17,16 +18,9 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val priorSystemicTreatments = record.oncologicalHistory.filter { it.treatments.any(Treatment::isSystemic) }
-        val (_, includedIntentTreatments) = TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent(
-            priorSystemicTreatments,
-            intentsToIgnore
-        )
-        val (palliativeIntentTreatments, nonPalliativeIncludedTreatments) =
-            TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent(
-                includedIntentTreatments,
-                setOf(Intent.PALLIATIVE)
-            )
-        val potentiallyRecentNonPalliativeTreatments = nonPalliativeIncludedTreatments.filter {
+        val (_, includedIntentTreatments) = priorSystemicTreatments.partitionTreatmentsByIntent(intentsToIgnore)
+        val (palliativeIntentTreatments, nonPalliativeTreatments) = includedIntentTreatments.partitionTreatmentsByIntent(setOf(Intent.PALLIATIVE))
+        val potentiallyRecentNonPalliativeTreatments = nonPalliativeTreatments.filter {
             TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(it, referenceDate.minusMonths(MONTHS_TO_SUBTRACT))
         }
         val settingMessage = "$settingDescription setting"

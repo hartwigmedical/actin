@@ -32,10 +32,11 @@ class TreatmentHistoryEntryFunctionsTest {
         val curative = treatment.copy(intents = setOf(Intent.CURATIVE))
         val palliative = treatment.copy(intents = setOf(Intent.PALLIATIVE))
         val nullIntent = treatment.copy(intents = null)
-        val (included, excluded) = partitionTreatmentsByIntent(
-            listOf(curative, palliative, nullIntent),
-            Intent.curativeAdjuvantNeoadjuvantSet()
-        )
+        val (included, excluded) = listOf(
+            curative,
+            palliative,
+            nullIntent
+        ).partitionTreatmentsByIntent(Intent.curativeAdjuvantNeoadjuvantSet())
         assertThat(included).containsExactly(curative)
         assertThat(excluded).containsExactly(palliative, nullIntent)
     }
@@ -48,7 +49,7 @@ class TreatmentHistoryEntryFunctionsTest {
             treatment.copy(intents = null),
             treatment.copy(intents = emptySet())
         )
-        val (included, excluded) = partitionTreatmentsByIntent(entries, emptySet())
+        val (included, excluded) = entries.partitionTreatmentsByIntent(emptySet())
         assertThat(included).isEmpty()
         assertThat(excluded).containsExactlyElementsOf(entries)
     }
@@ -291,7 +292,12 @@ class TreatmentHistoryEntryFunctionsTest {
 
     @Test
     fun `Should return max number of weeks between the start and stop date of the treatment`() {
-        val entry = TreatmentHistoryEntry(treatments = emptySet(), startYear = 2024, startMonth = 3, treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8))
+        val entry = TreatmentHistoryEntry(
+            treatments = emptySet(),
+            startYear = 2024,
+            startMonth = 3,
+            treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8)
+        )
         assertThat(TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(entry)).isEqualTo(17)
     }
 }

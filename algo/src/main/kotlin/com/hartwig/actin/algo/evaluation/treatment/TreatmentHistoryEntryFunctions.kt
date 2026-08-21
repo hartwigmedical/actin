@@ -30,12 +30,8 @@ object TreatmentHistoryEntryFunctions {
     fun TreatmentHistoryEntry.containsTreatment(treatmentNameToFind: String) =
         allTreatments().any { it.name.equals(treatmentNameToFind, ignoreCase = true) }
 
-    fun partitionTreatmentsByIntent(
-        treatmentHistory: List<TreatmentHistoryEntry>,
-        intents: Set<Intent>
-    ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
-        return treatmentHistory.partition { it.intents?.any(intents::contains) == true }
-    }
+    fun Collection<TreatmentHistoryEntry>.partitionTreatmentsByIntent(intents: Set<Intent>): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> =
+        partition { it.intents?.any(intents::contains) == true }
 
     fun evaluateIfDrugHadPDResponse(treatmentHistory: List<TreatmentHistoryEntry>, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {
         val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)
