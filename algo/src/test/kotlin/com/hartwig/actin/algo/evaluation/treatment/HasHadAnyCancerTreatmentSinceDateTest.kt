@@ -151,7 +151,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         )
         evaluateFunctions(EvaluationResult.UNDETERMINED, priorCancerTreatment)
         assertThat(function.evaluate(priorCancerTreatment).undeterminedMessagesStrings()).containsExactly(
-            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
+            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months"
         )
     }
 

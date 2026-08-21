@@ -120,23 +120,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     }
 
     @Test
-    fun `Should fail with systemic treatment with correct intent but too long ago according to start date if evaluating within weeks and undetermined if evaluating before weeks`() {
-        val patientRecord = withTreatmentHistory(
-            listOf(
-                TreatmentTestFactory.treatmentHistoryEntry(
-                    setOf(SYSTEMIC_TREATMENT),
-                    startYear = olderDate.year,
-                    startMonth = olderDate.monthValue,
-                    intents = REQUESTED_INTENT
-                )
-            )
-        )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
-    }
-
-    @Test
-    fun `Should pass with systemic treatment with correct intent with recent stop date if evaluating before weeks and fail if evaluating not before weeks`() {
+    fun `Should pass with systemic treatment with correct intent with recent stop date if evaluating within weeks and undetermined if evaluating before weeks`() {
         val patientRecord = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -148,11 +132,11 @@ class HasHadSystemicTherapyWithAnyIntentTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
     }
 
     @Test
-    fun `Should pass with systemic treatment with correct intent with recent start date if evaluating before weeks and undetermined if evaluating not before weeks`() {
+    fun `Should pass with systemic treatment with correct intent with recent start date if evaluating within weeks and fail if evaluating before weeks`() {
         val patientRecord = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
@@ -164,7 +148,23 @@ class HasHadSystemicTherapyWithAnyIntentTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+    }
+
+    @Test
+    fun `Should pass with systemic treatment with correct intent but older start date if evaluation before weeks and undetermined if evaluation within weeks`() {
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                TreatmentTestFactory.treatmentHistoryEntry(
+                    setOf(SYSTEMIC_TREATMENT),
+                    startYear = olderDate.year,
+                    startMonth = olderDate.monthValue,
+                    intents = REQUESTED_INTENT
+                )
+            )
+        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingWithinWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
     }
 
     @Test
@@ -180,7 +180,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
             )
         )
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutDate.evaluate(patientRecord))
         EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord))
     }
