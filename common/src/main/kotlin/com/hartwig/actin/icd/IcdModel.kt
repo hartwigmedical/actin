@@ -63,10 +63,10 @@ class IcdModel(
             else -> invalidMainTitleReason(slots.first) ?: slots.second?.let(::invalidExtensionTitleReason)
         }
 
-    fun invalidMainTitleReason(mainTitle: String): String? =
+    private fun invalidMainTitleReason(mainTitle: String): String? =
         unknownOrMisplacedTitleReason(mainTitle, mainTitleToCodeMap, extensionTitleToCodeMap, EXTENSION_SLOT, MAIN_SLOT)
 
-    fun invalidExtensionTitleReason(extensionTitle: String): String? =
+    private fun invalidExtensionTitleReason(extensionTitle: String): String? =
         unknownOrMisplacedTitleReason(extensionTitle, extensionTitleToCodeMap, mainTitleToCodeMap, MAIN_SLOT, EXTENSION_SLOT)
 
     private fun unknownOrMisplacedTitleReason(
@@ -79,7 +79,7 @@ class IcdModel(
         when (title.lowercase()) {
             in expectedSlotTitles -> null
             in otherSlotTitles -> "ICD title [$title] is $otherSlot and cannot be used as $expectedSlot"
-            else -> "ICD title [$title] is not known - check for existence in ICD model"
+            else -> "ICD title [$title] is not known. Check for existence in ICD model"
         }
 
     private fun malformedTitleReason(icdTitle: String): String =
