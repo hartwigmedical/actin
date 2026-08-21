@@ -17,7 +17,7 @@ class HasContraindicationToCTTest {
 
     @Test
     fun `Should fail with no other condition`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withOtherConditions(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withOtherConditions(emptyList())), "No potential contraindications to CT")
     }
 
     @Test
@@ -30,7 +30,8 @@ class HasContraindicationToCTTest {
                         otherCondition(name = "not a contraindication")
                     )
                 )
-            )
+            ),
+            "No potential contraindications to CT"
         )
     }
 
@@ -38,46 +39,71 @@ class HasContraindicationToCTTest {
     fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode)))
+            function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode))),
+            "Potential CT contraindication: "
         )
     }
 
     @Test
     fun `Should pass with other condition that matches by name`() {
         HasContraindicationToCT.COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_CT.forEach { contraindicationName ->
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(name = contraindicationName))))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(withOtherCondition(otherCondition(name = contraindicationName))),
+                "Potential CT contraindication: $contraindicationName"
+            )
         }
     }
 
     @Test
     fun `Should fail with no intolerances`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withIntolerances(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withIntolerances(emptyList())), "No potential contraindications to CT")
     }
 
     @Test
     fun `Should fail with no relevant intolerance`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withIntolerances(listOf(intolerance("no relevant allergy")))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withIntolerances(listOf(intolerance("no relevant allergy")))),
+            "No potential contraindications to CT"
+        )
     }
 
     @Test
     fun `Should pass with intolerance that matches by name`() {
         HasContraindicationToCT.COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_CT.forEach { contraindicationName ->
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(withIntolerances(listOf(intolerance(contraindicationName)))))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(withIntolerances(listOf(intolerance(contraindicationName)))),
+                "Potential CT contraindication: $contraindicationName"
+            )
         }
     }
 
     @Test
     fun `Should fail with no medications`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withMedications(emptyList())),
+            "No potential contraindications to CT"
+        )
     }
 
     @Test
     fun `Should fail with other condition provided in list with wrong code`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withOtherCondition(otherCondition(icdMainCode = "wrong"))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withOtherCondition(otherCondition(icdMainCode = "wrong"))),
+            "No potential contraindications to CT"
+        )
     }
 
     @Test
     fun `Should pass with other condition provided in list with correct code`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode))),
+            "Potential CT contraindication: "
+        )
     }
 }

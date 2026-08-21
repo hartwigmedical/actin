@@ -18,7 +18,8 @@ class CurrentlyGetsCypXInhibitingMedicationTest {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "CYP9A9 inhibiting medication use ()"
         )
     }
 
@@ -27,7 +28,8 @@ class CurrentlyGetsCypXInhibitingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP9A9 inhibiting medication use"
         )
     }
 
@@ -36,13 +38,18 @@ class CurrentlyGetsCypXInhibitingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP9A9 inhibiting medication use"
         )
     }
 
     @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No CYP9A9 inhibiting medication use"
+        )
     }
 
     @Test
@@ -50,7 +57,8 @@ class CurrentlyGetsCypXInhibitingMedicationTest {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "Planned CYP9A9 inhibiting medication use ()"
         )
     }
 
@@ -59,7 +67,8 @@ class CurrentlyGetsCypXInhibitingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP9A9 inhibiting medication use"
         )
     }
 
@@ -67,10 +76,10 @@ class CurrentlyGetsCypXInhibitingMedicationTest {
     fun `Should be undetermined if medication is not provided`() {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult, "No medication data provided")
         assertThat(alwaysPlannedResult.recoverable).isTrue()
         val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult, "No medication data provided")
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

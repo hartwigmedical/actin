@@ -25,8 +25,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 listOf(IhcTestFactory.create(TARGET_RECEPTOR, "Positive")), emptySet()
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if PR positive breast cancer (tumor doids missing)")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if PR positive breast cancer (tumor doids missing)")
     }
 
     @Test
@@ -37,7 +36,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(TARGET_RECEPTOR, "Positive")),
                     setOf(DoidConstants.COLORECTAL_CANCER_DOID)
                 )
-            )
+            ),
+            "No breast cancer"
         )
     }
 
@@ -49,7 +49,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "PR-status unknown (data missing)")
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("$TARGET_RECEPTOR-status unknown (data missing)")
     }
 
@@ -60,10 +60,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID), "ERBB2", listOf(IhcTestFactory.create("wrong test", "positive"))
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(
-            evaluation.undeterminedMessagesStrings()
-        ).containsExactly(
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
             "HER2-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
         )
     }
@@ -76,7 +75,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "PR-status undetermined (DOID and/or IHC data inconsistent)")
         assertThat(
             evaluation.undeterminedMessagesStrings()
         ).containsExactly(
@@ -95,7 +94,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                         DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID
                     )
                 )
-            )
+            ),
+            "PR-status undetermined (DOID and/or IHC data inconsistent)"
         )
     }
 
@@ -107,7 +107,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(TARGET_RECEPTOR, "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "PR-status undetermined (DOID and/or IHC data inconsistent)"
         )
     }
 
@@ -119,7 +120,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create("HER2", "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "Has PR-positive breast cancer"
         )
     }
 
@@ -131,7 +133,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(TARGET_RECEPTOR, "Positive")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "Has PR-positive breast cancer"
         )
     }
 
@@ -143,7 +146,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(item = TARGET_RECEPTOR, score = 75.0, scoreValueUnit = "%")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "Has PR-positive breast cancer"
         )
         assertEvaluation(
             EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
@@ -151,7 +155,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(item = "HER2", score = 3.0, scoreValueUnit = "+")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "Has HER2-positive breast cancer"
         )
     }
 
@@ -163,7 +168,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(item = "HER2", score = 1.0, scoreValueUnit = "+")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No HER2-positive breast cancer"
         )
     }
 
@@ -175,7 +181,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(item = "HER2", scoreText = "low")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No HER2-positive breast cancer"
         )
     }
 
@@ -186,7 +193,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 TumorTestFactory.withDoidsAndAmplification(
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.HER2_NEGATIVE_BREAST_CANCER_DOID), "ERBB2"
                 )
-            )
+            ),
+            "Undetermined if HER2-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)"
         )
     }
 
@@ -199,7 +207,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                         IhcTestFactory.create("HER2", "Negative")
                     )
                 )
-            )
+            ),
+            "Undetermined if HER2-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)"
         )
     }
 
@@ -212,7 +221,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     "ERBB2",
                     listOf(IhcTestFactory.create("HER2", score = 1.0, scoreValueUnit = "+"))
                 )
-            )
+            ),
+            "Undetermined if HER2-positive breast cancer (HER2 low IHC inconsistent with ERBB2 gene amp)"
         )
     }
 
@@ -224,10 +234,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(
-            evaluation.undeterminedMessagesStrings()
-        ).containsExactly(
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
             "No HER2-positive breast cancer but HER2-score is 2+ hence FISH may be useful"
         )
     }
@@ -240,7 +249,11 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Has PR-positive breast cancer but clinical relevance unknown (PR-score under 10%)"
+        )
         assertThat(
             evaluation.warnMessagesStrings()
         ).containsExactly(
@@ -256,7 +269,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create("HER2", "Unclear")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No HER2-positive breast cancer"
         )
     }
 
@@ -268,7 +282,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     emptyList(),
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_NEGATIVE_BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No PR-positive breast cancer"
         )
     }
 
@@ -278,9 +293,21 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
             emptyList(),
             setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(record))
-        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, ER).evaluate(record))
-        assertEvaluation(EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, PR).evaluate(record))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(record),
+            "No HER2-positive breast cancer"
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            HasBreastCancerWithPositiveReceptorOfType(doidModel, ER).evaluate(record),
+            "No ER-positive breast cancer"
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            HasBreastCancerWithPositiveReceptorOfType(doidModel, PR).evaluate(record),
+            "No PR-positive breast cancer"
+        )
     }
 
     @Test
@@ -291,7 +318,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(TARGET_RECEPTOR, "Negative")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No PR-positive breast cancer"
         )
     }
 
@@ -303,7 +331,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(TARGET_RECEPTOR, score = 0.0, scoreValueUnit = "%")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No PR-positive breast cancer"
         )
     }
 
@@ -315,7 +344,11 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Has PR-positive breast cancer but clinical relevance unknown (PR-score under 10%)"
+        )
         assertThat(
             evaluation.warnMessagesStrings()
         ).containsExactly(
@@ -331,7 +364,11 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Has PR-positive breast cancer but clinical relevance unknown (PR-score under 10%)"
+        )
         assertThat(
             evaluation.warnMessagesStrings()
         ).containsExactly(
@@ -347,7 +384,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     listOf(IhcTestFactory.create(item = TARGET_RECEPTOR, scoreLowerBound = 5.0, scoreUpperBound = 15.0, scoreValueUnit = "%")),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No PR-positive breast cancer"
         )
     }
 
@@ -359,10 +397,9 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(
-            evaluation.undeterminedMessagesStrings()
-        ).containsExactly(
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
             "No HER2-positive breast cancer but HER2-score is 2+ hence FISH may be useful"
         )
     }
@@ -378,7 +415,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No PR-positive breast cancer"
         )
         assertEvaluation(
             EvaluationResult.FAIL, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
@@ -389,7 +427,8 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     ),
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
-            )
+            ),
+            "No HER2-positive breast cancer"
         )
     }
 

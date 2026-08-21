@@ -19,7 +19,8 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should pass if WGS is available and contains tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_WHOLE_GENOME, true))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_WHOLE_GENOME, true)),
+            "NSCLC driver gene statuses are available"
         )
     }
 
@@ -27,7 +28,8 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should pass if targeted panel analysis is available and contains tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_TARGETED, true))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_TARGETED, true)),
+            "NSCLC driver gene statuses are available"
         )
     }
 
@@ -37,7 +39,8 @@ class NsclcDriverGeneStatusesAreAvailableTest {
             EvaluationResult.PASS,
             function.evaluate(
                 createNonWGSRecordWithOptionalPriorTests(NSCLC_DRIVER_GENE_SET.map { panelWithTestForGene(it) })
-            )
+            ),
+            "NSCLC driver gene statuses are available"
         )
     }
 
@@ -45,7 +48,8 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if WGS is available but contains no tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_WHOLE_GENOME, false))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_WHOLE_GENOME, false)),
+            "NSCLC driver gene statuses unknown (sequencing data of insufficient quality)"
         )
     }
 
@@ -53,20 +57,26 @@ class NsclcDriverGeneStatusesAreAvailableTest {
     fun `Should fail if targeted panel analysis is available but contains no tumor cells`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_TARGETED, false))
+            function.evaluate(MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(ExperimentType.HARTWIG_TARGETED, false)),
+            "NSCLC driver gene statuses unknown (sequencing data of insufficient quality)"
         )
     }
 
     @Test
     fun `Should fail if molecular history is empty`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(createNonWGSRecordWithOptionalPriorTests()))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(createNonWGSRecordWithOptionalPriorTests()),
+            "NSCLC driver gene statuses not available (missing: EGFR, MET, BRAF, ALK, ROS1, RET, NTRK1, NTRK2, NTRK3)"
+        )
     }
 
     @Test
     fun `Should fail if molecular history does not contain WGS or targeted panel analysis and other panels do not cover any target gene`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(createNonWGSRecordWithOptionalPriorTests(listOf(panelWithTestForGene("GeneX"))))
+            function.evaluate(createNonWGSRecordWithOptionalPriorTests(listOf(panelWithTestForGene("GeneX")))),
+            "NSCLC driver gene statuses not available (missing: EGFR, MET, BRAF, ALK, ROS1, RET, NTRK1, NTRK2, NTRK3)"
         )
     }
 
@@ -76,7 +86,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
             createNonWGSRecordWithOptionalPriorTests(
                 NSCLC_DRIVER_GENE_SET.drop(1).map { panelWithTestForGene(it) })
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation, "NSCLC driver gene statuses not available (missing: EGFR)")
         assertThat(evaluation.failMessagesStrings()).containsExactly(
             "NSCLC driver gene statuses not available (missing: ${NSCLC_DRIVER_GENE_SET.first()})"
         )

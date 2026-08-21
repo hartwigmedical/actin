@@ -18,12 +18,20 @@ class HasPotentialAbsorptionDifficultiesTest {
 
     @Test
     fun `Should pass for icd-matching other condition`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(correctCondition)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(correctCondition)),
+            "Potential absorption difficulties ()"
+        )
     }
 
     @Test
     fun `Should pass for icd-matching toxicity`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withToxicities(listOf(correctToxicity))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(ComorbidityTestFactory.withToxicities(listOf(correctToxicity))),
+            "Potential absorption difficulties ()"
+        )
     }
 
     @Test
@@ -33,12 +41,16 @@ class HasPotentialAbsorptionDifficultiesTest {
             ComorbidityTestFactory.withOtherCondition(correctCondition.copy(icdCodes = setOf(IcdCode(wrongIcdMainCode))))
         )
             .forEach {
-                assertEvaluation(EvaluationResult.FAIL, function.evaluate((it)))
+                assertEvaluation(EvaluationResult.FAIL, function.evaluate((it)), "No potential absorption difficulties")
             }
     }
 
     @Test
     fun `Should fail for empty history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No potential absorption difficulties"
+        )
     }
 }

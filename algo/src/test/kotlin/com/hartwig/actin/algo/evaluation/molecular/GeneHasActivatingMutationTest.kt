@@ -25,18 +25,20 @@ class GeneHasActivatingMutationTest {
     fun `Should fail for patient with minimal WGS record`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            functionNotIgnoringCodons.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No gene A activating mutation(s)"
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionWithCodonsToIgnore.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            functionWithCodonsToIgnore.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No gene A activating mutation(s)"
         )
     }
 
     @Test
     fun `Should pass with activating mutation for gene`() {
-        assertResultForVariant(EvaluationResult.PASS, ACTIVATING_VARIANT)
-        assertResultForVariantIgnoringCodons(EvaluationResult.PASS, ACTIVATING_VARIANT)
+        assertResultForVariant(EvaluationResult.PASS, ACTIVATING_VARIANT, "gene A activating mutation(s): event")
+        assertResultForVariantIgnoringCodons(EvaluationResult.PASS, ACTIVATING_VARIANT, "gene A activating mutation(s): event")
     }
 
     @Test
@@ -44,20 +46,32 @@ class GeneHasActivatingMutationTest {
         val function = GeneHasActivatingMutation(GENE, null, inKinaseDomain = true)
         val result = function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
 
-        assertMolecularEvaluation(EvaluationResult.WARN, result)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            result,
+            "gene A activating mutation(s): event but undetermined if in kinase domain"
+        )
         assertThat(result.warnMessagesStrings())
             .containsExactly("gene A activating mutation(s): event but undetermined if in kinase domain")
     }
 
     @Test
     fun `Should fail with activating mutation for other gene`() {
-        assertResultForVariant(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
-        assertResultForVariantIgnoringCodons(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"))
+        assertResultForVariant(EvaluationResult.FAIL, ACTIVATING_VARIANT.copy(gene = "gene B"), "No gene A activating mutation(s)")
+        assertResultForVariantIgnoringCodons(
+            EvaluationResult.FAIL,
+            ACTIVATING_VARIANT.copy(gene = "gene B"),
+            "No gene A activating mutation(s)"
+        )
     }
 
     @Test
     fun `Should fail with activating mutation for correct gene but codon to ignore`() {
-        assertResultForVariantIgnoringCodons(EvaluationResult.FAIL, ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE)
+        assertResultForVariantIgnoringCodons(
+            EvaluationResult.FAIL,
+            ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE,
+            "No gene A activating mutation(s)"
+        )
     }
 
     @Test
@@ -69,7 +83,8 @@ class GeneHasActivatingMutationTest {
                     ACTIVATING_VARIANT,
                     ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE
                 )
-            )
+            ),
+            "gene A activating mutation(s): event"
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS, functionWithCodonsToIgnore.evaluate(
@@ -78,21 +93,31 @@ class GeneHasActivatingMutationTest {
                     ACTIVATING_VARIANT,
                     ACTIVATING_VARIANT_WITH_CODON_TO_IGNORE
                 )
-            )
+            ),
+            "gene A activating mutation(s): event"
         )
     }
 
     @Test
     fun `Should warn with activating mutation for TSG`() {
-        assertResultForVariant(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG))
-        assertResultForVariantIgnoringCodons(EvaluationResult.WARN, ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG))
+        assertResultForVariant(
+            EvaluationResult.WARN,
+            ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG),
+            "gene A activating mutation(s) event - however gene known as TSG in "
+        )
+        assertResultForVariantIgnoringCodons(
+            EvaluationResult.WARN,
+            ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG),
+            "gene A activating mutation(s) event - however gene known as TSG in "
+        )
     }
 
     @Test
     fun `Should warn with activating mutation for gene with no protein effect or cancer-associated variant`() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isCancerAssociatedVariant = false)
+            ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, isCancerAssociatedVariant = false),
+            "gene A potentially activating mutation(s) event with high driver likelihood - however not a cancer-associated variant"
         )
     }
 
@@ -101,7 +126,8 @@ class GeneHasActivatingMutationTest {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,
             ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, driverLikelihood = DriverLikelihood.LOW),
-            null
+            null,
+            "gene A potentially activating mutation(s) event but no high driver likelihood"
         )
     }
 
@@ -114,7 +140,8 @@ class GeneHasActivatingMutationTest {
                 isReportable = false,
                 isCancerAssociatedVariant = false,
                 canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
-            )
+            ),
+            "gene A potentially activating mutation(s)  that are missense or have cancer-associated variant status but are not considered reportable"
         )
     }
 
@@ -122,7 +149,8 @@ class GeneHasActivatingMutationTest {
     fun `Should warn with non reportable cancer-associated variant for gene`() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isCancerAssociatedVariant = true)
+            TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isCancerAssociatedVariant = true),
+            "gene A potentially activating mutation(s)  that are missense or have cancer-associated variant status but are not considered reportable"
         )
     }
 
@@ -136,6 +164,7 @@ class GeneHasActivatingMutationTest {
                 driverLikelihood = DriverLikelihood.HIGH,
                 clonalLikelihood = 0.2
             ),
+            "gene A potentially activating mutation(s)  with high driver likelihood - however not a cancer-associated variant"
         )
     }
 
@@ -149,7 +178,8 @@ class GeneHasActivatingMutationTest {
                 driverLikelihood = DriverLikelihood.LOW,
                 clonalLikelihood = 0.2
             ),
-            null
+            null,
+            "gene A potentially activating mutation(s)  have subclonal likelihood of > 50% and no high driver likelihood"
         )
     }
 
@@ -163,13 +193,14 @@ class GeneHasActivatingMutationTest {
                 driverLikelihood = DriverLikelihood.LOW,
                 clonalLikelihood = 0.2
             ),
-            true
+            true,
+            "No gene A activating mutation(s)"
         )
     }
 
     @Test
     fun `Should pass with high driver activating mutation with high TML`() {
-        assertResultForVariant(EvaluationResult.PASS, ACTIVATING_VARIANT)
+        assertResultForVariant(EvaluationResult.PASS, ACTIVATING_VARIANT, "gene A activating mutation(s): event")
     }
 
     @Test
@@ -177,7 +208,8 @@ class GeneHasActivatingMutationTest {
         assertResultForVariantWithTML(
             EvaluationResult.FAIL,
             ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, driverLikelihood = DriverLikelihood.LOW),
-            true
+            true,
+            "No gene A activating mutation(s)"
         )
     }
 
@@ -186,7 +218,8 @@ class GeneHasActivatingMutationTest {
         assertResultForVariantWithTML(
             EvaluationResult.WARN,
             ACTIVATING_VARIANT.copy(proteinEffect = ProteinEffect.UNKNOWN, driverLikelihood = DriverLikelihood.LOW),
-            false
+            false,
+            "gene A potentially activating mutation(s) event but no high driver likelihood"
         )
     }
 
@@ -196,7 +229,8 @@ class GeneHasActivatingMutationTest {
             EvaluationResult.UNDETERMINED,
             functionNotIgnoringCodons.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(molecularTests = emptyList())
-            )
+            ),
+            "No molecular results of sufficient quality"
         )
     }
 
@@ -224,7 +258,8 @@ class GeneHasActivatingMutationTest {
                             .copy(hgvsProteinImpact = "p.V600E", affectedCodon = 300)
                     )
                 )
-            )
+            ),
+            "No gene A activating mutation(s)"
         )
     }
 
@@ -233,7 +268,8 @@ class GeneHasActivatingMutationTest {
         val function = GeneHasActivatingMutation(GENE, codonsToIgnore = null, proteinImpactsToIgnore = setOf("V600E"))
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT))
+            function.evaluate(MolecularTestFactory.withVariant(ACTIVATING_VARIANT)),
+            "gene A activating mutation(s): event"
         )
     }
 
@@ -251,7 +287,8 @@ class GeneHasActivatingMutationTest {
                         canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 2)
                     )
                 )
-            )
+            ),
+            "No gene A activating mutation(s)"
         )
     }
 
@@ -269,44 +306,50 @@ class GeneHasActivatingMutationTest {
                         canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = 2)
                     )
                 )
-            )
+            ),
+            "gene A activating mutation(s): event"
         )
     }
 
-    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant) {
-        assertResultForVariantWithTML(expectedResult, variant, null)
+    private fun assertResultForVariant(expectedResult: EvaluationResult, variant: Variant, expectedMessage: String) {
+        assertResultForVariantWithTML(expectedResult, variant, null, expectedMessage)
 
         // Repeat with high TML since unknown TML always results in a warning for reportable variants:
-        assertResultForVariantWithTML(expectedResult, variant, true)
+        assertResultForVariantWithTML(expectedResult, variant, true, expectedMessage)
 
         if (expectedResult == EvaluationResult.WARN) {
-            assertResultForVariantIgnoringCodons(expectedResult, variant)
+            assertResultForVariantIgnoringCodons(expectedResult, variant, expectedMessage)
         }
     }
 
-    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: Variant) {
-        assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, null)
-        assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, true)
+    private fun assertResultForVariantIgnoringCodons(expectedResult: EvaluationResult, variant: Variant, expectedMessage: String) {
+        assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, null, expectedMessage)
+        assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, true, expectedMessage)
     }
 
-    private fun assertResultForVariantWithTML(expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?) {
+    private fun assertResultForVariantWithTML(
+        expectedResult: EvaluationResult, variant: Variant, hasHighTML: Boolean?, expectedMessage: String
+    ) {
         assertMolecularEvaluation(
             expectedResult,
-            functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
+            functionNotIgnoringCodons.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant)),
+            expectedMessage
         )
         if (expectedResult == EvaluationResult.WARN) {
-            assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, hasHighTML)
+            assertResultForVariantWithTMLIgnoringCodons(expectedResult, variant, hasHighTML, expectedMessage)
         }
     }
 
     private fun assertResultForVariantWithTMLIgnoringCodons(
         expectedResult: EvaluationResult,
         variant: Variant,
-        hasHighTML: Boolean?
+        hasHighTML: Boolean?,
+        expectedMessage: String
     ) {
         assertMolecularEvaluation(
             expectedResult,
-            functionWithCodonsToIgnore.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant))
+            functionWithCodonsToIgnore.evaluate(MolecularTestFactory.withHasTumorMutationalLoadAndVariants(hasHighTML, variant)),
+            expectedMessage
         )
     }
 

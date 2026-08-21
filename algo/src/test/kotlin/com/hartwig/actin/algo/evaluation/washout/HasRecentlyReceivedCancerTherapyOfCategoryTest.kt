@@ -37,28 +37,44 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     @Test
     fun `Should fail when no medications`() {
         val medications = emptyList<Medication>()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+        )
     }
 
     @Test
     fun `Should fail when medication has the wrong category`() {
         val atc = AtcTestFactory.atcClassification("wrong category")
         val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+        )
     }
 
     @Test
     fun `Should fail when medication has right category and old date`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.minusDays(1)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+        )
     }
 
     @Test
     fun `Should pass when medication has right category and recent date`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "Recent 'chemotherapy' drug use () - pay attention to washout period"
+        )
     }
 
     @Test
@@ -77,7 +93,8 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
+            "Recent 'chemotherapy' drug use  - pay attention to washout period"
         )
     }
 
@@ -101,7 +118,8 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
+            "Recent 'monoclonal antibodies and antibody drug conjugates' drug use (parp inhibitor) - pay attention to washout period"
         )
     }
 
@@ -109,7 +127,11 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     fun `Should fail if only matching medication contains drug to ignore`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)).copy(drug = DRUG_TO_IGNORE))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+        )
     }
 
     @Test
@@ -117,7 +139,11 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medication = WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1))
         val medications = listOf(medication.copy(drug = DRUG_TO_IGNORE), medication.copy(drug = OTHER_MATCHING_DRUG))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "Recent 'chemotherapy' drug use (other drug) - pay attention to washout period"
+        )
     }
 
     @Test
@@ -127,7 +153,11 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
             medication.copy(drug = DRUG_TO_IGNORE, atc = AtcTestFactory.atcClassification("category to find")),
             medication.copy(drug = OTHER_NON_MATCHING_DRUG, atc = AtcTestFactory.atcClassification("not category to find"))
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+        )
     }
 
     @Test
@@ -142,7 +172,8 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
+            "Has received 'chemotherapy and monoclonal antibodies and antibody drug conjugates' treatment but inconclusive date"
         )
     }
 
@@ -161,14 +192,19 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Undetermined if treatment received in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
         )
     }
 
     @Test
     fun `Should return undetermined when medication is trial medication`() {
         val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true, stopDate = REFERENCE_DATE.plusDays(1)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(WashoutTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(WashoutTestFactory.withMedications(medications)),
+            "Undetermined if treatment received in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
+        )
     }
 
     @Test
@@ -176,7 +212,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }
 
@@ -198,7 +234,8 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
+            "Recent 'monoclonal antibodies and antibody drug conjugates' drug use (parp inhibitor) - pay attention to washout period"
         )
     }
 
@@ -208,7 +245,8 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList()))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList())),
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
         )
     }
 
@@ -226,7 +264,8 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList()))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList())),
+            "Recent 'chemotherapy' drug use (other drug) - pay attention to washout period"
         )
     }
 
@@ -244,7 +283,8 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList()))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList())),
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
         )
     }
 }

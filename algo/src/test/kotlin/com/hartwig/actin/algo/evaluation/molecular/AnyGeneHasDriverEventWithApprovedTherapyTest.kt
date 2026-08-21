@@ -44,7 +44,7 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
         val record =
             MolecularTestFactory.withVariant(CORRECT_VARIANT)
                 .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "NSCLC driver event(s) with available SOC detected: ")
     }
 
     @Test
@@ -52,7 +52,7 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
         val record =
             MolecularTestFactory.withVariant(INCORRECT_VARIANT)
                 .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No (applicable) NSCLC driver event(s) detected")
     }
 
     @Test
@@ -60,7 +60,11 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
         val record = MolecularTestFactory.withVariant(INCORRECT_VARIANT)
             .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionRequestingInvalidGenes.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionRequestingInvalidGenes.evaluate(record),
+            "Possible presence of driver events for gene(s) INCORRECT and Other could not be determined"
+        )
         assertThat(functionRequestingInvalidGenes.evaluate(record).undeterminedMessagesStrings()).containsExactly("Possible presence of driver events for gene(s) INCORRECT and Other could not be determined")
     }
 
@@ -69,40 +73,60 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
         val record = MolecularTestFactory.withVariant(CORRECT_VARIANT)
             .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
 
-        assertEvaluation(EvaluationResult.PASS, functionRequestingInvalidGenes.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionRequestingInvalidGenes.evaluate(record),
+            "NSCLC driver event(s) with available SOC detected: "
+        )
     }
 
     @Test
     fun `Should pass if tumor type is colorectal cancer and correct variant present`() {
         val record = MolecularTestFactory.withVariant(CORRECT_VARIANT)
             .copy(tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "V600E in BRAF in canonical transcript")
     }
 
     @Test
     fun `Should fail if tumor type is colorectal cancer but correct variant not present`() {
         val record = MolecularTestFactory.withVariant(INCORRECT_VARIANT)
             .copy(tumor = TumorDetails(doids = setOf(DoidConstants.COLORECTAL_CANCER_DOID)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No fusion in NTRK1",
+            "No fusion in NTRK2",
+            "No fusion in NTRK3",
+            "V600E not detected in BRAF"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined if tumor type is not lung or CRC`() {
         val record = MolecularTestFactory.withVariant(CORRECT_VARIANT)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Undetermined if there are driver events with approved therapy"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined if tumor type is neuroendocrine colorectal cancer `() {
         val record = MolecularTestFactory.withVariant(CORRECT_VARIANT)
             .copy(tumor = TumorDetails(doids = setOf(DoidConstants.RECTUM_NEUROENDOCRINE_NEOPLASM_DOID)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Undetermined if there are driver events with approved therapy"
+        )
     }
 
     @Test
     fun `Should fail when no molecular data present`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+            EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()),
+            "No molecular data"
         )
     }
 }

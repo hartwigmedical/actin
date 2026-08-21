@@ -15,14 +15,26 @@ class HasHistoryOfSecondMalignancyWithDoidTest {
 
         // No prior tumors.
         val priorTumors: MutableList<PriorPrimary> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No history of previous malignancy belonging to null"
+        )
 
         // Wrong doid
         priorTumors.add(PriorTumorTestFactory.priorPrimary(doid = "300"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No history of previous malignancy belonging to null"
+        )
 
         // Right doid
         priorTumors.add(PriorTumorTestFactory.priorPrimary(doid = "200"))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "Has history of previous malignancy belonging to null"
+        )
     }
 }

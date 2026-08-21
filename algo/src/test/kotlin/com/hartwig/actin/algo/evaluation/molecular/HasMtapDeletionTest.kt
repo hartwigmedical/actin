@@ -60,13 +60,18 @@ class HasMtapDeletionTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test))),
+            "MTAP deletion ()"
         )
     }
 
     @Test
     fun `Should pass for MTAP IHC result with score text loss`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(listOf(mtapIhcLoss))))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(mtapIhcLoss))),
+            "MTAP is lost by IHC"
+        )
     }
 
     @Test
@@ -77,7 +82,8 @@ class HasMtapDeletionTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test))),
+            "MTAP inactivation ()"
         )
     }
 
@@ -89,7 +95,8 @@ class HasMtapDeletionTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test))),
+            "No MTAP deletion"
         )
     }
 
@@ -97,7 +104,7 @@ class HasMtapDeletionTest {
     fun `Should fail when CDKN2A is deleted but MTAP is also tested as IHC with result other than loss`() {
         val record = MolecularTestFactory.withIhcTests(listOf(mtapIhcLoss.copy(scoreText = "positive")))
             .copy(molecularTests = listOf(panelTestWithCdkn2aDelOnly))
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No MTAP deletion")
     }
 
     @Test
@@ -105,7 +112,8 @@ class HasMtapDeletionTest {
         val wgs = TestMolecularFactory.createMinimalWholeGenomeTest()
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(wgs)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(wgs))),
+            "No MTAP deletion"
         )
     }
 
@@ -113,7 +121,8 @@ class HasMtapDeletionTest {
     fun `Should warn when CDKN2A is deleted and MTAP is not tested`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(panelTestWithCdkn2aDelOnly)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(panelTestWithCdkn2aDelOnly))),
+            "MTAP deletion not tested but CDKN2A deletion detected (highly correlated)"
         )
     }
 
@@ -124,7 +133,8 @@ class HasMtapDeletionTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test))),
+            "MTAP deletion not tested"
         )
     }
 
@@ -132,7 +142,8 @@ class HasMtapDeletionTest {
     fun `Should evaluate to undetermined for no molecular tests`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(emptyList()))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(emptyList())),
+            "MTAP deletion not tested"
         )
     }
 
@@ -144,7 +155,8 @@ class HasMtapDeletionTest {
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test)))
+            function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test))),
+            "MTAP deletion not tested"
         )
     }
 }

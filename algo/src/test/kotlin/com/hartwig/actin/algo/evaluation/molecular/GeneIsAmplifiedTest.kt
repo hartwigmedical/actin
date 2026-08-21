@@ -70,42 +70,69 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should be undetermined when molecular record is empty`() {
-        assertBothFunctions(EvaluationResult.UNDETERMINED, TestPatientFactory.createEmptyMolecularTestPatientRecord())
+        assertBothFunctions(
+            EvaluationResult.UNDETERMINED,
+            TestPatientFactory.createEmptyMolecularTestPatientRecord(),
+            "No molecular results of sufficient quality",
+            "No molecular results of sufficient quality"
+        )
     }
 
     @Test
     fun `Should fail with minimal WGS record`() {
-        assertBothFunctions(EvaluationResult.FAIL, TestPatientFactory.createMinimalTestWGSPatientRecord())
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            TestPatientFactory.createMinimalTestWGSPatientRecord(),
+            "No amplification of gene A with >= 5 copies",
+            "No amplification of gene A"
+        )
     }
 
     @Test
     fun `Should fail when not amplified and ineligible copy number`() {
-        assertBothFunctions(EvaluationResult.FAIL, MolecularTestFactory.withCopyNumber(ineligibleNoneCopyNumber))
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withCopyNumber(ineligibleNoneCopyNumber),
+            "No amplification of gene A with >= 5 copies",
+            "No amplification of gene A"
+        )
     }
 
     @Test
     fun `Should fail when amplified but copies requested and not met`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            functionWithMinCopies.evaluate(MolecularTestFactory.withCopyNumber(ampButInsufficientCopies))
+            functionWithMinCopies.evaluate(MolecularTestFactory.withCopyNumber(ampButInsufficientCopies)),
+            "No amplification of gene A with >= 5 copies"
         )
     }
 
     @Test
     fun `Should pass with full amp on canonical transcript when copies are null and copies not requested or copies requested and meeting threshold`() {
-        assertBothFunctions(EvaluationResult.PASS, MolecularTestFactory.withCopyNumber(eligibleAmp))
+        assertBothFunctions(
+            EvaluationResult.PASS,
+            MolecularTestFactory.withCopyNumber(eligibleAmp),
+            "gene A is amplified with >= 5 copies",
+            "gene A is amplified"
+        )
     }
 
     @Test
     fun `Should warn if gene role is TSG`() {
-        assertBothFunctions(EvaluationResult.WARN, MolecularTestFactory.withCopyNumber(eligibleAmp.copy(geneRole = GeneRole.TSG)))
+        assertBothFunctions(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withCopyNumber(eligibleAmp.copy(geneRole = GeneRole.TSG)),
+            "gene A is amplified with >= 5 copies but gene known as TSG in ",
+            "gene A is amplified but gene known as TSG in "
+        )
     }
 
     @Test
     fun `Should warn with loss of function effect`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
+            MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION)),
+            "gene A is amplified with >= 5 copies but gene associated with loss-of-function protein impact in ", "gene A is amplified but gene associated with loss-of-function protein impact in "
         )
     }
 
@@ -113,7 +140,8 @@ class GeneIsAmplifiedTest {
     fun `Should warn with loss of function predicted effect`() {
         assertBothFunctions(
             EvaluationResult.WARN,
-            MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
+            MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)),
+            "gene A is amplified with >= 5 copies but gene associated with loss-of-function protein impact in ", "gene A is amplified but gene associated with loss-of-function protein impact in "
         )
     }
 
@@ -128,7 +156,8 @@ class GeneIsAmplifiedTest {
                         minCopies = NON_PASSING_COPY_NR,
                     )
                 )
-            )
+            ),
+            "gene A is amplified with >= 5 copies but only partially", "gene A is amplified but only partially"
         )
     }
 
@@ -146,13 +175,19 @@ class GeneIsAmplifiedTest {
                         )
                     )
                 )
-            )
+            ),
+            "No amplification of gene A with >= 5 copies"
         )
     }
 
     @Test
     fun `Should warn with full gain on non-canonical transcript and no gain on canonical transcript`() {
-        assertBothFunctions(EvaluationResult.WARN, MolecularTestFactory.withCopyNumber(ampOnNonCanonicalTranscript))
+        assertBothFunctions(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withCopyNumber(ampOnNonCanonicalTranscript),
+            "gene A is amplified with >= 5 copies but on non-canonical transcript",
+            "gene A is amplified but on non-canonical transcript"
+        )
     }
 
     @Test
@@ -165,7 +200,8 @@ class GeneIsAmplifiedTest {
                         canonicalImpact = eligibleImpact.copy(type = CopyNumberType.NONE)
                     )
                 )
-            )
+            ),
+            "gene A is not annotated as amp but meets requested copy nr of >= 5 copies"
         )
     }
 
@@ -185,7 +221,8 @@ class GeneIsAmplifiedTest {
                         )
                     )
                 )
-            )
+            ),
+            "gene A is not annotated as amp but meets amplification threshold of 3.0 * (assumed) ploidy"
         )
     }
 
@@ -204,7 +241,8 @@ class GeneIsAmplifiedTest {
                         )
                     )
                 )
-            )
+            ),
+            "gene A is not annotated as amp but meets amplification threshold of 3.0 * (assumed) ploidy"
         )
     }
 
@@ -223,7 +261,8 @@ class GeneIsAmplifiedTest {
                         )
                     )
                 )
-            )
+            ),
+            "No amplification of gene A"
         )
     }
 
@@ -242,7 +281,8 @@ class GeneIsAmplifiedTest {
                         )
                     )
                 )
-            )
+            ),
+            "gene A is not annotated as amp but meets requested copy nr of >= 4 copies"
         )
     }
 
@@ -250,7 +290,8 @@ class GeneIsAmplifiedTest {
     fun `Should pass with full amp if copies are null if no requested copy nr or requested copy nr below assumed copy nr`() {
         assertBothFunctions(
             EvaluationResult.PASS,
-            MolecularTestFactory.withCopyNumber(ampOnCanonicalTranscriptWithoutCopies)
+            MolecularTestFactory.withCopyNumber(ampOnCanonicalTranscriptWithoutCopies),
+            "gene A is amplified hence assumed gene is amplified with >= 5 copies", "gene A is amplified"
         )
     }
 
@@ -262,7 +303,8 @@ class GeneIsAmplifiedTest {
                 MolecularTestFactory.withCopyNumber(
                     ampOnCanonicalTranscriptWithoutCopies
                 )
-            )
+            ),
+            "gene A is amplified but undetermined if with >= 10 copies"
         )
     }
 
@@ -276,13 +318,19 @@ class GeneIsAmplifiedTest {
                         type = CopyNumberType.PARTIAL_GAIN
                     )
                 )
-            )
+            ),
+            "gene A is amplified but partially and undetermined if copy nr meets threshold of >= 5 copies", "gene A is amplified but only partially"
         )
     }
 
     @Test
     fun `Should warn with matching IHC event for both functions`() {
-        assertBothFunctionsForIhc(EvaluationResult.WARN, MolecularTestFactory.withIhcTests(matchingIhcResult))
+        assertBothFunctionsForIhc(
+            EvaluationResult.WARN,
+            MolecularTestFactory.withIhcTests(matchingIhcResult),
+            "ERBB2 may be amplified with >= 5 copies - based on positive HER2 IHC result",
+            "ERBB2 may be amplified - based on positive HER2 IHC result"
+        )
     }
 
     @Test
@@ -301,14 +349,20 @@ class GeneIsAmplifiedTest {
 
     @Test
     fun `Should fail if gene is not allowed to be evaluated by IHC`() {
-        assertBothFunctions(EvaluationResult.FAIL, MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)))
+        assertBothFunctions(
+            EvaluationResult.FAIL,
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)),
+            "No amplification of gene A with >= 5 copies",
+            "No amplification of gene A"
+        )
     }
 
     @Test
     fun `Should fail with potentially eligible IHC event for both functions if correct result but on wrong gene`() {
         assertBothFunctionsForIhc(
             EvaluationResult.FAIL,
-            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE))
+            MolecularTestFactory.withIhcTests(matchingIhcResult.copy(item = GENE)),
+            "No amplification of ERBB2 with >= 5 copies", "No amplification of ERBB2"
         )
     }
 
@@ -325,7 +379,8 @@ class GeneIsAmplifiedTest {
                         transcriptId = ""
                     )
                 )
-            )
+            ),
+            "No amplification of gene A with >= 5 copies", "No amplification of gene A"
         )
     }
 
@@ -340,13 +395,17 @@ class GeneIsAmplifiedTest {
         assertThat(result.undeterminedMessagesStrings()).containsExactly("Amplification of gene gene A undetermined (not tested for amplifications)")
     }
 
-    private fun assertBothFunctions(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, functionWithMinCopies.evaluate(record))
-        assertMolecularEvaluation(result, functionWithNoMinCopies.evaluate(record))
+    private fun assertBothFunctions(
+        result: EvaluationResult, record: PatientRecord, expectedMessageWithMinCopies: String, expectedMessageWithNoMinCopies: String
+    ) {
+        assertMolecularEvaluation(result, functionWithMinCopies.evaluate(record), expectedMessageWithMinCopies)
+        assertMolecularEvaluation(result, functionWithNoMinCopies.evaluate(record), expectedMessageWithNoMinCopies)
     }
 
-    private fun assertBothFunctionsForIhc(result: EvaluationResult, record: PatientRecord) {
-        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR).evaluate(record))
-        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, null).evaluate(record))
+    private fun assertBothFunctionsForIhc(
+        result: EvaluationResult, record: PatientRecord, expectedMessageWithMinCopies: String, expectedMessageWithNoMinCopies: String
+    ) {
+        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, REQUIRED_COPY_NR).evaluate(record), expectedMessageWithMinCopies)
+        assertMolecularEvaluation(result, GeneIsAmplified(IHC_EVALUABLE_GENE, null).evaluate(record), expectedMessageWithNoMinCopies)
     }
 }

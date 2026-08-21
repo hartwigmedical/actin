@@ -20,8 +20,16 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, functionWithDate.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
-        assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithDate.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received adjuvant treatment(s) of targeted therapy"
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutDate.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received adjuvant treatment(s) of targeted therapy"
+        )
     }
 
     @Test
@@ -31,40 +39,77 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             TreatmentCategory.IMMUNOTHERAPY,
             setOf(Intent.ADJUVANT),
             recentDate,
-            functionWithDate
+            functionWithDate,
+            "Has not received adjuvant treatment(s) of targeted therapy"
         )
         assertResultForCategoryAndIntent(
             EvaluationResult.FAIL,
             TreatmentCategory.IMMUNOTHERAPY,
             setOf(Intent.ADJUVANT),
             recentDate,
-            functionWithoutDate
+            functionWithoutDate,
+            "Has not received adjuvant treatment(s) of targeted therapy"
         )
     }
 
     @Test
     fun `Should fail for non adjuvant treatment with matching category`() {
-        assertResultForCategoryAndIntent(EvaluationResult.FAIL, matchCategory, emptySet(), recentDate, functionWithoutDate)
+        assertResultForCategoryAndIntent(
+            EvaluationResult.FAIL,
+            matchCategory,
+            emptySet(),
+            recentDate,
+            functionWithoutDate,
+            "Has not received adjuvant treatment(s) of targeted therapy"
+        )
     }
 
     @Test
     fun `Should fail for neoadjuvant treatment with matching category`() {
-        assertResultForCategoryAndIntent(EvaluationResult.FAIL, matchCategory, setOf(Intent.NEOADJUVANT), recentDate, functionWithoutDate)
+        assertResultForCategoryAndIntent(
+            EvaluationResult.FAIL,
+            matchCategory,
+            setOf(Intent.NEOADJUVANT),
+            recentDate,
+            functionWithoutDate,
+            "Has not received adjuvant treatment(s) of targeted therapy"
+        )
     }
 
     @Test
     fun `Should be undetermined with adjuvant treatment with matching category but without (stop)date`() {
-        assertResultForCategoryAndIntent(EvaluationResult.UNDETERMINED, matchCategory, setOf(Intent.ADJUVANT), null, functionWithDate)
+        assertResultForCategoryAndIntent(
+            EvaluationResult.UNDETERMINED,
+            matchCategory,
+            setOf(Intent.ADJUVANT),
+            null,
+            functionWithDate,
+            "Received adjuvant treatment(s) of targeted therapy but date unknown"
+        )
     }
 
     @Test
     fun `Should fail with adjuvant treatment with matching category but too long ago`() {
-        assertResultForCategoryAndIntent(EvaluationResult.FAIL, matchCategory, setOf(Intent.NEOADJUVANT), olderDate, functionWithDate)
+        assertResultForCategoryAndIntent(
+            EvaluationResult.FAIL,
+            matchCategory,
+            setOf(Intent.NEOADJUVANT),
+            olderDate,
+            functionWithDate,
+            "Has not received adjuvant treatment(s) of targeted therapy"
+        )
     }
 
     @Test
     fun `Should pass for adjuvant treatment with matching category and correct date`() {
-        assertResultForCategoryAndIntent(EvaluationResult.PASS, matchCategory, setOf(Intent.ADJUVANT), recentDate, functionWithDate)
+        assertResultForCategoryAndIntent(
+            EvaluationResult.PASS,
+            matchCategory,
+            setOf(Intent.ADJUVANT),
+            recentDate,
+            functionWithDate,
+            "Received adjuvant treatment(s) of targeted therapy within the last 6 weeks"
+        )
     }
 
     @Test
@@ -74,7 +119,8 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             matchCategory,
             setOf(Intent.NEOADJUVANT, Intent.ADJUVANT),
             recentDate,
-            functionWithDate
+            functionWithDate,
+            "Received adjuvant treatment(s) of targeted therapy within the last 6 weeks"
         )
     }
 
@@ -83,7 +129,8 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
         category: TreatmentCategory,
         intents: Set<Intent>,
         date: LocalDate?,
-        function: HasHadAdjuvantTreatmentWithCategory
+        function: HasHadAdjuvantTreatmentWithCategory,
+        expectedMessage: String
     ) {
         val treatment = TreatmentTestFactory.drugTreatment("drug therapy", category)
         val record =
@@ -95,6 +142,6 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
                     stopMonth = date?.monthValue
                 )
             )
-        assertEvaluation(expectedResult, function.evaluate(record))
+        assertEvaluation(expectedResult, function.evaluate(record), expectedMessage)
     }
 }

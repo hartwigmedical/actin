@@ -11,6 +11,10 @@ class HasSiewertTypeTest {
 
     @Test
     fun `Should resolve to undetermined always`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined whether Siewert type is I"
+        )
     }
 }

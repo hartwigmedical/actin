@@ -54,7 +54,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
 
     @Test
     fun `Should fail when oncological history is empty`() {
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            TreatmentTestFactory.withTreatmentHistory(emptyList()),
+            "Has not received anti-cancer therapy within 6 months ignoring ALK inhibitor",
+            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
+        )
     }
 
     @Test
@@ -68,7 +73,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            priorCancerTreatment,
+            "Has not had any prior cancer treatment ignoring ALK inhibitor",
+            "Has not had any prior systemic cancer treatment ignoring ALK inhibitor"
+        )
     }
 
     @Test
@@ -87,7 +97,11 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             )
         )
         val evaluation = functionOnlySystemic.evaluate(priorCancerTreatment)
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
+        )
         assertThat(evaluation.failMessagesStrings()).containsExactly(
             "Has not received systemic anti-cancer therapy within $MONTHS_AGO months ignoring ${
                 TYPE_TO_IGNORE.first().display()
@@ -110,7 +124,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            priorCancerTreatment,
+            "Has not received anti-cancer therapy within 6 months ignoring ALK inhibitor",
+            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
+        )
     }
 
     @Test
@@ -130,7 +149,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.FAIL, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            priorCancerTreatment,
+            "Has not received anti-cancer therapy within 6 months ignoring ALK inhibitor",
+            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
+        )
     }
 
     @Test
@@ -149,7 +173,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.UNDETERMINED, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.UNDETERMINED,
+            priorCancerTreatment,
+            "Received anti-cancer therapy but undetermined if in the last 6 months (date unknown)",
+            "Received systemic anti-cancer therapy but undetermined if in the last 6 months (date unknown)"
+        )
         assertThat(function.evaluate(priorCancerTreatment).undeterminedMessagesStrings()).containsExactly(
             "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
@@ -158,7 +187,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
     @Test
     fun `Should evaluate to undetermined when medication entry with trial medication`() {
         val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true))
-        evaluateFunctions(EvaluationResult.UNDETERMINED, WashoutTestFactory.withMedications(medications))
+        evaluateFunctions(
+            EvaluationResult.UNDETERMINED,
+            WashoutTestFactory.withMedications(medications),
+            "Inconclusive if patient had any prior cancer treatment because participated in trial",
+            "Inconclusive if patient had any prior systemic cancer treatment because participated in trial"
+        )
     }
 
     @Test
@@ -182,7 +216,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            priorCancerTreatment,
+            "Received anti-cancer therapy within the last 6 months",
+            "Received systemic anti-cancer therapy within the last 6 months"
+        )
         assertThat(function.evaluate(priorCancerTreatment).passMessagesStrings()).containsExactly(
             "Received anti-cancer therapy within the last $MONTHS_AGO months"
         )
@@ -203,7 +242,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            priorCancerTreatment,
+            "Received anti-cancer therapy within the last 6 months",
+            "Received systemic anti-cancer therapy within the last 6 months"
+        )
     }
 
     @Test
@@ -224,7 +268,12 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                 )
             )
         )
-        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            priorCancerTreatment,
+            "Received anti-cancer therapy within the last 6 months",
+            "Received systemic anti-cancer therapy within the last 6 months"
+        )
     }
 
     @Test
@@ -243,11 +292,18 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                     .copy(drug = Drug(name = "", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
             )
         )
-        evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            priorCancerTreatment,
+            "Received anti-cancer therapy within the last 6 months",
+            "Received systemic anti-cancer therapy within the last 6 months"
+        )
     }
 
-    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
-        EvaluationAssert.assertEvaluation(expected, function.evaluate(record))
-        EvaluationAssert.assertEvaluation(expected, functionOnlySystemic.evaluate(record))
+    private fun evaluateFunctions(
+        expected: EvaluationResult, record: PatientRecord, expectedMessage: String, expectedMessageOnlySystemic: String
+    ) {
+        EvaluationAssert.assertEvaluation(expected, function.evaluate(record), expectedMessage)
+        EvaluationAssert.assertEvaluation(expected, functionOnlySystemic.evaluate(record), expectedMessageOnlySystemic)
     }
 }

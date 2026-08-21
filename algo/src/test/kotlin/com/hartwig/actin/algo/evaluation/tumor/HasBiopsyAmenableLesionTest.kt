@@ -12,11 +12,13 @@ class HasBiopsyAmenableLesionTest {
         val function = HasBiopsyAmenableLesion()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_TARGETED))
+            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_TARGETED)),
+            "Undetermined if biopsy amenable lesions present"
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_WHOLE_GENOME))
+            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_WHOLE_GENOME)),
+            "Biopsy amenability assumed because of WGS analysis"
         )
     }
 }

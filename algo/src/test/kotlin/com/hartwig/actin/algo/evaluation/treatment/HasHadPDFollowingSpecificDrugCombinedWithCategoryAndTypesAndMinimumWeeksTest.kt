@@ -30,7 +30,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
 
     @Test
     fun `Should fail for empty treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+        )
     }
 
     @Test
@@ -41,13 +45,21 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
                 treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(treatmentHistory))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(treatmentHistory),
+            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+        )
     }
 
     @Test
     fun `Should fail if treatment history contains treatment with target drug but not combined with treatment with required category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("wrong name", DIFFERENT_CATEGORY)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+        )
     }
 
     @Test
@@ -56,7 +68,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)),
             stopReason = StopReason.TOXICITY
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+        )
     }
 
     @Test
@@ -69,14 +85,22 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopYear = 2022,
             stopMonth = 3
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+        )
     }
 
     @Test
     fun `Should fail if types required but none match treatment history`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+        )
     }
 
     @Test
@@ -85,7 +109,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT)),
             treatmentHistoryEntry(setOf(drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES))),
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+        )
     }
 
     @Test
@@ -98,7 +126,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopYear = 2022,
             stopMonth = 3
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy with PD but for less than 6 weeks"
+        )
     }
 
     @Test
@@ -107,7 +139,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and  chemotherapy but uncertain if there has been PD"
+        )
     }
 
     @Test
@@ -121,7 +157,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and  chemotherapy with PD but unknown nr of weeks"
+        )
     }
 
     @Test
@@ -132,7 +172,8 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
         )
     }
 
@@ -156,7 +197,8 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2))),
+            "Undetermined if multiple received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy is counted as received for at least 6 weeks"
         )
     }
 
@@ -172,7 +214,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
+            "Has received combined therapy with target drug and  chemotherapy with PD for at least 6 weeks"
+        )
     }
 
     @Test
@@ -188,7 +234,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and  chemotherapy with PD for at least 6 weeks"
+        )
     }
 
     @Test
@@ -204,7 +254,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and  chemotherapy with PD for at least 6 weeks"
+        )
     }
 
     @Test
@@ -224,7 +278,11 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 6
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and HER2 antibody chemotherapy with PD for at least 6 weeks"
+        )
     }
 
     @Test
@@ -237,6 +295,10 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopYear = 2022,
             stopMonth = 8
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy with PD for at least 6 weeks"
+        )
     }
 }

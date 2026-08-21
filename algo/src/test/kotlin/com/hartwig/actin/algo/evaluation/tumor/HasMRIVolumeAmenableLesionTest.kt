@@ -10,6 +10,10 @@ class HasMRIVolumeAmenableLesionTest {
     @Test
     fun canEvaluate() {
         val function = HasMRIVolumeAmenableLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "MRI volume measurement amenability undetermined"
+        )
     }
 }

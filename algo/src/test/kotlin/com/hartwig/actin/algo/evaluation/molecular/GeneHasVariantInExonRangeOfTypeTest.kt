@@ -27,7 +27,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
 
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No variant in exon 1-2 in gene A of type insertion in canonical transcript"
+        )
     }
 
     @Test
@@ -36,7 +40,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(isReportable = true, gene = TARGET_GENE))
-            )
+            ),
+            "No variant in exon 1-2 in gene A of type insertion in canonical transcript"
         )
     }
 
@@ -50,7 +55,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         gene = TARGET_GENE, isReportable = true, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "No variant in exon 1-2 in gene A of type insertion in canonical transcript"
         )
     }
 
@@ -67,7 +73,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         canonicalImpact = impactWithExon(OTHER_EXON),
                     )
                 )
-            )
+            ),
+            "No variant in exon 1-2 in gene A of type insertion in canonical transcript"
         )
     }
 
@@ -81,7 +88,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         gene = TARGET_GENE, isReportable = true, type = VariantType.MNV, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "No variant in exon 1-2 in gene A of type insertion in canonical transcript"
         )
     }
 
@@ -99,7 +107,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript"
         )
     }
 
@@ -113,7 +122,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         gene = TARGET_GENE, isReportable = false, type = VariantType.INSERT, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript but considered not reportable"
         )
     }
 
@@ -131,7 +141,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript but not high driver"
         )
     }
 
@@ -149,7 +160,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         otherImpacts = setOf(impactWithExon(OTHER_EXON), impactWithExon(MATCHING_EXON))
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion but in non-canonical transcript"
         )
     }
 
@@ -164,7 +176,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         gene = TARGET_GENE, isReportable = true, type = VariantType.MNV, canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "No variant in exon 1-2 in gene A of type INDEL in canonical transcript"
         )
     }
 
@@ -182,7 +195,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript"
         )
     }
 
@@ -202,7 +216,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         fusedExonDown = 3
                     )
                 )
-            )
+            ),
+            "Exon(s) skipped in exon 1-4 in gene A of type deletion"
         )
     }
 
@@ -221,7 +236,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         fusedExonDown = 3
                     )
                 )
-            )
+            ),
+            "Exon skip(s) in exon 1-4 in gene A of type deletion but not reportable"
         )
     }
 
@@ -241,7 +257,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         fusedExonDown = 3
                     )
                 )
-            )
+            ),
+            "Exon skip(s) in exon 1-4 in gene A of type deletion but not high driver"
         )
     }
 
@@ -267,7 +284,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         canonicalImpact = impactWithExon(MATCHING_EXON)
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A in canonical transcript"
         )
     }
 
@@ -292,7 +310,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         otherImpacts = setOf(impactWithExon(MATCHING_EXON))
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion but in non-canonical transcript", "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript but not high driver"
         )
     }
 
@@ -318,7 +337,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         fusedExonDown = 3
                     )
                 )
-            )
+            ),
+            "Exon skip(s) in exon 1-4 in gene A of type deletion but not high driver", "Variant(s) in exon 1-4 in gene A of type deletion but in non-canonical transcript"
         )
     }
 
@@ -332,7 +352,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     canonicalVariant(VariantType.DELETE, clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
                     highDriverExonSkipFusion()
                 )
-            )
+            ),
+            "Exon(s) skipped in exon 1-4 in gene A of type deletion due to  together with variant(s) in canonical transcript but subclonal likelihood of > 50%: "
         )
     }
 
@@ -347,7 +368,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     nonCanonicalVariant(VariantType.DELETE),
                     highDriverExonSkipFusion()
                 )
-            )
+            ),
+            "Exon(s) skipped in exon 1-4 in gene A of type deletion due to  together with variant(s) in canonical transcript but subclonal likelihood of > 50%:  and variant(s) in non-canonical transcript: "
         )
     }
 
@@ -367,7 +389,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         otherImpacts = setOf(impactWithExon(MATCHING_EXON))
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-4 in gene A of type deletion in canonical transcript"
         )
     }
 
@@ -377,7 +400,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true))
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript"
         )
     }
 
@@ -387,7 +411,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true))
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript but subclonal likelihood of > 50%"
         )
     }
 
@@ -400,7 +425,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true),
                     canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true)
                 )
-            )
+            ),
+            "Variant(s)  in exon 1-2 in gene A of type insertion in canonical transcript together with variant(s) in canonical transcript but subclonal likelihood of > 50%: "
         )
     }
 
@@ -416,7 +442,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                         isReportable = true
                     )
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript but subclonal likelihood of > 50%"
         )
     }
 
@@ -427,7 +454,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withVariant(canonicalVariant(clonalLikelihood = clonalLikelihood, isReportable = false))
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript but considered not reportable"
         )
     }
 
@@ -440,7 +468,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
                     nonCanonicalVariant()
                 )
-            )
+            ),
+            "Variant(s) in exon 1-2 in gene A of type insertion but in non-canonical transcript", "Variant(s) in exon 1-2 in gene A of type insertion in canonical transcript but subclonal likelihood of > 50%"
         )
     }
 

@@ -45,7 +45,7 @@ class MolecularEvaluationFunctionTest {
     fun `Should return no molecular results message when no ORANGE nor other molecular data`() {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
         val evaluation = function.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No molecular results of sufficient quality")
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No molecular results of sufficient quality")
     }
@@ -57,7 +57,7 @@ class MolecularEvaluationFunctionTest {
     fun `Should execute rule when ORANGE molecular data`() {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val evaluation = function.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Fail message")
         assertThat(evaluation.failMessagesStrings()).containsExactly(FAIL_MESSAGE)
     }
 
@@ -71,7 +71,11 @@ class MolecularEvaluationFunctionTest {
     fun `Should return undetermined when genes have not been tested which are mandatory`() {
         val patient = withPanelTest()
         val evaluation = functionWithGene.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)"
         )
@@ -96,7 +100,7 @@ class MolecularEvaluationFunctionTest {
                     )
                 )
             )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Test in gene GENE undetermined (not tested for fusions)")
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Test in gene GENE undetermined (not tested for fusions)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
@@ -105,7 +109,7 @@ class MolecularEvaluationFunctionTest {
 
     private fun assertOverrideEvaluation(patient: PatientRecord) {
         val evaluation = functionWithOverride.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Override message")
         assertThat(evaluation.failMessagesStrings()).containsExactly(OVERRIDE_MESSAGE)
     }
 }

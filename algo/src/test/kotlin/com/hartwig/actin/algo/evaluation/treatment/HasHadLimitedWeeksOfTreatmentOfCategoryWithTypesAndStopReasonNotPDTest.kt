@@ -15,7 +15,12 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
 
     @Test
     fun `Should fail for empty treatments`() {
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            TreatmentTestFactory.withTreatmentHistory(emptyList()),
+            "No HER2 antibody targeted therapy treatment treatment with PD",
+            "No HER2 antibody targeted therapy treatment treatment with PD"
+        )
     }
 
     @Test
@@ -23,7 +28,12 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.RADIOTHERAPY)), stopReason = StopReason.TOXICITY
         )
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "No HER2 antibody targeted therapy treatment treatment with PD",
+            "No HER2 antibody targeted therapy treatment treatment with PD"
+        )
     }
 
     @Test
@@ -32,7 +42,12 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         val subsequentEntry = TreatmentTestFactory.treatmentHistoryEntry(
             setOf(TreatmentTestFactory.drugTreatment("other", TreatmentCategory.CHEMOTHERAPY)), startYear = 2020, startMonth = 9
         )
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(listOf(matchingEntry, subsequentEntry)))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            TreatmentTestFactory.withTreatmentHistory(listOf(matchingEntry, subsequentEntry)),
+            "Has received HER2 antibody targeted therapy treatment with stop reason PD",
+            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
+        )
     }
 
     @Test
@@ -43,7 +58,12 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
                 stopReason = StopReason.PROGRESSIVE_DISEASE,
                 bestResponse = TreatmentResponse.MIXED
             )
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has received HER2 antibody targeted therapy treatment with stop reason PD",
+            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
+        )
     }
 
     @Test
@@ -53,13 +73,23 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
                 setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY)),
                 stopReason = StopReason.TOXICITY
             )
-        evaluateFunctions(EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.UNDETERMINED,
+            TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Unclear if received targeted therapy",
+            "Unclear if received targeted therapy"
+        )
     }
 
     @Test
     fun `Should return undetermined for right category type and missing stop reason`() {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET)
-        evaluateFunctions(EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.UNDETERMINED,
+            TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has received HER2 antibody targeted therapy treatment but uncertain if there has been PD & unclear nr of weeks ",
+            "Has received HER2 antibody targeted therapy treatment but uncertain if there has been PD"
+        )
     }
 
     @Test
@@ -75,7 +105,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            functionWithoutWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            functionWithoutWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment without stop reason PD"
         )
     }
 
@@ -92,7 +123,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            functionWithoutWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            functionWithoutWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment without stop reason PD"
         )
     }
 
@@ -109,7 +141,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had HER2 antibody targeted therapy treatment for less than 6 weeks without stop reason PD"
         )
     }
 
@@ -117,14 +150,24 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
     fun `Should fail for matching treatment when PD is indicated in best response`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has received HER2 antibody targeted therapy treatment with stop reason PD",
+            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
+        )
     }
 
     @Test
     fun `Should return undetermined with trial treatment entry with matching category in history`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
-        evaluateFunctions(EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.UNDETERMINED,
+            TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Unclear if received targeted therapy",
+            "Unclear if received targeted therapy"
+        )
     }
 
     @Test
@@ -137,7 +180,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("test", true)), isTrial = true)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "No allogenic transplantation treatment with PD"
         )
     }
 
@@ -147,7 +191,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
             TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, stopReason = StopReason.TOXICITY, startYear = null)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received HER2 antibody targeted therapy treatment without stop reason PD but unknown nr of weeks"
         )
     }
 
@@ -163,13 +208,16 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
         )
     }
 
-    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
-        EvaluationAssert.assertEvaluation(expected, functionWithWeeks.evaluate(record))
-        EvaluationAssert.assertEvaluation(expected, functionWithoutWeeks.evaluate(record))
+    private fun evaluateFunctions(
+        expected: EvaluationResult, record: PatientRecord, expectedMessageWithWeeks: String, expectedMessageWithoutWeeks: String
+    ) {
+        EvaluationAssert.assertEvaluation(expected, functionWithWeeks.evaluate(record), expectedMessageWithWeeks)
+        EvaluationAssert.assertEvaluation(expected, functionWithoutWeeks.evaluate(record), expectedMessageWithoutWeeks)
     }
 
     companion object {

@@ -13,7 +13,6 @@ import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestCopyNumberFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasKnownSclcTransformationTest {
@@ -31,7 +30,8 @@ class HasKnownSclcTransformationTest {
                     listOf(IhcTest(item = "SCLC transformation", scoreText = "Positive")),
                     setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
                 )
-            )
+            ),
+            "Has SCLC transformation"
         )
     }
 
@@ -44,7 +44,8 @@ class HasKnownSclcTransformationTest {
                     listOf(IhcTest(item = "SCLC transformation", scoreText = "Possible")),
                     setOf(SMALL_CELL_LUNG_CANCER_DOIDS.first(), DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
                 )
-            )
+            ),
+            "Has NSCLC with potential SCLC transformation (unclear results)"
         )
     }
 
@@ -57,7 +58,8 @@ class HasKnownSclcTransformationTest {
                     SMALL_CELL_LUNG_CANCER_DOIDS.first(),
                     DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
                 )
-            )
+            ),
+            "Has NSCLC with small cell component - undetermined if this is considered SCLC transformation"
         )
     }
 
@@ -65,19 +67,25 @@ class HasKnownSclcTransformationTest {
     fun `Should be undetermined if tumor is NSCLC and has small cell component`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "small cell name"))
+            function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "small cell name")),
+            "Has NSCLC with small cell component - undetermined if this is considered SCLC transformation"
         )
     }
 
     @Test
     fun `Should be undetermined if tumor if exact lung carcinoma doid`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_CARCINOMA_DOID)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_CARCINOMA_DOID)),
+            "Undetermined if tumor type is NSCLC and if there may be SCLC transformation"
+        )
     }
 
     @Test
     fun `Should fail if tumor type not lung cancer`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LIVER_CANCER_DOID))
+            EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LIVER_CANCER_DOID)),
+            "No lung cancer thus no SCLC transformation"
         )
     }
 
@@ -85,7 +93,8 @@ class HasKnownSclcTransformationTest {
     fun `Should fail if tumor has small cell doid but no NSCLC doid`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withDoids(SMALL_CELL_LUNG_CANCER_DOIDS.first()))
+            function.evaluate(TumorTestFactory.withDoids(SMALL_CELL_LUNG_CANCER_DOIDS.first())),
+            "No lung cancer thus no SCLC transformation"
         )
     }
 
@@ -93,7 +102,8 @@ class HasKnownSclcTransformationTest {
     fun `Should fail if tumor doids and molecular profile do not indicate a possible small cell transformation`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)),
+            "No indication of SCLC transformation in molecular or tumor type data"
         )
     }
 
@@ -113,8 +123,11 @@ class HasKnownSclcTransformationTest {
             molecularTests = MolecularTestFactory.withDrivers(deletionRB1, deletionTP53).molecularTests
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if SCLC transformation may have occurred (RB1 and TP53 inactivation detected)")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if SCLC transformation may have occurred (RB1 and TP53 inactivation detected)"
+        )
     }
 
     @Test
@@ -132,7 +145,6 @@ class HasKnownSclcTransformationTest {
             molecularTests = MolecularTestFactory.withDrivers(deletionRB1).molecularTests
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("No indication of SCLC transformation in molecular or tumor type data")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "No indication of SCLC transformation in molecular or tumor type data")
     }
 }

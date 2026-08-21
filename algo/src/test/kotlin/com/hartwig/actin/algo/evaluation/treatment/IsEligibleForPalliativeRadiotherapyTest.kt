@@ -10,7 +10,8 @@ class IsEligibleForPalliativeRadiotherapyTest {
     fun shouldEvaluateToUndetermined() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            IsEligibleForPalliativeRadiotherapy().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            IsEligibleForPalliativeRadiotherapy().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Potential eligibility for palliative radiotherapy undetermined"
         )
     }
 }

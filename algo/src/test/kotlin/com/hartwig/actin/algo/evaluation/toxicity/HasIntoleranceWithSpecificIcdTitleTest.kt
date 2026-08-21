@@ -18,36 +18,51 @@ class HasIntoleranceWithSpecificIcdTitleTest {
 
     @Test
     fun `Should fail for no comorbidities`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
+            "No known intolerance to targetParentTitle&targetExtensionParentTitle"
+        )
     }
 
     @Test
     fun `Should fail for comorbidity with non-matching ICD code`() {
-        assertResultForIcdCodes(EvaluationResult.FAIL, "wrong")
+        assertResultForIcdCodes(EvaluationResult.FAIL, "wrong") { "No known intolerance to targetParentTitle&targetExtensionParentTitle" }
     }
 
     @Test
     fun `Should evaluate to undetermined for comorbidity with unknown extension`() {
-        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, targetIcdCode.mainCode)
+        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, targetIcdCode.mainCode) {
+            "Undetermined if intolerance in history is targetParentTitle&targetExtensionParentTitle intolerance (drug type unknown)"
+        }
     }
 
     @Test
     fun `Should pass for comorbidity with directly matching ICD code`() {
-        assertResultForIcdCodes(EvaluationResult.PASS, targetIcdCode.mainCode, targetIcdCode.extensionCode)
+        assertResultForIcdCodes(EvaluationResult.PASS, targetIcdCode.mainCode, targetIcdCode.extensionCode) { name ->
+            "Has intolerance $name belonging to targetParentTitle&targetExtensionParentTitle"
+        }
     }
 
     @Test
     fun `Should pass for comorbidity with ICD code child of target title`() {
-        assertResultForIcdCodes(EvaluationResult.PASS, childCode.mainCode, childCode.extensionCode)
+        assertResultForIcdCodes(EvaluationResult.PASS, childCode.mainCode, childCode.extensionCode) { name ->
+            "Has intolerance $name belonging to targetParentTitle&targetExtensionParentTitle"
+        }
     }
 
-    private fun assertResultForIcdCodes(expectedResult: EvaluationResult, icdMainCode: String, icdExtensionCode: String? = null) {
+    private fun assertResultForIcdCodes(
+        expectedResult: EvaluationResult,
+        icdMainCode: String,
+        icdExtensionCode: String? = null,
+        expectedMessage: (String?) -> String
+    ) {
         listOf(
             ComorbidityTestFactory.intolerance("unspecified", icdMainCode, icdExtensionCode),
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode, icdExtensionCode),
             ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode)
         ).forEach { match ->
-            assertEvaluation(expectedResult, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
+            assertEvaluation(expectedResult, function.evaluate(ComorbidityTestFactory.withComorbidity(match)), expectedMessage(match.name))
         }
     }
 }

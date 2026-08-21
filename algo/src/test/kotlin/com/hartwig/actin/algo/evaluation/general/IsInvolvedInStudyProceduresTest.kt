@@ -12,7 +12,9 @@ class IsInvolvedInStudyProceduresTest {
     @Test
     fun `Should fail always`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient is not involved with the trial of interest"
         )
     }
 }

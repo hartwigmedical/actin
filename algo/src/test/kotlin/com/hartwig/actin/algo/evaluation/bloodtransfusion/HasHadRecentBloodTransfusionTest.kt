@@ -12,13 +12,29 @@ class HasHadRecentBloodTransfusionTest {
     fun canEvaluate() {
         val minDate = LocalDate.of(2020, 3, 30)
         val function = HasHadRecentBloodTransfusion(TransfusionProduct.THROMBOCYTE, minDate)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())),
+            "Has not received recent thrombocyte blood transfusion"
+        )
         val tooOld = create(TransfusionProduct.THROMBOCYTE, minDate.minusWeeks(4))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(tooOld)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(tooOld)),
+            "Has not received recent thrombocyte blood transfusion"
+        )
         val wrongProduct = create(TransfusionProduct.ERYTHROCYTE, minDate.plusWeeks(2))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(wrongProduct)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(wrongProduct)),
+            "Has not received recent thrombocyte blood transfusion"
+        )
         val correct = create(TransfusionProduct.THROMBOCYTE, minDate.plusWeeks(2))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(correct)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(correct)),
+            "Has received recent thrombocyte blood transfusion"
+        )
     }
 
     companion object {

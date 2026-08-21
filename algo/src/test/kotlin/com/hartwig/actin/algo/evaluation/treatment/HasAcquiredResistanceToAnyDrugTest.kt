@@ -24,7 +24,11 @@ class HasAcquiredResistanceToAnyDrugTest {
             treatments = setOf(targetDrugTreatment),
             stopReason = StopReason.PROGRESSIVE_DISEASE
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "Has potential acquired resistance to osimertinib"
+        )
     }
 
     @Test
@@ -33,7 +37,11 @@ class HasAcquiredResistanceToAnyDrugTest {
             treatments = setOf(targetDrugTreatment),
             bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "Has potential acquired resistance to osimertinib"
+        )
     }
 
     @Test
@@ -44,7 +52,8 @@ class HasAcquiredResistanceToAnyDrugTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "Undetermined acquired resistance to osimertinib (stop reason toxicity) "
         )
     }
 
@@ -57,7 +66,8 @@ class HasAcquiredResistanceToAnyDrugTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "Undetermined acquired resistance to osimertinib "
         )
     }
 
@@ -70,7 +80,8 @@ class HasAcquiredResistanceToAnyDrugTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "Undetermined acquired resistance to osimertinib "
         )
     }
 
@@ -79,7 +90,8 @@ class HasAcquiredResistanceToAnyDrugTest {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(setOf(DrugTreatment("test", emptySet())), isTrial = true)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined resistance to osimertinib since unknown if drug was included in previous trial"
         )
     }
 
@@ -91,7 +103,8 @@ class HasAcquiredResistanceToAnyDrugTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "No acquired resistance to osimertinib since drug not in treatment history"
         )
     }
 
@@ -99,7 +112,8 @@ class HasAcquiredResistanceToAnyDrugTest {
     fun `Should fail if oncological history is empty`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "No acquired resistance to osimertinib since drug not in treatment history"
         )
     }
 }

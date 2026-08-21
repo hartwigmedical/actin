@@ -36,7 +36,7 @@ class HasHER2ExpressionByIhcTest {
     fun `Should evaluate to undetermined when no prior molecular tests available`() {
         listOf(negativeFunction, lowFunction).forEach { function ->
             val evaluation = function.evaluate(MolecularTestFactory.withMolecularTests(emptyList()))
-            assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+            assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No IHC HER2 expression test available")
             assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No IHC HER2 expression test available")
             assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
         }
@@ -45,7 +45,11 @@ class HasHER2ExpressionByIhcTest {
     @Test
     fun `Should evaluate to undetermined with no amplification message when no IHC results and ERBB2 not amplified`() {
         val evaluation = positiveFunction.evaluate(MolecularTestFactory.withMolecularTests(emptyList()))
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "No IHC HER2 expression test available (but no ERBB2 amplification found in DNA)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings())
             .containsExactly("No IHC HER2 expression test available (but no ERBB2 amplification found in DNA)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
@@ -57,7 +61,7 @@ class HasHER2ExpressionByIhcTest {
             TestPatientFactory.createMinimalTestWGSPatientRecord()
                 .copy(molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest()))
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No IHC HER2 expression test available")
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No IHC HER2 expression test available")
     }
 
@@ -65,7 +69,11 @@ class HasHER2ExpressionByIhcTest {
     fun `Should evaluate HER2 positive to warn if ERBB2 is amplified and no IHC HER2 results`() {
         val evaluation = positiveFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, emptyList()))
 
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "No IHC HER2 expression test available (but ERBB2 amplification detected in DNA)"
+        )
         assertThat(evaluation.warnMessagesStrings())
             .containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected in DNA)")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("Potential IHC HER2 positive")))
@@ -82,7 +90,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has positive HER2 IHC result")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("IHC HER2 positive")))
     }
 
@@ -96,7 +104,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no positive HER2 IHC result")
     }
 
     @Test
@@ -109,7 +117,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no positive HER2 IHC result")
     }
 
     @Test
@@ -119,7 +127,11 @@ class HasHER2ExpressionByIhcTest {
                 listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 2.0, scoreValueUnit = "+"))
             )
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if IHC HER2 score value(s) is considered positive"
+        )
         assertThat(evaluation.undeterminedMessagesStrings())
             .containsExactly("Undetermined if IHC HER2 score value(s) is considered positive")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
@@ -135,7 +147,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation, "Undetermined if HER2 IHC test results indicate positive HER2 status")
         assertThat(evaluation.warnMessagesStrings()).containsExactly("Undetermined if HER2 IHC test results indicate positive HER2 status")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("Potential IHC HER2 positive")))
     }
@@ -151,7 +163,7 @@ class HasHER2ExpressionByIhcTest {
                     )
                 )
             )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation, "Undetermined if HER2 IHC test results indicate positive HER2 status")
         assertThat(evaluation.warnMessagesStrings()).containsExactly("Undetermined if HER2 IHC test results indicate positive HER2 status")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("Potential IHC HER2 positive")))
     }
@@ -169,7 +181,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation, "Undetermined if HER2 IHC test results indicate positive HER2 status")
         assertThat(evaluation.warnMessagesStrings()).containsExactly("Undetermined if HER2 IHC test results indicate positive HER2 status")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("Potential IHC HER2 positive")))
     }
@@ -188,7 +200,11 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Undetermined if HER2 IHC test results indicate positive HER2 status (but ERBB2 amplification detected in DNA)"
+        )
         assertThat(evaluation.warnMessagesStrings())
             .containsExactly("Undetermined if HER2 IHC test results indicate positive HER2 status (but ERBB2 amplification detected in DNA)")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("Potential IHC HER2 positive")))
@@ -202,14 +218,22 @@ class HasHER2ExpressionByIhcTest {
                 listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0))
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "Has no positive HER2 IHC result (but ERBB2 amplification detected in DNA)"
+        )
     }
 
     @Test
     fun `Should evaluate HER2 negative to undetermined if no IHC HER2 results with ERBB2 amp`() {
         val evaluation = negativeFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, emptyList()))
 
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "No IHC HER2 expression test available (but ERBB2 amplification detected in DNA)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings())
             .containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected in DNA)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
@@ -225,7 +249,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has negative HER2 IHC result")
     }
 
     @Test
@@ -241,7 +265,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no negative HER2 IHC result")
     }
 
     @Test
@@ -252,7 +276,11 @@ class HasHER2ExpressionByIhcTest {
                 listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0))
             )
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Undetermined if HER2 IHC test results indicate negative HER2 status (but ERBB2 amplification detected in DNA)"
+        )
         assertThat(evaluation.warnMessagesStrings())
             .containsExactly("Undetermined if HER2 IHC test results indicate negative HER2 status (but ERBB2 amplification detected in DNA)")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("Potential IHC HER2 negative")))
@@ -268,7 +296,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has low HER2 IHC result")
     }
 
     @Test
@@ -283,7 +311,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no low HER2 IHC result")
     }
 
     @Test
@@ -294,7 +322,11 @@ class HasHER2ExpressionByIhcTest {
                 listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 1.0, scoreValueUnit = "+"))
             )
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Undetermined if HER2 IHC test results indicate low HER2 status (but ERBB2 amplification detected in DNA)"
+        )
         assertThat(evaluation.warnMessagesStrings())
             .containsExactly("Undetermined if HER2 IHC test results indicate low HER2 status (but ERBB2 amplification detected in DNA)")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("Potential IHC HER2 low")))
@@ -307,7 +339,7 @@ class HasHER2ExpressionByIhcTest {
                 listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 2.0, scoreValueUnit = "+"))
             )
         )
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if IHC HER2 score value(s) is considered low")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
 
@@ -315,7 +347,11 @@ class HasHER2ExpressionByIhcTest {
     fun `Should evaluate HER2 low to undetermined if no IHC HER2 results with ERBB2 amp`() {
         val evaluation = lowFunction.evaluate(MolecularTestFactory.withCopyNumberAndIhcTests(ERBB2_AMP, emptyList()))
 
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "No IHC HER2 expression test available (but ERBB2 amplification detected in DNA)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings())
             .containsExactly("No IHC HER2 expression test available (but ERBB2 amplification detected in DNA)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
@@ -335,7 +371,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation, "Undetermined if HER2 IHC test results indicate positive HER2 status")
     }
 
     @Test
@@ -343,7 +379,7 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = positiveFunction.evaluate(
             MolecularTestFactory.withIhcTests(listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 3.0)))
         )
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
+        assertMolecularEvaluation(EvaluationResult.WARN, evaluation, "Undetermined if HER2 IHC test results indicate positive HER2 status")
     }
 
     @Test
@@ -351,7 +387,7 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = negativeFunction.evaluate(
             MolecularTestFactory.withIhcTests(listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0)))
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has negative HER2 IHC result")
     }
 
 }

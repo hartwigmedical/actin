@@ -25,7 +25,7 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment(it, isSystemic = true)), intents = null)
         }
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Received at least 2 systemic treatments")
         assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at least 2 systemic treatments"))
     }
 
@@ -39,7 +39,7 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
             MAX_MONTHS_BEFORE_NEXT_LINE,
             referenceDate
         ).evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Received at most 2 systemic treatments")
         assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at most 2 systemic treatments"))
     }
 
@@ -51,7 +51,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                 intents = setOf(Intent.PALLIATIVE)
             )
         }
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Received at least 2 systemic treatments"
+        )
     }
 
     @Test
@@ -71,7 +75,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     startMonth = referenceDate.monthValue
                 )
             )
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Received at least 2 systemic treatments"
+            )
         }
     }
 
@@ -88,14 +96,19 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
             )
             assertEvaluation(
                 EvaluationResult.PASS,
-                minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
+                minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Received at least 1 systemic treatments"
             )
         }
     }
 
     @Test
     fun `Should fail when treatment history is empty`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received at least 2 systemic treatments"
+        )
     }
 
     @Test
@@ -103,7 +116,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
         val treatments = listOf("1", "2").map {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment(it, isSystemic = false)))
         }
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Has not received at least 2 systemic treatments"
+        )
     }
 
     @Test
@@ -123,7 +140,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     startMonth = referenceDate.monthValue
                 )
             )
-            assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Has not received at least 2 systemic treatments"
+            )
         }
     }
 
@@ -138,7 +159,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     stopMonth = referenceDate.monthValue - (MAX_MONTHS_BEFORE_NEXT_LINE + 1)
                 )
             )
-            assertEvaluation(EvaluationResult.FAIL, minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Has not received at least 1 systemic treatments"
+            )
         }
     }
 
@@ -158,7 +183,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     startMonth = referenceDate.monthValue
                 )
             )
-            assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Has not received at least 2 systemic treatments"
+            )
         }
     }
 
@@ -172,7 +201,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     startYear = referenceDate.year - 2
                 )
             )
-            assertEvaluation(EvaluationResult.FAIL, minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                minimalOneLineFunction.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Has not received at least 1 systemic treatments"
+            )
         }
     }
 
@@ -193,7 +226,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     startMonth = referenceDate.monthValue
                 )
             )
-            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Undetermined if received at least 2 systemic treatments since it is unclear if (neo)adjuvant treatment(s) resulted in PD within 3 months after stopping (incomplete date information)"
+            )
         }
     }
 
@@ -214,7 +251,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     startMonth = referenceDate.monthValue
                 )
             )
-            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Undetermined if received at least 2 systemic treatments since it is unclear if (neo)adjuvant treatment(s) resulted in PD within 3 months after stopping (incomplete date information)"
+            )
         }
     }
 
@@ -237,7 +278,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
                     startMonth = referenceDate.monthValue
                 )
             )
-            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+                "Undetermined if received at least 2 systemic treatments since it is unclear if (neo)adjuvant treatment(s) resulted in PD within 3 months after stopping (incomplete date information)"
+            )
         }
     }
 }

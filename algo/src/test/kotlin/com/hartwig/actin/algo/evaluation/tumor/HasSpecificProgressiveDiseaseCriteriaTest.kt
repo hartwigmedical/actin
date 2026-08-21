@@ -10,6 +10,10 @@ class HasSpecificProgressiveDiseaseCriteriaTest {
     @Test
     fun canEvaluate() {
         val function = HasSpecificProgressiveDiseaseCriteria()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Tumor progression according to specific criteria undetermined"
+        )
     }
 }

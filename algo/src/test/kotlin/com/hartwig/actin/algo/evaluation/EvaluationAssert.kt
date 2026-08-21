@@ -6,19 +6,6 @@ import org.assertj.core.api.Assertions.assertThat
 
 object EvaluationAssert {
 
-    fun assertMolecularEvaluation(expected: EvaluationResult, actual: Evaluation) {
-        assertEvaluation(expected, actual)
-        if (actual.result == EvaluationResult.PASS || actual.result == EvaluationResult.WARN) {
-            assertThat(actual.inclusionMolecularEvents).isNotEmpty()
-        } else {
-            assertThat(actual.inclusionMolecularEvents).isEmpty()
-        }
-
-        if (actual.result == EvaluationResult.UNDETERMINED) {
-            assertThat(actual.isMissingMolecularResultForEvaluation).isTrue
-        }
-    }
-
     fun assertEvaluation(expected: EvaluationResult, actual: Evaluation) {
         assertThat(actual.result).isEqualTo(expected)
         when (actual.result) {
@@ -51,6 +38,38 @@ object EvaluationAssert {
             }
 
             else -> {}
+        }
+    }
+
+    fun assertEvaluation(expected: EvaluationResult, actual: Evaluation, vararg expectedMessages: String) {
+        assertEvaluation(expected, actual)
+        assertThat(messagesForResult(actual)).containsExactlyInAnyOrder(*expectedMessages)
+    }
+
+    fun assertMolecularEvaluation(expected: EvaluationResult, actual: Evaluation) {
+        assertEvaluation(expected, actual)
+        if (actual.result == EvaluationResult.PASS || actual.result == EvaluationResult.WARN) {
+            assertThat(actual.inclusionMolecularEvents).isNotEmpty()
+        } else {
+            assertThat(actual.inclusionMolecularEvents).isEmpty()
+        }
+
+        if (actual.result == EvaluationResult.UNDETERMINED) {
+            assertThat(actual.isMissingMolecularResultForEvaluation).isTrue
+        }
+    }
+
+    fun assertMolecularEvaluation(expected: EvaluationResult, actual: Evaluation, vararg expectedMessages: String) {
+        assertMolecularEvaluation(expected, actual)
+        assertThat(messagesForResult(actual)).containsExactlyInAnyOrder(*expectedMessages)
+    }
+
+    private fun messagesForResult(actual: Evaluation): Set<String> {
+        return when (actual.result) {
+            EvaluationResult.PASS -> actual.passMessagesStrings()
+            EvaluationResult.WARN -> actual.warnMessagesStrings()
+            EvaluationResult.UNDETERMINED -> actual.undeterminedMessagesStrings()
+            EvaluationResult.FAIL -> actual.failMessagesStrings()
         }
     }
 }

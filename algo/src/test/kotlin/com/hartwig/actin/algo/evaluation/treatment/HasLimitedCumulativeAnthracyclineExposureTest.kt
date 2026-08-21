@@ -17,7 +17,11 @@ import org.junit.jupiter.api.Test
 class HasLimitedCumulativeAnthracyclineExposureTest {
     @Test
     fun `Should pass when no anthracycline information provided`() {
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(patientRecord(null, emptyList(), emptyList())))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(patientRecord(null, emptyList(), emptyList())),
+            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
+        )
     }
 
     @Test
@@ -25,7 +29,8 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         val genericChemo = drugTreatment("chemo", TreatmentCategory.CHEMOTHERAPY)
         assertEvaluation(
             EvaluationResult.PASS,
-            FUNCTION.evaluate(patientRecord(setOf("other cancer type"), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo)))))
+            FUNCTION.evaluate(patientRecord(setOf("other cancer type"), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo))))),
+            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -34,7 +39,8 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         val suspectTumorTypeWithOther = priorPrimary("other")
         assertEvaluation(
             EvaluationResult.PASS,
-            FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithOther), emptyList()))
+            FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithOther), emptyList())),
+            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -45,14 +51,16 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
 
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithSuspectTreatment), emptyList()))
+            FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithSuspectTreatment), emptyList())),
+            "Undetermined if prior anthracycline exposure within permitted limit (prior tumor in history associated with anthracycline chemotherapy)"
         )
     }
 
     @Test
     fun `Should return undetermined when prior primary has no prior treatment recorded`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(patientRecord(null, listOf(priorPrimary()), emptyList()))
+            EvaluationResult.UNDETERMINED, FUNCTION.evaluate(patientRecord(null, listOf(priorPrimary()), emptyList())),
+            "Undetermined if prior anthracycline exposure within permitted limit (prior tumor in history associated with anthracycline chemotherapy)"
         )
     }
 
@@ -61,7 +69,8 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         val genericChemo = drugTreatment("chemo", TreatmentCategory.CHEMOTHERAPY)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(patientRecord(setOf(SUSPICIOUS_CANCER_TYPE), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo)))))
+            FUNCTION.evaluate(patientRecord(setOf(SUSPICIOUS_CANCER_TYPE), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo))))),
+            "Cancer type is associated with potential anthracycline chemotherapy -  undetermined if anthracycline chemotherapy has been given"
         )
     }
 
@@ -70,7 +79,8 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         val priorAnthracycline = drugTreatment("chemo", TreatmentCategory.CHEMOTHERAPY, setOf(DrugType.ANTHRACYCLINE))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            FUNCTION.evaluate(patientRecord(null, emptyList(), listOf(treatmentHistoryEntry(setOf(priorAnthracycline)))))
+            FUNCTION.evaluate(patientRecord(null, emptyList(), listOf(treatmentHistoryEntry(setOf(priorAnthracycline))))),
+            "Exact dosage of received anthracycline chemotherapy undetermined"
         )
     }
 

@@ -13,7 +13,8 @@ class HasSufficientLifeExpectancyTest {
     fun `Should pass always`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that requested life expectancy will be met"
         )
     }
 }

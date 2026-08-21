@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.clinical.ClinicalStatus
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.InfectionStatus
 import com.hartwig.actin.icd.TestIcdFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasSpecificInfectionTest {
@@ -18,7 +17,11 @@ class HasSpecificInfectionTest {
 
     @Test
     fun `Should fail with no prior conditions`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())),
+            "No hepatitis B virus infection"
+        )
     }
 
     @Test
@@ -26,7 +29,8 @@ class HasSpecificInfectionTest {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.CYTOMEGALOVIRAL_DISEASE_CODE)
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
+            "No hepatitis B virus infection"
         )
     }
 
@@ -39,28 +43,31 @@ class HasSpecificInfectionTest {
         )
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.ACUTE_HEPATITIS_B_CODE)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Infection in history but undetermined if hepatitis B virus")
     }
 
     @Test
     fun `Should evaluate to undetermined with active infection but no description in infectionStatus`() {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
             .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(true, null)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Infection in history but undetermined if hepatitis B virus"
+        )
     }
 
     @Test
     fun `Should pass for prior condition with correct ICD code`() {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = targetCodes.first().mainCode)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Hepatitis B virus infection in history")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Hepatitis B virus infection in history")
     }
 
     @Test
     fun `Should pass with active infection and matching description in infectionStatus`() {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
             .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(true, "hepatitis B")))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "Hepatitis B virus infection in history")
     }
 }

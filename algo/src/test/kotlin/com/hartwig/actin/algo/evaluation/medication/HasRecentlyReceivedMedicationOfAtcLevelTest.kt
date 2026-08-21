@@ -19,21 +19,33 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
     
     @Test
     fun `Should fail when no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No recent category to find medication use"
+        )
     }
 
     @Test
     fun `Should fail when medication has wrong category`() {
         val atc = AtcTestFactory.atcClassification("wrong category")
         val medications = listOf(MedicationTestFactory.medication(atc = atc))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No recent category to find medication use"
+        )
     }
 
     @Test
     fun `Should pass when medication has right category`() {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(MedicationTestFactory.medication(atc = atc))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent category to find medication use ()"
+        )
     }
 
     @Test
@@ -46,7 +58,11 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         )
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent category to find medication use ()"
+        )
     }
 
     @Test
@@ -61,7 +77,8 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MedicationTestFactory.withMedications(medications))
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent category to find medication use undetermined (required stop date prior to registration date)"
         )
     }
 
@@ -70,7 +87,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         val result = function.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }
 }

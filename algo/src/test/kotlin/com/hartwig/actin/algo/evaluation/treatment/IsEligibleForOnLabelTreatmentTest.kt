@@ -91,7 +91,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 isCancerAssociatedVariant = true
             )
         ).copy(tumor = nsclcTumor)
-        assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record), "Eligible for on-label Osimertinib")
     }
 
     @Test
@@ -109,7 +109,11 @@ class IsEligibleForOnLabelTreatmentTest {
                 isCancerAssociatedVariant = true
             )
         ).copy(tumor = nsclcTumor)
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingOsimertinibWithIntent.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingOsimertinibWithIntent.evaluate(record),
+            "Undetermined if patient is eligible for on-label curative Osimertinib"
+        )
     }
 
     @Test
@@ -124,7 +128,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 driverLikelihood = DriverLikelihood.HIGH
             )
         ).copy(tumor = nsclcTumor)
-        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record), "Not eligible for on-label Osimertinib")
     }
 
     @Test
@@ -138,7 +142,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 )
             )
         ).copy(tumor = nsclcTumor)
-        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record), "Not eligible for on-label Osimertinib")
     }
 
     @Test
@@ -153,7 +157,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 )
             )
         ).copy(tumor = nsclcTumor)
-        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingOsimertinib.evaluate(record), "Not eligible for on-label Osimertinib")
     }
 
     @Test
@@ -182,7 +186,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, functionEvaluatingOsimertinib.evaluate(record), "Eligible for on-label Osimertinib")
     }
 
     @Test
@@ -193,7 +197,7 @@ class IsEligibleForOnLabelTreatmentTest {
             ihcTests = listOf(IhcTest(item = "PD-L1", measure = "TPS", scoreLowerBound = 55.0, scoreValueUnit = "%")),
             oncologicalHistory = emptyList()
         )
-        assertEvaluation(EvaluationResult.PASS, functionEvaluatingPembrolizumab.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, functionEvaluatingPembrolizumab.evaluate(record), "Eligible for on-label Pembrolizumab")
     }
 
     @Test
@@ -208,7 +212,7 @@ class IsEligibleForOnLabelTreatmentTest {
                 driverLikelihood = DriverLikelihood.HIGH
             )
         ).copy(tumor = nsclcTumor, oncologicalHistory = emptyList())
-        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, functionEvaluatingPembrolizumab.evaluate(record), "Not eligible for on-label Pembrolizumab")
     }
 
     @Test
@@ -227,7 +231,11 @@ class IsEligibleForOnLabelTreatmentTest {
             ),
             oncologicalHistory = emptyList()
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingPembrolizumab.evaluate(record),
+            "Undetermined if patient is eligible for on-label Pembrolizumab"
+        )
     }
 
     @Test
@@ -235,7 +243,11 @@ class IsEligibleForOnLabelTreatmentTest {
         standardOfCareCannotBeEvaluatedForPatient()
         val record =
             withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true))))).copy(tumor = nsclcTumor)
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingPembrolizumab.evaluate(record),
+            "Undetermined if patient is eligible for on-label Pembrolizumab"
+        )
     }
 
     @Test
@@ -253,7 +265,11 @@ class IsEligibleForOnLabelTreatmentTest {
         every {
             standardOfCareEvaluator.standardOfCareEvaluatedTreatments(colorectalCancerPatient)
         } returns StandardOfCareEvaluation(expectedSocTreatments)
-        assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingPembrolizumab.evaluate(colorectalCancerPatient))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingPembrolizumab.evaluate(colorectalCancerPatient),
+            "Undetermined if patient is eligible for on-label Pembrolizumab"
+        )
     }
 
     @Test
@@ -262,7 +278,7 @@ class IsEligibleForOnLabelTreatmentTest {
         every {
             standardOfCareEvaluator.standardOfCareEvaluatedTreatments(colorectalCancerPatient)
         } returns StandardOfCareEvaluation(emptyList())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(colorectalCancerPatient))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(colorectalCancerPatient), "Not eligible for on-label Treatment")
     }
 
     @Test
@@ -272,21 +288,30 @@ class IsEligibleForOnLabelTreatmentTest {
             EvaluationResult.WARN,
             function.evaluate(
                 withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true)))))
-            )
+            ),
+            "Patient might be ineligible for on-label Treatment since this treatment was already administered"
         )
     }
 
     @Test
     fun `Should return undetermined for non colorectal cancer patient with empty treatment list`() {
         standardOfCareCannotBeEvaluatedForPatient()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Undetermined if patient is eligible for on-label Treatment"
+        )
     }
 
     @Test
     fun `Should return undetermined for non colorectal cancer patient with non empty treatment list but not containing the specific treatment`() {
         standardOfCareCannotBeEvaluatedForPatient()
         val treatments = listOf(treatmentHistoryEntry(setOf(treatment("test", true))))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(treatments)),
+            "Undetermined if patient is eligible for on-label Treatment"
+        )
     }
 
     @Test

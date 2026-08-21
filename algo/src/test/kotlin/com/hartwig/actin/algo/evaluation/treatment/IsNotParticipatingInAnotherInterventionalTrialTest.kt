@@ -23,7 +23,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         val medications = listOf(medication(isTrialMedication = true))
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysActiveMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications))
+            alwaysActiveMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
         )
     }
 
@@ -40,7 +41,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
+            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
         )
     }
 
@@ -51,7 +53,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         val medications = listOf(medication(isTrialMedication = true))
         assertEvaluation(
             EvaluationResult.PASS,
-            alwaysStoppedMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications))
+            alwaysStoppedMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Assumed that patient is not participating in another interventional trial"
         )
     }
 
@@ -67,7 +70,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
+            "Assumed that patient is not participating in another interventional trial"
         )
     }
 
@@ -75,7 +79,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
     fun `Should pass when patient received no trial treatment or medication`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            alwaysActiveMedicationFunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            alwaysActiveMedicationFunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient is not participating in another interventional trial"
         )
     }
 }

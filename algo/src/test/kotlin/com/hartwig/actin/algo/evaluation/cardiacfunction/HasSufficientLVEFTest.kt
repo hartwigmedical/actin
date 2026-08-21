@@ -13,10 +13,10 @@ class HasSufficientLVEFTest {
     fun canEvaluate() {
         val function = HasSufficientLVEF(0.71)
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withLVEF(null)), "LVEF unknown")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withLVEF(0.1)), "LVEF of 0.1 below 0.71")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.71)), "LVEF of 0.71 exceeds 0.71")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withLVEF(0.9)), "LVEF of 0.9 exceeds 0.71")
     }
 
     companion object {

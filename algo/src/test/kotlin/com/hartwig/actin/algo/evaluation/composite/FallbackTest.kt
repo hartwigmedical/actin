@@ -14,9 +14,9 @@ class FallbackTest {
     fun canEvaluate() {
 
         val pass = Fallback(evaluationFunction(EvaluationResult.PASS), evaluationFunction(EvaluationResult.FAIL))
-        assertEvaluation(EvaluationResult.PASS, pass.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(EvaluationResult.PASS, pass.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()), "pass")
         val fallback = Fallback(evaluationFunction(EvaluationResult.UNDETERMINED), evaluationFunction(EvaluationResult.FAIL))
-        assertEvaluation(EvaluationResult.FAIL, fallback.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(EvaluationResult.FAIL, fallback.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()), "fail")
     }
 
     private fun evaluationFunction(result: EvaluationResult): EvaluationFunction {

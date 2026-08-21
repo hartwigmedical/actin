@@ -16,7 +16,11 @@ class HasContraindicationToMRITest {
 
     @Test
     fun `Should fail with no other condition`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())),
+            "No potential contraindications to MRI"
+        )
     }
 
     @Test
@@ -29,7 +33,8 @@ class HasContraindicationToMRITest {
                         otherCondition(name = "not a contraindication")
                     )
                 )
-            )
+            ),
+            "No potential contraindications to MRI"
         )
     }
 
@@ -37,34 +42,47 @@ class HasContraindicationToMRITest {
     fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withOtherCondition(otherCondition(icdMainCode = IcdConstants.KIDNEY_FAILURE_BLOCK)))
+            function.evaluate(withOtherCondition(otherCondition(icdMainCode = IcdConstants.KIDNEY_FAILURE_BLOCK))),
+            "Potential MRI contraindication: "
         )
     }
 
     @Test
     fun `Should pass with a condition with correct name`() {
         COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI.forEach { contraindicationName ->
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(withOtherCondition(otherCondition(name = contraindicationName))))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(withOtherCondition(otherCondition(name = contraindicationName))),
+                "Potential MRI contraindication: $contraindicationName"
+            )
         }
     }
 
 
     @Test
     fun `Should fail with no intolerances`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
+            "No potential contraindications to MRI"
+        )
     }
 
     @Test
     fun `Should fail with no relevant intolerance`() {
         val intolerances = listOf(intolerance("no relevant intolerance"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(intolerances)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withIntolerances(intolerances)),
+            "No potential contraindications to MRI"
+        )
     }
 
     @Test
     fun `Should pass with relevant intolerance`() {
         COMORBIDITIES_THAT_ARE_CONTRAINDICATIONS_TO_MRI.forEach { contraindicationName ->
             val record = ComorbidityTestFactory.withIntolerances(listOf(intolerance(contraindicationName)))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+            assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "Potential MRI contraindication: $contraindicationName")
         }
     }
 }

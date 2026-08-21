@@ -20,7 +20,8 @@ class HasKnownHPVStatusTest {
                 MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_WHOLE_GENOME, true
                 )
-            )
+            ),
+            "HPV status known (by WGS test)"
         )
     }
 
@@ -33,7 +34,8 @@ class HasKnownHPVStatusTest {
                     type = ExperimentType.PANEL,
                     virus = TestMolecularFactory.createMinimalVirus().copy(type = VirusType.HPV)
                 )
-            )
+            ),
+            "HPV status known"
         )
     }
 
@@ -42,7 +44,7 @@ class HasKnownHPVStatusTest {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
             ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "HPV status known (by WGS test)")
     }
 
 
@@ -53,7 +55,7 @@ class HasKnownHPVStatusTest {
         ).copy(
             ihcTests = listOf(MolecularTestFactory.ihcTest(item = "HPV", impliesIndeterminate = false))
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "HPV status known (by IHC test)")
     }
 
     @Test
@@ -68,7 +70,7 @@ class HasKnownHPVStatusTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(record), "HPV tested before but indeterminate status")
     }
 
     @Test
@@ -78,7 +80,11 @@ class HasKnownHPVStatusTest {
         ).copy(
             ihcTests = listOf(MolecularTestFactory.ihcTest(item = "Something"))
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "HPV status undetermined (WGS contained no tumor cells)"
+        )
     }
 
     @Test
@@ -94,7 +100,8 @@ class HasKnownHPVStatusTest {
                         )
                     )
                 )
-            )
+            ),
+            "HPV status not known"
         )
     }
 }
