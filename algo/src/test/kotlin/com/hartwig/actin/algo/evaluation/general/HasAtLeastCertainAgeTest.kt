@@ -14,7 +14,7 @@ class HasAtLeastCertainAgeTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(GeneralTestFactory.withBirthYear(2002)),
-            "Undetermined if patient with birth year 2002) is older than 18"
+            "Undetermined if patient with birth year 2002 is older than 18"
         )
     }
 }
