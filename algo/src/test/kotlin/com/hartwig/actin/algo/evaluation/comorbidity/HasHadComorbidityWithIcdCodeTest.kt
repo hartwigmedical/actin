@@ -21,8 +21,10 @@ private const val diseaseDescription = "parent disease"
 
 class HasHadComorbidityWithIcdCodeTest {
     private val targetIcdCodes = IcdConstants.RESPIRATORY_COMPROMISE_SET.map { IcdCode(it) }.toSet()
-    private val icdModel =
-        TestIcdFactory.createModelWithSpecificNodes(listOf("child", "otherTarget", "childParent", "extension", parentCode))
+    private val icdModel = TestIcdFactory.createModelWithSpecificNodes(
+        mainNodePrefixes = listOf("child", "otherTarget", "childParent", parentCode),
+        extensionNodePrefixes = listOf("extension")
+    )
     private val referenceDate = LocalDate.of(2024, 12, 6)
     private val minimalPatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val conditionWithTargetCode = ComorbidityTestFactory.otherCondition(name = OTHER_CONDITION_NAME, icdMainCode = parentCode)
