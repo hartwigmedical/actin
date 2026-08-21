@@ -15,10 +15,7 @@ object Styles {
     val PALETTE_BLACK = DeviceRgb(0, 0, 0)
     val PALETTE_DARK_GREY = DeviceRgb(39, 47, 50)
     val PALETTE_MID_GREY = DeviceRgb(101, 106, 108)
-
-    val PALETTE_BLUE = DeviceRgb(74, 134, 232) // - original actin
-    // val PALETTE_BLUE = DeviceRgb(38, 90, 166) // oncoact
-
+    val PALETTE_BLUE = DeviceRgb(74, 134, 232)
     val PALETTE_EVALUATION_PASS = DeviceRgb(0, 150, 0)
     val PALETTE_EVALUATION_WARN = DeviceRgb(255, 130, 0)
     val PALETTE_EVALUATION_FAILED = DeviceRgb(231, 85, 85)
