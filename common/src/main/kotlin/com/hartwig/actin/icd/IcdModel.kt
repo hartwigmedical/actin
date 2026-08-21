@@ -63,10 +63,10 @@ class IcdModel(
             else -> invalidMainTitleReason(slots.first) ?: slots.second?.let(::invalidExtensionTitleReason)
         }
 
-    private fun invalidMainTitleReason(mainTitle: String): String? =
+    fun invalidMainTitleReason(mainTitle: String): String? =
         unknownOrMisplacedTitleReason(mainTitle, mainTitleToCodeMap, extensionTitleToCodeMap, EXTENSION_SLOT, MAIN_SLOT)
 
-    private fun invalidExtensionTitleReason(extensionTitle: String): String? =
+    fun invalidExtensionTitleReason(extensionTitle: String): String? =
         unknownOrMisplacedTitleReason(extensionTitle, extensionTitleToCodeMap, mainTitleToCodeMap, MAIN_SLOT, EXTENSION_SLOT)
 
     private fun unknownOrMisplacedTitleReason(
