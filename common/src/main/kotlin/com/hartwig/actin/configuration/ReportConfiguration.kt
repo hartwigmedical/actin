@@ -65,20 +65,5 @@ data class ReportConfiguration(
         fun create(environmentConfigFile: String?): ReportConfiguration {
             return EnvironmentConfiguration.create(environmentConfigFile).report
         }
-
-        fun extended(): ReportConfiguration {
-            return ReportConfiguration(
-                patientDetailsType = ReportContentType.COMPREHENSIVE,
-                clinicalSummaryType = ReportContentType.COMPREHENSIVE,
-                molecularSummaryType = ReportContentType.COMPREHENSIVE,
-                standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
-                trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
-                molecularChapterType = MolecularChapterType.STANDARD_AND_LONGITUDINAL,
-                efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
-                clinicalChapterType = ClinicalChapterType.COMPLETE,
-                trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS,
-                intendedUse = ReportIntendedUse.RESEARCH_USE_ONLY
-            )
-        }
     }
 }
