@@ -82,7 +82,7 @@ class FormatTest {
 
     @Test
     fun `Should format lab references with ULN, possible reference and unit`() {
-        assertThat(Format.labReferenceWithLimit(2.0, "ULN", 4.0, LabUnit.MICROMOLES_PER_LITER)).isEqualTo("2.0*ULN (8.0 umol/L)")
+        assertThat(Format.labReferenceWithLimit(2.0, "ULN", 4.0, LabUnit.MICROMOLES_PER_LITER)).isEqualTo("2.0*ULN (8.0 µmol/L)")
         assertThat(Format.labReferenceWithLimit(2.0, "ULN", null, LabUnit.MILLIGRAMS_PER_DECILITER)).isEqualTo("2.0*ULN (2.0*NA mg/dL)")
     }
 
@@ -94,7 +94,7 @@ class FormatTest {
                 4.005,
                 LabUnit.MICROMOLES_PER_LITER
             )
-        ).isEqualTo("Indirect bilirubin 4.0 umol/L")
+        ).isEqualTo("Indirect bilirubin 4.0 µmol/L")
     }
 
     @Test

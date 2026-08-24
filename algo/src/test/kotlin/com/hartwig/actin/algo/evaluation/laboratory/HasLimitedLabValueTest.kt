@@ -62,7 +62,7 @@ class HasLimitedLabValueTest {
 
         val evaluation = function.evaluate(record, measurement, offUnit.copy(value = 120.0))
         assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Creatinine 1.4 mg/dL (converted from: 120.0 umol/L) exceeds max of 1.0 mg/dL")
+        assertThat(evaluation.failMessagesStrings()).containsExactly("Creatinine 1.4 mg/dL (converted from: 120.0 µmol/L) exceeds max of 1.0 mg/dL")
 
         // Test that evaluation becomes undetermined if lab evaluation cannot convert.
         assertEvaluation(
