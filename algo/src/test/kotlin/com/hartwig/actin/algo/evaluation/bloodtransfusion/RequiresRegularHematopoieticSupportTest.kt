@@ -85,7 +85,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(within)),
-            "Has received recent hematopoietic support ()"
+            "Has received recent hematopoietic support (medication)"
         )
     }
 
@@ -95,7 +95,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(stillRunning)),
-            "Has received recent hematopoietic support ()"
+            "Has received recent hematopoietic support (medication)"
         )
     }
 
@@ -119,6 +119,7 @@ class RequiresRegularHematopoieticSupportTest {
 
         private fun support(startDate: LocalDate, stopDate: LocalDate?, atc: AtcClassification? = null): Medication {
             return TestMedicationFactory.createMinimal().copy(
+                name = "medication",
                 startDate = startDate,
                 stopDate = stopDate,
                 atc = atc ?: AtcTestFactory.atcClassification().copy(

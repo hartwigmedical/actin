@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class GenesMeetSpecificMrnaExpressionRequirementsTest {
@@ -18,6 +17,5 @@ class GenesMeetSpecificMrnaExpressionRequirementsTest {
             evaluation,
             "Undetermined if specific mRNA expression requirements for gene(s) gene a, gene b and gene c are met"
         )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if specific mRNA expression requirements for gene(s) gene a, gene b and gene c are met")
     }
 }

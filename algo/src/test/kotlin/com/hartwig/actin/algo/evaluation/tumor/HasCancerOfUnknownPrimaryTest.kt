@@ -41,8 +41,8 @@ class HasCancerOfUnknownPrimaryTest {
     fun `Should warn if correct DOID assigned but 'CUP' not specifically mentioned`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withDoids(childDoid)),
-            "Undetermined if tumor  may be cancer of unknown primary"
+            function.evaluate(TumorTestFactory.withDoidAndName(childDoid, "name")),
+            "Undetermined if tumor name may be cancer of unknown primary"
         )
     }
 
@@ -50,8 +50,8 @@ class HasCancerOfUnknownPrimaryTest {
     fun `Should be undetermined if doid is exactly cancer`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)),
-            "Undetermined if tumor  may be cancer of unknown primary"
+            function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.CANCER_DOID, "name")),
+            "Undetermined if tumor name may be cancer of unknown primary"
         )
     }
 

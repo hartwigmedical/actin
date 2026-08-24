@@ -39,16 +39,16 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
     @Test
     fun `Should pass when medication has right category`() {
         assertEvaluation(
-            EvaluationResult.PASS, alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE)),
-            "L01A medication use ()"
+            EvaluationResult.PASS, alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE, "name")),
+            "L01A medication use (name)"
         )
     }
 
     @Test
     fun `Should warn when patient plans to use medication of right category`() {
         assertEvaluation(
-            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE)),
-            "Planned L01A medication use ()"
+            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE, "name")),
+            "Planned L01A medication use (name)"
         )
     }
 
@@ -72,7 +72,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 
-    private fun patientWithMedicationHavingAnatomicalCode(atcCode: String) = MedicationTestFactory.withMedications(
-        listOf(TestMedicationFactory.createMinimal().copy(atc = AtcTestFactory.atcClassification(atcCode)))
+    private fun patientWithMedicationHavingAnatomicalCode(atcCode: String, name: String = "") = MedicationTestFactory.withMedications(
+        listOf(TestMedicationFactory.createMinimal().copy(name = name, atc = AtcTestFactory.atcClassification(atcCode)))
     )
 }

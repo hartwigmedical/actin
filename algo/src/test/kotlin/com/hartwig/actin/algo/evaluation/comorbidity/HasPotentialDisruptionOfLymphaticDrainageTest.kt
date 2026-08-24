@@ -13,15 +13,15 @@ class HasPotentialDisruptionOfLymphaticDrainageTest {
     private val function = HasPotentialDisruptionOfLymphaticDrainage(TestIcdFactory.createTestModel())
     private val correctIcd = IcdConstants.LYMPHATIC_DRAINAGE_SET.iterator().next()
     private val wrongIcdMainCode = "wrong"
-    private val correctCondition = ComorbidityTestFactory.otherCondition(icdMainCode = correctIcd)
-    private val correctToxicity = ComorbidityTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)
+    private val correctCondition = ComorbidityTestFactory.otherCondition(name = "correct condition", icdMainCode = correctIcd)
+    private val correctToxicity = ComorbidityTestFactory.toxicity("correct toxicity", ToxicitySource.EHR, 2, correctIcd)
 
     @Test
     fun `Should warn for icd-matching other condition`() {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(correctCondition)),
-            "Potential disruption of lymphatic drainage ()"
+            "Potential disruption of lymphatic drainage (correct condition)"
         )
     }
 
@@ -30,7 +30,7 @@ class HasPotentialDisruptionOfLymphaticDrainageTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComorbidityTestFactory.withToxicities(listOf(correctToxicity))),
-            "Potential disruption of lymphatic drainage ()"
+            "Potential disruption of lymphatic drainage (correct toxicity)"
         )
     }
 

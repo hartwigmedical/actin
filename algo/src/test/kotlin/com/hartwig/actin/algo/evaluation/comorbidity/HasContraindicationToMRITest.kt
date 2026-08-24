@@ -42,8 +42,8 @@ class HasContraindicationToMRITest {
     fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withOtherCondition(otherCondition(icdMainCode = IcdConstants.KIDNEY_FAILURE_BLOCK))),
-            "Potential MRI contraindication: "
+            function.evaluate(withOtherCondition(otherCondition(name = "kidney failure", icdMainCode = IcdConstants.KIDNEY_FAILURE_BLOCK))),
+            "Potential MRI contraindication: kidney failure"
         )
     }
 

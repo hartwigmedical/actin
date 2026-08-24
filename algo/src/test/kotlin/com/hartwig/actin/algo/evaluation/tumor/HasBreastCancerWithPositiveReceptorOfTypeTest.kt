@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.clinical.ReceptorType.ER
 import com.hartwig.actin.datamodel.clinical.ReceptorType.HER2
 import com.hartwig.actin.datamodel.clinical.ReceptorType.PR
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 const val TARGET_RECEPTOR = "PR"
@@ -49,8 +48,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "PR-status unknown (data missing)")
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("$TARGET_RECEPTOR-status unknown (data missing)")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "$TARGET_RECEPTOR-status unknown (data missing)")
     }
 
     @Test
@@ -75,12 +73,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "PR-status undetermined (DOID and/or IHC data inconsistent)")
-        assertThat(
-            evaluation.undeterminedMessagesStrings()
-        ).containsExactly(
-            "$TARGET_RECEPTOR-status undetermined (DOID and/or IHC data inconsistent)"
-        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "$TARGET_RECEPTOR-status undetermined (DOID and/or IHC data inconsistent)")
     }
 
     @Test
@@ -252,11 +245,6 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has PR-positive breast cancer but clinical relevance unknown (PR-score under 10%)"
-        )
-        assertThat(
-            evaluation.warnMessagesStrings()
-        ).containsExactly(
             "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
         )
     }
@@ -347,11 +335,6 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has PR-positive breast cancer but clinical relevance unknown (PR-score under 10%)"
-        )
-        assertThat(
-            evaluation.warnMessagesStrings()
-        ).containsExactly(
             "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
         )
     }
@@ -367,11 +350,6 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has PR-positive breast cancer but clinical relevance unknown (PR-score under 10%)"
-        )
-        assertThat(
-            evaluation.warnMessagesStrings()
-        ).containsExactly(
             "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
         )
     }

@@ -137,12 +137,12 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
     fun `Should return undetermined for combination of target drug and treatment with target category and type but missing stop reason`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)))
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, null, 6
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and  chemotherapy but uncertain if there has been PD"
+            "Has received combined therapy with target drug and chemotherapy but uncertain if there has been PD"
         )
     }
 
@@ -155,12 +155,12 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             startMonth = 3
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, null, 6
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and  chemotherapy with PD but unknown nr of weeks"
+            "Has received combined therapy with target drug and chemotherapy with PD but unknown nr of weeks"
         )
     }
 
@@ -212,12 +212,12 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             setOf(drugTreatment("other", TreatmentCategory.IMMUNOTHERAPY)), startYear = 2022, startMonth = 8
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, null, 6
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "Has received combined therapy with target drug and  chemotherapy with PD for at least 6 weeks"
+            "Has received combined therapy with target drug and chemotherapy with PD for at least 6 weeks"
         )
     }
 
@@ -232,12 +232,12 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopMonth = 8
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, null, 6
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and  chemotherapy with PD for at least 6 weeks"
+            "Has received combined therapy with target drug and chemotherapy with PD for at least 6 weeks"
         )
     }
 
@@ -252,12 +252,12 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
             stopMonth = 8
         )
         val function = HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), 6
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, null, 6
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and  chemotherapy with PD for at least 6 weeks"
+            "Has received combined therapy with target drug and chemotherapy with PD for at least 6 weeks"
         )
     }
 

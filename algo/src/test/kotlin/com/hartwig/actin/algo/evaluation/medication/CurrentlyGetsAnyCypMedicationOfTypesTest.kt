@@ -21,15 +21,15 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
     fun `Should pass when any CYP inhibiting or inducing medication`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP inducer or inhibitor medication use ()"
+            "CYP inducer or inhibitor medication use (name)"
         )
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP inducer or inhibitor medication use ()"
+            "CYP inducer or inhibitor medication use (name)"
         )
     }
 
@@ -56,15 +56,15 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
     fun `Should warn when patient plans to use CYP inhibiting or inducing medication`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP inducer or inhibitor medication ()"
+            "Planned CYP inducer or inhibitor medication (name)"
         )
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP inducer or inhibitor medication ()"
+            "Planned CYP inducer or inhibitor medication (name)"
         )
     }
 

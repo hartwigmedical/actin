@@ -56,8 +56,8 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     fun `Should warn when patient has prior condition belonging to autoimmune disease ICD code`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(patient(emptyList(), AUTOIMMUNE_ICD_MAIN_CODE)),
-            "Possible PD-1/PD-L1 intolerance due to autoimmune disease ()"
+            function.evaluate(patient(emptyList(), AUTOIMMUNE_ICD_MAIN_CODE, "autoimmune disease")),
+            "Possible PD-1/PD-L1 intolerance due to autoimmune disease (autoimmune disease)"
         )
     }
 
@@ -79,9 +79,9 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
         )
     }
 
-    private fun patient(intolerances: List<Intolerance>, icdMainCode: String = ""): PatientRecord {
+    private fun patient(intolerances: List<Intolerance>, icdMainCode: String = "", otherConditionName: String = ""): PatientRecord {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(
-            comorbidities = intolerances + ComorbidityTestFactory.otherCondition(icdMainCode = icdMainCode)
+            comorbidities = intolerances + ComorbidityTestFactory.otherCondition(name = otherConditionName, icdMainCode = icdMainCode)
         )
     }
 

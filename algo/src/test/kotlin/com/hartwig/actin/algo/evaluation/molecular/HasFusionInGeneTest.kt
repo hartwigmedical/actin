@@ -11,8 +11,6 @@ import com.hartwig.actin.datamodel.molecular.driver.FusionDriverType
 import com.hartwig.actin.datamodel.molecular.driver.ProteinEffect
 import com.hartwig.actin.datamodel.molecular.driver.TestFusionFactory
 import com.hartwig.actin.molecular.util.GeneConstants
-import org.assertj.core.api.Assertions
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val MATCHING_GENE = "gene A"
@@ -28,7 +26,8 @@ class HasFusionInGeneTest {
         isReportable = true,
         driverLikelihood = DriverLikelihood.HIGH,
         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-        driverType = FusionDriverType.PROMISCUOUS_5
+        driverType = FusionDriverType.PROMISCUOUS_5,
+        event = "fusion event"
     )
 
     @Test
@@ -44,7 +43,7 @@ class HasFusionInGeneTest {
     fun `Should pass on high driver reportable gain of function matching fusion`() {
         assertMolecularEvaluation(
             EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withFusion(matchingFusion)),
-            "Fusion(s)  in gene A"
+            "Fusion(s) fusion event in gene A"
         )
     }
 
@@ -55,7 +54,7 @@ class HasFusionInGeneTest {
                 MolecularTestFactory.withDrivers(matchingFusion)
                     .copy(ihcTests = listOf(IhcTest(MATCHING_GENE_IHC, scoreText = IhcTestEvaluationConstants.POSITIVE_TERMS.first())))
             ),
-            "Fusion(s)  in gene A"
+            "Fusion(s) fusion event in gene A"
         )
     }
 
@@ -90,7 +89,7 @@ class HasFusionInGeneTest {
     fun `Should warn on unreportable gain of function match`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(isReportable = false))),
-            "Unreportable fusion(s)  in gene A however annotated with having gain-of-function evidence in "
+            "Unreportable fusion(s) fusion event in gene A however annotated with having gain-of-function evidence in evidence source"
         )
     }
 
@@ -110,7 +109,7 @@ class HasFusionInGeneTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withFusion(matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT))),
-            "Fusion(s)  in gene A but annotated with having no protein effect evidence in "
+            "Fusion(s) fusion event in gene A but annotated with having no protein effect evidence in evidence source"
         )
     }
 
@@ -120,10 +119,10 @@ class HasFusionInGeneTest {
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withDrivers(
                     matchingFusion,
-                    matchingFusion.copy(isReportable = false)
+                    matchingFusion.copy(isReportable = false, event = "other fusion event")
                 )
             ),
-            "Fusion(s)  in gene A together with other fusion events(s):  (gain-of-function evidence but not considered reportable)"
+            "Fusion(s) fusion event in gene A together with other fusion events(s): other fusion event (gain-of-function evidence but not considered reportable)"
         )
     }
 
@@ -133,10 +132,10 @@ class HasFusionInGeneTest {
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withDrivers(
                     matchingFusion,
-                    matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT)
+                    matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT, event = "other fusion event")
                 )
             ),
-            "Fusion(s)  in gene A together with other fusion events(s):  (no protein effect)"
+            "Fusion(s) fusion event in gene A together with other fusion events(s): other fusion event (no protein effect)"
         )
     }
 
@@ -146,10 +145,10 @@ class HasFusionInGeneTest {
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withDrivers(
                     matchingFusion,
-                    matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT, driverLikelihood = DriverLikelihood.LOW)
+                    matchingFusion.copy(proteinEffect = ProteinEffect.NO_EFFECT, driverLikelihood = DriverLikelihood.LOW, event = "other fusion event")
                 )
             ),
-            "Fusion(s)  in gene A together with other fusion events(s):  (no high driver likelihood)"
+            "Fusion(s) fusion event in gene A together with other fusion events(s): other fusion event (no high driver likelihood)"
         )
     }
 
@@ -164,7 +163,6 @@ class HasFusionInGeneTest {
             )
         )
         assertMolecularEvaluation(EvaluationResult.WARN, result, "ALK IHC result(s) may indicate ALK fusion")
-        assertThat(result.warnMessagesStrings()).containsExactly("ALK IHC result(s) may indicate ALK fusion")
     }
 
     @Test
@@ -179,7 +177,6 @@ class HasFusionInGeneTest {
         )
 
         assertMolecularEvaluation(EvaluationResult.FAIL, result, "No fusion in gene A")
-        assertThat(result.failMessagesStrings()).containsExactly("No fusion in gene A")
     }
 
     @Test
@@ -202,10 +199,6 @@ class HasFusionInGeneTest {
             resultOnlyIhcTests,
             "ALK IHC result(s) are indeterminate - undetermined if this may indicate ALK fusion"
         )
-
-        val message = "ALK IHC result(s) are indeterminate - undetermined if this may indicate ALK fusion"
-        assertThat(result.warnMessagesStrings()).containsExactly(message)
-        assertThat(resultOnlyIhcTests.warnMessagesStrings()).containsExactly(message)
     }
 
     @Test
@@ -216,10 +209,6 @@ class HasFusionInGeneTest {
 
         assertMolecularEvaluation(EvaluationResult.FAIL, result, "No fusion in ALK")
         assertMolecularEvaluation(EvaluationResult.FAIL, resultOnlyIhcTests, "No fusion in ALK")
-
-        val message = "No fusion in $MATCHING_GENE_IHC"
-        assertThat(result.failMessagesStrings()).containsExactly(message)
-        assertThat(resultOnlyIhcTests.failMessagesStrings()).containsExactly(message)
     }
 
     @Test
@@ -229,8 +218,6 @@ class HasFusionInGeneTest {
                 molecularTests = listOf(TestMolecularFactory.createMinimalPanelTest())
             )
         )
-        Assertions.assertThat(result.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        Assertions.assertThat(result.undeterminedMessagesStrings())
-            .containsExactly("Fusion in gene gene A undetermined (not tested for fusions)")
+        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, result, "Fusion in gene gene A undetermined (not tested for fusions)")
     }
 }

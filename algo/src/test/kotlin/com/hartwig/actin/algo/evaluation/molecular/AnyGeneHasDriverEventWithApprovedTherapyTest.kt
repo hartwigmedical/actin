@@ -10,16 +10,17 @@ import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.doid.TestDoidModelFactory.createMinimalTestDoidModel
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val CORRECT_GENE = "BRAF"
 private const val CORRECT_PROTEIN_IMPACT = "V600E"
+private const val CORRECT_EVENT = "$CORRECT_GENE $CORRECT_PROTEIN_IMPACT"
 private const val INCORRECT_GENE = "INCORRECT"
 private val CORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = CORRECT_GENE,
     canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(hgvsProteinImpact = CORRECT_PROTEIN_IMPACT),
-    isReportable = true
+    isReportable = true,
+    event = CORRECT_EVENT
 )
 private val INCORRECT_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = INCORRECT_GENE,
@@ -44,7 +45,7 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
         val record =
             MolecularTestFactory.withVariant(CORRECT_VARIANT)
                 .copy(tumor = TumorDetails(doids = setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "NSCLC driver event(s) with available SOC detected: ")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "NSCLC driver event(s) with available SOC detected: $CORRECT_EVENT")
     }
 
     @Test
@@ -65,7 +66,6 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
             functionRequestingInvalidGenes.evaluate(record),
             "Possible presence of driver events for gene(s) INCORRECT and Other could not be determined"
         )
-        assertThat(functionRequestingInvalidGenes.evaluate(record).undeterminedMessagesStrings()).containsExactly("Possible presence of driver events for gene(s) INCORRECT and Other could not be determined")
     }
 
     @Test
@@ -76,7 +76,7 @@ class AnyGeneHasDriverEventWithApprovedTherapyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionRequestingInvalidGenes.evaluate(record),
-            "NSCLC driver event(s) with available SOC detected: "
+            "NSCLC driver event(s) with available SOC detected: $CORRECT_EVENT"
         )
     }
 

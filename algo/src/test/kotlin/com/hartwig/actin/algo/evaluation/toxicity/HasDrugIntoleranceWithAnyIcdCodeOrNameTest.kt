@@ -48,11 +48,11 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
     @Test
     fun `Should pass for intolerance matching on ICD code only`() {
         val match = ComorbidityTestFactory.intolerance(
-            icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = IcdConstants.PLATINUM_COMPOUND_CODE
+            name = "platinum allergy", icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = IcdConstants.PLATINUM_COMPOUND_CODE
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy to platinum compounds ()"
+            "Has allergy to platinum compounds (${match.name})"
         )
     }
 

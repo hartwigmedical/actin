@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasLymphNodeMetastasesTest {
@@ -17,32 +16,24 @@ class HasLymphNodeMetastasesTest {
             undetermined,
             "Undetermined if patient has lymph node metastases (missing lesion data)"
         )
-        assertThat(undetermined.undeterminedMessagesStrings())
-            .contains("Undetermined if patient has lymph node metastases (missing lesion data)")
     }
 
     @Test
     fun `Should pass when has lymph node lesions is true`() {
         val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(true))
         assertEvaluation(EvaluationResult.PASS, pass, "Has lymph node metastases")
-        assertThat(pass.passMessagesStrings()).contains("Has lymph node metastases")
     }
 
     @Test
     fun `Should fail when has lymph node lesions is false`() {
         val fail = function.evaluate(TumorTestFactory.withLymphNodeLesions(false))
         assertEvaluation(EvaluationResult.FAIL, fail, "No lymph node metastases")
-        assertThat(fail.failMessagesStrings()).contains("No lymph node metastases")
     }
 
     @Test
     fun `Should warn when has suspected lymph node lesions only`() {
         val warn = function.evaluate(TumorTestFactory.withLymphNodeLesions(false, true))
-        val message = "Has suspected lymph node metastases and not yet confirmed"
         assertEvaluation(EvaluationResult.WARN, warn, "Has suspected lymph node metastases and not yet confirmed")
-        listOf(warn.warnMessagesStrings()).forEach {
-            assertThat(it).contains(message)
-        }
     }
 
     @Test
@@ -53,14 +44,11 @@ class HasLymphNodeMetastasesTest {
             undetermined,
             "Undetermined if patient has lymph node metastases (missing lesion data)"
         )
-        assertThat(undetermined.undeterminedMessagesStrings())
-            .contains("Undetermined if patient has lymph node metastases (missing lesion data)")
     }
 
     @Test
     fun `Should pass when has lymph node lesions is true and no suspected lymph node lesions`() {
         val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(true, false))
         assertEvaluation(EvaluationResult.PASS, pass, "Has lymph node metastases")
-        assertThat(pass.passMessagesStrings()).contains("Has lymph node metastases")
     }
 }

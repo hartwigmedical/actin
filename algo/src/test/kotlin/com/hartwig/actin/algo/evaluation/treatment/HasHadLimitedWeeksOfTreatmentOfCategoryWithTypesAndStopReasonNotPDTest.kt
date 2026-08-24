@@ -18,7 +18,6 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistory(emptyList()),
-            "No HER2 antibody targeted therapy treatment treatment with PD",
             "No HER2 antibody targeted therapy treatment treatment with PD"
         )
     }
@@ -31,7 +30,6 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "No HER2 antibody targeted therapy treatment treatment with PD",
             "No HER2 antibody targeted therapy treatment treatment with PD"
         )
     }
@@ -45,7 +43,6 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistory(listOf(matchingEntry, subsequentEntry)),
-            "Has received HER2 antibody targeted therapy treatment with stop reason PD",
             "Has received HER2 antibody targeted therapy treatment with stop reason PD"
         )
     }
@@ -61,7 +58,6 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has received HER2 antibody targeted therapy treatment with stop reason PD",
             "Has received HER2 antibody targeted therapy treatment with stop reason PD"
         )
     }
@@ -76,7 +72,6 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Unclear if received targeted therapy",
             "Unclear if received targeted therapy"
         )
     }
@@ -153,7 +148,6 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has received HER2 antibody targeted therapy treatment with stop reason PD",
             "Has received HER2 antibody targeted therapy treatment with stop reason PD"
         )
     }
@@ -165,7 +159,6 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Unclear if received targeted therapy",
             "Unclear if received targeted therapy"
         )
     }
@@ -214,10 +207,10 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
     }
 
     private fun evaluateFunctions(
-        expected: EvaluationResult, record: PatientRecord, expectedMessageWithWeeks: String, expectedMessageWithoutWeeks: String
+        expected: EvaluationResult, record: PatientRecord, expectedMessageWithWeeks: String, expectedMessageWithoutWeeks: String? = null
     ) {
         EvaluationAssert.assertEvaluation(expected, functionWithWeeks.evaluate(record), expectedMessageWithWeeks)
-        EvaluationAssert.assertEvaluation(expected, functionWithoutWeeks.evaluate(record), expectedMessageWithoutWeeks)
+        EvaluationAssert.assertEvaluation(expected, functionWithoutWeeks.evaluate(record), expectedMessageWithoutWeeks ?: expectedMessageWithWeeks)
     }
 
     companion object {

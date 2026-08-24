@@ -17,9 +17,9 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
     fun `Should pass with CYP substrate medication`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 substrate medication use ()"
+            "CYP9A9 substrate medication use (name)"
         )
     }
 
@@ -47,9 +47,9 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
     fun `Should warn when patient plans to use CYP substrate medication`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 substrate medication use ()"
+            "Planned CYP9A9 substrate medication use (name)"
         )
     }
 

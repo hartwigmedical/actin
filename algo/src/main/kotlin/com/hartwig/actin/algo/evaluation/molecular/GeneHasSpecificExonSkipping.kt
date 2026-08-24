@@ -48,8 +48,8 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
                 } else {
                     EvaluationFactory.warn(
                         "$gene exon $exonToSkip skipping detected: ${concat(exonSkippingFusionEvents)} " +
-                                "together with potential additional exon $exonToSkip skipping variant(s) (${concat(exonSplicingVariantEvents)})",
-                        inclusionEvents = exonSkippingFusionEvents + exonSplicingVariantEvents
+                                "together with potential additional exon $exonToSkip skipping variant(s) (${concat(potentialExonSplicingVariantEvents)})",
+                        inclusionEvents = exonSkippingFusionEvents + potentialExonSplicingVariantEvents
                     )
                 }
             }

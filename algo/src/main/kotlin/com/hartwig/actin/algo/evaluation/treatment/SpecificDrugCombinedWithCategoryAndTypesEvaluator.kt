@@ -25,5 +25,5 @@ class SpecificDrugCombinedWithCategoryAndTypesEvaluator(
     }
 
     fun treatmentString() =
-        "combined therapy with ${drugToFind.display()} and ${types?.let { concatItemsWithAnd(types) } ?: ""} ${category.display()}"
+        "combined therapy with ${drugToFind.display()} and ${types?.let { "${concatItemsWithAnd(it)} " } ?: ""}${category.display()}"
 }

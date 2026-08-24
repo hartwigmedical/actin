@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 private val OPIOIDS_ATC_LEVEL = AtcLevel("N02A", "Opioids")
 private val PAIN_MEDICATION =
-    TestMedicationFactory.createMinimal().copy(atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = OPIOIDS_ATC_LEVEL))
+    TestMedicationFactory.createMinimal().copy(name = "medication name", atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = OPIOIDS_ATC_LEVEL))
 
 class HasPotentialUncontrolledTumorRelatedPainTest {
 
@@ -32,7 +32,7 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
         assertEvaluation(
             EvaluationResult.WARN,
             alwaysActiveFunction.evaluate(ComorbidityTestFactory.withMedication(PAIN_MEDICATION)),
-            "Possible uncontrolled tumor related pain ( usage)"
+            "Possible uncontrolled tumor related pain (medication name usage)"
         )
     }
 
@@ -41,7 +41,7 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
         assertEvaluation(
             EvaluationResult.WARN,
             alwaysPlannedFunction.evaluate(ComorbidityTestFactory.withMedication(PAIN_MEDICATION)),
-            "Possible uncontrolled tumor related pain (planned  usage)"
+            "Possible uncontrolled tumor related pain (planned medication name usage)"
         )
     }
 

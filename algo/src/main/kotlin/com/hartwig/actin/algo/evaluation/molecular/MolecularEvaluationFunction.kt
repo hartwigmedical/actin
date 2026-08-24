@@ -86,7 +86,7 @@ abstract class MolecularEvaluationFunction(
             characteristics = MolecularCharacteristics(null, null, null, null, null, null, null),
             immunology = null,
             pharmaco = emptySet(),
-            evidenceSource = "",
+            evidenceSource = "evidence source",
             externalTrialSource = ""
         )
     }

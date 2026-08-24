@@ -40,11 +40,11 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
     @Test
     fun `Should pass when medication has right category`() {
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(MedicationTestFactory.medication(atc = atc))
+        val medications = listOf(MedicationTestFactory.medication(name = "name", atc = atc))
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent category to find medication use ()"
+            "Recent category to find medication use (name)"
         )
     }
 
@@ -57,11 +57,11 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
             evaluationDate.minusDays(1)
         )
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(MedicationTestFactory.medication(atc = atc, stopDate = evaluationDate))
+        val medications = listOf(MedicationTestFactory.medication(name = "name", atc = atc, stopDate = evaluationDate))
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent category to find medication use ()"
+            "Recent category to find medication use (name)"
         )
     }
 

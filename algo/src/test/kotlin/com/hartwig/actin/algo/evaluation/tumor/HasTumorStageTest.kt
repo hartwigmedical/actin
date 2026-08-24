@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorStage
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasTumorStageTest {
@@ -30,9 +29,6 @@ class HasTumorStageTest {
             "Tumor stage IIIB meets requested stage(s) IIIB",
             "Tumor stage IIIB meets requested stage(s) IIIB or IVA"
         )
-        assertThat(
-            functionWithMultipleStages.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)).passMessagesStrings()
-        ).containsExactly("Tumor stage IIIB meets requested stage(s) IIIB or IVA")
     }
 
     @Test

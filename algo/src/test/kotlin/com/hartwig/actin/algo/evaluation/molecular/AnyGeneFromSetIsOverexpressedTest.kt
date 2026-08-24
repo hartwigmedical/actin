@@ -51,7 +51,6 @@ class AnyGeneFromSetIsOverexpressedTest {
             evaluation,
             "(Possible) amplification of geneA and geneC detected and therefore possible overexpression in RNA"
         )
-        assertThat(evaluation.warnMessagesStrings()).contains("(Possible) amplification of geneA and geneC detected and therefore possible overexpression in RNA")
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(
             setOf(
                 MolecularEvent(PASS_INCLUSION_EVENT, "Potential geneA overexpression"),
@@ -70,9 +69,6 @@ class AnyGeneFromSetIsOverexpressedTest {
             evaluation,
             "Overexpression of geneA, geneB and geneC in RNA undetermined (but no amplifications found in DNA)"
         )
-        assertThat(evaluation.undeterminedMessagesStrings()).contains(
-            "Overexpression of geneA, geneB and geneC in RNA undetermined (but no amplifications found in DNA)"
-        )
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()
     }
 
@@ -83,7 +79,6 @@ class AnyGeneFromSetIsOverexpressedTest {
             .copy(molecularTests = listOf(TestMolecularFactory.createProperPanelTest()))
         val evaluation = createFunctionWithEvaluations(geneIsAmplifiedCreator).evaluate(panelRecord)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Overexpression of geneA, geneB and geneC in RNA undetermined")
-        assertThat(evaluation.undeterminedMessagesStrings()).contains("Overexpression of geneA, geneB and geneC in RNA undetermined")
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()
     }
 
@@ -104,9 +99,6 @@ class AnyGeneFromSetIsOverexpressedTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Overexpression of geneA, geneB and geneC in RNA undetermined (no amplification in DNA for geneA and geneB)"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).contains(
             "Overexpression of geneA, geneB and geneC in RNA undetermined (no amplification in DNA for geneA and geneB)"
         )
         assertThat(evaluation.inclusionMolecularEvents).isEmpty()

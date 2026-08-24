@@ -51,8 +51,6 @@ class GeneHasActivatingMutationTest {
             result,
             "gene A activating mutation(s): event but undetermined if in kinase domain"
         )
-        assertThat(result.warnMessagesStrings())
-            .containsExactly("gene A activating mutation(s): event but undetermined if in kinase domain")
     }
 
     @Test
@@ -103,12 +101,12 @@ class GeneHasActivatingMutationTest {
         assertResultForVariant(
             EvaluationResult.WARN,
             ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG),
-            "gene A activating mutation(s) event - however gene known as TSG in "
+            "gene A activating mutation(s) event - however gene known as TSG in evidence source"
         )
         assertResultForVariantIgnoringCodons(
             EvaluationResult.WARN,
             ACTIVATING_VARIANT.copy(geneRole = GeneRole.TSG),
-            "gene A activating mutation(s) event - however gene known as TSG in "
+            "gene A activating mutation(s) event - however gene known as TSG in evidence source"
         )
     }
 
@@ -139,9 +137,10 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = false,
                 isCancerAssociatedVariant = false,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE)
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(codingEffect = CodingEffect.MISSENSE),
+                event = "event"
             ),
-            "gene A potentially activating mutation(s)  that are missense or have cancer-associated variant status but are not considered reportable"
+            "gene A potentially activating mutation(s) event that are missense or have cancer-associated variant status but are not considered reportable"
         )
     }
 
@@ -149,8 +148,8 @@ class GeneHasActivatingMutationTest {
     fun `Should warn with non reportable cancer-associated variant for gene`() {
         assertResultForVariant(
             EvaluationResult.WARN,
-            TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isCancerAssociatedVariant = true),
-            "gene A potentially activating mutation(s)  that are missense or have cancer-associated variant status but are not considered reportable"
+            TestVariantFactory.createMinimal().copy(gene = GENE, isReportable = false, isCancerAssociatedVariant = true, event = "event"),
+            "gene A potentially activating mutation(s) event that are missense or have cancer-associated variant status but are not considered reportable"
         )
     }
 
@@ -162,9 +161,10 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.HIGH,
-                clonalLikelihood = 0.2
+                clonalLikelihood = 0.2,
+                event = "event"
             ),
-            "gene A potentially activating mutation(s)  with high driver likelihood - however not a cancer-associated variant"
+            "gene A potentially activating mutation(s) event with high driver likelihood - however not a cancer-associated variant"
         )
     }
 
@@ -176,10 +176,11 @@ class GeneHasActivatingMutationTest {
                 gene = GENE,
                 isReportable = true,
                 driverLikelihood = DriverLikelihood.LOW,
-                clonalLikelihood = 0.2
+                clonalLikelihood = 0.2,
+                event = "event"
             ),
             null,
-            "gene A potentially activating mutation(s)  have subclonal likelihood of > 50% and no high driver likelihood"
+            "gene A potentially activating mutation(s) event have subclonal likelihood of > 50% and no high driver likelihood"
         )
     }
 

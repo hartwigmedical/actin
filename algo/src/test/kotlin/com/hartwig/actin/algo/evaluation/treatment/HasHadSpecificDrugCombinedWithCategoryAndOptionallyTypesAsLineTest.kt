@@ -75,7 +75,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and  chemotherapy"
+            "Has received combined therapy with target drug and chemotherapy"
         )
     }
 

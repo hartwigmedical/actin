@@ -47,7 +47,6 @@ class MolecularEvaluationFunctionTest {
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No molecular results of sufficient quality")
         assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No molecular results of sufficient quality")
     }
     
     private fun emptyPanel(testDate: LocalDate? = null) =
@@ -57,8 +56,7 @@ class MolecularEvaluationFunctionTest {
     fun `Should execute rule when ORANGE molecular data`() {
         val patient = TestPatientFactory.createMinimalTestWGSPatientRecord()
         val evaluation = function.evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Fail message")
-        assertThat(evaluation.failMessagesStrings()).containsExactly(FAIL_MESSAGE)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, FAIL_MESSAGE)
     }
 
     @Test
@@ -74,9 +72,6 @@ class MolecularEvaluationFunctionTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "gene GENE undetermined (not tested for mutations, amplifications, deletions or fusions)"
         )
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
@@ -101,7 +96,6 @@ class MolecularEvaluationFunctionTest {
                 )
             )
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Test in gene GENE undetermined (not tested for fusions)")
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Test in gene GENE undetermined (not tested for fusions)")
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue()
     }
 

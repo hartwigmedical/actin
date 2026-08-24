@@ -61,7 +61,10 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         val conditions = ComorbidityTestFactory.withOtherConditions(
             listOf(
                 ComorbidityTestFactory.otherCondition(
-                    year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
+                    name = "stroke name",
+                    year = minDate.plusYears(1).year,
+                    month = 1,
+                    icdMainCode = targetIcdCodes.first().mainCode
                 ),
                 ComorbidityTestFactory.otherCondition(
                     year = minDate.plusMonths(1).year,
@@ -70,7 +73,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(conditions), "Recent stroke ()")
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(conditions), "Recent stroke (stroke name)")
     }
 
     @Test

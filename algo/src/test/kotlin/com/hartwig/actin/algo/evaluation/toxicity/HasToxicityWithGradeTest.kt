@@ -23,7 +23,7 @@ class HasToxicityWithGradeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function().evaluate(ComorbidityTestFactory.withToxicities(emptyList())),
-            "No toxicities  found with grade 2 or higher"
+            "No toxicities found with grade 2 or higher"
         )
     }
 
@@ -33,7 +33,7 @@ class HasToxicityWithGradeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function().evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
-            "No toxicities  found with grade 2 or higher"
+            "No toxicities found with grade 2 or higher"
         )
     }
 
@@ -104,7 +104,7 @@ class HasToxicityWithGradeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
-            "No toxicities  found with grade 2 or higher"
+            "No toxicities found with grade 2 or higher"
         )
 
         val matchingToxicity = toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "keep me", icdMainCode = "keepCode")
@@ -188,7 +188,7 @@ class HasToxicityWithGradeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
-            "No toxicities  found with grade 2 or higher"
+            "No toxicities found with grade 2 or higher"
         )
     }
 

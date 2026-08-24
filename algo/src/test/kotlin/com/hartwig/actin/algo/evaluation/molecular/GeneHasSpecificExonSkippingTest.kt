@@ -19,14 +19,16 @@ private val EXON_SKIPPING_FUSION = TestFusionFactory.createMinimal().copy(
     geneStart = MATCHING_GENE,
     geneEnd = MATCHING_GENE,
     fusedExonUp = EXON_TO_SKIP - 1,
-    fusedExonDown = EXON_TO_SKIP + 1
+    fusedExonDown = EXON_TO_SKIP + 1,
+    event = "fusion event"
 )
 
 private val SPLICE_VARIANT = TestVariantFactory.createMinimal().copy(
     gene = MATCHING_GENE,
     isReportable = true,
     canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal()
-        .copy(affectedExon = EXON_TO_SKIP, codingEffect = CodingEffect.SPLICE)
+        .copy(affectedExon = EXON_TO_SKIP, codingEffect = CodingEffect.SPLICE),
+    event = "splice event"
 )
 
 private val POTENTIAL_SPLICE_VARIANT =
@@ -64,7 +66,7 @@ class GeneHasSpecificExonSkippingTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withVariant(SPLICE_VARIANT)),
-            "Potential gene_A exon 2 skipping detected: "
+            "Potential gene_A exon 2 skipping detected: splice event"
         )
     }
 
@@ -75,7 +77,7 @@ class GeneHasSpecificExonSkippingTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withVariant(confirmedVariant)),
-            "Confirmed gene_A exon 2 skipping detected: "
+            "Confirmed gene_A exon 2 skipping detected: splice event"
         )
     }
 
@@ -107,8 +109,6 @@ class GeneHasSpecificExonSkippingTest {
             result,
             "Potential gene_A exon 2 skipping: variant(s) c.potential detected in splice region of exon 2 although unknown relevance (not annotated with splice coding effect)"
         )
-        assertThat(result.warnMessagesStrings())
-            .containsExactly("Potential gene_A exon 2 skipping: variant(s) c.potential detected in splice region of exon 2 although unknown relevance (not annotated with splice coding effect)")
     }
 
     @Test
@@ -116,7 +116,7 @@ class GeneHasSpecificExonSkippingTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withFusion(EXON_SKIPPING_FUSION)),
-            "gene_A exon 2 skipping detected: "
+            "gene_A exon 2 skipping detected: fusion event"
         )
     }
 
@@ -148,7 +148,7 @@ class GeneHasSpecificExonSkippingTest {
             function.evaluate(
                 MolecularTestFactory.withDrivers(EXON_SKIPPING_FUSION, POTENTIAL_SPLICE_VARIANT)
             ),
-            "gene_A exon 2 skipping detected:  together with potential additional exon 2 skipping variant(s) ()"
+            "gene_A exon 2 skipping detected: fusion event together with potential additional exon 2 skipping variant(s) (c.potential)"
         )
     }
 
@@ -159,7 +159,7 @@ class GeneHasSpecificExonSkippingTest {
             function.evaluate(
                 MolecularTestFactory.withDrivers(EXON_SKIPPING_FUSION, SPLICE_VARIANT.copy(exonSkippingIsConfirmed = true))
             ),
-            "gene_A exon 2 skipping detected:  together with confirmed additional exon 2 skipping variant(s) ()"
+            "gene_A exon 2 skipping detected: fusion event together with confirmed additional exon 2 skipping variant(s) (splice event)"
         )
     }
 

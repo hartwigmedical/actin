@@ -19,13 +19,13 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
     fun `Should pass when patient recently received CYP-inducing medication`() {
         val medications = listOf(
             MedicationTestFactory.medicationWithCypInteraction(
-                TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, evaluationDate
+                TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, evaluationDate, "name"
             )
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent CYP9A9 inducing medication use ()"
+            "Recent CYP9A9 inducing medication use (name)"
         )
     }
 

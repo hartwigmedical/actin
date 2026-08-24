@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.molecular.ExperimentType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class NsclcDriverGeneStatusesAreAvailableTest {
@@ -86,10 +85,7 @@ class NsclcDriverGeneStatusesAreAvailableTest {
             createNonWGSRecordWithOptionalPriorTests(
                 NSCLC_DRIVER_GENE_SET.drop(1).map { panelWithTestForGene(it) })
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation, "NSCLC driver gene statuses not available (missing: EGFR)")
-        assertThat(evaluation.failMessagesStrings()).containsExactly(
-            "NSCLC driver gene statuses not available (missing: ${NSCLC_DRIVER_GENE_SET.first()})"
-        )
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation, "NSCLC driver gene statuses not available (missing: ${NSCLC_DRIVER_GENE_SET.first()})")
     }
 
     private fun panelWithTestForGene(it: String) =

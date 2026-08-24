@@ -249,8 +249,6 @@ class HasExhaustedSOCTreatmentsTest {
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
             "Has not exhausted SOC (remaining options: Pembrolizumab)"
         )
-        assertThat(function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())).failMessagesStrings())
-            .containsExactly("Has not exhausted SOC (remaining options: Pembrolizumab)")
     }
 
     @Test

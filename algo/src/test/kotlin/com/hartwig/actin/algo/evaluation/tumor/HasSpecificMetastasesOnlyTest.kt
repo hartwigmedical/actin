@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasSpecificMetastasesOnlyTest {
@@ -135,8 +134,6 @@ class HasSpecificMetastasesOnlyTest {
             evaluationMultiple,
             "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
         )
-
-        assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)")
     }
 
     @Test
@@ -155,8 +152,6 @@ class HasSpecificMetastasesOnlyTest {
             evaluationMultiple,
             "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
         )
-
-        assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)")
     }
 
     @Test
@@ -194,8 +189,6 @@ class HasSpecificMetastasesOnlyTest {
             evaluationMultiple,
             "Undetermined if patient has only liver and/or lymph node and/or lung metastases (missing lesion data)"
         )
-
-        assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (missing lesion data)")
     }
 
     @Test

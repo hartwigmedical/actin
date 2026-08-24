@@ -69,11 +69,11 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
     @Test
     fun `Should pass when medication has right category and recent date`() {
         val atc = AtcTestFactory.atcClassification("category to find")
-        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1)))
+        val medications = listOf(WashoutTestFactory.medication(atc, REFERENCE_DATE.plusDays(1), "drug"))
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Recent 'chemotherapy' drug use () - pay attention to washout period"
+            "Recent 'chemotherapy' drug use (drug) - pay attention to washout period"
         )
     }
 

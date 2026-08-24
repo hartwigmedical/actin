@@ -19,7 +19,7 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if received chemotherapy of only type(s)alkylating agent for at least 2 months as most recent line"
+            "Undetermined if received chemotherapy of only type(s) alkylating agent for at least 2 months as most recent line"
         )
     }
 }

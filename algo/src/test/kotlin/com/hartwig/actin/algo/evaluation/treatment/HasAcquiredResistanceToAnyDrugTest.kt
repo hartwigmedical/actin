@@ -53,7 +53,7 @@ class HasAcquiredResistanceToAnyDrugTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "Undetermined acquired resistance to osimertinib (stop reason toxicity) "
+            "Undetermined acquired resistance to osimertinib (stop reason toxicity)"
         )
     }
 
@@ -67,7 +67,7 @@ class HasAcquiredResistanceToAnyDrugTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "Undetermined acquired resistance to osimertinib "
+            "Undetermined acquired resistance to osimertinib"
         )
     }
 
@@ -81,7 +81,7 @@ class HasAcquiredResistanceToAnyDrugTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "Undetermined acquired resistance to osimertinib "
+            "Undetermined acquired resistance to osimertinib"
         )
     }
 

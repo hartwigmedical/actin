@@ -36,7 +36,7 @@ class HasAdequateOrganFunctionTest {
             function.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(labValues = emptyList(), comorbidities = emptyList())
             ),
-            "Undetermined if adequate organ function (lab value(s) (absolute neutrophil count, absolute thrombocyte count, ALAT, ASAT, estimated GFR (CKD-EPI), estimated GFR (MDRD), hemoglobin, LDH and total bilirubin) undetermined)"
+            "Undetermined if adequate organ function (absolute neutrophil count, absolute thrombocyte count, ALAT, ASAT, estimated GFR (CKD-EPI), estimated GFR (MDRD), hemoglobin, LDH and total bilirubin undetermined)"
         )
     }
 
@@ -51,7 +51,7 @@ class HasAdequateOrganFunctionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Undetermined if adequate organ function (lab value(s) (hemoglobin) undetermined)"
+            "Undetermined if adequate organ function (hemoglobin undetermined)"
         )
     }
 

@@ -33,9 +33,9 @@ class HasTnmTScore(private val targetTnmTs: Set<TnmT>) : EvaluationFunction {
         val possibleTnmTs = stages?.mapNotNull { stageMap[it] }?.flatten()?.toSet() ?: emptySet()
 
         return when {
-            stages.isNullOrEmpty() -> EvaluationFactory.undetermined("No tumor stage or derived tumor stage found. Tnm T scores not determined.")
+            stages.isNullOrEmpty() -> EvaluationFactory.undetermined("No tumor stage or derived tumor stage found - Tnm T scores not determined.")
             setOf(TumorStage.IV, TumorStage.IVA, TumorStage.IVB, TumorStage.IVC).containsAll(stages) ->
-                EvaluationFactory.undetermined("Cancer is metastatic. Undetermined if tumor is TNM T-classification ${show(targetTnmTs)}")
+                EvaluationFactory.undetermined("Cancer is metastatic - undetermined if tumor is TNM T-classification ${show(targetTnmTs)}")
             targetTnmTs.containsAll(possibleTnmTs) -> EvaluationFactory.pass("Tumor has TNT T-classification ${show(possibleTnmTs)}")
             targetTnmTs.intersect(possibleTnmTs).isNotEmpty() ->
                 EvaluationFactory.undetermined("Undetermined if TNM T-classification is of ${show(targetTnmTs)}- derived T's based on tumor stage are ${show(possibleTnmTs)}")

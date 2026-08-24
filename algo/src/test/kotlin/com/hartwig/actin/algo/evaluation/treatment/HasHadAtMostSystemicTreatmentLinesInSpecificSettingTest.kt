@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
@@ -52,8 +51,6 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             evaluation,
             "Has had more than 2 systemic treatment line(s) with palliative intent in metastatic setting"
         )
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Has had more than 2 systemic treatment line(s) with palliative " +
-                "intent in metastatic setting")
     }
 
     @Test
@@ -72,8 +69,6 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             evaluation,
             "Likely exceeded maximum of 2 systemic treatment line(s) in metastatic setting (4 lines likely in metastatic setting)"
         )
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Likely exceeded maximum of 2 systemic treatment line(s) in " +
-                "metastatic setting (4 lines likely in metastatic setting)")
     }
 
     @Test
@@ -91,8 +86,6 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             evaluation,
             "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some)"
         )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Uncertain whether maximum of 2 systemic treatment line(s) " +
-                "in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some)")
     }
 
     @Test
@@ -109,10 +102,6 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             EvaluationResult.UNDETERMINED,
             evaluation,
             "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded (3 lines likely in metastatic setting, setting unclear for some)"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded" +
-                    " (3 lines likely in metastatic setting, setting unclear for some)"
         )
     }
 
@@ -132,10 +121,6 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             evaluation,
             "Likely exceeded maximum of 2 systemic treatment line(s) in metastatic setting (4 lines likely in metastatic setting)"
         )
-        assertThat(evaluation.failMessagesStrings()).containsExactly(
-            "Likely exceeded maximum of 2 systemic treatment line(s) in metastatic setting" +
-                    " (4 lines likely in metastatic setting)"
-        )
     }
 
     @Test
@@ -153,8 +138,6 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
             evaluation,
             "Uncertain whether maximum of 2 systemic treatment line(s) in metastatic setting is exceeded (3 lines with non-excluded intent, setting unclear for older lines)"
         )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Uncertain whether maximum of 2 systemic treatment line(s) " +
-                "in metastatic setting is exceeded (3 lines with non-excluded intent, setting unclear for older lines)")
     }
 
     @Test

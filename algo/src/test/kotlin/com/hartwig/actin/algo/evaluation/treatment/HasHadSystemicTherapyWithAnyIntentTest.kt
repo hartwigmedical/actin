@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private val REQUESTED_INTENT = setOf(Intent.ADJUVANT)
@@ -48,7 +47,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutIntentsAndWithinWeeks.evaluate(withTreatmentHistory(emptyList())),
-            "No  systemic therapy in prior tumor history"
+            "No systemic therapy in prior tumor history"
         )
     }
 
@@ -77,7 +76,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord),
-            "Received  systemic therapy within the last 20 weeks"
+            "Received systemic therapy within the last 20 weeks"
         )
     }
 
@@ -125,7 +124,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord),
-            "No  systemic therapy in prior tumor history"
+            "No systemic therapy in prior tumor history"
         )
     }
 
@@ -274,7 +273,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord),
-            "Received  systemic therapy within the last 20 weeks"
+            "Received systemic therapy within the last 20 weeks"
         )
     }
 
@@ -298,16 +297,13 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithoutDate.evaluate(patientRecordOldDate),
-            "Received adjuvant systemic therapy"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithoutDate.evaluate(patientRecordUnknownDate),
-            "Received adjuvant systemic therapy"
-        )
+        listOf(patientRecordOldDate, patientRecordUnknownDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.PASS,
+                functionWithoutDate.evaluate(it),
+                "Received adjuvant systemic therapy"
+            )
+        }
     }
 
     @Test
@@ -359,36 +355,27 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionEvaluatingWithinWeeks.evaluate(therapyWithoutDate),
-            "Received adjuvant systemic therapy but date unknown"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionEvaluatingWithinWeeks.evaluate(therapyWithoutStopDate),
-            "Received adjuvant systemic therapy but date unknown"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionEvaluatingBeforeWeeks.evaluate(therapyWithoutDate),
-            "Received adjuvant systemic therapy but date unknown"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionEvaluatingBeforeWeeks.evaluate(therapyWithoutStopDate),
-            "Received adjuvant systemic therapy but date unknown"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionWithoutIntentsAndWithinWeeks.evaluate(therapyWithoutDate),
-            "Received  systemic therapy but date unknown"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionWithoutIntentsAndWithinWeeks.evaluate(therapyWithoutStopDate),
-            "Received  systemic therapy but date unknown"
-        )
+        listOf(therapyWithoutDate, therapyWithoutStopDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                functionEvaluatingWithinWeeks.evaluate(it),
+                "Received adjuvant systemic therapy but date unknown"
+            )
+        }
+        listOf(therapyWithoutDate, therapyWithoutStopDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                functionEvaluatingBeforeWeeks.evaluate(it),
+                "Received adjuvant systemic therapy but date unknown"
+            )
+        }
+        listOf(therapyWithoutDate, therapyWithoutStopDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                functionWithoutIntentsAndWithinWeeks.evaluate(it),
+                "Received systemic therapy but date unknown"
+            )
+        }
     }
 
     @Test
@@ -404,27 +391,9 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         val evaluationWithWeeksAgoDate = functionEvaluatingWithinWeeks.evaluate(patientRecord)
         val evaluationWithoutDate = functionWithoutDate.evaluate(patientRecord)
 
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            evaluationWithWeeksAgoDate,
-            "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            evaluationWithoutDate,
-            "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant"
-        )
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
-            functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord),
-            "Received  systemic therapy within the last 20 weeks"
-        )
-
-        listOf(evaluationWithWeeksAgoDate, evaluationWithoutDate).forEach {
-            assertThat(it.undeterminedMessagesStrings()).containsExactly(
-                "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant"
-            )
-        }
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithWeeksAgoDate,  "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant")
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithoutDate,  "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant")
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord), "Received systemic therapy within the last 20 weeks")
     }
 
     @Test

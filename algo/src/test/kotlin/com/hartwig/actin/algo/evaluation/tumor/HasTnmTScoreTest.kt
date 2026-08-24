@@ -13,7 +13,7 @@ class HasTnmTScoreTest {
     fun `Should be undetermined if the tumor is TNM M`(){
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1), TumorTestFactory.withTumorStage(TumorStage.IVA)),
-            "Cancer is metastatic. Undetermined if tumor is TNM T-classification T1"
+            "Cancer is metastatic - undetermined if tumor is TNM T-classification T1"
         )
     }
 
@@ -72,7 +72,7 @@ class HasTnmTScoreTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function(setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, null)),
-            "No tumor stage or derived tumor stage found. Tnm T scores not determined."
+            "No tumor stage or derived tumor stage found - Tnm T scores not determined."
         )
     }
 }

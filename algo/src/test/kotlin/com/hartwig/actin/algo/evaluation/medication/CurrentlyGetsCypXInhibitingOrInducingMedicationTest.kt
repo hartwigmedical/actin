@@ -17,15 +17,15 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
     fun `Should pass when CYP inhibiting or inducing medication`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 inhibiting or inducing medication use ()"
+            "CYP9A9 inhibiting or inducing medication use (name)"
         )
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 inhibiting or inducing medication use ()"
+            "CYP9A9 inhibiting or inducing medication use (name)"
         )
     }
 
@@ -70,15 +70,15 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
     fun `Should warn when patient plans to use CYP inhibiting or inducing medication`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 inhibiting or inducing medication use ()"
+            "Planned CYP9A9 inhibiting or inducing medication use (name)"
         )
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 inhibiting or inducing medication use ()"
+            "Planned CYP9A9 inhibiting or inducing medication use (name)"
         )
     }
 

@@ -32,7 +32,6 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistory(emptyList()),
-            "Has not received targeted therapy ignoring match",
             "Has not received targeted therapy ignoring match"
         )
     }
@@ -43,7 +42,6 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has not received targeted therapy ignoring match",
             "Has not received targeted therapy ignoring match"
         )
     }
@@ -66,7 +64,6 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has not received targeted therapy ignoring match",
             "Has not received targeted therapy ignoring match"
         )
     }
@@ -77,7 +74,6 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Undetermined if treatment received in previous trial included targeted therapy ignoring match",
             "Undetermined if treatment received in previous trial included targeted therapy ignoring match"
         )
     }
@@ -130,9 +126,9 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
     }
 
     private fun evaluateFunctions(
-        expected: EvaluationResult, record: PatientRecord, expectedMessageWithTypes: String, expectedMessageWithoutTypes: String
+        expected: EvaluationResult, record: PatientRecord, expectedMessageWithTypes: String, expectedMessageWithoutTypes: String? = null
     ) {
         assertEvaluation(expected, functionWithTypes.evaluate(record), expectedMessageWithTypes)
-        assertEvaluation(expected, functionWithoutTypes.evaluate(record), expectedMessageWithoutTypes)
+        assertEvaluation(expected, functionWithoutTypes.evaluate(record), expectedMessageWithoutTypes ?: expectedMessageWithTypes)
     }
 }

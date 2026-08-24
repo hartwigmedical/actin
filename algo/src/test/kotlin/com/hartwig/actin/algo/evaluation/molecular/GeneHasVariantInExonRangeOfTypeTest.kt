@@ -353,7 +353,7 @@ class GeneHasVariantInExonRangeOfTypeTest {
                     highDriverExonSkipFusion()
                 )
             ),
-            "Exon(s) skipped in exon 1-4 in gene A of type deletion due to  together with variant(s) in canonical transcript but subclonal likelihood of > 50%: "
+            "Exon(s) skipped in exon 1-4 in gene A of type deletion due to fusion event together with variant(s) in canonical transcript but subclonal likelihood of > 50%: event"
         )
     }
 
@@ -364,12 +364,12 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDrivers(
-                    canonicalVariant(VariantType.DELETE, clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true),
-                    nonCanonicalVariant(VariantType.DELETE),
+                    canonicalVariant(VariantType.DELETE, clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true, event = "event 1"),
+                    nonCanonicalVariant(VariantType.DELETE, event = "event 2"),
                     highDriverExonSkipFusion()
                 )
             ),
-            "Exon(s) skipped in exon 1-4 in gene A of type deletion due to  together with variant(s) in canonical transcript but subclonal likelihood of > 50%:  and variant(s) in non-canonical transcript: "
+            "Exon(s) skipped in exon 1-4 in gene A of type deletion due to fusion event together with variant(s) in canonical transcript but subclonal likelihood of > 50%: event 1 and variant(s) in non-canonical transcript: event 2"
         )
     }
 
@@ -422,11 +422,11 @@ class GeneHasVariantInExonRangeOfTypeTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withDrivers(
-                    canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true),
-                    canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true)
+                    canonicalVariant(clonalLikelihood = CLONAL_LIKELIHOOD, isReportable = true, event = "event 1"),
+                    canonicalVariant(clonalLikelihood = SUBCLONAL_LIKELIHOOD, isReportable = true, event = "event 2")
                 )
             ),
-            "Variant(s)  in exon 1-2 in gene A of type insertion in canonical transcript together with variant(s) in canonical transcript but subclonal likelihood of > 50%: "
+            "Variant(s) event 1 in exon 1-2 in gene A of type insertion in canonical transcript together with variant(s) in canonical transcript but subclonal likelihood of > 50%: event 2"
         )
     }
 
@@ -495,26 +495,29 @@ class GeneHasVariantInExonRangeOfTypeTest {
         assertThat(result.undeterminedMessagesStrings()).containsExactly("Mutation in exon 1 of type insertion in gene gene A undetermined (not tested for at least mutations)")
     }
 
-    private fun nonCanonicalVariant(type: VariantType = VariantType.INSERT) = TestVariantFactory.createMinimal().copy(
+    private fun nonCanonicalVariant(type: VariantType = VariantType.INSERT, event: String = "event") = TestVariantFactory.createMinimal().copy(
         gene = TARGET_GENE,
         isReportable = true,
         type = type,
         canonicalImpact = impactWithExon(OTHER_EXON),
-        otherImpacts = setOf(impactWithExon(MATCHING_EXON))
+        otherImpacts = setOf(impactWithExon(MATCHING_EXON)),
+        event = event
     )
 
     private fun canonicalVariant(
         type: VariantType = VariantType.INSERT,
         clonalLikelihood: Double? = null,
         driverLikelihood: DriverLikelihood = DriverLikelihood.HIGH,
-        isReportable: Boolean = false
+        isReportable: Boolean = false,
+        event: String = "event"
     ) = TestVariantFactory.createMinimal().copy(
         gene = TARGET_GENE,
         isReportable = isReportable,
         driverLikelihood = driverLikelihood,
         type = type,
         canonicalImpact = impactWithExon(MATCHING_EXON),
-        clonalLikelihood = clonalLikelihood
+        clonalLikelihood = clonalLikelihood,
+        event = event
     )
 
     private fun highDriverExonSkipFusion() = TestFusionFactory.createMinimal().copy(
@@ -523,7 +526,8 @@ class GeneHasVariantInExonRangeOfTypeTest {
         isReportable = true,
         driverLikelihood = DriverLikelihood.HIGH,
         fusedExonUp = 2,
-        fusedExonDown = 3
+        fusedExonDown = 3,
+        event = "fusion event"
     )
 
     private fun impactWithExon(affectedExon: Int) = TestTranscriptVariantImpactFactory.createMinimal().copy(affectedExon = affectedExon)

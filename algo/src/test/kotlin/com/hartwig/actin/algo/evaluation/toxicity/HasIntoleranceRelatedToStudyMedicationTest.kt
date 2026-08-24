@@ -73,13 +73,14 @@ class HasIntoleranceRelatedToStudyMedicationTest {
     @Test
     fun `Should evaluate to undetermined when intolerance has matching ICD code`() {
         val intolerance = ComorbidityTestFactory.intolerance(
+            name = "intolerance",
             icdMainCode = matchingIcdCodes.first(),
             icdExtensionCode = IcdConstants.NIVOLUMAB_CODE
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "Has medication-related allergies () - undetermined if allergy to study medication"
+            "Has medication-related allergies (${intolerance.name}) - undetermined if allergy to study medication"
         )
     }
 

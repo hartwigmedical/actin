@@ -15,11 +15,11 @@ class CurrentlyGetsQTProlongatingMedicationTest {
 
     @Test
     fun `Should pass when patient uses known QT prolongating medication`() {
-        val medications = listOf(MedicationTestFactory.medication(qtProlongatingRisk = QTProlongatingRisk.KNOWN))
+        val medications = listOf(MedicationTestFactory.medication(name = "name", qtProlongatingRisk = QTProlongatingRisk.KNOWN))
         assertEvaluation(
             EvaluationResult.PASS,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "QT prolongating medication use (risk type):  (known)"
+            "QT prolongating medication use (risk type): name (known)"
         )
     }
 
@@ -44,11 +44,11 @@ class CurrentlyGetsQTProlongatingMedicationTest {
 
     @Test
     fun `Should warn when patient plans to use known QT prolongating medication`() {
-        val medications = listOf(MedicationTestFactory.medication(qtProlongatingRisk = QTProlongatingRisk.KNOWN))
+        val medications = listOf(MedicationTestFactory.medication(name = "name", qtProlongatingRisk = QTProlongatingRisk.KNOWN))
         assertEvaluation(
             EvaluationResult.WARN,
             alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Planned QT prolongating medication use (risk type):  (known)"
+            "Planned QT prolongating medication use (risk type): name (known)"
         )
     }
 

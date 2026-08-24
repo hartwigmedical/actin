@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.assertj.core.api.Assertions.assertThat
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
@@ -176,10 +175,6 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
             evaluation,
             "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 because it is the last treatment line and stop date missing"
         )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if treatment matching 'Treatment' may have been " +
-                    "administered since 01-Jun-2024 because it is the last treatment line and stop date missing"
-        )
     }
 
     @Test
@@ -193,10 +188,6 @@ abstract class TreatmentVersusDateFunctionsTestAbstract {
             EvaluationResult.UNDETERMINED,
             evaluation,
             "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 because it is the last treatment line and stop date missing"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Undetermined if treatment matching 'Treatment' may have been " +
-                    "administered since 01-Jun-2024 because it is the last treatment line and stop date missing"
         )
     }
 

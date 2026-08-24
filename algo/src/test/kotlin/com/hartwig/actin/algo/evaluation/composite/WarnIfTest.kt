@@ -14,10 +14,10 @@ class WarnIfTest {
     @Test
     fun `Should warn if underlying function evaluates to pass or warn`() {
         val patient: PatientRecord = TestPatientFactory.createProperTestPatientRecord()
-        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient), "pass")
-        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient), "warn")
-        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient), "fail")
-        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.undetermined()).evaluate(patient), "undetermined")
+        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.pass()).evaluate(patient))
+        assertEvaluation(EvaluationResult.WARN, WarnIf(TestEvaluationFunctionFactory.warn()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.fail()).evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, WarnIf(TestEvaluationFunctionFactory.undetermined()).evaluate(patient))
     }
 
     @Test

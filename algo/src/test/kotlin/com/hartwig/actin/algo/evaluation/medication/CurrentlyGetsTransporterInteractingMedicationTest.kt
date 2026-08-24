@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test
 
 class CurrentlyGetsTransporterInteractingMedicationTest {
     private val patientWithBCRPSubstrateMedication =
-        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.UNKNOWN)
+        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.UNKNOWN, "name")
     private val patientWithBCRPInhibitorMedication =
-        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.UNKNOWN)
+        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.UNKNOWN, "name")
 
     @Test
     fun `Should pass with active expected BCRP medication`() {
@@ -21,7 +21,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.SUBSTRATE
             ).evaluate(patientWithBCRPSubstrateMedication),
-            "Active BCRP substrate medication use ()"
+            "Active BCRP substrate medication use (name)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -29,7 +29,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.INHIBITOR
             ).evaluate(patientWithBCRPInhibitorMedication),
-            "Active BCRP inhibitor medication use ()"
+            "Active BCRP inhibitor medication use (name)"
         )
     }
 
@@ -40,7 +40,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.SUBSTRATE).evaluate(
                 patientWithBCRPSubstrateMedication
             ),
-            "Planned BCRP substrate medication use ()"
+            "Planned BCRP substrate medication use (name)"
         )
 
         assertEvaluation(
@@ -48,7 +48,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.INHIBITOR).evaluate(
                 patientWithBCRPInhibitorMedication
             ),
-            "Planned BCRP inhibitor medication use ()"
+            "Planned BCRP inhibitor medication use (name)"
         )
     }
 

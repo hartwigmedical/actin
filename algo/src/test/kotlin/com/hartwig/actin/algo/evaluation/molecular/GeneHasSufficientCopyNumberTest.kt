@@ -114,7 +114,7 @@ class GeneHasSufficientCopyNumberTest {
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(eligibleAmp.copy(geneRole = GeneRole.TSG))
             ),
-            "gene A has at least 5 copies but gene known as TSG in "
+            "gene A has at least 5 copies but gene known as TSG in evidence source"
         )
     }
 
@@ -125,7 +125,7 @@ class GeneHasSufficientCopyNumberTest {
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
             ),
-            "gene A has at least 5 copies but gene associated with loss-of-function protein impact in "
+            "gene A has at least 5 copies but gene associated with loss-of-function protein impact in evidence source"
         )
     }
 
@@ -136,7 +136,7 @@ class GeneHasSufficientCopyNumberTest {
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
             ),
-            "gene A has at least 5 copies but gene associated with loss-of-function protein impact in "
+            "gene A has at least 5 copies but gene associated with loss-of-function protein impact in evidence source"
         )
     }
 

@@ -56,7 +56,6 @@ class PDL1EvaluationFunctionsTest {
             MolecularTestFactory.ihcTest(item = "PD-L1", measure = "other wrong")
         )
         evaluateFunctions(EvaluationResult.FAIL, record) { "Available PD-L1 tests not in requested measure ($REQUESTED_MEASURE)" }
-        assertMessage(record, message = "Available PD-L1 tests not in requested measure ($REQUESTED_MEASURE)", measure = TPS)
     }
 
     @Test
@@ -67,7 +66,6 @@ class PDL1EvaluationFunctionsTest {
         evaluateFunctions(EvaluationResult.FAIL, record, measure = null) {
             "No specific PD-L1 measure requested - hence PD-L1 cannot be evaluated"
         }
-        assertMessage(record, message = "No specific PD-L1 measure requested - hence PD-L1 cannot be evaluated", measure = null)
     }
 
     @Test
@@ -187,9 +185,6 @@ class PDL1EvaluationFunctionsTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Undetermined if PD-L1 expression (<= 3.0%) above minimum of 2.0%"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Undetermined if PD-L1 expression (<= 3.0%) above minimum of 2.0%"
         )
     }
@@ -417,15 +412,5 @@ class PDL1EvaluationFunctionsTest {
             evaluatePDL1byIhc(record, measure, reference, doidModel, evaluateMaxPDL1 = false),
             expectedMessage("above minimum")
         )
-    }
-
-    private fun assertMessage(record: PatientRecord, message: String, measure: Pdl1Measure?) {
-        val evaluations = listOf(
-            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = true),
-            evaluatePDL1byIhc(record, measure, PDL1_REFERENCE, doidModel, evaluateMaxPDL1 = false)
-        )
-        evaluations.forEach {
-            assertThat(it.failMessagesStrings()).containsExactly(message)
-        }
     }
 }

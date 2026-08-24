@@ -2,11 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val MAX_MONTHS_BEFORE_NEXT_LINE = 3
@@ -26,7 +24,6 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
         }
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation, "Received at least 2 systemic treatments")
-        assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at least 2 systemic treatments"))
     }
 
     @Test
@@ -40,7 +37,6 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonthsTest {
             referenceDate
         ).evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertEvaluation(EvaluationResult.PASS, evaluation, "Received at most 2 systemic treatments")
-        assertThat(evaluation.passMessages).containsExactly(StaticMessage("Received at most 2 systemic treatments"))
     }
 
     @Test

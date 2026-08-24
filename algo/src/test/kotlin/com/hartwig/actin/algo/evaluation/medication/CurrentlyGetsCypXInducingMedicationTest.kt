@@ -17,9 +17,9 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should pass when CYP inducing medication`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 inducing medication use ()"
+            "CYP9A9 inducing medication use (name)"
         )
     }
 
@@ -56,9 +56,9 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should warn when patient plans to use CYP inducing medication`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 inducing medication use ()"
+            "Planned CYP9A9 inducing medication use (name)"
         )
     }
 

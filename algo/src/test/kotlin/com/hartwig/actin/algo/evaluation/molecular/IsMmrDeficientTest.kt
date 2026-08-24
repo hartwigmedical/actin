@@ -163,7 +163,6 @@ class IsMmrDeficientTest {
         val result = function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest(MMR_TERM, scoreText = "Deficient")))
 
         assertMolecularEvaluation(EvaluationResult.PASS, result, "dMMR by IHC")
-        assertThat(result.passMessagesStrings()).containsExactly("dMMR by IHC")
     }
 
     @Test
@@ -191,7 +190,6 @@ class IsMmrDeficientTest {
             result,
             "Undetermined if tumor is dMMR by IHC - but loss detected of MMR gene by IHC"
         )
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if tumor is dMMR by IHC - but loss detected of MMR gene by IHC")
     }
 
     @Test
@@ -208,7 +206,6 @@ class IsMmrDeficientTest {
             )
         )
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined dMMR result by IHC")
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined dMMR result by IHC")
     }
 
     @Test

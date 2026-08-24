@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasSufficientPDL1ByIhcTest {
@@ -33,9 +32,6 @@ class HasSufficientPDL1ByIhcTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Undetermined if PD-L1 expression (<= 3.0%) above minimum of 2.0%"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Undetermined if PD-L1 expression (<= ${minPdl1.plus(1.0)}%) above minimum of 2.0%"
         )
     }

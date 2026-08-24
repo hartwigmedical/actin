@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test
 class HasContraindicationToCTTest {
     private val function = HasContraindicationToCT(TestIcdFactory.createTestModel())
     private val correctCode = IcdConstants.KIDNEY_FAILURE_BLOCK
+    private val correctName = "kidney failure"
 
     @Test
     fun `Should fail with no other condition`() {
@@ -39,8 +40,8 @@ class HasContraindicationToCTTest {
     fun `Should pass with a condition with correct ICD code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode))),
-            "Potential CT contraindication: "
+            function.evaluate(withOtherCondition(otherCondition(name = correctName, icdMainCode = correctCode))),
+            "Potential CT contraindication: $correctName"
         )
     }
 
@@ -102,8 +103,8 @@ class HasContraindicationToCTTest {
     fun `Should pass with other condition provided in list with correct code`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withOtherCondition(otherCondition(icdMainCode = correctCode))),
-            "Potential CT contraindication: "
+            function.evaluate(withOtherCondition(otherCondition(name = correctName, icdMainCode = correctCode))),
+            "Potential CT contraindication: $correctName"
         )
     }
 }

@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
@@ -194,9 +193,6 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (Matching but unknown date) with unknown date"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date"
         )
     }

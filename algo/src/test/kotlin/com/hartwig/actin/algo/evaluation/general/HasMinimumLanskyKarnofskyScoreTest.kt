@@ -42,16 +42,13 @@ class HasMinimumLanskyKarnofskyScoreTest {
     @Test
     fun `Should evaluate LANSKY performance based on different maximum (at most) who values`() {
         val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80)
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(withWHO(0, WhoStatusPrecision.AT_MOST)),
-            "Lansky score based on WHO status is at least 80"
-        )
-        assertEvaluation(
-            EvaluationResult.PASS,
-            function.evaluate(withWHO(1, WhoStatusPrecision.AT_MOST)),
-            "Lansky score based on WHO status is at least 80"
-        )
+        listOf(0,1).forEach {
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(withWHO(it, WhoStatusPrecision.AT_MOST)),
+                "Lansky score based on WHO status is at least 80"
+            )
+        }
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withWHO(2, WhoStatusPrecision.AT_MOST)),
@@ -62,16 +59,13 @@ class HasMinimumLanskyKarnofskyScoreTest {
     @Test
     fun `Should evaluate LANSKY performance based on different minimum (at least) who values`() {
         val function = HasMinimumLanskyKarnofskyScore(PerformanceScore.LANSKY, 80)
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(withWHO(0, WhoStatusPrecision.AT_LEAST)),
-            "Undetermined if Lansky score is at least 80"
-        )
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function.evaluate(withWHO(1, WhoStatusPrecision.AT_LEAST)),
-            "Undetermined if Lansky score is at least 80"
-        )
+        listOf(0, 1).forEach {
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function.evaluate(withWHO(it, WhoStatusPrecision.AT_LEAST)),
+                "Undetermined if Lansky score is at least 80"
+            )
+        }
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withWHO(2, WhoStatusPrecision.AT_LEAST)),

@@ -26,8 +26,8 @@ object TestDoidModelFactory {
         return create(childToParentMap.mapValues { listOf(it.value) }, termPerDoidMap = termPerDoidMap)
     }
 
-    fun createWithMainCancerTypeAndChildToParentsMap(mainCancerDoid: String, childToParentsMap: Map<String, List<String>>): DoidModel {
-        return create(childToParentsMap).copy(doidManualConfig = createWithOneMainCancerDoid(mainCancerDoid))
+    fun createWithMainCancerTypeAndChildToParentsMap(mainCancerDoid: String, childToParentsMap: Map<String, List<String>>, termPerDoidMap: Map<String, String> = emptyMap()): DoidModel {
+        return create(childToParentsMap, termPerDoidMap).copy(doidManualConfig = createWithOneMainCancerDoid(mainCancerDoid))
     }
 
     fun createWithMainCancerTypeAndChildToParentMap(mainCancerDoid: String, childToParentMap: Map<String, String>, termPerDoidMap: Map<String, String> = emptyMap()): DoidModel {

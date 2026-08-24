@@ -27,7 +27,8 @@ class HasMtapDeletionTest {
         isReportable = true,
         geneRole = GeneRole.TSG,
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL)
+        canonicalImpact = TestTranscriptCopyNumberImpactFactory.createTranscriptCopyNumberImpact(CopyNumberType.FULL_DEL),
+        event = "del event"
     )
     private val mtapInactivation = TestVariantFactory.createMinimal().copy(
         gene = MTAP,
@@ -39,7 +40,8 @@ class HasMtapDeletionTest {
         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
         canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
             codingEffect = GeneIsInactivated.INACTIVATING_CODING_EFFECTS.first()
-        )
+        ),
+        event = "inactivation event"
     )
     private val mtapIhcLoss = MolecularTestFactory.ihcTest(MTAP, scoreText = "loss")
     private val cdkn2aDel = mtapDel.copy(gene = CDKN2A)
@@ -61,7 +63,7 @@ class HasMtapDeletionTest {
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test))),
-            "MTAP deletion ()"
+            "MTAP deletion (del event)"
         )
     }
 
@@ -83,7 +85,7 @@ class HasMtapDeletionTest {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(listOf(test))),
-            "MTAP inactivation ()"
+            "MTAP inactivation (inactivation event)"
         )
     }
 

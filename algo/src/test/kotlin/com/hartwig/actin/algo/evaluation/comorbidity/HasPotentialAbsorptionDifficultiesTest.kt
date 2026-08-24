@@ -13,15 +13,15 @@ class HasPotentialAbsorptionDifficultiesTest {
     private val function = HasPotentialAbsorptionDifficulties(TestIcdFactory.createTestModel())
     private val correctIcd = IcdConstants.POSSIBLE_ABSORPTION_DIFFICULTIES_SET.iterator().next()
     private val wrongIcdMainCode = "wrong"
-    private val correctCondition = ComorbidityTestFactory.otherCondition(icdMainCode = correctIcd)
-    private val correctToxicity = ComorbidityTestFactory.toxicity("", ToxicitySource.EHR, 2, correctIcd)
+    private val correctCondition = ComorbidityTestFactory.otherCondition(name = "correct condition", icdMainCode = correctIcd)
+    private val correctToxicity = ComorbidityTestFactory.toxicity("correct toxicity", ToxicitySource.EHR, 2, correctIcd)
 
     @Test
     fun `Should pass for icd-matching other condition`() {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(correctCondition)),
-            "Potential absorption difficulties ()"
+            "Potential absorption difficulties (correct condition)"
         )
     }
 
@@ -30,7 +30,7 @@ class HasPotentialAbsorptionDifficultiesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(ComorbidityTestFactory.withToxicities(listOf(correctToxicity))),
-            "Potential absorption difficulties ()"
+            "Potential absorption difficulties (correct toxicity)"
         )
     }
 

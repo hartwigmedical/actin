@@ -122,8 +122,8 @@ class GeneIsAmplifiedTest {
         assertBothFunctions(
             EvaluationResult.WARN,
             MolecularTestFactory.withCopyNumber(eligibleAmp.copy(geneRole = GeneRole.TSG)),
-            "gene A is amplified with >= 5 copies but gene known as TSG in ",
-            "gene A is amplified but gene known as TSG in "
+            "gene A is amplified with >= 5 copies but gene known as TSG in evidence source",
+            "gene A is amplified but gene known as TSG in evidence source"
         )
     }
 
@@ -132,7 +132,7 @@ class GeneIsAmplifiedTest {
         assertBothFunctions(
             EvaluationResult.WARN,
             MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION)),
-            "gene A is amplified with >= 5 copies but gene associated with loss-of-function protein impact in ", "gene A is amplified but gene associated with loss-of-function protein impact in "
+            "gene A is amplified with >= 5 copies but gene associated with loss-of-function protein impact in evidence source", "gene A is amplified but gene associated with loss-of-function protein impact in evidence source"
         )
     }
 
@@ -141,7 +141,7 @@ class GeneIsAmplifiedTest {
         assertBothFunctions(
             EvaluationResult.WARN,
             MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED)),
-            "gene A is amplified with >= 5 copies but gene associated with loss-of-function protein impact in ", "gene A is amplified but gene associated with loss-of-function protein impact in "
+            "gene A is amplified with >= 5 copies but gene associated with loss-of-function protein impact in evidence source", "gene A is amplified but gene associated with loss-of-function protein impact in evidence source"
         )
     }
 

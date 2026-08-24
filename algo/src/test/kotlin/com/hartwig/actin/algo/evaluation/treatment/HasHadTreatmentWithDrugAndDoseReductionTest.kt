@@ -25,7 +25,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Patient did not dose reduction receive Drug(name=match, synonyms=[], drugTypes=[], category=TARGETED_THERAPY, displayOverride=null) during treatment"
+            "Patient did not dose reduction receive match during treatment"
         )
     }
 
@@ -44,7 +44,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Patient did not dose reduction receive Drug(name=match, synonyms=[], drugTypes=[], category=TARGETED_THERAPY, displayOverride=null) during treatment"
+            "Patient did not dose reduction receive match during treatment"
         )
     }
 
@@ -55,7 +55,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication))),
-            "Patient did not dose reduction receive Drug(name=match, synonyms=[], drugTypes=[], category=TARGETED_THERAPY, displayOverride=null) during treatment"
+            "Patient did not dose reduction receive match during treatment"
         )
     }
 
@@ -78,7 +78,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Undetermined if patient may have had a dose reduction during Drug(name=match, synonyms=[], drugTypes=[], category=TARGETED_THERAPY, displayOverride=null) treatment"
+            "Undetermined if patient may have had a dose reduction during match treatment"
         )
     }
 
@@ -89,7 +89,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication))),
-            "Undetermined if patient may have had a dose reduction during Drug(name=match, synonyms=[], drugTypes=[], category=TARGETED_THERAPY, displayOverride=null) treatment"
+            "Undetermined if patient may have had a dose reduction during match treatment"
         )
     }
 }

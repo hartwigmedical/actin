@@ -137,31 +137,36 @@ class PrimaryTumorLocationBelongsToDoidTest {
             pancreaticNeuroendocrine to listOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID, pancreaticCancer),
             ovaryNeuroendocrine to listOf(DoidConstants.NEUROENDOCRINE_TUMOR_DOID)
         )
-        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentsMap(pancreaticCancer, childToParentsMap)
+        val termPerDoidMap: Map<String, String> = mapOf(pancreaticCancer to "pancreatic cancer", pancreaticAdeno to "pancreatic adeno", pancreaticNeuroendocrine to "pancreatic neuroendocrine", ovaryNeuroendocrine to "ovary neuroendocrine")
+        val doidModel: DoidModel = TestDoidModelFactory.createWithMainCancerTypeAndChildToParentsMap(pancreaticCancer, childToParentsMap, termPerDoidMap)
         val function = PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, setOf(pancreaticAdeno), null)
-        assertResultForDoids(EvaluationResult.FAIL, function, setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID), "No ")
+        assertResultForDoids(EvaluationResult.FAIL, function, setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID), "No pancreatic adeno")
         assertResultForDoids(
             EvaluationResult.UNDETERMINED,
             PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, setOf(pancreaticNeuroendocrine), null),
             setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID),
-            "Undetermined if "
+            "Undetermined if pancreatic neuroendocrine"
         )
-        assertResultForDoid(EvaluationResult.UNDETERMINED, function, pancreaticCancer, "Undetermined if ")
+        assertResultForDoid(EvaluationResult.UNDETERMINED, function, pancreaticCancer, "Undetermined if pancreatic adeno")
         assertResultForDoids(
             EvaluationResult.FAIL,
             PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, setOf(pancreaticAdeno, ovaryNeuroendocrine), null),
             setOf(pancreaticCancer, DoidConstants.NEUROENDOCRINE_TUMOR_DOID),
-            "No "
+            "No ovary neuroendocrine or pancreatic adeno"
         )
     }
 
     @Test
     fun `Should resolve to adeno squamous type`() {
-        val mapping = AdenoSquamousMapping(adenoSquamousDoid = "1", squamousDoid = "2", adenoDoid = "3")
+        val adenoSquamous = "1"
+        val squamous = "2"
+        val adeno = "3"
+        val mapping = AdenoSquamousMapping(adenoSquamousDoid = adenoSquamous, squamousDoid = squamous, adenoDoid = adeno)
         val config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
-        val doidModel = TestDoidModelFactory.createWithDoidManualConfig(config)
+        val termForDoidMap = mapOf(adenoSquamous to "adenosquamous cancer", squamous to "squamous cancer", adeno to "adeno cancer")
+        val doidModel = TestDoidModelFactory.createWithDoidManualConfig(config).copy(termForDoidMap = termForDoidMap)
         val function = PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, setOf("2", "5"), null)
-        assertResultForDoid(EvaluationResult.FAIL, function, "4", "No ")
+        assertResultForDoid(EvaluationResult.FAIL, function, "4", "No squamous cancer")
         assertResultForDoid(EvaluationResult.WARN, function, "1", "Unclear if tumor type is considered ")
         assertResultForDoid(EvaluationResult.PASS, function, "2", "Tumor belongs to DOID term(s) ")
         assertResultForDoid(EvaluationResult.PASS, function, "5", "Tumor belongs to DOID term(s) ")
@@ -272,7 +277,6 @@ class PrimaryTumorLocationBelongsToDoidTest {
     fun `Should pass when sub query and doid match`() {
         val pass = specificQueryFunction.evaluate(TumorTestFactory.withDoidAndName(CHILD_DOID_1, NAME_WITH_SPECIFIC_QUERY))
         assertEvaluation(EvaluationResult.PASS, pass, "Tumor belongs to child term 1 with specific request 'specific'")
-        assertThat(pass.passMessagesStrings()).contains("Tumor belongs to child term 1 with specific request 'specific'")
     }
 
     @Test

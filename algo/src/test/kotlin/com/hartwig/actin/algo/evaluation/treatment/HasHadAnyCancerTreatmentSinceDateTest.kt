@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val MONTHS_AGO = 6
@@ -100,9 +99,6 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
-        )
-        assertThat(evaluation.failMessagesStrings()).containsExactly(
             "Has not received systemic anti-cancer therapy within $MONTHS_AGO months ignoring ${
                 TYPE_TO_IGNORE.first().display()
             }"
@@ -176,11 +172,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             priorCancerTreatment,
-            "Received anti-cancer therapy but undetermined if in the last 6 months (date unknown)",
-            "Received systemic anti-cancer therapy but undetermined if in the last 6 months (date unknown)"
-        )
-        assertThat(function.evaluate(priorCancerTreatment).undeterminedMessagesStrings()).containsExactly(
-            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
+            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)",
+            "Received systemic anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
     }
 
@@ -219,11 +212,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "Received anti-cancer therapy within the last 6 months",
-            "Received systemic anti-cancer therapy within the last 6 months"
-        )
-        assertThat(function.evaluate(priorCancerTreatment).passMessagesStrings()).containsExactly(
-            "Received anti-cancer therapy within the last $MONTHS_AGO months"
+            "Received anti-cancer therapy within the last $MONTHS_AGO months",
+            "Received systemic anti-cancer therapy within the last $MONTHS_AGO months"
         )
     }
 

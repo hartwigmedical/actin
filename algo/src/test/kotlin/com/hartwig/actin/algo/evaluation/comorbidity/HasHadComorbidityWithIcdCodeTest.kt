@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val OTHER_CONDITION_NAME: String = "other condition"
@@ -155,7 +154,6 @@ class HasHadComorbidityWithIcdCodeTest {
         val evaluation =
             function.evaluate(ComorbidityTestFactory.withComorbidities(listOf(intoleranceWithTargetCode, otherConditionWithTargetCode)))
         assertEvaluation(EvaluationResult.PASS, evaluation, "Has history of other condition", "Has intolerance to intolerance")
-        assertThat(evaluation.passMessagesStrings()).containsAll(setOf("Has intolerance to intolerance", "Has history of other condition"))
     }
 
     @Test

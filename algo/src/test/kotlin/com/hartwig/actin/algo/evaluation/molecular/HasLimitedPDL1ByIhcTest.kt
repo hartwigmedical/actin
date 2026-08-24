@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val MAX_PDL1 = 2.0
@@ -34,9 +33,6 @@ class HasLimitedPDL1ByIhcTest {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Undetermined if PD-L1 expression (>= 1.0%) below maximum of 2.0%"
-        )
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Undetermined if PD-L1 expression (>= ${MAX_PDL1.minus(1.0)}%) below maximum of 2.0%"
         )
     }

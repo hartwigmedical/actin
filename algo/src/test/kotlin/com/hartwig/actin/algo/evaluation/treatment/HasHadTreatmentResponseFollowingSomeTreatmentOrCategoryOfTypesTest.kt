@@ -221,8 +221,6 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesTest {
         assertForAllCompleteResponseFunctions(EvaluationResult.WARN, record, "${CORRECT_TREATMENT.display()} or ${OTHER_CORRECT_TREATMENT.display()}") { target ->
             "Uncertain ${COMPLETE_RESPONSE.display()} from treatment $target - also had progressive disease"
         }
-        assertThat(functionWithSpecificTreatmentsAndCompleteResponse.evaluate(record).warnMessagesStrings())
-            .containsExactly("Uncertain ${COMPLETE_RESPONSE.display()} from treatment with ${CORRECT_TREATMENT.display()} or ${OTHER_CORRECT_TREATMENT.display()} - also had progressive disease")
     }
 
     @Test
@@ -242,10 +240,6 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypesTest {
             assertForAllCompleteResponseFunctions(EvaluationResult.UNDETERMINED, record, it.display()) { target ->
                 "Undetermined ${COMPLETE_RESPONSE.display()} from treatment $target"
             }
-            assertThat(functionWithSpecificTreatmentsAndClinicalBenefit.evaluate(record).undeterminedMessagesStrings())
-                .containsExactly("Undetermined objective benefit from treatment with ${it.display()}")
-            assertThat(functionWithSpecificTreatmentsAndCompleteResponse.evaluate(record).undeterminedMessagesStrings())
-                .containsExactly("Undetermined ${COMPLETE_RESPONSE.display()} from treatment with ${it.display()}")
         }
     }
 
