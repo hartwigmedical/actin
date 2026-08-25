@@ -9,6 +9,7 @@ import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import com.itextpdf.licensing.base.LicenseKey
+import io.github.oshai.kotlinlogging.KotlinLogging
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.LocalDate
@@ -17,7 +18,6 @@ import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.HelpFormatter
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 class ReporterApplication(private val config: ReporterConfig, private val doidModel: DoidModel) {
 
@@ -35,16 +35,10 @@ class ReporterApplication(private val config: ReporterConfig, private val doidMo
             LicenseKey.loadLicenseFile(Files.newInputStream(Path.of(key)))
         }
 
-        val configuration = if (config.enableExtendedMode) {
-            logger.info { "Extended mode enabled. Using report configuration that includes all possible content" }
-            ReportConfiguration.extended()
-        } else {
-            ReportConfiguration.create(config.overrideYaml)
-        }
-
+        val configuration = ReportConfiguration.create(config.overrideYaml)
         val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
-        writer.write(report, configuration, doidModel, config.enableExtendedMode)
+        writer.write(report, configuration, doidModel)
         logger.info { "Done!" }
     }
 

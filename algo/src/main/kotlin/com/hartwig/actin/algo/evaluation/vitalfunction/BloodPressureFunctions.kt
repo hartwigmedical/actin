@@ -51,7 +51,7 @@ object BloodPressureFunctions {
             }
 
             comparison == 0 -> {
-                return EvaluationFactory.recoverablePass(
+                EvaluationFactory.recoverablePass(
                     "Median $categoryDisplay (${median.roundToInt()} mmHg) equal to $referenceBloodPressure mmHg"
                 )
             }

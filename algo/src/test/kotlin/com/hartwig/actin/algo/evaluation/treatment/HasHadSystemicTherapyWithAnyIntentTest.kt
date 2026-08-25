@@ -172,19 +172,19 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     }
 
     @Test
-    fun `Should fail with systemic treatment with correct intent but too long ago according to start date if evaluating within weeks and undetermined if evaluating before weeks`() {
+    fun `Should pass with systemic treatment with correct intent with recent stop date if evaluating within weeks and undetermined if evaluating before weeks`() {
         val patientRecord = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
                     setOf(SYSTEMIC_TREATMENT),
-                    startYear = olderDate.year,
-                    startMonth = olderDate.monthValue,
+                    stopYear = recentDate.year,
+                    stopMonth = recentDate.monthValue,
                     intents = REQUESTED_INTENT
                 )
             )
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.PASS,
             functionEvaluatingWithinWeeks.evaluate(patientRecord),
             "All adjuvant systemic therapy is administered more than 20 weeks ago"
         )
@@ -196,13 +196,13 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     }
 
     @Test
-    fun `Should pass with systemic treatment with correct intent with recent stop date if evaluating before weeks and fail if evaluating not before weeks`() {
+    fun `Should pass with systemic treatment with correct intent with recent start date if evaluating within weeks and fail if evaluating before weeks`() {
         val patientRecord = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
                     setOf(SYSTEMIC_TREATMENT),
-                    stopYear = recentDate.year,
-                    stopMonth = recentDate.monthValue,
+                    startYear = recentDate.year,
+                    startMonth = recentDate.monthValue,
                     intents = REQUESTED_INTENT
                 )
             )
@@ -220,24 +220,24 @@ class HasHadSystemicTherapyWithAnyIntentTest {
     }
 
     @Test
-    fun `Should pass with systemic treatment with correct intent with recent start date if evaluating before weeks and undetermined if evaluating not before weeks`() {
+    fun `Should pass with systemic treatment with correct intent but older start date if evaluation before weeks and undetermined if evaluation within weeks`() {
         val patientRecord = withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
                     setOf(SYSTEMIC_TREATMENT),
-                    startYear = recentDate.year,
-                    startMonth = recentDate.monthValue,
+                    startYear = olderDate.year,
+                    startMonth = olderDate.monthValue,
                     intents = REQUESTED_INTENT
                 )
             )
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS,
+            EvaluationResult.UNDETERMINED,
             functionEvaluatingWithinWeeks.evaluate(patientRecord),
             "Received adjuvant systemic therapy within the last 20 weeks"
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
+            EvaluationResult.PASS,
             functionEvaluatingBeforeWeeks.evaluate(patientRecord),
             "Received adjuvant systemic therapy but date unknown"
         )
@@ -261,7 +261,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
             "Received adjuvant systemic therapy within the last 20 weeks"
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL,
+            EvaluationResult.UNDETERMINED,
             functionEvaluatingBeforeWeeks.evaluate(patientRecord),
             "All adjuvant systemic therapy is not administered at least 20 weeks ago"
         )

@@ -26,7 +26,7 @@ class GeneHasSpecificExonSkipping(override val gene: String, private val exonToS
         val exonSplicingVariantEvents = exonSplicingVariants.map(Variant::event).toSet()
         val potentialExonSplicingVariantEvents = potentialExonSplicingVariants.map(Variant::event).toSet()
         val confirmedExonSkippingEvents =
-            (exonSplicingVariants + potentialExonSplicingVariants).filter { it.exonSkippingIsConfirmed == true }
+            (exonSplicingVariants + potentialExonSplicingVariants).filter { it.exonSkippingIsConfirmed }
                 .map(Variant::event)
                 .toSet()
 

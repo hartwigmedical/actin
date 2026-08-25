@@ -67,12 +67,12 @@ class HasLimitedTotalBilirubinULNOrLimitedOtherMeasureULNDependingOnGilbertDisea
     @Test
     fun `Should fail when evaluating required measure but exceeding ULN in case of no Gilbert disease`() {
         val evaluation = function.evaluate(recordWithoutGilbertDisease.copy(labValues = listOf(tbil4Uln)))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Total bilirubin 400.0 umol/L exceeds max of 3.0*ULN (300.0 umol/L)")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "Total bilirubin 400.0 µmol/L exceeds max of 3.0*ULN (300.0 umol/L)")
     }
 
     @Test
     fun `Should fail when evaluating required measure but exceeding ULN in case of Gilbert disease`() {
         val evaluation = function.evaluate(recordWithGilbertDisease.copy(labValues = listOf(dbil6Uln)))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Direct bilirubin 600.0 umol/L exceeds max of 5.0*ULN (500.0 umol/L)")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "Direct bilirubin 600.0 µmol/L exceeds max of 5.0*ULN (500.0 umol/L)")
     }
 }

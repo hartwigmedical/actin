@@ -32,7 +32,7 @@ object Tables {
 
     fun makeWrapping(contentTable: Table, forceKeepTogether: Boolean, skipWrappingFooter: Boolean = false): Table {
         if (contentTable.numberOfRows < 3 || forceKeepTogether) {
-            contentTable.setKeepTogether(true)
+            contentTable.isKeepTogether = true
             return contentTable
         } else {
             if (skipWrappingFooter) {
@@ -42,7 +42,7 @@ object Tables {
                         .setPaddingBottom(5f)
                 )
             }
-            contentTable.setSkipLastFooter(true)
+            contentTable.isSkipLastFooter = true
 
             val wrappingTable = createSingleColWithWidth(contentTable.width.value).setMarginBottom(10f)
             if (skipWrappingFooter) {

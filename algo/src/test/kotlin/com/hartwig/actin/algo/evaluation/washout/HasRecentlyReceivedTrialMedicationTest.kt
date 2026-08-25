@@ -81,6 +81,25 @@ class HasRecentlyReceivedTrialMedicationTest {
     }
 
     @Test
+    fun `Should be undetermined when medication is not trial medication and treatment history entry is trial but with unknown date`() {
+        val medications = listOf(medication(isTrialMedication = false))
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                isTrial = true,
+                stopYear = null,
+                stopMonth = null
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
+            "check"
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined when medication stopped after min stop date`() {
         val function = HasRecentlyReceivedTrialMedication(
             MedicationTestFactory.alwaysStopped(),
@@ -96,9 +115,7 @@ class HasRecentlyReceivedTrialMedicationTest {
 
     @Test
     fun `Should evaluate to undetermined if medication is not provided and no trial in treatment history entry`() {
-        val result = functionActive.evaluate(
-            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
-        )
+        val result = functionActive.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null))
         assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }

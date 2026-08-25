@@ -146,7 +146,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
     }
 
     @Test
-    fun `Should fail when date is too old`() {
+    fun `Should be undetermined when stop date is missing`() {
         val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
         val patientRecord = withTreatmentHistory(
             listOf(
@@ -158,11 +158,40 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
             )
         )
         val evaluation = functionWithDate.evaluate(patientRecord)
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Has received palliative targeted therapy (Matching category and intent) but unknown if since 2022-04-01")
     }
 
     @Test
-    fun `Should pass when date is new enough`() {
+    fun `Should be undetermined when all dates are missing`() {
+        val treatment = drugTreatment("matching but unknown date", category = matchingCategory, types = matchingTypes)
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(treatment),
+            intents = matchingIntents
+        )
+        val patientRecord = withTreatmentHistory(listOf(treatmentHistoryEntry))
+        val evaluation = functionWithDate.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation,  "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) but unknown if since 2022-04-01")
+    }
+
+    @Test
+    fun `Should fail when stop date is known and is too old`() {
+        val treatment = treatment("matching category and intent", isSystemic = true, categories = setOf(matchingCategory))
+        val patientRecord = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(
+                    setOf(treatment),
+                    intents = matchingIntents,
+                    startYear = minDate.year - 2,
+                    stopYear = minDate.year - 1,
+                )
+            )
+        )
+        val evaluation = functionWithDate.evaluate(patientRecord)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Has received palliative targeted therapy (Matching category and intent) but unknown if since 2022-04-01")
+    }
+
+    @Test
+    fun `Should pass when treatment dates are recent enough`() {
         val treatment = drugTreatment("recent matching treatment", category = matchingCategory, types = matchingTypes)
         val patientRecord = withTreatmentHistory(
             listOf(

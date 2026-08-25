@@ -172,8 +172,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             priorCancerTreatment,
-            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)",
-            "Received systemic anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
+            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months",
+            "Received systemic anti-cancer therapy but undetermined if in the last $MONTHS_AGO months"
         )
     }
 

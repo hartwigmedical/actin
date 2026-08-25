@@ -1,6 +1,6 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
-import com.hartwig.actin.algo.evaluation.EvaluationAssert
+import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
@@ -125,10 +125,13 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
         )
     }
 
-    private fun assertResultForPatient(
-        evaluationResult: EvaluationResult, type: TreatmentType, record: PatientRecord, expectedMessage: String
-    ) {
-        val evaluation = HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, minCycles).evaluate(record)
-        return EvaluationAssert.assertEvaluation(evaluationResult, evaluation, expectedMessage)
+    private fun assertResultForPatient(evaluationResult: EvaluationResult, type: TreatmentType, record: PatientRecord, minCycles: Int, expectedMessage: String) {
+        return listOf(minCycles, null).forEach {
+            assertEvaluation(
+                evaluationResult,
+                HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, it).evaluate(record),
+                expectedMessage
+            )
+        }
     }
 }

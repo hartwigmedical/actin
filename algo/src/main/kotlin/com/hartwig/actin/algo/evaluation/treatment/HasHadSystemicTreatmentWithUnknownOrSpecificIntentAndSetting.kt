@@ -2,6 +2,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.partitionTreatmentsByCertainOccurrenceSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concat
 import com.hartwig.actin.clinical.sort.TreatmentHistoryAscendingDateComparator
@@ -12,6 +15,8 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import java.time.LocalDate
+
+const val MONTHS_TO_SUBTRACT = 6L
 
 class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
     private val referenceDate: LocalDate,
@@ -24,12 +29,12 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
         val priorTreatments = record.oncologicalHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
         val priorSystemicTreatments =
             priorTreatments.filter { it.treatments.any(Treatment::isSystemic) && !it.categories().contains(categoryToIgnore) }
-        val (excludedIntentTreatments, includedIntentTreatments) =
-            SystemicTreatmentAnalyser.partitionByIntent(priorSystemicTreatments, intentsToIgnore)
-        val (recentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) =
-            partitionRecentTreatments(includedIntentTreatments, false)
-        val (recentPotentiallyCorrectIntentTreatmentsIncludingUnknown, _) =
-            partitionRecentTreatments(includedIntentTreatments, true)
+        val (excludedIntentTreatments, includedIntentTreatments) = priorSystemicTreatments.partitionTreatmentsByIntent(intentsToIgnore)
+        val (certainRecentPotentiallyCorrectIntentTreatments, nonRecentPotentiallyCorrectIntentTreatments) = includedIntentTreatments.partitionTreatmentsByCertainOccurrenceSinceMinDate(
+            referenceDate.minusMonths(MONTHS_TO_SUBTRACT)
+        )
+        val potentiallyRecentPotentiallyCorrectIntentTreatments =
+            includedIntentTreatments.filter { potentialTreatmentSinceMinDate(it, referenceDate.minusMonths(MONTHS_TO_SUBTRACT)) }
         val potentiallyCorrectIntentTreatmentsWithUnknownStopDate = includedIntentTreatments.filter { it.stopYear() == null }
         val palliativeIntentTreatments = priorSystemicTreatments.filter { it.intents?.contains(Intent.PALLIATIVE) == true }
         val settingMessage = "$settingDescription setting"
@@ -53,11 +58,11 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                 )
             }
 
-            recentPotentiallyCorrectIntentTreatments.isNotEmpty() -> {
+            certainRecentPotentiallyCorrectIntentTreatments.isNotEmpty() -> {
                 EvaluationFactory.pass(
                     createMessage(
                         "Has had recent systemic treatment$categoryToIgnoreMessage - presumably in $settingMessage",
-                        recentPotentiallyCorrectIntentTreatments
+                        certainRecentPotentiallyCorrectIntentTreatments
                     )
                 )
             }
@@ -71,14 +76,14 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                 )
             }
 
-            recentPotentiallyCorrectIntentTreatmentsIncludingUnknown.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
+            potentiallyRecentPotentiallyCorrectIntentTreatments.size == 1 && !hasRadiotherapyOrSurgeryAfterNonCurativeTreatment(
                 priorTreatments,
-                recentPotentiallyCorrectIntentTreatmentsIncludingUnknown.first()
+                potentiallyRecentPotentiallyCorrectIntentTreatments.first()
             ) -> {
                 EvaluationFactory.pass(
                     createMessage(
                         "Has had a systemic treatment line$categoryToIgnoreMessage not followed by radiotherapy or surgery - presumably in $settingMessage",
-                        recentPotentiallyCorrectIntentTreatmentsIncludingUnknown
+                        potentiallyRecentPotentiallyCorrectIntentTreatments
                     )
                 )
             }
@@ -114,13 +119,6 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                 it.categories().contains(TreatmentCategory.RADIOTHERAPY) || it.categories().contains(TreatmentCategory.SURGERY)
             }
         }
-    }
-
-    private fun partitionRecentTreatments(
-        nonCurativeTreatments: List<TreatmentHistoryEntry>,
-        includeUnknown: Boolean
-    ): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> {
-        return SystemicTreatmentAnalyser.partitionRecentTreatments(nonCurativeTreatments, referenceDate.minusMonths(6), includeUnknown)
     }
 
     private fun createMessage(string: String, treatments: List<TreatmentHistoryEntry>): String {

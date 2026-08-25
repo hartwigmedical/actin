@@ -39,7 +39,7 @@ object ActionableAndEvidenceFactory {
         } else {
             val drivers = molecular.drivers
             val characteristics = molecular.characteristics
-            return (drivers.variants + drivers.copyNumbers + drivers.homozygousDisruptions + drivers.disruptions + drivers.fusions + drivers.viruses +
+            (drivers.variants + drivers.copyNumbers + drivers.homozygousDisruptions + drivers.disruptions + drivers.fusions + drivers.viruses +
                     listOfNotNull(
                         characteristics.microsatelliteStability,
                         characteristics.homologousRecombination,

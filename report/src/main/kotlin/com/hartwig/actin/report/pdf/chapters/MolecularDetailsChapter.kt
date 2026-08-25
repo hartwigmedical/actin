@@ -53,17 +53,9 @@ class MolecularDetailsChapter(
 
     override fun render(document: Document) {
         addChapterTitle(document)
-
-        if (configuration.molecularChapterType == MolecularChapterType.STANDARD ||
-            configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
-        ) {
-            addMolecularDetails(document)
-        }
-
-        if (configuration.molecularChapterType == MolecularChapterType.LONGITUDINAL ||
-            configuration.molecularChapterType == MolecularChapterType.STANDARD_AND_LONGITUDINAL
-        ) {
-            addLongitudinalMolecularHistoryTable(document)
+        when (configuration.molecularChapterType) {
+            MolecularChapterType.STANDARD -> addMolecularDetails(document)
+            MolecularChapterType.LONGITUDINAL -> addLongitudinalMolecularHistoryTable(document)
         }
     }
 
