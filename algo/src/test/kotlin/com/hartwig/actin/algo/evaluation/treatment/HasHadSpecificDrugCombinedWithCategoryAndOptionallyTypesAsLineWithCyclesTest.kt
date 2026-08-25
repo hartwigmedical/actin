@@ -18,18 +18,19 @@ private val MATCHING_TYPES = setOf(DrugType.HER2_ANTIBODY, DrugType.HER3_ANTIBOD
 private val DIFFERENT_TYPES = setOf(DrugType.ABL_INHIBITOR)
 private val MATCHING_DRUG_TREATMENT = drugTreatment("Target drug", MATCHING_CATEGORY, MATCHING_TYPES)
 
-class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
+class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTest {
 
-    private val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
+    private val functionWithoutCycles = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
         MATCHING_DRUG_TREATMENT.drugs.first(),
         MATCHING_CATEGORY,
         MATCHING_TYPES,
+        null,
         null
     )
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, functionWithoutCycles.evaluate(withTreatmentHistory(emptyList())))
     }
 
     @Test
@@ -41,7 +42,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
                     treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
                 )
             )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(treatmentHistory))
+        assertEvaluation(EvaluationResult.FAIL, functionWithoutCycles.evaluate(treatmentHistory))
     }
 
     @Test
@@ -52,14 +53,14 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
                 drugTreatment("wrong name", DIFFERENT_CATEGORY)
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
     fun `Should pass if combination of target drug and treatment with target category in history if function requires no types and line`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)))
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null, null
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -74,8 +75,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
                 )
             )
         )
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), null
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), null, null
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -85,8 +86,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, MATCHING_TYPES))
         )
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, null
         )
         assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
@@ -101,7 +102,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 
@@ -110,7 +111,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         )
     }
 
@@ -124,8 +125,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
                 )
             )
         )
-        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 2
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, setOf(MATCHING_TYPES.first()), 2, null
         )
         val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
         assertEvaluation(EvaluationResult.UNDETERMINED, result)
@@ -133,10 +134,51 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
     }
 
     @Test
+    fun `Should warn if patient received drug combined with requested category and type but with less cycles than required`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, MATCHING_TYPES)), numCycles = 2
+        )
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, 4
+        )
+        val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.WARN, result)
+        assertThat(result.warnMessagesStrings()).containsExactly(
+            "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy but with less than 4 cycles"
+        )
+    }
+
+    @Test
+    fun `Should pass if patient received drug combined with requested category and type with at least required cycles`() {
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, MATCHING_TYPES)), numCycles = 4
+        )
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, 4
+        )
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+    }
+
+    @Test
+    fun `Should evaluate to undetermined if cycles required but cycles unknown in treatment history`() {
+        val treatmentHistoryEntry =
+            treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, MATCHING_TYPES)))
+        val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, 4
+        )
+        val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertThat(result.undeterminedMessagesStrings()).containsExactly(
+            "Undetermined if received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy " +
+                    "and at least 4 cycles"
+        )
+    }
+
+    @Test
     fun `Should fail if types required but none match treatment history`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(EvaluationResult.FAIL, functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
     }
 
     @Test
@@ -145,6 +187,6 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineTest {
             treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT)),
             treatmentHistoryEntry(setOf(drugTreatment("combined", MATCHING_CATEGORY, DIFFERENT_TYPES))),
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(EvaluationResult.FAIL, functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)))
     }
 }

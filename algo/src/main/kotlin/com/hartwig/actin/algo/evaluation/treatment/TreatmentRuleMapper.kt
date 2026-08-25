@@ -82,6 +82,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_AS_A_LINE to hasHadSpecificDrugCombinedWithCategoryAndTypesAsLineCreator(),
+            EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_AND_AT_LEAST_A_CYCLES to hasHadSpecificDrugCombinedWithCategoryAndTypesWithCyclesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(requireCurrentAdministration = false),
@@ -413,7 +414,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val drug = function.param<DrugParameter>(0).value
             val category = function.param<TreatmentCategoryParameter>(1).value
             val types = function.param<ManyTreatmentTypesParameter>(2).value
-            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(drug, category, types, null)
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(drug, category, types, null, null)
         }
     }
 
@@ -429,7 +430,23 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val category = function.param<TreatmentCategoryParameter>(1).value
             val types = function.param<ManyTreatmentTypesParameter>(2).value
             val line = function.param<IntegerParameter>(3).value
-            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(drug, category, types, line)
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(drug, category, types, line, null)
+        }
+    }
+
+    private fun hasHadSpecificDrugCombinedWithCategoryAndTypesWithCyclesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.DRUG,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val drug = function.param<DrugParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            val types = function.param<ManyTreatmentTypesParameter>(2).value
+            val cycles = function.param<IntegerParameter>(3).value
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(drug, category, types, null, cycles)
         }
     }
 
