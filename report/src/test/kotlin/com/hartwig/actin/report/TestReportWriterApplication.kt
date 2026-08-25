@@ -62,5 +62,5 @@ fun main() {
         hospitalOfReference = null
     )
 
-    writer.write(report, configuration = reportConfiguration, TestDoidModelFactory.createMinimalTestDoidModel(), addExtendedSuffix = false)
+    writer.write(report, configuration = reportConfiguration, TestDoidModelFactory.createMinimalTestDoidModel())
 }

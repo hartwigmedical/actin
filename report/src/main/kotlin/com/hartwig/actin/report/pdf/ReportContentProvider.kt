@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.chapters.ClinicalDetailsChapter
@@ -25,7 +24,6 @@ class ReportContentProvider(
         countryOfReference = configuration.countryOfReference,
         doidModel = doidModel,
         dutchExternalTrialsToExclude = configuration.dutchExternalTrialsToExclude,
-        retainOriginalExternalTrials = configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
         filterOnSoCExhaustionAndTumorType = configuration.filterOnSOCExhaustionAndTumorType
     )
 
@@ -35,7 +33,7 @@ class ReportContentProvider(
             MolecularDetailsChapter(report, configuration, trialsProvider, labels),
             EfficacyEvidenceChapter(report, configuration, labels),
             ClinicalDetailsChapter(report, configuration, labels),
-            TrialMatchingDetailsChapter(report, configuration, trialsProvider, labels)
+            TrialMatchingDetailsChapter(configuration, trialsProvider, labels)
         ).filter(ReportChapter::include)
     }
 }

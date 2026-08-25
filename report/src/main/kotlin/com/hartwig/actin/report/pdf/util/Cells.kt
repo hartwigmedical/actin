@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.util
 
-import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.report.pdf.util.Formats.styleForTableValue
 import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.layout.Style
@@ -33,12 +32,6 @@ object Cells {
     fun createSpanningContent(text: String, table: Table): Cell {
         val cell = create(Paragraph(text), table.numberOfColumns)
         cell.addStyle(Styles.tableContentStyle())
-        return cell
-    }
-
-    fun createSpanningTitle(text: String, table: Table): Cell {
-        val cell = create(Paragraph(text), table.numberOfColumns)
-        cell.addStyle(Styles.tableTitleStyle())
         return cell
     }
 
@@ -150,18 +143,6 @@ object Cells {
         val cell = createBorderless()
         paragraphs.forEach(cell::add)
         cell.addStyle(Styles.tableHighlightStyle())
-        return cell
-    }
-
-    fun createValueYesNo(yesNo: String): Cell {
-        val cell = createValue(yesNo)
-        cell.setFontColor(Formats.fontColorForYesNo(yesNo))
-        return cell
-    }
-
-    fun createEvaluationResult(result: EvaluationResult, display: String): Cell {
-        val cell = create(Paragraph(display))
-        cell.setFontColor(Formats.fontColorForEvaluation(result))
         return cell
     }
 

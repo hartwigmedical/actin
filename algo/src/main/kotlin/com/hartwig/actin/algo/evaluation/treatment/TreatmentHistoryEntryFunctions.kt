@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -14,7 +15,7 @@ object TreatmentHistoryEntryFunctions {
 
     private data class NullableYearMonth(val year: Int?, val month: Int?)
 
-    private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int>())
+    private val nullSafeComparator = nullsLast<Int>()
     private val stageDateComparatorNullsLast = Comparator.comparing(TreatmentStage::startYear, nullSafeComparator)
         .thenComparing(TreatmentStage::startMonth, nullSafeComparator)
 
@@ -28,6 +29,9 @@ object TreatmentHistoryEntryFunctions {
 
     fun TreatmentHistoryEntry.containsTreatment(treatmentNameToFind: String) =
         allTreatments().any { it.name.equals(treatmentNameToFind, ignoreCase = true) }
+
+    fun Collection<TreatmentHistoryEntry>.partitionTreatmentsByIntent(intents: Set<Intent>): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> =
+        partition { it.intents?.any(intents::contains) == true }
 
     fun evaluateIfDrugHadPDResponse(treatmentHistory: List<TreatmentHistoryEntry>, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {
         val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)

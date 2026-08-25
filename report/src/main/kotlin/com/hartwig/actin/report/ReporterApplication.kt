@@ -3,7 +3,6 @@ package com.hartwig.actin.report
 import com.hartwig.actin.PatientRecordJson
 import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.extended
 import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
@@ -36,16 +35,10 @@ class ReporterApplication(private val config: ReporterConfig, private val doidMo
             LicenseKey.loadLicenseFile(Files.newInputStream(Path.of(key)))
         }
 
-        val configuration = if (config.enableExtendedMode) {
-            logger.info { "Extended mode enabled. Using report configuration that includes all possible content" }
-            ReportConfiguration.create(config.overrideYaml).extended()
-        } else {
-            ReportConfiguration.create(config.overrideYaml)
-        }
-
+        val configuration = ReportConfiguration.create(config.overrideYaml)
         val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
-        writer.write(report, configuration, doidModel, config.enableExtendedMode)
+        writer.write(report, configuration, doidModel)
         logger.info { "Done!" }
     }
 

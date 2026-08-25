@@ -238,10 +238,6 @@ internal object TumorTestFactory {
         return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions))
     }
 
-    fun withBoneAndLiverLesions(hasBoneLesions: Boolean?, hasLiverLesions: Boolean?): PatientRecord {
-        return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions, hasLiverLesions = hasLiverLesions))
-    }
-
     fun withBoneAndSuspectedLiverLesions(hasBoneLesions: Boolean?, hasSuspectedLiverLesions: Boolean?): PatientRecord {
         return withTumorDetails(
             TumorDetails(
@@ -252,10 +248,6 @@ internal object TumorTestFactory {
         )
     }
 
-    fun withBoneAndOtherLesions(hasBoneLesions: Boolean?, otherLesions: List<String>): PatientRecord {
-        return withTumorDetails(TumorDetails(hasBoneLesions = hasBoneLesions, otherLesions = otherLesions))
-    }
-
     fun withSuspectedBoneAndOtherLesions(hasSuspectedBoneLesions: Boolean?, otherLesions: List<String>?): PatientRecord {
         return withTumorDetails(
             TumorDetails(
@@ -264,10 +256,6 @@ internal object TumorTestFactory {
                 otherLesions = otherLesions
             )
         )
-    }
-
-    fun withLiverAndOtherLesions(hasLiverLesions: Boolean?, otherLesions: List<String>): PatientRecord {
-        return withTumorDetails(TumorDetails(hasLiverLesions = hasLiverLesions, otherLesions = otherLesions))
     }
 
     fun withLiverLesions(hasLiverLesions: Boolean?): PatientRecord {

@@ -11,8 +11,7 @@ enum class ReportContentType {
 
 enum class MolecularChapterType {
     STANDARD,
-    LONGITUDINAL,
-    STANDARD_AND_LONGITUDINAL
+    LONGITUDINAL
 }
 
 enum class EfficacyEvidenceChapterType {
@@ -30,8 +29,7 @@ enum class ClinicalChapterType {
 enum class TrialMatchingChapterType {
     NONE,
     STANDARD_ALL_TRIALS,
-    STANDARD_EXTERNAL_TRIALS_ONLY,
-    DETAILED_ALL_TRIALS
+    STANDARD_EXTERNAL_TRIALS_ONLY
 }
 
 enum class ExternalTrialTumorType(val tumorDoids: Set<String>?) {
@@ -67,18 +65,4 @@ data class ReportConfiguration(
             return EnvironmentConfiguration.create(environmentConfigFile).report
         }
     }
-}
-
-fun ReportConfiguration.extended(): ReportConfiguration {
-    return copy(
-        patientDetailsType = ReportContentType.COMPREHENSIVE,
-        clinicalSummaryType = ReportContentType.COMPREHENSIVE,
-        molecularSummaryType = ReportContentType.COMPREHENSIVE,
-        standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
-        trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
-        molecularChapterType = MolecularChapterType.STANDARD_AND_LONGITUDINAL,
-        efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
-        clinicalChapterType = ClinicalChapterType.COMPLETE,
-        trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS
-    )
 }
