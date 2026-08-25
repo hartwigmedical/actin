@@ -44,7 +44,7 @@
 
         <commons.cli.version>1.5.0</commons.cli.version>
         <google.gson.version>2.10</google.gson.version>
-        <kotlin-logging.version>8.0.4</kotlin-logging.version>
+        <kotlin-logging.version>7.0.3</kotlin-logging.version>
         <logback.version>1.5.25</logback.version>
 
         <jooq.version>3.15.5</jooq.version>
@@ -59,8 +59,8 @@
         <junit-jupiter.version>5.10.3</junit-jupiter.version>
         <assertj-core.version>3.27.7</assertj-core.version>
         <mockk-jvm.version>1.13.5</mockk-jvm.version>
-        <jackson.version>2.21.2</jackson.version>
-        <kotlinx-coroutines-core.version>1.10.2</kotlinx-coroutines-core.version>
+        <jackson.version>2.16.1</jackson.version>
+        <kotlinx-coroutines-core.version>1.8.0</kotlinx-coroutines-core.version>
         <commons-math3.version>3.6.1</commons-math3.version>
         <jsonschema-generator.version>4.36.0</jsonschema-generator.version>
         <letsplot.version>4.8.2</letsplot.version>
