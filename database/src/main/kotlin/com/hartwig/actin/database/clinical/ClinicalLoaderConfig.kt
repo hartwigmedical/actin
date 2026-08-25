@@ -2,10 +2,9 @@ package com.hartwig.actin.database.clinical
 
 import com.hartwig.actin.database.DatabaseLoaderConfig
 import com.hartwig.actin.util.ApplicationConfig
+import com.hartwig.actin.utils.enableDebugLogging
 import org.apache.commons.cli.CommandLine
 import org.apache.commons.cli.Options
-import com.hartwig.actin.utils.enableDebugLogging
-import io.github.oshai.kotlinlogging.KotlinLogging
 
 data class ClinicalLoaderConfig(
     val clinicalDirectory: String,
@@ -37,7 +36,6 @@ data class ClinicalLoaderConfig(
             )
         }
 
-        private val logger = KotlinLogging.logger {}
         private const val CLINICAL_DIRECTORY = "clinical_directory"
         private const val DB_USER = "db_user"
         private const val DB_PASS = "db_pass"

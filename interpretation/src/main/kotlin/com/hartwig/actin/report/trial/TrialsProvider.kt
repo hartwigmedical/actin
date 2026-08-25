@@ -42,8 +42,7 @@ class TrialsProvider(
     private val internalTrialIds: Set<String>,
     private val patientIsYoungAdult: Boolean,
     val effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
-    private val countryOfReference: Country,
-    private val retainOriginalExternalTrials: Boolean
+    private val countryOfReference: Country
 ) {
     fun evaluableCohorts(): List<InterpretedCohort> {
         return evaluableCohorts
@@ -102,24 +101,18 @@ class TrialsProvider(
         return ExternalTrials(
             hideOverlappingTrials(
                 nationalTrials,
-                filteredNationalTrials,
-                retainOriginalExternalTrials
+                filteredNationalTrials
             ),
             hideOverlappingTrials(
                 internationalTrials,
-                filteredInternationalTrials,
-                retainOriginalExternalTrials
+                filteredInternationalTrials
             )
         )
     }
 
-    private fun hideOverlappingTrials(
-        original: Set<ActionableWithExternalTrial>,
-        filtered: Set<ActionableWithExternalTrial>,
-        retainOriginalTrials: Boolean
-    ): MolecularFilteredExternalTrials {
-        return MolecularFilteredExternalTrials(original, if (retainOriginalTrials) original else filtered)
-    }
+    private fun hideOverlappingTrials(original: Set<ActionableWithExternalTrial>, filtered: Set<ActionableWithExternalTrial>) =
+        MolecularFilteredExternalTrials(original, filtered)
+
 
     companion object {
         fun create(
@@ -128,7 +121,6 @@ class TrialsProvider(
             countryOfReference: Country,
             doidModel: DoidModel,
             dutchExternalTrialsToExclude: ExternalTrialTumorType,
-            retainOriginalExternalTrials: Boolean,
             filterOnSoCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
@@ -143,7 +135,6 @@ class TrialsProvider(
                 countryOfReference,
                 (treatmentMatch.referenceDate.year - patientRecord.patient.birthYear) < YOUNG_ADULT_CUT_OFF,
                 effectiveDutchExternalTrialExclusion,
-                retainOriginalExternalTrials,
                 filterOnSoCExhaustionAndTumorType,
                 filter
             )
@@ -155,7 +146,6 @@ class TrialsProvider(
             countryOfReference: Country,
             patientIsYoungAdult: Boolean,
             effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
-            retainOriginalExternalTrials: Boolean,
             filterOnSOCExhaustionAndTumorType: Boolean,
             filter: Function1<Actionable, Boolean> = { true }
         ): TrialsProvider {
@@ -172,8 +162,7 @@ class TrialsProvider(
                 internalTrialIds,
                 patientIsYoungAdult,
                 effectiveDutchExternalTrialExclusion,
-                countryOfReference,
-                retainOriginalExternalTrials
+                countryOfReference
             )
         }
 
