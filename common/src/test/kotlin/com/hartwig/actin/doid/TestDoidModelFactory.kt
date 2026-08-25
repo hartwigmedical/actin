@@ -14,7 +14,10 @@ object TestDoidModelFactory {
         return create(mapOf(child to listOf(parent)))
     }
 
-    fun createWithParentChildAndTermPerDoidMaps(childToParentMap: Map<String, String>, doidToTermMap: Map<String, String>): DoidModel {
+    fun createWithParentChildAndTermPerDoidMaps(
+        childToParentMap: Map<String, String>,
+        doidToTermMap: Map<String, String>
+    ): DoidModel {
         return create(
             childToParentsMap = childToParentMap.mapValues { listOf(it.value) },
             termPerDoidMap = doidToTermMap,
@@ -22,16 +25,34 @@ object TestDoidModelFactory {
         )
     }
 
-    fun createWithChildToParentMap(childToParentMap: Map<String, String>, termPerDoidMap: Map<String, String> = emptyMap()): DoidModel {
+    fun createWithChildToParentMap(
+        childToParentMap: Map<String, String>,
+        termPerDoidMap: Map<String, String> = emptyMap()
+    ): DoidModel {
         return create(childToParentMap.mapValues { listOf(it.value) }, termPerDoidMap = termPerDoidMap)
     }
 
-    fun createWithMainCancerTypeAndChildToParentsMap(mainCancerDoid: String, childToParentsMap: Map<String, List<String>>, termPerDoidMap: Map<String, String> = emptyMap()): DoidModel {
-        return create(childToParentsMap, termPerDoidMap).copy(doidManualConfig = createWithOneMainCancerDoid(mainCancerDoid))
+    fun createWithMainCancerTypeAndChildToParentsMap(
+        mainCancerDoid: String,
+        childToParentsMap: Map<String, List<String>>,
+        termPerDoidMap: Map<String, String>
+    ): DoidModel {
+        return create(childToParentsMap, termPerDoidMap).copy(
+            doidManualConfig = createWithOneMainCancerDoid(
+                mainCancerDoid
+            )
+        )
     }
 
-    fun createWithMainCancerTypeAndChildToParentMap(mainCancerDoid: String, childToParentMap: Map<String, String>, termPerDoidMap: Map<String, String> = emptyMap()): DoidModel {
-        return createWithChildToParentMap(childToParentMap, termPerDoidMap).copy(doidManualConfig = createWithOneMainCancerDoid(mainCancerDoid))
+    fun createWithMainCancerTypeAndChildToParentMap(
+        mainCancerDoid: String,
+        childToParentMap: Map<String, String>,
+        termPerDoidMap: Map<String, String>
+    ): DoidModel {
+        return createWithChildToParentMap(
+            childToParentMap,
+            termPerDoidMap
+        ).copy(doidManualConfig = createWithOneMainCancerDoid(mainCancerDoid))
     }
 
     fun createWithOneDoidAndTerm(doid: String, term: String): DoidModel {
