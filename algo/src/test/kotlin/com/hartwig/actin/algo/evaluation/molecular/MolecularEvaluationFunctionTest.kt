@@ -46,7 +46,6 @@ class MolecularEvaluationFunctionTest {
         val patient = TestPatientFactory.createEmptyMolecularTestPatientRecord()
         val evaluation = function.evaluate(patient)
         assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No molecular results of sufficient quality")
-        assertThat(evaluation.result).isEqualTo(EvaluationResult.UNDETERMINED)
     }
     
     private fun emptyPanel(testDate: LocalDate? = null) =

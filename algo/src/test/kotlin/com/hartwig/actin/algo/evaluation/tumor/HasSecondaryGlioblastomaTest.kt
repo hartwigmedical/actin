@@ -7,10 +7,12 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.jupiter.api.Test
 
 class HasSecondaryGlioblastomaTest {
-    
+
+    private val function =
+        HasSecondaryGlioblastoma(TestDoidModelFactory.createWithOneDoidAndTerm(DoidConstants.GLIOBLASTOMA_DOID, "glioblastoma"))
+
     @Test
     fun canEvaluate() {
-        val function = HasSecondaryGlioblastoma(TestDoidModelFactory.createMinimalTestDoidModel())
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withDoids(null)),
@@ -19,7 +21,7 @@ class HasSecondaryGlioblastomaTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.GLIOBLASTOMA_DOID)),
-            "Unclear if null is considered secondary glioblastoma"
+            "Unclear if glioblastoma is considered secondary glioblastoma"
         )
         assertEvaluation(
             EvaluationResult.FAIL,

@@ -86,7 +86,9 @@ class HasHadOtherConditionWithIcdCodeFromSetRecently(
     }
 
     private fun conditionWithOptionalDate(condition: OtherCondition, withDate: Boolean): String {
-        val dateString = if (withDate) " (${condition.year}-${condition.month})" else ""
+        val dateString = if (withDate && condition.year != null) {
+            " (${condition.year}${condition.month?.let { "-$it" } ?: ""})"
+        } else ""
         return condition.display() + dateString
     }
 }

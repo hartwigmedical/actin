@@ -31,7 +31,7 @@ class IsMmrDeficientTest {
     }
 
     @Test
-    fun `Should pass with reportable biallelic MSI variant`() {
+    fun `Should evaluate to undetermined with unknown MSI and reportable biallelic MSI variant`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(

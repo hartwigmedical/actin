@@ -85,7 +85,7 @@ class HasReceivedPlatinumBasedDoubletTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Has received platinum based doublet chemotherapy "
+            "Has received platinum based doublet chemotherapy"
         )
     }
 
@@ -96,7 +96,7 @@ class HasReceivedPlatinumBasedDoubletTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Has received platinum based doublet chemotherapy "
+            "Has received platinum based doublet chemotherapy"
         )
     }
 
@@ -112,7 +112,7 @@ class HasReceivedPlatinumBasedDoubletTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Has received platinum based doublet chemotherapy "
+            "Has received platinum based doublet chemotherapy"
         )
     }
 

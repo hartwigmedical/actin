@@ -16,7 +16,8 @@ class HasSecondaryGlioblastoma(private val doidModel: DoidModel) : EvaluationFun
         }
         for (tumorDoid in tumorDoids ?: emptySet()) {
             if (doidModel.doidWithParents(tumorDoid).contains(DoidConstants.GLIOBLASTOMA_DOID)) {
-                return EvaluationFactory.warn("Unclear if ${doidModel.resolveTermForDoid(tumorDoid)} is considered secondary glioblastoma")
+                val tumorTerm = doidModel.resolveTermForDoid(tumorDoid) ?: "tumor"
+                return EvaluationFactory.warn("Unclear if $tumorTerm is considered secondary glioblastoma")
             }
         }
         return EvaluationFactory.fail("No (secondary) glioblastoma")

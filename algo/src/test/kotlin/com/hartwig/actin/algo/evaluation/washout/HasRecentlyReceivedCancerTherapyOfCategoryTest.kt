@@ -94,7 +94,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-            "Recent 'chemotherapy' drug use  - pay attention to washout period"
+            "Recent 'chemotherapy' drug use - pay attention to washout period"
         )
     }
 

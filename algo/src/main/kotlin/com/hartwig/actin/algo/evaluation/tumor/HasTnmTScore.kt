@@ -38,7 +38,7 @@ class HasTnmTScore(private val targetTnmTs: Set<TnmT>) : EvaluationFunction {
                 EvaluationFactory.undetermined("Cancer is metastatic - undetermined if tumor is TNM T-classification ${show(targetTnmTs)}")
             targetTnmTs.containsAll(possibleTnmTs) -> EvaluationFactory.pass("Tumor has TNT T-classification ${show(possibleTnmTs)}")
             targetTnmTs.intersect(possibleTnmTs).isNotEmpty() ->
-                EvaluationFactory.undetermined("Undetermined if TNM T-classification is of ${show(targetTnmTs)}- derived T's based on tumor stage are ${show(possibleTnmTs)}")
+                EvaluationFactory.undetermined("Undetermined if TNM T-classification is of ${show(targetTnmTs)} - derived T's based on tumor stage are ${show(possibleTnmTs)}")
             else -> EvaluationFactory.fail("Tumor is not of stage ${show(targetTnmTs)}")
         }
     }

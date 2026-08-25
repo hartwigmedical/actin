@@ -11,7 +11,7 @@ class ProteinHasExactExpressionByIhcTest {
     private val function = ProteinHasExactExpressionByIhc(PROTEIN, 2)
 
     @Test
-    fun `Should fail when there are no prior tests`() {
+    fun `Should resolve to undetermined when there are no prior tests`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(MolecularTestFactory.withMolecularTests(emptyList())),

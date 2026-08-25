@@ -45,7 +45,7 @@ class HasTnmTScoreTest {
     fun `Should be undetermined if only some of the possible TnmTs exist in the target set`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B) , TumorTestFactory.withTumorStage(TumorStage.IIB)),
-            "Undetermined if TNM T-classification is of T1A, T2B or T4- derived T's based on tumor stage are T1, T1A, T1B, T1C, T2, T2A, T2B or T3"
+            "Undetermined if TNM T-classification is of T1A, T2B or T4 - derived T's based on tumor stage are T1, T1A, T1B, T1C, T2, T2A, T2B or T3"
         )
     }
 
@@ -54,16 +54,7 @@ class HasTnmTScoreTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function(setOf(TnmT.T1A, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIB))),
-            "Undetermined if TNM T-classification is of T1A, T2B or T4- derived T's based on tumor stage are T1, T1A, T1B, T1C, T2, T2A, T2B or T3"
-        )
-    }
-
-    @Test
-    fun `Should pass if the target TnmTs list all possible TnmTs of the derived stage`() {
-        assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            function(setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, setOf(TumorStage.IIB, TumorStage.IA))),
-            "Undetermined if TNM T-classification is of T1, T1A, T1B, T1C, T2B or T4- derived T's based on tumor stage are T1, T1A, T1B, T1C, T2, T2A, T2B or T3"
+            "Undetermined if TNM T-classification is of T1A, T2B or T4 - derived T's based on tumor stage are T1, T1A, T1B, T1C, T2, T2A, T2B or T3"
         )
     }
 

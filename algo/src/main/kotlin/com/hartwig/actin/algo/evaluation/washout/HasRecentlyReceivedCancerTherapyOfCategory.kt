@@ -63,13 +63,13 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         val foundTrialMedication = activeMedications.any(Medication::isTrialMedication)
 
         val foundDrugNames = foundMedicationNames + treatmentAssessment.matchingDrugs
-        val foundMedicationString = if (foundDrugNames.isNotEmpty()) "(${concatLowercaseUnlessNumericWithAnd(foundDrugNames)})" else ""
+        val foundMedicationString = if (foundDrugNames.isNotEmpty()) " (${concatLowercaseUnlessNumericWithAnd(foundDrugNames)})" else ""
         val foundCategories = foundMedicationCategories.toSet() + treatmentAssessment.matchingMedicationCategories
 
         return when {
             foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use $foundMedicationString" +
+                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use$foundMedicationString" +
                             " - pay attention to washout period"
                 )
             }

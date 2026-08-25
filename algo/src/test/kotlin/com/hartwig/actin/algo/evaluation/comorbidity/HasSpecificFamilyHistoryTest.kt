@@ -65,9 +65,11 @@ class HasSpecificFamilyHistoryTest {
             assertEvaluation(
                 EvaluationResult.UNDETERMINED,
                 function.evaluate(
-                    ComorbidityTestFactory.withOtherCondition(ComorbidityTestFactory.otherCondition(icdMainCode = it))
+                    ComorbidityTestFactory.withOtherCondition(
+                        ComorbidityTestFactory.otherCondition(name = "unspecified health problem", icdMainCode = it)
+                    )
                 ),
-                "Has family history of unspecified disease () - undetermined if idiopathic sudden death"
+                "Has family history of unspecified disease (unspecified health problem) - undetermined if idiopathic sudden death"
             )
         }
     }

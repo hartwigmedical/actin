@@ -105,11 +105,11 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 ComorbidityTestFactory.withOtherCondition(
                     ComorbidityTestFactory.otherCondition(
-                        year = null, icdMainCode = targetIcdCodes.first().mainCode
+                        name = "cerebral bleeding", year = null, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
             ),
-            "History of stroke ( (null-null)) but undetermined if less than 6 months ago"
+            "History of stroke (cerebral bleeding) but undetermined if less than 6 months ago"
         )
     }
 
@@ -123,11 +123,11 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 ComorbidityTestFactory.withOtherCondition(
                     ComorbidityTestFactory.otherCondition(
-                        icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
+                        name = "cerebral bleeding", icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
                     )
                 )
             ),
-            "Recent  but undetermined if history of stroke"
+            "Recent cerebral bleeding but undetermined if history of stroke"
         )
     }
 
