@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.clinical.PriorPrimary
 
 class PriorPrimaryDiagnosedDateComparator : Comparator<PriorPrimary> {
 
-    private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int?>())
+    private val nullSafeComparator = nullsLast<Int>()
     private val comparator = Comparator.comparing(PriorPrimary::diagnosedYear, nullSafeComparator)
         .thenComparing(PriorPrimary::diagnosedMonth, nullSafeComparator)
         .thenComparing(PriorPrimary::name)

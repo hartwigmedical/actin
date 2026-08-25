@@ -3,7 +3,6 @@ package com.hartwig.actin.report.pdf.chapters
 import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportIntendedUse
-import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -66,7 +65,7 @@ class MolecularDetailsChapterTest {
 
     @Test
     fun `Should create chapter for STANDARD config`() {
-        assertThat(createChapter(MolecularChapterType.STANDARD)).isNotNull()
+        assertThat(createChapter()).isNotNull()
     }
 
     private fun testWithReliableImmunology(): MolecularTest {
@@ -75,15 +74,14 @@ class MolecularDetailsChapterTest {
         )
     }
 
-    private fun createChapter(molecularChapterType: MolecularChapterType): MolecularDetailsChapter {
-        val configuration = ReportConfiguration(molecularChapterType = molecularChapterType)
+    private fun createChapter(): MolecularDetailsChapter {
+        val configuration = ReportConfiguration(molecularChapterType = MolecularChapterType.STANDARD)
         val trialsProvider = TrialsProvider.create(
             report.patientRecord,
             report.treatmentMatch,
             configuration.countryOfReference,
             TestDoidModelFactory.createMinimalTestDoidModel(),
             configuration.dutchExternalTrialsToExclude,
-            configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
             configuration.filterOnSOCExhaustionAndTumorType,
         )
         return MolecularDetailsChapter(report, configuration, trialsProvider, labels)

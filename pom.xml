@@ -27,7 +27,7 @@
         <kotlin.compiler.jvmTarget>${java.version}</kotlin.compiler.jvmTarget>
 
         <actin-datamodel.version>5.2.0</actin-datamodel.version>
-        <actin-treatment-database.version>0.4.6</actin-treatment-database.version>
+        <actin-treatment-database.version>0.5.0</actin-treatment-database.version>
         <actin-utils.version>2.1.0</actin-utils.version>
         <serve.version>8.11.0</serve.version>
         <orange-datamodel.version>3.0.0</orange-datamodel.version>
