@@ -74,7 +74,7 @@ class HasLimitedLabValueTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record, measurement, offUnit.copy(value = 80.0)),
-            "Creatinine 0.9 mg/dL (converted from: 80.0 umol/L) below max of 1.0 mg/dL"
+            "Creatinine 0.9 mg/dL (converted from: 80.0 µmol/L) below max of 1.0 mg/dL"
         )
 
         val evaluation = function.evaluate(record, measurement, offUnit.copy(value = 120.0))

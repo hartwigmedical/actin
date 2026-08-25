@@ -85,7 +85,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Has recently received treatment with medication correct - pay attention to washout period"
+            "Received recent correct - pay attention to washout period"
         )
     }
 
@@ -110,7 +110,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Has recently received treatment with medication correct - pay attention to washout period"
+            "Received recent correct - pay attention to washout period"
         )
     }
 
@@ -129,7 +129,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Treatment containing 'correct' administered with unknown date"
+            "Received correct but unknown if recent (missing stop date)"
         )
     }
 }

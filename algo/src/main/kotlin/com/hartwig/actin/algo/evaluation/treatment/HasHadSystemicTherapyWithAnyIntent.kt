@@ -52,7 +52,7 @@ class HasHadSystemicTherapyWithAnyIntent(
                     (evaluateWithinWeeks != true && matchingTreatments[null]?.let(::anyTreatmentPotentiallyBeforeMaxDate) == true) -> {
                 EvaluationFactory.undetermined(
                     "Has received systemic treatment (${Format.concat(systemicTreatments.map { it.treatmentDisplay() })}) " +
-                            "but undetermined if intent is $intentsLowercase"
+                            "but undetermined if intent is$intentsLowercase"
                 )
             }
 

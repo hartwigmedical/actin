@@ -161,15 +161,21 @@ class PrimaryTumorLocationBelongsToDoidTest {
         val adenoSquamous = "1"
         val squamous = "2"
         val adeno = "3"
+        val otherdoid = "5"
         val mapping = AdenoSquamousMapping(adenoSquamousDoid = adenoSquamous, squamousDoid = squamous, adenoDoid = adeno)
         val config = TestDoidManualConfigFactory.createWithOneAdenoSquamousMapping(mapping)
-        val termForDoidMap = mapOf(adenoSquamous to "adenosquamous cancer", squamous to "squamous cancer", adeno to "adeno cancer")
+        val termForDoidMap = mapOf(
+            adenoSquamous to "adenosquamous cancer",
+            squamous to "squamous cancer",
+            adeno to "adeno cancer",
+            otherdoid to "other doid"
+        )
         val doidModel = TestDoidModelFactory.createWithDoidManualConfig(config).copy(termForDoidMap = termForDoidMap)
         val function = PrimaryTumorLocationBelongsToDoid(doidModel, cuppaToDoidMapping, setOf("2", "5"), null)
-        assertResultForDoid(EvaluationResult.FAIL, function, "4", "No squamous cancer")
-        assertResultForDoid(EvaluationResult.WARN, function, "1", "Unclear if tumor type is considered ")
-        assertResultForDoid(EvaluationResult.PASS, function, "2", "Tumor belongs to DOID term(s) ")
-        assertResultForDoid(EvaluationResult.PASS, function, "5", "Tumor belongs to DOID term(s) ")
+        assertResultForDoid(EvaluationResult.FAIL, function, "4", "No other doid or squamous cancer")
+        assertResultForDoid(EvaluationResult.WARN, function, "1", "Unclear if tumor type is considered squamous cancer")
+        assertResultForDoid(EvaluationResult.PASS, function, "2", "Tumor belongs to DOID term(s) squamous cancer")
+        assertResultForDoid(EvaluationResult.PASS, function, "5", "Tumor belongs to DOID term(s) other doid")
     }
 
     private fun assertResultsForFunction(function: PrimaryTumorLocationBelongsToDoid, doidToMatchIsParent: Boolean) {

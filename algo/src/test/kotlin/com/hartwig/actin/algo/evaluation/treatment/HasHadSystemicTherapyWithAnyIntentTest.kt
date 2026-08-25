@@ -186,7 +186,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             functionEvaluatingWithinWeeks.evaluate(patientRecord),
-            "All adjuvant systemic therapy is administered more than 20 weeks ago"
+            "Received adjuvant systemic therapy within the last 20 weeks"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -234,12 +234,12 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionEvaluatingWithinWeeks.evaluate(patientRecord),
-            "Received adjuvant systemic therapy within the last 20 weeks"
+            "Received adjuvant systemic therapy but date unknown"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             functionEvaluatingBeforeWeeks.evaluate(patientRecord),
-            "Received adjuvant systemic therapy but date unknown"
+            "Received adjuvant systemic therapy at least 20 weeks ago"
         )
     }
 
@@ -263,7 +263,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionEvaluatingBeforeWeeks.evaluate(patientRecord),
-            "All adjuvant systemic therapy is not administered at least 20 weeks ago"
+            "Received adjuvant systemic therapy but date unknown"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
@@ -460,7 +460,7 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionEvaluatingBeforeWeeks.evaluate(patientRecord),
-            "Has received systemic treatment (Systemic treatment) but undetermined if intent is adjuvant"
+            "Received adjuvant systemic therapy but date unknown"
         )
     }
 

@@ -71,7 +71,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
     fun `Should pass if combination of target drug and treatment with target category in history if function requires no types and line`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_DRUG_TREATMENT, drugTreatment("combined", MATCHING_CATEGORY)))
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
-            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, emptySet(), null, null
+            MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, null, null, null
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -170,8 +170,9 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, 4
         )
         val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
-        assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.WARN,
+            result,
             "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy but with less than 4 cycles"
         )
     }
@@ -184,7 +185,11 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         val function = HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, 4
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)), "check")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy and at least 4 cycles"
+        )
     }
 
     @Test

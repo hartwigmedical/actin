@@ -49,11 +49,10 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             treatments = setOf(chemotherapy, radiotherapy),
             treatmentHistoryDetails = TreatmentHistoryDetails(cycles = minCycles - 1)
         )
-        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))
-        assertResultForPatient(
+        assertEvaluation(
             EvaluationResult.WARN,
-            matchingType,
-            record,
+            HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(matchingType, minCycles)
+                .evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))),
             "Had received chemoradiotherapy with platinum compound chemotherapy but with less than 5 cycles"
         )
     }
@@ -94,18 +93,18 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.UNDETERMINED,
             matchingType,
             record,
-            "Undetermined if patient received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles"
+            "Undetermined if patient received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles",
+            "Undetermined if patient received chemoradiotherapy with platinum compound chemotherapy"
         )
     }
 
     @Test
     fun `Should be undetermined if there is a matching treatment with unknown cycles`() {
         val matchingTreatmentNullCycles = TreatmentHistoryEntry(treatments = setOf(chemotherapy, radiotherapy))
-        val record = TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatmentNullCycles))
-        assertResultForPatient(
+        assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            matchingType,
-            record,
+            HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(matchingType, minCycles)
+                .evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatmentNullCycles))),
             "Undetermined if patient received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles"
         )
     }
@@ -121,17 +120,27 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.PASS,
             matchingType,
             record,
-            "Had received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles"
+            "Had received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles",
+            "Had received chemoradiotherapy with platinum compound chemotherapy"
         )
     }
 
-    private fun assertResultForPatient(evaluationResult: EvaluationResult, type: TreatmentType, record: PatientRecord, minCycles: Int, expectedMessage: String) {
-        return listOf(minCycles, null).forEach {
-            assertEvaluation(
-                evaluationResult,
-                HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, it).evaluate(record),
-                expectedMessage
-            )
-        }
+    private fun assertResultForPatient(
+        evaluationResult: EvaluationResult,
+        type: TreatmentType,
+        record: PatientRecord,
+        messageWithCycles: String,
+        messageWithoutCycles: String? = null
+    ) {
+        assertEvaluation(
+            evaluationResult,
+            HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, minCycles).evaluate(record),
+            messageWithCycles
+        )
+        assertEvaluation(
+            evaluationResult,
+            HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(type, null).evaluate(record),
+            messageWithoutCycles ?: messageWithCycles
+        )
     }
 }

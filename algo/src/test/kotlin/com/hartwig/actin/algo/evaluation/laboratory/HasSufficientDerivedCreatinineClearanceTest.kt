@@ -131,7 +131,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine),
-            "eGFR (CG) based on creatinine level (umol/L) most likely above min of 80.0 but body weight unknown"
+            "eGFR (CG) based on creatinine level (µmol/L) most likely above min of 80.0 but body weight unknown"
         )
 
         // CG 67
@@ -139,7 +139,7 @@ class HasSufficientDerivedCreatinineClearanceTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(fallBack2, LabMeasurement.CREATININE, creatinine),
-            "eGFR (CG) may be insufficient based on creatinine level (umol/L) but body weight unknown"
+            "eGFR (CG) may be insufficient based on creatinine level (µmol/L) but body weight unknown"
         )
     }
 

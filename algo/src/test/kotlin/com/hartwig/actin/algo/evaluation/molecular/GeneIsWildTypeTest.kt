@@ -373,7 +373,8 @@ class GeneIsWildTypeTest {
                                         gene = "ALK",
                                         isReportable = true,
                                         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                                        driverLikelihood = DriverLikelihood.HIGH
+                                        driverLikelihood = DriverLikelihood.HIGH,
+                                        event = "event 1"
                                     ),
                                 TestVariantFactory.createMinimal()
                                     .copy(
@@ -393,8 +394,7 @@ class GeneIsWildTypeTest {
                                         gene = "KRAS",
                                         isReportable = true,
                                         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                                        driverLikelihood = DriverLikelihood.HIGH,
-                                        event = "event 1"
+                                        driverLikelihood = DriverLikelihood.HIGH
                                     ),
 
                                 )

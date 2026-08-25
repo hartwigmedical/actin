@@ -19,14 +19,22 @@ class HasLimitedIndirectBilirubinULNTest {
     fun `Should pass when indirect bilirubin below requested fold of ULN`() {
         val record = LabTestFactory.withLabValue(totalBilirubin)
         val actual = function.evaluate(record, LabMeasurement.DIRECT_BILIRUBIN, directBilirubin)
-        assertEvaluation(EvaluationResult.PASS, actual, "Indirect bilirubin 11.5 umol/L below max of 2.0*ULN (24.0 umol/L)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            actual,
+            "Indirect bilirubin 11.5 µmol/L below max of 2.0*ULN (24.0 µmol/L)"
+        )
     }
 
     @Test
     fun `Should fail if indirect bilirubin is above requested fold of ULN and outside of margin of error`() {
         val record = LabTestFactory.withLabValue(totalBilirubin.copy(value = 30.0))
         val actual = function.evaluate(record, LabMeasurement.DIRECT_BILIRUBIN, directBilirubin)
-        assertEvaluation(EvaluationResult.FAIL, actual, "Indirect bilirubin 25.5 umol/L exceeds max of 2.0*ULN (24.0 umol/L)")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            actual,
+            "Indirect bilirubin 25.5 µmol/L exceeds max of 2.0*ULN (24.0 µmol/L)"
+        )
         assertThat(actual.recoverable).isTrue
     }
 
@@ -53,7 +61,7 @@ class HasLimitedIndirectBilirubinULNTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             actual,
-            "Indirect bilirubin 25.0 umol/L exceeds max of 2.0*ULN (24.0 umol/L) but within margin of error"
+            "Indirect bilirubin 25.0 µmol/L exceeds max of 2.0*ULN (24.0 µmol/L) but within margin of error"
         )
         assertThat(actual.recoverable).isTrue
     }

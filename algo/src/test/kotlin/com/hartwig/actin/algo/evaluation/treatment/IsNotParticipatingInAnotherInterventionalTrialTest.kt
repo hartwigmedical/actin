@@ -33,7 +33,13 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(
+                TreatmentTestFactory.withTreatmentsAndMedications(
+                    treatmentHistory,
+                    null
+                )
+            ),
+            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
         )
     }
 
@@ -60,7 +66,13 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(
+                TreatmentTestFactory.withTreatmentsAndMedications(
+                    treatmentHistory,
+                    null
+                )
+            ),
+            "Undetermined if patient may be participating in another interventional trial (missing stop date)"
         )
     }
 
@@ -80,7 +92,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
-            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
+            "Undetermined if patient may be participating in another interventional trial (missing stop date)"
         )
     }
 
