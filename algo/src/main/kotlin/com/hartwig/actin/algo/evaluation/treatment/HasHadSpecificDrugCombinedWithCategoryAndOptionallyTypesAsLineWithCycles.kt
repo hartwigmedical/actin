@@ -22,7 +22,8 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
         val relevantHistory = specificDrugCombinedWithCategoryAndTypesEvaluator.relevantHistory(record)
 
         val historyWithSpecificCombination = relevantHistory.filter { entry ->
-            entry.allTreatments().any { specificDrugCombinedWithCategoryAndTypesEvaluator.treatmentWithoutDrugMatchesCategoryAndType(it) }
+            entry.allTreatments()
+                .any { specificDrugCombinedWithCategoryAndTypesEvaluator.treatmentWithoutDrugMatchesCategoryAndType(it) }
         }
         val hasSufficientCycles = historyWithSpecificCombination.map { entry ->
             val cycles = entry.treatmentHistoryDetails?.cycles
@@ -33,14 +34,18 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
             }
         }.toSet()
 
-        val hadCombinationWithTrialWithUnknownType = relevantHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, setOf(category)) }
-        val hadTrialWithUnspecifiedTreatment = record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
+        val hadCombinationWithTrialWithUnknownType =
+            relevantHistory.any { TrialFunctions.treatmentMayMatchAsTrial(it, setOf(category)) }
+        val hadTrialWithUnspecifiedTreatment =
+            record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
         val treatmentDesc = specificDrugCombinedWithCategoryAndTypesEvaluator.treatmentString()
         val cyclesString = minCycles?.let { " and at least $it cycles" } ?: ""
 
         return when {
-            historyWithSpecificCombination.isNotEmpty() && line != null -> EvaluationFactory.undetermined("Has received $treatmentDesc but unknown if in line $line")
+            historyWithSpecificCombination.isNotEmpty() && line != null -> {
+                EvaluationFactory.undetermined("Has received $treatmentDesc but unknown if in line $line")
+            }
 
             true in hasSufficientCycles -> EvaluationFactory.pass("Has received $treatmentDesc$cyclesString")
 
