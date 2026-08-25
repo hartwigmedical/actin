@@ -15,7 +15,7 @@ object TreatmentHistoryEntryFunctions {
 
     private data class NullableYearMonth(val year: Int?, val month: Int?)
 
-    private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int>())
+    private val nullSafeComparator = nullsLast<Int>()
     private val stageDateComparatorNullsLast = Comparator.comparing(TreatmentStage::startYear, nullSafeComparator)
         .thenComparing(TreatmentStage::startMonth, nullSafeComparator)
 
