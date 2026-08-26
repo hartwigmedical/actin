@@ -17,15 +17,10 @@ private enum class IcdMatchCategory {
 
 class IcdModel(
     val codeToNodeMap: Map<String, IcdNode>,
-    val titleToCodeMap: Map<String, String>
+    val titleToCodeMap: Map<String, String>,
+    val mainTitleToCodeMap: Map<String, String>,
+    val extensionTitleToCodeMap: Map<String, String>
 ) {
-
-    val mainTitleToCodeMap = titleToCodeMapForSlot(extensionSlot = false)
-    val extensionTitleToCodeMap = titleToCodeMapForSlot(extensionSlot = true)
-
-    private fun titleToCodeMapForSlot(extensionSlot: Boolean): Map<String, String> =
-        codeToNodeMap.values.filter { it.isExtension == extensionSlot }
-            .associate { it.title.lowercase() to it.code }
 
     fun isMainCode(code: String): Boolean = codeToNodeMap[code]?.isExtension == false
 
@@ -143,7 +138,16 @@ class IcdModel(
 
     companion object {
         fun create(nodes: List<IcdNode>): IcdModel {
-            return IcdModel(createCodeToNodeMap(nodes), createTitleToCodeMap(nodes))
+            val (extensionNodes, mainNodes) = nodes.partition(IcdNode::isExtension)
+            val mainTitleToCodeMap = createTitleToCodeMap(mainNodes)
+            val extensionTitleToCodeMap = createTitleToCodeMap(extensionNodes)
+
+            return IcdModel(
+                createCodeToNodeMap(nodes),
+                mainTitleToCodeMap + extensionTitleToCodeMap,
+                mainTitleToCodeMap,
+                extensionTitleToCodeMap
+            )
         }
 
         private fun createCodeToNodeMap(icdNodes: List<IcdNode>): Map<String, IcdNode> = icdNodes.associateBy { it.code }
