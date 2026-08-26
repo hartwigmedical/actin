@@ -5,6 +5,10 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.datamodel.IcdMatches
 import com.hartwig.actin.icd.datamodel.IcdNode
 
+private const val SLOT_SEPARATOR = '&'
+private const val MAIN_SLOT = "a main title"
+private const val EXTENSION_SLOT = "an extension title"
+
 private enum class IcdMatchCategory {
     FULL_MATCH,
     MATCH_WITH_UNKNOWN_EXTENSION,
@@ -13,33 +17,36 @@ private enum class IcdMatchCategory {
 
 class IcdModel(
     val codeToNodeMap: Map<String, IcdNode>,
-    val titleToCodeMap: Map<String, String>
+    val mainTitleToCodeMap: Map<String, String>,
+    val extensionTitleToCodeMap: Map<String, String>
 ) {
 
-    fun isValidIcdTitle(icdTitle: String): Boolean {
-        val titles = icdTitle.split('&')
-        return titles.size in 1..2 && titles.map(String::lowercase).all(titleToCodeMap::containsKey)
-    }
+    fun isMainCode(code: String): Boolean = codeToNodeMap[code]?.isExtension == false
 
-    fun isValidIcdCode(icdCode: String): Boolean {
-        val codes = icdCode.split('&')
-        return codes.size in 1..2 && codes.all(codeToNodeMap::containsKey)
-    }
+    fun isExtensionCode(code: String): Boolean = codeToNodeMap[code]?.isExtension == true
 
-    fun resolveCodeForTitle(icdTitle: String): IcdCode? {
-        val split = icdTitle.lowercase().split('&')
-        return titleToCodeMap[split[0]]?.let { mainCode ->
-            split.takeIf { it.size == 2 }?.get(1)?.trim()?.ifEmpty { null }?.let { extensionTitle ->
-                titleToCodeMap[extensionTitle]?.let { IcdCode(mainCode, it) } ?: return null
-            } ?: IcdCode(mainCode, null)
+    fun isValidIcdTitle(icdTitle: String): Boolean = resolveCodeForTitle(icdTitle) != null
+
+    fun isValidIcdCode(icdCode: String): Boolean = resolveCodeForCodeString(icdCode) != null
+
+    fun resolveCodeForTitle(icdTitle: String): IcdCode? =
+        splitSlots(icdTitle)?.let { (mainTitle, extensionTitle) ->
+            val mainCode = mainTitleToCodeMap[mainTitle.lowercase()]
+            val extensionCode = extensionTitle?.let { extensionTitleToCodeMap[it.lowercase()] }
+            val slotsAreValid = mainCode != null && (extensionTitle == null || extensionCode != null)
+
+            if (slotsAreValid) IcdCode(mainCode, extensionCode) else null
         }
-    }
+
+    fun invalidTitleReason(icdTitle: String): String? =
+        when (val slots = splitSlots(icdTitle)) {
+            null -> malformedTitleReason(icdTitle)
+            else -> invalidMainTitleReason(slots.first) ?: slots.second?.let(::invalidExtensionTitleReason)
+        }
 
     fun resolveTitleForCodeString(code: String): String {
-        if (!isValidIcdCode(code)) {
-            throw IllegalStateException("Invalid ICD code: $code")
-        }
-        return resolveTitleForCode(code.split('&').let { IcdCode(it[0], it.getOrNull(1)) }, displayWithSpaces = false)
+        val icdCode = resolveCodeForCodeString(code) ?: throw IllegalStateException("Invalid ICD code: $code")
+        return resolveTitleForCode(icdCode, displayWithSpaces = false)
     }
 
     fun codeWithAllParents(code: String?): List<String> {
@@ -50,10 +57,6 @@ class IcdModel(
         val separator = if (displayWithSpaces) " & " else "&"
         val extensionTitle = icdCode.extensionCode?.let { titleFromMap(it) }
         return listOfNotNull(titleFromMap(icdCode.mainCode), extensionTitle).joinToString(separator)
-    }
-
-    private fun titleFromMap(code: String): String {
-        return codeToNodeMap[code]?.title ?: throw IllegalStateException("ICD title unresolvable for code $code")
     }
 
     fun <T : Comorbidity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Iterable<IcdCode>): IcdMatches<T> {
@@ -84,6 +87,45 @@ class IcdModel(
         }
     }
 
+    private fun splitSlots(input: String): Pair<String, String?>? {
+        val slots = input.split(SLOT_SEPARATOR).map(String::trim)
+        return slots.takeIf { it.size in 1..2 && it.first().isNotEmpty() }
+            ?.let { it.first() to it.getOrNull(1)?.ifEmpty { null } }
+    }
+
+    private fun resolveCodeForCodeString(code: String): IcdCode? {
+        val (mainCode, extensionCode) = splitSlots(code) ?: return null
+        val slotsAreValid = isMainCode(mainCode) && (extensionCode == null || isExtensionCode(extensionCode))
+
+        return IcdCode(mainCode, extensionCode).takeIf { slotsAreValid }
+    }
+
+    private fun invalidMainTitleReason(mainTitle: String): String? =
+        unknownOrMisplacedTitleReason(mainTitle, mainTitleToCodeMap, extensionTitleToCodeMap, EXTENSION_SLOT, MAIN_SLOT)
+
+    private fun invalidExtensionTitleReason(extensionTitle: String): String? =
+        unknownOrMisplacedTitleReason(extensionTitle, extensionTitleToCodeMap, mainTitleToCodeMap, MAIN_SLOT, EXTENSION_SLOT)
+
+    private fun unknownOrMisplacedTitleReason(
+        title: String,
+        expectedSlotTitles: Map<String, String>,
+        otherSlotTitles: Map<String, String>,
+        otherSlot: String,
+        expectedSlot: String
+    ): String? =
+        when (title.lowercase()) {
+            in expectedSlotTitles -> null
+            in otherSlotTitles -> "ICD title [$title] is $otherSlot and cannot be used as $expectedSlot"
+            else -> "ICD title [$title] is not known. Check for existence in ICD model"
+        }
+
+    private fun malformedTitleReason(icdTitle: String): String =
+        "ICD title [$icdTitle] must be a single main title, optionally followed by '$SLOT_SEPARATOR' and one extension title"
+
+    private fun titleFromMap(code: String): String {
+        return codeToNodeMap[code]?.title ?: throw IllegalStateException("ICD title unresolvable for code $code")
+    }
+
     private fun allCodesForEntity(entity: Comorbidity): Set<IcdCode> {
         return entity.icdCodes.flatMap { code ->
             val extensionCodes = code.extensionCode?.let { codeWithAllParents(it) + null } ?: listOf(null)
@@ -95,7 +137,13 @@ class IcdModel(
 
     companion object {
         fun create(nodes: List<IcdNode>): IcdModel {
-            return IcdModel(createCodeToNodeMap(nodes), createTitleToCodeMap(nodes))
+            val (extensionNodes, mainNodes) = nodes.partition(IcdNode::isExtension)
+
+            return IcdModel(
+                createCodeToNodeMap(nodes),
+                createTitleToCodeMap(mainNodes),
+                createTitleToCodeMap(extensionNodes)
+            )
         }
 
         private fun createCodeToNodeMap(icdNodes: List<IcdNode>): Map<String, IcdNode> = icdNodes.associateBy { it.code }

@@ -171,7 +171,7 @@ class HasToxicityWithGradeTest {
         source: ToxicitySource,
         grade: Int? = null,
         name: String? = null,
-        icdMainCode: String = icdModel.titleToCodeMap.keys.first(),
+        icdMainCode: String = icdModel.mainTitleToCodeMap.keys.first(),
         endDate: LocalDate? = null,
         evaluatedDate: LocalDate? = null
     ): Toxicity {
