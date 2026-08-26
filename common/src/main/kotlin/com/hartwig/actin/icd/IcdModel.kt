@@ -44,46 +44,11 @@ class IcdModel(
             if (slotsAreValid) IcdCode(mainCode, extensionCode) else null
         }
 
-    private fun splitSlots(input: String): Pair<String, String?>? {
-        val slots = input.split(SLOT_SEPARATOR).map(String::trim)
-        return slots.takeIf { it.size in 1..2 && it.first().isNotEmpty() }
-            ?.let { it.first() to it.getOrNull(1)?.ifEmpty { null } }
-    }
-
-    private fun resolveCodeForCodeString(code: String): IcdCode? {
-        val (mainCode, extensionCode) = splitSlots(code) ?: return null
-        val slotsAreValid = isMainCode(mainCode) && (extensionCode == null || isExtensionCode(extensionCode))
-
-        return IcdCode(mainCode, extensionCode).takeIf { slotsAreValid }
-    }
-
     fun invalidTitleReason(icdTitle: String): String? =
         when (val slots = splitSlots(icdTitle)) {
             null -> malformedTitleReason(icdTitle)
             else -> invalidMainTitleReason(slots.first) ?: slots.second?.let(::invalidExtensionTitleReason)
         }
-
-    private fun invalidMainTitleReason(mainTitle: String): String? =
-        unknownOrMisplacedTitleReason(mainTitle, mainTitleToCodeMap, extensionTitleToCodeMap, EXTENSION_SLOT, MAIN_SLOT)
-
-    private fun invalidExtensionTitleReason(extensionTitle: String): String? =
-        unknownOrMisplacedTitleReason(extensionTitle, extensionTitleToCodeMap, mainTitleToCodeMap, MAIN_SLOT, EXTENSION_SLOT)
-
-    private fun unknownOrMisplacedTitleReason(
-        title: String,
-        expectedSlotTitles: Map<String, String>,
-        otherSlotTitles: Map<String, String>,
-        otherSlot: String,
-        expectedSlot: String
-    ): String? =
-        when (title.lowercase()) {
-            in expectedSlotTitles -> null
-            in otherSlotTitles -> "ICD title [$title] is $otherSlot and cannot be used as $expectedSlot"
-            else -> "ICD title [$title] is not known. Check for existence in ICD model"
-        }
-
-    private fun malformedTitleReason(icdTitle: String): String =
-        "ICD title [$icdTitle] must be a single main title, optionally followed by '$SLOT_SEPARATOR' and one extension title"
 
     fun resolveTitleForCodeString(code: String): String {
         val icdCode = resolveCodeForCodeString(code) ?: throw IllegalStateException("Invalid ICD code: $code")
@@ -98,10 +63,6 @@ class IcdModel(
         val separator = if (displayWithSpaces) " & " else "&"
         val extensionTitle = icdCode.extensionCode?.let { titleFromMap(it) }
         return listOfNotNull(titleFromMap(icdCode.mainCode), extensionTitle).joinToString(separator)
-    }
-
-    private fun titleFromMap(code: String): String {
-        return codeToNodeMap[code]?.title ?: throw IllegalStateException("ICD title unresolvable for code $code")
     }
 
     fun <T : Comorbidity> findInstancesMatchingAnyIcdCode(instances: List<T>, targetIcdCodes: Iterable<IcdCode>): IcdMatches<T> {
@@ -130,6 +91,45 @@ class IcdModel(
         return instances.filter { entity ->
             entity.icdCodes.any { codeWithAllParents(it.extensionCode).any(targetExtensionCodes::contains) }
         }
+    }
+
+    private fun splitSlots(input: String): Pair<String, String?>? {
+        val slots = input.split(SLOT_SEPARATOR).map(String::trim)
+        return slots.takeIf { it.size in 1..2 && it.first().isNotEmpty() }
+            ?.let { it.first() to it.getOrNull(1)?.ifEmpty { null } }
+    }
+
+    private fun resolveCodeForCodeString(code: String): IcdCode? {
+        val (mainCode, extensionCode) = splitSlots(code) ?: return null
+        val slotsAreValid = isMainCode(mainCode) && (extensionCode == null || isExtensionCode(extensionCode))
+
+        return IcdCode(mainCode, extensionCode).takeIf { slotsAreValid }
+    }
+
+    private fun invalidMainTitleReason(mainTitle: String): String? =
+        unknownOrMisplacedTitleReason(mainTitle, mainTitleToCodeMap, extensionTitleToCodeMap, EXTENSION_SLOT, MAIN_SLOT)
+
+    private fun invalidExtensionTitleReason(extensionTitle: String): String? =
+        unknownOrMisplacedTitleReason(extensionTitle, extensionTitleToCodeMap, mainTitleToCodeMap, MAIN_SLOT, EXTENSION_SLOT)
+
+    private fun unknownOrMisplacedTitleReason(
+        title: String,
+        expectedSlotTitles: Map<String, String>,
+        otherSlotTitles: Map<String, String>,
+        otherSlot: String,
+        expectedSlot: String
+    ): String? =
+        when (title.lowercase()) {
+            in expectedSlotTitles -> null
+            in otherSlotTitles -> "ICD title [$title] is $otherSlot and cannot be used as $expectedSlot"
+            else -> "ICD title [$title] is not known. Check for existence in ICD model"
+        }
+
+    private fun malformedTitleReason(icdTitle: String): String =
+        "ICD title [$icdTitle] must be a single main title, optionally followed by '$SLOT_SEPARATOR' and one extension title"
+
+    private fun titleFromMap(code: String): String {
+        return codeToNodeMap[code]?.title ?: throw IllegalStateException("ICD title unresolvable for code $code")
     }
 
     private fun allCodesForEntity(entity: Comorbidity): Set<IcdCode> {
