@@ -88,7 +88,6 @@
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",
         "stopReasonDetail": null,
-        "switchToTreatments": null,
         "maintenanceTreatment": null
       },
       "toxicities": [
@@ -327,7 +326,7 @@
   "bloodTransfusions": [
     {
       "date": "2024-08-20",
-      "product": "PLATELETS_POOLED"
+      "product": "THROMBOCYTE"
     }
   ],
   "medications": [

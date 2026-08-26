@@ -143,6 +143,46 @@ class TumorEvaluationFunctionsTest {
     }
 
     @Test
+    fun `Should return false if patient does not have spleen metastases`() {
+        listOf("abdominal metastases", "Lymph node").forEach { lesion ->
+            val tumor = TumorTestFactory.withOtherLesions(listOf(lesion)).tumor
+            assertThat(TumorEvaluationFunctions.hasSpleenMetastases(tumor)).isFalse
+        }
+    }
+
+    @Test
+    fun `Should return true if patient does have spleen metastases`() {
+        listOf(
+            "splenic metastases",
+            "Lesion in lien",
+            "spleen"
+        ).forEach { lesion ->
+            val tumor = TumorTestFactory.withOtherLesions(listOf(lesion)).tumor
+            assertThat(TumorEvaluationFunctions.hasSpleenMetastases(tumor)).isTrue
+        }
+    }
+
+    @Test
+    fun `Should return false if patient does not have soft tissue metastases`() {
+        listOf("abdominal metastases", "Lymph node").forEach { lesion ->
+            val tumor = TumorTestFactory.withOtherLesions(listOf(lesion)).tumor
+            assertThat(TumorEvaluationFunctions.hasSoftTissueMetastases(tumor)).isFalse
+        }
+    }
+
+    @Test
+    fun `Should return true if patient does have soft tissue metastases`() {
+        listOf(
+            "soft tissue metastases",
+            "Lesion in muscle",
+            "skin"
+        ).forEach { lesion ->
+            val tumor = TumorTestFactory.withOtherLesions(listOf(lesion)).tumor
+            assertThat(TumorEvaluationFunctions.hasSoftTissueMetastases(tumor)).isTrue
+        }
+    }
+
+    @Test
     fun `Should return null if patient tumor details are unknown`() {
         assertThat(TumorEvaluationFunctions.hasPeritonealMetastases(TumorDetails())).isNull()
     }

@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.clinical.Gender
 import com.hartwig.actin.datamodel.clinical.IcdCode
@@ -9,6 +10,7 @@ import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
 import com.hartwig.actin.util.ApplicationConfig
 import org.assertj.core.api.Assertions.assertThat
@@ -24,6 +26,7 @@ class PatientCurrentDetailsGeneratorTest {
 
     private val minimalPatientRecord = TestPatientFactory.createMinimalTestWGSPatientRecord()
     private val referenceDate = LocalDate.of(2024, 10, 1)
+    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
 
     @Test
     fun `Should return title with questionnaire date`() {
@@ -40,7 +43,7 @@ class PatientCurrentDetailsGeneratorTest {
         )
 
         val patientCurrentDetailsGenerator =
-            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate, labels)
         assertThat(patientCurrentDetailsGenerator.title())
             .isEqualTo("Patient current details (%s)", DATE_FORMAT.format(questionnaireDate))
     }
@@ -70,7 +73,7 @@ class PatientCurrentDetailsGeneratorTest {
         )
 
         val patientCurrentDetailsGenerator =
-            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate, labels)
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(3)
@@ -95,7 +98,7 @@ class PatientCurrentDetailsGeneratorTest {
             )
         )
         val patientCurrentDetailsGenerator =
-            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate, labels)
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)
@@ -112,7 +115,7 @@ class PatientCurrentDetailsGeneratorTest {
             )
         )
         val patientCurrentDetailsGenerator =
-            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate, labels)
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)
@@ -128,7 +131,7 @@ class PatientCurrentDetailsGeneratorTest {
             )
         )
         val patientCurrentDetailsGenerator =
-            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate)
+            PatientCurrentDetailsGenerator(patientRecord, KEY_WIDTH, VALUE_WIDTH, referenceDate, labels)
         val table = patientCurrentDetailsGenerator.contents()
 
         assertThat(table.numberOfRows).isEqualTo(2)

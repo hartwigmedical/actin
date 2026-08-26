@@ -62,6 +62,13 @@ class DoidModelTest {
         assertThat(model.resolveDoidForTerm("tumor B")).isNull()
     }
 
+    @Test
+    fun `Should return doid`() {
+        val model = createTestModel(TestDoidManualConfigFactory.createMinimalTestDoidManualConfig())
+        assertThat(model.toDoid("tumor a")).isEqualTo("200")
+        assertThat(model.toDoid("200")).isEqualTo("200")
+    }
+
     private fun createTestModel(manualConfig: DoidManualConfig): DoidModel {
         val childToParentsMap = mapOf(
             "200" to listOf("300"),

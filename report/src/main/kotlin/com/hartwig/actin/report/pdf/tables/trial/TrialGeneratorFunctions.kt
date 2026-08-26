@@ -24,6 +24,7 @@ object TrialGeneratorFunctions {
     private const val NO_SLOTS = "(no slots)"
     private const val CLOSED = "(closed)"
     private const val SMALL_LINE_DISTANCE = 0.9f
+    private const val SUPERSCRIPT_RISE_RATIO = 0.4f
 
     fun addTrialsToTable(
         table: Table,
@@ -114,17 +115,21 @@ object TrialGeneratorFunctions {
 
     private fun generateTrialTitleCell(cohortsForTrial: List<InterpretedCohort>, useSmallerSize: Boolean): Cell {
         val anyCohort = cohortsForTrial.first()
-        val trialIdIsNotAcronym = anyCohort.trialId.trimIndent() != anyCohort.acronym
+        val trialId = anyCohort.trialId.trimIndent()
+        val trialIdIsNotAcronym = trialId != anyCohort.acronym
+        val hasCtGovSource = anyCohort.sources.singleOrNull() == TrialSource.CTgov
+        val fontSize = if (useSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
+        val asterisk = Text("*").addStyle(Styles.tableHighlightStyle()).setFontSize(fontSize).setTextRise(fontSize * SUPERSCRIPT_RISE_RATIO)
         val trialLabelText = listOfNotNull(
-            Text(anyCohort.trialId.trimIndent()).addStyle(Styles.tableHighlightStyle()),
+            Text(trialId).addStyle(Styles.tableHighlightStyle()),
+            if (hasCtGovSource) asterisk else null,
             if (trialIdIsNotAcronym) Text("\n") else null,
             if (trialIdIsNotAcronym) Text(anyCohort.acronym).addStyle(Styles.tableContentStyle()) else null,
             anyCohort.phase?.takeIf { it != TrialPhase.COMPASSIONATE_USE }
                 ?.let { Text("\n(${it.display()})").addStyle(Styles.tableContentStyle()) })
 
         val paragraph = if (useSmallerSize) Paragraph().setMultipliedLeading(SMALL_LINE_DISTANCE) else Paragraph()
-        val fontSize = if (useSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
-        val trialLabels = trialLabelText.map { it.setFontSize(fontSize) }
+        val trialLabels = trialLabelText.map { if (it === asterisk) it else it.setFontSize(fontSize) }
         return anyCohort.url?.let {
             Cells.createContent(paragraph.addAll(trialLabels.map { label -> label.addStyle(Styles.urlStyle()) }))
                 .setAction(PdfAction.createURI(it))

@@ -7,6 +7,7 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
@@ -150,7 +151,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         )
         evaluateFunctions(EvaluationResult.UNDETERMINED, priorCancerTreatment)
         assertThat(function.evaluate(priorCancerTreatment).undeterminedMessagesStrings()).containsExactly(
-            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months (date unknown)"
+            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months"
         )
     }
 
@@ -236,7 +237,11 @@ class HasHadAnyCancerTreatmentSinceDateTest {
                     stopYear = OLDER_DATE.year,
                     stopMonth = OLDER_DATE.monthValue
                 )
-            ), listOf(WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1)))
+            ),
+            listOf(
+                WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1))
+                    .copy(drug = Drug(name = "", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
+            )
         )
         evaluateFunctions(EvaluationResult.PASS, priorCancerTreatment)
     }

@@ -11,7 +11,8 @@ import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.report.datamodel.Report
-import com.hartwig.actin.report.interpretation.MedicationToTreatmentConverter
+import com.hartwig.actin.medication.MedicationToTreatmentConverter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
 import com.hartwig.actin.report.pdf.util.Cells.create
@@ -30,11 +31,12 @@ class ClinicalSummaryGenerator(
     private val report: Report,
     private val includeAdditionalFields: Boolean,
     private val keyWidth: Float,
-    private val valueWidth: Float
+    private val valueWidth: Float,
+    private val labels: ReportLabels
 ) : TableGenerator {
 
     override fun title(): String {
-        return "Clinical summary"
+        return labels.clinicalDetails.summaryTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -51,15 +53,15 @@ class ClinicalSummaryGenerator(
         val record = report.patientRecord
 
         return listOfNotNull(
-            "Relevant systemic treatment history" to relevantSystemicTreatmentHistoryTable(record),
+            labels.clinicalDetails.sectionSystemicHistory() to relevantSystemicTreatmentHistoryTable(record),
             if (includeAdditionalFields) {
-                "Relevant other oncological history" to relevantNonSystemicTreatmentHistoryTable(record)
+                labels.clinicalDetails.sectionOtherOncological() to relevantNonSystemicTreatmentHistoryTable(record)
             } else null,
             if (includeAdditionalFields) {
-                "Previous primary tumor" to priorPrimaryTable(record)
+                labels.clinicalDetails.sectionPreviousPrimary() to priorPrimaryTable(record)
             } else null,
             if (includeAdditionalFields) {
-                "Relevant non-oncological history" to relevantNonOncologicalHistoryTable(record)
+                labels.clinicalDetails.sectionNonOncological() to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
     }
@@ -91,10 +93,10 @@ class ClinicalSummaryGenerator(
         val treatmentWidth = valueWidth - dateWidth
         val table = createDoubleColumnTable(dateWidth, treatmentWidth)
 
-        val medicationsToAdd = MedicationToTreatmentConverter.convert(medications, treatmentHistory)
         val systemicTreatmentHistory = treatmentHistory.filter { treatmentHistoryEntryIsSystemic(it) == requireSystemic }
+        val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(medications, systemicTreatmentHistory)
 
-        (systemicTreatmentHistory + medicationsToAdd).sortedWith(TreatmentHistoryAscendingDateComparator())
+        effectiveTreatmentHistory.sortedWith(TreatmentHistoryAscendingDateComparator())
             .groupBy { Triple(extractTreatmentString(it), it.startMonth, it.startYear) }
             .forEach { (key, historyEntries) ->
                 val details =
@@ -178,11 +180,6 @@ class ClinicalSummaryGenerator(
 
         val treatmentWithAnnotation = listOfNotNull(
             treatmentHistoryEntry.treatmentDisplay() + if (annotation.isEmpty()) "" else " ($annotation)",
-            treatmentHistoryEntry.treatmentHistoryDetails?.switchToTreatments?.ifEmpty { null }?.let { switchToTreatments ->
-                switchToTreatments.joinToString(prefix = "with switch to ", separator = " then ") {
-                    it.treatment.display() + (it.cycles?.let { cycles -> " (${cycles} cycles)" } ?: "")
-                }
-            },
             treatmentHistoryEntry.treatmentHistoryDetails?.maintenanceTreatment?.let { maintenanceTreatment ->
                 "continued with ${maintenanceTreatment.treatment.display()} maintenance"
             }

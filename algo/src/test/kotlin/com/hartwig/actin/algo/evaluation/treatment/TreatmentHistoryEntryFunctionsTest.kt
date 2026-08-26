@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.evaluateIfDrugHadPDResponse
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
@@ -8,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -23,6 +25,34 @@ private val TRIAL_DRUG_TREATMENT_NO_CATEGORY = drugTreatment("Some trial drug", 
 class TreatmentHistoryEntryFunctionsTest {
 
     private val predicate: (Treatment) -> Boolean = { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
+
+    @Test
+    fun `Should place treatments with missing intent or other intent than requested in excluded partition`() {
+        val treatment = treatmentHistoryEntry(setOf(TARGET_DRUG_TREATMENT), 2022, 5)
+        val curative = treatment.copy(intents = setOf(Intent.CURATIVE))
+        val palliative = treatment.copy(intents = setOf(Intent.PALLIATIVE))
+        val nullIntent = treatment.copy(intents = null)
+        val (included, excluded) = listOf(
+            curative,
+            palliative,
+            nullIntent
+        ).partitionTreatmentsByIntent(Intent.curativeAdjuvantNeoadjuvantSet())
+        assertThat(included).containsExactly(curative)
+        assertThat(excluded).containsExactly(palliative, nullIntent)
+    }
+
+    @Test
+    fun `Should return all treatments in non-matching list when intent list is empty`() {
+        val treatment = treatmentHistoryEntry(setOf(TARGET_DRUG_TREATMENT), 2022, 5)
+        val entries = listOf(
+            treatment.copy(intents = setOf(Intent.CURATIVE)),
+            treatment.copy(intents = null),
+            treatment.copy(intents = emptySet())
+        )
+        val (included, excluded) = entries.partitionTreatmentsByIntent(emptySet())
+        assertThat(included).isEmpty()
+        assertThat(excluded).containsExactlyElementsOf(entries)
+    }
 
     @Test
     fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`() {
@@ -117,60 +147,39 @@ class TreatmentHistoryEntryFunctionsTest {
 
     @Test
     fun `Should return single-stage entry with aggregated treatments and cycles for matching multi-stage treatment`() {
-        val switchToTreatment = treatmentStage(drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)
-        val maintenanceTreatment = treatmentStage(drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY))
+        val maintenanceTreatment = treatmentStage(drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)),
-            switchToTreatments = listOf(switchToTreatment),
             maintenanceTreatment = maintenanceTreatment,
             numCycles = 2
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
                 entry.copy(
-                    treatments = entry.treatments + switchToTreatment.treatment + maintenanceTreatment.treatment,
-                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
-                        cycles = 5, switchToTreatments = emptyList(), maintenanceTreatment = null
-                    )
+                    treatments = entry.treatments + maintenanceTreatment.treatment,
+                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(cycles = 5, maintenanceTreatment = null)
                 )
             )
     }
 
     @Test
     fun `Should override stop date in treatment details when later treatment stages do not match`() {
-        val switchToTreatment = treatmentStage(
-            drugTreatment("switch treatment", TreatmentCategory.TARGETED_THERAPY), startYear = 2020, startMonth = 1, cycles = 3
-        )
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)),
-            switchToTreatments = listOf(switchToTreatment),
             maintenanceTreatment = treatmentStage(drugTreatment("maintenance treatment", TreatmentCategory.SUPPORTIVE_TREATMENT)),
             numCycles = 2
         )
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
-            .isEqualTo(
-                entry.copy(
-                    treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
-                        stopYear = switchToTreatment.startYear,
-                        stopMonth = switchToTreatment.startMonth,
-                        switchToTreatments = emptyList(),
-                        maintenanceTreatment = null
-                    )
-                )
-            )
+            .isEqualTo(entry.copy(treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(maintenanceTreatment = null)))
     }
 
     @Test
-    fun `Should return single-stage entry with aggregated treatments and cycles for partially matching multi-stage treatment`() {
-        val switchToTreatment = treatmentStage(
-            drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), startYear = 2020, startMonth = 1, cycles = 3
-        )
+    fun `Should override stop date to start of non-matching maintenance stage`() {
         val maintenanceTreatment = treatmentStage(
             drugTreatment("maintenance treatment", TreatmentCategory.SUPPORTIVE_TREATMENT), startYear = 2021, startMonth = 4
         )
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)),
-            switchToTreatments = listOf(switchToTreatment),
             maintenanceTreatment = maintenanceTreatment,
             numCycles = 2,
             stopYear = 2021,
@@ -179,10 +188,8 @@ class TreatmentHistoryEntryFunctionsTest {
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
                 entry.copy(
-                    treatments = entry.treatments + switchToTreatment.treatment,
                     treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
-                        cycles = 5,
-                        switchToTreatments = emptyList(),
+                        cycles = 2,
                         maintenanceTreatment = null,
                         stopYear = maintenanceTreatment.startYear,
                         stopMonth = maintenanceTreatment.startMonth
@@ -192,16 +199,12 @@ class TreatmentHistoryEntryFunctionsTest {
     }
 
     @Test
-    fun `Should not alter stop date when intermediate stage does not match`() {
-        val switchToTreatment = treatmentStage(
-            drugTreatment("switch treatment", TreatmentCategory.TARGETED_THERAPY), startYear = 2020, startMonth = 1, cycles = 3
-        )
+    fun `Should aggregate matching additional stage treatment with base treatment`() {
         val maintenanceTreatment = treatmentStage(
             drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY), startYear = 2021, startMonth = 4
         )
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)),
-            switchToTreatments = listOf(switchToTreatment),
             maintenanceTreatment = maintenanceTreatment,
             numCycles = 2,
             stopYear = 2021,
@@ -213,7 +216,6 @@ class TreatmentHistoryEntryFunctionsTest {
                     treatments = entry.treatments + maintenanceTreatment.treatment,
                     treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
                         cycles = 2,
-                        switchToTreatments = emptyList(),
                         maintenanceTreatment = null
                     )
                 )
@@ -222,15 +224,11 @@ class TreatmentHistoryEntryFunctionsTest {
 
     @Test
     fun `Should return entry representing matching stages when base treatment does not match`() {
-        val switchToTreatment = treatmentStage(
-            drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), startYear = 2020, startMonth = 1, cycles = 3
-        )
         val maintenanceTreatment = treatmentStage(
-            drugTreatment("maintenance treatment", TreatmentCategory.SUPPORTIVE_TREATMENT), startYear = 2021, startMonth = 4
+            drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY), startYear = 2021, startMonth = 4
         )
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.TARGETED_THERAPY)),
-            switchToTreatments = listOf(switchToTreatment),
             maintenanceTreatment = maintenanceTreatment,
             numCycles = 2,
             startYear = 2019,
@@ -241,15 +239,12 @@ class TreatmentHistoryEntryFunctionsTest {
         assertThat(TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry, predicate))
             .isEqualTo(
                 entry.copy(
-                    treatments = setOf(switchToTreatment.treatment),
-                    startYear = switchToTreatment.startYear,
-                    startMonth = switchToTreatment.startMonth,
+                    treatments = setOf(maintenanceTreatment.treatment),
+                    startYear = maintenanceTreatment.startYear,
+                    startMonth = maintenanceTreatment.startMonth,
                     treatmentHistoryDetails = entry.treatmentHistoryDetails!!.copy(
-                        cycles = 3,
-                        switchToTreatments = emptyList(),
                         maintenanceTreatment = null,
-                        stopYear = maintenanceTreatment.startYear,
-                        stopMonth = maintenanceTreatment.startMonth,
+                        cycles = null
                     )
                 )
             )
@@ -257,15 +252,11 @@ class TreatmentHistoryEntryFunctionsTest {
 
     @Test
     fun `Should return null when no stages of entry match`() {
-        val switchToTreatment = treatmentStage(
-            drugTreatment("switch treatment", TreatmentCategory.TARGETED_THERAPY)
-        )
         val maintenanceTreatment = treatmentStage(
             drugTreatment("maintenance treatment", TreatmentCategory.SUPPORTIVE_TREATMENT)
         )
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.TARGETED_THERAPY)),
-            switchToTreatments = listOf(switchToTreatment),
             maintenanceTreatment = maintenanceTreatment,
             numCycles = 2,
             stopYear = 2021,
@@ -275,22 +266,20 @@ class TreatmentHistoryEntryFunctionsTest {
     }
 
     @Test
-    fun `Should display switch and maintenance treatments when present`() {
-        val switchToTreatment = treatmentStage(drugTreatment("switch treatment", TreatmentCategory.CHEMOTHERAPY), cycles = 3)
+    fun `Should display maintenance treatments when present`() {
         val maintenanceTreatment = treatmentStage(drugTreatment("maintenance treatment", TreatmentCategory.CHEMOTHERAPY))
         val entry = treatmentHistoryEntry(
             setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)),
-            switchToTreatments = listOf(switchToTreatment),
             maintenanceTreatment = maintenanceTreatment,
             numCycles = 2
         )
         assertThat(TreatmentHistoryEntryFunctions.fullTreatmentDisplay(entry)).isEqualTo(
-            "Test treatment with switch to Switch treatment continued with Maintenance treatment maintenance"
+            "Test treatment continued with Maintenance treatment maintenance"
         )
     }
 
     @Test
-    fun `Should display base treatment when no switch and maintenance treatments present`() {
+    fun `Should display base treatment when no maintenance treatments present`() {
         val entry = treatmentHistoryEntry(setOf(drugTreatment("test treatment", TreatmentCategory.CHEMOTHERAPY)), numCycles = 2)
         assertThat(TreatmentHistoryEntryFunctions.fullTreatmentDisplay(entry)).isEqualTo("Test treatment")
     }
@@ -303,7 +292,12 @@ class TreatmentHistoryEntryFunctionsTest {
 
     @Test
     fun `Should return max number of weeks between the start and stop date of the treatment`() {
-        val entry = TreatmentHistoryEntry(treatments = emptySet(), startYear = 2024, startMonth = 3, treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8))
+        val entry = TreatmentHistoryEntry(
+            treatments = emptySet(),
+            startYear = 2024,
+            startMonth = 3,
+            treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8)
+        )
         assertThat(TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(entry)).isEqualTo(17)
     }
 }

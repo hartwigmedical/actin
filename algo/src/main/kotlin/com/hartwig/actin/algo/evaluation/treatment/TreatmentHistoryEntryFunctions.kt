@@ -5,6 +5,7 @@ import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -14,7 +15,7 @@ object TreatmentHistoryEntryFunctions {
 
     private data class NullableYearMonth(val year: Int?, val month: Int?)
 
-    private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int>())
+    private val nullSafeComparator = nullsLast<Int>()
     private val stageDateComparatorNullsLast = Comparator.comparing(TreatmentStage::startYear, nullSafeComparator)
         .thenComparing(TreatmentStage::startMonth, nullSafeComparator)
 
@@ -29,12 +30,15 @@ object TreatmentHistoryEntryFunctions {
     fun TreatmentHistoryEntry.containsTreatment(treatmentNameToFind: String) =
         allTreatments().any { it.name.equals(treatmentNameToFind, ignoreCase = true) }
 
+    fun Collection<TreatmentHistoryEntry>.partitionTreatmentsByIntent(intents: Set<Intent>): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> =
+        partition { it.intents?.any(intents::contains) == true }
+
     fun evaluateIfDrugHadPDResponse(treatmentHistory: List<TreatmentHistoryEntry>, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {
         val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)
 
         return treatmentHistory.map { entry ->
             val categoriesToMatch = drugsToMatch.map(Drug::category).toSet()
-            val isPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(entry)
+            val isPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, treatmentHistory)
             val matchingDrugs = entry.allTreatments().flatMap {
                 (it as? DrugTreatment)?.drugs?.intersect(drugsToMatch) ?: emptyList()
             }.toSet()
@@ -66,13 +70,10 @@ object TreatmentHistoryEntryFunctions {
 
     fun fullTreatmentDisplay(entry: TreatmentHistoryEntry): String {
         return entry.treatmentHistoryDetails?.let { details ->
-            val switchToTreatmentDisplay = if (details.switchToTreatments.isNullOrEmpty()) "" else {
-                " with switch to " + details.switchToTreatments!!.joinToString(" then ") { it.treatment.display() }
-            }
             val maintenanceTreatmentDisplay = details.maintenanceTreatment?.let {
                 " continued with ${details.maintenanceTreatment!!.treatment.display()} maintenance"
             } ?: ""
-            entry.treatmentDisplay() + switchToTreatmentDisplay + maintenanceTreatmentDisplay
+            entry.treatmentDisplay() + maintenanceTreatmentDisplay
         } ?: entry.treatmentDisplay()
     }
 
@@ -81,7 +82,7 @@ object TreatmentHistoryEntryFunctions {
     ): TreatmentHistoryEntry? {
         val initialTreatmentStageMatches = entry.treatments.any(predicate)
         val details = entry.treatmentHistoryDetails
-        val additionalTreatmentStages = (details?.switchToTreatments ?: emptyList()) + listOfNotNull(details?.maintenanceTreatment)
+        val additionalTreatmentStages = listOfNotNull(details?.maintenanceTreatment)
 
         val matchingAdditionalStages = dropNonMatchingStagesFromStartAndEnd(additionalTreatmentStages, predicate)
 
@@ -158,7 +159,6 @@ object TreatmentHistoryEntryFunctions {
             stopYear = stopYearMonth.year,
             stopMonth = stopYearMonth.month,
             maintenanceTreatment = null,
-            switchToTreatments = emptyList(),
             cycles = cycles
         ) ?: TreatmentHistoryDetails(
             stopYear = stopYearMonth.year,
@@ -168,7 +168,6 @@ object TreatmentHistoryEntryFunctions {
             bestResponse = null,
             stopReason = null,
             stopReasonDetail = null,
-            switchToTreatments = emptyList(),
             maintenanceTreatment = null
         )
     }

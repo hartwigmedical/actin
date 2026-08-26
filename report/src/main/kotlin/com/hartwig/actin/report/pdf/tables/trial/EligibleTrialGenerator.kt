@@ -4,6 +4,7 @@ import com.hartwig.actin.configuration.ExternalTrialTumorType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohort
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.trial.TrialGeneratorFunctions.addTrialsToTable
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Tables
@@ -20,7 +21,8 @@ class EligibleTrialGenerator(
     private val footNote: String?,
     private val indicateNoSlotsOrClosed: Boolean,
     private val useSmallerSize: Boolean,
-    private val includeWarningsColumn: Boolean
+    private val includeWarningsColumn: Boolean,
+    private val labels: ReportLabels
 ) : TrialTableGenerator {
 
     override fun title(): String {
@@ -39,12 +41,12 @@ class EligibleTrialGenerator(
                 Tables.createRelativeWidthCols(1f, 1f, 1f, 2f)
             }
 
-        table.addHeaderCell(Cells.createHeader("Trial"))
-        table.addHeaderCell(Cells.createHeader("Cohort"))
-        table.addHeaderCell(Cells.createHeader("Molecular"))
-        table.addHeaderCell(Cells.createHeader("Sites"))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colTrial()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colCohort()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colMolecular()))
+        table.addHeaderCell(Cells.createHeader(labels.trialMatching.colSites()))
         if (includeWarningsColumn) {
-            table.addHeaderCell(Cells.createHeader("Warnings"))
+            table.addHeaderCell(Cells.createHeader(labels.trialMatching.colWarnings()))
         }
 
         addTrialsToTable(
@@ -72,22 +74,18 @@ class EligibleTrialGenerator(
     }
 
     companion object {
-        const val FILTERED_TRIALS_SUFFIX = "See Other Trial Matching Results for filtered matches."
-        const val FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE =
-            "filtered because trial is running exclusively in children's hospital. $FILTERED_TRIALS_SUFFIX"
-        const val FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE =
-            "filtered because Dutch trials evaluated without clinical data aren't shown in lung cancer trial matching. $FILTERED_TRIALS_SUFFIX"
 
         fun localAndNationalExternalOpenAndEligibleCohorts(
             cohorts: List<InterpretedCohort>,
-            externalTrials: ExternalTrials,
+            externalTrials: ExternalTrials?,
             requestingSource: TrialSource?,
             countryOfReference: Country?,
             localTrialsType: LocalTrialsType,
-            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
+            labels: ReportLabels
         ): TrialTableGenerator {
-            val nationalExternalTrials = ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered)
-            val nationalExternalTrialFilteredCount = ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials()).size
+            val nationalExternalTrials = externalTrials?.let { ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered) } ?: emptySet()
+            val nationalExternalTrialFilteredCount = externalTrials?.let { ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials()).size } ?: 0
 
             return forLocalAndNationalExternalOpenAndEligibleLocalCohorts(
                 openAndEligibleLocalCohorts = filterOpenAndEligibleCohorts(localTrialsType, cohorts),
@@ -95,8 +93,9 @@ class EligibleTrialGenerator(
                 relevantNationalExternalTrialsFilteredCount = nationalExternalTrialFilteredCount,
                 requestingSource = requestingSource,
                 countryOfReference = countryOfReference,
-                trialDescriptionString = trialDescriptionString(localTrialsType, countryOfReference),
-                effectiveDutchExternalTrialExclusion = effectiveDutchExternalTrialExclusion
+                trialDescriptionString = trialDescriptionString(localTrialsType, countryOfReference, labels),
+                effectiveDutchExternalTrialExclusion = effectiveDutchExternalTrialExclusion,
+                labels = labels
             )
         }
 
@@ -104,7 +103,8 @@ class EligibleTrialGenerator(
             externalTrials: ExternalTrials,
             requestingSource: TrialSource?,
             isNational: Boolean,
-            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
+            labels: ReportLabels
         ): TrialTableGenerator {
             val (includedTrials, excludedTrials) = if (isNational) {
                 externalTrials.nationalTrials.filtered to externalTrials.excludedNationalTrials()
@@ -119,7 +119,8 @@ class EligibleTrialGenerator(
                 externalTrialsFilteredCount = relevantExternalTrialsFilteredCount,
                 requestingSource = requestingSource,
                 isNational = isNational,
-                effectiveDutchExternalTrialExclusion = effectiveDutchExternalTrialExclusion
+                effectiveDutchExternalTrialExclusion = effectiveDutchExternalTrialExclusion,
+                labels = labels
             )
         }
 
@@ -130,25 +131,27 @@ class EligibleTrialGenerator(
             requestingSource: TrialSource?,
             countryOfReference: Country? = null,
             trialDescriptionString: String,
-            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
+            labels: ReportLabels
         ): TrialTableGenerator {
             val openAndEligibleTrials = openAndEligibleLocalCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortsFromTrialsString = TrialFormatFunctions.generateCohortsFromTrialsString(
                 openAndEligibleLocalCohorts.size + relevantNationalExternalTrials.size,
-                openAndEligibleTrials.size + relevantNationalExternalTrials.size
+                openAndEligibleTrials.size + relevantNationalExternalTrials.size,
+                labels
             )
-            val title = "$trialDescriptionString that are open and potentially eligible $cohortsFromTrialsString"
+            val title = labels.trialMatching.titleOpenEligible(trialDescriptionString, cohortsFromTrialsString)
 
+            val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
             val footNote = if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG) {
                 relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                    "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
+                    labels.trialMatching.footnoteDutchLung(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
                 }
             } else {
                 listOfNotNull(
-                    "Trials matched solely on molecular event and tumor type (no clinical data used) are shown in italicized, smaller font."
-                        .takeIf { relevantNationalExternalTrials.isNotEmpty() },
+                    labels.trialMatching.footnoteExternalMatched().takeIf { relevantNationalExternalTrials.isNotEmpty() },
                     relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE"
+                        labels.trialMatching.footnoteChildrensHospital(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
                     }
                 ).joinToString("\n").ifEmpty { null }
             }
@@ -162,7 +165,8 @@ class EligibleTrialGenerator(
                 footNote = footNote,
                 indicateNoSlotsOrClosed = true,
                 useSmallerSize = false,
-                includeWarningsColumn = true
+                includeWarningsColumn = true,
+                labels = labels
             )
         }
 
@@ -180,30 +184,28 @@ class EligibleTrialGenerator(
             externalTrialsFilteredCount: Int,
             requestingSource: TrialSource?,
             isNational: Boolean,
-            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType
+            effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
+            labels: ReportLabels
         ): TrialTableGenerator {
-            val cohortsFromTrialsString = TrialFormatFunctions.generateCohortsFromTrialsString(externalTrials.size, externalTrials.size)
-            val nationalString = if (isNational) "National" else "International"
-            val title = "$nationalString trials that are open and potentially eligible $cohortsFromTrialsString"
+            val cohortsFromTrialsString =
+                TrialFormatFunctions.generateCohortsFromTrialsString(externalTrials.size, externalTrials.size, labels)
+            val nationalString = if (isNational) labels.trialMatching.phaseNational() else labels.trialMatching.phaseInternational()
+            val title = labels.trialMatching.titleOpenEligible(nationalString, cohortsFromTrialsString)
 
+            val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
             val footNote =
                 if (effectiveDutchExternalTrialExclusion == ExternalTrialTumorType.LUNG && isNational) {
                     externalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} $FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE"
+                        labels.trialMatching.footnoteDutchLung(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
                     }
                 } else {
                     listOfNotNull(
-                        "Trials in this table are matched solely on molecular event and tumor type (clinical data excluded)."
-                            .takeIf { externalTrials.isNotEmpty() },
-
+                        labels.trialMatching.footnoteExternalExcluded().takeIf { externalTrials.isNotEmpty() },
                         externalTrialsFilteredCount.takeIf { it > 0 && isNational }?.let { count ->
-                            "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} " +
-                                    FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE
+                            labels.trialMatching.footnoteChildrensHospital(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
                         },
-
                         externalTrialsFilteredCount.takeIf { it > 0 && !isNational }?.let { count ->
-                            "${TrialFormatFunctions.formatCountWithLabel(count, "trial")} filtered due to trials recruiting " +
-                                    "nationally for the same molecular target. See Other Trial Matching Results for filtered matches."
+                            labels.trialMatching.footnoteNationalMolecular(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
                         }
                     ).joinToString("\n").ifEmpty { null }
                 }
@@ -217,25 +219,28 @@ class EligibleTrialGenerator(
                 footNote = footNote,
                 indicateNoSlotsOrClosed = false,
                 useSmallerSize = false,
-                includeWarningsColumn = false
+                includeWarningsColumn = false,
+                labels = labels
             )
         }
 
         fun openCohortsWithMissingMolecularResultsForEvaluation(
             cohorts: List<InterpretedCohort>,
             countryOfReference: Country?,
-            requestingSource: TrialSource?
+            requestingSource: TrialSource?,
+            labels: ReportLabels
         ): TrialTableGenerator? {
             val openAndEligibleButMissingMolecularResultCohorts = filterCohortsOpenAndEligibleButMissingMolecularResult(cohorts)
             val openAndEligibleButMissingMolecularResultTrials =
                 openAndEligibleButMissingMolecularResultCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortsFromTrialsString = TrialFormatFunctions.generateCohortsFromTrialsString(
                 openAndEligibleButMissingMolecularResultCohorts.size,
-                openAndEligibleButMissingMolecularResultTrials.size
+                openAndEligibleButMissingMolecularResultTrials.size,
+                labels
             )
 
-            val title =
-                "${countryOfReferenceString(countryOfReference)} that are open but additional molecular tests needed to evaluate eligibility $cohortsFromTrialsString"
+            val countryString = countryOfReferenceString(countryOfReference)
+            val title = labels.trialMatching.titleOpenMissingMolecular(countryString, cohortsFromTrialsString)
 
             return if (openAndEligibleButMissingMolecularResultCohorts.isNotEmpty()) {
                 EligibleTrialGenerator(
@@ -247,44 +252,44 @@ class EligibleTrialGenerator(
                     footNote = null,
                     indicateNoSlotsOrClosed = true,
                     useSmallerSize = false,
-                    includeWarningsColumn = true
+                    includeWarningsColumn = true,
+                    labels = labels
                 )
             } else null
         }
 
-        fun closedCohorts(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?): TrialTableGenerator {
+        fun closedCohorts(cohorts: List<InterpretedCohort>, requestingSource: TrialSource?, labels: ReportLabels): TrialTableGenerator {
             val unavailableAndEligibleCohorts = cohorts.filter { trial: InterpretedCohort -> trial.isPotentiallyEligible && !trial.isOpen }
             val unavailableAndEligibleTrials = unavailableAndEligibleCohorts.map(InterpretedCohort::trialId).distinct()
-            val title = "Trials and cohorts that are potentially eligible, but are closed ${
-                TrialFormatFunctions.generateCohortsFromTrialsString(
-                    unavailableAndEligibleCohorts.size,
-                    unavailableAndEligibleTrials.size
-                )
-            }"
+            val cohortsString = TrialFormatFunctions.generateCohortsFromTrialsString(
+                unavailableAndEligibleCohorts.size,
+                unavailableAndEligibleTrials.size,
+                labels
+            )
 
             return EligibleTrialGenerator(
                 cohorts = unavailableAndEligibleCohorts,
                 externalTrials = emptySet(),
                 requestingSource = requestingSource,
                 countryOfReference = null,
-                title = title,
+                title = labels.trialMatching.titleClosedEligible(cohortsString),
                 footNote = null,
                 indicateNoSlotsOrClosed = false,
                 useSmallerSize = true,
-                includeWarningsColumn = true
+                includeWarningsColumn = true,
+                labels = labels
             )
         }
 
-        fun filteredExternalTrials(externalTrials: ExternalTrials, countryOfReference: Country): TrialTableGenerator? {
+        fun filteredExternalTrials(
+            externalTrials: ExternalTrials,
+            countryOfReference: Country,
+            labels: ReportLabels
+        ): TrialTableGenerator? {
             val summarizedTrials =
                 ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials() + externalTrials.excludedInternationalTrials())
             val title =
-                "Filtered trials potentially eligible based on molecular results which are potentially recruiting (${
-                    TrialFormatFunctions.formatCountWithLabel(
-                        summarizedTrials.size,
-                        "trial"
-                    )
-                })"
+                labels.trialMatching.titleFilteredEligible(TrialFormatFunctions.formatCountWithLabel(summarizedTrials.size, labels.misc.trial()))
             return if (summarizedTrials.isNotEmpty()) {
                 EligibleTrialGenerator(
                     cohorts = emptyList(),
@@ -295,7 +300,8 @@ class EligibleTrialGenerator(
                     footNote = null,
                     indicateNoSlotsOrClosed = false,
                     useSmallerSize = true,
-                    includeWarningsColumn = false
+                    includeWarningsColumn = false,
+                    labels = labels
                 )
             } else null
         }
@@ -308,11 +314,11 @@ class EligibleTrialGenerator(
             return countryOfReference?.let { "Trials in ${it.display()}" } ?: "Trials"
         }
 
-        private fun trialDescriptionString(type: LocalTrialsType, countryOfReference: Country?): String {
+        private fun trialDescriptionString(type: LocalTrialsType, countryOfReference: Country?, labels: ReportLabels): String {
             val referenceCountryString = countryOfReferenceString(countryOfReference).replaceFirstChar { it.lowercase() }
             return when (type) {
-                LocalTrialsType.LOCAL_LATE_PHASE -> "Phase 2/3+ $referenceCountryString"
-                LocalTrialsType.LOCAL_EARLY_PHASE -> "Phase 1/2 (or unknown phase) $referenceCountryString"
+                LocalTrialsType.LOCAL_LATE_PHASE -> labels.trialMatching.phaseLate(referenceCountryString)
+                LocalTrialsType.LOCAL_EARLY_PHASE -> labels.trialMatching.phaseEarly(referenceCountryString)
             }
         }
     }

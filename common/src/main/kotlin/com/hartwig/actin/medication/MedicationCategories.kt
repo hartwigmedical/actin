@@ -57,7 +57,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
             "L01FE" to setOf(DrugType.EGFR_INHIBITOR),
             "L01FF" to setOf(DrugType.PD_1_PD_L1_ANTIBODY),
             "L04AG" to setOf(DrugType.MONOCLONAL_ANTIBODY_IMMUNOTHERAPY),
-            "Nitrosoureas" to setOf(DrugType.NITROSOUREAS)
+            "Nitrosoureas" to setOf(DrugType.NITROSOUREAS),
+            "Androgen deprivation therapy" to setOf(DrugType.ANTI_ANDROGEN, DrugType.GONADORELIN_ANTAGONIST, DrugType.GONADORELIN_AGONIST)
         )
 
         fun create(atcTree: AtcTree): MedicationCategories {

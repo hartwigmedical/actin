@@ -12,6 +12,7 @@ object FunctionInput {
     val TWO_DOUBLES = listOf(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
     val ONE_ALBI_GRADE = listOf(Parameter.Type.ALBI_GRADE)
     val ONE_SYSTEMIC_TREATMENT = listOf(Parameter.Type.SYSTEMIC_TREATMENT)
+    val ONE_TREATMENT_TYPE = listOf(Parameter.Type.TREATMENT_TYPE)
     val ONE_TREATMENT_CATEGORY_OR_TYPE = listOf(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE)
     val ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER = listOf(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE, Parameter.Type.INTEGER)
     val ONE_TREATMENT_CATEGORY_MANY_TYPES = listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
@@ -26,6 +27,8 @@ object FunctionInput {
     val ONE_TREATMENT_CATEGORY_MANY_INTENTS = listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_INTENTS)
     val ONE_TREATMENT_CATEGORY_MANY_INTENTS_ONE_INTEGER =
         listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_INTENTS, Parameter.Type.INTEGER)
+    val ONE_TREATMENT_CATEGORY_MANY_TYPES_MANY_INTENTS =
+        listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES, Parameter.Type.MANY_INTENTS)
     val ONE_TREATMENT_TYPE_ONE_INTEGER = listOf(Parameter.Type.TREATMENT_TYPE, Parameter.Type.INTEGER)
     val MANY_TREATMENT_CATEGORIES = listOf(Parameter.Type.MANY_TREATMENT_CATEGORIES)
     val ONE_SPECIFIC_TREATMENT = listOf(Parameter.Type.TREATMENT)
@@ -66,12 +69,15 @@ object FunctionInput {
     val ONE_GENE_TWO_INTEGERS = listOf(Parameter.Type.GENE, Parameter.Type.INTEGER, Parameter.Type.INTEGER)
     val ONE_GENE_MANY_CODONS = listOf(Parameter.Type.GENE, Parameter.Type.MANY_CODONS)
     val ONE_GENE_MANY_PROTEIN_IMPACTS = listOf(Parameter.Type.GENE, Parameter.Type.MANY_PROTEIN_IMPACTS)
+    val ONE_GENE_MANY_PROTEIN_IMPACTS_ONE_VARIANT_TYPE_ONE_INTEGER =
+        listOf(Parameter.Type.GENE, Parameter.Type.MANY_PROTEIN_IMPACTS, Parameter.Type.VARIANT_TYPE, Parameter.Type.INTEGER)
     val MANY_GENES = listOf(Parameter.Type.MANY_GENES)
     val MANY_HLA_ALLELES = listOf(Parameter.Type.MANY_HLA_ALLELES)
     val ONE_HLA_GROUP = listOf(Parameter.Type.HLA_GROUP)
     val ONE_DOID_TERM = listOf(Parameter.Type.DOID_TERM)
     val ONE_ICD_TITLE_ONE_INTEGER = listOf(Parameter.Type.ICD_TITLE, Parameter.Type.INTEGER)
     val MANY_DOID_TERMS = listOf(Parameter.Type.MANY_DOID_TERMS)
+    val MANY_DOID_TERMS_ONE_STRING = listOf(Parameter.Type.MANY_DOID_TERMS, Parameter.Type.STRING)
     val MANY_TUMOR_STAGES = listOf(Parameter.Type.MANY_TUMOR_STAGES)
     val ONE_HAPLOTYPE = listOf(Parameter.Type.HAPLOTYPE)
     val ONE_RECEPTOR_TYPE = listOf(Parameter.Type.RECEPTOR_TYPE)
@@ -90,5 +96,6 @@ object FunctionInput {
     val ONE_PROTEIN_ONE_STRING = listOf(Parameter.Type.PROTEIN, Parameter.Type.STRING)
     val ONE_TREATMENT_RESPONSE_ONE_TREATMENT_CATEGORY_MANY_TYPES =
         listOf(Parameter.Type.TREATMENT_RESPONSE, Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+    val ONE_TREATMENT_RESPONSE_MANY_SPECIFIC_TREATMENTS = listOf(Parameter.Type.TREATMENT_RESPONSE, Parameter.Type.MANY_TREATMENTS)
     val ONE_IHC_TEST_RESULT = listOf(Parameter.Type.IHC_TEST_RESULT)
 }

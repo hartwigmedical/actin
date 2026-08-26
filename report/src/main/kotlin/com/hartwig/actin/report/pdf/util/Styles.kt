@@ -26,6 +26,7 @@ object Styles {
 
     const val REGULAR_FONT_SIZE = 8f
     const val SMALL_FONT_SIZE = 6f
+    const val SMALLER_FONT_SIZE = 5f
 
     private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
     private const val FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf"
@@ -109,7 +110,7 @@ object Styles {
     }
 
     fun disclaimerStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(SMALL_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
+        return Style().setFont(fontRegular()).setFontSize(SMALLER_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
     }
 
     fun urlStyle(): Style {
@@ -128,10 +129,6 @@ object Styles {
 
     fun fontItalic(): PdfFont {
         return fontItalic
-    }
-
-    fun fontItalicBold() : PdfFont {
-        return fontItalicBold
     }
 
     private fun createFont(fontPath: String): PdfFont {

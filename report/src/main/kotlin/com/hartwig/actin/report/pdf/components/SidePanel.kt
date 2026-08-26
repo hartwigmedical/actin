@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf.components
 
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.ApplicationConfig
@@ -22,7 +23,7 @@ private const val INITIAL_FONT_SIZE = 10f
 private const val MIN_FONT_SIZE = 6f
 private const val FONT_HEIGHT = 15f
 
-class SidePanel(private val patientId: String, private val sourcePatientId: String?, private val reportDate: LocalDate) {
+class SidePanel(private val patientId: String, private val sourcePatientId: String?, private val reportDate: LocalDate, private val labels: ReportLabels) {
 
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
@@ -33,8 +34,8 @@ class SidePanel(private val patientId: String, private val sourcePatientId: Stri
         var sideTextIndex = 0
         val cv = Canvas(canvas, page.pageSize)
         val (value, extra) = sourcePatientId.takeUnless { it.isNullOrBlank() }?.let { it to patientId } ?: (patientId to null)
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Patient", value, extra))
-        cv.add(createDiv(pageSize, ++sideTextIndex, "Report Date", date(reportDate)))
+        cv.add(createDiv(pageSize, ++sideTextIndex, labels.sidePanel.patient(), value, extra))
+        cv.add(createDiv(pageSize, ++sideTextIndex, labels.sidePanel.reportDate(), date(reportDate)))
         canvas.release()
     }
 

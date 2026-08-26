@@ -81,7 +81,6 @@
         "bestResponse": null,
         "stopReason": null,
         "stopReasonDetail": null,
-        "switchToTreatments": null,
         "maintenanceTreatment": null,
         "toxicities": null,
         "bodyLocationCategories": [
@@ -428,7 +427,7 @@
   "bloodTransfusions": [
     {
       "date": "2023-01-10",
-      "product": "ERTHROCYTES_FILTERED"
+      "product": "ERYTHROCYTE"
     }
   ],
   "medications": [

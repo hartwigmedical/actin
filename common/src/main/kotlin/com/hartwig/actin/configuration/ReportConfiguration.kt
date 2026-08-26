@@ -11,8 +11,7 @@ enum class ReportContentType {
 
 enum class MolecularChapterType {
     STANDARD,
-    LONGITUDINAL,
-    STANDARD_AND_LONGITUDINAL
+    LONGITUDINAL
 }
 
 enum class EfficacyEvidenceChapterType {
@@ -30,8 +29,12 @@ enum class ClinicalChapterType {
 enum class TrialMatchingChapterType {
     NONE,
     STANDARD_ALL_TRIALS,
-    STANDARD_EXTERNAL_TRIALS_ONLY,
-    DETAILED_ALL_TRIALS
+    STANDARD_EXTERNAL_TRIALS_ONLY
+}
+
+enum class ReportIntendedUse {
+    RESEARCH_USE_ONLY,
+    NON_MEDICAL
 }
 
 enum class ExternalTrialTumorType(val tumorDoids: Set<String>?) {
@@ -52,26 +55,13 @@ data class ReportConfiguration(
     val filterOnSOCExhaustionAndTumorType: Boolean = false,
     val countryOfReference: Country = Country.NETHERLANDS,
     val hospitalOfReference: String? = null,
-    val dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE
+    val dutchExternalTrialsToExclude: ExternalTrialTumorType = ExternalTrialTumorType.NONE,
+    val intendedUse: ReportIntendedUse = ReportIntendedUse.RESEARCH_USE_ONLY
 ) {
 
     companion object {
         fun create(environmentConfigFile: String?): ReportConfiguration {
             return EnvironmentConfiguration.create(environmentConfigFile).report
-        }
-
-        fun extended(): ReportConfiguration {
-            return ReportConfiguration(
-                patientDetailsType = ReportContentType.COMPREHENSIVE,
-                clinicalSummaryType = ReportContentType.COMPREHENSIVE,
-                molecularSummaryType = ReportContentType.COMPREHENSIVE,
-                standardOfCareSummaryType = ReportContentType.COMPREHENSIVE,
-                trialMatchingSummaryType = ReportContentType.COMPREHENSIVE,
-                molecularChapterType = MolecularChapterType.STANDARD_AND_LONGITUDINAL,
-                efficacyEvidenceChapterType = EfficacyEvidenceChapterType.COMPLETE,
-                clinicalChapterType = ClinicalChapterType.COMPLETE,
-                trialMatchingChapterType = TrialMatchingChapterType.DETAILED_ALL_TRIALS
-            )
         }
     }
 }

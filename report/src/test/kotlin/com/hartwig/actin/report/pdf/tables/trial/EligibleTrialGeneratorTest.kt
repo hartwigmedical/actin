@@ -1,12 +1,14 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.configuration.ExternalTrialTumorType
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
 import com.hartwig.actin.datamodel.trial.TrialPhase
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.report.interpretation.InterpretedCohortTestFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.trial.ActionableWithExternalTrial
 import com.hartwig.actin.report.trial.ExternalTrials
 import com.hartwig.actin.report.trial.MolecularFilteredExternalTrials
@@ -21,6 +23,7 @@ class EligibleTrialGeneratorTest {
     )
     val requestingSource = TrialSource.EXAMPLE
     val countryOfReference = Country.NETHERLANDS
+    val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
 
     @Test
     fun `Should filter early phase open and eligible national cohorts correctly (excluding missing molecular result for evaluation cohorts)`() {
@@ -51,11 +54,12 @@ class EligibleTrialGeneratorTest {
             requestingSource,
             countryOfReference,
             LocalTrialsType.LOCAL_EARLY_PHASE,
-            ExternalTrialTumorType.NONE
+            ExternalTrialTumorType.NONE,
+            labels
         )
 
         assertThat(result.cohortSize()).isEqualTo(2)
-        assertThat(result.title()).isEqualTo("Phase 1/2 (or unknown phase) trials in NL that are open and potentially eligible (2 trials)")
+        assertThat(result.title()).isEqualTo("Phase 1/2 trials in NL that are open and potentially eligible (2 trials)")
     }
 
     @Test
@@ -80,11 +84,12 @@ class EligibleTrialGeneratorTest {
             requestingSource,
             countryOfReference,
             LocalTrialsType.LOCAL_LATE_PHASE,
-            ExternalTrialTumorType.NONE
+            ExternalTrialTumorType.NONE,
+            labels
         )
 
         assertThat(result.cohortSize()).isEqualTo(1)
-        assertThat(result.title()).isEqualTo("Phase 2/3+ trials in NL that are open and potentially eligible (1 trial)")
+        assertThat(result.title()).isEqualTo("Phase 2/3+ (or unknown phase) trials in NL that are open and potentially eligible (1 trial)")
     }
 
     @Test
@@ -127,7 +132,7 @@ class EligibleTrialGeneratorTest {
             cohortToFilter5
         )
         val result =
-            EligibleTrialGenerator.openCohortsWithMissingMolecularResultsForEvaluation(cohorts, Country.NETHERLANDS, requestingSource)
+            EligibleTrialGenerator.openCohortsWithMissingMolecularResultsForEvaluation(cohorts, Country.NETHERLANDS, requestingSource, labels)
 
         assertThat(result?.cohortSize()).isEqualTo(3)
         assertThat(result?.title()).isEqualTo("Trials in NL that are open but additional molecular tests needed to evaluate eligibility (3 cohorts from 2 trials)")
@@ -135,14 +140,16 @@ class EligibleTrialGeneratorTest {
 
     @Test
     fun `Should show specific footnote if filtering is applied based on lung tumor type`() {
-        assertThat(localAndNationalGenerator(ExternalTrialTumorType.LUNG).footnote())
-            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_DUTCH_EXTERNAL_TRIALS_LUNG_FOOT_NOTE}")
+        val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
+        val expected = labels.trialMatching.footnoteDutchLung("1 trial", filteredSuffix)
+        assertThat(localAndNationalGenerator(ExternalTrialTumorType.LUNG).footnote()).isEqualTo(expected)
     }
 
     @Test
     fun `Should show standard footnote if filtering based on lung tumor type is not applied`() {
-        assertThat(localAndNationalGenerator(ExternalTrialTumorType.NONE).footnote())
-            .isEqualTo("1 trial ${EligibleTrialGenerator.FILTERED_EXTERNAL_TRIALS_CHILDRENS_HOSPITAL_FOOT_NOTE}")
+        val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
+        val expected = labels.trialMatching.footnoteChildrensHospital("1 trial", filteredSuffix)
+        assertThat(localAndNationalGenerator(ExternalTrialTumorType.NONE).footnote()).isEqualTo(expected)
     }
 
     private fun localAndNationalGenerator(effectiveExternalTrialExclusion: ExternalTrialTumorType): TrialTableGenerator {
@@ -158,7 +165,8 @@ class EligibleTrialGeneratorTest {
             requestingSource = TrialSource.EXAMPLE,
             countryOfReference = Country.NETHERLANDS,
             localTrialsType = LocalTrialsType.LOCAL_EARLY_PHASE,
-            effectiveDutchExternalTrialExclusion = effectiveExternalTrialExclusion
+            effectiveDutchExternalTrialExclusion = effectiveExternalTrialExclusion,
+            labels = labels
         )
     }
 }

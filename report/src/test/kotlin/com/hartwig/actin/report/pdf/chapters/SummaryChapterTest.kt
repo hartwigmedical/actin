@@ -1,13 +1,14 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.TrialMatchingChapterType
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.clinical.TumorDetails
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.interpretation.TumorDetailsInterpreter
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.molecular.MolecularSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.trial.EligibleTrialGenerator
@@ -73,7 +74,8 @@ class SummaryChapterTest {
 
     private fun createTestSummaryChapter(report: Report): SummaryChapter {
         val configuration = ReportConfiguration()
-        return SummaryChapter(report, configuration, createTrialsProvider(report, configuration))
+        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+        return SummaryChapter(report, configuration, createTrialsProvider(report, configuration), labels)
     }
 
     private fun createTrialsProvider(report: Report, configuration: ReportConfiguration): TrialsProvider {
@@ -83,7 +85,6 @@ class SummaryChapterTest {
             configuration.countryOfReference,
             TestDoidModelFactory.createMinimalTestDoidModel(),
             configuration.dutchExternalTrialsToExclude,
-            configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
             configuration.filterOnSOCExhaustionAndTumorType,
         )
     }

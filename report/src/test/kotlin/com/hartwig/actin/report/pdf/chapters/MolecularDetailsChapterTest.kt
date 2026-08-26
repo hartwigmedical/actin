@@ -2,7 +2,7 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.TrialMatchingChapterType
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -10,6 +10,7 @@ import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
 import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.assertHeader
 import com.hartwig.actin.report.pdf.tables.CellTestUtil
 import com.hartwig.actin.report.pdf.tables.molecular.ImmunologyDisplayMode
@@ -20,6 +21,8 @@ import org.junit.jupiter.api.Test
 
 private const val KEY_WIDTH = 50f
 private const val VALUE_WIDTH = 100f
+
+private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
 
 class MolecularDetailsChapterTest {
 
@@ -37,7 +40,7 @@ class MolecularDetailsChapterTest {
     @Test
     fun `Should show DETAILED_INLINE mode for inline format in rows without table headers`() {
         val generator = ImmunologyGenerator(
-            testWithReliableImmunology(), ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", KEY_WIDTH, VALUE_WIDTH
+            testWithReliableImmunology(), ImmunologyDisplayMode.DETAILED_INLINE, "Immunology", KEY_WIDTH, VALUE_WIDTH, labels
         )
         assertThat(CellTestUtil.extractTextFromCell(generator.contents().getCell(0, 1)))
             .isEqualTo("HLA-A*01:01, tumor copy nr: 2, mutated: No")
@@ -46,7 +49,7 @@ class MolecularDetailsChapterTest {
     @Test
     fun `Should show DETAILED_TABLE mode for tabular format with headers`() {
         val generator = ImmunologyGenerator(
-            testWithReliableImmunology(), ImmunologyDisplayMode.DETAILED_TABLE, "Immunology", KEY_WIDTH, VALUE_WIDTH
+            testWithReliableImmunology(), ImmunologyDisplayMode.DETAILED_TABLE, "Immunology", KEY_WIDTH, VALUE_WIDTH, labels
         )
         assertHeader(generator, "HLA gene", "Type", "Tumor copy number", "Mutated in tumor")
     }
@@ -54,7 +57,7 @@ class MolecularDetailsChapterTest {
     @Test
     fun `Should show ALLELE_ONLY mode as comma-separated alleles on a single row`() {
         val generator = ImmunologyGenerator(
-            testWithReliableImmunology(), ImmunologyDisplayMode.ALLELE_ONLY, "Immunology", KEY_WIDTH, VALUE_WIDTH
+            testWithReliableImmunology(), ImmunologyDisplayMode.ALLELE_ONLY, "Immunology", KEY_WIDTH, VALUE_WIDTH, labels
         )
         assertThat(CellTestUtil.extractTextFromCell(generator.contents().getCell(0, 1)))
             .isEqualTo("HLA-A*01:01")
@@ -62,7 +65,7 @@ class MolecularDetailsChapterTest {
 
     @Test
     fun `Should create chapter for STANDARD config`() {
-        assertThat(createChapter(MolecularChapterType.STANDARD)).isNotNull()
+        assertThat(createChapter()).isNotNull()
     }
 
     private fun testWithReliableImmunology(): MolecularTest {
@@ -71,17 +74,16 @@ class MolecularDetailsChapterTest {
         )
     }
 
-    private fun createChapter(molecularChapterType: MolecularChapterType): MolecularDetailsChapter {
-        val configuration = ReportConfiguration(molecularChapterType = molecularChapterType)
+    private fun createChapter(): MolecularDetailsChapter {
+        val configuration = ReportConfiguration(molecularChapterType = MolecularChapterType.STANDARD)
         val trialsProvider = TrialsProvider.create(
             report.patientRecord,
             report.treatmentMatch,
             configuration.countryOfReference,
             TestDoidModelFactory.createMinimalTestDoidModel(),
             configuration.dutchExternalTrialsToExclude,
-            configuration.trialMatchingChapterType == TrialMatchingChapterType.DETAILED_ALL_TRIALS,
             configuration.filterOnSOCExhaustionAndTumorType,
         )
-        return MolecularDetailsChapter(report, configuration, trialsProvider)
+        return MolecularDetailsChapter(report, configuration, trialsProvider, labels)
     }
 }

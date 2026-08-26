@@ -86,35 +86,6 @@ class TreatmentHistoryAnalysisTest {
     }
 
     @Test
-    fun `Should include switch to treatments in platinum doublet count`() {
-        val record = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(nonPlatinumDoublet),
-            switchToTreatments = listOf(TreatmentStage(platinumDoublet, null, null, null))
-        )
-        assertThat(
-            TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
-                .receivedPlatinumDoublet()
-        ).isTrue()
-    }
-
-    @Test
-    fun `Should consider only one switch to treatment stage in platinum combination count`() {
-        val treatmentStage = TreatmentStage(platinumDoublet, null, null, null)
-        val record = TreatmentTestFactory.treatmentHistoryEntry(
-            treatments = setOf(nonPlatinumDoublet),
-            switchToTreatments = listOf(
-                treatmentStage,
-                treatmentStage,
-                treatmentStage.copy(treatment = nonPlatinumDoublet)
-            )
-        )
-        assertThat(
-            TreatmentHistoryAnalysis.create(TreatmentTestFactory.withTreatmentHistoryEntry(record))
-                .receivedPlatinumDoublet()
-        ).isTrue()
-    }
-
-    @Test
     fun `Should return false if treatment history not empty but does not contain platinum doublet therapy`() {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(

@@ -3,109 +3,179 @@ package com.hartwig.actin.algo.evaluation.tumor
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TumorDetails
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasSpecificMetastasesOnlyTest {
 
     private val hasLiverMetastasesOnly =
-        HasSpecificMetastasesOnly(TumorDetails::hasLiverLesions, TumorDetails::hasSuspectedLiverLesions, "liver")
-    private val hasBoneMetastasesOnly =
-        HasSpecificMetastasesOnly(TumorDetails::hasBoneLesions, TumorDetails::hasSuspectedBoneLesions, "bone")
+        HasSpecificMetastasesOnly(listOf(TumorDetails::hasLiverLesions), listOf(TumorDetails::hasSuspectedLiverLesions), "liver")
+    private val hasLiverAndOrLymphNodeAndOrLungMetastasesOnly = HasSpecificMetastasesOnly(
+        listOf(TumorDetails::hasLiverLesions, TumorDetails::hasLymphNodeLesions, TumorDetails::hasLungLesions),
+        listOf(TumorDetails::hasSuspectedLiverLesions, TumorDetails::hasSuspectedLymphNodeLesions, TumorDetails::hasSuspectedLungLesions),
+        "liver and/or lymph node and/or lung"
+    )
 
     @Test
     fun `Should pass when patient has liver metastases only`() {
+        val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true))
+
+        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+    }
+
+    @Test
+    fun `Should pass when patient has liver metastases only and only suspected lesions data is missing`() {
+        val record = TumorTestFactory.withTumorDetails(
+            withNoOutsideLesions(hasLiverLesions = true).copy(
+                otherSuspectedLesions = null,
+                hasSuspectedBrainLesions = null
+            )
+        )
+
+        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+    }
+
+    @Test
+    fun `Should pass when patient has only lymph node metastases`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverAndOtherLesions(true, emptyList()))
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLymphNodeLesions = true)))
         )
+    }
+
+    @Test
+    fun `Should pass when patient has liver, lymph node and lung metastases only`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(createDetails(false, true)))
-        )
-    }
-
-    @Test
-    fun `Should warn when patient has suspected liver metastases only`() {
-        assertEvaluation(
-            EvaluationResult.WARN,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndSuspectedLiverLesions(false, true))
-        )
-    }
-
-    @Test
-    fun `Should evaluate to undetermined when data regarding liver metastases is missing`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(null)))
-    }
-
-    @Test
-    fun `Should warn if patient has liver metastases but data regarding any other lesion is missing`() {
-        assertEvaluation(EvaluationResult.WARN, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(true)))
-        assertEvaluation(EvaluationResult.WARN, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(null, true)))
-    }
-
-    @Test
-    fun `Should fail when patient does not have liver metastases exclusively`() {
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(true, true)))
-        assertEvaluation(
-            EvaluationResult.FAIL,
-            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverAndOtherLesions(true, listOf("skin")))
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(
+                TumorTestFactory.withTumorDetails(
+                    withNoOutsideLesions(
+                        hasLiverLesions = true,
+                        hasLymphNodeLesions = true,
+                        hasLungLesions = true
+                    )
+                )
+            )
         )
     }
 
     @Test
     fun `Should fail when patient has no liver metastases`() {
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(TumorTestFactory.withLiverLesions(false)))
-    }
-
-    @Test
-    fun `Should pass when patient has bone metastases only`() {
-        assertEvaluation(EvaluationResult.PASS, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndOtherLesions(true, emptyList())))
-        assertEvaluation(
-            EvaluationResult.PASS,
-            hasBoneMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(createDetails(true, false)))
-        )
-    }
-
-    @Test
-    fun `Should warn when patient has suspected bone metastases only`() {
-        assertEvaluation(
-            EvaluationResult.WARN,
-            hasBoneMetastasesOnly.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, emptyList()))
-        )
-    }
-
-    @Test
-    fun `Should evaluate to undetermined when data regarding bone metastases is missing`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(null)))
-    }
-
-    @Test
-    fun `Should warn if patient has bone metastases but data regarding other lesions is missing `() {
-        assertEvaluation(EvaluationResult.WARN, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(true)))
-    }
-
-    @Test
-    fun `Should fail when patient does not have bone metastases exclusively`() {
-        assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndLiverLesions(true, true)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneAndOtherLesions(true, listOf("skin")))
+            hasLiverMetastasesOnly.evaluate(TumorTestFactory.withConfirmedLesions(hasLiverLesions = false))
         )
     }
 
     @Test
-    fun `Should fail when patient has no bone metastases`() {
-        assertEvaluation(EvaluationResult.FAIL, hasBoneMetastasesOnly.evaluate(TumorTestFactory.withBoneLesions(false)))
+    fun `Should fail when patient has no liver, lymph node or lung metastases`() {
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(
+                TumorTestFactory.withConfirmedLesions(
+                    hasLiverLesions = false,
+                    hasLymphNodeLesions = false,
+                    hasLungLesions = false
+                )
+            )
+        )
     }
 
-    private fun createDetails(hasBoneMetastases: Boolean, hasLiverMetastases: Boolean): TumorDetails {
+    @Test
+    fun `Should fail when patient has liver lesion but also bone metastases`() {
+        val record = TumorTestFactory.withConfirmedLesions(hasLiverLesions = true, hasBoneLesions = true)
+
+        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail when patient has liver lesion but also other lesion`() {
+        val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(otherLesions = listOf("skin")))
+
+        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record))
+    }
+
+    @Test
+    fun `Should be undetermined when only suspected liver metastases exist`() {
+        val record = TumorTestFactory.withBoneAndSuspectedLiverLesions(hasBoneLesions = false, hasSuspectedLiverLesions = true)
+        val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
+        val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+
+        assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)")
+        assertThat(evaluationMultiple.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)")
+    }
+
+    @Test
+    fun `Should be undetermined when liver lesion is present but suspected bone lesions exist`() {
+        val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(hasSuspectedBoneLesions = true))
+        val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
+        val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+
+        assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)")
+        assertThat(evaluationMultiple.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)")
+    }
+
+    @Test
+    fun `Should be undetermined when liver lesion is present but suspected other lesions exist`() {
+        val record =
+            TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(otherSuspectedLesions = listOf("lesion")))
+        val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
+        val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+    }
+
+    @Test
+    fun `Should be undetermined when liver lesion is present but some lesion data is missing`() {
+        val record = TumorTestFactory.withLiverLesions(true)
+        val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
+        val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+
+        assertThat(evaluationSingle.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver metastases (missing lesion data)")
+        assertThat(evaluationMultiple.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has only liver and/or lymph node and/or lung metastases (missing lesion data)")
+    }
+
+    @Test
+    fun `Should be undetermined when lesion data is missing`() {
+        val record = TumorTestFactory.withLiverLesions(null)
+        val evaluationSingle = hasLiverMetastasesOnly.evaluate(record)
+        val evaluationMultiple = hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record)
+
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationSingle)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluationMultiple)
+    }
+
+    private fun withNoOutsideLesions(
+        hasLiverLesions: Boolean = false,
+        hasLymphNodeLesions: Boolean = false,
+        hasLungLesions: Boolean = false
+    ): TumorDetails {
         return TumorDetails(
-            hasBoneLesions = hasBoneMetastases,
-            hasLiverLesions = hasLiverMetastases,
+            hasLiverLesions = hasLiverLesions,
+            hasLymphNodeLesions = hasLymphNodeLesions,
+            hasLungLesions = hasLungLesions,
+            hasBoneLesions = false,
             hasBrainLesions = false,
             hasCnsLesions = false,
-            hasLymphNodeLesions = false,
-            hasLungLesions = false
+            otherLesions = emptyList(),
+            hasSuspectedBoneLesions = false,
+            hasSuspectedBrainLesions = false,
+            hasSuspectedCnsLesions = false,
+            otherSuspectedLesions = emptyList()
         )
     }
 }

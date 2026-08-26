@@ -79,7 +79,6 @@
         "bestResponse": "PARTIAL_RESPONSE",
         "stopReason": "PROGRESSIVE_DISEASE",
         "stopReasonDetail": "PD",
-        "switchToTreatments": null,
         "maintenanceTreatment": null,
         "toxicities": [],
         "bodyLocationCategories": null,
@@ -222,7 +221,7 @@
   "bloodTransfusions": [
     {
       "date": "2024-09-20",
-      "product": "ERTHROCYTES_FILTERED"
+      "product": "ERYTHROCYTE"
     }
   ],
   "medications": [

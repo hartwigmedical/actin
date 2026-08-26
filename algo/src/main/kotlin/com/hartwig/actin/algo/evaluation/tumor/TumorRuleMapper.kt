@@ -15,6 +15,7 @@ import com.hartwig.actin.datamodel.trial.ManyTnmTParameter
 import com.hartwig.actin.datamodel.trial.ManyTumorStagesParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.datamodel.trial.ReceptorTypeParameter
+import com.hartwig.actin.datamodel.trial.StringParameter
 import com.hartwig.actin.datamodel.trial.TumorTypeParameter
 import com.hartwig.actin.trial.input.EligibilityRule
 import com.hartwig.actin.trial.input.datamodel.TumorTypeInput
@@ -26,21 +27,22 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_SOLID_PRIMARY_TUMOR to hasSolidPrimaryTumorCreator(),
             EligibilityRule.HAS_SOLID_PRIMARY_TUMOR_INCLUDING_LYMPHOMA to hasSolidPrimaryTumorCreatorIncludingLymphomaCreator(),
             EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X to hasPrimaryTumorBelongsToDoidTermsCreator(),
-            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X_DISTAL_SUB_LOCATION to hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(),
+            EligibilityRule.HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X_WITH_SUB_LOCATION_Y to hasPrimaryTumorBelongsToDoidTermsWithSubLocationCreator(),
             EligibilityRule.HAS_CANCER_OF_UNKNOWN_PRIMARY_AND_TYPE_X to hasCancerOfUnknownPrimaryCreator(),
             EligibilityRule.HAS_CANCER_WITH_NEUROENDOCRINE_COMPONENT to hasCancerWithNeuroendocrineComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_SMALL_CELL_COMPONENT to hasCancerWithSmallCellComponentCreator(),
             EligibilityRule.HAS_CANCER_WITH_LARGE_CELL_COMPONENT to hasCancerWithLargeCellComponentCreator(),
             EligibilityRule.HAS_LOW_GRADE_CANCER to hasLowGradeCancerCreator(),
             EligibilityRule.HAS_HIGH_GRADE_CANCER to hasHighGradeCancerCreator(),
+            EligibilityRule.HAS_WELL_DIFFERENTIATED_TUMOR to hasWellDifferentiatedTumorCreator(),
             EligibilityRule.HAS_KNOWN_SCLC_TRANSFORMATION to hasKnownSclcTransformationCreator(),
             EligibilityRule.HAS_NON_SQUAMOUS_NSCLC to hasNonSquamousNsclcCreator(),
             EligibilityRule.HAS_TRIPLE_NEGATIVE_BREAST_CANCER to hasTripleNegativeBreastCancerCreator(),
             EligibilityRule.HAS_BREAST_CANCER_RECEPTOR_X_POSITIVE to hasBreastCancerWithPositiveReceptorOfTypeCreator(),
             EligibilityRule.HAS_OVARIAN_CANCER_WITH_MUCINOUS_COMPONENT to hasOvarianCancerWithMucinousComponentCreator(),
             EligibilityRule.HAS_OVARIAN_BORDERLINE_TUMOR to hasOvarianBorderlineTumorCreator(),
-            EligibilityRule.HAS_STOMACH_UNDIFFERENTIATED_TUMOR to hasStomachUndifferentiatedTumorCreator(),
             EligibilityRule.HAS_SECONDARY_GLIOBLASTOMA to hasSecondaryGlioblastomaCreator(),
+            EligibilityRule.HAS_NON_MUSCLE_INVASIVE_BLADDER_CANCER to hasNonMuscleInvasiveBladderCancerCreator(),
             EligibilityRule.HAS_CYTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasCytologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_HISTOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasHistologicalDocumentationOfTumorTypeCreator(),
             EligibilityRule.HAS_PATHOLOGICAL_DOCUMENTATION_OF_TUMOR_TYPE to hasPathologicalDocumentationOfTumorTypeCreator(),
@@ -54,11 +56,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_RECURRENT_CANCER to hasRecurrentCancerCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_RECURRENT_CANCER to meetsSpecificCriteriaRegardingRecurrentCancerCreator(),
             EligibilityRule.HAS_INCURABLE_CANCER to hasIncurableCancerCreator(),
+            EligibilityRule.HAS_PRIMARY_TUMOR_AT_UNFAVOURABLE_SITE to hasPrimaryTumorAtUnfavourableSiteCreator(),
             EligibilityRule.HAS_ANY_LESION to hasAnyLesionCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_METASTASES to meetsSpecificCriteriaRegardingMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES to hasLiverMetastasesCreator(),
             EligibilityRule.HAS_LIVER_METASTASES_ONLY to hasOnlyLiverMetastasesCreator(),
             EligibilityRule.MEETS_SPECIFIC_CRITERIA_REGARDING_LIVER_METASTASES to meetsSpecificCriteriaRegardingLiverMetastasesCreator(),
+            EligibilityRule.HAS_LIVER_AND_OR_LYMPH_NODE_AND_OR_LUNG_METASTASES_ONLY to hasOnlyLiverAndOrLymphNodeAndOrLungMetastasesCreator(),
             EligibilityRule.HAS_KNOWN_CNS_METASTASES to hasKnownCnsMetastasesCreator(),
             EligibilityRule.HAS_ACTIVE_CNS_METASTASES to hasKnownActiveCnsMetastasesCreator(),
             EligibilityRule.HAS_SYMPTOMATIC_CNS_METASTASES to hasKnownSymptomaticCnsMetastasesCreator(),
@@ -74,23 +78,29 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LUNG_AND_OR_LUNG_LYMPH_NODE_METASTASES_ONLY to hasOnlyLungAndOrLungLymphNodeMetastasesCreator(),
             EligibilityRule.HAS_VISCERAL_METASTASES to hasVisceralMetastasesCreator(),
             EligibilityRule.HAS_IN_TRANSIT_METASTASES to hasInTransitMetastasesCreator(),
+            EligibilityRule.HAS_SPLEEN_METASTASES to hasSpleenMetastasesCreator(),
+            EligibilityRule.HAS_SOFT_TISSUE_METASTASES to hasSoftTissueMetastasesCreator(),
             EligibilityRule.HAS_UNRESECTABLE_PERITONEAL_METASTASES to hasUnresectablePeritonealMetastasesCreator(),
             EligibilityRule.HAS_LESIONS_CLOSE_TO_OR_INVOLVING_AIRWAY to hasLesionsCloseToOrInvolvingAirwayCreator(),
             EligibilityRule.HAS_LESIONS_INFILTRATING_BLOOD_VESSEL to { HasLesionsInfiltratingBloodVessel() },
             EligibilityRule.HAS_LESION_COUNT_OF_AT_LEAST_X_IN_BODY_LOCATION_Y to hasMinimumLesionsInSpecificBodyLocationCreator(),
             EligibilityRule.HAS_EXTENSIVE_SYSTEMIC_METASTASES_PREDOMINANTLY_DETERMINING_PROGNOSIS to hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(),
+            EligibilityRule.HAS_EXTENSIVE_ABDOMINAL_TUMOR_SPREAD to hasExtensiveAbdominalTumorSpreadCreator(),
             EligibilityRule.HAS_BIOPSY_AMENABLE_LESION to hasBiopsyAmenableLesionCreator(),
             EligibilityRule.HAS_IRRADIATION_AMENABLE_LESION to hasIrradiationAmenableLesionCreator(),
+            EligibilityRule.HAS_HIFU_AMENABLE_LESION to hasHifuAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.HAS_RISK_OF_AT_LEAST_X_PERCENTAGE_FOR_SENTINEL_NODE_POSITIVITY to hasMinimumRiskForSentinelNodePositivityCreator(),
             EligibilityRule.HAS_OLIGOPROGRESSIVE_DISEASE to { HasOligoprogressiveDisease() },
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
             EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY to meetsSpecificBiopsyRequirementsCreator(),
+            EligibilityRule.HAS_VISIBLE_LESION_BY_CYSTOSCOPY to hasVisibleLesionByCystoscopyCreator(),
             EligibilityRule.HAS_EVALUABLE_DISEASE to hasEvaluableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE to hasMeasurableDiseaseCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RECIST to hasMeasurableDiseaseRecistCreator(),
             EligibilityRule.HAS_MEASURABLE_DISEASE_RANO to hasMeasurableDiseaseRanoCreator(),
+            EligibilityRule.HAS_MEASURABLE_DISEASE_PERCIST to hasMeasurableDiseasePercistCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_ACCORDING_TO_SPECIFIC_CRITERIA to hasSpecificProgressiveDiseaseCriteriaCreator(),
             EligibilityRule.HAS_RAPID_PROGRESSIVE_DISEASE to hasRapidProgressiveDiseaseCreator(),
             EligibilityRule.HAS_INJECTION_AMENABLE_LESION to hasInjectionAmenableLesionCreator(),
@@ -100,9 +110,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_LOW_RISK_OF_HEMORRHAGE_UPON_TREATMENT to hasLowRiskOfHemorrhageUponTreatmentCreator(),
             EligibilityRule.HAS_SUPERSCAN_BONE_SCAN to hasSuperScanBoneScanCreator(),
             EligibilityRule.HAS_BCLC_STAGE_X to hasBCLCStageCreator(),
-            EligibilityRule.HAS_ANY_RISK_X_PROSTATE_CANCER to hasAnyProstateCancerRiskCreator(),
+            EligibilityRule.HAS_SIEWERT_TYPE_X to hasSiewertTypeCreator(),
+            EligibilityRule.HAS_ANY_RISK_X_CANCER to hasAnyRiskCancerCreator(),
+            EligibilityRule.HAS_MODIFIED_OBERLIN_PROGNOSTIC_SCORE_OF_AT_LEAST_X to hasMinimumModifiedOberlinPrognosticScoreCreator(),
             EligibilityRule.HAS_LEFT_SIDED_COLORECTAL_TUMOR to hasLeftSidedColorectalTumorCreator(),
-            EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSitu()
+            EligibilityRule.HAS_SYMPTOMS_OF_PRIMARY_TUMOR_IN_SITU to hasSymptomsOfPrimaryTumorInSituCreator(),
+            EligibilityRule.HAS_TUMOR_LENGTH_OF_AT_MOST_X_CM to hasLimitedTumorLengthCreator(),
         )
     }
 
@@ -116,17 +129,18 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasPrimaryTumorBelongsToDoidTermsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
-            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, null)
+            val doidInputToMatch = function.param<ManyDoidTermsParameter>(0).value
+            val doidsToMatch = doidInputToMatch.map { doidModel().toDoid(it) }.toSet()
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidsToMatch, null)
         }
     }
 
-    private fun hasPrimaryTumorBelongsToDoidTermsDistalSubLocationCreator(): FunctionCreator {
+    private fun hasPrimaryTumorBelongsToDoidTermsWithSubLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            val doidTermToMatch = function.param<ManyDoidTermsParameter>(0).value
-            val doidTermsResolved = doidTermToMatch.mapNotNull { doidModel().resolveDoidForTerm(it) }.toSet()
-            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidTermsResolved, "distal")
+            val doidInputToMatch = function.param<ManyDoidTermsParameter>(0).value
+            val doidsToMatch = doidInputToMatch.map { doidModel().toDoid(it) }.toSet()
+            val subLocation = function.param<StringParameter>(1).value
+            PrimaryTumorLocationBelongsToDoid(doidModel(), cuppaToDoidMapping(), doidsToMatch, subLocation)
         }
     }
 
@@ -164,6 +178,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { Not(HasLowGradeCancer()) }
     }
 
+    private fun hasWellDifferentiatedTumorCreator(): FunctionCreator {
+        return { HasWellDifferentiatedTumor() }
+    }
+
     private fun hasKnownSclcTransformationCreator(): FunctionCreator {
         return { HasKnownSclcTransformation(doidModel()) }
     }
@@ -184,12 +202,12 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasOvarianBorderlineTumor(doidModel()) }
     }
 
-    private fun hasStomachUndifferentiatedTumorCreator(): FunctionCreator {
-        return { HasStomachUndifferentiatedTumor(doidModel()) }
-    }
-
     private fun hasSecondaryGlioblastomaCreator(): FunctionCreator {
         return { HasSecondaryGlioblastoma(doidModel()) }
+    }
+
+    private fun hasNonMuscleInvasiveBladderCancerCreator(): FunctionCreator {
+        return { HasNonMuscleInvasiveBladderCancer(doidModel()) }
     }
 
     private fun hasCytologicalDocumentationOfTumorTypeCreator(): FunctionCreator {
@@ -267,6 +285,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { DerivedTumorStageEvaluationFunction(HasIncurableCancer(), "incurable cancer") }
     }
 
+    private fun hasPrimaryTumorAtUnfavourableSiteCreator(): FunctionCreator {
+        return { HasPrimaryTumorAtUnfavourableSite() }
+    }
+
     private fun hasAnyLesionCreator(): FunctionCreator {
         return { HasAnyLesion() }
     }
@@ -282,9 +304,31 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasOnlyLiverMetastasesCreator(): FunctionCreator {
         return {
             HasSpecificMetastasesOnly(
-                TumorDetails::hasLiverLesions,
-                TumorDetails::hasSuspectedLiverLesions,
-                TumorDetails.LIVER.lowercase()
+                listOf(TumorDetails::hasLiverLesions),
+                listOf(TumorDetails::hasSuspectedLiverLesions),
+                "liver"
+            )
+        }
+    }
+
+    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
+        return { MeetsSpecificCriteriaRegardingLiverMetastases() }
+    }
+
+    private fun hasOnlyLiverAndOrLymphNodeAndOrLungMetastasesCreator(): FunctionCreator {
+        return {
+            HasSpecificMetastasesOnly(
+                listOf(
+                    TumorDetails::hasLiverLesions,
+                    TumorDetails::hasLymphNodeLesions,
+                    TumorDetails::hasLungLesions
+                ),
+                listOf(
+                    TumorDetails::hasSuspectedLiverLesions,
+                    TumorDetails::hasSuspectedLymphNodeLesions,
+                    TumorDetails::hasSuspectedLungLesions
+                ),
+                "liver and/or lymph node and/or lung"
             )
         }
     }
@@ -328,9 +372,9 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasOnlyBoneMetastasesCreator(): FunctionCreator {
         return {
             HasSpecificMetastasesOnly(
-                TumorDetails::hasBoneLesions,
-                TumorDetails::hasSuspectedBoneLesions,
-                TumorDetails.BONE.lowercase()
+                listOf(TumorDetails::hasBoneLesions),
+                listOf(TumorDetails::hasSuspectedBoneLesions),
+                "bone"
             )
         }
     }
@@ -355,8 +399,20 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasInTransitMetastases() }
     }
 
+    private fun hasSpleenMetastasesCreator(): FunctionCreator {
+        return { HasSpleenMetastases() }
+    }
+
+    private fun hasSoftTissueMetastasesCreator(): FunctionCreator {
+        return { HasSoftTissueMetastases() }
+    }
+
     private fun hasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisCreator(): FunctionCreator {
         return { HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(HasMetastaticCancer(doidModel())) }
+    }
+
+    private fun hasExtensiveAbdominalTumorSpreadCreator(): FunctionCreator {
+        return { HasExtensiveAbdominalTumorSpread(HasMetastaticCancer(doidModel())) }
     }
 
     private fun hasBiopsyAmenableLesionCreator(): FunctionCreator {
@@ -365,6 +421,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasIrradiationAmenableLesionCreator(): FunctionCreator {
         return { HasIrradiationAmenableLesion(HasMetastaticCancer(doidModel())) }
+    }
+
+    private fun hasHifuAmenableLesionCreator(): FunctionCreator {
+        return { HasHifuAmenableLesion() }
     }
 
     private fun hasMinimumSitesWithLesionsCreator(): FunctionCreator {
@@ -391,6 +451,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { MeetsSpecificBiopsyRequirements() }
     }
 
+    private fun hasVisibleLesionByCystoscopyCreator(): FunctionCreator {
+        return { HasVisibleLesionByCystoscopy() }
+    }
+
     private fun hasEvaluableDiseaseCreator(): FunctionCreator {
         return { HasEvaluableDisease() }
     }
@@ -405,6 +469,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
 
     private fun hasMeasurableDiseaseRanoCreator(): FunctionCreator {
         return { HasMeasurableDiseaseRano(doidModel()) }
+    }
+
+    private fun hasMeasurableDiseasePercistCreator(): FunctionCreator {
+        return { HasMeasurableDiseasePercist(doidModel()) }
     }
 
     private fun hasSpecificProgressiveDiseaseCriteriaCreator(): FunctionCreator {
@@ -443,9 +511,21 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasBCLCStage() }
     }
 
-    private fun hasAnyProstateCancerRiskCreator(): FunctionCreator {
+    private fun hasSiewertTypeCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasProstateCancerRisk(function.param<ManyStringsParameter>(0).value, doidModel())
+            HasSiewertType(function.param<StringParameter>(0).value)
+        }
+    }
+
+    private fun hasAnyRiskCancerCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasAnyRiskCancer(function.param<ManyStringsParameter>(0).value)
+        }
+    }
+
+    private fun hasMinimumModifiedOberlinPrognosticScoreCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasMinimumModifiedOberlinPrognosticScore(function.param<IntegerParameter>(0).value)
         }
     }
 
@@ -453,11 +533,13 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
         return { HasLeftSidedColorectalTumor(doidModel()) }
     }
 
-    private fun meetsSpecificCriteriaRegardingLiverMetastasesCreator(): FunctionCreator {
-        return { MeetsSpecificCriteriaRegardingLiverMetastases() }
+    private fun hasSymptomsOfPrimaryTumorInSituCreator(): FunctionCreator {
+        return { HasSymptomsOfPrimaryTumorInSitu() }
     }
 
-    private fun hasSymptomsOfPrimaryTumorInSitu(): FunctionCreator {
-        return { HasSymptomsOfPrimaryTumorInSitu() }
+    private fun hasLimitedTumorLengthCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasLimitedTumorLength(function.param<IntegerParameter>(0).value)
+        }
     }
 }

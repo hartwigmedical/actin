@@ -46,12 +46,6 @@ CREATE TABLE `clinicalStatus`
     `hasActiveInfection` BOOLEAN,
     `activeInfectionDescription` varchar(50),
     `hasToxicitiesGrade2` BOOLEAN,
-    `hasSigAberrationLatestECG` BOOLEAN,
-    `ecgAberrationDescription` varchar(120),
-    `qtcfValue` int,
-    `qtcfUnit` varchar(50),
-    `jtcValue` int,
-    `jtcUnit` varchar(50),
     `lvef` double precision,
     PRIMARY KEY (`id`)
 );
@@ -104,10 +98,6 @@ CREATE TABLE `treatmentHistoryEntry`
     `maintenanceTreatment` varchar(100),
     `maintenanceTreatmentStartYear` int,
     `maintenanceTreatmentStartMonth` int,
-    `switchToTreatment` varchar(100),
-    `switchToTreatmentStartYear` int,
-    `switchToTreatmentStartMonth` int,
-    `switchToTreatmentCycles` int,
     PRIMARY KEY (`id`)
 );
 
@@ -166,6 +156,21 @@ CREATE TABLE `labValue`
     `refLimitLow` double precision,
     `refLimitUp` double precision,
     `isOutsideRef` BOOLEAN,
+    PRIMARY KEY (`id`)
+);
+
+DROP TABLE IF EXISTS `heartMeasurement`;
+CREATE TABLE `heartMeasurement`
+(   `id` int NOT NULL AUTO_INCREMENT,
+    `patientId` varchar(50) NOT NULL,
+    `name` varchar(50),
+    `icdCodes` varchar(50) NOT NULL,
+    `year` int,
+    `month` int,
+    `day` int,
+    `value` double precision,
+    `unit` varchar(50),
+    `measurementType` varchar(50),
     PRIMARY KEY (`id`)
 );
 

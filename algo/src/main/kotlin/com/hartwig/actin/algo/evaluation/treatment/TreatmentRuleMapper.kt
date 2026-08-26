@@ -82,15 +82,19 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_FIRST_LINE_SYSTEMIC_TREATMENT_NAME_X_WITHOUT_PROGRESSION_AND_AT_LEAST_Y_CYCLES to hasHadFirstLineTreatmentNameWithoutPdAndWithCyclesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_AS_A_LINE to hasHadSpecificDrugCombinedWithCategoryAndTypesAsLineCreator(),
+            EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_AND_AT_LEAST_A_CYCLES to hasHadSpecificDrugCombinedWithCategoryAndTypesWithCyclesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugCreator(),
-            EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(requireCurrentAdministration = false),
+            EligibilityRule.CURRENTLY_GETS_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugAsMostRecentCreator(requireCurrentAdministration = true),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AND_AT_LEAST_Y_CYCLES to hasHadTreatmentWithAnyDrugWithCyclesCreator(),
             EligibilityRule.HAS_HAD_COMBINED_TREATMENT_NAMES_X_AND_BETWEEN_Y_AND_Z_CYCLES to hasHadCombinedTreatmentNamesWithCyclesCreator(),
+            EligibilityRule.HAS_HAD_TREATMENT_NAME_X_AND_AT_LEAST_Y_CYCLES to hasHadTreatmentNameWithCyclesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT to hasHadTreatmentWithCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y to hasHadTreatmentCategoryOfTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y to hasHadTreatmentCategoryWithAnyIntentCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_WITH_ANY_INTENT_Y_WITHIN_Z_MONTHS to hasHadTreatmentCategoryWithAnyIntentRecentlyCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ANY_TYPE_Y_WITH_ANY_INTENT_Z to hasHadTreatmentCategoryAndTypeWithAnyIntentCreator(),
             EligibilityRule.HAS_RECEIVED_PLATINUM_BASED_DOUBLET to { HasReceivedPlatinumBasedDoublet(doidModel()) },
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y to hasHadTreatmentCategoryOfAllTypesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ALL_TYPES_Y_AND_AT_LEAST_Z_LINES to hasHadSomeTreatmentCategoryOfAllTypesCreator(),
@@ -124,19 +128,25 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_SYSTEMIC_THERAPY_WITH_ANY_INTENT_X to hasHadSystemicTherapyWithIntentsCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING to {
                 HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
-                    referenceDate,
+                    referenceDate = referenceDate,
                     intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
-                    "metastatic"
+                    categoryToIgnore = null,
+                    settingDescription = "metastatic"
                 )
             },
+            EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_METASTATIC_SETTING_EXCLUDING_CATEGORY_X to hasHadSystemicTreatmentInMetastaticSettingExcludingCategoryCreator(),
             EligibilityRule.HAS_HAD_SYSTEMIC_TREATMENT_IN_ADVANCED_OR_METASTATIC_SETTING to {
                 HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
-                    referenceDate,
+                    referenceDate = referenceDate,
                     intentsToIgnore = setOf(Intent.CURATIVE),
-                    "advanced or metastatic"
+                    categoryToIgnore = null,
+                    settingDescription = "advanced or metastatic"
                 )
             },
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_ADVANCED_OR_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(),
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
+            EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_ANY_TREATMENT_NAME_X to hasHadResponseFollowingSomeSpecificTreatmentCreator(),
             EligibilityRule.HAS_HAD_RADIOLOGICAL_RESPONSE_TO_TREATMENT_WITH_DRUG_X to hasHadRadiologicalResponseFollowingDrugTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_TREATMENT_WITH_ANY_NAME_X to hasHadClinicalBenefitFollowingSomeTreatmentCreator(),
             EligibilityRule.HAS_HAD_OBJECTIVE_CLINICAL_BENEFIT_FOLLOWING_CATEGORY_X_TREATMENT to hasHadClinicalBenefitFollowingTreatmentOfCategoryCreator(),
@@ -147,8 +157,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_TARGETED_THERAPY_INTERFERING_WITH_RAS_MEK_MAPK_PATHWAY to hasHadTargetedTherapyInterferingWithRasMekMapkPathwayCreator(),
             EligibilityRule.HAS_HAD_NON_INTERNAL_RADIOTHERAPY to { HasHadNonInternalRadiotherapy() },
             EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X to hasHadRadiotherapyToSomeBodyLocationCreator(),
+            EligibilityRule.HAS_HAD_RADIOTHERAPY_TO_BODY_LOCATION_X_FOR_AT_LEAST_Y_LINES to hasHadRadiotherapyToSomeBodyLocationAndSufficientLinesCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_ONLY_TYPES_Y_FOR_AT_LEAST_Z_MONTHS_AS_MOST_RECENT_LINE to hasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentCreator(),
             EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_WITH_ANY_DRUG_X_AND_AT_LEAST_Y_CYCLES to hasHadChemoradiotherapyWithAnyDrugAndMinimumCyclesCreator(),
+            EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY to hasHadChemoradiotherapyWithSpecificChemotherapyTypeCreator(),
             EligibilityRule.HAS_HAD_CHEMORADIOTHERAPY_OF_TYPE_X_CHEMOTHERAPY_AND_AT_LEAST_Y_CYCLES to hasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_NAME_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentNameCreator(),
             EligibilityRule.HAS_PROGRESSIVE_DISEASE_FOLLOWING_CATEGORY_X_TREATMENT to hasProgressiveDiseaseFollowingTreatmentCategoryCreator(),
@@ -403,7 +415,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val drug = function.param<DrugParameter>(0).value
             val category = function.param<TreatmentCategoryParameter>(1).value
             val types = function.param<ManyTreatmentTypesParameter>(2).value
-            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(drug, category, types, null)
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(drug, category, types, null, null)
         }
     }
 
@@ -419,7 +431,23 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val category = function.param<TreatmentCategoryParameter>(1).value
             val types = function.param<ManyTreatmentTypesParameter>(2).value
             val line = function.param<IntegerParameter>(3).value
-            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLine(drug, category, types, line)
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(drug, category, types, line, null)
+        }
+    }
+
+    private fun hasHadSpecificDrugCombinedWithCategoryAndTypesWithCyclesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.DRUG,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.INTEGER
+            )
+            val drug = function.param<DrugParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            val types = function.param<ManyTreatmentTypesParameter>(2).value
+            val cycles = function.param<IntegerParameter>(3).value
+            HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(drug, category, types, null, cycles)
         }
     }
 
@@ -463,10 +491,10 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
-    private fun hasHadTreatmentWithAnyDrugAsMostRecentCreator(): FunctionCreator {
+    private fun hasHadTreatmentWithAnyDrugAsMostRecentCreator(requireCurrentAdministration: Boolean): FunctionCreator {
         return { function: EligibilityFunction ->
             val drugs = function.param<ManyDrugsParameter>(0).value
-            HasHadTreatmentWithDrugFromSetAsMostRecent(drugs)
+            HasHadTreatmentWithDrugFromSetAsMostRecent(drugs, requireCurrentAdministration)
         }
     }
 
@@ -477,6 +505,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val minCycles = function.param<IntegerParameter>(1).value
             val maxCycles = function.param<IntegerParameter>(2).value
             HasHadCombinedTreatmentNamesWithCycles(treatments, minCycles, maxCycles)
+        }
+    }
+
+    private fun hasHadTreatmentNameWithCyclesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.TREATMENT, Parameter.Type.INTEGER)
+            val treatment = function.param< TreatmentParameter>(0).value
+            val minCycles = function.param<IntegerParameter>(1).value
+            HasHadCombinedTreatmentNamesWithCycles(listOf(treatment), minCycles, null)
         }
     }
 
@@ -503,7 +540,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             function.expectTypes(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_INTENTS)
             val category = function.param<TreatmentCategoryParameter>(0).value
             val intents = function.param<ManyIntentsParameter>(1).value
-            HasHadSomeTreatmentsWithCategoryWithIntents(category, intents)
+            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(category, intents)
         }
     }
 
@@ -518,7 +555,22 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val intents = function.param<ManyIntentsParameter>(1).value
             val weeksAgo = function.param<IntegerParameter>(2).value
             val minDate = createInterpreterForWashout(weeksAgo, null, referenceDate).second
-            HasHadSomeTreatmentsWithCategoryWithIntents(category, intents, minDate)
+            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(category, intents, minDate = minDate)
+        }
+    }
+
+    private fun hasHadTreatmentCategoryAndTypeWithAnyIntentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.MANY_INTENTS
+            )
+            val category = function.param<TreatmentCategoryParameter>(0).value
+            val types = function.param<ManyTreatmentTypesParameter>(1).value
+            val intents = function.param<ManyIntentsParameter>(2).value
+
+            HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(category, intents, types)
         }
     }
 
@@ -759,10 +811,44 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
         }
     }
 
+    private fun hasHadSystemicTreatmentInMetastaticSettingExcludingCategoryCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val input = function.param<TreatmentCategoryOrTypeParameter>(0).value
+            HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                categoryToIgnore = input.category,
+                settingDescription = "metastatic"
+            )
+        }
+    }
+
     private fun hasHadSystemicTherapyWithIntentsCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val intents = function.param<ManyIntentsParameter>(0).value
             HasHadSystemicTherapyWithAnyIntent(intents, null, null, null)
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                settingDescription = "metastatic",
+                maximumLines = function.param<IntegerParameter>(0).value
+            )
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = setOf(Intent.CURATIVE),
+                settingDescription = "advanced or metastatic",
+                maximumLines = function.param<IntegerParameter>(0).value
+            )
         }
     }
 
@@ -780,6 +866,18 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 treatmentResponses = setOf(treatmentResponse),
                 category = category,
                 types = types
+            )
+        }
+    }
+
+    private fun hasHadResponseFollowingSomeSpecificTreatmentCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.TREATMENT_RESPONSE, Parameter.Type.MANY_TREATMENTS)
+            val treatmentResponse = function.param<TreatmentResponseParameter>(0).value
+            val treatments = function.param<ManyTreatmentsParameter>(1).value
+            HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
+                treatmentResponses = setOf(treatmentResponse),
+                targetTreatments = treatments
             )
         }
     }
@@ -852,7 +950,15 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
 
     private fun hasHadRadiotherapyToSomeBodyLocationCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
-            HasHadRadiotherapyToSomeBodyLocation(function.param<StringParameter>(0).value)
+            HasHadRadiotherapyToSomeBodyLocation(function.param<StringParameter>(0).value, null)
+        }
+    }
+
+    private fun hasHadRadiotherapyToSomeBodyLocationAndSufficientLinesCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            val bodyLocation = function.param<StringParameter>(0).value
+            val lines = function.param<IntegerParameter>(1).value
+            HasHadRadiotherapyToSomeBodyLocation(bodyLocation, lines)
         }
     }
 
@@ -885,6 +991,14 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val drugs = function.param<ManyDrugsParameter>(0).value
             val cycles = function.param<IntegerParameter>(1).value
             HasHadChemoradiotherapyWithDrugAndCycles(drugs, cycles)
+        }
+    }
+
+    private fun hasHadChemoradiotherapyWithSpecificChemotherapyTypeCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.TREATMENT_TYPE)
+            val chemotherapyType = function.param<TreatmentTypeParameter>(0).value
+            HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(chemotherapyType, minCycles = null)
         }
     }
 

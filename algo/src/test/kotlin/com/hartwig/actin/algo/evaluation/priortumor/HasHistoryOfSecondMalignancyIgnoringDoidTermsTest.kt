@@ -18,8 +18,8 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
         mapOf(ignoreDoid to parentDoid),
         mapOf(ignoreDoid to ignoreTerm, parentDoid to parentTerm),
     )
-    private val functionWithoutMinDate = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, listOf(ignoreTerm), minDate = null)
-    private val functionWithMinDate = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, listOf(ignoreTerm), minDate = minDate)
+    private val functionWithoutMinDate = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(ignoreDoid), minDate = null)
+    private val functionWithMinDate = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(ignoreDoid), minDate = minDate)
 
     @Test
     fun `Should fail when no prior tumors present`() {
@@ -35,7 +35,7 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
     @Test
     fun `Should fail when prior tumors present in history but doid is child of doid to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid))
-        val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, listOf(parentTerm), minDate = null)
+        val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(parentDoid), minDate = null)
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
     }
 

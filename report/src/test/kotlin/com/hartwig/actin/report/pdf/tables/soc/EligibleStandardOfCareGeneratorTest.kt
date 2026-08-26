@@ -1,9 +1,11 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.PatientRecordFactory
+import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.getCellContents
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,7 +22,8 @@ class EligibleStandardOfCareGeneratorTest {
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         )
 
-        val contents = EligibleStandardOfCareGenerator(report).contents()
+        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+        val contents = EligibleStandardOfCareGenerator(report, labels).contents()
 
         assertThat(getCellContents(contents, 0, 0)).isEqualTo("There are no standard of care treatment options for this patient")
     }

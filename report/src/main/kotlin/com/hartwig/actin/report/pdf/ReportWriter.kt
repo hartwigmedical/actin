@@ -25,16 +25,15 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
     private val logger = KotlinLogging.logger {}
 
     @Synchronized
-    fun write(report: Report, configuration: ReportConfiguration, doidModel: DoidModel, addExtendedSuffix: Boolean) {
+    fun write(report: Report, configuration: ReportConfiguration, doidModel: DoidModel) {
         logger.info { "Building report for patient ${report.patientId} with configuration $configuration" }
 
-        logger.debug { "Extended suffix enabled: $addExtendedSuffix" }
-        
         logger.debug { "Initializing output styles" }
         Styles.initialize()
 
-        val chapters = ReportContentProvider(report, configuration, doidModel).provideChapters()
-        writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, report.reportDate, addExtendedSuffix)
+        val labels = ReportLabels.load(configuration.intendedUse)
+        val chapters = ReportContentProvider(report, configuration, doidModel, labels).provideChapters()
+        writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, report.reportDate, labels)
     }
 
     private fun writePdfChapters(
@@ -42,11 +41,11 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         sourcePatientId: String?,
         chapters: List<ReportChapter>,
         reportDate: LocalDate,
-        addExtendedSuffix: Boolean
+        labels: ReportLabels
     ) {
-        val doc = initializeReport(patientId, addExtendedSuffix)
+        val doc = initializeReport(patientId)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate)
+        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]
@@ -63,12 +62,10 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdfDocument.close()
     }
 
-    private fun initializeReport(patientId: String, addExtendedSuffix: Boolean): Document {
+    private fun initializeReport(patientId: String): Document {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
-            val outputFilePath =
-                (Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin" +
-                        (if (addExtendedSuffix) ".extended" else "") + ".pdf")
+            val outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf"
             logger.info { "Writing PDF report to $outputFilePath" }
             val properties = WriterProperties().setFullCompressionMode(true)
                 .setCompressionLevel(CompressionConstants.BEST_COMPRESSION)
