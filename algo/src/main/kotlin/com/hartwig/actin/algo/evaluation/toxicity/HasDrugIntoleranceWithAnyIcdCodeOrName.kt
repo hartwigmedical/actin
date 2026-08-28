@@ -28,11 +28,11 @@ class HasDrugIntoleranceWithAnyIcdCodeOrName(
 
         return when {
             matchingAllergies.isNotEmpty() -> {
-                EvaluationFactory.pass("Has allergy to $description (${Format.concatItemsWithAnd(matchingAllergies)})")
+                EvaluationFactory.pass("Allergy to $description (${Format.concatItemsWithAnd(matchingAllergies)})")
             }
 
             undeterminedDrugAllergies.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Undetermined if drug allergy in history is $description allergy (drug type unknown)")
+                EvaluationFactory.undetermined("Undetermined if drug allergy in provided allergies is $description allergy (drug type unknown)")
             }
 
             else -> EvaluationFactory.fail("No known allergy to $description")

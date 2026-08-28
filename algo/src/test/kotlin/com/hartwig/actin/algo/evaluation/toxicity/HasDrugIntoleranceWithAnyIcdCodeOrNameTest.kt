@@ -41,7 +41,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         val match = ComorbidityTestFactory.intolerance(name = PLATINUM_DRUG_SET.iterator().next())
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy to platinum compounds (carboplatin)"
+            "Allergy to platinum compounds (carboplatin)"
         )
     }
 
@@ -52,7 +52,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy to platinum compounds (${match.name})"
+            "Allergy to platinum compounds (${match.name})"
         )
     }
 
@@ -67,7 +67,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
             EvaluationAssert.assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-                "Has allergy to platinum compounds (${match.name})"
+                "Allergy to platinum compounds (${match.name})"
             )
         }
     }
@@ -78,7 +78,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy to platinum compounds (carboplatin chemotherapy allergy)"
+            "Allergy to platinum compounds (carboplatin chemotherapy allergy)"
         )
     }
 
@@ -87,7 +87,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = null)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "Undetermined if drug allergy in history is platinum compounds allergy (drug type unknown)"
+            "Undetermined if drug allergy in provided allergies is platinum compounds allergy (drug type unknown)"
         )
     }
 }

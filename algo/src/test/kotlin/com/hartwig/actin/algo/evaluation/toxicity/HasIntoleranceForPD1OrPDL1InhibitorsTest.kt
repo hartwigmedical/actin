@@ -26,7 +26,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(record),
-                "Has PD-1/PD-L1 intolerance(s): intolerance to ${term.uppercase()}"
+                "PD-1/PD-L1 intolerance(s): intolerance to ${term.uppercase()}"
             )
         }
     }
@@ -34,7 +34,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     @Test
     fun `Should pass when patient has any comorbidity matching main and extension code`() {
         assertResultForIcdCodes(EvaluationResult.PASS, MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.first()) { name ->
-            "Has PD-1/PD-L1 intolerance(s): $name"
+            "PD-1/PD-L1 intolerance(s): $name"
         }
     }
 

@@ -39,7 +39,7 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
 
         return when {
             matchingIntolerances.isNotEmpty() -> {
-                EvaluationFactory.pass("Has PD-1/PD-L1 intolerance(s): " + Format.concatItemsWithAnd(matchingIntolerances))
+                EvaluationFactory.pass("PD-1/PD-L1 intolerance(s): " + Format.concatItemsWithAnd(matchingIntolerances))
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
