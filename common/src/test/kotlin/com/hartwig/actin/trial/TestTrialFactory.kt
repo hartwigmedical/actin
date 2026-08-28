@@ -93,7 +93,6 @@ object TestTrialFactory {
                 open = true,
                 slotsAvailable = true
             ),
-            ignore = false,
             description = "Cohort $cohortId"
         )
     }

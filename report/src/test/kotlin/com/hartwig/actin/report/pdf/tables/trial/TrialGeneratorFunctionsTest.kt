@@ -26,7 +26,6 @@ class TrialGeneratorFunctionsTest {
         name = "cohort1",
         isOpen = true,
         hasSlotsAvailable = false,
-        ignore = false,
         isEvaluable = false,
         molecularInclusionEvents = setOf(MolecularEvent("MSI")),
         molecularExclusionEvents = emptySet(),
@@ -325,11 +324,8 @@ class TrialGeneratorFunctionsTest {
         assertThat(
             TrialGeneratorFunctions.contentForTrialCohortList(
                 listOf(
-                    cohort1.copy(locations = setOf("site1")),
-                    cohort2.copy(locations = setOf("site2"), ignore = true),
-                    cohort1.copy(locations = setOf("site3"), isEvaluable = false, ignore = true),
-                    cohort2.copy(locations = setOf("site4"), isEvaluable = true, ignore = true),
-                    cohort1.copy(locations = setOf("site5"), isEvaluable = false),
+                    cohort1.copy(locations = setOf("site1"), isEvaluable = false),
+                    cohort1.copy(locations = setOf("site2"), isEvaluable = true),
                 ),
                 includeFeedback = false,
                 InterpretedCohort::warnings,
@@ -339,11 +335,9 @@ class TrialGeneratorFunctionsTest {
             )
         ).isEqualTo(
             listOf(
-                listOf("cohort1 (no slots)", "MSI", "site1", "Non-evaluable"),
-                listOf("cohort2", "None", "site2", "Ignored and Non-evaluable"),
-                listOf("cohort1 (no slots)", "MSI", "site3", "Ignored and Non-evaluable"),
-                listOf("cohort2", "None", "site4", "Ignored"),
-                listOf("cohort1 (no slots)", "MSI", "site5", "Non-evaluable"),
+                listOf(APPLIES_TO_ALL_COHORTS, "MSI", ""),
+                listOf("cohort1 (no slots)", "", "site1", "Non-evaluable"),
+                listOf("cohort1 (no slots)", "", "site2", "None"),
             )
         )
     }

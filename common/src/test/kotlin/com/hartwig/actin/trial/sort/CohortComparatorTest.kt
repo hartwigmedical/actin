@@ -25,7 +25,6 @@ class CohortComparatorTest {
                     true,
                     slotsAvailable = true
                 ),
-                ignore = false,
                 description = ""
             ),
             eligibility = emptyList()

@@ -47,7 +47,6 @@ class TrialDAO(private val context: DSLContext) {
             Tables.COHORT.EVALUABLE,
             Tables.COHORT.OPEN,
             Tables.COHORT.SLOTSAVAILABLE,
-            Tables.COHORT.IGNORE,
             Tables.COHORT.DESCRIPTION
         )
             .values(
@@ -56,7 +55,6 @@ class TrialDAO(private val context: DSLContext) {
                 metadata.evaluable,
                 metadata.open,
                 metadata.slotsAvailable,
-                metadata.ignore,
                 metadata.description
             )
             .returning(Tables.COHORT.ID)

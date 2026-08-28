@@ -9,11 +9,11 @@ class CohortMetadataComparatorTest {
 
     @Test
     fun `Should sort cohort metadata`() {
-        val metadata1 = metadata("A", "A First", open = true, ignore = false)
-        val metadata2 = metadata("A", "A First", open = false, ignore = false)
-        val metadata3 = metadata("A", "Second A", open = true, ignore = false)
-        val metadata4 = metadata("B", "B Third", open = true, ignore = false)
-        val metadata5 = metadata("A", "A First", open = false, ignore = true)
+        val metadata1 = metadata("A", "A First", open = true)
+        val metadata2 = metadata("A", "A First", open = false)
+        val metadata3 = metadata("A", "Second A", open = true)
+        val metadata4 = metadata("B", "B Third", open = true)
+        val metadata5 = metadata("A", "A First", open = false)
         val metadata = listOf(metadata1, metadata2, metadata3, metadata4, metadata5).sortedWith(CohortMetadataComparator())
 
         assertThat(metadata[0]).isEqualTo(metadata1)
@@ -23,13 +23,12 @@ class CohortMetadataComparatorTest {
         assertThat(metadata[4]).isEqualTo(metadata4)
     }
 
-    private fun metadata(cohortId: String, description: String, open: Boolean, ignore: Boolean): CohortMetadata {
+    private fun metadata(cohortId: String, description: String, open: Boolean): CohortMetadata {
         return CohortMetadata(
             evaluable = true,
             cohortAvailability = CohortAvailability(slotsAvailable = true, open = open),
             cohortId = cohortId,
-            description = description,
-            ignore = ignore
+            description = description
         )
     }
 }

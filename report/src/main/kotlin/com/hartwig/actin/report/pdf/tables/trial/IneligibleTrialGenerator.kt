@@ -100,23 +100,21 @@ class IneligibleTrialGenerator(
             )
         }
 
-        fun nonEvaluableOrIgnoredCohorts(
-            ignoredCohorts: List<InterpretedCohort>,
+        fun nonEvaluableCohorts(
             nonEvaluableCohorts: List<InterpretedCohort>,
             requestingSource: TrialSource?,
             labels: ReportLabels
         ): TrialTableGenerator {
-            val nonEvaluableAndIgnoredCohorts = ignoredCohorts + nonEvaluableCohorts
-            val nonEvaluableAndIgnoredTrials = nonEvaluableAndIgnoredCohorts.map(InterpretedCohort::trialId).distinct()
+            val nonEvaluableAndIgnoredTrials = nonEvaluableCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortsString = TrialFormatFunctions.generateCohortsFromTrialsString(
-                nonEvaluableAndIgnoredCohorts.size,
+                nonEvaluableCohorts.size,
                 nonEvaluableAndIgnoredTrials.size,
                 labels
             )
             val title = labels.trialMatching.titleNonEvaluable(cohortsString)
 
             return IneligibleTrialGenerator(
-                cohorts = nonEvaluableAndIgnoredCohorts,
+                cohorts = nonEvaluableCohorts,
                 requestingSource = requestingSource,
                 title = title,
                 indicateNoSlotsOrClosed = false,

@@ -18,7 +18,6 @@ object InterpretedCohortTestFactory {
         molecularInclusionEvents: Iterable<MolecularEvent> = emptySet(),
         isPotentiallyEligible: Boolean = false,
         isMissingMolecularResultForEvaluation: Boolean = false,
-        isIgnore: Boolean = false,
         isEvaluable: Boolean = false,
     ): InterpretedCohort {
         return InterpretedCohort(
@@ -33,7 +32,6 @@ object InterpretedCohortTestFactory {
             name = cohort,
             isOpen = isOpen,
             hasSlotsAvailable = hasSlotsAvailable,
-            ignore = isIgnore,
             isEvaluable = isEvaluable,
             molecularInclusionEvents = molecularInclusionEvents.toSet(),
             molecularExclusionEvents = emptySet(),

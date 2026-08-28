@@ -46,7 +46,6 @@ private val EVALUABLE_COHORTS = listOf(
     InterpretedCohortTestFactory.interpretedCohort(
         isPotentiallyEligible = true,
         isOpen = true,
-        isIgnore = false,
         hasSlotsAvailable = true,
         molecularInclusionEvents = setOf(MolecularEvent(EGFR_TARGET))
     )

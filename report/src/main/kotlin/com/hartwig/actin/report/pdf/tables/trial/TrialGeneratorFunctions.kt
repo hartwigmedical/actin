@@ -228,7 +228,6 @@ object TrialGeneratorFunctions {
                 ) else null,
                 if (includeCohortConfig) concat(
                     setOfNotNull(
-                        "Ignored".takeIf { cohort.ignore },
                         "Non-evaluable".takeIf { !cohort.isEvaluable }), separator = " and "
                 ) else null,
             )
