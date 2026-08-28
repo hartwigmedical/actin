@@ -21,11 +21,13 @@ class BodyWeightFunctionsTest {
         val weights: List<BodyWeight> = emptyList()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "No (recent) body weights found"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate),
+            "No (recent) body weights found"
         )
     }
 
@@ -36,11 +38,13 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Body weights not measured in kilogram or kilograms"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate),
+            "Body weights not measured in kilogram or kilograms"
         )
     }
 
@@ -53,7 +57,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Median body weight (167.5 kg) above 150.0 kg"
         )
     }
 
@@ -64,7 +69,7 @@ class BodyWeightFunctionsTest {
             weight(referenceDateTime.plusDays(1), 152.0)
         )
         val evaluation = evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Median body weight (151.5 kg) below 150.0 kg")
         assertThat(evaluation.recoverable).isTrue()
     }
 
@@ -76,7 +81,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Median body weight (149.5 kg) below 150.0 kg"
         )
     }
 
@@ -88,7 +94,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Median body weight (149.5 kg) below 150.0 kg"
         )
     }
 
@@ -99,7 +106,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Body weights not measured in kilogram or kilograms"
         )
     }
 
@@ -111,7 +119,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Median body weight (150.0 kg) equal to 150.0 kg"
         )
     }
 
@@ -123,7 +132,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate),
+            "Median body weight (32.5 kg) below 40.0 kg"
         )
     }
 
@@ -134,7 +144,7 @@ class BodyWeightFunctionsTest {
             weight(referenceDateTime.plusDays(1), 40.0)
         )
         val evaluation = evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Median body weight (39.0 kg) below 40.0 kg")
         assertThat(evaluation.recoverable).isTrue()
     }
 
@@ -146,7 +156,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate),
+            "Median body weight (40.5 kg) above 40.0 kg"
         )
     }
 
@@ -158,7 +169,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
+            evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate),
+            "Median body weight (40.0 kg) equal to 40.0 kg"
         )
     }
 
@@ -175,7 +187,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Median body weight (150.0 kg) equal to 150.0 kg"
         )
     }
 
@@ -188,7 +201,8 @@ class BodyWeightFunctionsTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
+            evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate),
+            "Median body weight (137.5 kg) below 150.0 kg"
         )
     }
 

@@ -29,13 +29,21 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
 
     @Test
     fun `Should fail for no treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
     fun `Should fail for trial treatment with unknown date`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -43,7 +51,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true, startYear = MIN_DATE.year - 1
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -51,7 +63,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -59,7 +75,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, DRUG_TYPE_TO_IGNORE_SET)), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -67,7 +87,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, DRUG_TYPE_TO_IGNORE_SET)), startYear = MIN_DATE.year - 1
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -80,7 +104,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(treatment("test", true)), isTrial = true, startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had recent transplantation treatment ignoring allogenic"
+        )
     }
 
     @Test
@@ -94,7 +122,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
                 )
             ), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
 
@@ -104,7 +136,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
             setOf(drugTreatment("test", MATCHING_CATEGORY, DRUG_TYPE_TO_IGNORE_SET + OTHER_DRUG_TYPE_SET)),
             startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -116,7 +152,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
             ),
             startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received targeted therapy treatment ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -131,7 +171,8 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)))
+            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
+            "Has received targeted therapy treatment ignoring HER2 antibody"
         )
     }
 
@@ -146,7 +187,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
                 )
             ), startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has potentially received targeted therapy treatment ignoring HER2 antibody - exact drug type of patient's treatment unknown"
+        )
     }
 
     @Test
@@ -154,7 +199,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(treatment("test", true)), isTrial = true, startYear = MIN_DATE.year + 1
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if treatment received in previous trial included targeted therapy"
+        )
     }
 
     @Test
@@ -162,6 +211,10 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, OTHER_DRUG_TYPE_SET))
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received targeted therapy treatment ignoring HER2 antibody but inconclusive date"
+        )
     }
 }

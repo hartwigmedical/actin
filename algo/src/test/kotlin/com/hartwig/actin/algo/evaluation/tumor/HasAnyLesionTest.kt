@@ -17,27 +17,43 @@ class HasAnyLesionTest {
             TumorTestFactory.withBrainLesions(true),
             TumorTestFactory.withLungLesions(true),
             TumorTestFactory.withLymphNodeLesions(true),
-        ).forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it)) }
+        ).forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it), "Has at least one lesion") }
     }
 
     @Test
     fun `Should pass if at least other lesions are present`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(listOf("other"))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("other"))),
+            "Has at least one lesion"
+        )
     }
 
     @Test
     fun `Should warn if only suspected lesions are present`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))),
+            "Has only suspected lesions - undetermined if has lesions"
+        )
     }
 
     @Test
     fun `Should be undetermined if all lesion localizations are undetermined`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withConfirmedLesions()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withConfirmedLesions()),
+            "Undetermined if lesions are present (some lesion data missing)"
+        )
     }
 
     @Test
     fun `Should be undetermined if some lesion localizations are undetermined and others are false`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withConfirmedLesions(false, false)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withConfirmedLesions(false, false)),
+            "Undetermined if lesions are present (some lesion data missing)"
+        )
     }
 
     @Test
@@ -48,7 +64,8 @@ class HasAnyLesionTest {
                     false, false, false, false, false, false,
                     emptyList()
                 )
-            )
+            ),
+            "Has no lesions"
         )
     }
 }

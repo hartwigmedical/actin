@@ -23,6 +23,10 @@ class HasLimitedBloodPressureTest {
                 valid = true
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)),
+            "Median systolic blood pressure (150 mmHg) above 140 mmHg"
+        )
     }
 }

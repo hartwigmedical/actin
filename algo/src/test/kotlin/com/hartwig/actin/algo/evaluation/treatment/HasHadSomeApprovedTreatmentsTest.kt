@@ -10,9 +10,13 @@ class HasHadSomeApprovedTreatmentsTest {
     @Test
     fun canEvaluate() {
         val function = HasHadSomeApprovedTreatments(1)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not had approved treatments (no prior tumor treatment)"
+        )
 
         val record = TreatmentTestFactory.withTreatmentHistoryEntry(TreatmentTestFactory.treatmentHistoryEntry())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record), "Nr of received approved treatments undetermined")
     }
 }

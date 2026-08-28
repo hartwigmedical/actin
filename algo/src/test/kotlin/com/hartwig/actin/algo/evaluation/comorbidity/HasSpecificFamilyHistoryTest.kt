@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.icd.TestIcdFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasSpecificFamilyHistoryTest {
@@ -18,7 +17,11 @@ class HasSpecificFamilyHistoryTest {
 
     @Test
     fun `Should fail when no prior conditions present`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions((emptyList()))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withOtherConditions((emptyList()))),
+            "No presence of family history of idiopathic sudden death"
+        )
     }
 
     @Test
@@ -26,7 +29,8 @@ class HasSpecificFamilyHistoryTest {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.HEART_FAILURE_BLOCK)
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
+            "No presence of family history of idiopathic sudden death"
         )
     }
 
@@ -34,8 +38,7 @@ class HasSpecificFamilyHistoryTest {
     fun `Should pass when 'pass condition' family history present`() {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = passConditions.icdCodes.first().mainCode)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Has family history of idiopathic sudden death")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has family history of idiopathic sudden death")
     }
 
     @Test
@@ -46,8 +49,9 @@ class HasSpecificFamilyHistoryTest {
                 icdMainCode = undeterminedConditions.icdCodes.first().mainCode
             )
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
             "Has family history of cardiovascular disease (acute myocard infarct) - undetermined if idiopathic sudden death"
         )
     }
@@ -61,8 +65,11 @@ class HasSpecificFamilyHistoryTest {
             assertEvaluation(
                 EvaluationResult.UNDETERMINED,
                 function.evaluate(
-                    ComorbidityTestFactory.withOtherCondition(ComorbidityTestFactory.otherCondition(icdMainCode = it))
-                )
+                    ComorbidityTestFactory.withOtherCondition(
+                        ComorbidityTestFactory.otherCondition(name = "unspecified health problem", icdMainCode = it)
+                    )
+                ),
+                "Has family history of unspecified disease (unspecified health problem) - undetermined if idiopathic sudden death"
             )
         }
     }

@@ -13,15 +13,23 @@ class HasOvarianBorderlineTumorTest {
 
     @Test
     fun canEvaluate() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withDoids(null)),
+            "Ovarian borderline tumor undetermined (no DOIDs)"
+        )
 
         val wrongCancerType = TumorTestFactory.withDoidAndName("wrong", targetedType)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(wrongCancerType))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(wrongCancerType), "Has no ovarian borderline tumor")
 
         val genericType = TumorTestFactory.withDoidAndName(DoidConstants.OVARIAN_CANCER_DOID, "wrong")
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(genericType))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(genericType),
+            "Has ovarian cancer - undetermined if may be a borderline tumor"
+        )
 
         val correct = TumorTestFactory.withDoidAndName(DoidConstants.OVARIAN_CANCER_DOID, targetedType)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(correct))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(correct), "Has ovarian borderline tumor")
     }
 }

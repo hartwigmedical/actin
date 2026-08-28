@@ -21,7 +21,7 @@ class HasReceivedPlatinumBasedDoublet(private val doidModel: DoidModel) : Evalua
 
         return when {
             treatmentHistoryAnalysis.receivedPlatinumDoublet() -> {
-                EvaluationFactory.pass("Has $message ")
+                EvaluationFactory.pass("Has $message")
             }
 
             isNsclc && treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {

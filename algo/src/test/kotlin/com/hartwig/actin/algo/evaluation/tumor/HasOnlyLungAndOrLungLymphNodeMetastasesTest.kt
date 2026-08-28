@@ -11,7 +11,8 @@ class HasOnlyLungAndOrLungLymphNodeMetastasesTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasOnlyLungAndOrLungLymphNodeMetastases().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            HasOnlyLungAndOrLungLymphNodeMetastases().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if only lung and/or lung lymph nodes metastases"
         )
     }
 }

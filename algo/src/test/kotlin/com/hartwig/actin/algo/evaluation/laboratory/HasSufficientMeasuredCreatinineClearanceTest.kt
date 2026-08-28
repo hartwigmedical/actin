@@ -15,28 +15,32 @@ class HasSufficientMeasuredCreatinineClearanceTest {
     fun `Should pass for DAILY_TOTAL when calculated clearance is above minimum`() {
         // CrCl = 10 * 1000 * 1000 / (70 * 1440) = 99.2 → above min of 60
         assertEvaluation(EvaluationResult.PASS, evaluateFormula(MeasuredCreatinineClearanceMethod.DAILY_TOTAL,
-            LabMeasurement.CREATININE_24U to 10.0, LabMeasurement.CREATININE to 70.0))
+            LabMeasurement.CREATININE_24U to 10.0, LabMeasurement.CREATININE to 70.0),
+            "Measured creatinine clearance exceeds min of 60.0 mL/min")
     }
 
     @Test
     fun `Should fail for DAILY_TOTAL when calculated clearance is below minimum`() {
         // CrCl = 5 * 1000 * 1000 / (150 * 1440) = 23.1 → below min of 60
         assertEvaluation(EvaluationResult.FAIL, evaluateFormula(MeasuredCreatinineClearanceMethod.DAILY_TOTAL,
-            LabMeasurement.CREATININE_24U to 5.0, LabMeasurement.CREATININE to 150.0))
+            LabMeasurement.CREATININE_24U to 5.0, LabMeasurement.CREATININE to 150.0),
+            "Measured creatinine clearance below min of 60.0 mL/min")
     }
 
     @Test
     fun `Should pass for URINE_CONCENTRATION when calculated clearance is above minimum`() {
         // CrCl = 5 * 1500 * 1000 / (70 * 1440) = 74.4 → above min of 60
         assertEvaluation(EvaluationResult.PASS, evaluateFormula(MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION,
-            LabMeasurement.CREATININE_URINE to 5.0, LabMeasurement.URINE_VOLUME_24H to 1500.0, LabMeasurement.CREATININE to 70.0))
+            LabMeasurement.CREATININE_URINE to 5.0, LabMeasurement.URINE_VOLUME_24H to 1500.0, LabMeasurement.CREATININE to 70.0),
+            "Measured creatinine clearance exceeds min of 60.0 mL/min")
     }
 
     @Test
     fun `Should fail for URINE_CONCENTRATION when calculated clearance is below minimum`() {
         // CrCl = 2 * 1000 * 1000 / (150 * 1440) = 9.3 → below min of 60
         assertEvaluation(EvaluationResult.FAIL, evaluateFormula(MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION,
-            LabMeasurement.CREATININE_URINE to 2.0, LabMeasurement.URINE_VOLUME_24H to 1000.0, LabMeasurement.CREATININE to 150.0))
+            LabMeasurement.CREATININE_URINE to 2.0, LabMeasurement.URINE_VOLUME_24H to 1000.0, LabMeasurement.CREATININE to 150.0),
+            "Measured creatinine clearance below min of 60.0 mL/min")
     }
 
     @Test
@@ -46,7 +50,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
             evaluateFormula(
                 MeasuredCreatinineClearanceMethod.DAILY_TOTAL,
                 LabMeasurement.CREATININE_24U to 10.0
-            )
+            ),
+            "Measured creatinine clearance undetermined: No creatinine value available"
         )
     }
 
@@ -57,7 +62,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
             evaluateFormula(
                 MeasuredCreatinineClearanceMethod.DAILY_TOTAL,
                 LabMeasurement.CREATININE to 70.0
-            )
+            ),
+            "Measured creatinine clearance undetermined: No creatinine in 24h urine value available"
         )
     }
 
@@ -67,7 +73,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
             MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION,
             LabMeasurement.CREATININE_URINE to 5.0,
             LabMeasurement.URINE_VOLUME_24H to 1500.0
-        ))
+        ),
+            "Measured creatinine clearance undetermined: No creatinine value available")
     }
 
     @Test
@@ -77,7 +84,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
             evaluateFormula(
                 MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION,
                 LabMeasurement.URINE_VOLUME_24H to 1500.0, LabMeasurement.CREATININE to 70.0
-            )
+            ),
+            "Measured creatinine clearance undetermined: No creatinine in urine value available"
         )
     }
 
@@ -88,7 +96,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
             evaluateFormula(
                 MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION,
                 LabMeasurement.CREATININE_URINE to 5.0, LabMeasurement.CREATININE to 70.0
-            )
+            ),
+            "Measured creatinine clearance undetermined: No 24-hour volume urine value available"
         )
     }
 
@@ -100,7 +109,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
                 MeasuredCreatinineClearanceMethod.DAILY_TOTAL,
                 LabMeasurement.CREATININE_24U to 10.0, LabMeasurement.CREATININE to 70.0,
                 comparatorOverrides = mapOf(LabMeasurement.CREATININE_24U to ">")
-            )
+            ),
+            "Measured creatinine clearance undetermined: comparator present on input value(s) makes the result direction ambiguous"
         )
     }
 
@@ -112,7 +122,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
                 MeasuredCreatinineClearanceMethod.URINE_CONCENTRATION,
                 LabMeasurement.CREATININE_URINE to 5.0, LabMeasurement.URINE_VOLUME_24H to 1500.0, LabMeasurement.CREATININE to 70.0,
                 comparatorOverrides = mapOf(LabMeasurement.CREATININE to "<")
-            )
+            ),
+            "Measured creatinine clearance undetermined: comparator present on input value(s) makes the result direction ambiguous"
         )
     }
 
@@ -123,7 +134,8 @@ class HasSufficientMeasuredCreatinineClearanceTest {
             EvaluationResult.UNDETERMINED,
             evaluateFormula(method,
                 LabMeasurement.CREATININE_24U to 10.0, LabMeasurement.CREATININE_URINE to 5.0,
-                LabMeasurement.URINE_VOLUME_24H to 1500.0, LabMeasurement.CREATININE to 0.0)
+                LabMeasurement.URINE_VOLUME_24H to 1500.0, LabMeasurement.CREATININE to 0.0),
+            "Measured creatinine clearance undetermined: creatinine value is zero"
         )
     }
 

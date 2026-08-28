@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.vitalfunction.VitalFunctionTestFactory.
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import java.time.LocalDate
 import java.time.LocalDateTime
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasBMIUpToLimitTest {
@@ -18,7 +17,8 @@ class HasBMIUpToLimitTest {
     fun `Should be undetermined when no body weights provided`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(VitalFunctionTestFactory.withBodyWeights(emptyList()))
+            function.evaluate(VitalFunctionTestFactory.withBodyWeights(emptyList())),
+            "No (recent) body weights found"
         )
     }
 
@@ -30,7 +30,8 @@ class HasBMIUpToLimitTest {
                 VitalFunctionTestFactory.withBodyWeights(
                     listOf(weight(date = referenceDate, value = 70.0, unit = "pound"))
                 )
-            )
+            ),
+            "Body weights not measured in kilogram"
         )
     }
 
@@ -39,7 +40,7 @@ class HasBMIUpToLimitTest {
         val weight = weight(date = referenceDate, value = 70.0, unit = "Kilogram")
         val height = height(date = referenceDate, value = 180.0, unit = "centimeters", valid = true)
         val evaluation = function.evaluate(VitalFunctionTestFactory.withBodyWeightsAndHeight(listOf(weight), height))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "BMI (22) under limit of 40")
     }
 
     @Test
@@ -47,7 +48,7 @@ class HasBMIUpToLimitTest {
         val weight = weight(date = referenceDate, value = 140.0, unit = "Kilogram")
         val height = height(date = referenceDate, value = 160.0, unit = "centimeters", valid = true)
         val evaluation = function.evaluate(VitalFunctionTestFactory.withBodyWeightsAndHeight(listOf(weight), height))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "BMI (55) above limit of 40")
     }
 
     @Test
@@ -60,8 +61,7 @@ class HasBMIUpToLimitTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).contains("Median weight 75.0 kg will not exceed BMI limit of 40 for height >= 1.37 m")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Median weight 75.0 kg will not exceed BMI limit of 40 for height >= 1.37 m")
     }
 
     @Test
@@ -74,7 +74,7 @@ class HasBMIUpToLimitTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Median weight 75.0 kg will not exceed BMI limit of 40 for height >= 1.37 m")
     }
 
     @Test
@@ -87,8 +87,7 @@ class HasBMIUpToLimitTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).contains("Median weight 175.0 kg will exceed BMI limit of 40 for height < 2.09 m")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "Median weight 175.0 kg will exceed BMI limit of 40 for height < 2.09 m")
     }
 
     @Test
@@ -101,7 +100,6 @@ class HasBMIUpToLimitTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).contains("Median weight 102.5 kg will exceed BMI limit of 40 for height < 1.60 m")
+        assertEvaluation(EvaluationResult.WARN, evaluation, "Median weight 102.5 kg will exceed BMI limit of 40 for height < 1.60 m")
     }
 }

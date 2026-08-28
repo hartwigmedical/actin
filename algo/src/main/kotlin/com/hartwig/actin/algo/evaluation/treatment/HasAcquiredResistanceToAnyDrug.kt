@@ -13,7 +13,7 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val treatmentEvaluation = evaluateIfDrugHadPDResponse(record.oncologicalHistory, drugsToMatch)
-        val toxicityMessage = if (treatmentEvaluation.matchesWithToxicity) "(stop reason toxicity) " else ""
+        val toxicityMessage = if (treatmentEvaluation.matchesWithToxicity) " (stop reason toxicity)" else ""
 
         return when {
             treatmentEvaluation.matchingDrugsWithPD.isNotEmpty() -> {
@@ -27,7 +27,7 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
             }
 
             treatmentEvaluation.matchesWithUnclearPD || treatmentEvaluation.matchesWithToxicity -> {
-                EvaluationFactory.undetermined("Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} $toxicityMessage")
+                EvaluationFactory.undetermined("Undetermined acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)}$toxicityMessage")
             }
 
             treatmentEvaluation.matchingDrugs.isNotEmpty() -> {

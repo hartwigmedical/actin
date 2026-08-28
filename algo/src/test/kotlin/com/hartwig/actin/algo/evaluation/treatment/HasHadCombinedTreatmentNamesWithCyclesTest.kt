@@ -31,7 +31,12 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
             testTreatmentWithNullCycles,
             nonMatchingTreatment
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Found matching treatments (Matching (11 cycles) and between 8 and 12 cycles",
+            "Found matching treatments (Test (8 cycles) and between 8 and 12 cycles"
+        )
     }
 
     @Test
@@ -41,7 +46,8 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
                 withTreatmentHistory(
                     listOf(matchingPriorTreatment, testTreatmentWithWrongCycles, testTreatmentWithNullCycles, nonMatchingTreatment)
                 )
-            )
+            ),
+            "Unknown cycles for matching treatments: Test"
         )
     }
 
@@ -50,7 +56,8 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
         assertEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 withTreatmentHistory(listOf(matchingPriorTreatment, testTreatmentWithWrongCycles, nonMatchingTreatment))
-            )
+            ),
+            "Matching treatments did not have between 8 and 12 cycles: Test (3 cycles)"
         )
     }
 
@@ -59,7 +66,8 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 withTreatmentHistory(listOf(matchingPriorTreatment, nonMatchingTreatment))
-            )
+            ),
+            "No prior treatments found matching Test and between 8 and 12 cycles"
         )
     }
 

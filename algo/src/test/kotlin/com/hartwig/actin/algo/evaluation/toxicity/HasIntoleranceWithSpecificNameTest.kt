@@ -11,18 +11,30 @@ class HasIntoleranceWithSpecificNameTest {
 
     @Test
     fun `Should fail with no intolerances`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
+            "Has no allergies with name allergy"
+        )
     }
 
     @Test
     fun `Should fail with intolerance that does not match`() {
         val mismatch = ComorbidityTestFactory.intolerance(name = "mismatch")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(mismatch)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withComorbidity(mismatch)),
+            "Has no allergies with name allergy"
+        )
     }
 
     @Test
     fun `Should pass with intolerance that matches`() {
         val match = ComorbidityTestFactory.intolerance(name = "matching allergy")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+            "Has allergy matching allergy"
+        )
     }
 }

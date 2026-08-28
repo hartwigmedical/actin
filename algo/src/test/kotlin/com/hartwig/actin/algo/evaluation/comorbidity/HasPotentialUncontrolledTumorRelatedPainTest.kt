@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 private val OPIOIDS_ATC_LEVEL = AtcLevel("N02A", "Opioids")
 private val PAIN_MEDICATION =
-    TestMedicationFactory.createMinimal().copy(atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = OPIOIDS_ATC_LEVEL))
+    TestMedicationFactory.createMinimal().copy(name = "medication name", atc = AtcTestFactory.atcClassification().copy(pharmacologicalSubGroup = OPIOIDS_ATC_LEVEL))
 
 class HasPotentialUncontrolledTumorRelatedPainTest {
 
@@ -31,7 +31,8 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
     fun `Should warn if patient uses severe pain medication`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysActiveFunction.evaluate(ComorbidityTestFactory.withMedication(PAIN_MEDICATION))
+            alwaysActiveFunction.evaluate(ComorbidityTestFactory.withMedication(PAIN_MEDICATION)),
+            "Possible uncontrolled tumor related pain (medication name usage)"
         )
     }
 
@@ -39,21 +40,31 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
     fun `Should warn if patient has planned severe pain medication`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysPlannedFunction.evaluate(ComorbidityTestFactory.withMedication(PAIN_MEDICATION))
+            alwaysPlannedFunction.evaluate(ComorbidityTestFactory.withMedication(PAIN_MEDICATION)),
+            "Possible uncontrolled tumor related pain (planned medication name usage)"
         )
     }
 
     @Test
     fun `Should evaluate to undetermined on other condition with direct or parent match on target icd code`() {
-        listOf(targetNode.code, childOfTargetNode.code, otherTargetCode)
-            .map { ComorbidityTestFactory.withOtherCondition(ComorbidityTestFactory.otherCondition(icdMainCode = it)) }
-            .forEach { assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveFunction.evaluate(it)) }
+        listOf(
+            targetNode.code to "Has tumor related pain in history - undetermined if uncontrolled",
+            childOfTargetNode.code to "Has tumor related pain in history - undetermined if uncontrolled",
+            otherTargetCode to "Has acute pain in history - undetermined if uncontrolled"
+        ).forEach { (code, expectedMessage) ->
+            val record = ComorbidityTestFactory.withOtherCondition(ComorbidityTestFactory.otherCondition(icdMainCode = code))
+            assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveFunction.evaluate(record), expectedMessage)
+        }
     }
 
 
     @Test
     fun `Should fail if patient has no relevant conditions and uses no pain medication`() {
         val noPainMedication = TestMedicationFactory.createMinimal().copy(name = "just some medication")
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(ComorbidityTestFactory.withMedication(noPainMedication)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(ComorbidityTestFactory.withMedication(noPainMedication)),
+            "No indication for uncontrolled tumor related pain"
+        )
     }
 }
