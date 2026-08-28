@@ -55,7 +55,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -84,7 +83,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2WithIsMissingMolecularResultForEvaluation),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -104,7 +102,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -129,7 +126,6 @@ class TrialGeneratorFunctionsTest {
                 cohorts,
                 includeFeedback = true,
                 InterpretedCohort::fails,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -149,7 +145,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             ).map { text -> text.any { it.endsWith("(no slots)") } }
@@ -160,7 +155,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = false
             ).map { text -> text.any { it.endsWith("(no slots)") } }
@@ -171,7 +165,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2.copy(isOpen = false)),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             ).map { text -> text.any { it.endsWith("(closed)") || it.endsWith("(no slots)") } }
@@ -182,7 +175,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2.copy(hasSlotsAvailable = false)),
                 true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             ).map { text -> text.any { it.endsWith("(closed)") || it.endsWith("(no slots)") } }
@@ -197,7 +189,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort3),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -219,7 +210,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(noMolecularEvent1, noMolecularEvent2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -239,7 +229,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -253,7 +242,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -273,7 +261,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site1"))),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -293,7 +280,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"), warnings = emptySet())),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -312,34 +298,10 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1"), warnings = emptySet())),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
         ).isEqualTo(listOf(listOf("cohort1 (no slots)", "MSI", "site1", "None")))
-    }
-
-    @Test
-    fun `Should put configuration at the end based on the cohorts fields`() {
-        assertThat(
-            TrialGeneratorFunctions.contentForTrialCohortList(
-                listOf(
-                    cohort1.copy(locations = setOf("site1"), isEvaluable = false),
-                    cohort1.copy(locations = setOf("site2"), isEvaluable = true),
-                ),
-                includeFeedback = false,
-                InterpretedCohort::warnings,
-                includeCohortConfig = true,
-                includeSites = true,
-                indicateNoSlotsOrClosed = true
-            )
-        ).isEqualTo(
-            listOf(
-                listOf(APPLIES_TO_ALL_COHORTS, "MSI", ""),
-                listOf("cohort1 (no slots)", "", "site1", "Non-evaluable"),
-                listOf("cohort1 (no slots)", "", "site2", "None"),
-            )
-        )
     }
 
     @Test
@@ -349,7 +311,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1.copy(locations = setOf("site1")), cohort2.copy(locations = setOf("site2"))),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = false,
                 indicateNoSlotsOrClosed = true
             )
@@ -372,7 +333,6 @@ class TrialGeneratorFunctionsTest {
                 listOf(cohort1, cohort2),
                 includeFeedback = true,
                 InterpretedCohort::warnings,
-                includeCohortConfig = false,
                 includeSites = true,
                 indicateNoSlotsOrClosed = true
             )
@@ -404,7 +364,6 @@ class TrialGeneratorFunctionsTest {
             feedbackFunction = InterpretedCohort::warnings,
             indicateNoSlotsOrClosed = true,
             useSmallerSize = false,
-            includeCohortConfig = false,
             includeSites = true
         )
         return extractTextFromCell(table.getCell(0, 0))

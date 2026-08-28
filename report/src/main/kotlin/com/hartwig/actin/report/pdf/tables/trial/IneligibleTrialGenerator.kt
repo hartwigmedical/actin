@@ -63,7 +63,6 @@ class IneligibleTrialGenerator(
             feedbackFunction = InterpretedCohort::fails,
             indicateNoSlotsOrClosed = indicateNoSlotsOrClosed,
             useSmallerSize = true,
-            includeCohortConfig = !useIneligibilityInsteadOfSiteAndConfig,
             includeSites = !useIneligibilityInsteadOfSiteAndConfig
         )
         return table
@@ -105,10 +104,10 @@ class IneligibleTrialGenerator(
             requestingSource: TrialSource?,
             labels: ReportLabels
         ): TrialTableGenerator {
-            val nonEvaluableAndIgnoredTrials = nonEvaluableCohorts.map(InterpretedCohort::trialId).distinct()
+            val nonEvaluableTrials = nonEvaluableCohorts.map(InterpretedCohort::trialId).distinct()
             val cohortsString = TrialFormatFunctions.generateCohortsFromTrialsString(
                 nonEvaluableCohorts.size,
-                nonEvaluableAndIgnoredTrials.size,
+                nonEvaluableTrials.size,
                 labels
             )
             val title = labels.trialMatching.titleNonEvaluable(cohortsString)
