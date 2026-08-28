@@ -11,12 +11,20 @@ class IsFemaleTest {
 
     @Test
     fun `Should fail if patient is male`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withGender(Gender.MALE)), "Patient is not female")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(GeneralTestFactory.withGender(Gender.MALE)),
+            "Gender is not female"
+        )
     }
 
     @Test
     fun `Should pass if patient is female`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withGender(Gender.FEMALE)), "Patient is female")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(GeneralTestFactory.withGender(Gender.FEMALE)),
+            "Gender is female"
+        )
     }
 
     @Test
@@ -24,7 +32,7 @@ class IsFemaleTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(GeneralTestFactory.withGender(null)),
-            "Undetermined if patient is female"
+            "Undetermined if gender is female"
         )
     }
 }
