@@ -7,33 +7,48 @@ import com.hartwig.actin.datamodel.clinical.TransfusionProduct
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
+private val THROMBOCYTE_PRODUCT = TransfusionProduct.THROMBOCYTE
+
 class HasHadRecentBloodTransfusionTest {
+    private val minDate = LocalDate.of(2020, 3, 30)
+    private val function = HasHadRecentBloodTransfusion(THROMBOCYTE_PRODUCT, minDate)
+
     @Test
-    fun canEvaluate() {
-        val minDate = LocalDate.of(2020, 3, 30)
-        val function = HasHadRecentBloodTransfusion(TransfusionProduct.THROMBOCYTE, minDate)
+    fun `Should fail when no blood transfusions`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())),
-            "Has not received recent thrombocyte blood transfusion"
+            "Has not received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
         )
+    }
+
+    @Test
+    fun `Should fail when thrombocyte transfusion but too long ago`() {
         val tooOld = create(TransfusionProduct.THROMBOCYTE, minDate.minusWeeks(4))
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(tooOld)),
-            "Has not received recent thrombocyte blood transfusion"
+            "Has not received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
         )
+    }
+
+    @Test
+    fun `Should fail when erythrocyte transfusion`() {
         val wrongProduct = create(TransfusionProduct.ERYTHROCYTE, minDate.plusWeeks(2))
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(wrongProduct)),
-            "Has not received recent thrombocyte blood transfusion"
+            "Has not received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
         )
+    }
+
+    @Test
+    fun `Should pass for thrombocyte transfusion with correct date`() {
         val correct = create(TransfusionProduct.THROMBOCYTE, minDate.plusWeeks(2))
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(correct)),
-            "Has received recent thrombocyte blood transfusion"
+            "Has received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
         )
     }
 
