@@ -13,7 +13,7 @@ class IneligibleTrialGenerator(
     private val requestingSource: TrialSource?,
     private val title: String,
     private val indicateNoSlotsOrClosed: Boolean,
-    private val useIneligibilityInsteadOfSiteAndConfig: Boolean,
+    private val useIneligibilityInsteadOfSite: Boolean,
     private val labels: ReportLabels
 ) : TrialTableGenerator {
 
@@ -29,28 +29,23 @@ class IneligibleTrialGenerator(
         val trialColWidth = 10f
         val cohortColWidth = 20f
         val molecularColWidth = 6f
-        val locationColWidth = 10f
+        val locationColWidth = 40f
         val ineligibilityColWidth = 54f
-        val configColWidth = 30f
 
-        val table = if (useIneligibilityInsteadOfSiteAndConfig) Tables.createRelativeWidthCols(
+        val table = if (useIneligibilityInsteadOfSite) Tables.createRelativeWidthCols(
             trialColWidth,
             cohortColWidth,
             molecularColWidth,
             ineligibilityColWidth
-        ) else Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth, configColWidth)
+        ) else Tables.createRelativeWidthCols(trialColWidth, cohortColWidth, molecularColWidth, locationColWidth)
 
         table.addHeaderCell(Cells.createHeader(labels.trialMatching.colTrial()))
         table.addHeaderCell(Cells.createHeader(labels.trialMatching.colCohort()))
         table.addHeaderCell(Cells.createHeader(labels.trialMatching.colMolecular()))
-        if (!useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader(labels.trialMatching.colSites()))
-        }
-        if (useIneligibilityInsteadOfSiteAndConfig) {
+        if (useIneligibilityInsteadOfSite) {
             table.addHeaderCell(Cells.createHeader(labels.trialMatching.colIneligibilityReasons()))
-        }
-        if (!useIneligibilityInsteadOfSiteAndConfig) {
-            table.addHeaderCell(Cells.createHeader(labels.trialMatching.colConfiguration()))
+        } else {
+            table.addHeaderCell(Cells.createHeader(labels.trialMatching.colSites()))
         }
 
         addTrialsToTable(
@@ -59,11 +54,11 @@ class IneligibleTrialGenerator(
             externalTrials = emptySet(),
             requestingSource = requestingSource,
             countryOfReference = null,
-            includeFeedback = useIneligibilityInsteadOfSiteAndConfig,
+            includeFeedback = useIneligibilityInsteadOfSite,
             feedbackFunction = InterpretedCohort::fails,
             indicateNoSlotsOrClosed = indicateNoSlotsOrClosed,
             useSmallerSize = true,
-            includeSites = !useIneligibilityInsteadOfSiteAndConfig
+            includeSites = !useIneligibilityInsteadOfSite
         )
         return table
     }
@@ -94,7 +89,7 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 indicateNoSlotsOrClosed = true,
-                useIneligibilityInsteadOfSiteAndConfig = true,
+                useIneligibilityInsteadOfSite = true,
                 labels = labels
             )
         }
@@ -117,7 +112,7 @@ class IneligibleTrialGenerator(
                 requestingSource = requestingSource,
                 title = title,
                 indicateNoSlotsOrClosed = false,
-                useIneligibilityInsteadOfSiteAndConfig = false,
+                useIneligibilityInsteadOfSite = false,
                 labels = labels
             )
         }
