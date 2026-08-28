@@ -8,6 +8,7 @@ import java.time.LocalDate
 import org.junit.jupiter.api.Test
 
 private val THROMBOCYTE_PRODUCT = TransfusionProduct.THROMBOCYTE
+private val THROMBOCYTE_DISPLAY = THROMBOCYTE_PRODUCT.display().lowercase()
 
 class HasHadRecentBloodTransfusionTest {
     private val minDate = LocalDate.of(2020, 3, 30)
@@ -18,7 +19,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())),
-            "Has not received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
+            "Has not received recent $THROMBOCYTE_DISPLAY blood transfusion"
         )
     }
 
@@ -28,7 +29,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(tooOld)),
-            "Has not received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
+            "Has not received recent $THROMBOCYTE_DISPLAY blood transfusion"
         )
     }
 
@@ -38,7 +39,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(wrongProduct)),
-            "Has not received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
+            "Has not received recent $THROMBOCYTE_DISPLAY blood transfusion"
         )
     }
 
@@ -48,7 +49,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(correct)),
-            "Has received recent ${THROMBOCYTE_PRODUCT.display()} blood transfusion"
+            "Has received recent $THROMBOCYTE_DISPLAY blood transfusion"
         )
     }
 
