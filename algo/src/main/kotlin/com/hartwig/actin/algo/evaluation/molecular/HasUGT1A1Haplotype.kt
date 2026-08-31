@@ -20,9 +20,12 @@ class HasUGT1A1Haplotype(private val haplotypeToFind: String) : MolecularEvaluat
             ?: return EvaluationFactory.undetermined("UGT1A1 haplotype undetermined", isMissingMolecularResultForEvaluation = true)
 
         return if (hasUGT1A1Type(pharmaco, haplotypeToFind)) {
-            EvaluationFactory.pass("Has UGT1A1 type $haplotypeToFind", inclusionEvents = setOf(haplotypeToFind))
+            EvaluationFactory.pass(
+                "UGT1A1 type $haplotypeToFind in provided molecular data",
+                inclusionEvents = setOf(haplotypeToFind)
+            )
         } else {
-            EvaluationFactory.fail("Does not have required UGT1A1 type $haplotypeToFind")
+            EvaluationFactory.fail("Required UGT1A1 type $haplotypeToFind not in provided molecular data")
         }
     }
 

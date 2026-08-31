@@ -81,7 +81,7 @@ class HasHomozygousDPYDDeficiencyTest {
                     )
                 )
             ),
-            "Is not homozygous DPYD deficient"
+            "No homozygous DPYD deficiency in provided molecular data"
         )
     }
 
@@ -94,7 +94,7 @@ class HasHomozygousDPYDDeficiencyTest {
                     PharmacoEntry(gene = PharmacoGene.DPYD, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)))
                 )
             ),
-            "Is not homozygous DPYD deficient"
+            "No homozygous DPYD deficiency in provided molecular data"
         )
     }
 }

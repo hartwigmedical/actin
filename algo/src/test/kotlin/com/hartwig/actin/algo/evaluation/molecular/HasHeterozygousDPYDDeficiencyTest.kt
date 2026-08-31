@@ -89,7 +89,7 @@ class HasHeterozygousDPYDDeficiencyTest {
                     )
                 )
             ),
-            "Is not heterozygous DPYD deficient"
+            "No heterozygous DPYD deficiency in provided molecular data"
         )
     }
 
@@ -105,7 +105,7 @@ class HasHeterozygousDPYDDeficiencyTest {
                     )
                 )
             ),
-            "Is not heterozygous DPYD deficient"
+            "No heterozygous DPYD deficiency in provided molecular data"
         )
     }
 
@@ -124,7 +124,7 @@ class HasHeterozygousDPYDDeficiencyTest {
                     )
                 )
             ),
-            "Is not heterozygous DPYD deficient"
+            "No heterozygous DPYD deficiency in provided molecular data"
         )
     }
 
@@ -143,7 +143,7 @@ class HasHeterozygousDPYDDeficiencyTest {
                     )
                 )
             ),
-            "Is not heterozygous DPYD deficient"
+            "No heterozygous DPYD deficiency in provided molecular data"
         )
     }
 }

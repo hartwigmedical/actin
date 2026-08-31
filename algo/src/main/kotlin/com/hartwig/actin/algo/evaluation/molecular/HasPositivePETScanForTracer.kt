@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasPositivePETScanForTracer(private val tracer: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has positive $tracer PET scan")
+        return EvaluationFactory.undetermined("Undetermined if $tracer PET scan is positive")
     }
 }
