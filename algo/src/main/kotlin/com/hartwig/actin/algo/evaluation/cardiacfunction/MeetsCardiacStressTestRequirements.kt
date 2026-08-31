@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MeetsCardiacStressTestRequirements : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient meets cardiac stress test requirements")
+        return EvaluationFactory.undetermined("Undetermined if cardiac stress test requirements are met")
     }
 }
