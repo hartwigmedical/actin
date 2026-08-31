@@ -32,7 +32,7 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication(
 
             else -> {
                 EvaluationFactory.warn(
-                    "Undetermined if patient uses $concatenatedTypes substrate or inhibiting medication"
+                    "Undetermined if $concatenatedTypes substrate or inhibiting medication is used"
                 )
             }
         }

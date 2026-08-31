@@ -40,14 +40,14 @@ class CurrentlyGetsHerbalMedicationTest {
             alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
             ),
-            "Undetermined if patient may use herbal medications (self care medication use)"
+            "Undetermined if herbal medications may be used (self care medication use)"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
             ),
-            "Undetermined if patient may plan to use herbal medications (planned self care medication use)"
+            "Undetermined if use of herbal medications may be planned (planned self care medication use)"
         )
     }
 

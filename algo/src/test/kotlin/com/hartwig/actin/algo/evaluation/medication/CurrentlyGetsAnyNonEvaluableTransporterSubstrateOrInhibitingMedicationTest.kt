@@ -36,12 +36,12 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
         assertEvaluation(
             EvaluationResult.WARN,
             resultPlanned,
-            "Undetermined if patient uses TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
+            "Undetermined if TYPE-A, type-B or TYPE-C substrate or inhibiting medication is used"
         )
         assertEvaluation(
             EvaluationResult.WARN,
             resultActive,
-            "Undetermined if patient uses TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
+            "Undetermined if TYPE-A, type-B or TYPE-C substrate or inhibiting medication is used"
         )
     }
 
