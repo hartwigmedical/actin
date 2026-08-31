@@ -14,7 +14,7 @@ class IsPregnantTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient is not pregnant"
+            "Assumed no pregnancy"
         )
     }
 }
