@@ -12,8 +12,8 @@ class HasLowGradeCancer : EvaluationFunction {
         val hasHighGrade = TumorTermConstants.HIGH_GRADE_TERMS.any { record.tumor.name.lowercase().contains(it) }
 
         return when {
-            hasLowGrade -> EvaluationFactory.pass("Has low grade cancer")
-            hasHighGrade -> EvaluationFactory.fail("Has high grade cancer")
+            hasLowGrade -> EvaluationFactory.pass("Cancer is low grade")
+            hasHighGrade -> EvaluationFactory.fail("Cancer is high grade")
             else -> EvaluationFactory.undetermined("Undetermined if low or high grade cancer")
         }
     }

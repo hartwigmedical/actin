@@ -14,14 +14,14 @@ class HasLymphNodeMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             undetermined,
-            "Undetermined if patient has lymph node metastases (missing lesion data)"
+            "Undetermined if lymph node metastases based on provided lesions"
         )
     }
 
     @Test
     fun `Should pass when has lymph node lesions is true`() {
         val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(true))
-        assertEvaluation(EvaluationResult.PASS, pass, "Has lymph node metastases")
+        assertEvaluation(EvaluationResult.PASS, pass, "lymph node metastases in provided lesions")
     }
 
     @Test
@@ -33,7 +33,11 @@ class HasLymphNodeMetastasesTest {
     @Test
     fun `Should warn when has suspected lymph node lesions only`() {
         val warn = function.evaluate(TumorTestFactory.withLymphNodeLesions(false, true))
-        assertEvaluation(EvaluationResult.WARN, warn, "Has suspected lymph node metastases and not yet confirmed")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            warn,
+            "Suspected lymph node metastases in provided lesions and not yet confirmed"
+        )
     }
 
     @Test
@@ -42,13 +46,13 @@ class HasLymphNodeMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             undetermined,
-            "Undetermined if patient has lymph node metastases (missing lesion data)"
+            "Undetermined if lymph node metastases based on provided lesions"
         )
     }
 
     @Test
     fun `Should pass when has lymph node lesions is true and no suspected lymph node lesions`() {
         val pass = function.evaluate(TumorTestFactory.withLymphNodeLesions(true, false))
-        assertEvaluation(EvaluationResult.PASS, pass, "Has lymph node metastases")
+        assertEvaluation(EvaluationResult.PASS, pass, "lymph node metastases in provided lesions")
     }
 }

@@ -10,7 +10,7 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val unknownIfActive = hasActiveCnsLesions == null && hasActiveBrainLesions == null
-            val undeterminedMessage = "CNS metastases present but unknown if active (data missing)"
+            val undeterminedMessage = "CNS metastases in provided lesions but unknown if active (data missing)"
 
             return when {
                 unknownIfActive && (hasCnsLesions == true || hasBrainLesions == true) -> {
@@ -22,16 +22,16 @@ class HasKnownActiveCnsMetastases : EvaluationFunction {
                 }
 
                 unknownIfActive && (hasCnsLesions == null && hasBrainLesions == null) -> {
-                    EvaluationFactory.undetermined("Undetermined if (active) CNS metastases present (data missing)")
+                    EvaluationFactory.undetermined("Undetermined if (active) CNS metastases based on provided lesions")
                 }
 
-                hasActiveCnsLesions == true -> EvaluationFactory.pass("Has active CNS metastases")
+                hasActiveCnsLesions == true -> EvaluationFactory.pass("Active CNS metastases in provided lesions")
 
                 hasActiveBrainLesions == true -> {
-                    EvaluationFactory.pass("Has active CNS (Brain) metastases")
+                    EvaluationFactory.pass("Active CNS (Brain) metastases in provided lesions")
                 }
 
-                else -> EvaluationFactory.fail("No known active CNS metastases present")
+                else -> EvaluationFactory.fail("No known active CNS metastases in provided lesions")
             }
         }
     }

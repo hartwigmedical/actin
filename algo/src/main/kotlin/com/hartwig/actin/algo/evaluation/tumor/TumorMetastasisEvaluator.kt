@@ -8,14 +8,16 @@ internal object TumorMetastasisEvaluator {
     fun evaluate(hasLesions: Boolean?, hasSuspectedLesions: Boolean?, metastasisType: String): Evaluation {
         return when {
             hasLesions == true -> {
-                EvaluationFactory.pass("Has $metastasisType metastases")
+                EvaluationFactory.pass("$metastasisType metastases in provided lesions")
             }
 
             hasSuspectedLesions == true -> {
-                EvaluationFactory.warn("Has suspected $metastasisType metastases and not yet confirmed")
+                EvaluationFactory.warn("Suspected $metastasisType metastases in provided lesions and not yet confirmed")
             }
 
-            hasLesions == null -> EvaluationFactory.undetermined("Undetermined if patient has $metastasisType metastases (missing lesion data)")
+            hasLesions == null -> EvaluationFactory.undetermined(
+                "Undetermined if $metastasisType metastases based on provided lesions"
+            )
 
             else -> {
                 EvaluationFactory.fail("No $metastasisType metastases")

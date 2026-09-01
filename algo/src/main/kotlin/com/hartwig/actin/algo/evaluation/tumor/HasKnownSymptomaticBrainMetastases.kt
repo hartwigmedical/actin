@@ -17,12 +17,12 @@ class HasKnownSymptomaticBrainMetastases : EvaluationFunction {
                 }
 
                 unknownIfSymptomatic && hasBrainLesions == null -> {
-                    EvaluationFactory.undetermined("Undetermined if symptomatic brain metastases present (data missing)")
+                    EvaluationFactory.undetermined("Undetermined if symptomatic brain metastases based on provided lesions")
                 }
 
-                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass("Has symptomatic brain metastases")
+                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass("Symptomatic brain metastases in provided lesions")
 
-                else -> EvaluationFactory.fail("No known symptomatic brain metastases present")
+                else -> EvaluationFactory.fail("No known symptomatic brain metastases in provided lesions")
             }
         }
     }

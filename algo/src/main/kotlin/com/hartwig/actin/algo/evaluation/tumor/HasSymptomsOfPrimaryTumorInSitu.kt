@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasSymptomsOfPrimaryTumorInSitu : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has symptoms of primary tumor in situ")
+        return EvaluationFactory.undetermined("Undetermined if symptoms of primary tumor in situ based on provided tumour details")
     }
 }

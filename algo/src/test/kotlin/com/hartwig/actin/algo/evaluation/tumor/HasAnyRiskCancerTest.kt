@@ -10,6 +10,6 @@ class HasAnyRiskCancerTest {
     @Test
     fun `Should evaluate to undetermined`() {
         val result = HasAnyRiskCancer(listOf("High", "Low")).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined if patient has high or low risk cancer")
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined presence of high or low risk cancer")
     }
 }

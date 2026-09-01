@@ -13,7 +13,7 @@ class HasSoftTissueMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withOtherLesions(null)),
-            "Soft tissue metastases undetermined (metastases data missing)"
+            "Soft tissue metastases undetermined (lesion data missing)"
         )
     }
 
@@ -42,17 +42,17 @@ class HasSoftTissueMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("Soft tissue metastases"))),
-            "Has soft tissue metastases"
+            "Soft tissue metastases in provided lesions"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("intramuscular depositions"))),
-            "Has soft tissue metastases"
+            "Soft tissue metastases in provided lesions"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("skin"))),
-            "Has soft tissue metastases"
+            "Soft tissue metastases in provided lesions"
         )
     }
 
@@ -61,7 +61,7 @@ class HasSoftTissueMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("soft tissue"))),
-            "Has suspected soft tissue metastases"
+            "Suspected soft tissue metastases in provided lesions"
         )
     }
 }

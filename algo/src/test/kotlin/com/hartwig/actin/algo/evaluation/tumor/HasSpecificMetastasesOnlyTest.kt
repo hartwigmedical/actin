@@ -19,11 +19,15 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should pass when patient has liver metastases only`() {
         val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true))
 
-        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record), "Has only liver metastases")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasLiverMetastasesOnly.evaluate(record),
+            "Only liver metastases in provided lesions"
+        )
         assertEvaluation(
             EvaluationResult.PASS,
             hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
-            "Has only liver and/or lymph node and/or lung metastases"
+            "Only liver and/or lymph node and/or lung metastases in provided lesions"
         )
     }
 
@@ -36,11 +40,15 @@ class HasSpecificMetastasesOnlyTest {
             )
         )
 
-        assertEvaluation(EvaluationResult.PASS, hasLiverMetastasesOnly.evaluate(record), "Has only liver metastases")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            hasLiverMetastasesOnly.evaluate(record),
+            "Only liver metastases in provided lesions"
+        )
         assertEvaluation(
             EvaluationResult.PASS,
             hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
-            "Has only liver and/or lymph node and/or lung metastases"
+            "Only liver and/or lymph node and/or lung metastases in provided lesions"
         )
     }
 
@@ -49,7 +57,7 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLymphNodeLesions = true))),
-            "Has only liver and/or lymph node and/or lung metastases"
+            "Only liver and/or lymph node and/or lung metastases in provided lesions"
         )
     }
 
@@ -66,7 +74,7 @@ class HasSpecificMetastasesOnlyTest {
                     )
                 )
             ),
-            "Has only liver and/or lymph node and/or lung metastases"
+            "Only liver and/or lymph node and/or lung metastases in provided lesions"
         )
     }
 
@@ -75,7 +83,7 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             hasLiverMetastasesOnly.evaluate(TumorTestFactory.withConfirmedLesions(hasLiverLesions = false)),
-            "Does not have only liver metastases"
+            "Metastases in provided lesions are not limited to liver"
         )
     }
 
@@ -90,7 +98,7 @@ class HasSpecificMetastasesOnlyTest {
                     hasLungLesions = false
                 )
             ),
-            "Does not have only liver and/or lymph node and/or lung metastases"
+            "Metastases in provided lesions are not limited to liver and/or lymph node and/or lung"
         )
     }
 
@@ -98,11 +106,15 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should fail when patient has liver lesion but also bone metastases`() {
         val record = TumorTestFactory.withConfirmedLesions(hasLiverLesions = true, hasBoneLesions = true)
 
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record), "Does not have only liver metastases")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            hasLiverMetastasesOnly.evaluate(record),
+            "Metastases in provided lesions are not limited to liver"
+        )
         assertEvaluation(
             EvaluationResult.FAIL,
             hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
-            "Does not have only liver and/or lymph node and/or lung metastases"
+            "Metastases in provided lesions are not limited to liver and/or lymph node and/or lung"
         )
     }
 
@@ -110,11 +122,15 @@ class HasSpecificMetastasesOnlyTest {
     fun `Should fail when patient has liver lesion but also other lesion`() {
         val record = TumorTestFactory.withTumorDetails(withNoOutsideLesions(hasLiverLesions = true).copy(otherLesions = listOf("skin")))
 
-        assertEvaluation(EvaluationResult.FAIL, hasLiverMetastasesOnly.evaluate(record), "Does not have only liver metastases")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            hasLiverMetastasesOnly.evaluate(record),
+            "Metastases in provided lesions are not limited to liver"
+        )
         assertEvaluation(
             EvaluationResult.FAIL,
             hasLiverAndOrLymphNodeAndOrLungMetastasesOnly.evaluate(record),
-            "Does not have only liver and/or lymph node and/or lung metastases"
+            "Metastases in provided lesions are not limited to liver and/or lymph node and/or lung"
         )
     }
 
@@ -127,12 +143,12 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationSingle,
-            "Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)"
+            "Undetermined if only liver metastases based on provided lesions (suspected lesions provided and/or missing lesion data)"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationMultiple,
-            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
+            "Undetermined if only liver and/or lymph node and/or lung metastases based on provided lesions (suspected lesions provided and/or missing lesion data)"
         )
     }
 
@@ -145,12 +161,12 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationSingle,
-            "Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)"
+            "Undetermined if only liver metastases based on provided lesions (suspected lesions provided and/or missing lesion data)"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationMultiple,
-            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
+            "Undetermined if only liver and/or lymph node and/or lung metastases based on provided lesions (suspected lesions provided and/or missing lesion data)"
         )
     }
 
@@ -164,12 +180,12 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationSingle,
-            "Undetermined if patient has only liver metastases (suspected lesions presence and/or missing lesion data)"
+            "Undetermined if only liver metastases based on provided lesions (suspected lesions provided and/or missing lesion data)"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationMultiple,
-            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (suspected lesions presence and/or missing lesion data)"
+            "Undetermined if only liver and/or lymph node and/or lung metastases based on provided lesions (suspected lesions provided and/or missing lesion data)"
         )
     }
 
@@ -182,12 +198,12 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationSingle,
-            "Undetermined if patient has only liver metastases (missing lesion data)"
+            "Undetermined if only liver metastases based on provided lesions"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationMultiple,
-            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (missing lesion data)"
+            "Undetermined if only liver and/or lymph node and/or lung metastases based on provided lesions"
         )
     }
 
@@ -200,12 +216,12 @@ class HasSpecificMetastasesOnlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationSingle,
-            "Undetermined if patient has only liver metastases (missing lesion data)"
+            "Undetermined if only liver metastases based on provided lesions"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluationMultiple,
-            "Undetermined if patient has only liver and/or lymph node and/or lung metastases (missing lesion data)"
+            "Undetermined if only liver and/or lymph node and/or lung metastases based on provided lesions"
         )
     }
 

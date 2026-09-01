@@ -16,9 +16,9 @@ class HasSpleenMetastases : EvaluationFunction {
                 EvaluationFactory.undetermined("Spleen metastases undetermined (metastases data missing)")
             }
 
-            certainSpleenMetastasesEvaluation == true -> EvaluationFactory.pass("Has spleen metastases")
+            certainSpleenMetastasesEvaluation == true -> EvaluationFactory.pass("Spleen metastases in provided lesions")
 
-            suspectedSpleenMetastasesEvaluation == true -> EvaluationFactory.warn("Has suspected spleen metastases")
+            suspectedSpleenMetastasesEvaluation == true -> EvaluationFactory.warn("Suspected spleen metastases in provided lesions")
 
             else -> EvaluationFactory.fail("No spleen metastases")
         }

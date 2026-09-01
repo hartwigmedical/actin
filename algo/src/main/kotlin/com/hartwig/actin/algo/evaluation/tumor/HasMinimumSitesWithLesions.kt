@@ -31,11 +31,11 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
 
             return when {
                 sitesWithKnownLesionsLowerBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.pass("Has at least $minimumSitesWithLesions lesion sites")
+                    EvaluationFactory.pass("At least $minimumSitesWithLesions lesion sites in provided lesions")
                 }
 
                 sitesWithKnownAndSuspectedLesionsLowerBound >= minimumSitesWithLesions -> {
-                    EvaluationFactory.warn("Has at least $minimumSitesWithLesions lesion sites (when including suspected lesions)")
+                    EvaluationFactory.warn("At least $minimumSitesWithLesions lesion sites in provided lesions (when including suspected lesions)")
                 }
 
                 sitesWithKnownLesionsUpperBound >= minimumSitesWithLesions -> {

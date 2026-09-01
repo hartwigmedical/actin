@@ -30,7 +30,7 @@ class HasCancerWithNeuroendocrineComponentTest {
     @Test
     fun `Should pass if tumor has neuroendocrine component`() {
         val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.NEUROENDOCRINE_DOIDS.first()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Has cancer with neuroendocrine component")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Cancer has neuroendocrine component")
     }
 
 
@@ -56,7 +56,11 @@ class HasCancerWithNeuroendocrineComponentTest {
     @Test
     fun `Should fail if tumor is of other type than neuroendocrine cell`() {
         val tumorDetails = TumorTestFactory.withDoidAndName("wrong doid", "wrong name")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "Has no cancer with neuroendocrine component")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(tumorDetails),
+            "Cancer has no neuroendocrine component"
+        )
     }
 
     private fun createWithNeuroendocrineProfile(): PatientRecord {

@@ -32,7 +32,7 @@ class HasSolidPrimaryTumorIncludingLymphoma(private val doidModel: DoidModel) : 
             }
 
             EvaluationResult.PASS -> {
-                EvaluationFactory.pass("Has solid primary tumor (including lymphoma)")
+                EvaluationFactory.pass("Primary tumor is solid (including lymphoma)")
             }
 
             else -> {
