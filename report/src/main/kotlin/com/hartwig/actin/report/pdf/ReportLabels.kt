@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf
 
-import com.hartwig.actin.configuration.ReportIntendedUse
+import com.hartwig.actin.configuration.ReportType
+import com.hartwig.actin.report.ReporterApplication
 import java.text.MessageFormat
 import java.util.Properties
 
@@ -18,6 +19,7 @@ class ReportLabels(private val properties: Properties) {
 
     inner class Report {
         fun title() = get("report.title")
+        fun metadataTitle() = "${title()} v${ReporterApplication.VERSION}"
     }
 
     inner class SidePanel {
@@ -62,11 +64,11 @@ class ReportLabels(private val properties: Properties) {
         fun colIneligibilityReasons() = get("trial.col.ineligibility.reasons")
         fun colConfiguration() = get("trial.col.configuration")
         fun footnoteFilteredSuffix() = get("trial.footnote.filtered.suffix")
-        fun footnoteChildrensHospital(count: String, suffix: String) = format("trial.footnote.childrens.hospital", count, suffix)
-        fun footnoteDutchLung(count: String, suffix: String) = format("trial.footnote.dutch.lung", count, suffix)
+        fun footnoteChildrensHospital(count: String) = format("trial.footnote.childrens.hospital", count)
+        fun footnoteDutchLung(count: Int) = format("trial.footnote.dutch.lung", count)
         fun footnoteExternalMatched() = get("trial.footnote.external.matched")
         fun footnoteExternalExcluded() = get("trial.footnote.external.excluded")
-        fun footnoteNationalMolecular(count: String, suffix: String) = format("trial.footnote.national.molecular", count, suffix)
+        fun footnoteNationalMolecular(count: String) = format("trial.footnote.national.molecular", count)
     }
 
     inner class EfficacyEvidence {
@@ -122,9 +124,9 @@ class ReportLabels(private val properties: Properties) {
     inner class ClinicalDetails {
         fun title() = get("clinical.title")
         fun summaryTitle() = get("clinical.summary.title")
-        fun patientDetailsTitle(date: String) = format("clinical.patient.details.title", date)
+        fun patientDetailsTitle() = get("clinical.patient.details.title")
         fun medicationTitle() = get("clinical.medication.title")
-        fun tumorDetailsTitle(date: String) = format("clinical.tumor.details.title", date)
+        fun tumorDetailsTitle() = get("clinical.tumor.details.title")
         fun sectionSystemicHistory() = get("clinical.section.systemic.history")
         fun sectionOtherOncological() = get("clinical.section.other.oncological")
         fun sectionPreviousPrimary() = get("clinical.section.previous.primary")
@@ -235,13 +237,23 @@ class ReportLabels(private val properties: Properties) {
     private fun format(key: String, vararg args: Any): String = MessageFormat.format(get(key), *args)
 
     companion object {
-        fun load(intendedUse: ReportIntendedUse): ReportLabels {
-            val name = "/labels/${intendedUse.name.lowercase()}.properties"
-            val props = Properties().apply {
-                ReportLabels::class.java.getResourceAsStream(name)?.bufferedReader(Charsets.UTF_8)?.use(::load)
-                    ?: error("Labels not found: $name")
+        fun load(type: ReportType): ReportLabels {
+            val props = Properties()
+            when (type) {
+                ReportType.PERSONALISATION -> loadPropertiesFile(props, "personalisation")
+                ReportType.TRIAL_MATCHING_NON_MEDICAL -> loadPropertiesFile(props, "trial_matching")
+                ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY -> {
+                    loadPropertiesFile(props, "trial_matching")
+                    loadPropertiesFile(props, "trial_matching_ruo_overrides")
+                }
             }
             return ReportLabels(props)
+        }
+
+        private fun loadPropertiesFile(properties: Properties, fileName: String) {
+            val name = "/labels/$fileName.properties"
+            ReportLabels::class.java.getResourceAsStream(name)?.bufferedReader(Charsets.UTF_8)?.use(properties::load)
+                ?: error("Labels not found: $name")
         }
     }
 }

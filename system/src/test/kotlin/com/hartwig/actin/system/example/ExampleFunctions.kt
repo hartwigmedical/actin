@@ -7,6 +7,7 @@ import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
 import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -63,6 +64,7 @@ object ExampleFunctions {
 
     fun createTrialMatchingReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
+            reportType = ReportType.TRIAL_MATCHING_NON_MEDICAL,
             patientDetailsType = ReportContentType.COMPREHENSIVE,
             clinicalSummaryType = ReportContentType.BRIEF,
             molecularSummaryType = ReportContentType.COMPREHENSIVE,
@@ -79,6 +81,7 @@ object ExampleFunctions {
 
     fun createPersonalizationReportConfiguration(): ReportConfiguration {
         return ReportConfiguration().copy(
+            reportType = ReportType.PERSONALISATION,
             patientDetailsType = ReportContentType.COMPREHENSIVE,
             clinicalSummaryType = ReportContentType.COMPREHENSIVE,
             molecularSummaryType = ReportContentType.NONE,

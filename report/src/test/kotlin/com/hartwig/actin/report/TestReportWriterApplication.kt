@@ -8,6 +8,7 @@ import com.hartwig.actin.configuration.EfficacyEvidenceChapterType
 import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportContentType
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.configuration.TrialMatchingChapterType
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -47,6 +48,7 @@ fun main() {
     val report = TestReportWriterApplication.createTestReport()
     val writer = createProductionReportWriter(WORK_DIRECTORY)
     val reportConfiguration = ReportConfiguration().copy(
+        reportType = ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY,
         patientDetailsType = ReportContentType.COMPREHENSIVE,
         clinicalSummaryType = ReportContentType.BRIEF,
         molecularSummaryType = ReportContentType.COMPREHENSIVE,
