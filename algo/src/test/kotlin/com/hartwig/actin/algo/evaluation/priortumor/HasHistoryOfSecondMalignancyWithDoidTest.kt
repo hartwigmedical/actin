@@ -34,7 +34,7 @@ class HasHistoryOfSecondMalignancyWithDoidTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Has history of previous malignancy belonging to breast cancer"
+            "History of previous malignancy belonging to breast cancer"
         )
     }
 }
