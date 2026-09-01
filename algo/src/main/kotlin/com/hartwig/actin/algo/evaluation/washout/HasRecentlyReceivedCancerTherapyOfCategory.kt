@@ -75,12 +75,14 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received '${concatLowercaseWithAnd(categoryNames)}' treatment but inconclusive date")
+                EvaluationFactory.undetermined(
+                    "'${concatLowercaseWithAnd(categoryNames)}' treatment in provided treatments but date is inconclusive"
+                )
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || foundTrialMedication -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if treatment received in previous trial included ${
+                    "Undetermined if treatment in previous trial included ${
                         concatLowercaseWithAnd(
                             categoryNames
                         )

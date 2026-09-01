@@ -19,22 +19,24 @@ class HasRecentlyReceivedRadiotherapy(
 
         return when {
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == true } -> {
-                EvaluationFactory.pass("Has recently received radiotherapy$bodyLocationMessage - pay attention to washout period")
+                EvaluationFactory.pass("Recent radiotherapy$bodyLocationMessage - pay attention to washout period")
             }
 
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == true } -> {
                 EvaluationFactory.undetermined(
-                    "Has received prior radiotherapy$bodyLocationMessage with unknown date - pay attention to washout period"
+                    "Prior radiotherapy$bodyLocationMessage with unknown date - pay attention to washout period"
                 )
             }
 
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == true && rightPlace == null } -> {
-                EvaluationFactory.recoverableUndetermined("Undetermined if received radiotherapy had target location $requestedLocation")
+                EvaluationFactory.recoverableUndetermined(
+                    "Prior radiotherapy but undetermined if target location was $requestedLocation"
+                )
             }
 
             radiotherapyEvaluations.any { (rightTime, rightPlace) -> rightTime == null && rightPlace == null } -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Has received prior radiotherapy but undetermined if recent (date unknown) and if$bodyLocationMessage"
+                    "Prior radiotherapy but undetermined if recent (date unknown) and if$bodyLocationMessage"
                 )
             }
 

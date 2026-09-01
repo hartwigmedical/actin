@@ -173,7 +173,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-            "Has received 'chemotherapy and monoclonal antibodies and antibody drug conjugates' treatment but inconclusive date"
+            "'chemotherapy and monoclonal antibodies and antibody drug conjugates' treatment in provided treatments but date is inconclusive"
         )
     }
 
@@ -193,7 +193,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Undetermined if treatment received in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
+            "Undetermined if treatment in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
         )
     }
 
@@ -203,7 +203,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Undetermined if treatment received in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
+            "Undetermined if treatment in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
         )
     }
 
