@@ -34,7 +34,7 @@ class HasHadOrganTransplantTest {
                     listOf(otherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             ),
-            "Has had an organ transplant"
+            "An organ transplant in provided treatments"
         )
     }
 
@@ -67,7 +67,7 @@ class HasHadOrganTransplantTest {
                     listOf(otherCondition(year = null, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             ),
-            "Has had an organ transplant but unclear if after 2021 (date unknown)"
+            "An organ transplant in provided treatments but unclear if after 2021 (date unknown)"
         )
     }
 
@@ -79,7 +79,7 @@ class HasHadOrganTransplantTest {
                     listOf(otherCondition(year = 2021, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             ),
-            "Has had an organ transplant since 2021"
+            "An organ transplant since 2021 in provided treatments"
         )
     }
 }

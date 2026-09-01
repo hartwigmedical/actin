@@ -33,7 +33,7 @@ class HasSpecificFamilyHistory(
 
         return when {
             passFamilyConditions.isNotEmpty() -> {
-                EvaluationFactory.pass("Has family history of $conditionDescription")
+                EvaluationFactory.pass("Family history of $conditionDescription")
             }
 
             undeterminedFamilyHistoryConditions.isNotEmpty() -> {
@@ -42,13 +42,13 @@ class HasSpecificFamilyHistory(
 
             unspecifiedFamilyHistory.isNotEmpty() -> createUndetermined("unspecified disease", unspecifiedFamilyHistory)
 
-            else -> EvaluationFactory.fail("No presence of family history of $conditionDescription")
+            else -> EvaluationFactory.fail("No family history of $conditionDescription")
         }
     }
 
     private fun createUndetermined(diseaseType: String, conditions: List<Displayable>): Evaluation {
         return EvaluationFactory.undetermined(
-            "Has family history of $diseaseType (${Format.concatItemsWithAnd(conditions)}) - undetermined if $conditionDescription"
+            "Family history of $diseaseType (${Format.concatItemsWithAnd(conditions)}) - undetermined if $conditionDescription"
         )
     }
 }
