@@ -5,11 +5,14 @@
     "acronym": "TEDR1",
     "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
     "nctId": "NCT00000004",
-    "phase": "2",
+    "phase": "PHASE_2",
     "locations": [
       "NKI-AvL"
     ],
-    "url": "https://hartwigmedicalfoundation.nl"
+    "url": "https://hartwigmedicalfoundation.nl",
+    "sources": [
+      "EXAMPLE"
+    ]
   },
   "generalEligibility": [
     {
@@ -70,13 +73,14 @@
       "metadata": {
         "cohortId": "A",
         "evaluable": true,
-        "open": true,
-        "slotsAvailable": true,
+        "cohortAvailability": {
+          "open": true,
+          "slotsAvailable": true
+        },
         "ignore": false,
         "description": "Lung cancer C797S cohort"
       },
-      "eligibility": [
-      ]
+      "eligibility": []
     }
   ]
 }

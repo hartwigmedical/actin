@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.fasterxml.jackson.core.type.TypeReference
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -14,6 +13,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFa
 import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.EligibilityFactory
 import com.hartwig.actin.trial.TrialIngestion
+import com.hartwig.actin.util.json.ActinObjectMapper
 import com.hartwig.actin.utils.monad.getOrNull
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
@@ -63,11 +63,10 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
         )
 
+        val trialConfigPath = config.trialConfigJson?.let { Path.of(it) }
+            ?: error("One of trial config or trial database must be specified.")
         val trials = inputData.trials ?: TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(
-            Gson().fromJson(
-                Files.readString(config.trialConfigJson?.let { Path.of(it) }
-                    ?: error("One of trial config or trial database must be specified.")), object : TypeToken<List<TrialConfig>>() {}.type
-            )
+            objectMapper.readValue(Files.readString(trialConfigPath), object : TypeReference<List<TrialConfig>>() {})
         ).mapLeft { unmappableTrials ->
             throw IllegalArgumentException(
                 "Failed to ingest trials. Unmappable trials found: \n" + "${
@@ -92,6 +91,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         val logger = KotlinLogging.logger {}
         private val VERSION = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+        private val objectMapper by lazy { ActinObjectMapper.create() }
     }
 }
 
