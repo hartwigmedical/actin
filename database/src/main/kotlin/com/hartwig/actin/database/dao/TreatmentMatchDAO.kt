@@ -92,7 +92,6 @@ class TreatmentMatchDAO(private val context: DSLContext) {
             Tables.COHORTMATCH.EVALUABLE,
             Tables.COHORTMATCH.OPEN,
             Tables.COHORTMATCH.SLOTSAVAILABLE,
-            Tables.COHORTMATCH.IGNORE,
             Tables.COHORTMATCH.DESCRIPTION,
             Tables.TRIALMATCH.ISELIGIBLE
         )
@@ -102,7 +101,6 @@ class TreatmentMatchDAO(private val context: DSLContext) {
                 cohortMatch.metadata.evaluable,
                 cohortMatch.metadata.open,
                 cohortMatch.metadata.slotsAvailable,
-                cohortMatch.metadata.ignore,
                 cohortMatch.metadata.description,
                 cohortMatch.isPotentiallyEligible
             )

@@ -59,7 +59,6 @@ class TrialIngestionTest {
                                 )
                             ),
                             description = DESCRIPTION,
-                            ignore = false,
                             evaluable = true,
                             inclusionCriterion = listOf(InclusionCriterionConfig(IS_FEMALE, listOf(REFERENCE_ID)))
                         )
@@ -97,8 +96,7 @@ class TrialIngestionTest {
                             ),
                             availabilityByLocation = mapOf(LOCATION to CohortAvailability(true, true)),
                             description = DESCRIPTION,
-                            evaluable = true,
-                            ignore = false
+                            evaluable = true
                         ),
                         eligibility = listOf(
                             Eligibility(
