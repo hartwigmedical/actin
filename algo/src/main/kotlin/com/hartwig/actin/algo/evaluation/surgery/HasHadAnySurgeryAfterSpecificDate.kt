@@ -38,19 +38,19 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
 
         return when {
             SurgeryEvent.HAS_FINISHED_SURGERY_BETWEEN_MIN_AND_EVAL in summary -> {
-                EvaluationFactory.pass("Has had surgery after ${date(minDate)}")
+                EvaluationFactory.pass("Surgery after ${date(minDate)} in provided treatments")
             }
 
             surgicalTreatmentsOccurredAfterMinDate.any { it == true } -> {
-                EvaluationFactory.pass("Has had surgery after ${date(minDate)}")
+                EvaluationFactory.pass("Surgery after ${date(minDate)} in provided treatments")
             }
 
             SurgeryEvent.HAS_PLANNED_SURGERY_AFTER_EVAL in summary -> {
-                EvaluationFactory.warn("Has surgery planned")
+                EvaluationFactory.warn("Surgery is planned")
             }
 
             SurgeryEvent.HAS_UNEXPECTED_SURGERY in summary -> {
-                EvaluationFactory.warn("Has potential recent surgery")
+                EvaluationFactory.warn("Potential recent surgery")
             }
 
             surgicalTreatmentsOccurredAfterMinDate.any { it == null } -> {
@@ -66,7 +66,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received surgery after ${date(minDate)}")
+                EvaluationFactory.fail("No surgery after ${date(minDate)} in provided treatments")
             }
         }
     }
