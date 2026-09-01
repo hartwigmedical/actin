@@ -43,7 +43,11 @@ class HasSpecificInfectionTest {
         )
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.ACUTE_HEPATITIS_B_CODE)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Infection in history but undetermined if hepatitis B virus")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Infection in provided history but undetermined if hepatitis B virus"
+        )
     }
 
     @Test
@@ -53,7 +57,7 @@ class HasSpecificInfectionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Infection in history but undetermined if hepatitis B virus"
+            "Infection in provided history but undetermined if hepatitis B virus"
         )
     }
 
@@ -61,13 +65,17 @@ class HasSpecificInfectionTest {
     fun `Should pass for prior condition with correct ICD code`() {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = targetCodes.first().mainCode)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Hepatitis B virus infection in history")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Hepatitis B virus infection in provided history")
     }
 
     @Test
     fun `Should pass with active infection and matching description in infectionStatus`() {
         val record = TestPatientFactory.createMinimalTestWGSPatientRecord()
             .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(true, "hepatitis B")))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "Hepatitis B virus infection in history")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "Hepatitis B virus infection in provided history"
+        )
     }
 }

@@ -35,7 +35,7 @@ class HasActiveInfection(
 
         return when {
             infectionStatus?.hasActiveInfection == true -> {
-                EvaluationFactory.recoverablePass("Has active infection (${description(infectionStatus)})")
+                EvaluationFactory.recoverablePass("Presence of active infection (${description(infectionStatus)})")
             }
 
             currentlyUsesAntimicrobials -> {
@@ -44,7 +44,7 @@ class HasActiveInfection(
 
             infectionComorbidity.fullMatches.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Has infection(s) in history - unknown if active " +
+                    "Infection(s) in provided history - unknown if active " +
                             "(${concatItemsWithAnd(infectionComorbidity.fullMatches)})"
                 )
             }

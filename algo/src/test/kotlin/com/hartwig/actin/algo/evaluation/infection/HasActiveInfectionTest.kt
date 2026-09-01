@@ -35,7 +35,11 @@ class HasActiveInfectionTest {
 
     @Test
     fun `Should pass if patient has active infection`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)), "Has active infection (unknown type)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withInfectionStatus(true)),
+            "Presence of active infection (unknown type)"
+        )
     }
 
     @Test
@@ -64,7 +68,7 @@ class HasActiveInfectionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode)),
-            "Has infection(s) in history - unknown if active (some infection)"
+            "Infection(s) in provided history - unknown if active (some infection)"
         )
     }
 
@@ -73,7 +77,7 @@ class HasActiveInfectionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = null))),
-            "Has infection(s) in history - unknown if active (some infection)"
+            "Infection(s) in provided history - unknown if active (some infection)"
         )
     }
 
