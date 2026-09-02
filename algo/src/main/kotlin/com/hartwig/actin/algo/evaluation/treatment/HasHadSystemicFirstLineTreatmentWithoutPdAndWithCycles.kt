@@ -34,8 +34,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
             hasMinCycles = targetTreatment?.treatmentHistoryDetails?.cycles?.let { it >= minCycles }
         )
 
-        val messageStartNegative = "Has not received ${treatment.display()}"
-        val messageStartPositive = "Has received ${treatment.display()}"
+        val messageStartNegative = "No ${treatment.display()} "
+        val messageStartPositive = "${treatment.display()} "
         val asFirstLine = " as first-line treatment"
         val messageEnd = " without PD and with at least $minCycles cycles"
 
@@ -57,9 +57,7 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TRIAL_TREATMENT -> {
-                EvaluationFactory.undetermined(
-                    "Undetermined if has received first line ${treatment.display()} treatment (first line is unknown trial treatment)"
-                )
+                EvaluationFactory.undetermined("Undetermined if first line trial treatment included ${treatment.display()}")
             }
 
             TreatmentEvaluation.FIRST_LINE_WITHOUT_PD_AND_INSUFFICIENT_CYCLES -> {

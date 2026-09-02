@@ -27,7 +27,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received targeted therapy ignoring HER2 antibody"
+            "No targeted therapy in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -37,7 +37,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received targeted therapy ignoring HER2 antibody"
+            "No targeted therapy in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -47,7 +47,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received targeted therapy ignoring HER2 antibody"
+            "No targeted therapy in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -57,7 +57,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if treatment received in previous trial included targeted therapy ignoring HER2 antibody"
+            "Undetermined if treatment from in previous trial included targeted therapy ignoring HER2 antibody"
         )
     }
 
@@ -68,7 +68,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received transplantation ignoring allogenic"
+            "No transplantation in provided treatments ignoring allogenic"
         )
     }
 
@@ -80,7 +80,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received targeted therapy ignoring HER2 antibody"
+            "targeted therapy in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -92,7 +92,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
-            "Has received targeted therapy ignoring HER2 antibody"
+            "targeted therapy in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -104,7 +104,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
-            "Has not received targeted therapy ignoring HER2 antibody"
+            "No targeted therapy in provided treatments ignoring HER2 antibody"
         )
     }
 }

@@ -41,7 +41,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "At least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -59,7 +59,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
-            "Has received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "At least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -69,7 +69,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(emptyList()))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Not at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -90,7 +90,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Not at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -111,7 +111,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Not at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -132,7 +132,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Not at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -147,7 +147,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(listOf(medication))),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Not at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -168,7 +168,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
                     listOf(treatmentHistoryEntry)
                 )
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Not at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -180,7 +180,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Trial medication in history - undetermined if received at least 1 line(s) of targeted therapy"
+            "Trial medication - undetermined if at least 1 line(s) of targeted therapy based on provided treatments"
         )
     }
 
@@ -194,7 +194,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has not received at least 1 line(s) of allogenic combination transplantation"
+            "Not at least 1 line(s) of allogenic combination transplantation in provided treatments"
         )
     }
 }

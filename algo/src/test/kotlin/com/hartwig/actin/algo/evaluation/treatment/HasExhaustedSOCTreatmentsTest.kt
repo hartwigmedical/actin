@@ -40,7 +40,7 @@ class HasExhaustedSOCTreatmentsTest {
                 optional = false,
                 potentialIntolerance = false,
                 eligibilityFunctions = setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
-            ), listOf(EvaluationFactory.pass("Has MSI"))
+            ), listOf(EvaluationFactory.pass("MSI in provided treatments"))
         )
     )
 
@@ -225,7 +225,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Assumed that SOC is exhausted (had prior cancer treatment)"
+            "Assumed that SOC is exhausted (prior cancer treatment)"
         )
     }
 
@@ -236,7 +236,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has exhausted SOC"
+            "SOC is exhausted"
         )
     }
 
@@ -247,7 +247,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not exhausted SOC (remaining options: Pembrolizumab)"
+            "SOC is not exhausted (remaining options: Pembrolizumab)"
         )
     }
 
@@ -271,7 +271,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has potentially not exhausted SOC (Pembrolizumab) but some corresponding molecular results are missing"
+            "SOC potentially not exhausted (Pembrolizumab) but some corresponding molecular results are missing"
         )
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
@@ -295,7 +295,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has potentially exhausted SOC - remaining options (Capecitabine+Oxaliplatin) may not have been given due to drug intolerance"
+            "SOC is potentially exhausted - remaining options (Capecitabine+Oxaliplatin) may not have been given due to drug intolerance"
         )
     }
 

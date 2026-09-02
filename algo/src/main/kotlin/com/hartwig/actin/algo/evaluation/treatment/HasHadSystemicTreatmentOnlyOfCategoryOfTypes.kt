@@ -27,23 +27,23 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
         val typesList = concatItemsWithOr(types)
         return when {
             false in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.fail("Did not only receive $typesList ${category.display()} treatment")
+                EvaluationFactory.fail("Treatments other than $typesList ${category.display()} are present in the provided treatments.")
             }
 
             null in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.undetermined("Undetermined if received ${category.display()} is of type $typesList")
+                EvaluationFactory.undetermined("Undetermined if ${category.display()} in provided treatments is of type $typesList")
             }
 
             record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() } -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial was $typesList ${category.display()}")
+                EvaluationFactory.undetermined("Undetermined if trial treatment included $typesList ${category.display()}")
             }
 
             true in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.pass("Has only had $typesList ${category.display()} treatment")
+                EvaluationFactory.pass("Only $typesList ${category.display()} treatment in provided treatments")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had $typesList ${category.display()} treatment (no prior systemic treatment)")
+                EvaluationFactory.fail("No $typesList ${category.display()} treatment in provided treatments (no prior systemic treatment)")
             }
         }
     }

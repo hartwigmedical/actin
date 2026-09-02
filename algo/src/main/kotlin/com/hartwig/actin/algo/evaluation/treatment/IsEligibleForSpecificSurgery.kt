@@ -9,7 +9,7 @@ class IsEligibleForSpecificSurgery(private val surgeryName: String) : Evaluation
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.recoverableUndetermined(
-            "Undetermined if patient is eligible for $surgeryName"
+            "Undetermined if $surgeryName is available"
         )
     }
 }

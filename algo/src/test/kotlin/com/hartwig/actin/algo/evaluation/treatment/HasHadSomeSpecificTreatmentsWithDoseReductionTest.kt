@@ -18,7 +18,11 @@ class HasHadSomeSpecificTreatmentsWithDoseReductionTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(listOf(TREATMENT_TO_MATCH))
         val result = function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Has received treat1 but unknown if there may have been a dose reduction")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Treat1 in provided treatments but unknown if there may have been a dose reduction"
+        )
     }
 
     @Test
@@ -29,7 +33,7 @@ class HasHadSomeSpecificTreatmentsWithDoseReductionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Undetermined if patient may have received treat1 and if there may have been a dose reduction"
+            "Undetermined if treat1 in provided treatments and if there may have been a dose reduction"
         )
     }
 
@@ -37,6 +41,6 @@ class HasHadSomeSpecificTreatmentsWithDoseReductionTest {
     fun `Should fail when patient has not received treatment`() {
         val result = function.evaluate(withTreatmentHistory(emptyList()))
 
-        assertEvaluation(EvaluationResult.FAIL, result, "Has not received treat1 hence also not received dose reduction")
+        assertEvaluation(EvaluationResult.FAIL, result, "Treat1 not in provided treatments hence no dose reduction")
     }
 }

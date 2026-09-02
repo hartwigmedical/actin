@@ -17,19 +17,19 @@ class IsEligibleForLocalLiverTreatment(private val doidModel: DoidModel) : Evalu
 
         return when {
             hasLiverCancer && hasLiverLesions != true -> {
-                EvaluationFactory.undetermined("Has liver cancer but undetermined if eligible for local liver treatment")
+                EvaluationFactory.undetermined("Liver cancer is present but undetermined if local liver treatment is available")
             }
 
             hasLiverLesions == false -> {
-                EvaluationFactory.fail("No liver lesions hence no eligibility for local liver treatment")
+                EvaluationFactory.fail("No liver lesions hence local liver treatment is not available")
             }
 
             hasLiverLesions == true -> {
-                EvaluationFactory.undetermined("Eligibility for local liver treatment undetermined")
+                EvaluationFactory.undetermined("Undetermined if local liver treatment is avaiable")
             }
 
             else -> {
-                EvaluationFactory.undetermined("Liver lesions undetermined and therefore undetermined eligibility for local liver treatment")
+                EvaluationFactory.undetermined("Liver lesions undetermined and therefore undetermined if local liver treatment is available")
             }
         }
     }

@@ -17,7 +17,7 @@ class IsEligibleForLocalLiverTreatmentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(patientRecord),
-            "No liver lesions hence no eligibility for local liver treatment"
+            "No liver lesions hence local liver treatment is not available"
         )
     }
 
@@ -27,7 +27,7 @@ class IsEligibleForLocalLiverTreatmentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(patientRecord),
-            "Liver lesions undetermined and therefore undetermined eligibility for local liver treatment"
+            "Liver lesions undetermined and therefore undetermined if local liver treatment is available"
         )
     }
 
@@ -37,7 +37,7 @@ class IsEligibleForLocalLiverTreatmentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(patientRecord),
-            "Eligibility for local liver treatment undetermined"
+            "Undetermined if local liver treatment is avaiable"
         )
     }
 
@@ -47,7 +47,7 @@ class IsEligibleForLocalLiverTreatmentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(patientRecord),
-            "Has liver cancer but undetermined if eligible for local liver treatment"
+            "Liver cancer is present but undetermined if local liver treatment is available"
         )
     }
 
@@ -57,7 +57,7 @@ class IsEligibleForLocalLiverTreatmentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(patientRecord),
-            "No liver lesions hence no eligibility for local liver treatment"
+            "No liver lesions hence local liver treatment is not available"
         )
     }
 }

@@ -21,15 +21,15 @@ class IsEligibleForTreatmentOfCategoryAndType(
         return when {
             treatmentSummary.hasSpecificMatch() -> {
                 EvaluationFactory.warn(
-                    "Has already received treatment of category ${category.display()} " +
-                            "and type(s) ${Format.concatItemsWithOr(types)} and may therefore not be eligible anymore for this treatment",
+                    "Treatment of category ${category.display()} " +
+                            "and type(s) ${Format.concatItemsWithOr(types)} in provided treatments and may therefore not be available anymore",
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Undetermined if patient is eligible for treatment of category ${category.display()} " +
-                            "and type(s) ${Format.concatItemsWithOr(types)}"
+                    "Undetermined if treatment of category ${category.display()} " +
+                            "and type(s) ${Format.concatItemsWithOr(types)} is available"
                 )
             }
         }

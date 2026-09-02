@@ -25,7 +25,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
     @Test
     fun `Should fail for no treatments`() {
         val evaluation = function.evaluate(withTreatmentHistory(emptyList()))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No palliative ALK inhibitor or EGFR inhibitor targeted therapy in provided treatments"
+        )
     }
 
     @Test
@@ -33,7 +37,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)), intents = matchingIntents)
         val evaluation = function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No palliative ALK inhibitor or EGFR inhibitor targeted therapy in provided treatments"
+        )
     }
 
     @Test
@@ -41,7 +49,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(drugTreatment("test", matchingCategory, setOf(DrugType.ROS1_INHIBITOR))), intents = matchingIntents)
         val evaluation = function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry)))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No palliative ALK inhibitor or EGFR inhibitor targeted therapy in provided treatments"
+        )
     }
 
     @Test
@@ -56,7 +68,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
             )
         )
         val evaluation = function.evaluate(patientRecord)
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No palliative ALK inhibitor or EGFR inhibitor targeted therapy in provided treatments"
+        )
     }
 
     @Test
@@ -74,7 +90,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (Matching category with correct intent and type)"
+            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (Matching category with correct intent and type) in provided treatments"
         )
     }
 
@@ -92,7 +108,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         )
         val evaluation = HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(matchingCategory, matchingIntents, allowedTypes = null)
             .evaluate(patientRecord)
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has received palliative targeted therapy (Matching)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluation,
+            "palliative targeted therapy (Matching) in provided treatments"
+        )
     }
 
     @Test
@@ -109,7 +129,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Undetermined if received ALK inhibitor or EGFR inhibitor targeted therapy is palliative"
+            "Undetermined if  ALK inhibitor or EGFR inhibitor targeted therapy in provided treatments is palliative"
         )
     }
 
@@ -127,7 +147,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Undetermined if treatment received in previous trial included palliative ALK inhibitor or EGFR inhibitor targeted therapy"
+            "Undetermined if trial treatment in provided treatments included palliative ALK inhibitor or EGFR inhibitor targeted therapy"
         )
     }
 
@@ -142,7 +162,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
             )
         )
         val evaluation = function.evaluate(patientRecord)
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No palliative ALK inhibitor or EGFR inhibitor targeted therapy in provided treatments"
+        )
     }
 
     @Test
@@ -158,7 +182,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
             )
         )
         val evaluation = functionWithDate.evaluate(patientRecord)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Has received palliative targeted therapy (Matching category and intent) but unknown if since 2022-04-01")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "palliative targeted therapy (Matching category and intent) with unknown date in provided treatments"
+        )
     }
 
     @Test
@@ -170,7 +198,11 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         )
         val patientRecord = withTreatmentHistory(listOf(treatmentHistoryEntry))
         val evaluation = functionWithDate.evaluate(patientRecord)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation,  "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) but unknown if since 2022-04-01")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date in provided treatments"
+        )
     }
 
     @Test
@@ -190,7 +222,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Has not received palliative ALK inhibitor or EGFR inhibitor targeted therapy"
+            "No palliative ALK inhibitor or EGFR inhibitor targeted therapy in provided treatments"
         )
     }
 
@@ -210,7 +242,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (Recent matching treatment)"
+            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (Recent matching treatment) in provided treatments"
         )
     }
 
@@ -226,7 +258,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has received palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) but unknown if since 2022-04-01"
+            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date in provided treatments"
         )
     }
 }

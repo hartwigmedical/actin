@@ -43,7 +43,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistory(listOf(matchingEntry, subsequentEntry)),
-            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
+            "HER2 antibody targeted therapy treatment in provided treatments with stop reason PD"
         )
     }
 
@@ -58,7 +58,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
+            "HER2 antibody targeted therapy treatment in provided treatments with stop reason PD"
         )
     }
 
@@ -82,8 +82,8 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has received HER2 antibody targeted therapy treatment but uncertain if there has been PD & unclear nr of weeks ",
-            "Has received HER2 antibody targeted therapy treatment but uncertain if there has been PD"
+            "HER2 antibody targeted therapy treatment but uncertain if there has been PD & unclear nr of weeks  in provided treatments",
+            "HER2 antibody targeted therapy treatment but uncertain if there has been PD in provided treatments"
         )
     }
 
@@ -101,7 +101,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment without stop reason PD"
+            "HER2 antibody targeted therapy treatment in provided treatments without stop reason PD"
         )
     }
 
@@ -119,7 +119,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment without stop reason PD"
+            "HER2 antibody targeted therapy treatment in provided treatments without stop reason PD"
         )
     }
 
@@ -137,7 +137,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment for less than 6 weeks without stop reason PD"
+            "HER2 antibody targeted therapy treatment for less than 6 weeks in provided treatments without stop reason PD"
         )
     }
 
@@ -148,7 +148,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
+            "HER2 antibody targeted therapy treatment in provided treatments with stop reason PD"
         )
     }
 
@@ -185,7 +185,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received HER2 antibody targeted therapy treatment without stop reason PD but unknown nr of weeks"
+            "HER2 antibody targeted therapy treatment without stop reason PD but unknown nr of weeks in provided treatments"
         )
     }
 
@@ -202,7 +202,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             functionWithWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received HER2 antibody targeted therapy treatment with stop reason PD"
+            "HER2 antibody targeted therapy treatment in provided treatments with stop reason PD"
         )
     }
 

@@ -29,35 +29,36 @@ class HasHadSystemicTherapyWithAnyIntent(
         } ?: systemicTreatments.groupBy { true }
 
         val intentsLowercase = intents?.let { " ${concatItemsWithOr(it).lowercase()}" } ?: ""
+        val intentsPrefix = intents?.let { "${concatItemsWithOr(it).lowercase()} " } ?: ""
 
         return when {
             refDate == null && matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.pass("Received$intentsLowercase systemic therapy")
+                EvaluationFactory.pass("${intentsPrefix}systemic therapy in provided treatments")
             }
 
             evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::certainTreatmentSinceMinDate) -> {
-                EvaluationFactory.pass("Received$intentsLowercase systemic therapy within the last $weeks weeks")
+                EvaluationFactory.pass("${intentsPrefix}systemic therapy within the last $weeks weeks in provided treatments")
             }
 
             evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::certainTreatmentBeforeMaxDate) -> {
-                EvaluationFactory.pass("Received$intentsLowercase systemic therapy at least $weeks weeks ago")
+                EvaluationFactory.pass("${intentsPrefix}systemic therapy at least $weeks weeks ago in provided treatments")
             }
 
             (evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::potentialTreatmentSinceMinDate)) ||
                     (evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::potentialTreatmentBeforeMaxDate)) -> {
-                EvaluationFactory.undetermined("Received$intentsLowercase systemic therapy but date unknown")
+                EvaluationFactory.undetermined("${intentsPrefix}systemic therapy in provided treatments but date unknown")
             }
 
             (evaluateWithinWeeks != false && matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true) ||
                     (evaluateWithinWeeks != true && matchingTreatments[null]?.let(::anyTreatmentPotentiallyBeforeMaxDate) == true) -> {
                 EvaluationFactory.undetermined(
-                    "Has received systemic treatment (${Format.concat(systemicTreatments.map { it.treatmentDisplay() })}) " +
+                    "Systemic treatment (${Format.concat(systemicTreatments.map { it.treatmentDisplay() })}) in provided treatments " +
                             "but undetermined if intent is$intentsLowercase"
                 )
             }
 
             !matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.fail("No$intentsLowercase systemic therapy in prior tumor history")
+                EvaluationFactory.fail("No$intentsLowercase systemic therapy in provided treatments")
             }
 
             else -> EvaluationFactory.fail(

@@ -20,7 +20,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received treatments that include drug"
+            "No treatments that include drug in provided treatments"
         )
     }
 
@@ -30,7 +30,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received treatments that include drug"
+            "No treatments that include drug in provided treatments"
         )
     }
 
@@ -44,7 +44,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received drugs drug but no PD"
+            "Drugs drug in provided treatments but no PD"
         )
     }
 
@@ -54,7 +54,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received drugs drug but undetermined if PD"
+            "Drugs drug in provided treatments but undetermined if PD"
         )
     }
 
@@ -65,7 +65,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "Has had PD after receiving drugs drug"
+            "PD after receiving drugs drug based on provided treatments"
         )
     }
 
@@ -76,7 +76,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "Has received drugs drug but undetermined if PD"
+            "Drugs drug in provided treatments but undetermined if PD"
         )
     }
 
@@ -87,7 +87,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "Has received drugs drug but no PD"
+            "Drugs drug in provided treatments but no PD"
         )
     }
 
@@ -97,7 +97,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had PD after receiving drugs drug"
+            "PD after receiving drugs drug based on provided treatments"
         )
     }
 
@@ -107,7 +107,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had PD after receiving drugs drug"
+            "PD after receiving drugs drug based on provided treatments"
         )
     }
 
@@ -117,7 +117,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received treatments that include drug"
+            "No treatments that include drug in provided treatments"
         )
     }
 
@@ -127,7 +127,7 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if treatment received in previous trial included drug"
+            "Undetermined if treatment from previous trial included drug"
         )
     }
 

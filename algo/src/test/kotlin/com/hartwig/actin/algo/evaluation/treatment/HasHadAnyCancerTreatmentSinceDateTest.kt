@@ -56,8 +56,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistory(emptyList()),
-            "Has not received anti-cancer therapy within 6 months ignoring ALK inhibitor",
-            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
+            "No anti-cancer therapy within 6 months ignoring ALK inhibitor in provided treatments",
+            "No systemic anti-cancer therapy within 6 months ignoring ALK inhibitor in provided treatments"
         )
     }
 
@@ -75,8 +75,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             priorCancerTreatment,
-            "Has not had any prior cancer treatment ignoring ALK inhibitor",
-            "Has not had any prior systemic cancer treatment ignoring ALK inhibitor"
+            "No prior cancer treatment ignoring ALK inhibitor in provided treatments",
+            "No prior systemic cancer treatment ignoring ALK inhibitor in provided treatments"
         )
     }
 
@@ -99,9 +99,9 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Has not received systemic anti-cancer therapy within $MONTHS_AGO months ignoring ${
+            "No systemic anti-cancer therapy within $MONTHS_AGO months ignoring ${
                 TYPE_TO_IGNORE.first().display()
-            }"
+            } in provided treatments"
         )
     }
 
@@ -123,8 +123,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             priorCancerTreatment,
-            "Has not received anti-cancer therapy within 6 months ignoring ALK inhibitor",
-            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
+            "No anti-cancer therapy within 6 months ignoring ALK inhibitor in provided treatments",
+            "No systemic anti-cancer therapy within 6 months ignoring ALK inhibitor in provided treatments"
         )
     }
 
@@ -148,8 +148,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             priorCancerTreatment,
-            "Has not received anti-cancer therapy within 6 months ignoring ALK inhibitor",
-            "Has not received systemic anti-cancer therapy within 6 months ignoring ALK inhibitor"
+            "No anti-cancer therapy within 6 months ignoring ALK inhibitor in provided treatments",
+            "No systemic anti-cancer therapy within 6 months ignoring ALK inhibitor in provided treatments"
         )
     }
 
@@ -172,8 +172,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             priorCancerTreatment,
-            "Received anti-cancer therapy but undetermined if in the last $MONTHS_AGO months",
-            "Received systemic anti-cancer therapy but undetermined if in the last $MONTHS_AGO months"
+            "anti-cancer therapy in provided treatments but undetermined if in the last $MONTHS_AGO months (date unknown)",
+            "systemic anti-cancer therapy in provided treatments but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
     }
 
@@ -183,8 +183,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             WashoutTestFactory.withMedications(medications),
-            "Inconclusive if patient had any prior cancer treatment because participated in trial",
-            "Inconclusive if patient had any prior systemic cancer treatment because participated in trial"
+            "Inconclusive if there was any prior cancer treatment because of trial participation",
+            "Inconclusive if there was any prior systemic cancer treatment because of trial participation"
         )
     }
 
@@ -212,8 +212,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "Received anti-cancer therapy within the last $MONTHS_AGO months",
-            "Received systemic anti-cancer therapy within the last $MONTHS_AGO months"
+            "anti-cancer therapy within the last $MONTHS_AGO months in provided treatments",
+            "systemic anti-cancer therapy within the last $MONTHS_AGO months in provided treatments"
         )
     }
 
@@ -235,8 +235,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "Received anti-cancer therapy within the last 6 months",
-            "Received systemic anti-cancer therapy within the last 6 months"
+            "anti-cancer therapy within the last 6 months in provided treatments",
+            "systemic anti-cancer therapy within the last 6 months in provided treatments"
         )
     }
 
@@ -261,8 +261,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "Received anti-cancer therapy within the last 6 months",
-            "Received systemic anti-cancer therapy within the last 6 months"
+            "anti-cancer therapy within the last 6 months in provided treatments",
+            "systemic anti-cancer therapy within the last 6 months in provided treatments"
         )
     }
 
@@ -285,8 +285,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "Received anti-cancer therapy within the last 6 months",
-            "Received systemic anti-cancer therapy within the last 6 months"
+            "anti-cancer therapy within the last 6 months in provided treatments",
+            "systemic anti-cancer therapy within the last 6 months in provided treatments"
         )
     }
 

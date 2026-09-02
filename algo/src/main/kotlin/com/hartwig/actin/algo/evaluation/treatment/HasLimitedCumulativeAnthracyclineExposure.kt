@@ -30,7 +30,7 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
             anthracyclineSummary.hasApproximateMatch() && hasSuspectPrimaryTumor -> {
                 EvaluationFactory.undetermined(
                     "Cancer type is associated with potential anthracycline chemotherapy - "
-                            + "undetermined if anthracycline chemotherapy has been given"
+                            + "undetermined if anthracycline chemotherapy in provided treatments"
                 )
             }
 

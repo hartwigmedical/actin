@@ -17,7 +17,11 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
 
     @Test
     fun `Should fail for empty treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not received treatment 1")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "No treatment 1 in provided treatments"
+        )
     }
 
     @Test
@@ -26,7 +30,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received treatment 1"
+            "No treatment 1 in provided treatments"
         )
     }
 
@@ -42,7 +46,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received treatment 1"
+            "No treatment 1 in provided treatments"
         )
     }
 
@@ -52,7 +56,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if treatment received contained treatment 1 for at least 6 weeks"
+            "Undetermined if treatment included treatment 1 for at least 6 weeks based on provided treatments"
         )
     }
 
@@ -63,7 +67,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received treatment 1"
+            "No treatment 1 in provided treatments"
         )
     }
 
@@ -74,7 +78,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if treatment received contained treatment 1 for at least 6 weeks"
+            "Undetermined if treatment included treatment 1 for at least 6 weeks based on provided treatments"
         )
     }
 
@@ -84,7 +88,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has received treatment 1 but unknown nb of weeks"
+            "treatment 1 in provided treatments but unknown nb of weeks"
         )
     }
 
@@ -95,7 +99,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has received treatment 1 for at least 6 weeks"
+            "treatment 1 for at least 6 weeks in provided treatments"
         )
     }
 
@@ -118,7 +122,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2))),
-            "Undetermined if multiple received treatment 1 is counted as received for less than 6 weeks"
+            "Undetermined if multiple treatment 1 in provided treatments is counted for less than 6 weeks"
         )
     }
 }

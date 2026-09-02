@@ -27,7 +27,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has had no prior systemic treatment in metastatic setting - thus within maximum of 2 line(s)"
+            "No prior systemic treatment in metastatic setting in provided treatments - thus within maximum of 2 line(s)"
         )
     }
 
@@ -36,7 +36,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.CURATIVE)))),
-            "Has had no prior systemic treatment in metastatic setting - thus within maximum of 2 line(s)"
+            "No prior systemic treatment in metastatic setting in provided treatments - thus within maximum of 2 line(s)"
         )
     }
 
@@ -49,7 +49,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Has had more than 2 systemic treatment line(s) with palliative intent in metastatic setting"
+            "More than 2 systemic treatment line(s) with palliative intent in metastatic setting in provided treatments"
         )
     }
 
@@ -151,7 +151,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had at most 2 systemic treatment line(s) in metastatic setting"
+            "At most 2 systemic treatment line(s) in metastatic setting in provided treatments"
         )
     }
 
@@ -166,7 +166,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had at most 2 systemic treatment line(s) in metastatic setting"
+            "At most 2 systemic treatment line(s) in metastatic setting in provided treatments"
         )
     }
 
@@ -178,7 +178,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had at most 2 systemic treatment line(s) in metastatic setting"
+            "At most 2 systemic treatment line(s) in metastatic setting in provided treatments"
         )
     }
 

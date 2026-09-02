@@ -21,21 +21,21 @@ class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private
 
         return when {
             matchingTreatments.any { certainTreatmentSinceMinDate(it, minDate) } -> {
-                EvaluationFactory.pass("Treatment $predicateDescription administered since $formattedMinDate")
+                EvaluationFactory.pass("Treatment $predicateDescription administered since $formattedMinDate based on provided treatments")
             }
 
             matchingTreatments.any { potentialTreatmentSinceMinDate(it, minDate) } -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if treatment $predicateDescription may have been administered since " +
-                            "$formattedMinDate (missing stop date)"
+                    "Treatment $predicateDescription administered with unknown date " +
+                            "based on provided treatments"
                 )
             }
 
             matchingTreatments.isNotEmpty() -> {
-                EvaluationFactory.fail("All treatments $predicateDescription administered before $formattedMinDate")
+                EvaluationFactory.fail("All treatments $predicateDescription administered before $formattedMinDate based on provided treatments")
             }
 
-            else -> EvaluationFactory.fail("No treatments $predicateDescription in history")
+            else -> EvaluationFactory.fail("No treatments $predicateDescription in provided treatments")
         }
     }
 }

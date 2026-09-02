@@ -44,20 +44,20 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
 
         return when {
             historyWithSpecificCombination.isNotEmpty() && line != null -> {
-                EvaluationFactory.undetermined("Has received $treatmentDesc but unknown if in line $line")
+                EvaluationFactory.undetermined("$treatmentDesc in provided treatments but unknown if in line $line")
             }
 
-            true in hasSufficientCycles -> EvaluationFactory.pass("Has received $treatmentDesc$cyclesString")
+            true in hasSufficientCycles -> EvaluationFactory.pass("$treatmentDesc$cyclesString in provided treatments")
 
-            false in hasSufficientCycles -> EvaluationFactory.warn("Has received $treatmentDesc but with less than $minCycles cycles")
+            false in hasSufficientCycles -> EvaluationFactory.warn("$treatmentDesc in provided treatments but with less than $minCycles cycles")
 
-            null in hasSufficientCycles -> EvaluationFactory.undetermined("Undetermined if received $treatmentDesc$cyclesString")
+            null in hasSufficientCycles -> EvaluationFactory.undetermined("Undetermined if $treatmentDesc$cyclesString based on provided treatments")
 
             hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
-                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc$cyclesString")
+                EvaluationFactory.undetermined("Undetermined if $treatmentDesc$cyclesString based on provided treatments")
             }
 
-            else -> EvaluationFactory.fail("Has not received $treatmentDesc")
+            else -> EvaluationFactory.fail("No $treatmentDesc in provided treatments")
         }
     }
 }

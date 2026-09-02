@@ -12,7 +12,7 @@ class IsEligibleForIntensiveTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             IsEligibleForIntensiveTreatment().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Eligibility for intensive treatment undetermined"
+            "Undetermined if intensive treatment is available"
         )
     }
 }

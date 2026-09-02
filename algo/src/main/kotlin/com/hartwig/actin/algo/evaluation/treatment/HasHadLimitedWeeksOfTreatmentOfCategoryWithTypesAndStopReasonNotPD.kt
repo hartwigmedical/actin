@@ -71,7 +71,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has received ${treatment()} with stop reason PD")
+                EvaluationFactory.fail("${treatment()} in provided treatments with stop reason PD")
             }
 
             else -> {
@@ -81,11 +81,11 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "Has had ${treatment()}$suffix without stop reason PD"
+        return "${treatment()}$suffix in provided treatments without stop reason PD"
     }
 
     private fun undetermined(suffix: String): Evaluation {
-        return EvaluationFactory.undetermined("Has received ${treatment()} $suffix")
+        return EvaluationFactory.undetermined("${treatment()} $suffix in provided treatments")
     }
 
     private fun treatment(): String {

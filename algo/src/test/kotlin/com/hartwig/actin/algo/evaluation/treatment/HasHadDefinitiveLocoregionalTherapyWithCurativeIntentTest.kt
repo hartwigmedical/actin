@@ -36,7 +36,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(withTreatmentHistory(emptyList())),
-            "Undetermined if patient has had locoregional therapy with curative intent"
+            "Undetermined if locoregional therapy with curative intent based on provided treatments"
         )
     }
 
@@ -47,7 +47,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 evaluate(patientRecord),
-                "Patient has received locoregional therapy with curative intent"
+                "Locoregional therapy with curative intent in provided treatments"
             )
         }
     }
@@ -58,7 +58,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(chemotherapyCurative),
-            "Undetermined if patient has had locoregional therapy with curative intent"
+            "Undetermined if locoregional therapy with curative intent based on provided treatments"
         )
     }
 
@@ -70,17 +70,17 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(radiotherapyIntentNull),
-            "Undetermined if patient has had locoregional therapy with curative intent"
+            "Undetermined if locoregional therapy with curative intent based on provided treatments"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(surgeryNonCurative),
-            "Undetermined if patient has had locoregional therapy with curative intent"
+            "Undetermined if locoregional therapy with curative intent based on provided treatments"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(radiotherapyIntentListEmpty),
-            "Undetermined if patient has had locoregional therapy with curative intent"
+            "Undetermined if locoregional therapy with curative intent based on provided treatments"
         )
     }
 
@@ -105,7 +105,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluate(multiTreatmentTestCase),
-            "Patient has received locoregional therapy with curative intent"
+            "Locoregional therapy with curative intent in provided treatments"
         )
     }
 }

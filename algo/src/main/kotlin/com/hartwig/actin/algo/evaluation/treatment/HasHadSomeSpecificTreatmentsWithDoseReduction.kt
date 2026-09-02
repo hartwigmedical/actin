@@ -11,18 +11,18 @@ class HasHadSomeSpecificTreatmentsWithDoseReduction(private val treatment: Treat
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val hasHadSpecificTreatmentResult = HasHadLimitedWeeksOfSpecificTreatment(treatment, null).evaluate(record).result
-        val treatmentName = treatment.name.lowercase()
+        val treatmentName = treatment.name
 
         return when (hasHadSpecificTreatmentResult) {
             EvaluationResult.PASS, EvaluationResult.WARN -> {
-                EvaluationFactory.undetermined("Has received $treatmentName but unknown if there may have been a dose reduction")
+                EvaluationFactory.undetermined("$treatmentName in provided treatments but unknown if there may have been a dose reduction")
             }
 
             EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.undetermined("Undetermined if patient may have received $treatmentName and if there may have been a dose reduction")
+                EvaluationFactory.undetermined("Undetermined if ${treatmentName.lowercase()} in provided treatments and if there may have been a dose reduction")
             }
 
-            EvaluationResult.FAIL -> EvaluationFactory.fail("Has not received $treatmentName hence also not received dose reduction")
+            EvaluationResult.FAIL -> EvaluationFactory.fail("$treatmentName not in provided treatments hence no dose reduction")
         }
     }
 }

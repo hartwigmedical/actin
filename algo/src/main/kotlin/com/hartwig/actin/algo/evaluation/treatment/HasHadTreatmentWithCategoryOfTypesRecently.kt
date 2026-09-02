@@ -44,22 +44,22 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
-                EvaluationFactory.pass("Has received $typesAndCategoryString treatment within requested time frame")
+                EvaluationFactory.pass("$typesAndCategoryString treatment in provided treatments within requested time frame")
             }
 
             treatmentAssessment.hasPotentiallyValidTreatment -> {
-                EvaluationFactory.undetermined("Has potentially received $typesAndCategoryString treatment within requested time frame - exact drug type of patient's treatment unknown")
+                EvaluationFactory.undetermined("Potentially $typesAndCategoryString treatment within requested time frame - exact drug type of treatment unknown based on provided treatments")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received $typesAndCategoryString treatment but inconclusive if within requested time frame")
+                EvaluationFactory.undetermined("$typesAndCategoryString treatment in provided treatments but inconclusive if within requested time frame")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial may have included ${category.display()}")
+                EvaluationFactory.undetermined("Undetermined if treatment from previous trial may have included ${category.display()}")
             }
 
-            else -> EvaluationFactory.fail("Has not had $typesAndCategoryString treatment within requested time frame")
+            else -> EvaluationFactory.fail("No $typesAndCategoryString treatment in provided treatments within requested time frame")
         }
     }
 }

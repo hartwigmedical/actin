@@ -21,23 +21,23 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
         )
 
         val typesList = Format.concatItemsWithAnd(types)
-        val baseMessage = "received at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
+        val baseMessage = "at least $minTreatmentLines line(s) of $typesList combination ${category.display()}"
 
         return when {
             treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
-                EvaluationFactory.pass("Has $baseMessage")
+                EvaluationFactory.pass("At least $minTreatmentLines line(s) of $typesList combination ${category.display()} in provided treatments")
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if $baseMessage")
+                EvaluationFactory.undetermined("Undetermined if $baseMessage based on provided treatments")
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Trial medication in history - undetermined if received at least $minTreatmentLines line(s) of ${category.display()}")
+                EvaluationFactory.undetermined("Trial medication - undetermined if at least $minTreatmentLines line(s) of ${category.display()} based on provided treatments")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not $baseMessage")
+                EvaluationFactory.fail("Not at least $minTreatmentLines line(s) of $typesList combination ${category.display()} in provided treatments")
             }
         }
     }

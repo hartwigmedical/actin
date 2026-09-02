@@ -19,7 +19,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received Treatment treatment"
+            "No Treatment treatment in provided treatments"
         )
     }
 
@@ -29,7 +29,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received Treatment treatment"
+            "No Treatment treatment in provided treatments"
         )
     }
 
@@ -43,7 +43,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received Treatment treatment but no PD"
+            "Treatment treatment in provided treatments but no PD"
         )
     }
 
@@ -53,7 +53,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received Treatment treatment but undetermined if PD"
+            "Treatment treatment in provided treatments but undetermined if PD"
         )
     }
 
@@ -64,7 +64,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "Has had PD after receiving Treatment treatment"
+            "PD after receiving Treatment treatment based on provided treatments"
         )
     }
 
@@ -74,7 +74,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had PD after receiving Treatment treatment"
+            "PD after receiving Treatment treatment based on provided treatments"
         )
     }
 
@@ -84,7 +84,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had PD after receiving Treatment treatment"
+            "PD after receiving Treatment treatment based on provided treatments"
         )
     }
 
@@ -94,7 +94,7 @@ class HasHadPDFollowingSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received Treatment treatment in trial"
+            "Undetermined if trial treatment in provided treatments contained Treatment"
         )
     }
 

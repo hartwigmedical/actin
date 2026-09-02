@@ -23,12 +23,12 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithDate.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not received adjuvant treatment(s) of targeted therapy"
+            "No adjuvant treatment(s) of targeted therapy in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutDate.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not received adjuvant treatment(s) of targeted therapy"
+            "No adjuvant treatment(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -40,7 +40,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.ADJUVANT),
             recentDate,
             functionWithDate,
-            "Has not received adjuvant treatment(s) of targeted therapy"
+            "No adjuvant treatment(s) of targeted therapy in provided treatments"
         )
         assertResultForCategoryAndIntent(
             EvaluationResult.FAIL,
@@ -48,7 +48,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.ADJUVANT),
             recentDate,
             functionWithoutDate,
-            "Has not received adjuvant treatment(s) of targeted therapy"
+            "No adjuvant treatment(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -60,7 +60,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             emptySet(),
             recentDate,
             functionWithoutDate,
-            "Has not received adjuvant treatment(s) of targeted therapy"
+            "No adjuvant treatment(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -72,7 +72,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.NEOADJUVANT),
             recentDate,
             functionWithoutDate,
-            "Has not received adjuvant treatment(s) of targeted therapy"
+            "No adjuvant treatment(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -84,7 +84,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.ADJUVANT),
             null,
             functionWithDate,
-            "Received adjuvant treatment(s) of targeted therapy but unknown if within the last 6 weeks"
+            "Adjuvant treatment(s) of targeted therapy in provided treatments but date unknown"
         )
     }
 
@@ -96,7 +96,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.NEOADJUVANT),
             olderDate,
             functionWithDate,
-            "Has not received adjuvant treatment(s) of targeted therapy"
+            "No adjuvant treatment(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -108,7 +108,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.ADJUVANT),
             recentDate,
             functionWithDate,
-            "Received adjuvant treatment(s) of targeted therapy within the last 6 weeks"
+            "Adjuvant treatment(s) of targeted therapy within the last 6 weeks in provided treatments"
         )
     }
 
@@ -120,7 +120,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.NEOADJUVANT, Intent.ADJUVANT),
             recentDate,
             functionWithDate,
-            "Received adjuvant treatment(s) of targeted therapy within the last 6 weeks"
+            "Adjuvant treatment(s) of targeted therapy within the last 6 weeks in provided treatments"
         )
     }
 

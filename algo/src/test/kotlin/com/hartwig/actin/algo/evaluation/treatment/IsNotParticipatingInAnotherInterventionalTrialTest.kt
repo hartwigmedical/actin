@@ -39,7 +39,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
                     null
                 )
             ),
-            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
+            "Recent trial treatment - undetermined participation in another interventional trial"
         )
     }
 
@@ -49,7 +49,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         assertEvaluation(
             EvaluationResult.WARN,
             alwaysActiveMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
+            "Recent trial treatment - undetermined participation in another interventional trial"
         )
     }
 
@@ -104,7 +104,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         assertEvaluation(
             EvaluationResult.PASS,
             alwaysStoppedMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Assumed that patient is not participating in another interventional trial"
+            "Assumed no participation in another interventional trial"
         )
     }
 
@@ -121,7 +121,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         assertEvaluation(
             EvaluationResult.PASS,
             alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
-            "Assumed that patient is not participating in another interventional trial"
+            "Assumed no participation in another interventional trial"
         )
     }
 
@@ -130,7 +130,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         assertEvaluation(
             EvaluationResult.PASS,
             alwaysActiveMedicationFunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient is not participating in another interventional trial"
+            "Assumed no participation in another interventional trial"
         )
     }
 }

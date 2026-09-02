@@ -24,7 +24,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             HasHadBrainRadiationTherapy().evaluate(withTreatmentHistory(history)),
-            "Has had brain radiation therapy"
+            "Brain radiation therapy in provided treatments"
         )
     }
 
@@ -36,7 +36,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             HasHadBrainRadiationTherapy().evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "Has had brain radiation therapy"
+            "Brain radiation therapy in provided treatments"
         )
     }
 
@@ -48,7 +48,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             HasHadBrainRadiationTherapy().evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "Has received radiotherapy but not to the brain"
+            "Radiotherapy in provided treatments but not to the brain"
         )
     }
 
@@ -62,7 +62,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadBrainRadiationTherapy().evaluate(history),
-            "Has brain and/or CNS metastases and received radiotherapy - undetermined if brain radiation therapy"
+            "brain and/or CNS metastases are present and radiotherapy in provided treatments - undetermined if brain radiation therapy"
         )
     }
 
@@ -76,7 +76,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadBrainRadiationTherapy().evaluate(history),
-            "Has suspected brain and/or CNS metastases and received radiotherapy - undetermined if brain radiation therapy"
+            "suspected brain and/or CNS metastases are present and radiotherapy in provided treatments - undetermined if brain radiation therapy"
         )
     }
 
@@ -91,7 +91,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             HasHadBrainRadiationTherapy().evaluate(history),
-            "Has not received prior brain radiation therapy"
+            "No prior brain radiation therapy in provided treatments"
         )
     }
 
@@ -105,7 +105,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             HasHadBrainRadiationTherapy().evaluate(history),
-            "Has not received prior brain radiation therapy"
+            "No prior brain radiation therapy in provided treatments"
         )
     }
 
@@ -122,7 +122,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             HasHadBrainRadiationTherapy().evaluate(history),
-            "Has received radiotherapy but not to the brain"
+            "Radiotherapy in provided treatments but not to the brain"
         )
     }
 
@@ -131,7 +131,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             HasHadBrainRadiationTherapy().evaluate(withTreatmentHistory(emptyList())),
-            "Has not received prior brain radiation therapy"
+            "No prior brain radiation therapy in provided treatments"
         )
     }
 }

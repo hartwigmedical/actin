@@ -13,7 +13,7 @@ class HasHadSomeApprovedTreatmentsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not had approved treatments (no prior tumor treatment)"
+            "No approved treatments in provided treatments (no prior tumor treatment)"
         )
 
         val record = TreatmentTestFactory.withTreatmentHistoryEntry(TreatmentTestFactory.treatmentHistoryEntry())

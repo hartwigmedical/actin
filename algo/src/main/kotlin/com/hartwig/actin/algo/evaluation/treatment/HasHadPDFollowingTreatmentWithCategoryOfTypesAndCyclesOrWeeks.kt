@@ -64,19 +64,19 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD")
+                recoverableUndetermined("${treatment()} in provided treatments but uncertain if there has been PD")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD & unknown nr of cycles")
+                recoverableUndetermined("${treatment()} in provided treatments but uncertain if there has been PD & unknown nr of cycles")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                recoverableUndetermined("Has received ${treatment()} but uncertain if there has been PD & unclear nr of weeks")
+                recoverableUndetermined("${treatment()} in provided treatments but uncertain if there has been PD & unclear nr of weeks")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                undetermined("Undetermined if patient received ${treatment()}")
+                undetermined("Undetermined if provided treatment included ${treatment()}")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_INSUFFICIENT_CYCLES in treatmentEvaluations -> {
@@ -94,7 +94,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "Has had ${treatment()} with PD$suffix"
+        return "${treatment()} with PD$suffix in provided treatments"
     }
 
     private fun hasNoPDAfterMessage(suffix: String = ""): String {

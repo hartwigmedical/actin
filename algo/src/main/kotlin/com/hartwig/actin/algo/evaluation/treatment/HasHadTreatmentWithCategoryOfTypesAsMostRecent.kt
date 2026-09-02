@@ -23,31 +23,31 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
         }
 
         val mostRecentAntiCancerDrug = priorAntiCancerDrugs.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
-        val typeString = types?.let { " ${types.joinToString { it.display() }}"}.orEmpty()
+        val typeString = types?.let { "${types.joinToString { it.display() }} " }.orEmpty()
 
         return when {
             priorAntiCancerDrugs.isEmpty() -> {
-                EvaluationFactory.fail("Has not received prior anti cancer drugs")
+                EvaluationFactory.fail("No prior anti cancer drugs in provided treatments")
             }
 
             types != null && mostRecentAntiCancerDrug?.matchesTypeFromSet(types) == true -> {
-                EvaluationFactory.pass("Has received$typeString ${category.display()} as most recent treatment line")
+                EvaluationFactory.pass("$typeString${category.display()} in provided treatments as most recent treatment line")
             }
 
             types == null && mostRecentAntiCancerDrug?.categories()?.contains(category) == true -> {
-                EvaluationFactory.pass("Has received ${category.display()} as most recent treatment line")
+                EvaluationFactory.pass("${category.display()} in provided treatments as most recent treatment line")
             }
 
             treatmentMatch.any { it.startYear == null } -> {
-                EvaluationFactory.undetermined("Has received$typeString ${category.display()} but undetermined if most recent (date unknown)")
+                EvaluationFactory.undetermined("$typeString${category.display()} in provided treatments but undetermined if most recent (date unknown)")
             }
 
             treatmentMatch.isNotEmpty() -> {
-                EvaluationFactory.fail("Has received$typeString ${category.display()} but not as the most recent treatment line")
+                EvaluationFactory.fail("$typeString${category.display()} in provided treatments but not as the most recent treatment line")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received$typeString ${category.display()} as prior therapy")
+                EvaluationFactory.fail("No $typeString${category.display()} in provided treatments")
             }
         }
     }

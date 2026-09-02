@@ -15,18 +15,24 @@ class HasHadPDFollowingTreatmentWithAnyDrug(private val drugsToMatch: Set<Drug>)
 
         return if (treatmentEvaluation.matchingDrugsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "Has had PD after receiving drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}"
+                "PD after receiving drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)} based on provided treatments"
             )
         } else if (treatmentEvaluation.possibleTrialMatch) {
-            EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${Format.concatItemsWithOr(drugsToMatch)}")
+            EvaluationFactory.undetermined(
+                "Undetermined if treatment from previous trial included ${
+                    Format.concatItemsWithOr(
+                        drugsToMatch
+                    )
+                }"
+            )
         } else if (treatmentEvaluation.matchesWithUnclearPD) {
             EvaluationFactory.undetermined(
-                "Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but undetermined if PD"
+                "Drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} in provided treatments but undetermined if PD"
             )
         } else if (treatmentEvaluation.matchingDrugs.isNotEmpty()) {
-            EvaluationFactory.fail("Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but no PD")
+            EvaluationFactory.fail("Drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} in provided treatments but no PD")
         } else {
-            EvaluationFactory.fail("Has not received treatments that include ${Format.concatItemsWithOr(drugsToMatch)}")
+            EvaluationFactory.fail("No treatments that include ${Format.concatItemsWithOr(drugsToMatch)} in provided treatments")
         }
     }
 }

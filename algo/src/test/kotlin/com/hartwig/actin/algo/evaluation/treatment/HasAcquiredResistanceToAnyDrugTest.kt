@@ -27,7 +27,7 @@ class HasAcquiredResistanceToAnyDrugTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "Has potential acquired resistance to osimertinib"
+            "Potential acquired resistance to osimertinib"
         )
     }
 
@@ -40,7 +40,7 @@ class HasAcquiredResistanceToAnyDrugTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "Has potential acquired resistance to osimertinib"
+            "Potential acquired resistance to osimertinib"
         )
     }
 

@@ -50,24 +50,24 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
 
         return when {
             treatmentAssessment.hasHadValidTreatment || hadCancerMedicationWithCategoryButNotOfTypes -> {
-                EvaluationFactory.pass("Has received ${category.display()} treatment ignoring $ignoringTypesList")
+                EvaluationFactory.pass("${category.display()} treatment in provided treatments ignoring $ignoringTypesList")
             }
 
             treatmentAssessment.hasPotentiallyValidTreatment -> {
-                EvaluationFactory.undetermined("Has potentially received ${category.display()} treatment ignoring $ignoringTypesList - exact drug type of patient's treatment unknown")
+                EvaluationFactory.undetermined("Potentially ${category.display()} treatment ignoring $ignoringTypesList - exact drug type of treatment unknown")
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received ${category.display()} treatment ignoring $ignoringTypesList but inconclusive date")
+                EvaluationFactory.undetermined("${category.display()} treatment in provided treatments ignoring $ignoringTypesList but inconclusive date")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || activeOrRecentlyStoppedMedications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}")
+                EvaluationFactory.undetermined("Undetermined if treatment from in previous trial included ${category.display()}")
             }
 
             else -> {
                 EvaluationFactory.fail(
-                    "Has not had recent ${category.display()} treatment ignoring $ignoringTypesList"
+                    "No recent ${category.display()} treatment ignoring $ignoringTypesList in provided treatments"
                 )
             }
         }

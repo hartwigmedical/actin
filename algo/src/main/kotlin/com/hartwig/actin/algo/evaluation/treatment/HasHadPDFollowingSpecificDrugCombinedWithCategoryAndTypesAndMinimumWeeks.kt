@@ -84,32 +84,32 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
 
         return when {
             treatmentEvaluations.size > 1 -> {
-                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentDesc is counted as received for at least $minWeeks weeks")
+                EvaluationFactory.undetermined("Undetermined whether multiple $treatmentDesc in the provided treatments have duration of at least $minWeeks weeks")
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_PD_AND_SUFFICIENT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.pass("Has received $treatmentDesc with PD for at least $minWeeks weeks")
+                EvaluationFactory.pass("$treatmentDesc in provided treatments with PD for at least $minWeeks weeks")
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_PD_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Has received $treatmentDesc with PD but unknown nr of weeks")
+                EvaluationFactory.undetermined("$treatmentDesc in provided treatments with PD but unknown nr of weeks")
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Has received $treatmentDesc but uncertain if there has been PD")
+                EvaluationFactory.undetermined("$treatmentDesc in provided treatments but uncertain if there has been PD")
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc")
+                EvaluationFactory.undetermined("Undetermined if $treatmentDesc based on provided treatments")
             }
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_PD_AND_INSUFFICIENT_WEEKS in treatmentEvaluations -> EvaluationFactory.fail(
-                "Has received $treatmentDesc with PD but for less than $minWeeks weeks"
+                "$treatmentDesc in provided treatments with PD but for less than $minWeeks weeks"
             )
 
             PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_NO_PD in treatmentEvaluations -> EvaluationFactory.fail("No PD after $treatmentDesc")
 
-            else -> EvaluationFactory.fail("Has not received $treatmentDesc")
+            else -> EvaluationFactory.fail("No $treatmentDesc in provided treatments")
         }
     }
 }

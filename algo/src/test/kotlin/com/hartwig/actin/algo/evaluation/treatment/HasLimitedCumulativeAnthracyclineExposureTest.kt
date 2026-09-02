@@ -70,7 +70,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(patientRecord(setOf(SUSPICIOUS_CANCER_TYPE), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo))))),
-            "Cancer type is associated with potential anthracycline chemotherapy - undetermined if anthracycline chemotherapy has been given"
+            "Cancer type is associated with potential anthracycline chemotherapy - undetermined if anthracycline chemotherapy in provided treatments"
         )
     }
 

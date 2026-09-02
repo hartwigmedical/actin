@@ -9,6 +9,6 @@ class IsEligibleForRadiotherapy(private val bodyLocation: String? = null) : Eval
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val messageAddition = if (bodyLocation != null) " to ${bodyLocation.lowercase()}" else ""
-        return EvaluationFactory.undetermined("Undetermined if eligible for radiotherapy$messageAddition")
+        return EvaluationFactory.undetermined("Undetermined if radiotherapy$messageAddition is available")
     }
 }

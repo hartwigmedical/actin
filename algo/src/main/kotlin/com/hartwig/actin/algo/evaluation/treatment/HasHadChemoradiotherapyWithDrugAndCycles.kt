@@ -10,6 +10,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 class HasHadChemoradiotherapyWithDrugAndCycles(private val drugs: Set<Drug>, private val cycles: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if received chemoradiotherapy with ${Format.concatItemsWithOr(drugs)} and at least $cycles cycles")
+        return EvaluationFactory.undetermined("Undetermined if chemoradiotherapy with ${Format.concatItemsWithOr(drugs)} and at least $cycles cycles based on provided treatments")
     }
 }

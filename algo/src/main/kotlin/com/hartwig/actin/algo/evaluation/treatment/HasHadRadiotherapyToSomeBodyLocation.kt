@@ -21,15 +21,15 @@ class HasHadRadiotherapyToSomeBodyLocation(private val bodyLocation: String, pri
 
         return when {
             radiotherapyToTargetLocationCount >= (lines ?: 1) -> {
-                EvaluationFactory.pass("Has had prior radiotherapy to $bodyLocation$messageEnding")
+                EvaluationFactory.pass("Prior radiotherapy to $bodyLocation$messageEnding in provided treatments")
             }
 
             priorRadiotherapies.any { it.treatmentHistoryDetails?.bodyLocations == null } -> {
-                EvaluationFactory.recoverableUndetermined("Has received radiotherapy but undetermined if target location was $bodyLocation")
+                EvaluationFactory.recoverableUndetermined("Radiotherapy in provided treatments but undetermined if target location was $bodyLocation")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received prior radiation therapy to $bodyLocation$messageEnding")
+                EvaluationFactory.fail("No prior radiation therapy to $bodyLocation$messageEnding in provided treatments")
             }
         }
     }

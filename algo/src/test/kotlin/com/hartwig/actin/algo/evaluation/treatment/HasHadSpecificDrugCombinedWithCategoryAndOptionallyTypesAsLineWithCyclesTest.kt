@@ -32,7 +32,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "No combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments"
         )
     }
 
@@ -48,7 +48,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(treatmentHistory),
-            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "No combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments"
         )
     }
 
@@ -63,7 +63,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "No combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments"
         )
     }
 
@@ -76,7 +76,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and chemotherapy"
+            "combined therapy with target drug and chemotherapy in provided treatments"
         )
     }
 
@@ -96,7 +96,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and HER2 antibody chemotherapy"
+            "combined therapy with target drug and HER2 antibody chemotherapy in provided treatments"
         )
     }
 
@@ -111,7 +111,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments"
         )
     }
 
@@ -126,7 +126,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "Undetermined if combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy based on provided treatments"
         )
     }
 
@@ -136,7 +136,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "Undetermined if combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy based on provided treatments"
         )
     }
 
@@ -157,7 +157,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Has received combined therapy with target drug and HER2 antibody chemotherapy but unknown if in line 2"
+            "combined therapy with target drug and HER2 antibody chemotherapy in provided treatments but unknown if in line 2"
         )
     }
 
@@ -173,7 +173,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.WARN,
             result,
-            "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy but with less than 4 cycles"
+            "combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments but with less than 4 cycles"
         )
     }
 
@@ -188,7 +188,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy and at least 4 cycles"
+            "combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy and at least 4 cycles in provided treatments"
         )
     }
 
@@ -200,8 +200,11 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
             MATCHING_DRUG_TREATMENT.drugs.first(), MATCHING_CATEGORY, MATCHING_TYPES, null, 4
         )
         val result = function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
-        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined if received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy " +
-                "and at least 4 cycles")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy and at least 4 cycles based on provided treatments"
+        )
     }
 
     @Test
@@ -211,7 +214,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "No combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments"
         )
     }
 
@@ -224,7 +227,7 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCyclesTe
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy"
+            "No combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments"
         )
     }
 }

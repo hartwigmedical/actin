@@ -32,18 +32,18 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
             when {
                 hasSpecificMatch() -> {
                     EvaluationFactory.pass(
-                        "Has received $intentsList${drugTypeString(specificMatches)} ${category.display()} " +
-                                "(${specificMatches.joinToString(", ") { it.treatmentDisplay() }})"
+                        "$intentsList${drugTypeString(specificMatches)} ${category.display()} " +
+                                "(${specificMatches.joinToString(", ") { it.treatmentDisplay() }}) in provided treatments"
                     )
                 }
 
                 hasApproximateMatch() -> {
-                    EvaluationFactory.undetermined("Undetermined if received$allowedTypesString ${category.display()} is $intentsList")
+                    EvaluationFactory.undetermined("Undetermined if $allowedTypesString ${category.display()} in provided treatments is $intentsList")
                 }
 
                 hasPossibleTrialMatch() -> {
                     EvaluationFactory.undetermined(
-                        "Undetermined if treatment received in previous trial included $intentsList$allowedTypesString ${category.display()}"
+                        "Undetermined if trial treatment in provided treatments included $intentsList$allowedTypesString ${category.display()}"
                     )
                 }
 
@@ -54,11 +54,12 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
                         ).specificMatches.ifEmpty { null }
                     }?.let { unknownDateMatches ->
                         EvaluationFactory.undetermined(
-                            "Has received $intentsList${drugTypeString(unknownDateMatches)} ${category.display()} " +
+                            "$intentsList${drugTypeString(unknownDateMatches)} ${category.display()} " +
                                     "(${unknownDateMatches.joinToString(", ") { it.treatmentDisplay() }}) " +
-                                    "but unknown if since $minDate"
+                                    "with unknown date in provided treatments"
                         )
-                    } ?: EvaluationFactory.fail("Has not received $intentsList$allowedTypesString ${category.display()}")
+                    }
+                        ?: EvaluationFactory.fail("No $intentsList$allowedTypesString ${category.display()} in provided treatments")
                 }
             }
         }

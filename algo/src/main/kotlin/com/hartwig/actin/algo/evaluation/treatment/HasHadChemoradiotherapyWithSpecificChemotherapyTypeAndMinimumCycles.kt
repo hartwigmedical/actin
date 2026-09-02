@@ -30,19 +30,19 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(privat
         val typeString = type.display()
         return when {
             treatmentMatches.any { (match, cycles) -> match == true && cycles == true } -> EvaluationFactory.pass(
-                "Had received chemoradiotherapy with $typeString chemotherapy${minCyclesString("and at least $minCycles cycles")}"
+                "Chemoradiotherapy with $typeString chemotherapy${minCyclesString("and at least $minCycles cycles")} in provided treatments"
             )
 
             treatmentMatches.any { (match, cycles) -> match == true && cycles == false } -> EvaluationFactory.warn(
-                "Had received chemoradiotherapy with $typeString chemotherapy${minCyclesString("but with less than $minCycles cycles")}"
+                "Chemoradiotherapy with $typeString chemotherapy${minCyclesString("but with less than $minCycles cycles")} in provided treatments"
             )
 
             treatmentMatches.any { (match, cycles) -> match == null || (match && cycles == null) } -> EvaluationFactory.undetermined(
-                "Undetermined if patient received chemoradiotherapy with $typeString chemotherapy" +
-                        minCyclesString("and at least $minCycles cycles")
+                "Undetermined if chemoradiotherapy with $typeString chemotherapy" +
+                        minCyclesString("and at least $minCycles cycles") + " in provided treatments"
             )
 
-            else -> EvaluationFactory.fail("Has not received chemoradiotherapy with $typeString chemotherapy")
+            else -> EvaluationFactory.fail("No chemoradiotherapy with $typeString chemotherapy in provided treatments")
         }
     }
 

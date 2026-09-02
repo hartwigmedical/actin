@@ -31,15 +31,15 @@ class HasHadAnyCancerTreatment(
 
         return when {
             hasHadPriorCancerTreatment -> {
-                EvaluationFactory.pass("Has received prior cancer treatment(s)")
+                EvaluationFactory.pass("Prior cancer treatment(s) in provided treatments")
             }
 
             hasHadTrial -> {
-                EvaluationFactory.undetermined("Inconclusive if patient had any prior cancer treatment because participated in trial")
+                EvaluationFactory.undetermined("Inconclusive if there was any prior cancer treatment because of trial participation")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had any prior cancer treatment")
+                EvaluationFactory.fail("No prior cancer treatment in provided treatments")
             }
         }
     }

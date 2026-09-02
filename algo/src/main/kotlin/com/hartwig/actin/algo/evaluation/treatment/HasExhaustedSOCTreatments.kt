@@ -23,19 +23,19 @@ class HasExhaustedSOCTreatments(
                     .joinToString(", ") { it.treatmentCandidate.treatment.display() }
                 when {
                     remainingNonOptionalTreatments.isEmpty() -> {
-                        EvaluationFactory.pass("Has exhausted SOC")
+                        EvaluationFactory.pass("SOC is exhausted")
                     }
 
                     treatmentEvaluation.isMissingTreatmentsWithPotentialIntoleranceOnly() -> {
                         EvaluationFactory.warn(
-                            "Has potentially exhausted SOC - remaining options ($remainingNonOptionalTreatments) may not have " +
+                            "SOC is potentially exhausted - remaining options ($remainingNonOptionalTreatments) may not have " +
                                     "been given due to drug intolerance"
                         )
                     }
 
                     treatmentEvaluation.isMissingMolecularResultForEvaluation() -> {
                         EvaluationFactory.warn(
-                            "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) " +
+                            "SOC potentially not exhausted ($remainingNonOptionalTreatments) " +
                                     "but some corresponding molecular results are missing",
                             isMissingMolecularResultForEvaluation = true
                         )
@@ -43,7 +43,7 @@ class HasExhaustedSOCTreatments(
 
                     else -> {
                         EvaluationFactory.fail(
-                            "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
+                            "SOC is not exhausted (remaining options: $remainingNonOptionalTreatments)"
                         )
                     }
                 }
@@ -77,7 +77,7 @@ class HasExhaustedSOCTreatments(
                 EvaluationFactory.undetermined("Exhaustion of SOC undetermined (no prior cancer treatment)")
             }
 
-            else -> EvaluationFactory.pass("Assumed that SOC is exhausted (had prior cancer treatment)")
+            else -> EvaluationFactory.pass("Assumed that SOC is exhausted (prior cancer treatment)")
         }
     }
 }

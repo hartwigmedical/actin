@@ -21,7 +21,11 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
     @Test
     fun `Should fail for empty treatments`() {
         listOf(functionWithMaxWeeks, functionWithoutMaxWeeks).forEach { function ->
-            assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not received treatment 1")
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                function.evaluate(withTreatmentHistory(emptyList())),
+                "No treatment 1 in provided treatments"
+            )
         }
     }
 
@@ -32,7 +36,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
             assertEvaluation(
                 EvaluationResult.FAIL,
                 function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-                "Has not received treatment 1"
+                "No treatment 1 in provided treatments"
             )
         }
     }
@@ -43,7 +47,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received treatment 1"
+            "No treatment 1 in provided treatments"
         )
     }
 
@@ -59,7 +63,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithMaxWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had treatment 1 treatment but for more than 6 weeks"
+            "treatment 1 treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -70,7 +74,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received treatment 1"
+            "No treatment 1 in provided treatments"
         )
     }
 
@@ -78,8 +82,8 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
     fun `Should evaluate to undetermined when trial entry without treatment and weeks are missing`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         listOf(
-            functionWithoutMaxWeeks to "Undetermined if treatment received contained treatment 1",
-            functionWithMaxWeeks to "Undetermined if treatment received contained treatment 1 for less than 6 weeks"
+            functionWithoutMaxWeeks to "Undetermined if treatment included treatment 1 based on provided treatments",
+            functionWithMaxWeeks to "Undetermined if treatment included treatment 1 for less than 6 weeks based on provided treatments"
         ).forEach { (function, expectedMessage) ->
             assertEvaluation(
                 EvaluationResult.UNDETERMINED,
@@ -96,7 +100,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received treatment 1"
+            "No treatment 1 in provided treatments"
         )
     }
 
@@ -107,7 +111,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if treatment received contained treatment 1 for less than 6 weeks"
+            "Undetermined if treatment included treatment 1 for less than 6 weeks based on provided treatments"
         )
     }
 
@@ -117,7 +121,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has received treatment 1 but unknown nb of weeks"
+            "treatment 1 in provided treatments but unknown nb of weeks"
         )
     }
 
@@ -127,7 +131,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has received treatment 1"
+            "treatment 1 in provided treatments"
         )
     }
 
@@ -138,7 +142,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has received treatment 1 for less than 6 weeks"
+            "treatment 1 for less than 6 weeks in provided treatments"
         )
     }
 
@@ -158,7 +162,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
                     )
                 )
             ),
-            "Has had treatment 1 treatment but for more than 6 weeks"
+            "treatment 1 treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -178,7 +182,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
                     )
                 )
             ),
-            "Has had treatment 1 treatment but for more than 6 weeks"
+            "treatment 1 treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -198,7 +202,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
                     )
                 )
             ),
-            "Undetermined if multiple received treatment 1 is counted as received for more than 6 weeks"
+            "Undetermined if multiple treatment 1 in provided treatments is counted for more than 6 weeks"
         )
     }
 }

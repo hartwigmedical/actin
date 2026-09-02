@@ -32,7 +32,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Patient did not have radiological response to match treatment"
+            "No radiological response to match treatment"
         )
     }
 
@@ -42,7 +42,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Patient did not have radiological response to match treatment"
+            "No radiological response to match treatment"
         )
     }
 
@@ -52,7 +52,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Patient had a progressive disease response to match treatment - which is not considered a radiological response to match"
+            "progressive disease response to match treatment - not considered a radiological response to match"
         )
     }
 
@@ -63,7 +63,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Patient had a stable disease response to match treatment - which is not considered a radiological response to match"
+            "stable disease response to match treatment - not considered a radiological response to match"
         )
     }
 
@@ -77,7 +77,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Patient had a stable disease and a progressive disease response to match treatment - which is not considered a radiological response to match"
+            "stable disease and a progressive disease response to match treatment - not considered a radiological response to match"
         )
     }
 
@@ -87,7 +87,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Patient had a mixed response to treatment with match - it is undetermined if this response is considered a radiological response"
+            "Mixed response to treatment with match - undetermined if this response is considered a radiological response"
         )
     }
 
@@ -97,7 +97,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Undetermined if patient had radiological response to match treatment"
+            "Undetermined if there was radiological response to match treatment"
         )
     }
 
@@ -110,7 +110,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Patient had a response to treatment with match - it is assumed this response was radiological"
+            "Response to treatment with match is assumed to be radiological"
         )
     }
 
@@ -126,7 +126,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(withTreatmentHistory(treatmentHistory)),
-                "Patient had a response to treatment with match - it is assumed this response was radiological"
+                "Response to treatment with match is assumed to be radiological"
             )
         }
     }

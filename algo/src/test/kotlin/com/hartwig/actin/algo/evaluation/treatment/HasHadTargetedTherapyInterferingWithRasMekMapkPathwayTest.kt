@@ -18,7 +18,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
+            "No targeted therapy interfering with RAS/MEK/MAPK pathway in provided treatments"
         )
     }
 
@@ -29,7 +29,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
+            "No targeted therapy interfering with RAS/MEK/MAPK pathway in provided treatments"
         )
     }
 
@@ -45,7 +45,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "Has had targeted therapy interfering with RAS/MEK/MAPK pathway (Test)"
+            "Targeted therapy interfering with RAS/MEK/MAPK pathway (Test) in provided treatments"
         )
     }
 
@@ -65,7 +65,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has had targeted therapy (Test) indirectly interfering with RAS/MEK/MAPK pathway"
+            "Targeted therapy (Test) indirectly interfering with RAS/MEK/MAPK pathway in provided treatments"
         )
     }
 
@@ -79,7 +79,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has had trial drug - undetermined interference with RAS/MEK/MAPK pathway"
+            "Trial drug in provided treatments - undetermined interference with RAS/MEK/MAPK pathway"
         )
     }
 
@@ -95,7 +95,7 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
+            "No targeted therapy interfering with RAS/MEK/MAPK pathway in provided treatments"
         )
     }
 }

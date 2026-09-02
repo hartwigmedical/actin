@@ -12,7 +12,7 @@ class IsEligibleForLocoRegionalTherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             IsEligibleForLocoRegionalTherapy().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Potential eligibility for loco-regional therapy undetermined"
+            "Potential availability for loco-regional therapy undetermined"
         )
     }
 }

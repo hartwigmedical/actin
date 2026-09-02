@@ -23,31 +23,30 @@ class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) :
                     otherResponses.mapNotNull { it.treatmentHistoryDetails?.bestResponse } }
 
         return when {
-            matchingDrugTreatments.isEmpty() -> EvaluationFactory.fail("Patient did not have radiological response to ${drug.display()} treatment")
+            matchingDrugTreatments.isEmpty() -> EvaluationFactory.fail("No radiological response to ${drug.display()} treatment")
 
             positiveResponses.isNotEmpty() -> {
                 EvaluationFactory.pass(
-                    "Patient had a response to treatment with ${drug.display()} - " +
-                            "it is assumed this response was radiological"
+                    "Response to treatment with ${drug.display()} is assumed to be radiological"
                 )
             }
 
             otherResponses.contains(TreatmentResponse.MIXED) -> {
                 EvaluationFactory.undetermined(
-                    "Patient had a mixed response to treatment with ${drug.display()} - " +
-                            "it is undetermined if this response is considered a radiological response"
+                    "Mixed response to treatment with ${drug.display()} - " +
+                            "undetermined if this response is considered a radiological response"
                 )
             }
 
             otherResponses.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Patient had a ${otherResponses.joinToString(separator = " and a ") { it.display() }} response to ${drug.display()} treatment - " +
-                            "which is not considered a radiological response to ${drug.display()}"
+                    "${otherResponses.joinToString(separator = " and a ") { it.display() }} response to ${drug.display()} treatment - " +
+                            "not considered a radiological response to ${drug.display()}"
                 )
             }
 
             else -> {
-                EvaluationFactory.undetermined("Undetermined if patient had radiological response to ${drug.display()} treatment")
+                EvaluationFactory.undetermined("Undetermined if there was radiological response to ${drug.display()} treatment")
             }
         }
     }

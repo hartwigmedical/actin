@@ -23,12 +23,12 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not had any prior cancer treatment"
+            "No prior cancer treatment in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not had any prior cancer treatment"
+            "No prior cancer treatment in provided treatments"
         )
     }
 
@@ -39,12 +39,12 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
     }
 
@@ -56,12 +56,12 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
     }
 
@@ -78,7 +78,7 @@ class HasHadAnyCancerTreatmentTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-                "Has received prior cancer treatment(s)"
+                "Prior cancer treatment(s) in provided treatments"
             )
         }
     }
@@ -91,7 +91,7 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has not had any prior cancer treatment"
+            "No prior cancer treatment in provided treatments"
         )
     }
 
@@ -101,7 +101,7 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCategoriesToIgnore.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Inconclusive if patient had any prior cancer treatment because participated in trial"
+            "Inconclusive if there was any prior cancer treatment because of trial participation"
         )
     }
 }

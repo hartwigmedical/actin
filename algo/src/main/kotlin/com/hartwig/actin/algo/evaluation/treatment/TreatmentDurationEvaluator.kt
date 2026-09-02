@@ -110,32 +110,32 @@ class TreatmentDurationEvaluator(
         val weeksString = if (weeks != null) " for ${durationMessageParts.acceptable} $weeks weeks" else ""
         return when {
             treatmentDurationType == TreatmentDurationType.LIMITED && TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has had $treatmentMessage treatment but for more than $weeks weeks")
+                EvaluationFactory.fail("$treatmentMessage treatment in provided treatments but for more than $weeks weeks")
             }
 
             weeks != null && treatmentEvaluations.size > 1 -> {
-                EvaluationFactory.undetermined("Undetermined if multiple received $treatmentMessage is counted as received for ${durationMessageParts.unacceptable} $weeks weeks")
+                EvaluationFactory.undetermined("Undetermined if multiple $treatmentMessage in provided treatments is counted for ${durationMessageParts.unacceptable} $weeks weeks")
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.pass("Has received $treatmentMessage$weeksString")
+                EvaluationFactory.pass("$treatmentMessage$weeksString in provided treatments")
 
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Has received $treatmentMessage but unknown nb of weeks")
+                EvaluationFactory.undetermined("$treatmentMessage in provided treatments but unknown nb of weeks")
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received contained $treatmentMessage$weeksString")
+                EvaluationFactory.undetermined("Undetermined if treatment included $treatmentMessage$weeksString based on provided treatments")
             }
 
             TreatmentEvaluation.HAS_HAD_POTENTIALLY_MATCHING_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial contained $treatmentMessage$weeksString")
+                EvaluationFactory.undetermined("Undetermined if treatment from previous trial included $treatmentMessage$weeksString")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received $treatmentMessage")
+                EvaluationFactory.fail("No $treatmentMessage in provided treatments")
             }
         }
     }

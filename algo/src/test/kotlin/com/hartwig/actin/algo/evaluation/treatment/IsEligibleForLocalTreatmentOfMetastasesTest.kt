@@ -22,7 +22,7 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(patientRecord),
-            "No metastatic cancer hence no eligibility for local treatment of metastases"
+            "No metastatic cancer hence local treatment of metastases is not available"
         )
     }
 
@@ -35,7 +35,7 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(patientRecord),
-            "Undetermined if metastatic cancer and therefore undetermined eligibility for local treatment of metastases"
+            "Undetermined if metastatic cancer and therefore undetermined if local treatment of metastases is available"
         )
     }
 
@@ -48,7 +48,7 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(patientRecord),
-            "Eligibility for local treatment of metastases undetermined"
+            "Undetermined if local treatment of metastases is available"
         )
     }
 }
