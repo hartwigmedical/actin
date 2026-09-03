@@ -54,19 +54,19 @@ class HasExhaustedSOCTreatments(
                 val messageStart = "SOC considered exhausted"
                 when {
                     treatmentHistoryAnalysis.receivedPlatinumDoublet() || treatmentHistoryAnalysis.receivedPlatinumTripletOrAbove() -> {
-                        EvaluationFactory.pass("$messageStart (platinum doublet in history)")
+                        EvaluationFactory.pass("$messageStart (platinum doublet in provided history)")
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {
-                        EvaluationFactory.pass("$messageStart (chemoradiation in history)")
+                        EvaluationFactory.pass("$messageStart (chemoradiation in provided history)")
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemoImmunotherapy() -> {
-                        EvaluationFactory.pass("$messageStart (chemo-immunotherapy in history)")
+                        EvaluationFactory.pass("$messageStart (chemo-immunotherapy in provided history)")
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemotherapy() -> {
-                        EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in history)")
+                        EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in provided history)")
                     }
 
                     else -> EvaluationFactory.warn("SOC potentially not exhausted (no platinum doublet in metastatic setting)")

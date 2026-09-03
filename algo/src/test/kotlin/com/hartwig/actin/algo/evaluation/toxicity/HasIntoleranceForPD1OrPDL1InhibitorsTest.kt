@@ -41,14 +41,14 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     @Test
     fun `Should evaluate to undetermined if any comorbidity matches on ICD main code but extension code unknown`() {
         assertResultForIcdCodes(EvaluationResult.UNDETERMINED, MATCHING_ICD_MAIN_CODE, null) {
-            "Drug intolerance in history - undetermined if PD-1/PD-L1 intolerance (drug type unknown)"
+            "Drug intolerance in provided history - undetermined if PD-1/PD-L1 intolerance (drug type unknown)"
         }
     }
 
     @Test
     fun `Should evaluate to undetermined if any comorbidity matches on ICD main code and extension code monoclonal antibodies`() {
         assertResultForIcdCodes(EvaluationResult.UNDETERMINED, OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK) { name ->
-            "Monoclonal antibody intolerance in history - undetermined if PD-1/PD-L1 intolerance: $name"
+            "Monoclonal antibody intolerance in provided history - undetermined if PD-1/PD-L1 intolerance: $name"
         }
     }
 

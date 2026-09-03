@@ -41,7 +41,7 @@ class HasEcgAberrationTest {
                     )
                 )
             ),
-            "Cardiac arrhythmia in history ($CARDIAC_ARRHYTHMIA)"
+            "Cardiac arrhythmia in provided history ($CARDIAC_ARRHYTHMIA)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -64,7 +64,7 @@ class HasEcgAberrationTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "ECG abnormalities (ecg abnormality) and cardiac arrhythmia ($CARDIAC_ARRHYTHMIA) in history"
+            "ECG abnormalities (ecg abnormality) and cardiac arrhythmia ($CARDIAC_ARRHYTHMIA) in provided history"
         )
     }
 

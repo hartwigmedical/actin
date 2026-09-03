@@ -56,7 +56,11 @@ class HasExhaustedSOCTreatmentsTest {
                 )
             )
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(platinumDoublet)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "SOC considered exhausted (platinum doublet in history)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "SOC considered exhausted (platinum doublet in provided history)"
+        )
     }
 
     @Test
@@ -110,7 +114,7 @@ class HasExhaustedSOCTreatmentsTest {
                     TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
                         .copy(oncologicalHistory = listOf(it))
                 ),
-                "SOC considered exhausted (chemoradiation in history)"
+                "SOC considered exhausted (chemoradiation in provided history)"
             )
         }
     }
@@ -156,7 +160,11 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(
             TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "SOC considered exhausted (chemo-immunotherapy in history)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "SOC considered exhausted (chemo-immunotherapy in provided history)"
+        )
     }
 
     @Test
