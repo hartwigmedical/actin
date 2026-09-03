@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.soc
 
 import com.hartwig.actin.PatientRecordFactory
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.clinical.TestClinicalFactory
 import com.hartwig.actin.report.datamodel.TestReportFactory
@@ -22,7 +21,7 @@ class EligibleStandardOfCareGeneratorTest {
             treatmentMatch = TestTreatmentMatchFactory.createMinimalTreatmentMatch()
         )
 
-        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+        val labels = ReportLabels.load()
         val contents = EligibleStandardOfCareGenerator(report, labels).contents()
 
         assertThat(getCellContents(contents, 0, 0)).isEqualTo("There are no standard of care treatment options for this patient")

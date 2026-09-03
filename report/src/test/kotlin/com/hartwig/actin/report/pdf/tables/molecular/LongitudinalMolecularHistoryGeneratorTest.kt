@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -26,7 +25,7 @@ private const val VAF = "VAF 10.0%"
 private const val NOT_DETECTED = ""
 private const val DETECTED = "Detected"
 
-private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+private val labels = ReportLabels.load()
 
 class LongitudinalMolecularHistoryGeneratorTest {
 

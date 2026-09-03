@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf
 
-import com.hartwig.actin.configuration.ReportIntendedUse
+import java.io.BufferedReader
+import java.io.File
 import java.text.MessageFormat
 import java.util.Properties
 
@@ -62,7 +63,7 @@ class ReportLabels(private val properties: Properties) {
         fun colIneligibilityReasons() = get("trial.col.ineligibility.reasons")
         fun colConfiguration() = get("trial.col.configuration")
         fun footnoteFilteredSuffix() = get("trial.footnote.filtered.suffix")
-        fun footnoteChildrensHospital(count: String, suffix: String) = format("trial.footnote.childrens.hospital", count, suffix)
+        fun footnoteChildrensHospital(count: String) = format("trial.footnote.childrens.hospital", count)
         fun footnoteDutchLung(count: String, suffix: String) = format("trial.footnote.dutch.lung", count, suffix)
         fun footnoteExternalMatched() = get("trial.footnote.external.matched")
         fun footnoteExternalExcluded() = get("trial.footnote.external.excluded")
@@ -235,13 +236,18 @@ class ReportLabels(private val properties: Properties) {
     private fun format(key: String, vararg args: Any): String = MessageFormat.format(get(key), *args)
 
     companion object {
-        fun load(intendedUse: ReportIntendedUse): ReportLabels {
-            val name = "/labels/${intendedUse.name.lowercase()}.properties"
+        private const val DEFAULT_LABELS_RESOURCE = "/labels/research_use_only.properties"
+
+        fun load(labelsPaths: List<String> = emptyList()): ReportLabels {
             val props = Properties().apply {
-                ReportLabels::class.java.getResourceAsStream(name)?.bufferedReader(Charsets.UTF_8)?.use(::load)
-                    ?: error("Labels not found: $name")
+                loadDefaultResource().use(::load)
+                labelsPaths.forEach { path -> File(path).bufferedReader(Charsets.UTF_8).use(::load) }
             }
             return ReportLabels(props)
         }
+
+        private fun loadDefaultResource(): BufferedReader =
+            ReportLabels::class.java.getResourceAsStream(DEFAULT_LABELS_RESOURCE)?.bufferedReader(Charsets.UTF_8)
+                ?: error("Labels not found: $DEFAULT_LABELS_RESOURCE")
     }
 }

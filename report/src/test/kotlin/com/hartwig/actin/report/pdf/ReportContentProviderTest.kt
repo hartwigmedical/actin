@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf
 
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.algo.TestTreatmentMatchFactory
 import com.hartwig.actin.datamodel.trial.TrialSource
 import com.hartwig.actin.doid.TestDoidModelFactory
@@ -22,7 +21,7 @@ class ReportContentProviderTest {
     private val proper = TestReportFactory.createProperTestReport()
     private val configuration = ReportConfiguration()
     private val doidModel = TestDoidModelFactory.createMinimalTestDoidModel()
-    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    private val labels = ReportLabels.load()
 
     @Test
     fun `Should include molecular chapter and omit efficacy chapters by default`() {

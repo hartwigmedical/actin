@@ -151,7 +151,12 @@ class EligibleTrialGenerator(
                 listOfNotNull(
                     labels.trialMatching.footnoteExternalMatched().takeIf { relevantNationalExternalTrials.isNotEmpty() },
                     relevantNationalExternalTrialsFilteredCount.takeIf { it > 0 }?.let { count ->
-                        labels.trialMatching.footnoteChildrensHospital(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
+                        labels.trialMatching.footnoteChildrensHospital(
+                            TrialFormatFunctions.formatCountWithLabel(
+                                count,
+                                labels.misc.trial()
+                            )
+                        )
                     }
                 ).joinToString("\n").ifEmpty { null }
             }
@@ -202,7 +207,12 @@ class EligibleTrialGenerator(
                     listOfNotNull(
                         labels.trialMatching.footnoteExternalExcluded().takeIf { externalTrials.isNotEmpty() },
                         externalTrialsFilteredCount.takeIf { it > 0 && isNational }?.let { count ->
-                            labels.trialMatching.footnoteChildrensHospital(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)
+                            labels.trialMatching.footnoteChildrensHospital(
+                                TrialFormatFunctions.formatCountWithLabel(
+                                    count,
+                                    labels.misc.trial()
+                                )
+                            )
                         },
                         externalTrialsFilteredCount.takeIf { it > 0 && !isNational }?.let { count ->
                             labels.trialMatching.footnoteNationalMolecular(TrialFormatFunctions.formatCountWithLabel(count, labels.misc.trial()), filteredSuffix)

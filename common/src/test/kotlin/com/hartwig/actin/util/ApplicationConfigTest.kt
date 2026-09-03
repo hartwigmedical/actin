@@ -6,6 +6,7 @@ import com.hartwig.actin.util.ApplicationConfig.nonOptionalFile
 import com.hartwig.actin.util.ApplicationConfig.nonOptionalValue
 import com.hartwig.actin.util.ApplicationConfig.optionalDir
 import com.hartwig.actin.util.ApplicationConfig.optionalFile
+import com.hartwig.actin.util.ApplicationConfig.optionalFiles
 import org.apache.commons.cli.DefaultParser
 import org.apache.commons.cli.Options
 import org.apache.commons.cli.ParseException
@@ -130,5 +131,31 @@ class ApplicationConfigTest {
         options.addOption("file", true, "")
         val cmd = DefaultParser().parse(options, arrayOf("-file", configFile))
         assertThat(optionalFile(cmd, "file")).isEqualTo(configFile)
+    }
+
+    @Test
+    fun `Should return empty list when optional files parameter is not provided`() {
+        val options = Options()
+        options.addOption("files", true, "")
+        val cmd = DefaultParser().parse(options, emptyArray())
+        assertThat(optionalFiles(cmd, "files")).isEmpty()
+    }
+
+    @Test
+    fun `Should split, trim and validate a comma-separated list of existing files`() {
+        val options = Options()
+        options.addOption("files", true, "")
+        val cmd = DefaultParser().parse(options, arrayOf("-files", "$configFile, $configFile"))
+        assertThat(optionalFiles(cmd, "files")).containsExactly(configFile, configFile)
+    }
+
+    @Test
+    fun `Should crash if any file in the comma-separated list does not exist`() {
+        assertThrows(ParseException::class.java) {
+            val options = Options()
+            options.addOption("files", true, "")
+            val cmd = DefaultParser().parse(options, arrayOf("-files", "$configFile,does not exist"))
+            optionalFiles(cmd, "files")
+        }
     }
 }

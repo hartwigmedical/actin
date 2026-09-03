@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
@@ -24,7 +23,7 @@ private const val VALUE_WIDTH = 200f
 class PatientClinicalHistoryGeneratorTest {
 
     private val report = TestReportFactory.createMinimalTestReport()
-    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    private val labels = ReportLabels.load()
 
     @Test
     fun `Should return title clinical summary`() {

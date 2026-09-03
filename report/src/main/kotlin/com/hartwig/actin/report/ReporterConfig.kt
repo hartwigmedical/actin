@@ -16,7 +16,10 @@ data class ReporterConfig(
     val overrideYaml: String,
     val outputDirectory: String,
     val reportDate: LocalDate?,
-    val itextLicenseKey: String?
+    val itextLicenseKey: String?,
+    val labelsPaths: List<String>,
+    val logoPath: String?,
+    val colorsPath: String?
 ) {
 
     companion object {
@@ -29,6 +32,9 @@ data class ReporterConfig(
         private const val LOG_DEBUG = "log_debug"
         private const val REPORT_DATE = "report_date"
         private const val ITEXT_LICENSE_KEY = "itext_license_key"
+        private const val LABELS_PATH = "labels_path"
+        private const val LOGO_PATH = "logo_path"
+        private const val COLORS_PATH = "colors_path"
 
         fun createOptions(): Options {
             val options = Options()
@@ -40,6 +46,9 @@ data class ReporterConfig(
             options.addOption(LOG_DEBUG, false, "If set, debug logging gets enabled")
             options.addOption(REPORT_DATE, true, "If set, sets fixed report date")
             options.addOption(ITEXT_LICENSE_KEY, true, "File containing the iText license key")
+            options.addOption(LABELS_PATH, true, "Comma-separated list of label override files, applied in order (later files override earlier keys)")
+            options.addOption(LOGO_PATH, true, "If set, overrides the bundled report logo file")
+            options.addOption(COLORS_PATH, true, "If set, overrides the bundled report colors file")
             return options
         }
 
@@ -55,7 +64,10 @@ data class ReporterConfig(
                 overrideYaml = ApplicationConfig.nonOptionalFile(cmd, OVERRIDE_YAML_ARGUMENT),
                 outputDirectory = ApplicationConfig.nonOptionalDir(cmd, OUTPUT_DIRECTORY),
                 reportDate = cmd.getOptionValue(REPORT_DATE)?.let { LocalDate.parse(it) },
-                itextLicenseKey = ApplicationConfig.optionalFile(cmd, ITEXT_LICENSE_KEY)
+                itextLicenseKey = ApplicationConfig.optionalFile(cmd, ITEXT_LICENSE_KEY),
+                labelsPaths = ApplicationConfig.optionalFiles(cmd, LABELS_PATH),
+                logoPath = ApplicationConfig.optionalFile(cmd, LOGO_PATH),
+                colorsPath = ApplicationConfig.optionalFile(cmd, COLORS_PATH)
             )
         }
     }

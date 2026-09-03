@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
 import com.hartwig.actin.configuration.ExternalTrialTumorType
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import com.hartwig.actin.datamodel.molecular.evidence.TestExternalTrialFactory
@@ -23,7 +22,7 @@ class EligibleTrialGeneratorTest {
     )
     val requestingSource = TrialSource.EXAMPLE
     val countryOfReference = Country.NETHERLANDS
-    val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    val labels = ReportLabels.load()
 
     @Test
     fun `Should filter early phase open and eligible national cohorts correctly (excluding missing molecular result for evaluation cohorts)`() {
@@ -147,8 +146,7 @@ class EligibleTrialGeneratorTest {
 
     @Test
     fun `Should show standard footnote if filtering based on lung tumor type is not applied`() {
-        val filteredSuffix = labels.trialMatching.footnoteFilteredSuffix()
-        val expected = labels.trialMatching.footnoteChildrensHospital("1 trial", filteredSuffix)
+        val expected = labels.trialMatching.footnoteChildrensHospital("1 trial")
         assertThat(localAndNationalGenerator(ExternalTrialTumorType.NONE).footnote()).isEqualTo(expected)
     }
 

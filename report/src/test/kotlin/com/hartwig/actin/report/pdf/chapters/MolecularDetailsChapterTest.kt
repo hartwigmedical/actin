@@ -2,7 +2,6 @@ package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.configuration.MolecularChapterType
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.evidence.ClinicalEvidence
@@ -22,7 +21,7 @@ import org.junit.jupiter.api.Test
 private const val KEY_WIDTH = 50f
 private const val VALUE_WIDTH = 100f
 
-private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+private val labels = ReportLabels.load()
 
 class MolecularDetailsChapterTest {
 

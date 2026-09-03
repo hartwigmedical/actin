@@ -7,6 +7,7 @@ import com.hartwig.actin.doid.DoidModel
 import com.hartwig.actin.doid.DoidModelFactory
 import com.hartwig.actin.doid.serialization.DoidJson
 import com.hartwig.actin.report.datamodel.ReportFactory
+import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import com.itextpdf.licensing.base.LicenseKey
 import io.github.oshai.kotlinlogging.KotlinLogging
@@ -36,8 +37,9 @@ class ReporterApplication(private val config: ReporterConfig, private val doidMo
         }
 
         val configuration = ReportConfiguration.create(config.overrideYaml)
+        val labels = ReportLabels.load(config.labelsPaths)
         val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
-        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory)
+        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory, labels)
         writer.write(report, configuration, doidModel)
         logger.info { "Done!" }
     }

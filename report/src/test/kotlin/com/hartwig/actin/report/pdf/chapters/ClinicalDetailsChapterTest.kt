@@ -1,7 +1,6 @@
 package com.hartwig.actin.report.pdf.chapters
 
 import com.hartwig.actin.configuration.ReportConfiguration
-import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
@@ -15,7 +14,7 @@ class ClinicalDetailsChapterTest {
 
     private val proper = TestReportFactory.createProperTestReport()
     private val configuration = ReportConfiguration()
-    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    private val labels = ReportLabels.load()
 
     @Test
     fun `Should provide all clinical details tables when details are provided`() {
