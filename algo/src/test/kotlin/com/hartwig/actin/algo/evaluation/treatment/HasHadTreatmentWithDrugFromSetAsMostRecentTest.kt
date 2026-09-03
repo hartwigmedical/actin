@@ -16,8 +16,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistory(emptyList()),
-            "No prior treatments in provided treatments",
-            "No prior treatments in provided treatments"
+            "No match in provided treatments",
+            "No match in provided treatments"
         )
     }
 
@@ -28,7 +28,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         )
         evaluateFunctions(
             EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
-            "No prior treatments in provided treatments", "No prior treatments in provided treatments"
+            "No match in provided treatments", "No match in provided treatments"
         )
     }
 
@@ -145,7 +145,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received match as most recent treatment but unknown if currently still administered"
+            "match in provided treatments as most recent treatment but unknown if currently still administered"
         )
     }
 
@@ -189,7 +189,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has received match as most recent treatment but unknown if currently still administered"
+            "match in provided treatments as most recent treatment but unknown if currently still administered"
         )
     }
 

@@ -18,7 +18,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
         val relevantHistory = record.oncologicalHistory.filter { entry ->
             entry.allTreatments().isEmpty() || entry.allTreatments().any { it is DrugTreatment }
         }
-        val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
+        val drugsToMatchDisplay = Format.concatItemsWithOr(drugsToMatch)
         if (relevantHistory.isEmpty()) {
             return EvaluationFactory.fail("No $drugsToMatchDisplay in provided treatments")
         }
@@ -51,7 +51,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
                         if (mostRecentMatchingEntryHasStopDate) {
                             EvaluationFactory.fail("Does not currently receive $matchingDrugDisplay (treatment has stopped)")
                         } else {
-                            EvaluationFactory.undetermined("Has received $matchingDrugDisplay as most recent treatment but unknown if currently still administered")
+                            EvaluationFactory.undetermined("$matchingDrugDisplay in provided treatments as most recent treatment but unknown if currently still administered")
                         }
                     }
                 }
