@@ -12,7 +12,7 @@ class HasSymptomsOfPrimaryTumorInSituTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasSymptomsOfPrimaryTumorInSitu().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if symptoms of primary tumor in situ based on provided tumour details"
+            "Undetermined if symptoms of primary tumor in situ based on provided tumor details"
         )
     }
 }

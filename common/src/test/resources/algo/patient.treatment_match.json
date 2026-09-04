@@ -170,7 +170,7 @@
           "recoverable": false,
           "failMessages": [
             {
-              "message": "Line 4 is available"
+              "message": "Requirements for treatment line 4 are met"
             }
           ]
         }

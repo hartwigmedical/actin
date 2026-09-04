@@ -34,8 +34,8 @@ class HasHadCombinedTreatmentNamesWithCyclesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Found matching treatments (Matching (11 cycles) and between 8 and 12 cycles",
-            "Found matching treatments (Test (8 cycles) and between 8 and 12 cycles"
+            "Found matching treatments (Matching (11 cycles)) and between 8 and 12 cycles",
+            "Found matching treatments (Test (8 cycles)) and between 8 and 12 cycles"
         )
     }
 

@@ -15,7 +15,7 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(patientWithEmptyHistory),
-            "Requirements for line 1 are met"
+            "Requirements for treatment line 1 are met"
         )
 
         val patientWithTwoLines = TreatmentTestFactory.withTreatmentHistory(
@@ -27,7 +27,7 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(patientWithTwoLines),
-            "Requirements for line 3 are met"
+            "Requirements for treatment line 3 are met"
         )
     }
 
@@ -37,7 +37,7 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(patientWithOneLine),
-            "Requirements for line 2 are met"
+            "Requirements for treatment line 2 are met"
         )
     }
 
@@ -47,7 +47,7 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(patientWithOneNonSystemicLine),
-            "Requirements for line 1 are met"
+            "Requirements for treatment line 1 are met"
         )
 
         val patientWithOneNonSystemicLineAndOneSystemicLine = TreatmentTestFactory.withTreatmentHistory(
@@ -59,7 +59,7 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(patientWithOneNonSystemicLineAndOneSystemicLine),
-            "Requirements for line 2 are met"
+            "Requirements for treatment line 2 are met"
         )
     }
 
@@ -71,14 +71,14 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionForLine2Or3.evaluate(patientWithEmptyHistory),
-            "Requirements for line 1 are met"
+            "Requirements for treatment line 1 are met"
         )
 
         val patientWithOneLine = TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry("FOLFOX", true)))
         assertEvaluation(
             EvaluationResult.PASS,
             functionForLine2Or3.evaluate(patientWithOneLine),
-            "Requirements for line 2 are met"
+            "Requirements for treatment line 2 are met"
         )
 
         val patientWithTwoLines = TreatmentTestFactory.withTreatmentHistory(
@@ -90,7 +90,7 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionForLine2Or3.evaluate(patientWithTwoLines),
-            "Requirements for line 3 are met"
+            "Requirements for treatment line 3 are met"
         )
 
         val patientWithThreeLines = TreatmentTestFactory.withTreatmentHistory(
@@ -103,7 +103,7 @@ class IsEligibleForTreatmentLinesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionForLine2Or3.evaluate(patientWithThreeLines),
-            "Requirements for line 4 are met"
+            "Requirements for treatment line 4 are met"
         )
     }
 
