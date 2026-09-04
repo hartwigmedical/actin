@@ -27,7 +27,7 @@ class HasLymphNodeMetastasesTest {
     @Test
     fun `Should fail when has lymph node lesions is false`() {
         val fail = function.evaluate(TumorTestFactory.withLymphNodeLesions(false))
-        assertEvaluation(EvaluationResult.FAIL, fail, "No lymph node metastases")
+        assertEvaluation(EvaluationResult.FAIL, fail, "No lymph node metastases in provided lesions")
     }
 
     @Test

@@ -75,7 +75,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
             }
 
             else -> {
-                EvaluationFactory.fail("No ${treatment(false)} treatment with PD")
+                EvaluationFactory.fail("No ${treatment(false)} treatment with PD in provided treatments")
             }
         }
     }

@@ -23,13 +23,16 @@ class HasIntoleranceWithSpecificIcdTitleTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
-            "No known intolerance to targetParentTitle&targetExtensionParentTitle"
+            "No known intolerance to targetParentTitle&targetExtensionParentTitle in provided intolerances"
         )
     }
 
     @Test
     fun `Should fail for comorbidity with non-matching ICD code`() {
-        assertResultForIcdCodes(EvaluationResult.FAIL, "wrong") { "No known intolerance to targetParentTitle&targetExtensionParentTitle" }
+        assertResultForIcdCodes(
+            EvaluationResult.FAIL,
+            "wrong"
+        ) { "No known intolerance to targetParentTitle&targetExtensionParentTitle in provided intolerances" }
     }
 
     @Test

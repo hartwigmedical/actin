@@ -31,7 +31,7 @@ class HasSpecificInfection(
                 EvaluationFactory.undetermined("Infection in provided history but undetermined if $term")
             }
 
-            else -> EvaluationFactory.fail("No $term infection")
+            else -> EvaluationFactory.fail("No $term infection in provided history")
         }
     }
 }

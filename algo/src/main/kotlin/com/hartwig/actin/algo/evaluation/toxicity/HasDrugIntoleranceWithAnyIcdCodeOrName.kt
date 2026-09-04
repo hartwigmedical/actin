@@ -35,7 +35,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrName(
                 EvaluationFactory.undetermined("Undetermined if drug allergy in provided allergies is $description allergy (drug type unknown)")
             }
 
-            else -> EvaluationFactory.fail("No known allergy to $description")
+            else -> EvaluationFactory.fail("No known allergy to $description in provided allergies")
         }
     }
 }

@@ -23,7 +23,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
     fun `Should fail when no known intolerances are present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
-            "No known allergy to platinum compounds"
+            "No known allergy to platinum compounds in provided allergies"
         )
     }
 
@@ -32,7 +32,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         val mismatch = ComorbidityTestFactory.intolerance(name = "mismatch", icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(mismatch)),
-            "No known allergy to platinum compounds"
+            "No known allergy to platinum compounds in provided allergies"
         )
     }
 

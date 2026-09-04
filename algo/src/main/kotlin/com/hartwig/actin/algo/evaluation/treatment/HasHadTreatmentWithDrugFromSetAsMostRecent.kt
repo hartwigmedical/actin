@@ -49,7 +49,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
                     false -> EvaluationFactory.pass("$matchingDrugDisplay in provided treatments as most recent treatment")
                     true -> {
                         if (mostRecentMatchingEntryHasStopDate) {
-                            EvaluationFactory.fail("No active $matchingDrugDisplay (treatment has stopped)")
+                            EvaluationFactory.fail("No active $matchingDrugDisplay in provided treatments (treatment has stopped)")
                         } else {
                             EvaluationFactory.undetermined("$matchingDrugDisplay in provided treatments as most recent treatment but unknown if active")
                         }

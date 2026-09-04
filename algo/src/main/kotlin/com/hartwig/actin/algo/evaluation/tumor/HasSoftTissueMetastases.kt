@@ -20,7 +20,7 @@ class HasSoftTissueMetastases : EvaluationFunction {
 
             suspectedSoftTissueMetastasesEvaluation == true -> EvaluationFactory.warn("Suspected soft tissue metastases in provided lesions")
 
-            else -> EvaluationFactory.fail("No soft tissue metastases")
+            else -> EvaluationFactory.fail("No soft tissue metastases in provided lesions")
         }
     }
 }

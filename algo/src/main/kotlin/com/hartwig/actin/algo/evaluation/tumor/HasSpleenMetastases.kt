@@ -20,7 +20,7 @@ class HasSpleenMetastases : EvaluationFunction {
 
             suspectedSpleenMetastasesEvaluation == true -> EvaluationFactory.warn("Suspected spleen metastases in provided lesions")
 
-            else -> EvaluationFactory.fail("No spleen metastases")
+            else -> EvaluationFactory.fail("No spleen metastases in provided lesions")
         }
     }
 }

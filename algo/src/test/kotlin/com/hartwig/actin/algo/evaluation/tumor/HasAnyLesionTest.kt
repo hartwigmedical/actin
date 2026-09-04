@@ -71,7 +71,7 @@ class HasAnyLesionTest {
                     emptyList()
                 )
             ),
-            "No lesions"
+            "No lesions provided"
         )
     }
 }

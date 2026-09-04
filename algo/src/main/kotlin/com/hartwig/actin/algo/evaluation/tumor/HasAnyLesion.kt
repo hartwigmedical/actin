@@ -21,7 +21,7 @@ class HasAnyLesion: EvaluationFunction {
                 EvaluationFactory.undetermined("Undetermined presence of lesions based on provided lesions")
             }
 
-            else -> EvaluationFactory.fail("No lesions")
+            else -> EvaluationFactory.fail("No lesions provided")
         }
     }
 }

@@ -19,7 +19,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "No Matching treatment as first-line treatment"
+            "No Matching treatment as first-line treatment in provided treatments"
         )
     }
 
@@ -28,7 +28,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(otherTreatment))),
-            "No Matching treatment as first-line treatment"
+            "No Matching treatment as first-line treatment in provided treatments"
         )
     }
 
@@ -37,7 +37,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(otherTreatment.copy(startYear = 2024), matchingTreatment.copy(startYear = 2025)))),
-            "No Matching treatment as first-line treatment"
+            "No Matching treatment as first-line treatment in provided treatments"
         )
     }
 
@@ -51,7 +51,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(firstLineTrialWithOtherTreatmentCategory, otherTreatment.copy(startYear = 2025)))),
-            "No Matching treatment as first-line treatment"
+            "No Matching treatment as first-line treatment in provided treatments"
         )
     }
 
@@ -60,7 +60,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(matchingTreatment.copy(startYear = 2024), otherTreatment.copy(startYear = 2025)))),
-            "Matching treatment in provided treatments as first-line treatment"
+            "Matching treatment as first-line treatment in provided treatments"
         )
     }
 
@@ -77,7 +77,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
                     )
                 )
             ),
-            "Matching treatment in provided treatments as first-line treatment"
+            "Matching treatment as first-line treatment in provided treatments"
         )
     }
 
@@ -86,7 +86,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(matchingTreatment))),
-            "Matching treatment in provided treatments as first-line treatment"
+            "Matching treatment as first-line treatment in provided treatments"
         )
     }
 
@@ -95,7 +95,7 @@ class HasHadSpecificFirstLineSystemicTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(matchingTreatment, matchingTreatment.copy(startYear = 2025)))),
-            "Matching treatment in provided treatments as first-line treatment"
+            "Matching treatment as first-line treatment in provided treatments"
         )
     }
 

@@ -20,7 +20,7 @@ class HasSpecificInfectionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())),
-            "No hepatitis B virus infection"
+            "No hepatitis B virus infection in provided history"
         )
     }
 
@@ -30,7 +30,7 @@ class HasSpecificInfectionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
-            "No hepatitis B virus infection"
+            "No hepatitis B virus infection in provided history"
         )
     }
 

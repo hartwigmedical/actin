@@ -27,6 +27,6 @@ class HasLungMetastasesTest {
     @Test
     fun shouldFailWhenHasLungLesionsIsFalse() {
         val fail = function.evaluate(TumorTestFactory.withLungLesions(false))
-        assertEvaluation(EvaluationResult.FAIL, fail, "No lung metastases")
+        assertEvaluation(EvaluationResult.FAIL, fail, "No lung metastases in provided lesions")
     }
 }

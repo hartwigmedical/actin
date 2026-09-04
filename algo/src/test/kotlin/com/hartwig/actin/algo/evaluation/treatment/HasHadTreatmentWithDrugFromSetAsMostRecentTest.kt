@@ -202,7 +202,11 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         )
 
         val evaluation = FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "No active match (treatment has stopped)")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No active match in provided treatments (treatment has stopped)"
+        )
     }
 
     private fun evaluateFunctions(

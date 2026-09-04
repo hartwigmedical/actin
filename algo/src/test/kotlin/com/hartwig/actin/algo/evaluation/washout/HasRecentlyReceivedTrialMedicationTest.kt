@@ -23,7 +23,7 @@ class HasRecentlyReceivedTrialMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionActive.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent trial medication"
+            "No recent trial medication in provided treatments"
         )
     }
 
@@ -33,7 +33,7 @@ class HasRecentlyReceivedTrialMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionActive.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent trial medication"
+            "No recent trial medication in provided treatments"
         )
     }
 

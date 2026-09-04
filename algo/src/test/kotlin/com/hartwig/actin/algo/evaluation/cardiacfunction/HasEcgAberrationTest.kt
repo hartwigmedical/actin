@@ -71,6 +71,10 @@ class HasEcgAberrationTest {
     @Test
     fun `Should fail with no ECG aberration no cardiac arrhythmia comorbidities`() {
         val record = CardiacFunctionTestFactory.withEcg(null).copy(comorbidities = emptyList())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No known ECG abnormalities")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No known ECG abnormalities in provided history"
+        )
     }
 }

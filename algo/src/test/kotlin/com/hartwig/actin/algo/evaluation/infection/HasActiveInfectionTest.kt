@@ -47,7 +47,7 @@ class HasActiveInfectionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withInfectionStatus(false)),
-            "No active infection provided"
+            "No active infection in provided infections"
         )
     }
 
@@ -93,7 +93,7 @@ class HasActiveInfectionTest {
                 ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = referenceDate.year - 1))
                     .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(false, null)))
             ),
-            "No active infection provided"
+            "No active infection in provided infections"
         )
     }
 

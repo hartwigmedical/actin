@@ -20,7 +20,7 @@ internal object TumorMetastasisEvaluator {
             )
 
             else -> {
-                EvaluationFactory.fail("No $metastasisType metastases")
+                EvaluationFactory.fail("No $metastasisType metastases in provided lesions")
             }
         }
     }

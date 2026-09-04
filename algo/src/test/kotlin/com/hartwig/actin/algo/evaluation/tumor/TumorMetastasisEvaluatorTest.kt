@@ -39,6 +39,6 @@ class TumorMetastasisEvaluatorTest {
     @Test
     fun `Should fail when boolean is false`() {
         val fail = TumorMetastasisEvaluator.evaluate(false, false, METASTASIS_TYPE)
-        assertEvaluation(EvaluationResult.FAIL, fail, "No bone metastases")
+        assertEvaluation(EvaluationResult.FAIL, fail, "No bone metastases in provided lesions")
     }
 }

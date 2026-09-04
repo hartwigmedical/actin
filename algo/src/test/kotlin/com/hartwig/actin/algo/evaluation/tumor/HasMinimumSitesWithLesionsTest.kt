@@ -82,7 +82,7 @@ class HasMinimumSitesWithLesionsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             HasMinimumSitesWithLesions(6).evaluate(testPatient),
-            "Insufficient number of lesion sites (less than 6)"
+            "Fewer than 6 lesion sites in provided lesions"
         )
     }
 
@@ -91,7 +91,7 @@ class HasMinimumSitesWithLesionsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             HasMinimumSitesWithLesions(7).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true))),
-            "Insufficient number of lesion sites (less than 7)"
+            "Fewer than 7 lesion sites in provided lesions"
         )
     }
 
@@ -106,7 +106,7 @@ class HasMinimumSitesWithLesionsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             HasMinimumSitesWithLesions(2).evaluate(patient),
-            "Insufficient number of lesion sites (less than 2)"
+            "Fewer than 2 lesion sites in provided lesions"
         )
     }
 

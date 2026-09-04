@@ -109,7 +109,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSetting(
                 )
             }
 
-            else -> EvaluationFactory.fail("No prior systemic treatment in $settingMessage")
+            else -> EvaluationFactory.fail("No prior systemic treatment in $settingMessage in provided treatments")
         }
     }
 

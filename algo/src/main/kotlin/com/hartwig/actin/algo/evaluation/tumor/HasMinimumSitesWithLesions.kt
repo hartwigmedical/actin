@@ -47,7 +47,7 @@ class HasMinimumSitesWithLesions(private val minimumSitesWithLesions: Int) : Eva
                 }
 
                 else -> {
-                    EvaluationFactory.fail("Insufficient number of lesion sites (less than $minimumSitesWithLesions)")
+                    EvaluationFactory.fail("Fewer than $minimumSitesWithLesions lesion sites in provided lesions")
                 }
             }
         }

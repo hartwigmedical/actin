@@ -24,7 +24,7 @@ class HasHadSpecificFirstLineSystemicTreatment(private val treatmentToFind: Trea
 
         return when {
             (hasHadTreatmentToFindInFirstLine && treatmentsWithoutStartDate.isEmpty()) || hasOnlyHadTreatmentToFind -> {
-                EvaluationFactory.pass("$treatmentToFindDisplay in provided treatments as first-line treatment")
+                EvaluationFactory.pass("$treatmentToFindDisplay as first-line treatment in provided treatments")
             }
 
             hasHadTreatmentToFindInFirstLine || hasHadTreatmentToFindWithUnknownStartDate -> {
@@ -36,7 +36,7 @@ class HasHadSpecificFirstLineSystemicTreatment(private val treatmentToFind: Trea
             }
 
             else -> {
-                EvaluationFactory.fail("No $treatmentToFindDisplay as first-line treatment")
+                EvaluationFactory.fail("No $treatmentToFindDisplay as first-line treatment in provided treatments")
             }
         }
     }

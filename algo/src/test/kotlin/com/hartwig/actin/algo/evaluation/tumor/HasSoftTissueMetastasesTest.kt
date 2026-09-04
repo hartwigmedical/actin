@@ -23,7 +23,7 @@ class HasSoftTissueMetastasesTest {
             EvaluationAssert.assertEvaluation(
                 EvaluationResult.FAIL,
                 function.evaluate(TumorTestFactory.withOtherLesions(listOf(it))),
-                "No soft tissue metastases"
+                "No soft tissue metastases in provided lesions"
             )
         }
     }
@@ -33,7 +33,7 @@ class HasSoftTissueMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withOtherLesions(emptyList())),
-            "No soft tissue metastases"
+            "No soft tissue metastases in provided lesions"
         )
     }
 

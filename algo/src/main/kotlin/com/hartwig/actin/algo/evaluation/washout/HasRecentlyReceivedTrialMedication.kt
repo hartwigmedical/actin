@@ -43,7 +43,7 @@ class HasRecentlyReceivedTrialMedication(
             }
 
             else -> {
-                EvaluationFactory.fail("No recent trial medication")
+                EvaluationFactory.fail("No recent trial medication in provided treatments")
             }
         }
     }

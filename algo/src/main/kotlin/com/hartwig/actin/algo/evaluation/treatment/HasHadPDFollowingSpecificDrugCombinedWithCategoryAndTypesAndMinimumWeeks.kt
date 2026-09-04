@@ -108,7 +108,9 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeks(
                 "$treatmentDescStart in provided treatments with PD but for less than $minWeeks weeks"
             )
 
-            PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_NO_PD in treatmentEvaluations -> EvaluationFactory.fail("No PD after $treatmentDesc")
+            PDFollowingSpecificCombinationEvaluation.HAS_SPECIFIC_COMBINATION_WITH_NO_PD in treatmentEvaluations -> EvaluationFactory.fail(
+                "No PD after $treatmentDesc in provided treatments"
+            )
 
             else -> EvaluationFactory.fail("No $treatmentDesc in provided treatments")
         }

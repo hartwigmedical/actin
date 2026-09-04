@@ -14,7 +14,7 @@ class HasActiveSecondMalignancyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())),
-            "No active second malignancy"
+            "No active second malignancy in provided history"
         )
     }
 
@@ -24,7 +24,7 @@ class HasActiveSecondMalignancyTest {
             EvaluationResult.FAIL, function.evaluate(
                 PriorTumorTestFactory.withPriorPrimaries(listOf(PriorTumorTestFactory.priorPrimary()))
             ),
-            "No active second malignancy"
+            "No active second malignancy in provided history"
         )
     }
 

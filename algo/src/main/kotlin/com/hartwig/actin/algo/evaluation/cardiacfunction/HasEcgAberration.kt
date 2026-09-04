@@ -43,7 +43,7 @@ class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No known ECG abnormalities")
+                EvaluationFactory.recoverableFail("No known ECG abnormalities in provided history")
             }
         }
     }

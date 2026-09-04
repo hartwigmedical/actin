@@ -38,7 +38,7 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
             }
 
             else -> {
-                EvaluationFactory.fail("No acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since drug not in treatment history")
+                EvaluationFactory.fail("No acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since drug not in provided treatments")
             }
         }
     }

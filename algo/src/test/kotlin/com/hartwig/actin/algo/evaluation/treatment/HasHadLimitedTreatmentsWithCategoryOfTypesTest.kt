@@ -177,7 +177,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateRequiredFunctions(
             EvaluationResult.FAIL,
             listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES),
-            "More than 1 lines of targeted therapy in provided treatments",
+            "More than 1 line(s) of targeted therapy in provided treatments",
             "More than 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }

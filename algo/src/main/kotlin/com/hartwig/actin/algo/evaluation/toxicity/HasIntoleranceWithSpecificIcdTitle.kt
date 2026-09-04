@@ -30,7 +30,7 @@ class HasIntoleranceWithSpecificIcdTitle(private val icdModel: IcdModel, private
                 EvaluationFactory.undetermined("Undetermined if intolerance in provided intolerances is $targetIcdTitle intolerance (drug type unknown)")
             }
 
-            else -> EvaluationFactory.fail("No known intolerance to $targetIcdTitle")
+            else -> EvaluationFactory.fail("No known intolerance to $targetIcdTitle in provided intolerances")
         }
     }
 }

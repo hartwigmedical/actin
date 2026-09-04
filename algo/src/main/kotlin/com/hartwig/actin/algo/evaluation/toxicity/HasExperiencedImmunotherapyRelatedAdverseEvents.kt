@@ -55,7 +55,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEvents(private val icdModel: IcdM
             }
 
             else -> {
-                EvaluationFactory.fail("No experience of immunotherapy related adverse events")
+                EvaluationFactory.fail("No immunotherapy related adverse events in provided history")
             }
         }
     }

@@ -18,7 +18,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistory(emptyList()),
-            "No HER2 antibody targeted therapy treatment treatment with PD"
+            "No HER2 antibody targeted therapy treatment treatment with PD in provided treatments"
         )
     }
 
@@ -30,7 +30,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "No HER2 antibody targeted therapy treatment treatment with PD"
+            "No HER2 antibody targeted therapy treatment treatment with PD in provided treatments"
         )
     }
 

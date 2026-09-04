@@ -53,7 +53,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "No experience of immunotherapy related adverse events"
+            "No immunotherapy related adverse events in provided history"
         )
     }
 
@@ -63,7 +63,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = listOf(IMMUNOTHERAPY_ALLERGY_OTHER_CONDITION),
             oncologicalHistory = emptyList()
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No immunotherapy related adverse events in provided history"
+        )
     }
 
     @Test
@@ -72,7 +76,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = emptyList(),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No immunotherapy related adverse events in provided history"
+        )
     }
 
     @Test
@@ -85,7 +93,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             ),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No immunotherapy related adverse events in provided history"
+        )
     }
 
     @Test

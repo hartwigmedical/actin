@@ -42,7 +42,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.PALLIATIVE, isSystemic = false)))),
-            "No prior systemic treatment in metastatic setting"
+            "No prior systemic treatment in metastatic setting in provided treatments"
         )
     }
 
@@ -51,7 +51,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "No prior systemic treatment in metastatic setting"
+            "No prior systemic treatment in metastatic setting in provided treatments"
         )
     }
 
@@ -77,7 +77,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
                     categories = setOf(CATEGORY_TO_IGNORE)
                 )
             })),
-            "No prior systemic treatment in metastatic setting"
+            "No prior systemic treatment in metastatic setting in provided treatments"
         )
     }
 

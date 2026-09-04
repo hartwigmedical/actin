@@ -54,7 +54,7 @@ class HasActiveInfection(
             }
 
             else -> {
-                EvaluationFactory.fail("No active infection provided")
+                EvaluationFactory.fail("No active infection in provided infections")
             }
         }
     }

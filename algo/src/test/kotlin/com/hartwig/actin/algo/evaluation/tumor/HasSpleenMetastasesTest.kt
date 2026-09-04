@@ -23,7 +23,7 @@ class HasSpleenMetastasesTest {
             EvaluationAssert.assertEvaluation(
                 EvaluationResult.FAIL,
                 function.evaluate(TumorTestFactory.withOtherLesions(listOf(it))),
-                "No spleen metastases"
+                "No spleen metastases in provided lesions"
             )
         }
     }
@@ -33,7 +33,7 @@ class HasSpleenMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withOtherLesions(emptyList())),
-            "No spleen metastases"
+            "No spleen metastases in provided lesions"
         )
     }
 

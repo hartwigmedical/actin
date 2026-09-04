@@ -27,7 +27,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypes(
         val typesList = concatItemsWithOr(types)
         return when {
             false in treatmentsByMatchEvaluation -> {
-                EvaluationFactory.fail("Not only $typesList ${category.display()} treatment in the provided treatments")
+                EvaluationFactory.fail("Not only $typesList ${category.display()} treatment in provided treatments")
             }
 
             null in treatmentsByMatchEvaluation -> {

@@ -104,7 +104,7 @@ class HasAcquiredResistanceToAnyDrugTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
-            "No acquired resistance to osimertinib since drug not in treatment history"
+            "No acquired resistance to osimertinib since drug not in provided treatments"
         )
     }
 
@@ -113,7 +113,7 @@ class HasAcquiredResistanceToAnyDrugTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "No acquired resistance to osimertinib since drug not in treatment history"
+            "No acquired resistance to osimertinib since drug not in provided treatments"
         )
     }
 }
