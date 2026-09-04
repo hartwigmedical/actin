@@ -21,7 +21,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
             category,
             types?.let { { historyEntry -> historyEntry.matchesTypeFromSet(types) } } ?: { true })
         val treatmentString = (types?.let { "${Format.concatItemsWithOr(types)} " } ?: "") + category.display()
-        val message = "$maxTreatmentLines lines of $treatmentString"
+        val message = "$maxTreatmentLines line(s) of $treatmentString"
 
         return when {
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines

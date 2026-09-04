@@ -22,11 +22,11 @@ class HasExtracranialMetastases : EvaluationFunction {
 
         return when {
             hasNonCnsMetastases || uncategorizedLesions.any(::isExtraCranialLesion) -> {
-                EvaluationFactory.pass("Extracranial metastases in provided metastases")
+                EvaluationFactory.pass("Extracranial metastases in provided lesions")
             }
 
             hasSuspectedNonCnsMetastases || uncategorizedSuspectedLesions.any(::isExtraCranialLesion) -> {
-                EvaluationFactory.warn("Extracranial metastases in provided metastases but only suspected lesions")
+                EvaluationFactory.warn("Extracranial metastases in provided lesions but only suspected lesions")
             }
 
             uncategorizedLesions.isNotEmpty() || anyCategorizedLesionUnknown -> {

@@ -15,22 +15,22 @@ class HasExtracranialMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withBoneLesions(true)),
-            "Extracranial metastases in provided metastases"
+            "Extracranial metastases in provided lesions"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withLiverLesions(true)),
-            "Extracranial metastases in provided metastases"
+            "Extracranial metastases in provided lesions"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withLungLesions(true)),
-            "Extracranial metastases in provided metastases"
+            "Extracranial metastases in provided lesions"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withLymphNodeLesions(true)),
-            "Extracranial metastases in provided metastases"
+            "Extracranial metastases in provided lesions"
         )
     }
 
@@ -39,7 +39,7 @@ class HasExtracranialMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("intestine"))),
-            "Extracranial metastases in provided metastases"
+            "Extracranial metastases in provided lesions"
         )
     }
 
@@ -84,7 +84,7 @@ class HasExtracranialMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, listOf("unknown site"))),
-            "Extracranial metastases in provided metastases but only suspected lesions"
+            "Extracranial metastases in provided lesions but only suspected lesions"
         )
     }
 
