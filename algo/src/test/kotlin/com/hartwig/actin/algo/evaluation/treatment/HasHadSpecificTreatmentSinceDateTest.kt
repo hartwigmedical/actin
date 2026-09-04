@@ -84,7 +84,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' in provided treatments with unknown date"
+            "Undetermined if treatment matching 'Treatment' in provided treatments is after 01-Jun-2024 (date unknown)"
         )
     }
 
@@ -109,7 +109,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' in provided treatments with unknown date"
+            "Undetermined if treatment matching 'Treatment' in provided treatments is after 01-Jun-2024 (date unknown)"
         )
     }
 
@@ -120,7 +120,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' in provided treatments with unknown date"
+            "Undetermined if treatment matching 'Treatment' in provided treatments is after 01-Jun-2024 (date unknown)"
         )
     }
 
@@ -130,7 +130,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' in provided treatments with unknown date"
+            "Undetermined if treatment matching 'Treatment' in provided treatments is after 01-Jun-2024 (date unknown)"
         )
     }
 
@@ -181,10 +181,10 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Treatment matching 'Treatment' in provided treatments with unknown date"
+            "Undetermined if treatment matching 'Treatment' in provided treatments is after 01-Jun-2024 (date unknown)"
         )
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Treatment matching 'Treatment' in provided treatments with unknown date"
+            "Undetermined if treatment matching 'Treatment' in provided treatments is after 01-Jun-2024 (date unknown)"
         )
     }
 

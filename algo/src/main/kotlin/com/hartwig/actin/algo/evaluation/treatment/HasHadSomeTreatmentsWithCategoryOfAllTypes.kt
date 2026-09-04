@@ -37,7 +37,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
             }
 
             else -> {
-                EvaluationFactory.fail("Not at least $minTreatmentLines line(s) of $typesList combination ${category.display()} in provided treatments")
+                EvaluationFactory.fail("Fewer than $minTreatmentLines line(s) of $typesList combination ${category.display()} in provided treatments")
             }
         }
     }

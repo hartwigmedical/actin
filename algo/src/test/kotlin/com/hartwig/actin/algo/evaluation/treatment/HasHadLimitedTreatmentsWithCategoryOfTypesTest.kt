@@ -171,14 +171,14 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.FAIL,
             listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES),
-            "Not at most 1 lines of targeted therapy in provided treatments",
-            "Not at most 1 lines of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
+            "More than 1 lines of targeted therapy in provided treatments",
+            "More than 1 lines of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
         evaluateRequiredFunctions(
             EvaluationResult.FAIL,
             listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES),
-            "Not at most 1 lines of targeted therapy in provided treatments",
-            "Not at most 1 lines of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
+            "More than 1 lines of targeted therapy in provided treatments",
+            "More than 1 lines of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 

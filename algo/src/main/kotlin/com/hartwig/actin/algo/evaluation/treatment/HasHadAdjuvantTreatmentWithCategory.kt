@@ -35,7 +35,7 @@ class HasHadAdjuvantTreatmentWithCategory(
             }
 
             minDate?.let { treatmentSummary.specificMatches.any { potentialTreatmentSinceMinDate(it, minDate) } } == true  -> {
-                EvaluationFactory.undetermined("Adjuvant treatment(s) of ${category.display()} in provided treatments but date unknown")
+                EvaluationFactory.undetermined("Adjuvant treatment(s) of ${category.display()} in provided treatments but unknown if within the last $weeksAgo weeks")
             }
 
             !treatmentSummary.hasSpecificMatch() -> {

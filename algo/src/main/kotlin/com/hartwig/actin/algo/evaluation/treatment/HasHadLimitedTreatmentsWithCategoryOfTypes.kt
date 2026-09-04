@@ -39,7 +39,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
             }
 
             else -> {
-                EvaluationFactory.fail("Not at most $message in provided treatments")
+                EvaluationFactory.fail("More than $message in provided treatments")
             }
         }
     }

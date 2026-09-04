@@ -84,7 +84,7 @@ class HasHadAdjuvantTreatmentWithCategoryTest {
             setOf(Intent.ADJUVANT),
             null,
             functionWithDate,
-            "Adjuvant treatment(s) of targeted therapy in provided treatments but date unknown"
+            "Adjuvant treatment(s) of targeted therapy in provided treatments but unknown if within the last 6 weeks"
         )
     }
 

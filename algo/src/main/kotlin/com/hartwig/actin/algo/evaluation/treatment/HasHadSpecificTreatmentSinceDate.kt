@@ -26,7 +26,7 @@ class HasHadSpecificTreatmentSinceDate(private val treatment: Treatment, private
 
             matchingTreatments.any { potentialTreatmentSinceMinDate(it, minDate) } -> {
                 EvaluationFactory.undetermined(
-                    "Treatment $predicateDescription in provided treatments with unknown date"
+                    "Undetermined if treatment $predicateDescription in provided treatments is after $formattedMinDate (date unknown)"
                 )
             }
 
