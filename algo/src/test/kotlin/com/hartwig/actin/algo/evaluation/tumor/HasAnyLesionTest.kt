@@ -40,7 +40,7 @@ class HasAnyLesionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))),
-            "Only suspected lesions in provided lesions - undetermined if lesions are present"
+            "Undetermined if lesions are present based on provided lesions (only suspected lesions)"
         )
     }
 
@@ -71,7 +71,7 @@ class HasAnyLesionTest {
                     emptyList()
                 )
             ),
-            "No lesions present"
+            "No lesions"
         )
     }
 }

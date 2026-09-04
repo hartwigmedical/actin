@@ -46,7 +46,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "All treatments matching 'Treatment' administered before 01-Jun-2024 based on provided treatments"
+            "All treatments matching 'Treatment' in provided treatments are before 01-Jun-2024"
         )
     }
 
@@ -60,7 +60,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "All treatments matching 'Treatment' administered before 01-Jun-2024 based on provided treatments"
+            "All treatments matching 'Treatment' in provided treatments are before 01-Jun-2024"
         )
     }
 
@@ -70,7 +70,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "All treatments matching 'Treatment' administered before 01-Jun-2024 based on provided treatments"
+            "All treatments matching 'Treatment' in provided treatments are before 01-Jun-2024"
         )
     }
 
@@ -84,7 +84,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' administered with unknown date based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments with unknown date"
         )
     }
 
@@ -99,7 +99,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' administered since 01-Jun-2024 based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments is after 01-Jun-2024"
         )
     }
 
@@ -109,7 +109,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' administered with unknown date based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments with unknown date"
         )
     }
 
@@ -120,7 +120,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' administered with unknown date based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments with unknown date"
         )
     }
 
@@ -130,7 +130,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' administered with unknown date based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments with unknown date"
         )
     }
 
@@ -143,7 +143,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Treatment matching 'Treatment' administered since 01-Jun-2024 based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments is after 01-Jun-2024"
         )
     }
 
@@ -160,7 +160,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "All treatments matching 'Treatment' administered before 01-Jun-2024 based on provided treatments"
+            "All treatments matching 'Treatment' in provided treatments are before 01-Jun-2024"
         )
     }
 
@@ -181,10 +181,10 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Treatment matching 'Treatment' administered with unknown date based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments with unknown date"
         )
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
-            "Treatment matching 'Treatment' administered with unknown date based on provided treatments"
+            "Treatment matching 'Treatment' in provided treatments with unknown date"
         )
     }
 
@@ -204,7 +204,7 @@ class HasHadSpecificTreatmentSinceDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "All treatments matching 'Treatment' administered before 01-Jun-2024 based on provided treatments"
+            "All treatments matching 'Treatment' in provided treatments are before 01-Jun-2024"
         )
     }
 

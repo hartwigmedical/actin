@@ -26,13 +26,14 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
             TreatmentSummaryForCategory.createForTreatmentHistory(oncologicalHistory, category, ::hasAnyMatchingTypeAndIntent)
 
         val intentsList = Format.concatItemsWithOr(intentsToFind, toLowerCase = true)
+        val intentsListStart = Format.concatItemsWithOr(intentsToFind, toLowerCase = false)
         val allowedTypesString = allowedTypes?.let { " ${Format.concatItemsWithOr(it)}" } ?: ""
 
         return with(treatmentSummary) {
             when {
                 hasSpecificMatch() -> {
                     EvaluationFactory.pass(
-                        "$intentsList${drugTypeString(specificMatches)} ${category.display()} " +
+                        "$intentsListStart${drugTypeString(specificMatches)} ${category.display()} " +
                                 "(${specificMatches.joinToString(", ") { it.treatmentDisplay() }}) in provided treatments"
                     )
                 }
@@ -54,7 +55,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntents(
                         ).specificMatches.ifEmpty { null }
                     }?.let { unknownDateMatches ->
                         EvaluationFactory.undetermined(
-                            "$intentsList${drugTypeString(unknownDateMatches)} ${category.display()} " +
+                            "$intentsListStart${drugTypeString(unknownDateMatches)} ${category.display()} " +
                                     "(${unknownDateMatches.joinToString(", ") { it.treatmentDisplay() }}) " +
                                     "with unknown date in provided treatments"
                         )

@@ -31,7 +31,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
 
             treatmentIsRequired && !treatmentSummary.hasSpecificMatch() && !treatmentSummary.hasApproximateMatch()
                     && !treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.fail("Not $treatmentString in provided treatments")
+                EvaluationFactory.fail("No $treatmentString in provided treatments")
             }
 
             treatmentSummary.numSpecificMatches() <= maxTreatmentLines -> {

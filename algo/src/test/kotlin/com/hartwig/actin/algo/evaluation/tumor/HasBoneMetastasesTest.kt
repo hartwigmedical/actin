@@ -21,7 +21,7 @@ class HasBoneMetastasesTest {
     @Test
     fun shouldPassWhenHasBoneLesionsIsTrue() {
         val pass = function.evaluate(TumorTestFactory.withBoneLesions(true))
-        assertEvaluation(EvaluationResult.PASS, pass, "bone metastases in provided lesions")
+        assertEvaluation(EvaluationResult.PASS, pass, "Bone metastases in provided lesions")
     }
 
     @Test

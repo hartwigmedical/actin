@@ -9,6 +9,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasHadLocalHepaticTherapyWithinWeeks : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if local hepatic therapy within specified time frame based on provided treatments")
+        return EvaluationFactory.undetermined("Undetermined history of local hepatic therapy within specified time frame based on provided treatments")
     }
 }

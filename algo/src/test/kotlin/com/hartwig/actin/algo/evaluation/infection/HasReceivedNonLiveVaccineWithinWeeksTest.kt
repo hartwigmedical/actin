@@ -12,7 +12,7 @@ class HasReceivedNonLiveVaccineWithinWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasReceivedNonLiveVaccineWithinWeeks(2).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Non-live vaccine use within 2 weeks undetermined based on provided history"
+            "Undetermined history of non-live vaccine within 2 weeks based on provided history"
         )
     }
 }

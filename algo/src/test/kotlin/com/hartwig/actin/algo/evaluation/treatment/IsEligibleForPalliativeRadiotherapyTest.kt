@@ -11,7 +11,7 @@ class IsEligibleForPalliativeRadiotherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             IsEligibleForPalliativeRadiotherapy().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Availability of palliative radiotherapy undetermined"
+            "Undetermined whether requirements for palliative radiotherapy are met"
         )
     }
 }

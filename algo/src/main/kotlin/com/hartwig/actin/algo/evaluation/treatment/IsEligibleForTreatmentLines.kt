@@ -9,7 +9,7 @@ class IsEligibleForTreatmentLines(private val lines: List<Int>) : EvaluationFunc
     
     override fun evaluate(record: PatientRecord): Evaluation {
         val nextTreatmentLine = SystemicTreatmentAnalyser.minSystemicTreatments(record.oncologicalHistory) + 1
-        val message = "Line $nextTreatmentLine is available"
+        val message = "Requirements for line $nextTreatmentLine are met"
 
         return if (nextTreatmentLine in lines) EvaluationFactory.pass(message) else EvaluationFactory.fail(message)
     }

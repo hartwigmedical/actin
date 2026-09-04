@@ -20,12 +20,12 @@ class HasEcgAberrationTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(CardiacFunctionTestFactory.withEcgDescription("with description")),
-            "ECG abnormalities present (with description)"
+            "ECG abnormalities provided (with description)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(CardiacFunctionTestFactory.withEcgDescription(null)),
-            "ECG abnormalities present (details unknown)"
+            "ECG abnormalities provided (details unknown)"
         )
     }
 
@@ -46,7 +46,7 @@ class HasEcgAberrationTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(CardiacFunctionTestFactory.withEcgDescription(null)),
-            "ECG abnormalities present (details unknown)"
+            "ECG abnormalities provided (details unknown)"
         )
     }
 

@@ -101,7 +101,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "platinum compound chemotherapy combined with HER2 antibody targeted therapy in provided treatments"
+            "Platinum compound chemotherapy combined with HER2 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -114,7 +114,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 
@@ -124,7 +124,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 
@@ -134,7 +134,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 
@@ -149,7 +149,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 }

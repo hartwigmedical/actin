@@ -49,9 +49,9 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
                     false -> EvaluationFactory.pass("$matchingDrugDisplay in provided treatments as most recent treatment")
                     true -> {
                         if (mostRecentMatchingEntryHasStopDate) {
-                            EvaluationFactory.fail("Does not currently receive $matchingDrugDisplay (treatment has stopped)")
+                            EvaluationFactory.fail("No active $matchingDrugDisplay (treatment has stopped)")
                         } else {
-                            EvaluationFactory.undetermined("$matchingDrugDisplay in provided treatments as most recent treatment but unknown if currently still administered")
+                            EvaluationFactory.undetermined("$matchingDrugDisplay in provided treatments as most recent treatment but unknown if active")
                         }
                     }
                 }
@@ -60,12 +60,12 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
             matchingDrugsInUnknownTreatmentLines.isNotEmpty() || matchingDrugsInMostRecentLineWithDate.isNotEmpty() -> {
                 val drugList = Format.concatItemsWithAnd(matchingDrugsInUnknownTreatmentLines + matchingDrugsInMostRecentLineWithDate)
                 val display = "$drugList in provided treatments but undetermined if most recent"
-                val currentlyDisplay = if (requireCurrentAdministration) " and unknown if currently still administered" else ""
+                val currentlyDisplay = if (requireCurrentAdministration) " and unknown if active" else ""
                 EvaluationFactory.undetermined("$display (date unknown)$currentlyDisplay")
             }
 
             possibleTrialMatch(if (relevantHistory.size == 1) relevantHistory.first() else mostRecentTreatmentEntry) -> {
-                val currentlyDisplay = if (requireCurrentAdministration) " and unknown if currently still administered" else ""
+                val currentlyDisplay = if (requireCurrentAdministration) " and unknown if active" else ""
                 EvaluationFactory.undetermined(
                     "Undetermined if treatment from previous trial included " +
                             "${Format.concatItemsWithOr(drugsToMatch)}$currentlyDisplay"
@@ -73,7 +73,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
             }
 
             relevantHistory.flatMap { selectMatchingDrugsFromEntry(it, drugNamesToMatch) }.isNotEmpty() -> {
-                val currentlyDisplay = if (requireCurrentAdministration) " and hence not currently administered" else ""
+                val currentlyDisplay = if (requireCurrentAdministration) " and hence not active" else ""
                 EvaluationFactory.fail("${Format.concatItemsWithOr(drugsToMatch)} in provided treatments but not as most recent line$currentlyDisplay")
             }
 

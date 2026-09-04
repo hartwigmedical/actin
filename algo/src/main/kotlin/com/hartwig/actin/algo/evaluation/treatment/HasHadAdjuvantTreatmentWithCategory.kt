@@ -43,7 +43,7 @@ class HasHadAdjuvantTreatmentWithCategory(
             }
 
             else -> {
-                EvaluationFactory.fail("All received adjuvant treatment(s) of ${category.display()} are administered more than $weeksAgo weeks ago")
+                EvaluationFactory.fail("None of the adjuvant treatment(s) of ${category.display()} in provided treatments are within $weeksAgo weeks")
             }
         }
     }

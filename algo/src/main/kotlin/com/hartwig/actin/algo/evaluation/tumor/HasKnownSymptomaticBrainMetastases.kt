@@ -13,7 +13,7 @@ class HasKnownSymptomaticBrainMetastases : EvaluationFunction {
 
             return when {
                 unknownIfSymptomatic && hasBrainLesions == true -> {
-                    EvaluationFactory.undetermined("Brain metastases present but unknown if symptomatic (data missing)")
+                    EvaluationFactory.undetermined("Brain metastases but unknown if symptomatic (data missing)")
                 }
 
                 unknownIfSymptomatic && hasBrainLesions == null -> {

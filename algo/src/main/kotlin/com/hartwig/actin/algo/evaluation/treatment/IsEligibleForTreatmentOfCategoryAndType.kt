@@ -22,14 +22,14 @@ class IsEligibleForTreatmentOfCategoryAndType(
             treatmentSummary.hasSpecificMatch() -> {
                 EvaluationFactory.warn(
                     "Treatment of category ${category.display()} " +
-                            "and type(s) ${Format.concatItemsWithOr(types)} in provided treatments and may therefore not be available anymore",
+                            "and type(s) ${Format.concatItemsWithOr(types)} in provided treatments and therefore requirements for this treatment may not be met anymore",
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableUndetermined(
-                    "Undetermined if treatment of category ${category.display()} " +
-                            "and type(s) ${Format.concatItemsWithOr(types)} is available"
+                    "Undetermined whether requirements for treatment of category ${category.display()} " +
+                            "and type(s) ${Format.concatItemsWithOr(types)} are met"
                 )
             }
         }

@@ -39,8 +39,10 @@ class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) :
             }
 
             otherResponses.isNotEmpty() -> {
+                val messageStart = otherResponses.joinToString(separator = " and a ") { it.display() }
+                    .replaceFirstChar { it.uppercase() }
                 EvaluationFactory.fail(
-                    "${otherResponses.joinToString(separator = " and a ") { it.display() }} response to ${drug.display()} treatment - " +
+                    "$messageStart response to ${drug.display()} treatment - " +
                             "not considered a radiological response to ${drug.display()}"
                 )
             }

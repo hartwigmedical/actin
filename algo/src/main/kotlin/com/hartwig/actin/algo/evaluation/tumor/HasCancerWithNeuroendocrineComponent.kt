@@ -23,7 +23,7 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) :
             }
 
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.undetermined("Neuroendocrine component undetermined (small cell component present)")
+                EvaluationFactory.undetermined("Neuroendocrine component undetermined (cancer has small cell component)")
             }
 
             hasNeuroendocrineProfile -> {

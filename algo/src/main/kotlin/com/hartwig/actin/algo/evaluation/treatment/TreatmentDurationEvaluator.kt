@@ -108,9 +108,10 @@ class TreatmentDurationEvaluator(
         }
 
         val weeksString = if (weeks != null) " for ${durationMessageParts.acceptable} $weeks weeks" else ""
+        val treatmentMessageStart = treatmentMessage.replaceFirstChar { it.uppercase() }
         return when {
             treatmentDurationType == TreatmentDurationType.LIMITED && TreatmentEvaluation.HAS_HAD_TREATMENT_WITH_INCORRECT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.fail("$treatmentMessage treatment in provided treatments but for more than $weeks weeks")
+                EvaluationFactory.fail("$treatmentMessageStart treatment in provided treatments but for more than $weeks weeks")
             }
 
             weeks != null && treatmentEvaluations.size > 1 -> {
@@ -118,12 +119,12 @@ class TreatmentDurationEvaluator(
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_FOR_CORRECT_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.pass("$treatmentMessage$weeksString in provided treatments")
+                EvaluationFactory.pass("$treatmentMessageStart$weeksString in provided treatments")
 
             }
 
             TreatmentEvaluation.HAS_HAD_TREATMENT_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("$treatmentMessage in provided treatments but unknown nb of weeks")
+                EvaluationFactory.undetermined("$treatmentMessageStart in provided treatments but unknown nb of weeks")
             }
 
             TreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT in treatmentEvaluations -> {

@@ -90,7 +90,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (Matching category with correct intent and type) in provided treatments"
+            "Palliative ALK inhibitor and EGFR inhibitor targeted therapy (Matching category with correct intent and type) in provided treatments"
         )
     }
 
@@ -111,7 +111,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "palliative targeted therapy (Matching) in provided treatments"
+            "Palliative targeted therapy (Matching) in provided treatments"
         )
     }
 
@@ -185,7 +185,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "palliative targeted therapy (Matching category and intent) with unknown date in provided treatments"
+            "Palliative targeted therapy (Matching category and intent) with unknown date in provided treatments"
         )
     }
 
@@ -201,7 +201,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date in provided treatments"
+            "Palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date in provided treatments"
         )
     }
 
@@ -242,7 +242,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (Recent matching treatment) in provided treatments"
+            "Palliative ALK inhibitor and EGFR inhibitor targeted therapy (Recent matching treatment) in provided treatments"
         )
     }
 
@@ -258,7 +258,7 @@ class HasHadSomeTreatmentsWithCategoryAndTypeWithIntentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date in provided treatments"
+            "Palliative ALK inhibitor and EGFR inhibitor targeted therapy (${treatment.display()}) with unknown date in provided treatments"
         )
     }
 }

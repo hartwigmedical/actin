@@ -19,7 +19,7 @@ class IsEligibleForTreatmentOfCategoryAndTypeTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Undetermined if treatment of category chemotherapy and type(s) anthracycline or platinum compound is available"
+            "Undetermined whether requirements for treatment of category chemotherapy and type(s) anthracycline or platinum compound are met"
         )
     }
 
@@ -32,7 +32,7 @@ class IsEligibleForTreatmentOfCategoryAndTypeTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList)),
-            "Undetermined if treatment of category chemotherapy and type(s) anthracycline or platinum compound is available"
+            "Undetermined whether requirements for treatment of category chemotherapy and type(s) anthracycline or platinum compound are met"
         )
     }
 
@@ -42,7 +42,7 @@ class IsEligibleForTreatmentOfCategoryAndTypeTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentList)),
-            "Undetermined if treatment of category chemotherapy and type(s) anthracycline or platinum compound is available"
+            "Undetermined whether requirements for treatment of category chemotherapy and type(s) anthracycline or platinum compound are met"
         )
     }
 
@@ -51,7 +51,7 @@ class IsEligibleForTreatmentOfCategoryAndTypeTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(createTreatmentHistoryEntry(TARGET_CATEGORY, TARGET_TYPES)))),
-            "Treatment of category chemotherapy and type(s) anthracycline or platinum compound in provided treatments and may therefore not be available anymore"
+            "Treatment of category chemotherapy and type(s) anthracycline or platinum compound in provided treatments and therefore requirements for this treatment may not be met anymore"
         )
     }
 

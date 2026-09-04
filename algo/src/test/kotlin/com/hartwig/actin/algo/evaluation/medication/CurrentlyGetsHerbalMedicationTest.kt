@@ -16,7 +16,7 @@ class CurrentlyGetsHerbalMedicationTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No use of herbal medications"
+            "No active herbal medications in provided medications"
         )
     }
 
@@ -28,7 +28,7 @@ class CurrentlyGetsHerbalMedicationTest {
             alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
             ),
-            "No use of herbal medications"
+            "No active herbal medications in provided medications"
         )
     }
 
@@ -40,14 +40,14 @@ class CurrentlyGetsHerbalMedicationTest {
             alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
             ),
-            "Undetermined if herbal medications may be used (self care medication use)"
+            "Undetermined if active herbal medications based on provided medications (self care medication)"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
             ),
-            "Undetermined if use of herbal medications may be planned (planned self care medication use)"
+            "Undetermined if planned herbal medications based on provided medications (planned self care medication)"
         )
     }
 
@@ -59,7 +59,7 @@ class CurrentlyGetsHerbalMedicationTest {
             alwaysInactiveFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
             ),
-            "No use of herbal medications"
+            "No active herbal medications in provided medications"
         )
     }
 

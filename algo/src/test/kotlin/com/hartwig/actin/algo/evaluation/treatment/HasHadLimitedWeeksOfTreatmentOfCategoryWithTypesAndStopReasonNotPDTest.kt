@@ -72,7 +72,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Unclear if received targeted therapy"
+            "Undetermined if trial treatment in provided treatments included targeted therapy"
         )
     }
 
@@ -159,7 +159,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPDTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Unclear if received targeted therapy"
+            "Undetermined if trial treatment in provided treatments included targeted therapy"
         )
     }
 

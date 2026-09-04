@@ -29,7 +29,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypes(
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if $baseMessage based on provided treatments")
+                EvaluationFactory.undetermined("Undetermined history of $baseMessage based on provided treatments")
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {

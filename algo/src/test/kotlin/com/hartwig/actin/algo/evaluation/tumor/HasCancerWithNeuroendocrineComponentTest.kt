@@ -40,7 +40,7 @@ class HasCancerWithNeuroendocrineComponentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(tumorDetails),
-            "Neuroendocrine component undetermined (small cell component present)"
+            "Neuroendocrine component undetermined (cancer has small cell component)"
         )
     }
 

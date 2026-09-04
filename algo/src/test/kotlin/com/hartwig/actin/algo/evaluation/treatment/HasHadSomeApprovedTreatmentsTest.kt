@@ -17,6 +17,10 @@ class HasHadSomeApprovedTreatmentsTest {
         )
 
         val record = TreatmentTestFactory.withTreatmentHistoryEntry(TreatmentTestFactory.treatmentHistoryEntry())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record), "Nr of received approved treatments undetermined")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Treatments provided but number of approved treatments undetermined"
+        )
     }
 }

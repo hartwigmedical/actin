@@ -36,7 +36,7 @@ class IsEligibleForOnLabelTreatment(
     override fun evaluate(record: PatientRecord): Evaluation {
         val standardOfCareEvaluator = standardOfCareEvaluatorFactory.create()
         val treatmentDisplay = intent?.let { "${intent.name.lowercase()} ${treatment.display()}" } ?: treatment.display()
-        val undeterminedMessage = "Undetermined availability of on-label $treatmentDisplay"
+        val undeterminedMessage = "Undetermined whether requirements for on-label $treatmentDisplay are met"
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
 
         return when {
@@ -46,7 +46,7 @@ class IsEligibleForOnLabelTreatment(
                 if (potentiallyEligibleTreatments.any { it.treatmentCandidate.treatment.name.equals(treatment.name, ignoreCase = true) }) {
                     EvaluationFactory.undetermined(undeterminedMessage)
                 } else {
-                    EvaluationFactory.fail("On-label $treatmentDisplay not available")
+                    EvaluationFactory.fail("Requirements for on-label $treatmentDisplay are not met")
                 }
             }
 
@@ -54,13 +54,13 @@ class IsEligibleForOnLabelTreatment(
                 when (evaluate(record, treatmentNameToEvaluationFunctionsForNSCLC[treatmentDisplay]!!).result) {
                     EvaluationResult.PASS -> {
                         if (intent == null) {
-                            EvaluationFactory.pass("On-label $treatmentDisplay available")
+                            EvaluationFactory.pass("Requirements for on-label $treatmentDisplay are met")
                         } else {
                             EvaluationFactory.undetermined(undeterminedMessage)
                         }
                     }
 
-                    EvaluationResult.FAIL -> EvaluationFactory.fail("On-label $treatmentDisplay not available")
+                    EvaluationResult.FAIL -> EvaluationFactory.fail("Requirements for on-label $treatmentDisplay are not met")
 
                     else -> EvaluationFactory.undetermined(undeterminedMessage)
                 }
@@ -68,7 +68,7 @@ class IsEligibleForOnLabelTreatment(
 
             record.oncologicalHistory.flatMap { it.allTreatments() }.any { it.name.equals(treatment.name, ignoreCase = true) } -> {
                 EvaluationFactory.warn(
-                    "On-label $treatmentDisplay might not be available since this treatment is in provided treatments"
+                    "Requirements for on-label $treatmentDisplay might not be met since treatment is in provided treatments"
                 )
             }
 

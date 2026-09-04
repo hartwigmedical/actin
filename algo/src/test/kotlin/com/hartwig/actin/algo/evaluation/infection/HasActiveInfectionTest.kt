@@ -38,13 +38,17 @@ class HasActiveInfectionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withInfectionStatus(true)),
-            "Presence of active infection (unknown type)"
+            "Active infection (unknown type) in provided infections"
         )
     }
 
     @Test
     fun `Should fail if patient has known infection status and does not have an active infection`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)), "No active infection present")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withInfectionStatus(false)),
+            "No active infection provided"
+        )
     }
 
     @Test
@@ -89,7 +93,7 @@ class HasActiveInfectionTest {
                 ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = referenceDate.year - 1))
                     .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(false, null)))
             ),
-            "No active infection present"
+            "No active infection provided"
         )
     }
 

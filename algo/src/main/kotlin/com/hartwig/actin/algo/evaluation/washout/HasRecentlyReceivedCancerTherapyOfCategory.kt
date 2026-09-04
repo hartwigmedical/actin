@@ -69,7 +69,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return when {
             foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use$foundMedicationString" +
+                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug in provided medications$foundMedicationString" +
                             " - pay attention to washout period"
                 )
             }
@@ -91,7 +91,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             }
 
             else -> {
-                EvaluationFactory.fail("No recent '${concatLowercaseWithAnd(categoryNames)}' drug use")
+                EvaluationFactory.fail("No recent '${concatLowercaseWithAnd(categoryNames)}' drug in provided medications")
             }
         }
     }

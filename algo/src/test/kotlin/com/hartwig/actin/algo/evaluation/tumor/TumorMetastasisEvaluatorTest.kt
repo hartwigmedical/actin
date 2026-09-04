@@ -21,7 +21,7 @@ class TumorMetastasisEvaluatorTest {
     @Test
     fun `Should pass when boolean is true`() {
         val pass = TumorMetastasisEvaluator.evaluate(true, false, METASTASIS_TYPE)
-        assertEvaluation(EvaluationResult.PASS, pass, "bone metastases in provided lesions")
+        assertEvaluation(EvaluationResult.PASS, pass, "Bone metastases in provided lesions")
     }
 
     @Test

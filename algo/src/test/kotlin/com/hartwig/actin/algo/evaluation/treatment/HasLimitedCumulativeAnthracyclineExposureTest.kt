@@ -20,7 +20,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(patientRecord(null, emptyList(), emptyList())),
-            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
+            "Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -30,7 +30,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(patientRecord(setOf("other cancer type"), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo))))),
-            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
+            "Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -40,7 +40,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithOther), emptyList())),
-            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
+            "Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -80,7 +80,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(patientRecord(null, emptyList(), listOf(treatmentHistoryEntry(setOf(priorAnthracycline))))),
-            "Exact dosage of received anthracycline chemotherapy undetermined"
+            "Exact dosage of anthracycline chemotherapy in provided treatments undetermined"
         )
     }
 

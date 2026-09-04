@@ -22,7 +22,7 @@ class HasKnownSymptomaticBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = null)),
-            "Brain metastases present but unknown if symptomatic (data missing)"
+            "Brain metastases but unknown if symptomatic (data missing)"
         )
     }
 

@@ -8,7 +8,7 @@ internal object TumorMetastasisEvaluator {
     fun evaluate(hasLesions: Boolean?, hasSuspectedLesions: Boolean?, metastasisType: String): Evaluation {
         return when {
             hasLesions == true -> {
-                EvaluationFactory.pass("$metastasisType metastases in provided lesions")
+                EvaluationFactory.pass("${metastasisType.replaceFirstChar { it.uppercase() }} metastases in provided lesions")
             }
 
             hasSuspectedLesions == true -> {

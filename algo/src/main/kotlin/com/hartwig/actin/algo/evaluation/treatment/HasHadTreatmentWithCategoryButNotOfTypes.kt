@@ -26,7 +26,9 @@ class HasHadTreatmentWithCategoryButNotOfTypes(
         val ignoreTypesList = Format.concatItemsWithAnd(ignoreTypes)
         return when {
             treatmentSummary.hasSpecificMatch() -> EvaluationFactory.pass(
-                "${category.display()} in provided treatments ignoring $ignoreTypesList"
+                "${
+                    category.display().replaceFirstChar { it.uppercase() }
+                } in provided treatments ignoring $ignoreTypesList"
             )
 
             treatmentSummary.hasPossibleTrialMatch() -> EvaluationFactory.undetermined(

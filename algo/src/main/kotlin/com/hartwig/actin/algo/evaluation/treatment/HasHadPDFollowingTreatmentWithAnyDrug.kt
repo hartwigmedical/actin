@@ -15,11 +15,11 @@ class HasHadPDFollowingTreatmentWithAnyDrug(private val drugsToMatch: Set<Drug>)
 
         return if (treatmentEvaluation.matchingDrugsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "PD after receiving drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)} based on provided treatments"
+                "PD after drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)} based on provided treatments"
             )
         } else if (treatmentEvaluation.possibleTrialMatch) {
             EvaluationFactory.undetermined(
-                "Undetermined if treatment from previous trial included ${
+                "Undetermined if trial treatment in provided treatments included ${
                     Format.concatItemsWithOr(
                         drugsToMatch
                     )

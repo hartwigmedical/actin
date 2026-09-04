@@ -51,8 +51,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateRequiredFunctions(
             EvaluationResult.FAIL,
             emptyList(),
-            "Not targeted therapy in provided treatments",
-            "Not HER2 antibody or HER3 antibody targeted therapy in provided treatments"
+            "No targeted therapy in provided treatments",
+            "No HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -103,8 +103,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateRequiredFunctions(
             EvaluationResult.FAIL,
             listOf(NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES),
-            "Not targeted therapy in provided treatments",
-            "Not HER2 antibody or HER3 antibody targeted therapy in provided treatments"
+            "No targeted therapy in provided treatments",
+            "No HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -122,7 +122,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE))),
-            "Not HER2 antibody or HER3 antibody targeted therapy in provided treatments"
+            "No HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -249,7 +249,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
             ),
-            "Not transplantation in provided treatments"
+            "No transplantation in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -258,7 +258,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
             ),
-            "Not HER2 antibody or HER3 antibody transplantation in provided treatments"
+            "No HER2 antibody or HER3 antibody transplantation in provided treatments"
         )
     }
 

@@ -16,7 +16,7 @@ class HasHistoryOfSecondMalignancyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "No previous second malignancy"
+            "No previous second malignancy in provided history"
         )
 
         // One prior tumor
@@ -24,7 +24,7 @@ class HasHistoryOfSecondMalignancyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Presence of second malignancy"
+            "Second malignancy in provided history"
         )
     }
 }

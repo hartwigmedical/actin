@@ -57,7 +57,7 @@ class HasHadSomeSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Undetermined if at least 2 systemic treatments based on provided treatments"
+            "Undetermined history of at least 2 systemic treatments based on provided treatments"
         )
     }
 

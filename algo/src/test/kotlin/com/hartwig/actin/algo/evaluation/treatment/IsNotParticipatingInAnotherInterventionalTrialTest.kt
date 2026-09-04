@@ -72,7 +72,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
                     null
                 )
             ),
-            "Undetermined if patient may be participating in another interventional trial (missing stop date)"
+            "Undetermined participation in another interventional trial (missing stop date)"
         )
     }
 
@@ -92,7 +92,7 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
-            "Undetermined if patient may be participating in another interventional trial (missing stop date)"
+            "Undetermined participation in another interventional trial (missing stop date)"
         )
     }
 

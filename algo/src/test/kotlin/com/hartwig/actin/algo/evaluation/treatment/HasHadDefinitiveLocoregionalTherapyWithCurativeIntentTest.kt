@@ -36,7 +36,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadDefinitiveLocoregionalTherapyWithCurativeIntent().evaluate(withTreatmentHistory(emptyList())),
-            "Undetermined if locoregional therapy with curative intent based on provided treatments"
+            "Undetermined history of locoregional therapy with curative intent based on provided treatments"
         )
     }
 
@@ -58,7 +58,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(chemotherapyCurative),
-            "Undetermined if locoregional therapy with curative intent based on provided treatments"
+            "Undetermined history of locoregional therapy with curative intent based on provided treatments"
         )
     }
 
@@ -70,17 +70,17 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(radiotherapyIntentNull),
-            "Undetermined if locoregional therapy with curative intent based on provided treatments"
+            "Undetermined history of locoregional therapy with curative intent based on provided treatments"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(surgeryNonCurative),
-            "Undetermined if locoregional therapy with curative intent based on provided treatments"
+            "Undetermined history of locoregional therapy with curative intent based on provided treatments"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluate(radiotherapyIntentListEmpty),
-            "Undetermined if locoregional therapy with curative intent based on provided treatments"
+            "Undetermined history of locoregional therapy with curative intent based on provided treatments"
         )
     }
 

@@ -52,7 +52,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "progressive disease response to match treatment - not considered a radiological response to match"
+            "Progressive disease response to match treatment - not considered a radiological response to match"
         )
     }
 
@@ -63,7 +63,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "stable disease response to match treatment - not considered a radiological response to match"
+            "Stable disease response to match treatment - not considered a radiological response to match"
         )
     }
 
@@ -77,7 +77,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "stable disease and a progressive disease response to match treatment - not considered a radiological response to match"
+            "Stable disease and a progressive disease response to match treatment - not considered a radiological response to match"
         )
     }
 

@@ -8,8 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsEligibleForSpecificSurgery(private val surgeryName: String) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.recoverableUndetermined(
-            "Undetermined if $surgeryName is available"
-        )
+        return EvaluationFactory.recoverableUndetermined("Undetermined whether requirements for $surgeryName are met")
     }
 }

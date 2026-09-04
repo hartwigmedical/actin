@@ -101,7 +101,7 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCategoriesToIgnore.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Inconclusive if there was any prior cancer treatment because of trial participation"
+            "Undetermined if trial treatment in provided treatments included cancer treatment"
         )
     }
 }

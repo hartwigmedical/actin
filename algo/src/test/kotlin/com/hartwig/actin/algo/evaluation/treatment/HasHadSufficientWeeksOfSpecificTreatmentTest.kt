@@ -88,7 +88,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "treatment 1 in provided treatments but unknown nb of weeks"
+            "Treatment 1 in provided treatments but unknown nb of weeks"
         )
     }
 
@@ -99,7 +99,7 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "treatment 1 for at least 6 weeks in provided treatments"
+            "Treatment 1 for at least 6 weeks in provided treatments"
         )
     }
 

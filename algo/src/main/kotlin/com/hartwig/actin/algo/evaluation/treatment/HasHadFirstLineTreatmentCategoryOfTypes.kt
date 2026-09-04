@@ -9,6 +9,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasHadFirstLineTreatmentCategoryOfTypes : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if certain treatment as first-line treatment in provided treatments")
+        return EvaluationFactory.undetermined("Undetermined history of certain treatment as first-line treatment based on provided treatments")
     }
 }

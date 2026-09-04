@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsEligibleForLocoRegionalTherapy : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Potential availability for loco-regional therapy undetermined")
+        return EvaluationFactory.undetermined("Undetermined whether requirements for loco-regional therapy are met")
     }
 }

@@ -30,7 +30,7 @@ class HasExtracranialMetastases : EvaluationFunction {
             }
 
             uncategorizedLesions.isNotEmpty() || anyCategorizedLesionUnknown -> {
-                EvaluationFactory.undetermined("Undetermined presence of extracranial metastases based on provided lesions")
+                EvaluationFactory.undetermined("Undetermined extracranial metastases based on provided lesions")
             }
 
             else -> {

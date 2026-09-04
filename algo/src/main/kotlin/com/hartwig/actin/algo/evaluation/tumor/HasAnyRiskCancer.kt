@@ -10,7 +10,7 @@ class HasAnyRiskCancer(private val risks: List<String>) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Undetermined presence of ${Format.concatLowercaseWithCommaAndOr(risks)} risk cancer"
+            "Undetermined if cancer is ${Format.concatLowercaseWithCommaAndOr(risks)} risk"
         )
     }
 }

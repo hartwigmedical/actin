@@ -33,7 +33,7 @@ class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
             }
 
             ecgs.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass("ECG abnormalities present ($aberrations)")
+                EvaluationFactory.recoverablePass("ECG abnormalities provided ($aberrations)")
             }
 
             cardiacArrhythmiaComorbidities.isNotEmpty() -> {

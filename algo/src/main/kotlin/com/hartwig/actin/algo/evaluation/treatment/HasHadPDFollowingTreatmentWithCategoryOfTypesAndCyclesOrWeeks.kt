@@ -64,19 +64,19 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS in treatmentEvaluations -> {
-                recoverableUndetermined("${treatment()} in provided treatments but uncertain if there has been PD")
+                recoverableUndetermined("${treatment(true)} in provided treatments but uncertain if there has been PD")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_CYCLES in treatmentEvaluations -> {
-                recoverableUndetermined("${treatment()} in provided treatments but uncertain if there has been PD & unknown nr of cycles")
+                recoverableUndetermined("${treatment(true)} in provided treatments but uncertain if there has been PD & unknown nr of cycles")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_UNCLEAR_PD_STATUS_AND_UNCLEAR_WEEKS in treatmentEvaluations -> {
-                recoverableUndetermined("${treatment()} in provided treatments but uncertain if there has been PD & unclear nr of weeks")
+                recoverableUndetermined("${treatment(true)} in provided treatments but uncertain if there has been PD & unclear nr of weeks")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                undetermined("Undetermined if provided treatment included ${treatment()}")
+                undetermined("Undetermined history of ${treatment(false)} based on provided treatments")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT_WITH_PD_AND_INSUFFICIENT_CYCLES in treatmentEvaluations -> {
@@ -94,7 +94,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "${treatment()} with PD$suffix in provided treatments"
+        return "${treatment(true)} with PD$suffix in provided treatments"
     }
 
     private fun hasNoPDAfterMessage(suffix: String = ""): String {
@@ -102,7 +102,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
     }
 
     private fun hasNoTreatmentMessage(suffix: String = ""): String {
-        return "No ${treatment()} with PD$suffix"
+        return "No ${treatment(false)} with PD$suffix"
     }
 
     private fun suffix(): String = when {
@@ -111,9 +111,9 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeks(
         else -> " for at least $minWeeks weeks"
     }
 
-    private fun treatment(): String {
-        return "${Format.concatItemsWithOr(types)} ${category.display()} treatment"
-    }
+    private fun treatment(uppercase: Boolean): String =
+        "${Format.concatItemsWithOr(types)} ${category.display()} treatment"
+            .let { if (uppercase) it.replaceFirstChar(Char::uppercase) else it }
 
     private enum class PDFollowingTreatmentEvaluation {
         HAS_HAD_TREATMENT_WITH_PD_AND_CYCLES_OR_WEEKS,

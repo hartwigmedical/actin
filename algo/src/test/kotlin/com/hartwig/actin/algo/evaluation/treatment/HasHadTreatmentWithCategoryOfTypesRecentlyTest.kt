@@ -84,7 +84,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "targeted therapy treatment in provided treatments within requested time frame"
+            "Targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -104,7 +104,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "targeted therapy treatment in provided treatments but inconclusive if within requested time frame"
+            "Targeted therapy treatment in provided treatments but inconclusive if within requested time frame"
         )
     }
 
@@ -141,7 +141,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "targeted therapy treatment in provided treatments within requested time frame"
+            "Targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -232,7 +232,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             EvaluationResult.UNDETERMINED,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
             "HER2 antibody targeted therapy treatment in provided treatments but inconclusive if within requested time frame",
-            "targeted therapy treatment in provided treatments but inconclusive if within requested time frame"
+            "Targeted therapy treatment in provided treatments but inconclusive if within requested time frame"
         )
     }
 
@@ -262,7 +262,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             EvaluationResult.PASS,
             withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)),
             "HER2 antibody targeted therapy treatment in provided treatments within requested time frame",
-            "targeted therapy treatment in provided treatments within requested time frame"
+            "Targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 

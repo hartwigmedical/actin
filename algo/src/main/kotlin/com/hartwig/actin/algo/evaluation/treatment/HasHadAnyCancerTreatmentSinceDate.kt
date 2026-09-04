@@ -43,20 +43,21 @@ class HasHadAnyCancerTreatmentSinceDate(
 
         val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
         val systemicPrefix = if (onlySystemicTreatments) "systemic " else ""
+        val systemicPrefixStart = if (onlySystemicTreatments) "Systemic anti-cancer" else "Anti-cancer"
 
         val ignoringString = if (typesToIgnore.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(typesToIgnore)}" else ""
 
         return when {
             effectiveTreatmentHistory.any { certainTreatmentSinceMinDate(it, minDate) } -> {
-                EvaluationFactory.pass("${systemicPrefix}anti-cancer therapy within the last $monthsAgo months in provided treatments")
+                EvaluationFactory.pass("$systemicPrefixStart therapy within the last $monthsAgo months in provided treatments")
             }
 
             effectiveTreatmentHistory.any { it.isTrial } || record.medications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined("Inconclusive if there was any prior ${systemicPrefix}cancer treatment because of trial participation")
+                EvaluationFactory.undetermined("Undetermined if trial treatment in provided treatments included ${systemicPrefix}cancer treatment")
             }
 
             effectiveTreatmentHistory.any { potentialTreatmentSinceMinDate(it, minDate) } -> {
-                EvaluationFactory.undetermined("${systemicPrefix}anti-cancer therapy in provided treatments but undetermined if in the last $monthsAgo months (date unknown)")
+                EvaluationFactory.undetermined("$systemicPrefixStart therapy in provided treatments but undetermined if in the last $monthsAgo months (date unknown)")
             }
 
             effectiveTreatmentHistory.isEmpty() -> {

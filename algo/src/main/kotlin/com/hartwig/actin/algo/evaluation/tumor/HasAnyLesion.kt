@@ -14,14 +14,14 @@ class HasAnyLesion: EvaluationFunction {
             tumor.hasConfirmedLesions() -> EvaluationFactory.pass("At least one lesion in provided lesions")
 
             tumor.hasSuspectedLesions() -> EvaluationFactory.warn(
-                "Only suspected lesions in provided lesions - undetermined if lesions are present"
+                "Undetermined if lesions are present based on provided lesions (only suspected lesions)"
             )
 
             with(tumor) { (confirmedCategoricalLesionList().any { it == null } || otherLesions == null) } -> {
                 EvaluationFactory.undetermined("Undetermined presence of lesions based on provided lesions")
             }
 
-            else -> EvaluationFactory.fail("No lesions present")
+            else -> EvaluationFactory.fail("No lesions")
         }
     }
 }

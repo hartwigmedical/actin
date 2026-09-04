@@ -16,7 +16,7 @@ class HasHadLimitedSystemicTreatments(private val maxSystemicTreatments: Int) : 
             }
 
             minSystemicCount <= maxSystemicTreatments -> {
-                EvaluationFactory.undetermined("Undetermined if more than $maxSystemicTreatments systemic treatments based on provided treatments")
+                EvaluationFactory.undetermined("Undetermined if provided treatments include more than $maxSystemicTreatments systemic treatments")
             }
 
             else -> {

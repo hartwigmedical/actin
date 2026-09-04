@@ -172,8 +172,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             priorCancerTreatment,
-            "anti-cancer therapy in provided treatments but undetermined if in the last $MONTHS_AGO months (date unknown)",
-            "systemic anti-cancer therapy in provided treatments but undetermined if in the last $MONTHS_AGO months (date unknown)"
+            "Anti-cancer therapy in provided treatments but undetermined if in the last $MONTHS_AGO months (date unknown)",
+            "Systemic anti-cancer therapy in provided treatments but undetermined if in the last $MONTHS_AGO months (date unknown)"
         )
     }
 
@@ -183,8 +183,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             WashoutTestFactory.withMedications(medications),
-            "Inconclusive if there was any prior cancer treatment because of trial participation",
-            "Inconclusive if there was any prior systemic cancer treatment because of trial participation"
+            "Undetermined if trial treatment in provided treatments included cancer treatment",
+            "Undetermined if trial treatment in provided treatments included systemic cancer treatment"
         )
     }
 
@@ -212,8 +212,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "anti-cancer therapy within the last $MONTHS_AGO months in provided treatments",
-            "systemic anti-cancer therapy within the last $MONTHS_AGO months in provided treatments"
+            "Anti-cancer therapy within the last $MONTHS_AGO months in provided treatments",
+            "Systemic anti-cancer therapy within the last $MONTHS_AGO months in provided treatments"
         )
     }
 
@@ -235,8 +235,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "anti-cancer therapy within the last 6 months in provided treatments",
-            "systemic anti-cancer therapy within the last 6 months in provided treatments"
+            "Anti-cancer therapy within the last 6 months in provided treatments",
+            "Systemic anti-cancer therapy within the last 6 months in provided treatments"
         )
     }
 
@@ -261,8 +261,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "anti-cancer therapy within the last 6 months in provided treatments",
-            "systemic anti-cancer therapy within the last 6 months in provided treatments"
+            "Anti-cancer therapy within the last 6 months in provided treatments",
+            "Systemic anti-cancer therapy within the last 6 months in provided treatments"
         )
     }
 
@@ -285,8 +285,8 @@ class HasHadAnyCancerTreatmentSinceDateTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             priorCancerTreatment,
-            "anti-cancer therapy within the last 6 months in provided treatments",
-            "systemic anti-cancer therapy within the last 6 months in provided treatments"
+            "Anti-cancer therapy within the last 6 months in provided treatments",
+            "Systemic anti-cancer therapy within the last 6 months in provided treatments"
         )
     }
 

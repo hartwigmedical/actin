@@ -35,7 +35,7 @@ class HasActiveInfection(
 
         return when {
             infectionStatus?.hasActiveInfection == true -> {
-                EvaluationFactory.recoverablePass("Presence of active infection (${description(infectionStatus)})")
+                EvaluationFactory.recoverablePass("Active infection (${description(infectionStatus)}) in provided infections")
             }
 
             currentlyUsesAntimicrobials -> {
@@ -54,7 +54,7 @@ class HasActiveInfection(
             }
 
             else -> {
-                EvaluationFactory.fail("No active infection present")
+                EvaluationFactory.fail("No active infection provided")
             }
         }
     }

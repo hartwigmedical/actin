@@ -38,8 +38,8 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(privat
             )
 
             treatmentMatches.any { (match, cycles) -> match == null || (match && cycles == null) } -> EvaluationFactory.undetermined(
-                "Undetermined if chemoradiotherapy with $typeString chemotherapy" +
-                        minCyclesString("and at least $minCycles cycles") + " in provided treatments"
+                "Undetermined history of chemoradiotherapy with $typeString chemotherapy" +
+                        minCyclesString("and at least $minCycles cycles") + " based on provided treatments"
             )
 
             else -> EvaluationFactory.fail("No chemoradiotherapy with $typeString chemotherapy in provided treatments")

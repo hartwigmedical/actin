@@ -129,7 +129,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments with PD but for less than 6 weeks"
+            "Combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments with PD but for less than 6 weeks"
         )
     }
 
@@ -142,7 +142,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "combined therapy with target drug and chemotherapy in provided treatments but uncertain if there has been PD"
+            "Combined therapy with target drug and chemotherapy in provided treatments but uncertain if there has been PD"
         )
     }
 
@@ -160,7 +160,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "combined therapy with target drug and chemotherapy in provided treatments with PD but unknown nr of weeks"
+            "Combined therapy with target drug and chemotherapy in provided treatments with PD but unknown nr of weeks"
         )
     }
 
@@ -173,7 +173,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy based on provided treatments"
+            "Undetermined history of combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy based on provided treatments"
         )
     }
 
@@ -217,7 +217,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "combined therapy with target drug and chemotherapy in provided treatments with PD for at least 6 weeks"
+            "Combined therapy with target drug and chemotherapy in provided treatments with PD for at least 6 weeks"
         )
     }
 
@@ -237,7 +237,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "combined therapy with target drug and chemotherapy in provided treatments with PD for at least 6 weeks"
+            "Combined therapy with target drug and chemotherapy in provided treatments with PD for at least 6 weeks"
         )
     }
 
@@ -257,7 +257,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "combined therapy with target drug and chemotherapy in provided treatments with PD for at least 6 weeks"
+            "Combined therapy with target drug and chemotherapy in provided treatments with PD for at least 6 weeks"
         )
     }
 
@@ -281,7 +281,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "combined therapy with target drug and HER2 antibody chemotherapy in provided treatments with PD for at least 6 weeks"
+            "Combined therapy with target drug and HER2 antibody chemotherapy in provided treatments with PD for at least 6 weeks"
         )
     }
 
@@ -298,7 +298,7 @@ class HasHadPDFollowingSpecificDrugCombinedWithCategoryAndTypesAndMinimumWeeksTe
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments with PD for at least 6 weeks"
+            "Combined therapy with target drug and HER2 antibody and HER3 antibody chemotherapy in provided treatments with PD for at least 6 weeks"
         )
     }
 }

@@ -94,7 +94,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionEvaluatingOsimertinib.evaluate(record),
-            "On-label Osimertinib available"
+            "Requirements for on-label Osimertinib are met"
         )
     }
 
@@ -116,7 +116,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionEvaluatingOsimertinibWithIntent.evaluate(record),
-            "Undetermined availability of on-label curative Osimertinib"
+            "Undetermined whether requirements for on-label curative Osimertinib are met"
         )
     }
 
@@ -135,7 +135,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionEvaluatingOsimertinib.evaluate(record),
-            "On-label Osimertinib not available"
+            "Requirements for on-label Osimertinib are not met"
         )
     }
 
@@ -153,7 +153,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionEvaluatingOsimertinib.evaluate(record),
-            "On-label Osimertinib not available"
+            "Requirements for on-label Osimertinib are not met"
         )
     }
 
@@ -172,7 +172,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionEvaluatingOsimertinib.evaluate(record),
-            "On-label Osimertinib not available"
+            "Requirements for on-label Osimertinib are not met"
         )
     }
 
@@ -205,7 +205,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionEvaluatingOsimertinib.evaluate(record),
-            "On-label Osimertinib available"
+            "Requirements for on-label Osimertinib are met"
         )
     }
 
@@ -220,7 +220,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionEvaluatingPembrolizumab.evaluate(record),
-            "On-label Pembrolizumab available"
+            "Requirements for on-label Pembrolizumab are met"
         )
     }
 
@@ -239,7 +239,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionEvaluatingPembrolizumab.evaluate(record),
-            "On-label Pembrolizumab not available"
+            "Requirements for on-label Pembrolizumab are not met"
         )
     }
 
@@ -262,7 +262,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionEvaluatingPembrolizumab.evaluate(record),
-            "Undetermined availability of on-label Pembrolizumab"
+            "Undetermined whether requirements for on-label Pembrolizumab are met"
         )
     }
 
@@ -274,7 +274,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionEvaluatingPembrolizumab.evaluate(record),
-            "Undetermined availability of on-label Pembrolizumab"
+            "Undetermined whether requirements for on-label Pembrolizumab are met"
         )
     }
 
@@ -297,7 +297,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionEvaluatingPembrolizumab.evaluate(colorectalCancerPatient),
-            "Undetermined availability of on-label Pembrolizumab"
+            "Undetermined whether requirements for on-label Pembrolizumab are met"
         )
     }
 
@@ -310,7 +310,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(colorectalCancerPatient),
-            "On-label Treatment not available"
+            "Requirements for on-label Treatment are not met"
         )
     }
 
@@ -322,7 +322,7 @@ class IsEligibleForOnLabelTreatmentTest {
             function.evaluate(
                 withTreatmentHistory(listOf(treatmentHistoryEntry(setOf(targetTreatment, treatment("other", true)))))
             ),
-            "On-label Treatment might not be available since this treatment is in provided treatments"
+            "Requirements for on-label Treatment might not be met since treatment is in provided treatments"
         )
     }
 
@@ -332,7 +332,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Undetermined availability of on-label Treatment"
+            "Undetermined whether requirements for on-label Treatment are met"
         )
     }
 
@@ -343,7 +343,7 @@ class IsEligibleForOnLabelTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(treatments)),
-            "Undetermined availability of on-label Treatment"
+            "Undetermined whether requirements for on-label Treatment are met"
         )
     }
 
@@ -354,8 +354,8 @@ class IsEligibleForOnLabelTreatmentTest {
         val evaluationWithoutIntent = function.evaluate(withTreatmentHistory(treatments))
         val evaluationWithIntent = functionWithIntent.evaluate(withTreatmentHistory(treatments))
 
-        assertThat(evaluationWithoutIntent.undeterminedMessagesStrings()).containsExactly("Undetermined availability of on-label Treatment")
-        assertThat(evaluationWithIntent.undeterminedMessagesStrings()).containsExactly("Undetermined availability of on-label curative Treatment")
+        assertThat(evaluationWithoutIntent.undeterminedMessagesStrings()).containsExactly("Undetermined whether requirements for on-label Treatment are met")
+        assertThat(evaluationWithIntent.undeterminedMessagesStrings()).containsExactly("Undetermined whether requirements for on-label curative Treatment are met")
     }
 
     private fun standardOfCareCannotBeEvaluatedForPatient() {

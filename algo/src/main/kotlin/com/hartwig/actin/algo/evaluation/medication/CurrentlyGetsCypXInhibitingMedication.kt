@@ -22,25 +22,33 @@ class CurrentlyGetsCypXInhibitingMedication(private val selector: MedicationSele
         return when {
             cypInhibitorsReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "CYP$termToFind inhibiting medication use (${concatLowercaseWithCommaAndAnd(cypInhibitorsReceived)})"
+                    "Active CYP$termToFind inhibiting medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            cypInhibitorsReceived
+                        )
+                    })"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
                 EvaluationFactory.undetermined(
-                    "CYP$termToFind inhibiting medication use undetermined"
+                    "CYP$termToFind inhibiting medication undetermined"
                 )
             }
 
             cypInhibitorsPlanned.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Planned CYP$termToFind inhibiting medication use (${concatLowercaseWithCommaAndAnd(cypInhibitorsPlanned)})"
+                    "Planned CYP$termToFind inhibiting medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            cypInhibitorsPlanned
+                        )
+                    })"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "No CYP$termToFind inhibiting medication use"
+                    "No active CYP$termToFind inhibiting medication in provided medications"
                 )
             }
         }

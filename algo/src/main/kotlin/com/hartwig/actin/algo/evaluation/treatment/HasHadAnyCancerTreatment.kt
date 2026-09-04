@@ -35,7 +35,7 @@ class HasHadAnyCancerTreatment(
             }
 
             hasHadTrial -> {
-                EvaluationFactory.undetermined("Inconclusive if there was any prior cancer treatment because of trial participation")
+                EvaluationFactory.undetermined("Undetermined if trial treatment in provided treatments included cancer treatment")
             }
 
             else -> {

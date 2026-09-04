@@ -24,7 +24,7 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
 
         return when {
             anthracyclineSummary.hasSpecificMatch() -> {
-                EvaluationFactory.undetermined("Exact dosage of received anthracycline chemotherapy undetermined")
+                EvaluationFactory.undetermined("Exact dosage of anthracycline chemotherapy in provided treatments undetermined")
             }
 
             anthracyclineSummary.hasApproximateMatch() && hasSuspectPrimaryTumor -> {
@@ -42,7 +42,7 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
             }
 
             else -> {
-                EvaluationFactory.pass("Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)")
+                EvaluationFactory.pass("Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)")
             }
         }
     }

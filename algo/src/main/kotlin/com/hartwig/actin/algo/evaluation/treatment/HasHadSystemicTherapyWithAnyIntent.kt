@@ -29,7 +29,7 @@ class HasHadSystemicTherapyWithAnyIntent(
         } ?: systemicTreatments.groupBy { true }
 
         val intentsLowercase = intents?.let { " ${concatItemsWithOr(it).lowercase()}" } ?: ""
-        val intentsPrefix = intents?.let { "${concatItemsWithOr(it).lowercase()} " } ?: ""
+        val intentsPrefix = intents?.let { "${concatItemsWithOr(it)} " } ?: ""
 
         return when {
             refDate == null && matchingTreatments.containsKey(true) -> {
@@ -63,9 +63,9 @@ class HasHadSystemicTherapyWithAnyIntent(
 
             else -> EvaluationFactory.fail(
                 if (evaluateWithinWeeks == true)
-                    "All$intentsLowercase systemic therapy is administered more than $weeks weeks ago"
+                    "None of the$intentsLowercase systemic therapy in provided treatments is within $weeks weeks"
                 else
-                    "All$intentsLowercase systemic therapy is not administered at least $weeks weeks ago"
+                    "All$intentsLowercase systemic therapy in provided treatments is within $weeks weeks"
             )
         }
     }

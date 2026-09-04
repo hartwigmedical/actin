@@ -19,7 +19,7 @@ class HasHadSomeSpecificTreatmentsWithDoseReduction(private val treatment: Treat
             }
 
             EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.undetermined("Undetermined if ${treatmentName.lowercase()} in provided treatments and if there may have been a dose reduction")
+                EvaluationFactory.undetermined("Undetermined history of ${treatmentName.lowercase()} based on provided treatments and if there may have been a dose reduction")
             }
 
             EvaluationResult.FAIL -> EvaluationFactory.fail("$treatmentName not in provided treatments hence no dose reduction")

@@ -16,11 +16,11 @@ class HasHadPDFollowingSpecificTreatment(private val treatments: List<Treatment>
 
         return if (treatmentEvaluation.matchingTreatmentsWithPD.isNotEmpty()) {
             EvaluationFactory.pass(
-                "PD after receiving ${concatItemsWithAnd(treatmentEvaluation.matchingTreatmentsWithPD)} treatment based on provided treatments"
+                "PD after ${concatItemsWithAnd(treatmentEvaluation.matchingTreatmentsWithPD)} treatment based on provided treatments"
             )
         } else if (treatmentEvaluation.includesTrial) {
             EvaluationFactory.undetermined(
-                "Undetermined if trial treatment in provided treatments contained ${
+                "Undetermined if trial treatment in provided treatments included ${
                     concatItemsWithAnd(
                         treatments
                     )

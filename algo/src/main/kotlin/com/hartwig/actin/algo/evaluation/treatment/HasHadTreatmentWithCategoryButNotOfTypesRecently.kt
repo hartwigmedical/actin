@@ -50,7 +50,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
 
         return when {
             treatmentAssessment.hasHadValidTreatment || hadCancerMedicationWithCategoryButNotOfTypes -> {
-                EvaluationFactory.pass("${category.display()} treatment in provided treatments ignoring $ignoringTypesList")
+                EvaluationFactory.pass(
+                    "${
+                        category.display().replaceFirstChar { it.uppercase() }
+                    } treatment in provided treatments ignoring $ignoringTypesList"
+                )
             }
 
             treatmentAssessment.hasPotentiallyValidTreatment -> {
@@ -58,7 +62,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecently(
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("${category.display()} treatment in provided treatments ignoring $ignoringTypesList but inconclusive date")
+                EvaluationFactory.undetermined(
+                    "${
+                        category.display().replaceFirstChar { it.uppercase() }
+                    } treatment in provided treatments ignoring $ignoringTypesList but inconclusive date"
+                )
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || activeOrRecentlyStoppedMedications?.any { it.isTrialMedication } == true -> {

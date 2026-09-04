@@ -62,7 +62,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadBrainRadiationTherapy().evaluate(history),
-            "brain and/or CNS metastases are present and radiotherapy in provided treatments - undetermined if brain radiation therapy"
+            "brain and/or CNS metastases and radiotherapy in provided treatments - undetermined if brain radiation therapy"
         )
     }
 
@@ -76,7 +76,7 @@ class HasHadBrainRadiationTherapyTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasHadBrainRadiationTherapy().evaluate(history),
-            "suspected brain and/or CNS metastases are present and radiotherapy in provided treatments - undetermined if brain radiation therapy"
+            "Suspected brain and/or CNS metastases and radiotherapy in provided treatments - undetermined if brain radiation therapy"
         )
     }
 

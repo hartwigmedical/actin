@@ -41,10 +41,11 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
         }.fold(TreatmentAssessment()) { acc, element -> acc.combineWith(element) }
 
         val typesAndCategoryString = listOfNotNull(types?.let(::concatItemsWithOr), category.display()).joinToString(" ")
+        val typesAndCategoryStringStart = typesAndCategoryString.replaceFirstChar { it.uppercase() }
 
         return when {
             treatmentAssessment.hasHadValidTreatment -> {
-                EvaluationFactory.pass("$typesAndCategoryString treatment in provided treatments within requested time frame")
+                EvaluationFactory.pass("$typesAndCategoryStringStart treatment in provided treatments within requested time frame")
             }
 
             treatmentAssessment.hasPotentiallyValidTreatment -> {
@@ -52,7 +53,7 @@ class HasHadTreatmentWithCategoryOfTypesRecently(
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("$typesAndCategoryString treatment in provided treatments but inconclusive if within requested time frame")
+                EvaluationFactory.undetermined("$typesAndCategoryStringStart treatment in provided treatments but inconclusive if within requested time frame")
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate -> {

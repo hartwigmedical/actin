@@ -23,7 +23,8 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
         }
 
         val mostRecentAntiCancerDrug = priorAntiCancerDrugs.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
-        val typeString = types?.let { "${types.joinToString { it.display() }} " }.orEmpty()
+        val typeString =
+            types?.let { "${types.joinToString { it.display() }} " }.orEmpty().replaceFirstChar { it.uppercase() }
 
         return when {
             priorAntiCancerDrugs.isEmpty() -> {
@@ -35,7 +36,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
             }
 
             types == null && mostRecentAntiCancerDrug?.categories()?.contains(category) == true -> {
-                EvaluationFactory.pass("${category.display()} in provided treatments as most recent treatment line")
+                EvaluationFactory.pass(
+                    "${
+                        category.display().replaceFirstChar { it.uppercase() }
+                    } in provided treatments as most recent treatment line"
+                )
             }
 
             treatmentMatch.any { it.startYear == null } -> {
@@ -47,7 +52,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecent(
             }
 
             else -> {
-                EvaluationFactory.fail("No $typeString${category.display()} in provided treatments")
+                EvaluationFactory.fail("No ${typeString.lowercase()}${category.display()} in provided treatments")
             }
         }
     }

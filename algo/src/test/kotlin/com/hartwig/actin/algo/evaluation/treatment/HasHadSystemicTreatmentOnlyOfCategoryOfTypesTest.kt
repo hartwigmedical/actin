@@ -65,7 +65,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
                     types = setOf(DrugType.ANTI_ANDROGEN)
                 )
             ),
-            "Treatments other than anti-androgen chemotherapy are present in the provided treatments."
+            "Not only anti-androgen chemotherapy treatment in the provided treatments"
         )
     }
 
@@ -84,7 +84,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = setOf(DrugType.ALKYLATING_AGENT))),
-            "Treatments other than anti-androgen chemotherapy are present in the provided treatments."
+            "Not only anti-androgen chemotherapy treatment in the provided treatments"
         )
     }
 

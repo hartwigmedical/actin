@@ -58,7 +58,7 @@ class HasHadAnySurgeryAfterSpecificDate(private val minDate: LocalDate, private 
             }
 
             record.surgeries.isNotEmpty() and record.surgeries.any { it.endDate == null } -> {
-                EvaluationFactory.undetermined("Undetermined when surgery occurred")
+                EvaluationFactory.undetermined("Date of surgery undetermined")
             }
 
             SurgeryEvent.HAS_CANCELLED_SURGERY in summary -> {

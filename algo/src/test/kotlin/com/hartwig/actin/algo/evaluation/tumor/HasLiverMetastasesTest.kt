@@ -21,7 +21,7 @@ class HasLiverMetastasesTest {
     @Test
     fun shouldPassWhenHasLiverLesionsIsTrue() {
         val pass = function.evaluate(TumorTestFactory.withLiverLesions(true))
-        assertEvaluation(EvaluationResult.PASS, pass, "liver metastases in provided lesions")
+        assertEvaluation(EvaluationResult.PASS, pass, "Liver metastases in provided lesions")
     }
 
     @Test

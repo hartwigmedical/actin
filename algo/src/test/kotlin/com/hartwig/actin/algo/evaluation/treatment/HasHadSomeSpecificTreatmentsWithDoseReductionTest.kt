@@ -33,7 +33,7 @@ class HasHadSomeSpecificTreatmentsWithDoseReductionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Undetermined if treat1 in provided treatments and if there may have been a dose reduction"
+            "Undetermined history of treat1 based on provided treatments and if there may have been a dose reduction"
         )
     }
 

@@ -83,7 +83,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if provided treatment included HER2 antibody targeted therapy treatment"
+            "Undetermined history of HER2 antibody targeted therapy treatment based on provided treatments"
         )
     }
 
@@ -134,7 +134,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if provided treatment included HER2 antibody targeted therapy treatment"
+            "Undetermined history of HER2 antibody targeted therapy treatment based on provided treatments"
         )
     }
 

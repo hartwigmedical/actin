@@ -18,7 +18,7 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent : EvaluationFunction
             EvaluationFactory.pass("Locoregional therapy with curative intent in provided treatments")
         }
         else {
-            EvaluationFactory.undetermined("Undetermined if locoregional therapy with curative intent based on provided treatments")
+            EvaluationFactory.undetermined("Undetermined history of locoregional therapy with curative intent based on provided treatments")
         }
 
     }

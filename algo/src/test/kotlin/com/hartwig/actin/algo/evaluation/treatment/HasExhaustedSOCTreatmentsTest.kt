@@ -192,7 +192,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Undetermined if SOC exhausted (undefined chemotherapy in history)"
+            "Undetermined if SOC exhausted (undefined chemotherapy in provided history)"
         )
     }
 
@@ -303,7 +303,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "SOC is potentially exhausted - remaining options (Capecitabine+Oxaliplatin) may not have been given due to drug intolerance"
+            "SOC is potentially exhausted - remaining options (Capecitabine+Oxaliplatin) possibly due to drug intolerance"
         )
     }
 

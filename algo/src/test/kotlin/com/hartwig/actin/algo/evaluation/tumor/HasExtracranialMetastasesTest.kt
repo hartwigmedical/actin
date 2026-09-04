@@ -47,7 +47,7 @@ class HasExtracranialMetastasesTest {
     fun `Should evaluate to undetermined when only uncategorized lesions with uncertain extracranial location present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("gland"))),
-            "Undetermined presence of extracranial metastases based on provided lesions"
+            "Undetermined extracranial metastases based on provided lesions"
         )
     }
 
@@ -55,7 +55,7 @@ class HasExtracranialMetastasesTest {
     fun `Should evaluate to undetermined when only uncategorized metastases present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("unknown site"))),
-            "Undetermined presence of extracranial metastases based on provided lesions"
+            "Undetermined extracranial metastases based on provided lesions"
         )
     }
 
@@ -75,7 +75,7 @@ class HasExtracranialMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Undetermined presence of extracranial metastases based on provided lesions"
+            "Undetermined extracranial metastases based on provided lesions"
         )
     }
 

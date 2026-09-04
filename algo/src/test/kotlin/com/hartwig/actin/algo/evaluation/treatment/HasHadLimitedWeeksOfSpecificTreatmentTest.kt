@@ -63,7 +63,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithMaxWeeks.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "treatment 1 treatment in provided treatments but for more than 6 weeks"
+            "Treatment 1 treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -121,7 +121,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "treatment 1 in provided treatments but unknown nb of weeks"
+            "Treatment 1 in provided treatments but unknown nb of weeks"
         )
     }
 
@@ -131,7 +131,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "treatment 1 in provided treatments"
+            "Treatment 1 in provided treatments"
         )
     }
 
@@ -142,7 +142,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithMaxWeeks.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "treatment 1 for less than 6 weeks in provided treatments"
+            "Treatment 1 for less than 6 weeks in provided treatments"
         )
     }
 
@@ -162,7 +162,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
                     )
                 )
             ),
-            "treatment 1 treatment in provided treatments but for more than 6 weeks"
+            "Treatment 1 treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -182,7 +182,7 @@ class HasHadLimitedWeeksOfSpecificTreatmentTest {
                     )
                 )
             ),
-            "treatment 1 treatment in provided treatments but for more than 6 weeks"
+            "Treatment 1 treatment in provided treatments but for more than 6 weeks"
         )
     }
 

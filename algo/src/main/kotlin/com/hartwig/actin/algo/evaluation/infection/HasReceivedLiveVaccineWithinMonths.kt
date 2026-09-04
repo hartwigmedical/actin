@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasReceivedLiveVaccineWithinMonths(private val minMonths: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Live vaccine use within $minMonths months undetermined based on provided history")
+        return EvaluationFactory.undetermined("Undetermined history of live vaccine within $minMonths months based on provided history")
     }
 }

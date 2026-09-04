@@ -91,7 +91,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Undetermined if at least 2 line(s) of HER2 antibody targeted therapy based on provided treatments"
+            "Undetermined history of at least 2 line(s) of HER2 antibody targeted therapy based on provided treatments"
         )
     }
 
@@ -105,7 +105,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Undetermined if at least 2 line(s) of HER2 antibody targeted therapy based on provided treatments"
+            "Undetermined history of at least 2 line(s) of HER2 antibody targeted therapy based on provided treatments"
         )
     }
 

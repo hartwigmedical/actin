@@ -14,7 +14,7 @@ class IsNotEligibleForCurativeTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that curative treatment is not available"
+            "Assumed that requirements for curative treatment are not met"
         )
     }
 }

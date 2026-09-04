@@ -40,7 +40,11 @@ class HasHadAnySurgeryAfterSpecificDateTest {
 
     @Test
     fun `Should return undetermined with surgery without end date`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withSurgery(surgery(null))), "Undetermined when surgery occurred")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withSurgery(surgery(null))),
+            "Date of surgery undetermined"
+        )
     }
 
     @Test
