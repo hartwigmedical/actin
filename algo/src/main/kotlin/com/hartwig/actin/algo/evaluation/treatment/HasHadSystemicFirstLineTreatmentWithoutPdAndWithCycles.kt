@@ -34,8 +34,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCycles(
             hasMinCycles = targetTreatment?.treatmentHistoryDetails?.cycles?.let { it >= minCycles }
         )
 
-        val messageStartNegative = "No ${treatment.display()} "
-        val messageStartPositive = "${treatment.display()} "
+        val messageStartNegative = "No ${treatment.display()}"
+        val messageStartPositive = treatment.display()
         val asFirstLine = " as first-line treatment"
         val messageEnd = " without PD and with at least $minCycles cycles"
 
