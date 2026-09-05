@@ -32,7 +32,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistory(emptyList()),
-            "Has not received targeted therapy ignoring match"
+            "No targeted therapy in provided treatments ignoring match"
         )
     }
 
@@ -42,7 +42,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has not received targeted therapy ignoring match"
+            "No targeted therapy in provided treatments ignoring match"
         )
     }
 
@@ -52,7 +52,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received targeted therapy ignoring match"
+            "No targeted therapy in provided treatments ignoring match"
         )
     }
 
@@ -64,7 +64,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has not received targeted therapy ignoring match"
+            "No targeted therapy in provided treatments ignoring match"
         )
     }
 
@@ -74,7 +74,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.UNDETERMINED,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Undetermined if treatment received in previous trial included targeted therapy ignoring match"
+            "Undetermined if treatment from in previous trial included targeted therapy ignoring match"
         )
     }
 
@@ -88,12 +88,12 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received transplantation ignoring match"
+            "No transplantation in provided treatments ignoring match"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received transplantation ignoring match"
+            "No transplantation in provided treatments ignoring match"
         )
     }
 
@@ -110,7 +110,8 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)),
-            "Has received targeted therapy of types ALK inhibitor (1st gen) and ALK inhibitor (2nd gen) ignoring match", "Has received targeted therapy ignoring match"
+            "targeted therapy of types ALK inhibitor (1st gen) and ALK inhibitor (2nd gen) in provided treatments ignoring match",
+            "targeted therapy in provided treatments ignoring match"
         )
     }
 
@@ -120,8 +121,8 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         evaluateFunctions(
             EvaluationResult.PASS,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has received targeted therapy of types ALK inhibitor (1st gen) and ALK inhibitor (2nd gen) ignoring match",
-            "Has received targeted therapy ignoring match"
+            "targeted therapy of types ALK inhibitor (1st gen) and ALK inhibitor (2nd gen) in provided treatments ignoring match",
+            "targeted therapy in provided treatments ignoring match"
         )
     }
 

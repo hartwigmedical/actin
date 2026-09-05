@@ -31,7 +31,7 @@ class HasChildPughScoreTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(withOtherConditions(conditions)),
-            "Patient has liver cirrhosis - undetermined if Child-Pugh score A or B"
+            "Liver cirrhosis in provided conditions - undetermined if Child-Pugh score A or B"
         )
     }
 }

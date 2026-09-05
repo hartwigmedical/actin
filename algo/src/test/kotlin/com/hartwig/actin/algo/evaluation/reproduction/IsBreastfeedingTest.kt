@@ -14,7 +14,7 @@ class IsBreastfeedingTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient is not breastfeeding"
+            "Assumed no breastfeeding"
         )
     }
 }

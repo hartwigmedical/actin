@@ -40,24 +40,25 @@ class HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(
             record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
         val treatmentDesc = specificDrugCombinedWithCategoryAndTypesEvaluator.treatmentString()
+        val treatmentDescStart = treatmentDesc.replaceFirstChar { it.uppercase() }
         val cyclesString = minCycles?.let { " and at least $it cycles" } ?: ""
 
         return when {
             historyWithSpecificCombination.isNotEmpty() && line != null -> {
-                EvaluationFactory.undetermined("Has received $treatmentDesc but unknown if in line $line")
+                EvaluationFactory.undetermined("$treatmentDescStart in provided treatments but unknown if in line $line")
             }
 
-            true in hasSufficientCycles -> EvaluationFactory.pass("Has received $treatmentDesc$cyclesString")
+            true in hasSufficientCycles -> EvaluationFactory.pass("$treatmentDescStart$cyclesString in provided treatments")
 
-            false in hasSufficientCycles -> EvaluationFactory.warn("Has received $treatmentDesc but with less than $minCycles cycles")
+            false in hasSufficientCycles -> EvaluationFactory.warn("$treatmentDescStart in provided treatments but with less than $minCycles cycles")
 
-            null in hasSufficientCycles -> EvaluationFactory.undetermined("Undetermined if received $treatmentDesc$cyclesString")
+            null in hasSufficientCycles -> EvaluationFactory.undetermined("Undetermined history of $treatmentDesc$cyclesString based on provided treatments")
 
             hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
-                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc$cyclesString")
+                EvaluationFactory.undetermined("Undetermined history of $treatmentDesc$cyclesString based on provided treatments")
             }
 
-            else -> EvaluationFactory.fail("Has not received $treatmentDesc")
+            else -> EvaluationFactory.fail("No $treatmentDesc in provided treatments")
         }
     }
 }

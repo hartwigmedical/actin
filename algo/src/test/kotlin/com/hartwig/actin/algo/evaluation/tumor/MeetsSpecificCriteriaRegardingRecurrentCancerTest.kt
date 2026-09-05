@@ -12,7 +12,7 @@ class MeetsSpecificCriteriaRegardingRecurrentCancerTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             MeetsSpecificCriteriaRegardingRecurrentCancer().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if patient meets specific criteria regarding recurrent cancer"
+            "Undetermined if specific criteria regarding recurrent cancer are met"
         )
     }
 }

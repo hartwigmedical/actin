@@ -22,14 +22,14 @@ class HasTripleNegativeBreastCancerTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID))),
-            "Has no triple negative breast cancer"
+            "Cancer is not triple negative breast cancer"
         )
     }
 
     @Test
     fun `Should pass if tumor doid is triple negative breast cancer`() {
         val patient = TumorTestFactory.withDoids(setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Cancer is triple negative breast cancer")
     }
 
     @Test
@@ -41,7 +41,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create("HER2", "Negative")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Cancer is triple negative breast cancer")
     }
 
     @Test
@@ -53,7 +53,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create("HER2", "Low")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Cancer is triple negative breast cancer")
     }
 
     @Test
@@ -65,7 +65,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "ER", score = 0.0, scoreValueUnit = "%")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Cancer is triple negative breast cancer")
     }
 
     @Test
@@ -77,7 +77,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "ER", score = 0.0, scoreValueUnit = "%")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Cancer is triple negative breast cancer")
     }
 
     @Test
@@ -101,7 +101,11 @@ class HasTripleNegativeBreastCancerTest {
     fun `Should fail if if at least one of HER2 or PR or ER is positive`() {
         val patient =
             TumorTestFactory.withIhcTestsAndDoids(listOf(IhcTestFactory.create("HER2", "Positive")), setOf(DoidConstants.BREAST_CANCER_DOID))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient), "Has no triple negative breast cancer")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patient),
+            "Cancer is not triple negative breast cancer"
+        )
     }
 
     @Test
@@ -110,7 +114,11 @@ class HasTripleNegativeBreastCancerTest {
             listOf(IhcTestFactory.create("HER2", score = 3.0, scoreValueUnit = "+")),
             setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient), "Has no triple negative breast cancer")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patient),
+            "Cancer is not triple negative breast cancer"
+        )
     }
 
     @Test
@@ -216,7 +224,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "HER2", score = 0.0, scoreValueUnit = "+")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Cancer is triple negative breast cancer")
     }
 
     @Test
@@ -245,7 +253,11 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "HER2", score = 0.0, scoreValueUnit = "+")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient), "Has no triple negative breast cancer")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patient),
+            "Cancer is not triple negative breast cancer"
+        )
     }
 
     @Test

@@ -84,7 +84,11 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has positive HER2 IHC result")
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            evaluation,
+            "Positive HER2 IHC result in provided molecular data"
+        )
         assertThat(evaluation.inclusionMolecularEvents).isEqualTo(setOf(MolecularEvent("IHC HER2 positive")))
     }
 
@@ -98,7 +102,11 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no positive HER2 IHC result")
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No positive HER2 IHC result in provided molecular data"
+        )
     }
 
     @Test
@@ -111,7 +119,11 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no positive HER2 IHC result")
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No positive HER2 IHC result in provided molecular data"
+        )
     }
 
     @Test
@@ -208,7 +220,7 @@ class HasHER2ExpressionByIhcTest {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "Has no positive HER2 IHC result (but ERBB2 amplification detected in DNA)"
+            "No positive HER2 IHC result in provided molecular data (but ERBB2 amplification detected in DNA)"
         )
     }
 
@@ -234,7 +246,11 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has negative HER2 IHC result")
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            evaluation,
+            "Negative HER2 IHC result in provided molecular data"
+        )
     }
 
     @Test
@@ -250,7 +266,11 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no negative HER2 IHC result")
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No negative HER2 IHC result in provided molecular data"
+        )
     }
 
     @Test
@@ -279,7 +299,7 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has low HER2 IHC result")
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Low HER2 IHC result in provided molecular data")
     }
 
     @Test
@@ -294,7 +314,11 @@ class HasHER2ExpressionByIhcTest {
                 )
             )
         )
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluation, "Has no low HER2 IHC result")
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
+            "No low HER2 IHC result in provided molecular data"
+        )
     }
 
     @Test
@@ -366,7 +390,11 @@ class HasHER2ExpressionByIhcTest {
         val evaluation = negativeFunction.evaluate(
             MolecularTestFactory.withIhcTests(listOf(IhcTestFactory.create(item = IHC_TEST_ITEM, score = 0.0)))
         )
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluation, "Has negative HER2 IHC result")
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            evaluation,
+            "Negative HER2 IHC result in provided molecular data"
+        )
     }
 
 }

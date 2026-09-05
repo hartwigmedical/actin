@@ -37,7 +37,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is platinum resistant"
+            "Platinum resistant disease"
         )
     }
 
@@ -55,7 +55,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is platinum resistant"
+            "Platinum resistant disease"
         )
     }
 
@@ -80,7 +80,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is platinum resistant"
+            "Platinum resistant disease"
         )
     }
 
@@ -97,7 +97,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum sensitive"
+            "Undetermined if platinum sensitive disease"
         )
     }
 
@@ -118,7 +118,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum sensitive"
+            "Undetermined if platinum sensitive disease"
         )
     }
 
@@ -129,7 +129,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum sensitive (no platinum treatment)"
+            "Undetermined if platinum sensitive disease (no platinum treatment)"
         )
     }
 
@@ -154,7 +154,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum sensitive"
+            "Undetermined if platinum sensitive disease"
         )
     }
 
@@ -171,7 +171,7 @@ class IsPlatinumSensitiveTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is platinum sensitive"
+            "Platinum sensitive disease"
         )
     }
 }

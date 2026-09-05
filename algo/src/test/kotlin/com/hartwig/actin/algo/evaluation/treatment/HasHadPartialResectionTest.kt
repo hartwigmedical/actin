@@ -15,7 +15,11 @@ class HasHadPartialResectionTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not had partial resection")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "No partial resection in provided treatments"
+        )
     }
 
     @Test
@@ -24,7 +28,7 @@ class HasHadPartialResectionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had partial resection"
+            "Partial resection in provided treatments"
         )
     }
 
@@ -34,7 +38,7 @@ class HasHadPartialResectionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))),
-            "Undetermined whether patient has had partial resection"
+            "Undetermined if resection in provided treatments was a partial resection"
         )
     }
 
@@ -44,7 +48,7 @@ class HasHadPartialResectionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))),
-            "Undetermined whether patient has had partial resection"
+            "Undetermined if resection in provided treatments was a partial resection"
         )
     }
 }

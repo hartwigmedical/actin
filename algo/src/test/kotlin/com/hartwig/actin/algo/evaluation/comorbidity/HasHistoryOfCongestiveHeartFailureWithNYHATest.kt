@@ -23,7 +23,7 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
                         )
                     )
                 ),
-                "Has history of congestive heart failure with at least NYHA class III"
+                "History of congestive heart failure with at least NYHA class III"
             )
         }
     }
@@ -39,7 +39,7 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
                     )
                 )
             ),
-            "Has history of congestive heart failure but undetermined if at least NYHA class III (NYHA unknown)"
+            "History of congestive heart failure - undetermined if at least NYHA class III (NYHA unknown)"
         )
     }
 

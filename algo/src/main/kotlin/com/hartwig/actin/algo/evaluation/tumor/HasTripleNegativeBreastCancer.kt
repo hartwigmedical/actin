@@ -37,11 +37,11 @@ class HasTripleNegativeBreastCancer(private val doidModel: DoidModel) : Evaluati
         ).all { evaluationPerReceptor[it] == BreastCancerReceptorEvaluation.NEGATIVE } && her2NegativeOrLow
 
         return when {
-            hasNoTripleNegativeBreastCancer -> EvaluationFactory.fail("Has no triple negative breast cancer")
+            hasNoTripleNegativeBreastCancer -> EvaluationFactory.fail("Cancer is not triple negative breast cancer")
 
             allReceptorsNegativeOrLow && erbb2Amplified -> EvaluationFactory.undetermined("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
 
-            allReceptorsNegativeOrHer2Low && !erbb2Amplified -> EvaluationFactory.pass("Has triple negative breast cancer")
+            allReceptorsNegativeOrHer2Low && !erbb2Amplified -> EvaluationFactory.pass("Cancer is triple negative breast cancer")
 
             allReceptorsNegativeOrLow -> EvaluationFactory.undetermined("Undetermined if IHC ER/PR low is considered triple negative breast cancer")
 

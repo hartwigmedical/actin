@@ -15,7 +15,11 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
 
     @Test
     fun shouldFailForEmptyTreatmentList() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())), "Not received adjuvant HER2 antibody")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(withTreatmentHistory(emptyList())),
+            "No adjuvant HER2 antibody in provided treatments"
+        )
     }
 
     @Test
@@ -25,7 +29,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             TreatmentCategory.IMMUNOTHERAPY,
             setOf(DrugType.ANTI_ANDROGEN),
             setOf(Intent.ADJUVANT),
-            "Not received adjuvant HER2 antibody"
+            "No adjuvant HER2 antibody in provided treatments"
         )
     }
 
@@ -36,7 +40,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             WARN_CATEGORY,
             MATCHING_TYPE_SET,
             emptySet(),
-            "Not received adjuvant HER2 antibody"
+            "No adjuvant HER2 antibody in provided treatments"
         )
     }
 
@@ -47,7 +51,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             WARN_CATEGORY,
             MATCHING_TYPE_SET,
             setOf(Intent.NEOADJUVANT),
-            "Not received adjuvant HER2 antibody"
+            "No adjuvant HER2 antibody in provided treatments"
         )
     }
 
@@ -58,7 +62,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             WARN_CATEGORY,
             setOf(DrugType.ANTI_TISSUE_FACTOR),
             setOf(Intent.ADJUVANT),
-            "Not received adjuvant HER2 antibody"
+            "No adjuvant HER2 antibody in provided treatments"
         )
     }
 
@@ -69,7 +73,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             WARN_CATEGORY,
             emptySet(),
             setOf(Intent.ADJUVANT),
-            "Received adjuvant targeted therapy but not of specific type)"
+            "Adjuvant targeted therapy in provided treatments but not of specific type"
         )
     }
 
@@ -80,7 +84,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             WARN_CATEGORY,
             MATCHING_TYPE_SET,
             setOf(Intent.ADJUVANT),
-            "Received adjuvant drug therapy"
+            "Adjuvant drug therapy in provided treatments"
         )
     }
 
@@ -91,7 +95,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             WARN_CATEGORY,
             MATCHING_TYPE_SET,
             setOf(Intent.NEOADJUVANT, Intent.ADJUVANT),
-            "Received adjuvant drug therapy"
+            "Adjuvant drug therapy in provided treatments"
         )
     }
 

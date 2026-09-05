@@ -12,8 +12,16 @@ class HasSevereConcomitantIllnessTest {
 
     @Test
     fun `Should warn when WHO is at least 3`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(withWHO(3)), "Potentially has severe concomitant illnesses (WHO 3)")
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(withWHO(4)), "Potentially has severe concomitant illnesses (WHO 4)")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(withWHO(3)),
+            "Potentially severe concomitant illnesses (WHO 3)"
+        )
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(withWHO(4)),
+            "Potentially severe concomitant illnesses (WHO 4)"
+        )
     }
 
     @Test
@@ -21,7 +29,7 @@ class HasSevereConcomitantIllnessTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(withWHO(3, precision = WhoStatusPrecision.AT_LEAST)),
-            "Potentially has severe concomitant illnesses (WHO >=3)"
+            "Potentially severe concomitant illnesses (WHO >=3)"
         )
     }
 
@@ -30,18 +38,22 @@ class HasSevereConcomitantIllnessTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withWHO(2, precision = WhoStatusPrecision.AT_LEAST)),
-            "Assumed that patient has no severe concomitant illnesses"
+            "Assumed no severe concomitant illnesses"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withWHO(3, precision = WhoStatusPrecision.AT_MOST)),
-            "Assumed that patient has no severe concomitant illnesses"
+            "Assumed no severe concomitant illnesses"
         )
     }
 
     @Test
     fun `Should fail when WHO is 2`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withWHO(2)), "Assumed that patient has no severe concomitant illnesses")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withWHO(2)),
+            "Assumed no severe concomitant illnesses"
+        )
     }
 
     @Test
@@ -49,7 +61,7 @@ class HasSevereConcomitantIllnessTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withWHO(null)),
-            "Assumed that patient has no severe concomitant illnesses"
+            "Assumed no severe concomitant illnesses"
         )
     }
 }

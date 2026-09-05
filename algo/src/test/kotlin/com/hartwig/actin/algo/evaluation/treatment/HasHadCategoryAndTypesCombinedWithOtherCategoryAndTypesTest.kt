@@ -28,7 +28,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "No HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -44,7 +44,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(treatmentHistory),
-            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "No HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -54,7 +54,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "No HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -65,7 +65,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "No HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -78,7 +78,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "No HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -101,7 +101,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received platinum compound chemotherapy combined with HER2 antibody targeted therapy"
+            "Platinum compound chemotherapy combined with HER2 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -114,7 +114,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 
@@ -124,7 +124,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 
@@ -134,7 +134,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 
@@ -149,7 +149,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+            "Undetermined history of HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy based on provided treatments"
         )
     }
 }

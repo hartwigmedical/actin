@@ -33,7 +33,7 @@
             ],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [
@@ -87,7 +87,7 @@
                 ],
                 "failMessages": [
                   {
-                    "message": "No known active CNS metastases present"
+                    "message": "No known active CNS metastases in provided lesions"
                   }
                 ]
               }
@@ -170,7 +170,7 @@
           "recoverable": false,
           "failMessages": [
             {
-              "message": "Patient determined to be eligible for line 4"
+              "message": "Requirements for treatment line 4 are met"
             }
           ]
         }

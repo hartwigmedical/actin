@@ -14,9 +14,9 @@ class HasSevereConcomitantIllness : EvaluationFunction {
         val who = record.performanceStatus.latestWho
 
         return if (who?.isAtLeast(3) == EvaluationResult.PASS) {
-            EvaluationFactory.warn("Potentially has severe concomitant illnesses (WHO ${who.asText()})")
+            EvaluationFactory.warn("Potentially severe concomitant illnesses (WHO ${who.asText()})")
         } else {
-            EvaluationFactory.fail("Assumed that patient has no severe concomitant illnesses")
+            EvaluationFactory.fail("Assumed no severe concomitant illnesses")
         }
     }
 }

@@ -13,7 +13,7 @@ class HasMinimumModifiedOberlinPrognosticScoreTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Undetermined if patient has modified oberlin prognostic score of at least 2"
+            "Undetermined if modified Oberlin prognostic score is at least 2"
         )
     }
 }

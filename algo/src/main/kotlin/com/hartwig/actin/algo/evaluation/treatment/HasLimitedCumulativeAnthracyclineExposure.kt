@@ -24,25 +24,25 @@ class HasLimitedCumulativeAnthracyclineExposure(private val doidModel: DoidModel
 
         return when {
             anthracyclineSummary.hasSpecificMatch() -> {
-                EvaluationFactory.undetermined("Exact dosage of received anthracycline chemotherapy undetermined")
+                EvaluationFactory.undetermined("Exact dosage of anthracycline chemotherapy in provided treatments undetermined")
             }
 
             anthracyclineSummary.hasApproximateMatch() && hasSuspectPrimaryTumor -> {
                 EvaluationFactory.undetermined(
                     "Cancer type is associated with potential anthracycline chemotherapy - "
-                            + "undetermined if anthracycline chemotherapy has been given"
+                            + "undetermined if anthracycline chemotherapy in provided treatments"
                 )
             }
 
             hasSuspectPriorTumorWithSuspectTreatmentHistory -> {
                 EvaluationFactory.undetermined(
                     "Undetermined if prior anthracycline exposure within permitted limit " +
-                            "(prior tumor in history associated with anthracycline chemotherapy)"
+                            "(prior tumor in provided history associated with anthracycline chemotherapy)"
                 )
             }
 
             else -> {
-                EvaluationFactory.pass("Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)")
+                EvaluationFactory.pass("Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)")
             }
         }
     }

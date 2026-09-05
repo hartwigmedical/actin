@@ -22,13 +22,13 @@ class HasHadPDFollowingTreatmentWithCategory(private val category: TreatmentCate
         )
 
         return if (treatmentSummary.hasSpecificMatch()) {
-            pass("Has had " + category.display() + " treatment with PD")
+            pass(category.display() + " treatment in provided treatments with PD")
         } else if (treatmentSummary.hasApproximateMatch()) {
-            undetermined("Has had " + category.display() + " treatment but undetermined PD status")
+            undetermined(category.display() + " treatment in provided treatments but PD status is undetermined")
         } else if (treatmentSummary.hasPossibleTrialMatch()) {
-            undetermined("Undetermined if treatment received in previous trial included $category")
+            undetermined("Undetermined if treatment from previous trial included $category")
         } else {
-            fail("Has not had " + category.display() + " treatment with PD")
+            fail("No " + category.display() + " treatment with PD in provided treatments")
         }
     }
 }

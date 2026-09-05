@@ -20,9 +20,10 @@ class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : E
 
         return if (allergies.isNotEmpty()) {
             EvaluationFactory.undetermined(
-                "Has medication-related allergies (${Format.concatItemsWithAnd(allergies)}) - undetermined if allergy to study medication"
+                "Medication-related allergies (${Format.concatItemsWithAnd(allergies)})" +
+                        " - undetermined if allergy to study medication"
             )
-        } else EvaluationFactory.fail("Has no intolerances to study medication")
+        } else EvaluationFactory.fail("No intolerances to study medication")
     }
 
 }

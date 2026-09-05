@@ -69,7 +69,11 @@ class BodyWeightFunctionsTest {
             weight(referenceDateTime.plusDays(1), 152.0)
         )
         val evaluation = evaluatePatientForMaximumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 150.0, minimumValidDate)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Median body weight (151.5 kg) below 150.0 kg")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Median body weight (151.5 kg) above 150.0 kg but within margin of error"
+        )
         assertThat(evaluation.recoverable).isTrue()
     }
 
@@ -144,7 +148,11 @@ class BodyWeightFunctionsTest {
             weight(referenceDateTime.plusDays(1), 40.0)
         )
         val evaluation = evaluatePatientForMinimumBodyWeight(VitalFunctionTestFactory.withBodyWeights(weights), 40.0, minimumValidDate)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Median body weight (39.0 kg) below 40.0 kg")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Median body weight (39.0 kg) below 40.0 kg but within margin of error"
+        )
         assertThat(evaluation.recoverable).isTrue()
     }
 

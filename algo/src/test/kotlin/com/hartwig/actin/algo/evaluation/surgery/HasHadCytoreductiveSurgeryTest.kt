@@ -26,7 +26,7 @@ class HasHadCytoreductiveSurgeryTest {
                     treatmentName = "Hormone therapy",
                     categories = setOf(TreatmentCategory.HORMONE_THERAPY))
             ),
-            "Has not received cytoreductive surgery"
+            "No cytoreductive surgery in provided treatments"
         )
     }
 
@@ -38,7 +38,8 @@ class HasHadCytoreductiveSurgeryTest {
                 categories = setOf(TreatmentCategory.SURGERY)
             )
         ),
-            "Has not received cytoreductive surgery")
+            "No cytoreductive surgery in provided treatments"
+        )
     }
 
     @Test
@@ -49,7 +50,8 @@ class HasHadCytoreductiveSurgeryTest {
                 categories = setOf(TreatmentCategory.CHEMOTHERAPY)
             )
         ),
-            "Has had cytoreductive surgery")
+            "Cytoreductive surgery in provided treatments"
+        )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -59,7 +61,7 @@ class HasHadCytoreductiveSurgeryTest {
                     types = setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
                 )
             ),
-            "Has had cytoreductive surgery"
+            "Cytoreductive surgery in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -70,7 +72,7 @@ class HasHadCytoreductiveSurgeryTest {
                     types = setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
                 )
             ),
-            "Has had cytoreductive surgery"
+            "Cytoreductive surgery in provided treatments"
         )
 
     }
@@ -121,7 +123,7 @@ class HasHadCytoreductiveSurgeryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(record),
-            "Has not received cytoreductive surgery"
+            "No cytoreductive surgery in provided treatments"
         )
     }
 
@@ -136,7 +138,7 @@ class HasHadCytoreductiveSurgeryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had cytoreductive surgery"
+            "Cytoreductive surgery in provided treatments"
         )
     }
 

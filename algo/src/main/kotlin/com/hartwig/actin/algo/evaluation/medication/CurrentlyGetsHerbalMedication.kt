@@ -14,17 +14,17 @@ class CurrentlyGetsHerbalMedication(private val selector: MedicationSelector) : 
 
         return when {
             hasActiveSelfCareMedication -> {
-                EvaluationFactory.undetermined("Undetermined if patient may use herbal medications (self care medication use)")
+                EvaluationFactory.undetermined("Undetermined if active herbal medications based on provided medications (self care medication)")
             }
 
             hasPlannedSelfCareMedication -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if patient may plan to use herbal medications (planned self care medication use)"
+                    "Undetermined if planned herbal medications based on provided medications (planned self care medication)"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No use of herbal medications")
+                EvaluationFactory.fail("No active herbal medications in provided medications")
             }
         }
     }

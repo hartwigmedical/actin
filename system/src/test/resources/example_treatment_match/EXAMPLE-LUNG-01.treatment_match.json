@@ -39,7 +39,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -95,7 +95,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has solid primary tumor"
+                "message": "Primary tumor is solid"
               },
               {
                 "message": "Stage IV is considered metastatic"
@@ -141,7 +141,7 @@
             "passMessages": [],
             "warnMessages": [
               {
-                "message": "Has not exhausted SOC (at least platinum doublet remaining)"
+                "message": "SOC is not exhausted (at least platinum doublet remaining)"
               }
             ],
             "undeterminedMessages": [],
@@ -174,7 +174,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has no other condition belonging to category autoimmune disease"
+                "message": "No comorbidity belonging to category autoimmune disease"
               }
             ],
             "warnMessages": [],
@@ -273,7 +273,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial IEMOEN"
+                "message": "No previous participation in trial IEMOEN"
               }
             ],
             "warnMessages": [],
@@ -353,7 +353,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -540,7 +540,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial KAYRAS"
+                "message": "No previous participation in trial KAYRAS"
               }
             ],
             "warnMessages": [],
@@ -682,7 +682,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -835,7 +835,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial NO-SEE797ES"
+                "message": "No previous participation in trial NO-SEE797ES"
               }
             ],
             "warnMessages": [],
@@ -901,7 +901,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -1041,7 +1041,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial TEDR1"
+                "message": "No previous participation in trial TEDR1"
               }
             ],
             "warnMessages": [],
@@ -1105,7 +1105,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -1246,7 +1246,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has no other condition belonging to category cardiac disease"
+                "message": "No comorbidity belonging to category cardiac disease"
               }
             ],
             "warnMessages": [],
@@ -1283,7 +1283,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial PICKME3CA"
+                "message": "No previous participation in trial PICKME3CA"
               }
             ],
             "warnMessages": [],

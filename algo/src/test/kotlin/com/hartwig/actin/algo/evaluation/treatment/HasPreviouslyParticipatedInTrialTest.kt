@@ -16,7 +16,7 @@ class HasPreviouslyParticipatedInTrialTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(emptyList())),
-            "Has not participated in trial ACR"
+            "No previous participation in trial ACR"
         )
     }
 
@@ -26,7 +26,7 @@ class HasPreviouslyParticipatedInTrialTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has previously participated in trial ACR"
+            "Previous participation in trial ACR"
         )
     }
 
@@ -52,7 +52,7 @@ class HasPreviouslyParticipatedInTrialTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not participated in trial ACR"
+            "No previous participation in trial ACR"
         )
     }
 }

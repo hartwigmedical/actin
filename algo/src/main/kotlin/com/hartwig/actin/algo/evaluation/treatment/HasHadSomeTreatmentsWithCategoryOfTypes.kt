@@ -23,15 +23,15 @@ class HasHadSomeTreatmentsWithCategoryOfTypes(
         val typesList = Format.concatItemsWithOr(types)
         return when {
             treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
-                EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
+                EvaluationFactory.pass("At least $minTreatmentLines line(s) of $typesList ${category.display()} in provided treatments")
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
+                EvaluationFactory.undetermined("Undetermined history of at least $minTreatmentLines line(s) of $typesList ${category.display()} based on provided treatments")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received at least $minTreatmentLines line(s) of $typesList ${category.display()}")
+                EvaluationFactory.fail("Not at least $minTreatmentLines line(s) of $typesList ${category.display()} in provided treatments")
             }
         }
     }

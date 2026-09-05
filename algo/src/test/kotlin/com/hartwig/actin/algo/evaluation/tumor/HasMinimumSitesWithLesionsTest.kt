@@ -37,13 +37,17 @@ class HasMinimumSitesWithLesionsTest {
                     otherSuspectedLesions = emptyList(),
                 )
             ),
-            "Has at least 6 lesion sites"
+            "At least 6 lesion sites in provided lesions"
         )
     }
 
     @Test
     fun `Should pass when number of categorized lesions are one less than threshold and other lesions are present`() {
-        assertEvaluation(EvaluationResult.PASS, HasMinimumSitesWithLesions(3).evaluate(testPatient), "Has at least 3 lesion sites")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            HasMinimumSitesWithLesions(3).evaluate(testPatient),
+            "At least 3 lesion sites in provided lesions"
+        )
     }
 
     @Test
@@ -51,7 +55,7 @@ class HasMinimumSitesWithLesionsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             HasMinimumSitesWithLesions(4).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true))),
-            "Has at least 4 lesion sites (when including suspected lesions)"
+            "At least 4 lesion sites in provided lesions (when including suspected lesions)"
         )
     }
 
@@ -78,7 +82,7 @@ class HasMinimumSitesWithLesionsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             HasMinimumSitesWithLesions(6).evaluate(testPatient),
-            "Insufficient number of lesion sites (less than 6)"
+            "Fewer than 6 lesion sites in provided lesions"
         )
     }
 
@@ -87,7 +91,7 @@ class HasMinimumSitesWithLesionsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             HasMinimumSitesWithLesions(7).evaluate(testPatient.copy(tumor = testPatient.tumor.copy(hasSuspectedLiverLesions = true))),
-            "Insufficient number of lesion sites (less than 7)"
+            "Fewer than 7 lesion sites in provided lesions"
         )
     }
 
@@ -102,7 +106,7 @@ class HasMinimumSitesWithLesionsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             HasMinimumSitesWithLesions(2).evaluate(patient),
-            "Insufficient number of lesion sites (less than 2)"
+            "Fewer than 2 lesion sites in provided lesions"
         )
     }
 

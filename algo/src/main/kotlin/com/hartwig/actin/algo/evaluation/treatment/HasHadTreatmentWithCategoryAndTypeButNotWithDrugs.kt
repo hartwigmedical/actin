@@ -39,18 +39,18 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
         val typeMessage = if (types != null && concatenatedMatchingTypes.isNotEmpty()) " of types $concatenatedMatchingTypes" else ""
-        val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
+        val messageEnding = "${category.display()}$typeMessage in provided treatments ignoring $ignoreDrugsList"
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Has $messageEnding")
+                EvaluationFactory.pass(messageEnding)
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}$typeMessage ignoring $ignoreDrugsList")
+                EvaluationFactory.undetermined("Undetermined if treatment from in previous trial included ${category.display()}$typeMessage ignoring $ignoreDrugsList")
             }
 
-            else -> EvaluationFactory.fail("Has not $messageEnding")
+            else -> EvaluationFactory.fail("No $messageEnding")
         }
     }
 }

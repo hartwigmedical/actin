@@ -12,7 +12,7 @@ class HasOligoprogressiveDiseaseTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HasOligoprogressiveDisease().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if patient has oligoprogressive disease"
+            "Undetermined if oligoprogressive disease based on provided lesions"
         )
     }
 }

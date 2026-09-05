@@ -67,29 +67,33 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesAndStopReasonNotPD(
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_UNCLEAR_TREATMENT_OR_TRIAL in treatmentEvaluations -> {
-                EvaluationFactory.undetermined("Unclear if received " + category.display())
+                EvaluationFactory.undetermined("Undetermined if trial treatment in provided treatments included ${category.display()}")
             }
 
             PDFollowingTreatmentEvaluation.HAS_HAD_TREATMENT in treatmentEvaluations -> {
-                EvaluationFactory.fail("Has received ${treatment()} with stop reason PD")
+                EvaluationFactory.fail("${treatment(true)} in provided treatments with stop reason PD")
             }
 
             else -> {
-                EvaluationFactory.fail("No ${treatment()} treatment with PD")
+                EvaluationFactory.fail("No ${treatment(false)} treatment with PD in provided treatments")
             }
         }
     }
 
     private fun hasTreatmentMessage(suffix: String = ""): String {
-        return "Has had ${treatment()}$suffix without stop reason PD"
+        return "${treatment(true)}$suffix in provided treatments without stop reason PD"
     }
 
     private fun undetermined(suffix: String): Evaluation {
-        return EvaluationFactory.undetermined("Has received ${treatment()} $suffix")
+        return EvaluationFactory.undetermined("${treatment(true)} $suffix in provided treatments")
     }
 
-    private fun treatment(): String {
-        return "${Format.concatItemsWithOr(types)} ${category.display()} treatment"
+    private fun treatment(uppercase: Boolean): String {
+        return "${Format.concatItemsWithOr(types)} ${category.display()} treatment".let {
+            if (uppercase) it.replaceFirstChar(
+                Char::uppercase
+            ) else it
+        }
     }
 
     private enum class PDFollowingTreatmentEvaluation {

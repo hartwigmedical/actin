@@ -89,7 +89,12 @@ class HasHadCombinedTreatmentNamesWithCycles(
             EvaluationFactory.fail("No prior treatments found matching $treatmentName and ${cyclesRequirementDescription()} cycles")
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.PASS)) {
             EvaluationFactory.pass(
-                "Found matching treatments (${formatTreatmentList(matchingHistoryEntries[EvaluationResult.PASS]!!, true)}" +
+                "Found matching treatments (${
+                    formatTreatmentList(
+                        matchingHistoryEntries[EvaluationResult.PASS]!!,
+                        true
+                    )
+                })" +
                         " and ${cyclesRequirementDescription()} cycles"
             )
         } else if (matchingHistoryEntries.containsKey(EvaluationResult.UNDETERMINED)) {

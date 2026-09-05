@@ -21,25 +21,25 @@ class HasHadLimitedTreatmentsWithCategoryOfTypes(
             category,
             types?.let { { historyEntry -> historyEntry.matchesTypeFromSet(types) } } ?: { true })
         val treatmentString = (types?.let { "${Format.concatItemsWithOr(types)} " } ?: "") + category.display()
-        val messageEnding = "received at most $maxTreatmentLines lines of $treatmentString"
+        val message = "$maxTreatmentLines line(s) of $treatmentString"
 
         return when {
             treatmentSummary.numSpecificMatches() + treatmentSummary.numApproximateMatches + treatmentSummary.numPossibleTrialMatches <= maxTreatmentLines
                     && (!treatmentIsRequired || treatmentSummary.hasSpecificMatch()) -> {
-                EvaluationFactory.pass("Has $messageEnding")
+                EvaluationFactory.pass("At most $message in provided treatments")
             }
 
             treatmentIsRequired && !treatmentSummary.hasSpecificMatch() && !treatmentSummary.hasApproximateMatch()
                     && !treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.fail("Has not received $treatmentString treatment")
+                EvaluationFactory.fail("No $treatmentString in provided treatments")
             }
 
             treatmentSummary.numSpecificMatches() <= maxTreatmentLines -> {
-                EvaluationFactory.undetermined("Undetermined if $messageEnding")
+                EvaluationFactory.undetermined("Undetermined if at most $message")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not $messageEnding")
+                EvaluationFactory.fail("More than $message in provided treatments")
             }
         }
     }

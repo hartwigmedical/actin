@@ -24,22 +24,26 @@ class HasEcgAberration(private val icdModel: IcdModel) : EvaluationFunction {
         return when {
             ecgs.isNotEmpty() && cardiacArrhythmiaComorbidities.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "ECG abnormalities ($aberrations) and cardiac arrhythmia (${Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)}) in history"
+                    "ECG abnormalities ($aberrations) and cardiac arrhythmia (${
+                        Format.concatItemsWithAnd(
+                            cardiacArrhythmiaComorbidities
+                        )
+                    }) in provided history"
                 )
             }
 
             ecgs.isNotEmpty() -> {
-                EvaluationFactory.recoverablePass("ECG abnormalities present ($aberrations)")
+                EvaluationFactory.recoverablePass("ECG abnormalities provided ($aberrations)")
             }
 
             cardiacArrhythmiaComorbidities.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Cardiac arrhythmia in history (${Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)})"
+                    "Cardiac arrhythmia in provided history (${Format.concatItemsWithAnd(cardiacArrhythmiaComorbidities)})"
                 )
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No known ECG abnormalities")
+                EvaluationFactory.recoverableFail("No known ECG abnormalities in provided history")
             }
         }
     }
