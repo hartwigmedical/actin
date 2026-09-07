@@ -17,7 +17,11 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
         val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysFailsMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patientRecord),
+            "No metastatic cancer (hence no extensive metastases) which could be the dominant factor determining prognosis"
+        )
     }
 
     @Test
@@ -26,7 +30,11 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
         val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysUndeterminedMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Metastatic cancer undetermined and therefore undetermined if metastases could be the dominant factor determining prognosis"
+        )
     }
 
     @Test
@@ -35,6 +43,10 @@ class HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosisTest {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
         val function = HasExtensiveSystemicMetastasesPredominantlyDeterminingPrognosis(alwaysPassMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Undetermined if metastases are the dominant factor determining prognosis"
+        )
     }
 }

@@ -20,19 +20,31 @@ class HasRecentlyReceivedTrialMedicationTest {
     @Test
     fun `Should fail when no medication`() {
         val medications = emptyList<Medication>()
-        assertEvaluation(EvaluationResult.FAIL, functionActive.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionActive.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No recent trial medication"
+        )
     }
 
     @Test
     fun `Should fail when medication is no trial medication`() {
         val medications = listOf(medication(isTrialMedication = false))
-        assertEvaluation(EvaluationResult.FAIL, functionActive.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionActive.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No recent trial medication"
+        )
     }
 
     @Test
     fun `Should pass when medication is trial medication`() {
         val medications = listOf(medication(isTrialMedication = true))
-        assertEvaluation(EvaluationResult.PASS, functionActive.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionActive.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent trial medication - pay attention to washout period"
+        )
     }
 
     @Test
@@ -42,7 +54,11 @@ class HasRecentlyReceivedTrialMedicationTest {
             evaluationDate.minusDays(1)
         )
         val medications = listOf(medication(isTrialMedication = true, stopDate = evaluationDate))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent trial medication - pay attention to washout period"
+        )
     }
 
     @Test
@@ -59,7 +75,27 @@ class HasRecentlyReceivedTrialMedicationTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
+            "Recent trial medication - pay attention to washout period"
+        )
+    }
+
+    @Test
+    fun `Should be undetermined when medication is not trial medication and treatment history entry is trial but with unknown date`() {
+        val medications = listOf(medication(isTrialMedication = false))
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                isTrial = true,
+                stopYear = null,
+                stopMonth = null
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
+            "Received trial treatment but unknown if recent (missing stop date)"
         )
     }
 
@@ -72,16 +108,15 @@ class HasRecentlyReceivedTrialMedicationTest {
         val medications = listOf(medication(isTrialMedication = true, stopDate = evaluationDate))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MedicationTestFactory.withMedications(medications))
+            function.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent trial medication undetermined (required stop date prior to registration date)"
         )
     }
 
     @Test
     fun `Should evaluate to undetermined if medication is not provided and no trial in treatment history entry`() {
-        val result = functionActive.evaluate(
-            TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
-        )
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        val result = functionActive.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }
 
@@ -98,7 +133,8 @@ class HasRecentlyReceivedTrialMedicationTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
+            "Recent trial medication - pay attention to washout period"
         )
     }
 
@@ -108,7 +144,8 @@ class HasRecentlyReceivedTrialMedicationTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments), isTrial = true))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionActive.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionActive.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Received trial treatment but unknown if recent (missing stop date)"
         )
     }
 }

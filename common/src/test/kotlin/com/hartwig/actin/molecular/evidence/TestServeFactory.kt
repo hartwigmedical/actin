@@ -29,13 +29,6 @@ object TestServeFactory {
             .build()
     }
 
-    fun createIndicationWithDoidAndExcludedDoid(doid: String, excludedDoid: String): Indication {
-        return ImmutableIndication.builder()
-            .applicableType(ImmutableCancerType.builder().name(doid).doid(doid).build())
-            .addExcludedSubTypes(ImmutableCancerType.builder().name(excludedDoid).doid(excludedDoid).build())
-            .build()
-    }
-
     fun createIndicationWithTypeAndExcludedTypes(type: String = "", excludedTypes: Set<String> = emptySet()): Indication {
         return ImmutableIndication.builder()
             .applicableType(ImmutableCancerType.builder().name(type).doid("").build())

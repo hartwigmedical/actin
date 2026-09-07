@@ -16,24 +16,32 @@ class HasNonMuscleInvasiveBladderCancerTest {
     @Test
     fun `Should evaluate to undetermined if there are no tumor doids configured`() {
         val tumor = TumorTestFactory.withDoids(null)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumor))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumor),
+            "Non muscle invasive bladder cancer undetermined (DOIDs missing)"
+        )
     }
 
     @Test
     fun `Should pass if tumor is bladder cancer of non muscle invasive type`() {
         val tumor = TumorTestFactory.withDoidAndName(DoidConstants.URINARY_BLADDER_CANCER_DOID, "name with $targetType")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumor))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumor), "Has non muscle invasive bladder cancer")
     }
 
     @Test
     fun `Should evaluate to undetermined if tumor is bladder cancer but unknown of non muscle invasive type`() {
         val tumor = TumorTestFactory.withDoidAndName(DoidConstants.URINARY_BLADDER_CANCER_DOID, "name without")
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumor))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumor),
+            "Has bladder cancer but undetermined if non muscle invasive"
+        )
     }
 
     @Test
     fun `Should fail if tumor type is not bladder cancer`() {
         val tumor = TumorTestFactory.withDoids(DoidConstants.BRAIN_CANCER_DOID)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumor))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumor), "No non muscle invasive bladder cancer")
     }
 }

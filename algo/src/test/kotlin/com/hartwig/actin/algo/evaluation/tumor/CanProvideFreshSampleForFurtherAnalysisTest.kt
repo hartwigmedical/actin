@@ -12,11 +12,13 @@ class CanProvideFreshSampleForFurtherAnalysisTest {
         val function = CanProvideFreshSampleForFurtherAnalysis()
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_TARGETED))
+            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_TARGETED)),
+            "Undetermined if fresh sample for FFPE analysis can be provided"
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_WHOLE_GENOME))
+            function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_WHOLE_GENOME)),
+            "WGS results present so assumed that fresh sample for FFPE analysis can be provided"
         )
     }
 }

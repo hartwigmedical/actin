@@ -13,19 +13,12 @@ import org.junit.jupiter.api.Test
 class IsNotParticipatingInAnotherInterventionalTrialTest {
 
     private val referenceDate = LocalDate.of(2025, 2, 2)
+    private val recentDate = referenceDate.plusMonths(1)
+    private val olderDate = referenceDate.minusMonths(1)
     private val alwaysActiveMedicationFunction = IsNotParticipatingInAnotherInterventionalTrial(
         MedicationTestFactory.alwaysActive(),
         referenceDate.minusWeeks(2)
     )
-
-    @Test
-    fun `Should warn when patient recently received trial medication`() {
-        val medications = listOf(medication(isTrialMedication = true))
-        assertEvaluation(
-            EvaluationResult.WARN,
-            alwaysActiveMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications))
-        )
-    }
 
     @Test
     fun `Should warn when patient recently received trial treatment`() {
@@ -40,7 +33,66 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.WARN,
-            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(
+                TreatmentTestFactory.withTreatmentsAndMedications(
+                    treatmentHistory,
+                    null
+                )
+            ),
+            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
+        )
+    }
+
+    @Test
+    fun `Should warn when patient recently received trial medication`() {
+        val medications = listOf(medication(isTrialMedication = true))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            alwaysActiveMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Recent trial treatment - undetermined if patient is participating in another interventional trial"
+        )
+    }
+
+    @Test
+    fun `Should be undetermined when patient received trial treatment without dates`() {
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                isTrial = true,
+                startYear = null,
+                startMonth = null
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            alwaysActiveMedicationFunction.evaluate(
+                TreatmentTestFactory.withTreatmentsAndMedications(
+                    treatmentHistory,
+                    null
+                )
+            ),
+            "Undetermined if patient may be participating in another interventional trial (missing stop date)"
+        )
+    }
+
+    @Test
+    fun `Should be undetermined when patient received trial treatment potentially after min date`() {
+        val treatments = TreatmentTestFactory.treatment("Chemotherapy", true, setOf(TreatmentCategory.CHEMOTHERAPY))
+        val treatmentHistory = listOf(
+            TreatmentTestFactory.treatmentHistoryEntry(
+                setOf(treatments),
+                isTrial = true,
+                startYear = olderDate.year,
+                startMonth = olderDate.monthValue,
+                maxStopYear = recentDate.year,
+                maxStopMonth = recentDate.monthValue
+            )
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
+            "Undetermined if patient may be participating in another interventional trial (missing stop date)"
         )
     }
 
@@ -51,7 +103,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         val medications = listOf(medication(isTrialMedication = true))
         assertEvaluation(
             EvaluationResult.PASS,
-            alwaysStoppedMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications))
+            alwaysStoppedMedicationFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Assumed that patient is not participating in another interventional trial"
         )
     }
 
@@ -67,7 +120,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null))
+            alwaysActiveMedicationFunction.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
+            "Assumed that patient is not participating in another interventional trial"
         )
     }
 
@@ -75,7 +129,8 @@ class IsNotParticipatingInAnotherInterventionalTrialTest {
     fun `Should pass when patient received no trial treatment or medication`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            alwaysActiveMedicationFunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            alwaysActiveMedicationFunction.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient is not participating in another interventional trial"
         )
     }
 }

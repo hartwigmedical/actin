@@ -11,22 +11,42 @@ class HasLocallyAdvancedCancerTest {
 
     @Test
     fun `Should be undetermined without stage information`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withTumorStage(null)),
+            "Undetermined if locally advanced cancer (tumor stage missing)"
+        )
     }
 
     @Test
     fun `Should pass with stage III`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.III)),
+            "Stage III is considered locally advanced"
+        )
     }
 
     @Test
     fun `Should be undetermined with stage II`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIB)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIB)),
+            "Undetermined if stage IIB is considered locally advanced"
+        )
     }
 
     @Test
     fun `Should fail with stage I or IV`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IB)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IB)),
+            "Stage IB is not considered locally advanced"
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)),
+            "Stage IV is not considered locally advanced"
+        )
     }
 }

@@ -10,6 +10,10 @@ class HasIntratumoralHemorrhageByMRITest {
     @Test
     fun canEvaluate() {
         val function = HasIntratumoralHemorrhageByMRI()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Intratumoral hemorrhage by MRI undetermined"
+        )
     }
 }

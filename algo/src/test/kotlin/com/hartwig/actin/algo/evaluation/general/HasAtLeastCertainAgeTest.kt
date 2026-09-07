@@ -9,8 +9,12 @@ class HasAtLeastCertainAgeTest {
     @Test
     fun canEvaluate() {
         val function = HasAtLeastCertainAge(2020, 18)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withBirthYear(1960)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withBirthYear(2014)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(GeneralTestFactory.withBirthYear(2002)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(GeneralTestFactory.withBirthYear(1960)), "Patient is older than 18")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(GeneralTestFactory.withBirthYear(2014)), "Patient is younger than 18")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(GeneralTestFactory.withBirthYear(2002)),
+            "Undetermined if patient with birth year 2002 is older than 18"
+        )
     }
 }

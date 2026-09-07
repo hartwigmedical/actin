@@ -14,13 +14,17 @@ class HasMetastaticCancerTest {
 
     @Test
     fun `Should pass for stage IV`() {
-        assertEvaluation(EvaluationResult.PASS, evaluateFunction(TumorStage.IV))
+        assertEvaluation(EvaluationResult.PASS, evaluateFunction(TumorStage.IV), "Stage IV is considered metastatic")
     }
 
 
     @Test
     fun `Should be undetermined for stage III`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(TumorStage.III))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluateFunction(TumorStage.III),
+            "Undetermined if stage III is considered metastatic"
+        )
     }
 
     @Test
@@ -32,19 +36,20 @@ class HasMetastaticCancerTest {
                     TumorStage.II,
                     MetastaticCancerEvaluator.STAGE_II_POTENTIALLY_METASTATIC_CANCER_DOIDS.first()
                 )
-            )
+            ),
+            "Undetermined if stage II is considered metastatic"
         )
     }
 
     @Test
     fun `Should fail for tumor stage I or II`() {
-        assertEvaluation(EvaluationResult.FAIL, evaluateFunction(TumorStage.I))
-        assertEvaluation(EvaluationResult.FAIL, evaluateFunction(TumorStage.II))
+        assertEvaluation(EvaluationResult.FAIL, evaluateFunction(TumorStage.I), "Stage I is not considered metastatic")
+        assertEvaluation(EvaluationResult.FAIL, evaluateFunction(TumorStage.II), "Stage II is not considered metastatic")
     }
 
     @Test
     fun `Should be undetermined when no tumor stage provided`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(null))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(null), "Undetermined if metastatic cancer (tumor stage missing)")
     }
 
     private fun evaluateFunction(stage: TumorStage?): Evaluation {

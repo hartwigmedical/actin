@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 
 class TreatmentHistoryAscendingDateComparator : Comparator<TreatmentHistoryEntry> {
 
-    private val nullSafeComparator = Comparator.nullsLast(Comparator.naturalOrder<Int?>())
+    private val nullSafeComparator = nullsLast<Int>()
     private val comparator = Comparator.comparing(TreatmentHistoryEntry::startYear, nullSafeComparator)
         .thenComparing(TreatmentHistoryEntry::startMonth, nullSafeComparator)
         .thenComparing(::stopYearForHistoryEntry, nullSafeComparator)

@@ -15,24 +15,36 @@ class HasHadPartialResectionTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not had partial resection")
     }
 
     @Test
     fun `Should pass with partial resection`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment(PARTIAL_RESECTION, false)))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had partial resection"
+        )
     }
 
     @Test
     fun `Should be undetermined for unspecified resection`() {
         val treatments = setOf(treatment("some form of " + RESECTION_KEYWORDS.last() + " surgery", false))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))),
+            "Undetermined whether patient has had partial resection"
+        )
     }
 
     @Test
     fun `Should be undetermined for unspecified surgery`() {
         val treatments = setOf(treatment("SURGERY", false, categories = setOf(TreatmentCategory.SURGERY)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))),
+            "Undetermined whether patient has had partial resection"
+        )
     }
 }

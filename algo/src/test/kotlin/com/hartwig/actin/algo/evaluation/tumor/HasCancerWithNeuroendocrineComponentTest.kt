@@ -20,31 +20,43 @@ class HasCancerWithNeuroendocrineComponentTest {
     @Test
     fun `Should evaluate to undetermined if no tumor doids configured`() {
         val tumorDetails = TumorTestFactory.withDoids(emptySet())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumorDetails))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumorDetails),
+            "Neuroendocrine component undetermined (tumor type missing)"
+        )
     }
 
     @Test
     fun `Should pass if tumor has neuroendocrine component`() {
         val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.NEUROENDOCRINE_DOIDS.first()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Has cancer with neuroendocrine component")
     }
 
 
     @Test
     fun `Should be undetermined if tumor has small cell component`() {
         val tumorDetails = TumorTestFactory.withDoids(DoidConstants.SMALL_CELL_CANCER_DOIDS.first())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumorDetails))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumorDetails),
+            "Neuroendocrine component undetermined (small cell component present)"
+        )
     }
 
     @Test
     fun `Should be undetermined if molecular profile matches neuroendocrine`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(createWithNeuroendocrineProfile()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(createWithNeuroendocrineProfile()),
+            "Neuroendocrine component undetermined (tumor type missing)"
+        )
     }
 
     @Test
     fun `Should fail if tumor is of other type than neuroendocrine cell`() {
         val tumorDetails = TumorTestFactory.withDoidAndName("wrong doid", "wrong name")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "Has no cancer with neuroendocrine component")
     }
 
     private fun createWithNeuroendocrineProfile(): PatientRecord {

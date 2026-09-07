@@ -13,24 +13,37 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
 
     @Test
     fun shouldReturnUndeterminedForNullDoids() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withDoids(null)),
+            "Solid primary tumor undetermined (tumor type missing)"
+        )
     }
 
     @Test
     fun shouldPassForCancerDoid() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)),
+            "Has solid primary tumor (including lymphoma)"
+        )
     }
 
     @Test
     fun shouldPassForBenignNeoplasmDoid() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withDoids(DoidConstants.BENIGN_NEOPLASM_DOID)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.BENIGN_NEOPLASM_DOID)),
+            "Has solid primary tumor (including lymphoma)"
+        )
     }
 
     @Test
     fun shouldWarnForWarnSolidCancerDoids() {
         val firstWarnDoid: String = HasSolidPrimaryTumorIncludingLymphoma.WARN_SOLID_CANCER_DOIDS.first()
         assertEvaluation(
-            EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid))
+            EvaluationResult.WARN, function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid)),
+            "Unclear if primary tumor is considered solid"
         )
     }
 
@@ -40,13 +53,14 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
         val firstNonSolidDoid: String = DoidConstants.NON_SOLID_CANCER_DOIDS.first()
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid, firstNonSolidDoid))
+            function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID, firstWarnDoid, firstNonSolidDoid)),
+            "No solid primary tumor"
         )
     }
 
     @Test
     fun shouldFailForNonCancerDoids() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("arbitrary doid")))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("arbitrary doid")), "No solid primary tumor")
     }
 
     companion object {

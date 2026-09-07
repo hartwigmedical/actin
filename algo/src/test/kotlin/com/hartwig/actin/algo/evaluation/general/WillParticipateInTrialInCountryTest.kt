@@ -12,9 +12,14 @@ class WillParticipateInTrialInCountryTest {
         val netherlands = WillParticipateInTrialInCountry("The Netherlands")
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            netherlands.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            netherlands.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Patient will be participating in The Netherlands"
         )
         val germany = WillParticipateInTrialInCountry("Germany")
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, germany.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            germany.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Patient will not be participating in Germany"
+        )
     }
 }

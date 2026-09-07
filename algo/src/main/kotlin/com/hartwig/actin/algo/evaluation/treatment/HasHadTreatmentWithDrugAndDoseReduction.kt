@@ -21,10 +21,10 @@ class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : Evaluati
 
         return when {
             hasHadDrug -> {
-                EvaluationFactory.undetermined("Undetermined if patient may have had a dose reduction during $drug treatment")
+                EvaluationFactory.undetermined("Undetermined if patient may have had a dose reduction during ${drug.display()} treatment")
             }
 
-            else -> EvaluationFactory.fail("Patient did not dose reduction receive $drug during treatment")
+            else -> EvaluationFactory.fail("Patient did not dose reduction receive ${drug.display()} during treatment")
         }
     }
 }

@@ -39,7 +39,7 @@ class FunctionCreatorFactoryTest {
         val doidTerm = "term 1"
         val doidModel = TestDoidModelFactory.createWithOneDoidAndTerm("doid 1", doidTerm)
         val icdModel = TestIcdFactory.createTestModel()
-        val icdTitle = icdModel.titleToCodeMap.keys.first()
+        val icdTitle = icdModel.mainTitleToCodeMap.keys.first()
         val map = create(RuleMappingResourcesTestFactory.create(doidModel = doidModel, icdModel = icdModel))
         val treatment = TreatmentTestFactory.treatment("Treatment", true, setOf(TreatmentCategory.CHEMOTHERAPY))
         val systemicTreatment = TreatmentTestFactory.treatment("Systemic treatment", true, setOf(TreatmentCategory.CHEMOTHERAPY))

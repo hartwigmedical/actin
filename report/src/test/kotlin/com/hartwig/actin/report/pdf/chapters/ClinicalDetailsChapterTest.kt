@@ -4,7 +4,6 @@ import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.configuration.ReportIntendedUse
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportLabels
-import com.hartwig.actin.report.pdf.tables.clinical.BloodTransfusionGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
@@ -27,7 +26,6 @@ class ClinicalDetailsChapterTest {
             PatientCurrentDetailsGenerator::class,
             TumorDetailsGenerator::class,
             MedicationGenerator::class,
-            BloodTransfusionGenerator::class
         )
     }
 

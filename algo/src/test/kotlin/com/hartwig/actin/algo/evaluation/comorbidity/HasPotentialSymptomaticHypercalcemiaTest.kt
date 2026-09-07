@@ -27,7 +27,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(LabTestFactory.withLabValues(labValues))
+            function.evaluate(LabTestFactory.withLabValues(labValues)),
+            "Possible symptomatic hypercalcemia (calcium above ULN)"
         )
     }
 
@@ -40,7 +41,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(LabTestFactory.withLabValues(labValues))
+            function.evaluate(LabTestFactory.withLabValues(labValues)),
+            "Possible symptomatic hypercalcemia (calcium above ULN)"
         )
     }
 
@@ -53,7 +55,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(LabTestFactory.withLabValues(labValues))
+            function.evaluate(LabTestFactory.withLabValues(labValues)),
+            "Possible symptomatic hypercalcemia (calcium above ULN)"
         )
     }
 
@@ -66,7 +69,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(LabTestFactory.withLabValues(labValues))
+            function.evaluate(LabTestFactory.withLabValues(labValues)),
+            "Symptomatic hypercalcemia undetermined"
         )
     }
 
@@ -79,7 +83,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(LabTestFactory.withLabValues(labValues))
+            function.evaluate(LabTestFactory.withLabValues(labValues)),
+            "Symptomatic hypercalcemia undetermined"
         )
     }
 
@@ -92,7 +97,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(LabTestFactory.withLabValues(labValues))
+            function.evaluate(LabTestFactory.withLabValues(labValues)),
+            "Symptomatic hypercalcemia undetermined"
         )
     }
 
@@ -100,7 +106,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
     fun `Should evaluate to undetermined if calcium lab values not present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(LabTestFactory.withLabValue(LabTestFactory.create(LabMeasurement.ALBUMIN, date = referenceDate)))
+            function.evaluate(LabTestFactory.withLabValue(LabTestFactory.create(LabMeasurement.ALBUMIN, date = referenceDate))),
+            "Symptomatic hypercalcemia undetermined"
         )
     }
 
@@ -108,7 +115,8 @@ class HasPotentialSymptomaticHypercalcemiaTest {
     fun `Should fail if all values under ULN`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(LabTestFactory.withLabValues(listOf(calciumValue, correctedCalciumValue, ionizedCalciumValue)))
+            function.evaluate(LabTestFactory.withLabValues(listOf(calciumValue, correctedCalciumValue, ionizedCalciumValue))),
+            "No indications for possible symptomatic hypercalcemia (calcium within ULN)"
         )
     }
 }

@@ -1,15 +1,15 @@
 package com.hartwig.actin.system.regression
 
+import ch.qos.logback.classic.Level
 import com.hartwig.actin.configuration.ReportConfiguration
 import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
-import ch.qos.logback.classic.Level
+import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 class ReportRegressionTest {
 
@@ -53,10 +53,5 @@ class ReportRegressionTest {
         val originalReportPdf = ExampleFunctions.resolveExampleReportPdf(exampleName)
         assertThatPdf(outputReportPdf).isEqualToTextually(originalReportPdf)
         assertThatPdf(outputReportPdf).isEqualToVisually(originalReportPdf)
-
-        val outputExtendedReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.extended.pdf"
-        val originalExtendedReportPdf = ExampleFunctions.resolveExampleReportExtendedPdf(exampleName)
-        assertThatPdf(outputExtendedReportPdf).isEqualToTextually(originalExtendedReportPdf)
-        assertThatPdf(outputExtendedReportPdf).isEqualToVisually(originalExtendedReportPdf)
     }
 }

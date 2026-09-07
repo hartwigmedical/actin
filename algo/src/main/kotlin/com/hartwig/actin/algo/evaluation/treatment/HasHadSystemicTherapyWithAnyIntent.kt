@@ -2,8 +2,10 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentBeforeMaxDate
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.certainTreatmentBeforeMaxDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.certainTreatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentBeforeMaxDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithOr
 import com.hartwig.actin.datamodel.PatientRecord
@@ -26,60 +28,59 @@ class HasHadSystemicTherapyWithAnyIntent(
             systemicTreatments.groupBy { it.intents?.any { intent -> intent in intents } }
         } ?: systemicTreatments.groupBy { true }
 
-        val intentsLowercase = intents?.let { concatItemsWithOr(it).lowercase() } ?: ""
+        val intentsLowercase = intents?.let { " ${concatItemsWithOr(it).lowercase()}" } ?: ""
 
         return when {
             refDate == null && matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.pass("Received $intentsLowercase systemic therapy")
+                EvaluationFactory.pass("Received$intentsLowercase systemic therapy")
             }
 
-            evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::treatmentSinceMinDate, false) -> {
-                EvaluationFactory.pass("Received $intentsLowercase systemic therapy within the last $weeks weeks")
+            evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::certainTreatmentSinceMinDate) -> {
+                EvaluationFactory.pass("Received$intentsLowercase systemic therapy within the last $weeks weeks")
             }
 
-            evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::treatmentBeforeMaxDate, false) -> {
-                EvaluationFactory.pass("Received $intentsLowercase systemic therapy at least $weeks weeks ago")
+            evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::certainTreatmentBeforeMaxDate) -> {
+                EvaluationFactory.pass("Received$intentsLowercase systemic therapy at least $weeks weeks ago")
             }
 
-            (evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::treatmentSinceMinDate, true)) ||
-                    (evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::treatmentBeforeMaxDate, true)) -> {
-                EvaluationFactory.undetermined("Received $intentsLowercase systemic therapy but date unknown")
+            (evaluateWithinWeeks == true && evaluateTreatments(matchingTreatments, ::potentialTreatmentSinceMinDate)) ||
+                    (evaluateWithinWeeks == false && evaluateTreatments(matchingTreatments, ::potentialTreatmentBeforeMaxDate)) -> {
+                EvaluationFactory.undetermined("Received$intentsLowercase systemic therapy but date unknown")
             }
 
             (evaluateWithinWeeks != false && matchingTreatments[null]?.let(::anyTreatmentPotentiallySinceMinDate) == true) ||
                     (evaluateWithinWeeks != true && matchingTreatments[null]?.let(::anyTreatmentPotentiallyBeforeMaxDate) == true) -> {
                 EvaluationFactory.undetermined(
                     "Has received systemic treatment (${Format.concat(systemicTreatments.map { it.treatmentDisplay() })}) " +
-                            "but undetermined if intent is $intentsLowercase"
+                            "but undetermined if intent is$intentsLowercase"
                 )
             }
 
             !matchingTreatments.containsKey(true) -> {
-                EvaluationFactory.fail("No $intentsLowercase systemic therapy in prior tumor history")
+                EvaluationFactory.fail("No$intentsLowercase systemic therapy in prior tumor history")
             }
 
             else -> EvaluationFactory.fail(
                 if (evaluateWithinWeeks == true)
-                    "All $intentsLowercase systemic therapy is administered more than $weeks weeks ago"
+                    "All$intentsLowercase systemic therapy is administered more than $weeks weeks ago"
                 else
-                    "All $intentsLowercase systemic therapy is not administered at least $weeks weeks ago"
+                    "All$intentsLowercase systemic therapy is not administered at least $weeks weeks ago"
             )
         }
     }
 
     private fun anyTreatmentPotentiallySinceMinDate(treatmentEntries: Iterable<TreatmentHistoryEntry>): Boolean {
-        return refDate == null || treatmentEntries.any { treatmentSinceMinDate(it, refDate, true) }
+        return refDate == null || treatmentEntries.any { potentialTreatmentSinceMinDate(it, refDate) }
     }
 
     private fun anyTreatmentPotentiallyBeforeMaxDate(treatmentEntries: Iterable<TreatmentHistoryEntry>): Boolean {
-        return refDate == null || treatmentEntries.any { treatmentBeforeMaxDate(it, refDate, true) }
+        return refDate == null || treatmentEntries.any { potentialTreatmentBeforeMaxDate(it, refDate) }
     }
 
     private fun evaluateTreatments(
         matchingTreatments: Map<out Boolean?, List<TreatmentHistoryEntry>>,
-        treatmentFunction: (TreatmentHistoryEntry, LocalDate, Boolean) -> Boolean,
-        includeUnknown: Boolean
+        treatmentFunction: (TreatmentHistoryEntry, LocalDate) -> Boolean,
     ): Boolean {
-        return refDate?.let { matchingTreatments[true]?.any { treatmentFunction(it, refDate, includeUnknown) } } == true
+        return refDate?.let { matchingTreatments[true]?.any { treatmentFunction(it, refDate) } } == true
     }
 }

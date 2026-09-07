@@ -13,11 +13,11 @@ import com.hartwig.actin.doid.TestDoidModelFactory
 import com.hartwig.actin.report.datamodel.ReportFactory
 import com.hartwig.actin.report.pdf.ReportWriterFactory
 import com.hartwig.actin.testutil.ResourceLocator
-import org.apache.commons.cli.ParseException
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.File
 import java.time.LocalDate
 import kotlin.system.exitProcess
+import org.apache.commons.cli.ParseException
 
 const val LUNG_01_EXAMPLE = "LUNG-01"
 const val LUNG_02_EXAMPLE = "LUNG-02"
@@ -40,7 +40,6 @@ object ExampleFunctions {
     private const val EXAMPLE_PATIENT_RECORD_JSON = "example_patient_data/EXAMPLE-$EXAMPLE_NAME_.patient_record.json"
     private const val EXAMPLE_TREATMENT_MATCH_JSON = "$EXAMPLE_TREATMENT_MATCH_DIRECTORY/EXAMPLE-$EXAMPLE_NAME_.treatment_match.json"
     private const val EXAMPLE_REPORT_PDF = "$EXAMPLE_REPORT_DIRECTORY/EXAMPLE-$EXAMPLE_NAME_.actin.pdf"
-    private const val EXAMPLE_REPORT_EXTENDED_PDF = "$EXAMPLE_REPORT_DIRECTORY/EXAMPLE-$EXAMPLE_NAME_.actin.extended.pdf"
 
     fun resolveExamplePatientRecordJson(exampleName: String): String {
         return ResourceLocator.resourceOnClasspath(EXAMPLE_PATIENT_RECORD_JSON.replace(EXAMPLE_NAME_, exampleName))
@@ -52,10 +51,6 @@ object ExampleFunctions {
 
     fun resolveExampleReportPdf(exampleName: String): String {
         return ResourceLocator.resourceOnClasspath(EXAMPLE_REPORT_PDF.replace(EXAMPLE_NAME_, exampleName))
-    }
-
-    fun resolveExampleReportExtendedPdf(exampleName: String): String {
-        return ResourceLocator.resourceOnClasspath(EXAMPLE_REPORT_EXTENDED_PDF.replace(EXAMPLE_NAME_, exampleName))
     }
 
     fun resolveExampleTrialDatabaseDirectory(): String {
@@ -127,19 +122,7 @@ object ExampleFunctions {
         val report = ReportFactory.create(reportDate, patient, treatmentMatch)
         val writer = ReportWriterFactory.createProductionReportWriter(outputDirectory)
 
-        writer.write(
-            report = report,
-            configuration = configuration,
-            TestDoidModelFactory.createMinimalTestDoidModel(),
-            addExtendedSuffix = false
-        )
-        writer.write(
-            report = report,
-            configuration = ReportConfiguration.extended(),
-            TestDoidModelFactory.createMinimalTestDoidModel(),
-            addExtendedSuffix = true
-        )
-
+        writer.write(report = report, configuration = configuration, TestDoidModelFactory.createMinimalTestDoidModel())
         logger.info { "Done!" }
     }
 

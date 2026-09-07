@@ -14,60 +14,80 @@ class ProteinHasSufficientExpressionByIhcTest {
 
     @Test
     fun `Should evaluate to undetermined when no IHC tests present in record`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(emptyList())))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withIhcTests(emptyList())),
+            "No protein 1 IHC test result"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined when no IHC test of correct protein present in record`() {
         val test = ihcTest(item = "other", scoreLowerBound = 1.0, scoreUpperBound = 1.0)
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(test)))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withIhcTests(test)),
+            "No protein 1 IHC test result"
+        )
     }
 
     @Test
     fun `Should warn when only score text is provided and exact value is unclear`() {
         val test = ihcTest(scoreText = "negative")
-        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withIhcTests(test)))
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withIhcTests(test)),
+            "Undetermined if protein 1 expression is at least 2 by IHC"
+        )
     }
 
     @Test
     fun `Should fail when only correct IHC test in record has no value`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(ihcTest())))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withIhcTests(ihcTest())),
+            "protein 1 expression not at least 2 by IHC"
+        )
     }
 
     @Test
     fun `Should pass when ihc test above requested value`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = REFERENCE.plus(1.0), scoreUpperBound = REFERENCE.plus(1.0)))
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record), "protein 1 has expression of at least 2 by IHC")
     }
 
     @Test
     fun `Should pass when ihc test at exact requested value`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = REFERENCE.toDouble(), scoreUpperBound = REFERENCE.toDouble()))
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record), "protein 1 has expression of at least 2 by IHC")
     }
 
     @Test
     fun `Should pass when only lower bound is set and above requested value`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = REFERENCE.plus(1.0)))
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(record), "protein 1 has expression of at least 2 by IHC")
     }
 
     @Test
     fun `Should fail when only upper bound is set and below requested value`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreUpperBound = REFERENCE.minus(1.0)))
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(record), "protein 1 expression not at least 2 by IHC")
     }
 
     @Test
     fun `Should fail when both bounds are below requested value with differing bounds`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = REFERENCE.minus(2.0), scoreUpperBound = REFERENCE.minus(1.0)))
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(record), "protein 1 expression not at least 2 by IHC")
     }
 
     @Test
     fun `Should warn when unclear if above requested value due to bounds`() {
         val record = MolecularTestFactory.withIhcTests(ihcTest(scoreLowerBound = REFERENCE.minus(1).toDouble()))
-        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(record))
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(record),
+            "Undetermined if protein 1 expression is at least 2 by IHC"
+        )
     }
 
     private fun ihcTest(scoreLowerBound: Double? = null, scoreUpperBound: Double? = null, scoreText: String? = null) =

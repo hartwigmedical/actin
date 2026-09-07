@@ -28,7 +28,11 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
 
     @Test
     fun `Should fail no medications`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(WashoutTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(WashoutTestFactory.withMedications(emptyList())),
+            "Has not received recent treatments with name correct"
+        )
     }
 
     @Test
@@ -44,7 +48,8 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has not received recent treatments with name correct"
         )
     }
 
@@ -61,7 +66,8 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has not received recent treatments with name correct"
         )
     }
 
@@ -78,7 +84,8 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                         )
                     )
                 )
-            )
+            ),
+            "Received recent correct - pay attention to washout period"
         )
     }
 
@@ -102,12 +109,13 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                         )
                     )
                 )
-            )
+            ),
+            "Received recent correct - pay attention to washout period"
         )
     }
 
     @Test
-    fun `Should be undetermined with treatment history entry with drug with correct name but without date `() {
+    fun `Should be undetermined with treatment history entry with drug with correct name but without date`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(
@@ -120,7 +128,8 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                         )
                     )
                 )
-            )
+            ),
+            "Received correct but unknown if recent (missing stop date)"
         )
     }
 }

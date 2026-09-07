@@ -14,13 +14,18 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
     fun `Should fail when patient medication list is empty`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            createFunction(MedicationTestFactory.alwaysActive()).evaluate(MedicationTestFactory.withMedications(emptyList()))
+            createFunction(MedicationTestFactory.alwaysActive()).evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No current TYPE-A, type-B or TYPE-C substrate or inhibiting medication use (no medication use)"
         )
     }
 
     @Test
     fun `Should fail when no active or planned medication`() {
-        assertEvaluation(EvaluationResult.FAIL, createFunction(MedicationTestFactory.alwaysInactive()).evaluate(patientWithMedication))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            createFunction(MedicationTestFactory.alwaysInactive()).evaluate(patientWithMedication),
+            "No current TYPE-A, type-B or TYPE-C substrate or inhibiting medication use (no planned or active medication)"
+        )
     }
 
     @Test
@@ -28,9 +33,14 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
         val resultPlanned = createFunction(MedicationTestFactory.alwaysPlanned()).evaluate(patientWithMedication)
         val resultActive = createFunction(MedicationTestFactory.alwaysActive()).evaluate(patientWithMedication)
 
-        assertEvaluation(EvaluationResult.WARN, resultPlanned)
-        assertEvaluation(EvaluationResult.WARN, resultActive)
-        assertThat(resultActive.warnMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.WARN,
+            resultPlanned,
+            "Undetermined if patient uses TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
+        )
+        assertEvaluation(
+            EvaluationResult.WARN,
+            resultActive,
             "Undetermined if patient uses TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
         )
     }
@@ -40,7 +50,7 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
         val result = createFunction(MedicationTestFactory.alwaysActive()).evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }
 

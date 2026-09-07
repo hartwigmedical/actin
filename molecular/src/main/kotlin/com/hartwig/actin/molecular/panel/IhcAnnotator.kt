@@ -10,7 +10,7 @@ import com.hartwig.actin.datamodel.molecular.panel.PanelTargetSpecification
 import com.hartwig.actin.molecular.MolecularAnnotator
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityConstants
 
-class IhcAnnotator() : MolecularAnnotator<IhcExtraction> {
+class IhcAnnotator : MolecularAnnotator<IhcExtraction> {
 
     override fun annotate(input: IhcExtraction): MolecularTest {
         val fusionTargetList = input.fusionTestedGenes.map { gene -> gene to MolecularTestTarget.FUSION }

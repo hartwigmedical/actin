@@ -3,7 +3,6 @@ package com.hartwig.actin.algo.evaluation.molecular
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertMolecularEvaluation
 import com.hartwig.actin.datamodel.TestPatientFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
-import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.GeneRole
@@ -24,7 +23,11 @@ class GeneIsWildTypeTest {
 
     @Test
     fun `Should pass with no molecular findings`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "GeneA is wild-type"
+        )
     }
 
     @Test
@@ -37,10 +40,12 @@ class GeneIsWildTypeTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         driverLikelihood = DriverLikelihood.HIGH,
-                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "GeneA not wild-type due to event 1"
         )
     }
 
@@ -54,10 +59,12 @@ class GeneIsWildTypeTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         driverLikelihood = DriverLikelihood.HIGH,
-                        proteinEffect = ProteinEffect.NO_EFFECT
+                        proteinEffect = ProteinEffect.NO_EFFECT,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "Reportable event(s) event 1 in GeneA - however these are annotated with protein effect 'no effect' in evidence source and thus may potentially be considered wild-type"
         )
     }
 
@@ -71,10 +78,12 @@ class GeneIsWildTypeTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         driverLikelihood = DriverLikelihood.LOW,
-                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "Reportable event(s) event 1 in GeneA which may potentially be considered wild-type"
         )
     }
 
@@ -85,9 +94,11 @@ class GeneIsWildTypeTest {
                 TestCopyNumberFactory.createMinimal().copy(event = "$MATCHING_GENE CN", gene = MATCHING_GENE, isReportable = true))
         )
         
-        assertMolecularEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessages).isEqualTo(
-            setOf(StaticMessage("Reportable event(s) GeneA CN in GeneA which may potentially be considered wild-type")))
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Reportable event(s) GeneA CN in GeneA which may potentially be considered wild-type"
+        )
     }
     
     @Test
@@ -100,10 +111,12 @@ class GeneIsWildTypeTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-                        geneRole = GeneRole.TSG
+                        geneRole = GeneRole.TSG,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "GeneA not wild-type due to event 1"
         )
     }
     
@@ -117,10 +130,12 @@ class GeneIsWildTypeTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         proteinEffect = ProteinEffect.NO_EFFECT,
-                        geneRole = GeneRole.TSG
+                        geneRole = GeneRole.TSG,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "Reportable event(s) event 1 in GeneA - however these are annotated with protein effect 'no effect' in evidence source and thus may potentially be considered wild-type"
         )
     }
 
@@ -137,7 +152,8 @@ class GeneIsWildTypeTest {
                         geneRole = GeneRole.ONCO
                     )
                 )
-            )
+            ),
+            "GeneA is wild-type"
         )
     }
 
@@ -151,10 +167,12 @@ class GeneIsWildTypeTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         proteinEffect = ProteinEffect.LOSS_OF_FUNCTION,
-                        geneRole = GeneRole.TSG
+                        geneRole = GeneRole.TSG,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "GeneA not wild-type due to event 1"
         )
     }
     
@@ -168,10 +186,12 @@ class GeneIsWildTypeTest {
                         gene = MATCHING_GENE,
                         isReportable = true,
                         proteinEffect = ProteinEffect.NO_EFFECT,
-                        geneRole = GeneRole.TSG
+                        geneRole = GeneRole.TSG,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "Reportable event(s) event 1 in GeneA - however these are annotated with protein effect 'no effect' in evidence source and thus may potentially be considered wild-type"
         )
     }
 
@@ -188,7 +208,8 @@ class GeneIsWildTypeTest {
                         geneRole = GeneRole.ONCO
                     )
                 )
-            )
+            ),
+            "GeneA is wild-type"
         )
     }
 
@@ -201,10 +222,12 @@ class GeneIsWildTypeTest {
                     TestFusionFactory.createMinimal().copy(
                         geneStart = MATCHING_GENE,
                         isReportable = true,
-                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION
+                        proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "GeneA not wild-type due to event 1"
         )
     }
 
@@ -217,10 +240,12 @@ class GeneIsWildTypeTest {
                     TestFusionFactory.createMinimal().copy(
                         geneStart = MATCHING_GENE,
                         isReportable = true,
-                        proteinEffect = ProteinEffect.NO_EFFECT
+                        proteinEffect = ProteinEffect.NO_EFFECT,
+                        event = "event 1"
                     )
                 )
-            )
+            ),
+            "Reportable event(s) event 1 in GeneA - however these are annotated with protein effect 'no effect' in evidence source and thus may potentially be considered wild-type"
         )
     }
 
@@ -233,7 +258,8 @@ class GeneIsWildTypeTest {
                     hasSufficientPurity = false,
                     hasSufficientQuality = true
                 )
-            )
+            ),
+            "GeneA is wild-type although tumor purity is low"
         )
     }
 
@@ -246,7 +272,8 @@ class GeneIsWildTypeTest {
                     hasSufficientPurity = true,
                     hasSufficientQuality = true
                 )
-            )
+            ),
+            "GeneA is wild-type"
         )
     }
 
@@ -260,7 +287,7 @@ class GeneIsWildTypeTest {
                 )
             )
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.PASS, evaluationResult)
+        assertMolecularEvaluation(EvaluationResult.PASS, evaluationResult, "ALK is wild-type")
     }
 
     @Test
@@ -273,7 +300,11 @@ class GeneIsWildTypeTest {
                 )
             )
         val evaluationResult = GeneIsWildType("EGFR").evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, evaluationResult)
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluationResult,
+            "Wildtype of gene EGFR undetermined (not tested for at least mutations)"
+        )
     }
 
     @Test
@@ -290,7 +321,8 @@ class GeneIsWildTypeTest {
                                         gene = "ALK",
                                         isReportable = true,
                                         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                                        driverLikelihood = DriverLikelihood.HIGH
+                                        driverLikelihood = DriverLikelihood.HIGH,
+                                        event = "event 1"
                                     )
                             )
                         )
@@ -298,7 +330,7 @@ class GeneIsWildTypeTest {
                 )
             )
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult, "ALK not wild-type due to event 1")
     }
 
     @Test
@@ -315,7 +347,8 @@ class GeneIsWildTypeTest {
                                     geneStart = "EML4",
                                     isReportable = true,
                                     proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                                    driverLikelihood = DriverLikelihood.HIGH
+                                    driverLikelihood = DriverLikelihood.HIGH,
+                                    event = "event 1"
                                 )
                             )
                         )
@@ -323,7 +356,7 @@ class GeneIsWildTypeTest {
                 )
             )
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult, "ALK not wild-type due to event 1")
     }
 
     @Test
@@ -340,7 +373,8 @@ class GeneIsWildTypeTest {
                                         gene = "ALK",
                                         isReportable = true,
                                         proteinEffect = ProteinEffect.GAIN_OF_FUNCTION,
-                                        driverLikelihood = DriverLikelihood.HIGH
+                                        driverLikelihood = DriverLikelihood.HIGH,
+                                        event = "event 1"
                                     ),
                                 TestVariantFactory.createMinimal()
                                     .copy(
@@ -369,7 +403,7 @@ class GeneIsWildTypeTest {
                 )
             )
         val evaluationResult = GeneIsWildType("ALK").evaluate(patient)
-        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult)
+        assertMolecularEvaluation(EvaluationResult.FAIL, evaluationResult, "ALK not wild-type due to event 1")
     }
 
     @Test

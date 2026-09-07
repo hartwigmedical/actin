@@ -11,7 +11,8 @@ class HasPrimaryTumorAtUnfavourableSiteTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasPrimaryTumorAtUnfavourableSite().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            HasPrimaryTumorAtUnfavourableSite().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if primary tumor is at unfavourable site"
         )
     }
 }

@@ -57,7 +57,7 @@ object BodyWeightFunctions {
             }
 
             comparisonWithoutMargin == 0 -> {
-                return EvaluationFactory.recoverablePass("Median body weight ($median kg) equal to $referenceBodyWeight kg")
+                EvaluationFactory.recoverablePass("Median body weight ($median kg) equal to $referenceBodyWeight kg")
             }
 
             else -> {

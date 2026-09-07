@@ -20,9 +20,8 @@ class ReportWriterTest {
         reports.forEach {
             memoryWriter.write(
                 it,
-                configuration = ReportConfiguration.extended(),
-                TestDoidModelFactory.createMinimalTestDoidModel(),
-                addExtendedSuffix = true
+                configuration = ReportConfiguration(),
+                TestDoidModelFactory.createMinimalTestDoidModel()
             )
         }
     }

@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test
 
 class CurrentlyGetsTransporterInteractingMedicationTest {
     private val patientWithBCRPSubstrateMedication =
-        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.UNKNOWN)
+        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.UNKNOWN, "name")
     private val patientWithBCRPInhibitorMedication =
-        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.UNKNOWN)
+        MedicationTestFactory.withTransporterInteraction("BCRP", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.UNKNOWN, "name")
 
     @Test
     fun `Should pass with active expected BCRP medication`() {
@@ -20,14 +20,16 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.SUBSTRATE
-            ).evaluate(patientWithBCRPSubstrateMedication)
+            ).evaluate(patientWithBCRPSubstrateMedication),
+            "Active BCRP substrate medication use (name)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             createFunction(
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.INHIBITOR
-            ).evaluate(patientWithBCRPInhibitorMedication)
+            ).evaluate(patientWithBCRPInhibitorMedication),
+            "Active BCRP inhibitor medication use (name)"
         )
     }
 
@@ -37,14 +39,16 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             EvaluationResult.WARN,
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.SUBSTRATE).evaluate(
                 patientWithBCRPSubstrateMedication
-            )
+            ),
+            "Planned BCRP substrate medication use (name)"
         )
 
         assertEvaluation(
             EvaluationResult.WARN,
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.INHIBITOR).evaluate(
                 patientWithBCRPInhibitorMedication
-            )
+            ),
+            "Planned BCRP inhibitor medication use (name)"
         )
     }
 
@@ -55,14 +59,16 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.SUBSTRATE
-            ).evaluate(patientWithBCRPInhibitorMedication)
+            ).evaluate(patientWithBCRPInhibitorMedication),
+            "No current BCRP substrate medication use"
         )
 
         assertEvaluation(
             EvaluationResult.FAIL,
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.INHIBITOR).evaluate(
                 patientWithBCRPSubstrateMedication
-            )
+            ),
+            "No current BCRP inhibitor medication use"
         )
     }
 
@@ -73,7 +79,8 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.SUBSTRATE
-            ).evaluate(MedicationTestFactory.withMedications(emptyList()))
+            ).evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No current BCRP substrate medication use"
         )
     }
 
@@ -84,7 +91,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             DrugInteraction.Type.SUBSTRATE
         ).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null))
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }
 

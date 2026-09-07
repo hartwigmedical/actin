@@ -22,7 +22,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
                             icdExtensionCode = it
                         )
                     )
-                )
+                ),
+                "Has history of congestive heart failure with at least NYHA class III"
             )
         }
     }
@@ -37,7 +38,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
                         icdExtensionCode = null
                     )
                 )
-            )
+            ),
+            "Has history of congestive heart failure but undetermined if at least NYHA class III (NYHA unknown)"
         )
     }
 
@@ -51,7 +53,8 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
                         icdExtensionCode = IcdConstants.NYHA_CLASS_2_CODE
                     )
                 )
-            )
+            ),
+            "No history of congestive heart failure with at least NYHA class III"
         )
     }
 
@@ -65,14 +68,16 @@ class HasHistoryOfCongestiveHeartFailureWithNYHATest {
                         icdExtensionCode = IcdConstants.NYHA_CLASS_4_CODE
                     )
                 )
-            )
+            ),
+            "No history of congestive heart failure with at least NYHA class III"
         )
     }
 
     @Test
     fun `Should fail for empty history`() {
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())),
+            "No history of congestive heart failure with at least NYHA class III"
         )
     }
 }

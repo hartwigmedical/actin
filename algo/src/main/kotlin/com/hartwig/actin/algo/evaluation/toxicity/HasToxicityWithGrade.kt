@@ -43,7 +43,7 @@ class HasToxicityWithGrade(
             ) != false
         }
 
-        val icdTitleText = targetIcdTitles?.let { "in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
+        val icdTitleText = targetIcdTitles?.let { " in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
         return when {
             matchingToxicities.isNotEmpty() &&
                     (matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE } || !warnIfToxicitiesNotFromQuestionnaire) -> {
@@ -61,7 +61,7 @@ class HasToxicityWithGrade(
                 EvaluationFactory.undetermined("Has toxicities$toxicityString but unknown if grade >= $minGrade")
             }
 
-            else -> EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
+            else -> EvaluationFactory.fail("No toxicities$icdTitleText found with grade $minGrade or higher")
         }
     }
 

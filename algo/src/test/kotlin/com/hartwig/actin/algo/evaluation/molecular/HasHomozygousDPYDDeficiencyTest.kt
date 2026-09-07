@@ -22,7 +22,8 @@ class HasHomozygousDPYDDeficiencyTest {
                 MolecularTestFactory.withHaplotype(
                     PharmacoEntry(gene = PharmacoGene.UGT1A1, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)))
                 )
-            )
+            ),
+            "DPYD haplotype undetermined"
         )
     }
 
@@ -41,7 +42,8 @@ class HasHomozygousDPYDDeficiencyTest {
                 MolecularTestFactory.withHaplotype(
                     PharmacoEntry(gene = PharmacoGene.DPYD, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.REDUCED_FUNCTION)))
                 )
-            )
+            ),
+            "Homozygous DPYD deficiency detected"
         )
     }
 
@@ -59,7 +61,8 @@ class HasHomozygousDPYDDeficiencyTest {
                         )
                     )
                 )
-            )
+            ),
+            "Homozygous DPYD deficiency detected"
         )
     }
 
@@ -77,7 +80,8 @@ class HasHomozygousDPYDDeficiencyTest {
                         )
                     )
                 )
-            )
+            ),
+            "Is not homozygous DPYD deficient"
         )
     }
 
@@ -89,7 +93,8 @@ class HasHomozygousDPYDDeficiencyTest {
                 MolecularTestFactory.withHaplotype(
                     PharmacoEntry(gene = PharmacoGene.DPYD, haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)))
                 )
-            )
+            ),
+            "Is not homozygous DPYD deficient"
         )
     }
 }

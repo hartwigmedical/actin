@@ -2,7 +2,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.treatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.certainTreatmentSinceMinDate
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -29,12 +30,12 @@ class HasHadAdjuvantTreatmentWithCategory(
                 EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()}")
             }
 
-            minDate?.let { treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, false) } } == true -> {
+            minDate?.let { treatmentSummary.specificMatches.any { certainTreatmentSinceMinDate(it, minDate) } } == true -> {
                 EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()} within the last $weeksAgo weeks")
             }
 
-            minDate?.let { treatmentSummary.specificMatches.any { treatmentSinceMinDate(it, minDate, true) } } == true -> {
-                EvaluationFactory.undetermined("Received adjuvant treatment(s) of ${category.display()} but date unknown")
+            minDate?.let { treatmentSummary.specificMatches.any { potentialTreatmentSinceMinDate(it, minDate) } } == true  -> {
+                EvaluationFactory.undetermined("Received adjuvant treatment(s) of ${category.display()} but unknown if within the last $weeksAgo weeks")
             }
 
             !treatmentSummary.hasSpecificMatch() -> {

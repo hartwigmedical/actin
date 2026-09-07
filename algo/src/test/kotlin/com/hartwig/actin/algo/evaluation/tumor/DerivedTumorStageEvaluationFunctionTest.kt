@@ -48,7 +48,7 @@ class DerivedTumorStageEvaluationFunctionTest {
         every { evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II)) } returns EvaluationTestFactory.withResult(
             EvaluationResult.PASS
         )
-        assertEvaluation(EvaluationResult.PASS, derivedFunction.evaluate(withStageAndDerivedStages()))
+        assertEvaluation(EvaluationResult.PASS, derivedFunction.evaluate(withStageAndDerivedStages()), "pass")
     }
 
     @Test
@@ -59,7 +59,7 @@ class DerivedTumorStageEvaluationFunctionTest {
         every {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
         } returns EvaluationTestFactory.withResult(EvaluationResult.UNDETERMINED)
-        assertEvaluation(EvaluationResult.UNDETERMINED, derivedFunction.evaluate(withStageAndDerivedStages()))
+        assertEvaluation(EvaluationResult.UNDETERMINED, derivedFunction.evaluate(withStageAndDerivedStages()), "undetermined")
     }
 
     @Test
@@ -70,7 +70,7 @@ class DerivedTumorStageEvaluationFunctionTest {
         every {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
         } returns EvaluationTestFactory.withResult(EvaluationResult.WARN)
-        assertEvaluation(EvaluationResult.WARN, derivedFunction.evaluate(withStageAndDerivedStages()))
+        assertEvaluation(EvaluationResult.WARN, derivedFunction.evaluate(withStageAndDerivedStages()), "warn")
     }
 
     @Test
@@ -81,7 +81,7 @@ class DerivedTumorStageEvaluationFunctionTest {
         every {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.II))
         } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
-        assertEvaluation(EvaluationResult.FAIL, derivedFunction.evaluate(withStageAndDerivedStages()))
+        assertEvaluation(EvaluationResult.FAIL, derivedFunction.evaluate(withStageAndDerivedStages()), "fail")
     }
 
     @Test
@@ -94,15 +94,18 @@ class DerivedTumorStageEvaluationFunctionTest {
         } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
 
         val result = derivedFunction.evaluate(withStageAndDerivedStages())
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if patient has something")
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined if patient has something")
     }
 
     private fun assertSingleStageWithResult(expectedResult: EvaluationResult) {
         every {
             evaluationFunction.evaluate(withStageAndDerivedStages(TumorStage.I, setOf(TumorStage.I)))
         } returns EvaluationTestFactory.withResult(expectedResult)
-        assertEvaluation(expectedResult, derivedFunction.evaluate(withStageAndDerivedStages(derivedStages = setOf(TumorStage.I))))
+        assertEvaluation(
+            expectedResult,
+            derivedFunction.evaluate(withStageAndDerivedStages(derivedStages = setOf(TumorStage.I))),
+            expectedResult.name.lowercase()
+        )
     }
 
     private fun withStageAndDerivedStages(

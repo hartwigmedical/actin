@@ -15,41 +15,61 @@ class CurrentlyGetsQTProlongatingMedicationTest {
 
     @Test
     fun `Should pass when patient uses known QT prolongating medication`() {
-        val medications = listOf(MedicationTestFactory.medication(qtProlongatingRisk = QTProlongatingRisk.KNOWN))
-        assertEvaluation(EvaluationResult.PASS, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        val medications = listOf(MedicationTestFactory.medication(name = "name", qtProlongatingRisk = QTProlongatingRisk.KNOWN))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "QT prolongating medication use (risk type): name (known)"
+        )
     }
 
     @Test
     fun `Should fail when patient does not use QT prolongating medication`() {
         val medications = listOf(TestMedicationFactory.createMinimal())
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No QT prolongating medication use"
+        )
     }
 
     @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No QT prolongating medication use"
+        )
     }
 
     @Test
     fun `Should warn when patient plans to use known QT prolongating medication`() {
-        val medications = listOf(MedicationTestFactory.medication(qtProlongatingRisk = QTProlongatingRisk.KNOWN))
-        assertEvaluation(EvaluationResult.WARN, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        val medications = listOf(MedicationTestFactory.medication(name = "name", qtProlongatingRisk = QTProlongatingRisk.KNOWN))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Planned QT prolongating medication use (risk type): name (known)"
+        )
     }
 
     @Test
     fun `Should fail when patient plans to use medication that is not QT prolongating`() {
         val medications = listOf(TestMedicationFactory.createMinimal())
-        assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No QT prolongating medication use"
+        )
     }
 
     @Test
     fun `Should be undetermined if medication is not provided`() {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult, "No medication data provided")
         assertThat(alwaysPlannedResult.recoverable).isTrue()
         val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult, "No medication data provided")
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

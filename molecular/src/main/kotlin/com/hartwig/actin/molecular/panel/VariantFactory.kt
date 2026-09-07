@@ -54,7 +54,7 @@ object VariantFactory {
         phaseGroups = null,
         exonSkippingIsConfirmed = variant.exonSkippingIsConfirmed,
         isCancerAssociatedVariant = false,
-        sourceEvent = sourceEvent(variant, paveResponse, transvarAnnotation),
+        sourceEvent = sourceEvent(variant, paveResponse),
         isReportable = true,
         event = "${variant.gene} ${eventString(paveResponse)}",
         driverLikelihood = null,
@@ -65,7 +65,7 @@ object VariantFactory {
         isAssociatedWithDrugResistance = null
     )
 
-    private fun sourceEvent(variant: SequencedVariant, paveResponse: PaveResponse, transvarAnnotation: TransvarVariant): String {
+    private fun sourceEvent(variant: SequencedVariant, paveResponse: PaveResponse): String {
         val transcriptImpacts = paveResponse.transcriptImpacts
         val selectedTranscript =
             variant.transcript?.let { transcript ->

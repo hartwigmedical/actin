@@ -22,33 +22,43 @@ class GeneHasUTR3LossTest {
 
     @Test
     fun canEvaluate() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.createMinimal().copy(gene = TARGET_GENE)))
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No 3' UTR loss of gene A"
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withDisruption(TestDisruptionFactory.createMinimal().copy(gene = TARGET_GENE))),
+            "No 3' UTR loss of gene A"
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN, function.evaluate(
                 MolecularTestFactory.withDisruption(
                     TestDisruptionFactory.createMinimal().copy(
-                        gene = TARGET_GENE, regionType = RegionType.EXONIC, codingContext = CodingContext.UTR_3P
+                        gene = TARGET_GENE, regionType = RegionType.EXONIC, codingContext = CodingContext.UTR_3P, event = "event"
                     )
                 )
-            )
+            ),
+            "Disruption(s) event in 3' UTR region of gene A which may lead to 3' UTR loss"
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = TARGET_GENE)))
+            function.evaluate(MolecularTestFactory.withVariant(TestVariantFactory.createMinimal().copy(gene = TARGET_GENE))),
+            "No 3' UTR loss of gene A"
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(patientWithThreePrimeUtrEffect(isReportable = false, isCancerAssociatedVariant = false))
+            function.evaluate(patientWithThreePrimeUtrEffect(isReportable = false, isCancerAssociatedVariant = false)),
+            "Cancer-associated variant(s) event in 3' UTR region of gene A which may lead to 3' UTR loss but mutation is not considered reportable"
         )
         assertMolecularEvaluation(
-            EvaluationResult.WARN, function.evaluate(patientWithThreePrimeUtrEffect(isReportable = false, isCancerAssociatedVariant = true))
+            EvaluationResult.WARN, function.evaluate(patientWithThreePrimeUtrEffect(isReportable = false, isCancerAssociatedVariant = true)),
+            "VUS mutation(s) event in 3' UTR region of gene A which may lead to 3' UTR loss"
         )
         assertMolecularEvaluation(
-            EvaluationResult.PASS, function.evaluate(patientWithThreePrimeUtrEffect(isReportable = true, isCancerAssociatedVariant = true))
+            EvaluationResult.PASS, function.evaluate(patientWithThreePrimeUtrEffect(isReportable = true, isCancerAssociatedVariant = true)),
+            "3' UTR cancer-associated variant(s) event in gene A should lead to 3' UTR loss"
         )
     }
 
@@ -69,7 +79,8 @@ class GeneHasUTR3LossTest {
                 gene = TARGET_GENE,
                 isReportable = isReportable,
                 isCancerAssociatedVariant = isCancerAssociatedVariant,
-                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(effects = setOf(VariantEffect.THREE_PRIME_UTR))
+                canonicalImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(effects = setOf(VariantEffect.THREE_PRIME_UTR)),
+                event = "event"
             )
         )
     }

@@ -13,6 +13,9 @@ import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.properties.TextAlignment
 import java.time.LocalDate
 
+private const val FOOTER_PARAGRAPH_X = 25f
+private const val FOOTER_PARAGRAPH_WIDTH = 425f
+
 class Footer(private val reportDate: LocalDate, private val labels: ReportLabels) {
 
     private val footerTemplates: MutableList<FooterTemplate> = mutableListOf()
@@ -20,8 +23,8 @@ class Footer(private val reportDate: LocalDate, private val labels: ReportLabels
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageNumber = page.document.getPageNumber(page)
-        val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 40f))
-        canvas.addXObjectAt(template, 58f, 18f)
+        val template = PdfFormXObject(Rectangle(0f, 0f, 450f, 35f))
+        canvas.addXObjectAt(template, 50f, 18f)
         footerTemplates.add(FooterTemplate(pageNumber, template, reportDate, labels))
         canvas.release()
     }
@@ -46,15 +49,20 @@ class Footer(private val reportDate: LocalDate, private val labels: ReportLabels
             val pageNumberParagraph = Paragraph().add("$pageNumber/$totalPageCount").addStyle(Styles.pageNumberStyle())
             canvas.showTextAligned(pageNumberParagraph, 0f, 0f, TextAlignment.LEFT)
 
-            val researchDisclaimerParagraph = Paragraph(labels.footer.researchDisclaimer()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
-            canvas.showTextAligned(researchDisclaimerParagraph, 30f, 27f, TextAlignment.LEFT)
+            val researchDisclaimerParagraph = Paragraph(labels.footer.researchDisclaimer())
+                .setMaxWidth(FOOTER_PARAGRAPH_WIDTH)
+                .addStyle(Styles.disclaimerStyle())
+            canvas.showTextAligned(researchDisclaimerParagraph, FOOTER_PARAGRAPH_X, 20f, TextAlignment.LEFT)
 
-            val ctgovDisclaimerParagraph = Paragraph(labels.footer.ctgovDisclaimer(Formats.date(reportDate))).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
-            canvas.showTextAligned(ctgovDisclaimerParagraph, 30f, 10f, TextAlignment.LEFT)
+            val ctgovDisclaimerParagraph = Paragraph(labels.footer.ctgovDisclaimer(Formats.date(reportDate)))
+                .setMaxWidth(FOOTER_PARAGRAPH_WIDTH)
+                .addStyle(Styles.disclaimerStyle())
+            canvas.showTextAligned(ctgovDisclaimerParagraph, FOOTER_PARAGRAPH_X, 7f, TextAlignment.LEFT)
 
-            // TODO (KD) Only add CKB attribution in case we have done molecular interpretation with evidenceSource = CKB.
-            val attributionParagraph = Paragraph(labels.footer.ckbAttribution()).setMaxWidth(420f).addStyle(Styles.disclaimerStyle())
-            canvas.showTextAligned(attributionParagraph, 30f, 0f, TextAlignment.LEFT)
+            val attributionsParagraph = Paragraph(labels.footer.attributions())
+                .setMaxWidth(FOOTER_PARAGRAPH_WIDTH)
+                .addStyle(Styles.disclaimerStyle())
+            canvas.showTextAligned(attributionsParagraph, FOOTER_PARAGRAPH_X, 0f, TextAlignment.LEFT)
         }
     }
 }

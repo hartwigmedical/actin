@@ -77,15 +77,15 @@ class EligibleTrialGenerator(
 
         fun localAndNationalExternalOpenAndEligibleCohorts(
             cohorts: List<InterpretedCohort>,
-            externalTrials: ExternalTrials,
+            externalTrials: ExternalTrials?,
             requestingSource: TrialSource?,
             countryOfReference: Country?,
             localTrialsType: LocalTrialsType,
             effectiveDutchExternalTrialExclusion: ExternalTrialTumorType,
             labels: ReportLabels
         ): TrialTableGenerator {
-            val nationalExternalTrials = ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered)
-            val nationalExternalTrialFilteredCount = ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials()).size
+            val nationalExternalTrials = externalTrials?.let { ExternalTrialSummarizer.summarize(externalTrials.nationalTrials.filtered) } ?: emptySet()
+            val nationalExternalTrialFilteredCount = externalTrials?.let { ExternalTrialSummarizer.summarize(externalTrials.excludedNationalTrials()).size } ?: 0
 
             return forLocalAndNationalExternalOpenAndEligibleLocalCohorts(
                 openAndEligibleLocalCohorts = filterOpenAndEligibleCohorts(localTrialsType, cohorts),

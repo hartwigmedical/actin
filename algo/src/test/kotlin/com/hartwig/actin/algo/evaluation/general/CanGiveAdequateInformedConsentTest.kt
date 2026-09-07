@@ -13,7 +13,8 @@ class CanGiveAdequateInformedConsentTest {
     fun `Should pass always`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient can give adequate informed consent"
         )
     }
 }

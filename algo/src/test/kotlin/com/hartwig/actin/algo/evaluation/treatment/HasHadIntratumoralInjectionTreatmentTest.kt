@@ -10,6 +10,10 @@ class HasHadIntratumoralInjectionTreatmentTest {
     @Test
     fun canEvaluate() {
         val function = HasHadIntratumoralInjectionTreatment()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Prior intratumoral injection treatment undetermined"
+        )
     }
 }

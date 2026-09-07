@@ -27,7 +27,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             BreastCancerReceptorEvaluation.NOT_BREAST_CANCER -> EvaluationFactory.fail("No breast cancer")
 
             BreastCancerReceptorEvaluation.DATA_MISSING -> {
-                return if (targetHer2AndErbb2Amplified) {
+                if (targetHer2AndErbb2Amplified) {
                     EvaluationFactory.undetermined(
                         "${receptorType.display()}-status undetermined (IHC data missing) but probably positive since ERBB2 amp present"
                     )
@@ -56,7 +56,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             BreastCancerReceptorEvaluation.LOW -> {
-                return when {
+                when {
                     targetHer2AndErbb2Amplified -> {
                         EvaluationFactory.warn(
                             "Undetermined if ${receptorType.display()}-positive breast cancer " +
@@ -82,7 +82,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
             }
 
             BreastCancerReceptorEvaluation.NEGATIVE -> {
-                return if (targetHer2AndErbb2Amplified) {
+                if (targetHer2AndErbb2Amplified) {
                     EvaluationFactory.warn(
                         "Undetermined if ${receptorType.display()}-positive breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)",
                         inclusionEvents = warnInclusionEvents

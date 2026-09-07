@@ -1,6 +1,7 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.evaluateIfDrugHadPDResponse
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.partitionTreatmentsByIntent
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
@@ -8,6 +9,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
+import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -23,6 +25,34 @@ private val TRIAL_DRUG_TREATMENT_NO_CATEGORY = drugTreatment("Some trial drug", 
 class TreatmentHistoryEntryFunctionsTest {
 
     private val predicate: (Treatment) -> Boolean = { it.categories().contains(TreatmentCategory.CHEMOTHERAPY) }
+
+    @Test
+    fun `Should place treatments with missing intent or other intent than requested in excluded partition`() {
+        val treatment = treatmentHistoryEntry(setOf(TARGET_DRUG_TREATMENT), 2022, 5)
+        val curative = treatment.copy(intents = setOf(Intent.CURATIVE))
+        val palliative = treatment.copy(intents = setOf(Intent.PALLIATIVE))
+        val nullIntent = treatment.copy(intents = null)
+        val (included, excluded) = listOf(
+            curative,
+            palliative,
+            nullIntent
+        ).partitionTreatmentsByIntent(Intent.curativeAdjuvantNeoadjuvantSet())
+        assertThat(included).containsExactly(curative)
+        assertThat(excluded).containsExactly(palliative, nullIntent)
+    }
+
+    @Test
+    fun `Should return all treatments in non-matching list when intent list is empty`() {
+        val treatment = treatmentHistoryEntry(setOf(TARGET_DRUG_TREATMENT), 2022, 5)
+        val entries = listOf(
+            treatment.copy(intents = setOf(Intent.CURATIVE)),
+            treatment.copy(intents = null),
+            treatment.copy(intents = emptySet())
+        )
+        val (included, excluded) = entries.partitionTreatmentsByIntent(emptySet())
+        assertThat(included).isEmpty()
+        assertThat(excluded).containsExactlyElementsOf(entries)
+    }
 
     @Test
     fun `Should return TreatmentHistoryEvaluation object with empty sets and false Booleans when treatment history is empty`() {
@@ -262,7 +292,12 @@ class TreatmentHistoryEntryFunctionsTest {
 
     @Test
     fun `Should return max number of weeks between the start and stop date of the treatment`() {
-        val entry = TreatmentHistoryEntry(treatments = emptySet(), startYear = 2024, startMonth = 3, treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8))
+        val entry = TreatmentHistoryEntry(
+            treatments = emptySet(),
+            startYear = 2024,
+            startMonth = 3,
+            treatmentHistoryDetails = TreatmentHistoryDetails(maxStopYear = 2024, maxStopMonth = 8)
+        )
         assertThat(TreatmentHistoryEntryFunctions.maxWeeksBetweenDates(entry)).isEqualTo(17)
     }
 }

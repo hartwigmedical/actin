@@ -4,7 +4,6 @@ import com.hartwig.actin.algo.doid.DoidConstants
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.doid.TestDoidModelFactory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasTripleNegativeBreastCancerTest {
@@ -15,19 +14,22 @@ class HasTripleNegativeBreastCancerTest {
     @Test
     fun `Should evaluate to undetermined when no tumor doids configured`() {
         val evaluation = function.evaluate(TumorTestFactory.withDoids(emptySet()))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer (tumor doids missing)")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if triple negative breast cancer (tumor doids missing)")
     }
 
     @Test
     fun `Should fail if tumor type is not breast cancer`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID))),
+            "Has no triple negative breast cancer"
+        )
     }
 
     @Test
     fun `Should pass if tumor doid is triple negative breast cancer`() {
         val patient = TumorTestFactory.withDoids(setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
     }
 
     @Test
@@ -39,7 +41,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create("HER2", "Negative")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
     }
 
     @Test
@@ -51,7 +53,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create("HER2", "Low")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
     }
 
     @Test
@@ -63,7 +65,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "ER", score = 0.0, scoreValueUnit = "%")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
     }
 
     @Test
@@ -75,7 +77,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "ER", score = 0.0, scoreValueUnit = "%")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
     }
 
     @Test
@@ -88,15 +90,18 @@ class HasTripleNegativeBreastCancerTest {
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
         val evaluation = function.evaluate(patient)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if IHC ER/PR low is considered triple negative breast cancer")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if IHC ER/PR low is considered triple negative breast cancer"
+        )
     }
 
     @Test
     fun `Should fail if if at least one of HER2 or PR or ER is positive`() {
         val patient =
             TumorTestFactory.withIhcTestsAndDoids(listOf(IhcTestFactory.create("HER2", "Positive")), setOf(DoidConstants.BREAST_CANCER_DOID))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient), "Has no triple negative breast cancer")
     }
 
     @Test
@@ -105,7 +110,7 @@ class HasTripleNegativeBreastCancerTest {
             listOf(IhcTestFactory.create("HER2", score = 3.0, scoreValueUnit = "+")),
             setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient), "Has no triple negative breast cancer")
     }
 
     @Test
@@ -116,8 +121,7 @@ class HasTripleNegativeBreastCancerTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if triple negative breast cancer")
     }
 
     @Test
@@ -131,8 +135,7 @@ class HasTripleNegativeBreastCancerTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if triple negative breast cancer")
     }
 
     @Test
@@ -143,8 +146,7 @@ class HasTripleNegativeBreastCancerTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if triple negative breast cancer")
     }
 
     @Test
@@ -155,8 +157,7 @@ class HasTripleNegativeBreastCancerTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.TRIPLE_NEGATIVE_BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if triple negative breast cancer")
     }
 
     @Test
@@ -171,8 +172,7 @@ class HasTripleNegativeBreastCancerTest {
                 setOf(DoidConstants.BREAST_CANCER_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if triple negative breast cancer")
     }
 
     @Test
@@ -184,8 +184,11 @@ class HasTripleNegativeBreastCancerTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if triple negative breast cancer (DOID/IHC data inconsistent with ERBB2 gene amp)"
+        )
     }
 
     @Test
@@ -197,8 +200,11 @@ class HasTripleNegativeBreastCancerTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so potentially not triple negative)")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if triple negative breast cancer (IHC HER2 data missing but ERBB2 amp so potentially not triple negative)"
+        )
     }
 
     @Test
@@ -210,7 +216,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "HER2", score = 0.0, scoreValueUnit = "+")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has triple negative breast cancer")
     }
 
     @Test
@@ -223,8 +229,11 @@ class HasTripleNegativeBreastCancerTest {
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
         val evaluation = function.evaluate(patient)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if IHC ER/PR low is considered triple negative breast cancer")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if IHC ER/PR low is considered triple negative breast cancer"
+        )
     }
 
     @Test
@@ -236,7 +245,7 @@ class HasTripleNegativeBreastCancerTest {
                 IhcTestFactory.create(item = "HER2", score = 0.0, scoreValueUnit = "+")
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patient), "Has no triple negative breast cancer")
     }
 
     @Test
@@ -249,8 +258,7 @@ class HasTripleNegativeBreastCancerTest {
             ), setOf(DoidConstants.BREAST_CANCER_DOID)
         )
         val evaluation = function.evaluate(patient)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Undetermined if triple negative breast cancer")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if triple negative breast cancer")
     }
 
 }

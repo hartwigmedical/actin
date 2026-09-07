@@ -4,7 +4,7 @@ import com.hartwig.actin.datamodel.trial.EligibilityFunction
 
 class EligibilityFunctionComparator : Comparator<EligibilityFunction> {
 
-    private val comparator = Comparator.comparing { function: EligibilityFunction -> function.rule.toString() }
+    private val comparator = Comparator.comparing { function: EligibilityFunction -> function.rule }
         .thenComparing { function: EligibilityFunction -> function.parameters.isEmpty() }
         .thenComparing { function: EligibilityFunction -> function.parameters.size }
         .thenComparing(EligibilityFunction::parameters, ::compareParameters)

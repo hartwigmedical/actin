@@ -12,7 +12,8 @@ class HasSpleenMetastasesTest {
     fun `Should be undetermined if other lesions are unknown`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withOtherLesions(null))
+            function.evaluate(TumorTestFactory.withOtherLesions(null)),
+            "Spleen metastases undetermined (metastases data missing)"
         )
     }
 
@@ -21,7 +22,8 @@ class HasSpleenMetastasesTest {
         listOf("abdominal lesion", "Lymph node").forEach {
             EvaluationAssert.assertEvaluation(
                 EvaluationResult.FAIL,
-                function.evaluate(TumorTestFactory.withOtherLesions(listOf(it)))
+                function.evaluate(TumorTestFactory.withOtherLesions(listOf(it))),
+                "No spleen metastases"
             )
         }
     }
@@ -30,7 +32,8 @@ class HasSpleenMetastasesTest {
     fun `Should fail if patient has no other lesions`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(emptyList()))
+            function.evaluate(TumorTestFactory.withOtherLesions(emptyList())),
+            "No spleen metastases"
         )
     }
 
@@ -38,15 +41,18 @@ class HasSpleenMetastasesTest {
     fun `Should pass if patient has spleen metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Splenic metastases")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Splenic metastases"))),
+            "Has spleen metastases"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions in spleen")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions in spleen"))),
+            "Has spleen metastases"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intrasplenic")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intrasplenic"))),
+            "Has spleen metastases"
         )
     }
 
@@ -54,7 +60,8 @@ class HasSpleenMetastasesTest {
     fun `Should warn if patient has suspected spleen metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("spleen")))
+            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("spleen"))),
+            "Has suspected spleen metastases"
         )
     }
 }

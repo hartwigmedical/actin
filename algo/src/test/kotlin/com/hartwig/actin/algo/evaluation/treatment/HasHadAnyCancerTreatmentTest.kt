@@ -22,11 +22,13 @@ class HasHadAnyCancerTreatmentTest {
     fun `Should fail when treatment history is empty`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not had any prior cancer treatment"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not had any prior cancer treatment"
         )
     }
 
@@ -36,11 +38,13 @@ class HasHadAnyCancerTreatmentTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatments)))
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Has received prior cancer treatment(s)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Has received prior cancer treatment(s)"
         )
     }
 
@@ -51,11 +55,13 @@ class HasHadAnyCancerTreatmentTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatment1, treatment2)))
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Has received prior cancer treatment(s)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Has received prior cancer treatment(s)"
         )
     }
 
@@ -71,7 +77,8 @@ class HasHadAnyCancerTreatmentTest {
         listOf(functionWithCategoriesToIgnore, functionWithoutCategoriesToIgnore).forEach { function ->
             assertEvaluation(
                 EvaluationResult.PASS,
-                function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications))
+                function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
+                "Has received prior cancer treatment(s)"
             )
         }
     }
@@ -83,7 +90,8 @@ class HasHadAnyCancerTreatmentTest {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(treatment1, treatment2)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
+            functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Has not had any prior cancer treatment"
         )
     }
 
@@ -92,7 +100,8 @@ class HasHadAnyCancerTreatmentTest {
         val medications = listOf(WashoutTestFactory.medication(isTrialMedication = true))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithCategoriesToIgnore.evaluate(WashoutTestFactory.withMedications(medications))
+            functionWithCategoriesToIgnore.evaluate(WashoutTestFactory.withMedications(medications)),
+            "Inconclusive if patient had any prior cancer treatment because participated in trial"
         )
     }
 }

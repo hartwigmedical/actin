@@ -11,6 +11,10 @@ class IsNotEligibleForCurativeTreatmentTest {
 
     @Test
     fun `Should pass always`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient is not eligible for curative treatment"
+        )
     }
 }

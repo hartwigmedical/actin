@@ -11,7 +11,8 @@ class AdheresToBloodDonationPrescriptionsTest {
     fun `Should return pass always`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            AdheresToBloodDonationPrescriptions().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            AdheresToBloodDonationPrescriptions().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient adheres to blood donation prescriptions"
         )
     }
 }

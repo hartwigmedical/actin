@@ -13,24 +13,32 @@ class HasCancerWithLargeCellComponentTest {
     @Test
     fun `Should evaluate to undetermined if no tumor doids configured`() {
         val tumorDetails = TumorTestFactory.withDoids(emptySet())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumorDetails))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumorDetails),
+            "Undetermined if tumor may have large cell component"
+        )
     }
 
     @Test
     fun `Should pass if tumor has large cell component`() {
         val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.LARGE_CELL_CANCER_DOIDS.first()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Has cancer with large cell component")
     }
 
     @Test
     fun `Should be undetermined if tumor has neuroendocrine component`() {
         val tumorDetails = TumorTestFactory.withDoids(DoidConstants.NEUROENDOCRINE_DOIDS.first())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumorDetails))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumorDetails),
+            "Potentially has cancer with large cell component (has neuroendocrine tumor type)"
+        )
     }
 
     @Test
     fun `Should fail if tumor is of other type than large cell`() {
         val tumorDetails = TumorTestFactory.withDoidAndName("wrong doid", "wrong name")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "Has no cancer with large cell component")
     }
 }
