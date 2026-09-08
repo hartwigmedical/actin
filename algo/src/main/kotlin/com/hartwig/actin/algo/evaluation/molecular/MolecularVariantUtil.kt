@@ -1,7 +1,7 @@
 package com.hartwig.actin.algo.evaluation.molecular
 
 import com.hartwig.actin.datamodel.molecular.driver.VariantType
-import com.hartwig.actin.datamodel.trial.ParameterFormat
+import com.hartwig.actin.datamodel.trial.InputChecker
 import com.hartwig.actin.datamodel.trial.VariantTypeInput
 import io.github.oshai.kotlinlogging.KotlinLogging
 
@@ -12,7 +12,7 @@ object MolecularVariantUtil {
     fun toProteinImpact(hgvsProteinImpact: String): String {
         val impact = if (hgvsProteinImpact.startsWith("p.")) hgvsProteinImpact.substring(2) else hgvsProteinImpact
         if (impact.isEmpty()) return impact
-        if (!ParameterFormat.isProteinImpact(impact)) {
+        if (!InputChecker.isProteinImpact(impact)) {
             logger.warn { "Cannot convert hgvs protein impact to a usable protein impact: $hgvsProteinImpact" }
         }
         return impact
