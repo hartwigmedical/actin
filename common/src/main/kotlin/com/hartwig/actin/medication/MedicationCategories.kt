@@ -31,9 +31,8 @@ class MedicationCategories(private val knownCategories: Map<String, Set<AtcLevel
         }
 
         fun isAntiCancerMedication(atcCode: String?): Boolean {
-            return ANTI_CANCER_ATC_CODES.any { antiCancerCode -> atcCode?.startsWith(antiCancerCode) == true } && atcCode?.startsWith(
-                "L01XD"
-            ) != true
+            return ANTI_CANCER_ATC_CODES.any { antiCancerCode -> atcCode?.startsWith(antiCancerCode) == true } &&
+                    atcCode?.startsWith("L01XD") != true
         }
     }
 }
