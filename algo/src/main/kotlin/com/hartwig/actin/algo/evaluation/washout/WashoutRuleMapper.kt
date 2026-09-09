@@ -8,6 +8,9 @@ import com.hartwig.actin.algo.evaluation.medication.MedicationSelector
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate
 import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreterOnEvaluationDate.Companion.createInterpreterForWashout
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.MedicationCategoryMappings.ANTI_CANCER_ATC_CODES
+import com.hartwig.actin.datamodel.clinical.MedicationCategoryMappings.MEDICATION_CATEGORIES_TO_DRUG_TYPES
+import com.hartwig.actin.datamodel.clinical.MedicationCategoryMappings.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.IntegerParameter
@@ -205,9 +208,9 @@ class WashoutRuleMapper(resources: RuleMappingResources) : RuleMapper(resources)
     }
 
     private fun throwExceptionIfAtcCategoryNotMapped(category: String) {
-        val hasMapping = MedicationCategories.MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.containsKey(category)
-                || MedicationCategories.MEDICATION_CATEGORIES_TO_DRUG_TYPES.containsKey(category)
-        if (MedicationCategories.ANTI_CANCER_ATC_CODES.any { category.startsWith(it) } && !hasMapping) {
+        val hasMapping = MEDICATION_CATEGORIES_TO_TREATMENT_CATEGORY.containsKey(category)
+                || MEDICATION_CATEGORIES_TO_DRUG_TYPES.containsKey(category)
+        if (ANTI_CANCER_ATC_CODES.any { category.startsWith(it) } && !hasMapping) {
             throw IllegalStateException("No treatment category or drug type mapping for ATC code $category")
         }
     }

@@ -13,11 +13,11 @@ import com.hartwig.actin.datamodel.trial.IcdTitleParameter
 import com.hartwig.actin.datamodel.trial.IntegerParameter
 import com.hartwig.actin.datamodel.trial.ManyIcdTitlesParameter
 import com.hartwig.actin.datamodel.trial.ManyStringsParameter
+import com.hartwig.actin.datamodel.trial.NyhaClass
 import com.hartwig.actin.datamodel.trial.NyhaClassParameter
 import com.hartwig.actin.datamodel.trial.Parameter
 import com.hartwig.actin.medication.MedicationCategories
 import com.hartwig.actin.trial.input.EligibilityRule
-import com.hartwig.actin.trial.input.datamodel.NyhaClass
 
 class ComorbidityRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     override fun createMappings(): Map<EligibilityRule, FunctionCreator> {
