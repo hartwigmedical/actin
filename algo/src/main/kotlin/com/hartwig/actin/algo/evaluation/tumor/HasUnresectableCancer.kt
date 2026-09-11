@@ -16,7 +16,7 @@ class HasUnresectableCancer : EvaluationFunction {
 
         return when {
             isStageMatch(stage, setOf(TumorStage.IV)) -> {
-                EvaluationFactory.pass("Has unresectable cancer (stage $stageMessage)")
+                EvaluationFactory.pass("Cancer is unresectable (stage $stageMessage)")
             }
 
             isStageMatch(stage, setOf(TumorStage.III)) -> {

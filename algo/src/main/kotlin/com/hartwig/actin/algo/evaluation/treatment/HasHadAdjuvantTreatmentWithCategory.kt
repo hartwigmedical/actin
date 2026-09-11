@@ -27,23 +27,23 @@ class HasHadAdjuvantTreatmentWithCategory(
 
         return when {
             minDate == null && treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()}")
+                EvaluationFactory.pass("Adjuvant treatment(s) of ${category.display()} in provided treatments")
             }
 
             minDate?.let { treatmentSummary.specificMatches.any { certainTreatmentSinceMinDate(it, minDate) } } == true -> {
-                EvaluationFactory.pass("Received adjuvant treatment(s) of ${category.display()} within the last $weeksAgo weeks")
+                EvaluationFactory.pass("Adjuvant treatment(s) of ${category.display()} within the last $weeksAgo weeks in provided treatments")
             }
 
             minDate?.let { treatmentSummary.specificMatches.any { potentialTreatmentSinceMinDate(it, minDate) } } == true  -> {
-                EvaluationFactory.undetermined("Received adjuvant treatment(s) of ${category.display()} but unknown if within the last $weeksAgo weeks")
+                EvaluationFactory.undetermined("Adjuvant treatment(s) of ${category.display()} in provided treatments but unknown if within the last $weeksAgo weeks")
             }
 
             !treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.fail("Has not received adjuvant treatment(s) of ${category.display()}")
+                EvaluationFactory.fail("No adjuvant treatment(s) of ${category.display()} in provided treatments")
             }
 
             else -> {
-                EvaluationFactory.fail("All received adjuvant treatment(s) of ${category.display()} are administered more than $weeksAgo weeks ago")
+                EvaluationFactory.fail("None of the adjuvant treatment(s) of ${category.display()} in provided treatments are within $weeksAgo weeks")
             }
         }
     }

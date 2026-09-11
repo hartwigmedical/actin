@@ -28,15 +28,15 @@ class HasHadLiverResection : EvaluationFunction {
 
         return when {
             hadResectionToTargetLocation -> {
-                EvaluationFactory.pass("Has had liver resection")
+                EvaluationFactory.pass("Liver resection in provided treatments")
             }
 
             hadResectionToUnknownLocation || hadSurgeryWithUnknownNamePotentiallyToTargetLocation -> {
-                EvaluationFactory.undetermined("Undetermined if received surgery was liver resection")
+                EvaluationFactory.undetermined("Undetermined if surgery in provided treatments was liver resection")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not had liver resection")
+                EvaluationFactory.fail("No liver resection in provided treatments")
             }
         }
     }

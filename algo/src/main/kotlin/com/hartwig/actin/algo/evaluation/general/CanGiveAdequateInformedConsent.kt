@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class CanGiveAdequateInformedConsent : EvaluationFunction {
     
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.pass("Assumed that patient can give adequate informed consent")
+        return EvaluationFactory.pass("Assumed adequate informed consent can be obtained")
     }
 }

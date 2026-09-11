@@ -36,11 +36,12 @@ class HasAnyHLAType(
         val requiredTypes = Format.concatLowercaseWithCommaAndOr(hlaAllelesToFind)
 
         return when {
-            matchingHlaAlleles.isEmpty() -> EvaluationFactory.fail("Does not have HLA type $requiredTypes")
+            matchingHlaAlleles.isEmpty() -> EvaluationFactory.fail("HLA type $requiredTypes not in provided molecular data")
             !test.hasSufficientQuality -> {
                 val matchedEvents = matchingHlaAlleles.map(HlaAllele::event).toSet()
                 EvaluationFactory.warn(
-                    "Has required HLA type ${Format.concatLowercaseWithCommaAndAnd(matchedEvents)} however undetermined whether allele is present in tumor",
+                    "Required HLA type ${Format.concatLowercaseWithCommaAndAnd(matchedEvents)}" +
+                            " - however undetermined whether allele is present in tumor",
                     inclusionEvents = matchedEvents
                 )
             }
@@ -57,22 +58,22 @@ class HasAnyHLAType(
             matchingHlaAlleles.any { allele ->
                 allele.tumorCopyNumber?.let { it >= HLA_PRESENCE_MIN_COPY_NUMBER } == true && allele.hasSomaticMutations == false
             } -> EvaluationFactory.pass(
-                "Has HLA type $matchingAllelesString (allele present without somatic variants in tumor)",
+                "HLA type $matchingAllelesString in provided molecular data (allele present without somatic variants in tumor)",
                 inclusionEvents = inclusionEvents
             )
 
             matchingHlaAlleles.any { it.hasSomaticMutations == true } -> EvaluationFactory.warn(
-                "Has required HLA type $matchingAllelesString but somatic mutation present in this allele in tumor",
+                "Required HLA type $matchingAllelesString but somatic mutation is present in this allele in tumor",
                 inclusionEvents = inclusionEvents
             )
 
             matchingHlaAlleles.any { it.tumorCopyNumber?.let { cn -> cn < HLA_PRESENCE_MIN_COPY_NUMBER } == true } -> EvaluationFactory.warn(
-                "Has required HLA type $matchingAllelesString but allele has low copy number in tumor",
+                "Required HLA type $matchingAllelesString but allele has low copy number in tumor",
                 inclusionEvents = inclusionEvents
             )
 
             else -> EvaluationFactory.pass(
-                "Has HLA type $matchingAllelesString",
+                "HLA type $matchingAllelesString in provided molecular data",
                 inclusionEvents = inclusionEvents
             )
         }

@@ -31,7 +31,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEvents(private val icdModel: IcdM
         )).toSet()
         val unknownDrugIntolerances = matchingComorbidities.mainCodeMatchesWithUnknownExtension
 
-        val warnMessageStart = "Possible immunotherapy related adverse events in history"
+        val warnMessageStart = "Possible immunotherapy related adverse events in provided history"
 
         return when {
             immunotherapyTreatmentList.isNotEmpty() && potentialImmunotherapyAdverseEvents.isNotEmpty() -> {
@@ -50,12 +50,12 @@ class HasExperiencedImmunotherapyRelatedAdverseEvents(private val icdModel: IcdM
             immunotherapyTreatmentList.isNotEmpty() && unknownDrugIntolerances.isNotEmpty() -> {
                 val allergyString = unknownDrugIntolerances.joinToString(", ", prefix = " (", postfix = ")") { it.display() }
                 EvaluationFactory.recoverableUndetermined(
-                    "Drug allergy$allergyString in history but undetermined if immunotherapy-related AE (drug type unknown)"
+                    "Drug allergy$allergyString in provided history but undetermined if immunotherapy-related AE (drug type unknown)"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No experience of immunotherapy related adverse events")
+                EvaluationFactory.fail("No immunotherapy related adverse events in provided history")
             }
         }
     }

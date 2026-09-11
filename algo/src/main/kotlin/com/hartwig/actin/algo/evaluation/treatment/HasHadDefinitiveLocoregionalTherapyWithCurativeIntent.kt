@@ -15,10 +15,10 @@ class HasHadDefinitiveLocoregionalTherapyWithCurativeIntent : EvaluationFunction
         }.any { it.intents?.contains(Intent.CURATIVE) == true }
 
         return if (locoregionalTherapyHasCurativeIntent) {
-            EvaluationFactory.pass("Patient has received locoregional therapy with curative intent")
+            EvaluationFactory.pass("Locoregional therapy with curative intent in provided treatments")
         }
         else {
-            EvaluationFactory.undetermined("Undetermined if patient has had locoregional therapy with curative intent")
+            EvaluationFactory.undetermined("Undetermined history of locoregional therapy with curative intent based on provided treatments")
         }
 
     }

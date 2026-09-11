@@ -31,7 +31,7 @@ class HasHistoryOfAnaphylaxisTest {
                     )
                 )
             ),
-            "Has history of anaphylaxis"
+            "History of anaphylaxis"
         )
     }
 
@@ -46,7 +46,7 @@ class HasHistoryOfAnaphylaxisTest {
                     )
                 )
             ),
-            "Has history of anaphylaxis"
+            "History of anaphylaxis"
         )
     }
 

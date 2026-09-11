@@ -19,7 +19,7 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 substrate medication use (name)"
+            "Active CYP9A9 substrate medication in provided medications (name)"
         )
     }
 
@@ -29,7 +29,7 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 substrate medication use"
+            "No active CYP9A9 substrate medication in provided medications"
         )
     }
 
@@ -39,7 +39,7 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 substrate medication use"
+            "No active CYP9A9 substrate medication in provided medications"
         )
     }
 
@@ -49,7 +49,7 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 substrate medication use (name)"
+            "Planned CYP9A9 substrate medication in provided medications (name)"
         )
     }
 
@@ -59,7 +59,7 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 substrate medication use"
+            "No active CYP9A9 substrate medication in provided medications"
         )
     }
 
@@ -69,7 +69,7 @@ class CurrentlyGetsCypXSubstrateMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No CYP9A9 substrate medication use"
+            "No active CYP9A9 substrate medication in provided medications"
         )
     }
 

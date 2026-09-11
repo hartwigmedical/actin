@@ -14,7 +14,7 @@ class CanGiveAdequateInformedConsentTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient can give adequate informed consent"
+            "Assumed adequate informed consent can be obtained"
         )
     }
 }

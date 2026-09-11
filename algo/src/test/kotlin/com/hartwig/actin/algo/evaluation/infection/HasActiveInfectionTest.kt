@@ -35,12 +35,20 @@ class HasActiveInfectionTest {
 
     @Test
     fun `Should pass if patient has active infection`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)), "Has active infection (unknown type)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withInfectionStatus(true)),
+            "Active infection (unknown type) in provided infections"
+        )
     }
 
     @Test
     fun `Should fail if patient has known infection status and does not have an active infection`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)), "No active infection present")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withInfectionStatus(false)),
+            "No active infection in provided infections"
+        )
     }
 
     @Test
@@ -64,7 +72,7 @@ class HasActiveInfectionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode)),
-            "Has infection(s) in history - unknown if active (some infection)"
+            "Infection(s) in provided history - unknown if active (some infection)"
         )
     }
 
@@ -73,7 +81,7 @@ class HasActiveInfectionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = null))),
-            "Has infection(s) in history - unknown if active (some infection)"
+            "Infection(s) in provided history - unknown if active (some infection)"
         )
     }
 
@@ -85,7 +93,7 @@ class HasActiveInfectionTest {
                 ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = referenceDate.year - 1))
                     .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(false, null)))
             ),
-            "No active infection present"
+            "No active infection in provided infections"
         )
     }
 

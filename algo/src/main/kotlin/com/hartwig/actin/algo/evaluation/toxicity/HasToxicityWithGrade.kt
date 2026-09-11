@@ -48,20 +48,20 @@ class HasToxicityWithGrade(
             matchingToxicities.isNotEmpty() &&
                     (matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE } || !warnIfToxicitiesNotFromQuestionnaire) -> {
                 val toxicityString = formatToxicities(matchingToxicities)
-                EvaluationFactory.recoverablePass("Has toxicities grade >= $minGrade$toxicityString")
+                EvaluationFactory.recoverablePass("Toxicities grade >= $minGrade$toxicityString")
             }
 
             matchingToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(matchingToxicities)
-                EvaluationFactory.warn("Has toxicities grade >= $minGrade$toxicityString")
+                EvaluationFactory.warn("Toxicities grade >= $minGrade$toxicityString")
             }
 
             unresolvableToxicities.isNotEmpty() -> {
                 val toxicityString = formatToxicities(unresolvableToxicities)
-                EvaluationFactory.undetermined("Has toxicities$toxicityString but unknown if grade >= $minGrade")
+                EvaluationFactory.undetermined("Toxicities$toxicityString but unknown if grade >= $minGrade")
             }
 
-            else -> EvaluationFactory.fail("No toxicities$icdTitleText found with grade $minGrade or higher")
+            else -> EvaluationFactory.fail("No toxicities$icdTitleText with grade $minGrade or higher")
         }
     }
 

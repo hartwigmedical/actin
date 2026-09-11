@@ -20,7 +20,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(patientRecord(null, emptyList(), emptyList())),
-            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
+            "Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -30,7 +30,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(patientRecord(setOf("other cancer type"), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo))))),
-            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
+            "Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -40,7 +40,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithOther), emptyList())),
-            "Should not have been exposed to anthracycline chemotherapy (thus not exceeding maximum dose)"
+            "Cancer type not associated with potential anthracycline chemotherapy (thus not exceeding maximum dose)"
         )
     }
 
@@ -52,7 +52,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(patientRecord(null, listOf(suspectTumorTypeWithSuspectTreatment), emptyList())),
-            "Undetermined if prior anthracycline exposure within permitted limit (prior tumor in history associated with anthracycline chemotherapy)"
+            "Undetermined if prior anthracycline exposure within permitted limit (prior tumor in provided history associated with anthracycline chemotherapy)"
         )
     }
 
@@ -60,7 +60,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
     fun `Should return undetermined when prior primary has no prior treatment recorded`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, FUNCTION.evaluate(patientRecord(null, listOf(priorPrimary()), emptyList())),
-            "Undetermined if prior anthracycline exposure within permitted limit (prior tumor in history associated with anthracycline chemotherapy)"
+            "Undetermined if prior anthracycline exposure within permitted limit (prior tumor in provided history associated with anthracycline chemotherapy)"
         )
     }
 
@@ -70,7 +70,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(patientRecord(setOf(SUSPICIOUS_CANCER_TYPE), emptyList(), listOf(treatmentHistoryEntry(setOf(genericChemo))))),
-            "Cancer type is associated with potential anthracycline chemotherapy - undetermined if anthracycline chemotherapy has been given"
+            "Cancer type is associated with potential anthracycline chemotherapy - undetermined if anthracycline chemotherapy in provided treatments"
         )
     }
 
@@ -80,7 +80,7 @@ class HasLimitedCumulativeAnthracyclineExposureTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(patientRecord(null, emptyList(), listOf(treatmentHistoryEntry(setOf(priorAnthracycline))))),
-            "Exact dosage of received anthracycline chemotherapy undetermined"
+            "Exact dosage of anthracycline chemotherapy in provided treatments undetermined"
         )
     }
 

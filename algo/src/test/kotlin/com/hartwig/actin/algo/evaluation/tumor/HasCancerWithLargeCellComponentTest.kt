@@ -23,7 +23,7 @@ class HasCancerWithLargeCellComponentTest {
     @Test
     fun `Should pass if tumor has large cell component`() {
         val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.LARGE_CELL_CANCER_DOIDS.first()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Has cancer with large cell component")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Is cancer with large cell component")
     }
 
     @Test
@@ -32,13 +32,13 @@ class HasCancerWithLargeCellComponentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(tumorDetails),
-            "Potentially has cancer with large cell component (has neuroendocrine tumor type)"
+            "Cancer may have large cell component (has neuroendocrine component)"
         )
     }
 
     @Test
     fun `Should fail if tumor is of other type than large cell`() {
         val tumorDetails = TumorTestFactory.withDoidAndName("wrong doid", "wrong name")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "Has no cancer with large cell component")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "No cancer with large cell component")
     }
 }

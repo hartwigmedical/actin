@@ -41,8 +41,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.PASS,
             emptyList(),
-            "Has received at most 1 lines of targeted therapy",
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of targeted therapy in provided treatments",
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -51,8 +51,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateRequiredFunctions(
             EvaluationResult.FAIL,
             emptyList(),
-            "Has not received targeted therapy treatment",
-            "Has not received HER2 antibody or HER3 antibody targeted therapy treatment"
+            "No targeted therapy in provided treatments",
+            "No HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -61,14 +61,14 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.PASS,
             listOf(MATCHING_TREATMENT_WITH_TYPES),
-            "Has received at most 1 lines of targeted therapy",
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of targeted therapy in provided treatments",
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
         evaluateRequiredFunctions(
             EvaluationResult.PASS,
             listOf(MATCHING_TREATMENT_WITH_TYPES),
-            "Has received at most 1 lines of targeted therapy",
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of targeted therapy in provided treatments",
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -77,14 +77,14 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.PASS,
             listOf(MATCHING_TREATMENT_WITH_ONE_TYPE),
-            "Has received at most 1 lines of targeted therapy",
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of targeted therapy in provided treatments",
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
         evaluateRequiredFunctions(
             EvaluationResult.PASS,
             listOf(MATCHING_TREATMENT_WITH_ONE_TYPE),
-            "Has received at most 1 lines of targeted therapy",
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of targeted therapy in provided treatments",
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -93,8 +93,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.PASS,
             listOf(NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES),
-            "Has received at most 1 lines of targeted therapy",
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of targeted therapy in provided treatments",
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -103,8 +103,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateRequiredFunctions(
             EvaluationResult.FAIL,
             listOf(NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES),
-            "Has not received targeted therapy treatment",
-            "Has not received HER2 antibody or HER3 antibody targeted therapy treatment"
+            "No targeted therapy in provided treatments",
+            "No HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -113,7 +113,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE))),
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -122,7 +122,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE))),
-            "Has not received HER2 antibody or HER3 antibody targeted therapy treatment"
+            "No HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -131,7 +131,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE))),
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -140,7 +140,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE))),
-            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "Undetermined if at most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -153,7 +153,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE, NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)
                 )
             ),
-            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "Undetermined if at most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -162,7 +162,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE, NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)
                 )
             ),
-            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "Undetermined if at most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -171,14 +171,14 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.FAIL,
             listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES),
-            "Has not received at most 1 lines of targeted therapy",
-            "Has not received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "More than 1 line(s) of targeted therapy in provided treatments",
+            "More than 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
         evaluateRequiredFunctions(
             EvaluationResult.FAIL,
             listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES),
-            "Has not received at most 1 lines of targeted therapy",
-            "Has not received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "More than 1 line(s) of targeted therapy in provided treatments",
+            "More than 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -187,8 +187,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.PASS,
             listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
-            "Has received at most 1 lines of targeted therapy",
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "At most 1 line(s) of targeted therapy in provided treatments",
+            "At most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -197,8 +197,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateRequiredFunctions(
             EvaluationResult.UNDETERMINED,
             listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
-            "Undetermined if received at most 1 lines of targeted therapy",
-            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "Undetermined if at most 1 line(s) of targeted therapy",
+            "Undetermined if at most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -207,12 +207,14 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
         evaluateOptionalFunctions(
             EvaluationResult.UNDETERMINED,
             listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
-            "Undetermined if received at most 1 lines of targeted therapy", "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "Undetermined if at most 1 line(s) of targeted therapy",
+            "Undetermined if at most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy"
         )
         evaluateRequiredFunctions(
             EvaluationResult.UNDETERMINED,
             listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
-            "Undetermined if received at most 1 lines of targeted therapy", "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+            "Undetermined if at most 1 line(s) of targeted therapy",
+            "Undetermined if at most 1 line(s) of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -225,7 +227,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
             ),
-            "Has received at most 1 lines of transplantation"
+            "At most 1 line(s) of transplantation in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -234,7 +236,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
             ),
-            "Has received at most 1 lines of HER2 antibody or HER3 antibody transplantation"
+            "At most 1 line(s) of HER2 antibody or HER3 antibody transplantation in provided treatments"
         )
     }
 
@@ -247,7 +249,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
             ),
-            "Has not received transplantation treatment"
+            "No transplantation in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -256,7 +258,7 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
             ),
-            "Has not received HER2 antibody or HER3 antibody transplantation treatment"
+            "No HER2 antibody or HER3 antibody transplantation in provided treatments"
         )
     }
 

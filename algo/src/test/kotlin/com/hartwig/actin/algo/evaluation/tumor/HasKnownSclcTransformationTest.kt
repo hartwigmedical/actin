@@ -31,7 +31,7 @@ class HasKnownSclcTransformationTest {
                     setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
                 )
             ),
-            "Has SCLC transformation"
+            "Tumor underwent transformation to SCLC"
         )
     }
 
@@ -45,7 +45,7 @@ class HasKnownSclcTransformationTest {
                     setOf(SMALL_CELL_LUNG_CANCER_DOIDS.first(), DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
                 )
             ),
-            "Has NSCLC with potential SCLC transformation (unclear results)"
+            "Tumor potentially underwent transformation to SCLC (unclear results)"
         )
     }
 
@@ -59,7 +59,7 @@ class HasKnownSclcTransformationTest {
                     DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID
                 )
             ),
-            "Has NSCLC with small cell component - undetermined if this is considered SCLC transformation"
+            "NSCLC with small cell component - undetermined if this is considered SCLC transformation"
         )
     }
 
@@ -68,7 +68,7 @@ class HasKnownSclcTransformationTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID, "small cell name")),
-            "Has NSCLC with small cell component - undetermined if this is considered SCLC transformation"
+            "NSCLC with small cell component - undetermined if this is considered SCLC transformation"
         )
     }
 
@@ -126,7 +126,7 @@ class HasKnownSclcTransformationTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Undetermined if SCLC transformation may have occurred (RB1 and TP53 inactivation detected)"
+            "Undetermined if tumor underwent SCLC transformation (RB1 and TP53 inactivation detected)"
         )
     }
 

@@ -42,7 +42,7 @@ class HasHadComorbidityWithIcdCodeTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)),
-            "Has history of pneumonitis"
+            "History of pneumonitis"
         )
     }
 
@@ -62,7 +62,7 @@ class HasHadComorbidityWithIcdCodeTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)),
-            "Has history of pneumonitis but undetermined if history of respiratory compromise"
+            "History of pneumonitis - undetermined if history of respiratory compromise"
         )
     }
 
@@ -81,7 +81,7 @@ class HasHadComorbidityWithIcdCodeTest {
                     )
                 )
             ),
-            "Has history of toxicity but grade unknown"
+            "History of toxicity but grade unknown"
         )
     }
 
@@ -106,7 +106,7 @@ class HasHadComorbidityWithIcdCodeTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(ComorbidityTestFactory.withToxicities(listOf(toxicities))),
-            "Has history of pneumonitis but undetermined if history of respiratory compromise and grade unknown"
+            "History of pneumonitis - undetermined if history of respiratory compromise and grade unknown"
         )
     }
 
@@ -115,7 +115,7 @@ class HasHadComorbidityWithIcdCodeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())),
-            "Has no comorbidity belonging to category parent disease"
+            "No comorbidity belonging to category parent disease"
         )
     }
 
@@ -125,7 +125,7 @@ class HasHadComorbidityWithIcdCodeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)),
-            "Has no comorbidity belonging to category parent disease"
+            "No comorbidity belonging to category parent disease"
         )
     }
 
@@ -145,7 +145,7 @@ class HasHadComorbidityWithIcdCodeTest {
         val intoleranceWithChildOfTargetCode = intoleranceWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
         listOf(intoleranceWithChildOfTargetCode, intoleranceWithTargetCode).forEach {
             val evaluation = function.evaluate(ComorbidityTestFactory.withIntolerances(listOf(it)))
-            assertEvaluation(EvaluationResult.PASS, evaluation, "Has intolerance to intolerance")
+            assertEvaluation(EvaluationResult.PASS, evaluation, "Intolerance to intolerance in provided intolerances")
         }
     }
 
@@ -155,7 +155,12 @@ class HasHadComorbidityWithIcdCodeTest {
         val otherConditionWithTargetCode = ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "other condition")
         val evaluation =
             function.evaluate(ComorbidityTestFactory.withComorbidities(listOf(intoleranceWithTargetCode, otherConditionWithTargetCode)))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has history of other condition", "Has intolerance to intolerance")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluation,
+            "History of other condition",
+            "Intolerance to intolerance in provided intolerances"
+        )
     }
 
     @Test
@@ -188,7 +193,7 @@ class HasHadComorbidityWithIcdCodeTest {
                         listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 1))
                     )
                 ),
-                "Has no comorbidity belonging to category parent disease"
+                "No comorbidity belonging to category parent disease"
             )
         }
     }
@@ -220,6 +225,6 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String) {
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has history of $matchedNames")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "History of $matchedNames")
     }
 }

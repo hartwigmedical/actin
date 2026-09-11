@@ -16,7 +16,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not had liver resection"
+            "No liver resection in provided treatments"
         )
     }
 
@@ -33,7 +33,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had liver resection"
+            "No liver resection in provided treatments"
         )
     }
 
@@ -50,7 +50,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had liver resection"
+            "No liver resection in provided treatments"
         )
     }
 
@@ -67,7 +67,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had liver resection"
+            "Liver resection in provided treatments"
         )
     }
 
@@ -84,7 +84,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had liver resection"
+            "Liver resection in provided treatments"
         )
     }
 
@@ -101,7 +101,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received surgery was liver resection"
+            "Undetermined if surgery in provided treatments was liver resection"
         )
     }
 
@@ -118,7 +118,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received surgery was liver resection"
+            "Undetermined if surgery in provided treatments was liver resection"
         )
     }
 
@@ -135,7 +135,7 @@ class HasHadLiverResectionTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if received surgery was liver resection"
+            "Undetermined if surgery in provided treatments was liver resection"
         )
     }
 

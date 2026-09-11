@@ -19,11 +19,11 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) :
 
         return when {
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.pass("Has cancer with neuroendocrine component")
+                EvaluationFactory.pass("Cancer has neuroendocrine component")
             }
 
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.undetermined("Neuroendocrine component undetermined (small cell component present)")
+                EvaluationFactory.undetermined("Neuroendocrine component undetermined (cancer has small cell component)")
             }
 
             hasNeuroendocrineProfile -> {
@@ -33,7 +33,7 @@ class HasCancerWithNeuroendocrineComponent(private val doidModel: DoidModel) :
                 )
             }
 
-            else -> EvaluationFactory.fail("Has no cancer with neuroendocrine component")
+            else -> EvaluationFactory.fail("Cancer has no neuroendocrine component")
         }
     }
 

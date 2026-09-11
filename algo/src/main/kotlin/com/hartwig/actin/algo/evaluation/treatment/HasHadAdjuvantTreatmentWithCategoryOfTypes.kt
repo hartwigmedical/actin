@@ -25,20 +25,20 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypes(private val types: Set<Treatmen
                 val treatmentsString = Format.concatLowercaseWithCommaAndAnd(
                     treatmentSummary.specificMatches.map(TreatmentHistoryEntryFunctions::fullTreatmentDisplay)
                 )
-                EvaluationFactory.pass("Received adjuvant $treatmentsString")
+                EvaluationFactory.pass("Adjuvant $treatmentsString in provided treatments")
             }
 
             treatmentSummary.hasApproximateMatch() -> {
-                EvaluationFactory.warn("Received adjuvant $categoryString but not of specific type)")
+                EvaluationFactory.warn("Adjuvant $categoryString in provided treatments but not of specific type")
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included adjuvant $categoryString")
+                EvaluationFactory.undetermined("Undetermined if treatment from previous trial included adjuvant $categoryString")
             }
 
             else -> {
                 val namesString = Format.concatItemsWithOr(types)
-                EvaluationFactory.fail("Not received adjuvant $namesString")
+                EvaluationFactory.fail("No adjuvant $namesString in provided treatments")
             }
         }
     }

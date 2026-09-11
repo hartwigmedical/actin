@@ -12,7 +12,7 @@ class HasHadSomeSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not received at least 1 systemic treatments"
+            "Not at least 1 systemic treatments in provided treatments"
         )
     }
 
@@ -22,7 +22,7 @@ class HasHadSomeSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Has not received at least 1 systemic treatments"
+            "Not at least 1 systemic treatments in provided treatments"
         )
     }
 
@@ -32,7 +32,7 @@ class HasHadSomeSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Received at least 1 systemic treatments"
+            "At least 1 systemic treatments in provided treatments"
         )
     }
 
@@ -45,7 +45,7 @@ class HasHadSomeSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Received at least 1 systemic treatments"
+            "At least 1 systemic treatments in provided treatments"
         )
     }
 
@@ -57,7 +57,7 @@ class HasHadSomeSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Undetermined if received at least 2 systemic treatments"
+            "Undetermined history of at least 2 systemic treatments based on provided treatments"
         )
     }
 

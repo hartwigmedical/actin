@@ -25,11 +25,11 @@ class HasHadProgressionFollowingLatestTreatmentLine(
 
         return when {
             systemicTreatments.isEmpty() -> {
-                EvaluationFactory.fail("No systemic treatments found in treatment history")
+                EvaluationFactory.fail("No systemic treatments in provided treatments")
             }
 
             systemicTreatments.all { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true } -> {
-                EvaluationFactory.pass("Has had progressive disease following latest treatment line")
+                EvaluationFactory.pass("Progressive disease following latest treatment line")
             }
 
             treatmentWithoutDateDiffersInPDStatusFromLastTreatment -> {

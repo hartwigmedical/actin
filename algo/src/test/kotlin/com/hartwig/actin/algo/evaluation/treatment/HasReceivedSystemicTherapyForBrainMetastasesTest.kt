@@ -21,7 +21,7 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(clinicalRecord),
-            "Has possibly received systemic therapy for brain metastases"
+            "Possible systemic therapy for brain metastases based on provided treatments"
         )
     }
 
@@ -35,7 +35,7 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(clinicalRecord),
-            "Has possibly received systemic therapy for (suspected) brain metastases"
+            "Possible systemic therapy for (suspected) brain metastases based on provided treatments"
         )
     }
 
@@ -45,7 +45,7 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(clinicalRecord),
-            "Has possibly received systemic therapy for brain metastases"
+            "Possible systemic therapy for brain metastases based on provided treatments"
         )
     }
 
@@ -59,7 +59,7 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(clinicalRecord),
-            "Has possibly received systemic therapy for (suspected) brain metastases"
+            "Possible systemic therapy for (suspected) brain metastases based on provided treatments"
         )
     }
 
@@ -69,7 +69,7 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(clinicalRecord),
-            "Has not received systemic therapy for brain metastases"
+            "No systemic therapy for brain metastases in provided treatments"
         )
     }
 
@@ -79,7 +79,7 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(clinicalRecord),
-            "Has not received systemic therapy for brain metastases"
+            "No systemic therapy for brain metastases in provided treatments"
         )
     }
 
@@ -92,7 +92,7 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(clinicalRecord),
-            "Has not received systemic therapy for brain metastases"
+            "No systemic therapy for brain metastases in provided treatments"
         )
     }
 }

@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasRapidProgressiveDisease : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient may have rapid progressive disease")
+        return EvaluationFactory.undetermined("Undetermined if there may be rapid progressive disease")
     }
 }

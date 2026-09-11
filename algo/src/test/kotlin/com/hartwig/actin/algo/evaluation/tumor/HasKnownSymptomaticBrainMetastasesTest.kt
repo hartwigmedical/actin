@@ -13,7 +13,7 @@ class HasKnownSymptomaticBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = null, hasSymptomaticBrainLesions = null)),
-            "Undetermined if symptomatic brain metastases present (data missing)"
+            "Undetermined if symptomatic brain metastases based on provided lesions"
         )
     }
 
@@ -22,7 +22,7 @@ class HasKnownSymptomaticBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = null)),
-            "Brain metastases present but unknown if symptomatic (data missing)"
+            "Brain metastases but unknown if symptomatic (data missing)"
         )
     }
 
@@ -31,7 +31,7 @@ class HasKnownSymptomaticBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = false, hasSymptomaticBrainLesions = null)),
-            "No known symptomatic brain metastases present"
+            "No known symptomatic brain metastases in provided lesions"
         )
     }
 
@@ -40,7 +40,7 @@ class HasKnownSymptomaticBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = false)),
-            "No known symptomatic brain metastases present"
+            "No known symptomatic brain metastases in provided lesions"
         )
     }
 
@@ -49,7 +49,7 @@ class HasKnownSymptomaticBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = true)),
-            "Has symptomatic brain metastases"
+            "Symptomatic brain metastases in provided lesions"
         )
     }
 }

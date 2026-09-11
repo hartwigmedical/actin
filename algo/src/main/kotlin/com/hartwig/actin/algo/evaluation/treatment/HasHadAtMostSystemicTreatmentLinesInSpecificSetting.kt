@@ -28,11 +28,11 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
 
         return when {
             includedIntentTreatments.isEmpty() ->
-                EvaluationFactory.pass("Has had no prior systemic treatment in $settingMessage - thus within maximum of $maximumLines line(s)")
+                EvaluationFactory.pass("No prior systemic treatment in $settingMessage in provided treatments - thus within maximum of $maximumLines line(s)")
 
             palliativeIntentTreatments.size > maximumLines ->
                 EvaluationFactory.fail(
-                    "Has had more than $maximumLines systemic treatment line(s) with palliative intent in $settingMessage"
+                    "More than $maximumLines systemic treatment line(s) with palliative intent in $settingMessage in provided treatments"
                 )
 
             probableCount > maximumLines + 1 ->
@@ -53,7 +53,7 @@ class HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
                             " (${includedIntentTreatments.size} lines with non-excluded intent, setting unclear for older lines)"
                 )
 
-            else -> EvaluationFactory.pass("Has had at most $maximumLines systemic treatment line(s) in $settingMessage")
+            else -> EvaluationFactory.pass("At most $maximumLines systemic treatment line(s) in $settingMessage in provided treatments")
         }
     }
 }

@@ -9,9 +9,9 @@ class HasHistoryOfSecondMalignancy : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return if (record.priorPrimaries.isNotEmpty()) {
-            EvaluationFactory.pass("Presence of second malignancy")
+            EvaluationFactory.pass("Second malignancy in provided history")
         } else {
-            EvaluationFactory.fail("No previous second malignancy")
+            EvaluationFactory.fail("No previous second malignancy in provided history")
         }
     }
 }

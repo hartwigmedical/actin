@@ -19,15 +19,15 @@ class HasMeasurableDiseaseRano(private val doidModel: DoidModel) : EvaluationFun
                 record.tumor.doids,
                 DoidConstants.CNS_CANCER_DOID
             )) -> {
-                EvaluationFactory.recoverablePass("Has measurable disease")
+                EvaluationFactory.recoverablePass("Disease is measurable")
             }
 
             hasMeasurableDisease -> {
-                EvaluationFactory.warn("Has measurable disease but with this tumor type unknown if by RANO")
+                EvaluationFactory.warn("Disease is measurable but with this tumor type unknown if by RANO")
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("Has no measurable disease")
+                EvaluationFactory.recoverableFail("Disease is not measurable")
             }
         }
     }

@@ -13,7 +13,7 @@ class HasBiopsyAmenableLesionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withMolecularExperimentType(ExperimentType.HARTWIG_TARGETED)),
-            "Undetermined if biopsy amenable lesions present"
+            "Undetermined if biopsy amenable lesions based on provided lesions"
         )
         assertEvaluation(
             EvaluationResult.PASS,

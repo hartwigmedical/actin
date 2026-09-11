@@ -12,15 +12,15 @@ class HasHadLimitedSystemicTreatments(private val maxSystemicTreatments: Int) : 
         val maxSystemicCount = SystemicTreatmentAnalyser.maxSystemicTreatments(record.oncologicalHistory)
         return when {
             maxSystemicCount <= maxSystemicTreatments -> {
-                EvaluationFactory.pass("Has received at most $maxSystemicTreatments systemic treatments")
+                EvaluationFactory.pass("At most $maxSystemicTreatments systemic treatments in provided treatments")
             }
 
             minSystemicCount <= maxSystemicTreatments -> {
-                EvaluationFactory.undetermined("Undetermined if received more than $maxSystemicTreatments systemic treatments")
+                EvaluationFactory.undetermined("Undetermined if provided treatments include more than $maxSystemicTreatments systemic treatments")
             }
 
             else -> {
-                EvaluationFactory.fail("Has received more than $maxSystemicTreatments systemic treatments")
+                EvaluationFactory.fail("More than $maxSystemicTreatments systemic treatments in provided treatments")
             }
         }
     }

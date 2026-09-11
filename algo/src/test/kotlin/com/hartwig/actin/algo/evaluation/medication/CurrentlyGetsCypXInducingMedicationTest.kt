@@ -19,7 +19,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 inducing medication use (name)"
+            "Active CYP9A9 inducing medication in provided medications (name)"
         )
     }
 
@@ -29,7 +29,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 inducing medication use"
+            "No active CYP9A9 inducing medication in provided medications"
         )
     }
 
@@ -39,7 +39,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 inducing medication use"
+            "No active CYP9A9 inducing medication in provided medications"
         )
     }
 
@@ -48,7 +48,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No CYP9A9 inducing medication use"
+            "No active CYP9A9 inducing medication in provided medications"
         )
     }
 
@@ -58,7 +58,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 inducing medication use (name)"
+            "Planned CYP9A9 inducing medication in provided medications (name)"
         )
     }
 
@@ -68,7 +68,7 @@ class CurrentlyGetsCypXInducingMedicationTest {
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 inducing medication use"
+            "No active CYP9A9 inducing medication in provided medications"
         )
     }
 

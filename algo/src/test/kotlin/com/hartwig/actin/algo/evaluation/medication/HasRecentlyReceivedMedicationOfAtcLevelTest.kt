@@ -22,7 +22,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No recent category to find medication use"
+            "No recent category to find medication in provided medications"
         )
     }
 
@@ -33,7 +33,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent category to find medication use"
+            "No recent category to find medication in provided medications"
         )
     }
 
@@ -44,7 +44,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent category to find medication use (name)"
+            "Recent category to find medication in provided medications (name)"
         )
     }
 
@@ -61,7 +61,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent category to find medication use (name)"
+            "Recent category to find medication in provided medications (name)"
         )
     }
 
@@ -78,7 +78,7 @@ class HasRecentlyReceivedMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent category to find medication use undetermined (required stop date prior to registration date)"
+            "Recent category to find medication undetermined (required stop date prior to registration date)"
         )
     }
 

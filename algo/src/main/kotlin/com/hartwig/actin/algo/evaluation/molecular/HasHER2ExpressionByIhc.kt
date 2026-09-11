@@ -52,14 +52,14 @@ class HasHER2ExpressionByIhc(private val ihcResultToFind: IhcTestResult) : Evalu
                     )
                 } else {
                     EvaluationFactory.pass(
-                        "Has $ihcResultString HER2 IHC result",
+                        "${ihcResultString.replaceFirstChar { it.uppercase() }} HER2 IHC result in provided molecular data",
                         inclusionEvents = setOf("IHC HER2 $ihcResultString")
                     )
                 }
             }
 
             failingResultsByTargetResult[ihcResultToFind]?.let { failResults -> her2TestResults.all { it in failResults } } == true -> {
-                val failMessage = "Has no $ihcResultString HER2 IHC result"
+                val failMessage = "No $ihcResultString HER2 IHC result in provided molecular data"
                 if (erbb2IsAmplified && ihcResultToFind == IhcTestResult.POSITIVE) {
                     EvaluationFactory.recoverableFail("$failMessage$erbb2AmplifiedMessage")
                 } else {

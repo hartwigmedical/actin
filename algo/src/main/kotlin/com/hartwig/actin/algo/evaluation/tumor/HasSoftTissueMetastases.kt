@@ -13,14 +13,14 @@ class HasSoftTissueMetastases : EvaluationFunction {
 
         return when {
             certainSoftTissueMetastasesEvaluation == null && suspectedSoftTissueMetastasesEvaluation != true -> {
-                EvaluationFactory.undetermined("Soft tissue metastases undetermined (metastases data missing)")
+                EvaluationFactory.undetermined("Soft tissue metastases undetermined (lesion data missing)")
             }
 
-            certainSoftTissueMetastasesEvaluation == true -> EvaluationFactory.pass("Has soft tissue metastases")
+            certainSoftTissueMetastasesEvaluation == true -> EvaluationFactory.pass("Soft tissue metastases in provided lesions")
 
-            suspectedSoftTissueMetastasesEvaluation == true -> EvaluationFactory.warn("Has suspected soft tissue metastases")
+            suspectedSoftTissueMetastasesEvaluation == true -> EvaluationFactory.warn("Suspected soft tissue metastases in provided lesions")
 
-            else -> EvaluationFactory.fail("No soft tissue metastases")
+            else -> EvaluationFactory.fail("No soft tissue metastases in provided lesions")
         }
     }
 }

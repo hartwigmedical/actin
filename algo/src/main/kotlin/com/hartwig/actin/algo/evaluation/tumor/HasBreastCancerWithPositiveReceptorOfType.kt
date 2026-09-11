@@ -42,7 +42,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
 
             BreastCancerReceptorEvaluation.POSITIVE -> {
                 EvaluationFactory.pass(
-                    "Has ${receptorType.display()}-positive breast cancer",
+                    "Cancer is ${receptorType.display()}-positive breast cancer",
                     inclusionEvents = setOf("IHC ${receptorType.display()} positive")
                 )
             }
@@ -73,7 +73,7 @@ class HasBreastCancerWithPositiveReceptorOfType(
 
                     else -> {
                         EvaluationFactory.warn(
-                            "Has ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
+                            "Cancer is ${receptorType.display()}-positive breast cancer but clinical relevance unknown " +
                                     "(${receptorType.display()}-score under 10%)",
                             inclusionEvents = warnInclusionEvents
                         )

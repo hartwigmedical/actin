@@ -23,33 +23,36 @@ class HasIntoleranceWithSpecificIcdTitleTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
-            "No known intolerance to targetParentTitle&targetExtensionParentTitle"
+            "No known intolerance to targetParentTitle&targetExtensionParentTitle in provided intolerances"
         )
     }
 
     @Test
     fun `Should fail for comorbidity with non-matching ICD code`() {
-        assertResultForIcdCodes(EvaluationResult.FAIL, "wrong") { "No known intolerance to targetParentTitle&targetExtensionParentTitle" }
+        assertResultForIcdCodes(
+            EvaluationResult.FAIL,
+            "wrong"
+        ) { "No known intolerance to targetParentTitle&targetExtensionParentTitle in provided intolerances" }
     }
 
     @Test
     fun `Should evaluate to undetermined for comorbidity with unknown extension`() {
         assertResultForIcdCodes(EvaluationResult.UNDETERMINED, targetIcdCode.mainCode) {
-            "Undetermined if intolerance in history is targetParentTitle&targetExtensionParentTitle intolerance (drug type unknown)"
+            "Undetermined if intolerance in provided intolerances is targetParentTitle&targetExtensionParentTitle intolerance (drug type unknown)"
         }
     }
 
     @Test
     fun `Should pass for comorbidity with directly matching ICD code`() {
         assertResultForIcdCodes(EvaluationResult.PASS, targetIcdCode.mainCode, targetIcdCode.extensionCode) { name ->
-            "Has intolerance $name belonging to targetParentTitle&targetExtensionParentTitle"
+            "Intolerance $name belonging to targetParentTitle&targetExtensionParentTitle"
         }
     }
 
     @Test
     fun `Should pass for comorbidity with ICD code child of target title`() {
         assertResultForIcdCodes(EvaluationResult.PASS, childCode.mainCode, childCode.extensionCode) { name ->
-            "Has intolerance $name belonging to targetParentTitle&targetExtensionParentTitle"
+            "Intolerance $name belonging to targetParentTitle&targetExtensionParentTitle"
         }
     }
 

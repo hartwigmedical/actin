@@ -20,19 +20,19 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedication(
         return when {
             medications.isEmpty() -> {
                 EvaluationFactory.recoverableFail(
-                    "No current $concatenatedTypes substrate or inhibiting medication use (no medication use)"
+                    "No active $concatenatedTypes substrate or inhibiting medication in provided medications (no medication)"
                 )
             }
 
             !hasActiveOrPlannedMedication -> {
                 EvaluationFactory.recoverableFail(
-                    "No current $concatenatedTypes substrate or inhibiting medication use (no planned or active medication)"
+                    "No active $concatenatedTypes substrate or inhibiting medication in provided medications (no planned or active medication)"
                 )
             }
 
             else -> {
                 EvaluationFactory.warn(
-                    "Undetermined if patient uses $concatenatedTypes substrate or inhibiting medication"
+                    "Undetermined if active $concatenatedTypes substrate or inhibiting medication in provided medications"
                 )
             }
         }

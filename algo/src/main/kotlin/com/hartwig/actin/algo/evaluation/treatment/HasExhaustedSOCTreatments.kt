@@ -23,19 +23,19 @@ class HasExhaustedSOCTreatments(
                     .joinToString(", ") { it.treatmentCandidate.treatment.display() }
                 when {
                     remainingNonOptionalTreatments.isEmpty() -> {
-                        EvaluationFactory.pass("Has exhausted SOC")
+                        EvaluationFactory.pass("SOC is exhausted")
                     }
 
                     treatmentEvaluation.isMissingTreatmentsWithPotentialIntoleranceOnly() -> {
                         EvaluationFactory.warn(
-                            "Has potentially exhausted SOC - remaining options ($remainingNonOptionalTreatments) may not have " +
-                                    "been given due to drug intolerance"
+                            "SOC is potentially exhausted - remaining options ($remainingNonOptionalTreatments) " +
+                                    "possibly due to drug intolerance"
                         )
                     }
 
                     treatmentEvaluation.isMissingMolecularResultForEvaluation() -> {
                         EvaluationFactory.warn(
-                            "Has potentially not exhausted SOC ($remainingNonOptionalTreatments) " +
+                            "SOC potentially not exhausted ($remainingNonOptionalTreatments) " +
                                     "but some corresponding molecular results are missing",
                             isMissingMolecularResultForEvaluation = true
                         )
@@ -43,7 +43,7 @@ class HasExhaustedSOCTreatments(
 
                     else -> {
                         EvaluationFactory.fail(
-                            "Has not exhausted SOC (remaining options: $remainingNonOptionalTreatments)"
+                            "SOC is not exhausted (remaining options: $remainingNonOptionalTreatments)"
                         )
                     }
                 }
@@ -54,19 +54,19 @@ class HasExhaustedSOCTreatments(
                 val messageStart = "SOC considered exhausted"
                 when {
                     treatmentHistoryAnalysis.receivedPlatinumDoublet() || treatmentHistoryAnalysis.receivedPlatinumTripletOrAbove() -> {
-                        EvaluationFactory.pass("$messageStart (platinum doublet in history)")
+                        EvaluationFactory.pass("$messageStart (platinum doublet in provided history)")
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {
-                        EvaluationFactory.pass("$messageStart (chemoradiation in history)")
+                        EvaluationFactory.pass("$messageStart (chemoradiation in provided history)")
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemoImmunotherapy() -> {
-                        EvaluationFactory.pass("$messageStart (chemo-immunotherapy in history)")
+                        EvaluationFactory.pass("$messageStart (chemo-immunotherapy in provided history)")
                     }
 
                     treatmentHistoryAnalysis.receivedUndefinedChemotherapy() -> {
-                        EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in history)")
+                        EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in provided history)")
                     }
 
                     else -> EvaluationFactory.warn("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
@@ -77,7 +77,7 @@ class HasExhaustedSOCTreatments(
                 EvaluationFactory.undetermined("Exhaustion of SOC undetermined (no prior cancer treatment)")
             }
 
-            else -> EvaluationFactory.pass("Assumed that SOC is exhausted (had prior cancer treatment)")
+            else -> EvaluationFactory.pass("Assumed that SOC is exhausted (prior cancer treatment)")
         }
     }
 }

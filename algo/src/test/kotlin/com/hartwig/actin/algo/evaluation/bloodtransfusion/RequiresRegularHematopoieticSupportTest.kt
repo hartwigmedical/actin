@@ -19,7 +19,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())),
-            "Has not received recent hematopoietic support"
+            "No recent hematopoietic support in provided transfusions"
         )
     }
 
@@ -28,7 +28,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.minusWeeks(1)))),
-            "Has not received recent hematopoietic support"
+            "No recent hematopoietic support in provided transfusions"
         )
     }
 
@@ -37,7 +37,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MAX_DATE.plusWeeks(1)))),
-            "Has not received recent hematopoietic support"
+            "No recent hematopoietic support in provided transfusions"
         )
     }
 
@@ -46,7 +46,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.plusMonths(1)))),
-            "Has received recent hematopoietic support (Erythrocyte)"
+            "Recent hematopoietic support (Erythrocyte) in provided transfusions"
         )
     }
 
@@ -55,7 +55,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedications(emptyList())),
-            "Has not received recent hematopoietic support"
+            "No recent hematopoietic support in provided transfusions"
         )
     }
 
@@ -65,7 +65,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooOld)),
-            "Has not received recent hematopoietic support"
+            "No recent hematopoietic support in provided transfusions"
         )
     }
 
@@ -75,7 +75,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooRecent)),
-            "Has not received recent hematopoietic support"
+            "No recent hematopoietic support in provided transfusions"
         )
     }
 
@@ -85,7 +85,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(within)),
-            "Has received recent hematopoietic support (medication)"
+            "Recent hematopoietic support (medication) in provided transfusions"
         )
     }
 
@@ -95,7 +95,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(stillRunning)),
-            "Has received recent hematopoietic support (medication)"
+            "Recent hematopoietic support (medication) in provided transfusions"
         )
     }
 
@@ -108,7 +108,7 @@ class RequiresRegularHematopoieticSupportTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)),
-            "Has not received recent hematopoietic support"
+            "No recent hematopoietic support in provided transfusions"
         )
     }
 

@@ -26,7 +26,7 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.FAIL,
             matchingType,
             record,
-            "Has not received chemoradiotherapy with platinum compound chemotherapy"
+            "No chemoradiotherapy with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -39,7 +39,7 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.FAIL,
             matchingType,
             record,
-            "Has not received chemoradiotherapy with platinum compound chemotherapy"
+            "No chemoradiotherapy with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -53,7 +53,7 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.WARN,
             HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(matchingType, minCycles)
                 .evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatment))),
-            "Had received chemoradiotherapy with platinum compound chemotherapy but with less than 5 cycles"
+            "Chemoradiotherapy with platinum compound chemotherapy but with less than 5 cycles in provided treatments"
         )
     }
 
@@ -73,7 +73,7 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.FAIL,
             matchingType,
             record,
-            "Has not received chemoradiotherapy with platinum compound chemotherapy"
+            "No chemoradiotherapy with platinum compound chemotherapy in provided treatments"
         )
     }
 
@@ -93,8 +93,8 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.UNDETERMINED,
             matchingType,
             record,
-            "Undetermined if patient received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles",
-            "Undetermined if patient received chemoradiotherapy with platinum compound chemotherapy"
+            "Undetermined history of chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles based on provided treatments",
+            "Undetermined history of chemoradiotherapy with platinum compound chemotherapy based on provided treatments"
         )
     }
 
@@ -105,7 +105,7 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.UNDETERMINED,
             HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCycles(matchingType, minCycles)
                 .evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(matchingTreatmentNullCycles))),
-            "Undetermined if patient received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles"
+            "Undetermined history of chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles based on provided treatments"
         )
     }
 
@@ -120,8 +120,8 @@ class HasHadChemoradiotherapyWithSpecificChemotherapyTypeAndMinimumCyclesTest {
             EvaluationResult.PASS,
             matchingType,
             record,
-            "Had received chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles",
-            "Had received chemoradiotherapy with platinum compound chemotherapy"
+            "Chemoradiotherapy with platinum compound chemotherapy and at least 5 cycles in provided treatments",
+            "Chemoradiotherapy with platinum compound chemotherapy in provided treatments"
         )
     }
 

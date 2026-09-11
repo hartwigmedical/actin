@@ -16,15 +16,15 @@ class CurrentlyGetsMedicationOfName(private val selector: MedicationSelector, pr
 
         return when {
             hasActiveMedicationWithName -> {
-                EvaluationFactory.recoverablePass(concatWithCommaAndOr(termsToFind) + " medication use")
+                EvaluationFactory.recoverablePass("Active ${concatWithCommaAndOr(termsToFind)} medication in provided medications")
             }
 
             hasPlannedMedicationWithName -> {
-                EvaluationFactory.warn("Planned " + concatLowercaseWithCommaAndOr(termsToFind) + " medication use")
+                EvaluationFactory.warn("Planned " + concatLowercaseWithCommaAndOr(termsToFind) + " medication in provided medications")
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No " + concatLowercaseWithCommaAndOr(termsToFind) + " medication use")
+                EvaluationFactory.recoverableFail("No active " + concatLowercaseWithCommaAndOr(termsToFind) + " medication in provided medications")
             }
         }
     }

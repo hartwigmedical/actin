@@ -33,19 +33,28 @@ class HasKnownSclcTransformation(private val doidModel: DoidModel) : EvaluationF
 
         return when {
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
-                EvaluationFactory.pass("Has SCLC transformation", inclusionEvents = setOf("small cell transformation"))
+                EvaluationFactory.pass(
+                    "Tumor underwent transformation to SCLC",
+                    inclusionEvents = setOf("small cell transformation")
+                )
             }
 
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasPossiblePositiveResultsForItem) -> {
-                EvaluationFactory.warn("Has NSCLC with potential SCLC transformation (unclear results)")
+                EvaluationFactory.warn("Tumor potentially underwent transformation to SCLC (unclear results)")
             }
 
             isNsclc && (isSclc || hasSmallCellComponent) -> {
-                EvaluationFactory.undetermined("Has NSCLC with small cell component - undetermined if this is considered SCLC transformation")
+                EvaluationFactory.undetermined("NSCLC with small cell component - undetermined if this is considered SCLC transformation")
             }
 
             isNsclc && allIndicativeGenesInactivated -> {
-                EvaluationFactory.undetermined("Undetermined if SCLC transformation may have occurred (${Format.concat(indicativeGenes)} inactivation detected)")
+                EvaluationFactory.undetermined(
+                    "Undetermined if tumor underwent SCLC transformation (${
+                        Format.concat(
+                            indicativeGenes
+                        )
+                    } inactivation detected)"
+                )
             }
 
             isOfUncertainLungCancerType -> {

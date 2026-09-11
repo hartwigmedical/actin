@@ -11,11 +11,11 @@ class HasWellDifferentiatedTumor : EvaluationFunction {
         return when {
             WELL_DIFFERENTIATED_TERMS.any {
                 record.tumor.name.lowercase().contains(it)
-            } -> EvaluationFactory.pass("Has well-differentiated tumor")
+            } -> EvaluationFactory.pass("Tumor is well-differentiated")
 
             OTHER_DIFFERENTIATION_TERMS.any {
                 record.tumor.name.lowercase().contains(it)
-            } -> EvaluationFactory.fail("Has no well-differentiated tumor")
+            } -> EvaluationFactory.fail("Tumor is not well-differentiated")
 
             else -> EvaluationFactory.undetermined("Undetermined if well-differentiated tumor")
         }

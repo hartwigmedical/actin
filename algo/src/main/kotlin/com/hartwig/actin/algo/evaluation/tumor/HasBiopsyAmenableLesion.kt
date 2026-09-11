@@ -12,7 +12,7 @@ class HasBiopsyAmenableLesion : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         val molecularRecord = MolecularHistory(record.molecularTests).latestOrangeMolecularRecord()
         return if (molecularRecord?.experimentType != ExperimentType.HARTWIG_WHOLE_GENOME) {
-            EvaluationFactory.recoverableUndetermined("Undetermined if biopsy amenable lesions present")
+            EvaluationFactory.recoverableUndetermined("Undetermined if biopsy amenable lesions based on provided lesions")
         } else {
             EvaluationFactory.pass("Biopsy amenability assumed because of WGS analysis")
         }

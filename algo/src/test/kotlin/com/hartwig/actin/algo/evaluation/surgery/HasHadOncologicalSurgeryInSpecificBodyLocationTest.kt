@@ -20,7 +20,11 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
     @Test
     fun `Should pass for surgery with target body location category in oncological history`() {
         val record = TreatmentTestFactory.withTreatmentHistoryEntry(correctHistoryEntry)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "Has had oncological surgery in location(s) lung")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "Oncological surgery in location(s) lung in provided treatments"
+        )
     }
 
     @Test
@@ -35,7 +39,11 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "Has had oncological surgery in location(s) liver and lung")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "Oncological surgery in location(s) liver and lung in provided treatments"
+        )
     }
 
     @Test
@@ -44,7 +52,7 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Has received oncological surgery but undetermined if in location(s) kidney or lung"
+            "Oncological surgery in provided treatments but undetermined if in location(s) kidney or lung"
         )
     }
 
@@ -58,7 +66,7 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(record),
-            "Has not received oncological surgery in location(s) kidney or lung"
+            "No oncological surgery in location(s) kidney or lung in provided treatments"
         )
     }
 
@@ -71,7 +79,7 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatment)),
-            "Has not received oncological surgery in location(s) kidney or lung"
+            "No oncological surgery in location(s) kidney or lung in provided treatments"
         )
     }
 
@@ -80,7 +88,7 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not received oncological surgery in location(s) kidney or lung"
+            "No oncological surgery in location(s) kidney or lung in provided treatments"
         )
     }
 }
