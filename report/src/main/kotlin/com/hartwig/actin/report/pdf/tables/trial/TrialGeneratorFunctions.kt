@@ -60,14 +60,16 @@ object TrialGeneratorFunctions {
                 useSmallerSize -> Cells::createContentSmallItalic
                 else -> Cells::createContentMediumItalic
             }
-            table.addCell(contentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()))
-            table.addCell(contentFunction(trial.sourceMolecularEvents.joinToString(", ")))
-            table.addCell(contentFunction(trial.actinMolecularEvents.joinToString(", ")))
+            table.addCell(
+                contentFunction(trialLabelText).setAction(PdfAction.createURI(trial.url)).addStyle(Styles.urlStyle()).setKeepTogether(true)
+            )
+            table.addCell(contentFunction(trial.sourceMolecularEvents.joinToString(", ")).setKeepTogether(true))
+            table.addCell(contentFunction(trial.actinMolecularEvents.joinToString(", ")).setKeepTogether(true))
 
             val country = if (trial.countries.none { it.country == countryOfReference }) null else countryOfReference
-            table.addCell(contentFunction(TrialLocations.externalTrialLocation(trial, country)))
+            table.addCell(contentFunction(TrialLocations.externalTrialLocation(trial, country)).setKeepTogether(true))
             if (includeFeedback) {
-                table.addCell(contentFunction(""))
+                table.addCell(contentFunction("").setKeepTogether(true))
             }
         }
     }
@@ -164,6 +166,7 @@ object TrialGeneratorFunctions {
                 useSmallerSize -> Cells.createContent(paragraph.setMultipliedLeading(SMALL_LINE_DISTANCE))
                 else -> Cells.createContent(paragraph)
             }
+            cell.setKeepTogether(true)
             if (!rowContainsTrialIdentificationCell) {
                 cell.setBorder(Border.NO_BORDER)
             }

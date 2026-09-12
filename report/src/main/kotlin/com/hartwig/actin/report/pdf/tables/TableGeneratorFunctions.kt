@@ -19,9 +19,9 @@ object TableGeneratorFunctions {
         generators.map { generator ->
             val generatedTable = Tables.createSingleColWithWidth(outerTableWidth).setFixedLayout()
             if (overrideTitleFormatToSubtitle) {
-                generatedTable.addCell(Cells.createSubTitle(generator.title()))
+                generatedTable.addHeaderCell(Cells.createSubTitle(generator.title()))
             } else {
-                generatedTable.addCell(Cells.createTitle(generator.title()))
+                generatedTable.addHeaderCell(Cells.createTitle(generator.title()))
             }
             val contentTable = generator.contents().setWidth(innerTableWidth).setFixedLayout()
 

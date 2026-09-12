@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.configuration.ReportIntendedUse
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.immunology.HlaAllele
 import com.hartwig.actin.datamodel.molecular.immunology.MolecularImmunology
@@ -41,7 +41,7 @@ class ImmunologyGeneratorTest {
             displayMode = ImmunologyDisplayMode.DETAILED_TABLE,
             hlaAlleles = listOf(createHlaAllele("HLA-A", "01", "01"))
         )
-        assertHeader(generator, "HLA gene", "Type", "Tumor copy number", "Mutated in tumor")
+        assertHeader(generator, "HLA GENE", "TYPE", "TUMOR COPY NUMBER", "MUTATED IN TUMOR")
     }
 
     @Test
@@ -410,7 +410,7 @@ class ImmunologyGeneratorTest {
         title: String = "Immunology",
         hlaAlleles: List<HlaAllele> = emptyList()
     ): ImmunologyGenerator {
-        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+        val labels = ReportLabels.load(ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
         val molecular = TestMolecularFactory.createMinimalWholeGenomeTest().copy(
             immunology = MolecularImmunology(isReliable = true, hlaAlleles = hlaAlleles.toSet())
         )
@@ -418,7 +418,7 @@ class ImmunologyGeneratorTest {
     }
 
     private fun createGeneratorWithNullImmunology(displayMode: ImmunologyDisplayMode): ImmunologyGenerator {
-        val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+        val labels = ReportLabels.load(ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
         val molecular = TestMolecularFactory.createMinimalWholeGenomeTest().copy(immunology = null)
         return ImmunologyGenerator(molecular, displayMode, "Immunology", keyWidth, valueWidth, labels)
     }

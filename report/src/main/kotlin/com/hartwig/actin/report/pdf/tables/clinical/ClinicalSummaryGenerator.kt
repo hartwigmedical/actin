@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.clinical.PriorPrimary
 import com.hartwig.actin.datamodel.clinical.TumorStatus
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.medication.MedicationToTreatmentConverter
+import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.DateFunctions.toDateString
@@ -51,8 +51,7 @@ class ClinicalSummaryGenerator(
 
     fun contentsAsList(): List<Cell> {
         val record = report.patientRecord
-
-        return listOfNotNull(
+        val clinicalDetails = listOfNotNull(
             labels.clinicalDetails.sectionSystemicHistory() to relevantSystemicTreatmentHistoryTable(record),
             if (includeAdditionalFields) {
                 labels.clinicalDetails.sectionOtherOncological() to relevantNonSystemicTreatmentHistoryTable(record)
@@ -64,6 +63,18 @@ class ClinicalSummaryGenerator(
                 labels.clinicalDetails.sectionNonOncological() to relevantNonOncologicalHistoryTable(record)
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
+
+        val patientCurrentDetails = if (includeAdditionalFields) {
+            PatientCurrentDetailsGenerator(
+                record = record,
+                keyWidth = keyWidth,
+                valueWidth = valueWidth,
+                referenceDate = report.treatmentMatch.referenceDate,
+                labels = labels
+            ).contentsAsList()
+        } else emptyList()
+
+        return clinicalDetails + patientCurrentDetails
     }
 
     private fun tableOrNone(table: Table): Table {
