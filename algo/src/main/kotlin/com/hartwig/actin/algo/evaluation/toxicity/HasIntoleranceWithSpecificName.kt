@@ -13,9 +13,9 @@ class HasIntoleranceWithSpecificName(private val termToFind: String) : Evaluatio
         val allergies = record.intolerances.filter { it.name?.lowercase()?.contains(lowercaseTerm) == true }.toSet()
 
         return if (allergies.isNotEmpty()) {
-            EvaluationFactory.pass("Has allergy " + Format.concatItemsWithAnd(allergies))
+            EvaluationFactory.pass("Allergy " + Format.concatItemsWithAnd(allergies))
         } else {
-            EvaluationFactory.fail("Has no allergies with name $termToFind")
+            EvaluationFactory.fail("No allergies with name $termToFind")
         }
     }
 }

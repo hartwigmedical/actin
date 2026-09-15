@@ -13,18 +13,18 @@ class IsPlatinumSensitive(private val referenceDate: LocalDate) : EvaluationFunc
 
         return when {
             platinumProgression.hasProgressionDuringPlatinumOrWithinMonths(platinumProgression.lastPlatinumTreatment) == true -> {
-                EvaluationFactory.fail("Is platinum resistant")
+                EvaluationFactory.fail("Platinum resistant disease")
             }
 
             platinumProgression.hasProgressionOrUnknownProgressionOnPlatinum(platinumProgression.lastPlatinumTreatment) == true -> {
-                EvaluationFactory.undetermined("Undetermined if patient is platinum sensitive")
+                EvaluationFactory.undetermined("Undetermined if platinum sensitive disease")
             }
 
             platinumProgression.lastPlatinumTreatment == null -> {
-                EvaluationFactory.undetermined("Undetermined if patient is platinum sensitive (no platinum treatment)")
+                EvaluationFactory.undetermined("Undetermined if platinum sensitive disease (no platinum treatment)")
             }
 
-            else -> EvaluationFactory.pass("Is platinum sensitive")
+            else -> EvaluationFactory.pass("Platinum sensitive disease")
         }
     }
 }

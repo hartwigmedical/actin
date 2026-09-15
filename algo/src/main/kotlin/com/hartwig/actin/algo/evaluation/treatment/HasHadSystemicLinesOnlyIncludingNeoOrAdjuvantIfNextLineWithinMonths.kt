@@ -40,7 +40,7 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
 
         return when {
             comparator(minCertainCount, referenceTreatmentCount) ->
-                EvaluationFactory.pass("Received at $comparatorMessage $referenceTreatmentCount systemic treatments")
+                EvaluationFactory.pass("At $comparatorMessage $referenceTreatmentCount systemic treatments in provided treatments")
 
 
             comparator(maxPotentialCount, referenceTreatmentCount) -> {
@@ -50,11 +50,11 @@ class HasHadSystemicLinesOnlyIncludingNeoOrAdjuvantIfNextLineWithinMonths(
                                 "stopping (incomplete date information)"
                     } ?: ""
                 EvaluationFactory.undetermined(
-                    "Undetermined if received at $comparatorMessage $referenceTreatmentCount systemic treatments$undeterminedMessageEnding"
+                    "Undetermined if at $comparatorMessage $referenceTreatmentCount systemic treatments$undeterminedMessageEnding based on provided treatments"
                 )
             }
 
-            else -> EvaluationFactory.fail("Has not received at $comparatorMessage $referenceTreatmentCount systemic treatments")
+            else -> EvaluationFactory.fail("Not at $comparatorMessage $referenceTreatmentCount systemic treatments in provided treatments")
         }
     }
 

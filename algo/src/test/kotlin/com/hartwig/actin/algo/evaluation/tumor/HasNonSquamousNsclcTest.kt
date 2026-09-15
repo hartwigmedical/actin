@@ -25,14 +25,18 @@ class HasNonSquamousNsclcTest {
 
     @Test
     fun `Should return fail when tumor is not lung`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids("wrong")), "Has no non-squamous NSCLC")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withDoids("wrong")),
+            "Cancer is not non-squamous NSCLC"
+        )
     }
 
     @Test
     fun `Should return fail when squamous NSCLC type`() {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_SQUAMOUS_CELL_CARCINOMA_DOID)),
-            "Has no non-squamous NSCLC"
+            "Cancer is not non-squamous NSCLC"
         )
     }
 
@@ -41,7 +45,7 @@ class HasNonSquamousNsclcTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_ADENOSQUAMOUS_CARCINOMA_DOID)),
-            "Has no non-squamous NSCLC"
+            "Cancer is not non-squamous NSCLC"
         )
     }
 
@@ -53,7 +57,11 @@ class HasNonSquamousNsclcTest {
                 setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation, "Has non-squamous NSCLC but also possibly positive SCC transformation results")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Cancer is non-squamous NSCLC but also possibly positive SCC transformation results"
+        )
     }
 
     @Test
@@ -64,7 +72,11 @@ class HasNonSquamousNsclcTest {
                 setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation, "Has non-squamous NSCLC but also positive SCC transformation results")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Cancer is non-squamous NSCLC but also positive SCC transformation results"
+        )
     }
 
     @Test
@@ -72,7 +84,7 @@ class HasNonSquamousNsclcTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_ADENOCARCINOMA_DOID)),
-            "Has non-squamous NSCLC"
+            "Cancer is non-squamous NSCLC"
         )
     }
 
@@ -81,7 +93,7 @@ class HasNonSquamousNsclcTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_ADENOCARCINOMA_DOID, "random DOID")),
-            "Has non-squamous NSCLC"
+            "Cancer is non-squamous NSCLC"
         )
     }
 
@@ -99,7 +111,7 @@ class HasNonSquamousNsclcTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.LUNG_SARCOMA_DOID)),
-            "Has no non-squamous NSCLC"
+            "Cancer is not non-squamous NSCLC"
         )
     }
 }

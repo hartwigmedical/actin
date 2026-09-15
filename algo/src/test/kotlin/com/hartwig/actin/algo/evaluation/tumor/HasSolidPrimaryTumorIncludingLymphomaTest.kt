@@ -25,7 +25,7 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.CANCER_DOID)),
-            "Has solid primary tumor (including lymphoma)"
+            "Primary tumor is solid (including lymphoma)"
         )
     }
 
@@ -34,7 +34,7 @@ class HasSolidPrimaryTumorIncludingLymphomaTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.BENIGN_NEOPLASM_DOID)),
-            "Has solid primary tumor (including lymphoma)"
+            "Primary tumor is solid (including lymphoma)"
         )
     }
 

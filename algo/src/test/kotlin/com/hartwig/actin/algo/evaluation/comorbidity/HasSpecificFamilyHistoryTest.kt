@@ -20,7 +20,7 @@ class HasSpecificFamilyHistoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherConditions((emptyList()))),
-            "No presence of family history of idiopathic sudden death"
+            "No family history of idiopathic sudden death"
         )
     }
 
@@ -30,7 +30,7 @@ class HasSpecificFamilyHistoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
-            "No presence of family history of idiopathic sudden death"
+            "No family history of idiopathic sudden death"
         )
     }
 
@@ -38,7 +38,7 @@ class HasSpecificFamilyHistoryTest {
     fun `Should pass when 'pass condition' family history present`() {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = passConditions.icdCodes.first().mainCode)
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has family history of idiopathic sudden death")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Family history of idiopathic sudden death")
     }
 
     @Test
@@ -52,7 +52,7 @@ class HasSpecificFamilyHistoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has family history of cardiovascular disease (acute myocard infarct) - undetermined if idiopathic sudden death"
+            "Family history of cardiovascular disease (acute myocard infarct) - undetermined if idiopathic sudden death"
         )
     }
 
@@ -69,7 +69,7 @@ class HasSpecificFamilyHistoryTest {
                         ComorbidityTestFactory.otherCondition(name = "unspecified health problem", icdMainCode = it)
                     )
                 ),
-                "Has family history of unspecified disease (unspecified health problem) - undetermined if idiopathic sudden death"
+                "Family history of unspecified disease (unspecified health problem) - undetermined if idiopathic sudden death"
             )
         }
     }

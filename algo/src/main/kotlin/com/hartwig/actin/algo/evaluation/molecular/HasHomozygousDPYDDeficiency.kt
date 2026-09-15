@@ -28,7 +28,7 @@ class HasHomozygousDPYDDeficiency: MolecularEvaluationFunction(true) {
             }
 
             else -> {
-                EvaluationFactory.fail("Is not homozygous DPYD deficient")
+                EvaluationFactory.fail("No homozygous DPYD deficiency in provided molecular data")
             }
         }
     }

@@ -21,7 +21,7 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
 
         return when {
             hasConfirmedLeptomeningealDisease -> {
-                EvaluationFactory.pass("Has leptomeningeal disease")
+                EvaluationFactory.pass("There is leptomeningeal involvement")
             }
 
             filterPotentiallyMeningealLesions(tumorDetails.hasConfirmedCnsLesions(), otherLesions).isNotEmpty() -> {
@@ -46,9 +46,9 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
         }
 
         private fun createWarnEvaluation(suspected: Boolean, lesions: List<String>): Evaluation {
-            val suspectedString = if (suspected) " suspected" else ""
+            val suspectedString = if (suspected) "Suspected lesions" else "Lesions"
             return EvaluationFactory.warn(
-                "Has$suspectedString lesions '${Format.concatLowercaseWithAnd(lesions)}'" +
+                "$suspectedString '${Format.concatLowercaseWithAnd(lesions)}'" +
                         " potentially indicating leptomeningeal disease"
             )
         }

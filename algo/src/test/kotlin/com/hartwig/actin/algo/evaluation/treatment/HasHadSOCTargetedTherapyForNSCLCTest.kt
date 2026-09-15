@@ -25,7 +25,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         assertEvaluationForAllFunctions(
             withTreatmentHistory(emptyList()),
             EvaluationResult.FAIL,
-            "Has not received SOC targeted therapy for NSCLC"
+            "No SOC targeted therapy for NSCLC in provided treatments"
         )
     }
 
@@ -39,7 +39,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         assertEvaluationForAllFunctions(
             withTreatmentHistory(treatmentHistory),
             EvaluationResult.FAIL,
-            "Has not received SOC targeted therapy for NSCLC"
+            "No SOC targeted therapy for NSCLC in provided treatments"
         )
     }
 
@@ -51,7 +51,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         assertEvaluationForAllFunctions(
             withTreatmentHistory(treatmentHistory),
             EvaluationResult.FAIL,
-            "Has not received SOC targeted therapy for NSCLC"
+            "No SOC targeted therapy for NSCLC in provided treatments"
         )
     }
 
@@ -71,7 +71,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionIgnoringGenes.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received SOC targeted therapy for NSCLC"
+            "No SOC targeted therapy for NSCLC in provided treatments"
         )
     }
 
@@ -83,7 +83,7 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         assertEvaluationForAllFunctions(
             withTreatmentHistory(treatmentHistory),
             EvaluationResult.PASS,
-            "Has received SOC targeted therapy for NSCLC (Correct)"
+            "SOC targeted therapy for NSCLC (Correct) in provided treatments"
         )
     }
 

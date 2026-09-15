@@ -18,7 +18,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received prior anti cancer drugs"
+            "No prior anti cancer drugs in provided treatments"
         )
     }
 
@@ -32,7 +32,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received prior anti cancer drugs"
+            "No prior anti cancer drugs in provided treatments"
         )
     }
 
@@ -46,7 +46,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutType.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received targeted therapy as most recent treatment line"
+            "Targeted therapy in provided treatments as most recent treatment line"
         )
     }
 
@@ -63,7 +63,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(treatmentHistoryEntry)),
-            "Has received EGFR inhibitor (3rd gen) targeted therapy as most recent treatment line"
+            "EGFR inhibitor (3rd gen) targeted therapy in provided treatments as most recent treatment line"
         )
     }
 
@@ -80,7 +80,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received EGFR inhibitor (3rd gen) targeted therapy but not as the most recent treatment line"
+            "EGFR inhibitor (3rd gen) targeted therapy in provided treatments but not as the most recent treatment line"
         )
     }
 
@@ -95,7 +95,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutType.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received targeted therapy but not as the most recent treatment line"
+            "targeted therapy in provided treatments but not as the most recent treatment line"
         )
     }
 
@@ -109,7 +109,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received EGFR inhibitor (3rd gen) targeted therapy as prior therapy"
+            "No egfr inhibitor (3rd gen) targeted therapy in provided treatments"
         )
     }
 
@@ -126,7 +126,7 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(treatmentHistoryEntry)),
-            "Has received EGFR inhibitor (3rd gen) targeted therapy but undetermined if most recent (date unknown)"
+            "EGFR inhibitor (3rd gen) targeted therapy in provided treatments but undetermined if most recent (date unknown)"
         )
     }
 }

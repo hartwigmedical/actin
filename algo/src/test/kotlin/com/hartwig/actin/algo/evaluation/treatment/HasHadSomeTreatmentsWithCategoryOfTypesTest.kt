@@ -26,7 +26,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Not at least 2 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -36,7 +36,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Not at least 2 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -47,7 +47,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Not at least 2 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -57,11 +57,11 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Not at least 2 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has received at least 2 line(s) of HER2 antibody targeted therapy"
+            "At least 2 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -77,7 +77,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
-            "Has received at least 1 line(s) of HER2 antibody targeted therapy"
+            "At least 1 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
     }
 
@@ -87,11 +87,11 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Not at least 2 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Undetermined if received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Undetermined history of at least 2 line(s) of HER2 antibody targeted therapy based on provided treatments"
         )
     }
 
@@ -101,11 +101,11 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Not at least 2 line(s) of HER2 antibody targeted therapy in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Undetermined if received at least 2 line(s) of HER2 antibody targeted therapy"
+            "Undetermined history of at least 2 line(s) of HER2 antibody targeted therapy based on provided treatments"
         )
     }
 
@@ -115,7 +115,7 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of allogenic transplantation"
+            "Not at least 2 line(s) of allogenic transplantation in provided treatments"
         )
     }
 }

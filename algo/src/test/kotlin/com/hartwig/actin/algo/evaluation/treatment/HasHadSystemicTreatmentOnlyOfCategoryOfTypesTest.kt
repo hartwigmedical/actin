@@ -42,7 +42,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not had anti-androgen chemotherapy treatment (no prior systemic treatment)"
+            "No anti-androgen chemotherapy treatment in provided treatments (no prior systemic treatment)"
         )
     }
 
@@ -51,7 +51,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(surgery))),
-            "Has not had anti-androgen chemotherapy treatment (no prior systemic treatment)"
+            "No anti-androgen chemotherapy treatment in provided treatments (no prior systemic treatment)"
         )
     }
 
@@ -65,7 +65,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
                     types = setOf(DrugType.ANTI_ANDROGEN)
                 )
             ),
-            "Did not only receive anti-androgen chemotherapy treatment"
+            "Not only anti-androgen chemotherapy treatment in provided treatments"
         )
     }
 
@@ -75,7 +75,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, surgery, ablation))),
-            "Has only had anti-androgen chemotherapy treatment"
+            "Only anti-androgen chemotherapy treatment in provided treatments"
         )
     }
 
@@ -84,7 +84,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = setOf(DrugType.ALKYLATING_AGENT))),
-            "Did not only receive anti-androgen chemotherapy treatment"
+            "Not only anti-androgen chemotherapy treatment in provided treatments"
         )
     }
 
@@ -93,7 +93,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(makeRecordWithMatchingAndAdditionalEntry(types = emptySet())),
-            "Undetermined if received chemotherapy is of type anti-androgen"
+            "Undetermined if chemotherapy in provided treatments is of type anti-androgen"
         )
     }
 
@@ -105,7 +105,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(patientRecord),
-            "Undetermined if received chemotherapy is of type anti-androgen"
+            "Undetermined if chemotherapy in provided treatments is of type anti-androgen"
         )
     }
 
@@ -117,7 +117,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(patientRecord),
-            "Undetermined if treatment received in previous trial was anti-androgen chemotherapy"
+            "Undetermined if trial treatment included anti-androgen chemotherapy"
         )
     }
 
@@ -126,7 +126,7 @@ class HasHadSystemicTreatmentOnlyOfCategoryOfTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(makeRecordWithMatchingAndAdditionalEntry()),
-            "Has only had anti-androgen chemotherapy treatment"
+            "Only anti-androgen chemotherapy treatment in provided treatments"
         )
     }
 

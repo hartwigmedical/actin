@@ -12,7 +12,7 @@ class MeetsSpecificCriteriaRegardingLiverMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Unknown if patient has liver lesions hence undetermined if specific criteria regarding liver metastases are met"
+            "Liver lesions undetermined - hence undetermined if study specific criteria regarding liver metastases are met"
         )
     }
 
@@ -32,7 +32,7 @@ class MeetsSpecificCriteriaRegardingLiverMetastasesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "No liver metastases present hence won't meet study specific criteria regarding liver metastases"
+            "No liver metastases hence won't meet study specific criteria regarding liver metastases"
         )
     }
 

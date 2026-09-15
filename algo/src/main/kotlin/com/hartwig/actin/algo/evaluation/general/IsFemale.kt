@@ -10,9 +10,9 @@ class IsFemale : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (record.patient.gender) {
-            Gender.FEMALE -> EvaluationFactory.pass("Patient is female")
-            Gender.MALE -> EvaluationFactory.fail("Patient is not female")
-            null -> EvaluationFactory.undetermined("Undetermined if patient is female")
+            Gender.FEMALE -> EvaluationFactory.pass("Gender is female")
+            Gender.MALE -> EvaluationFactory.fail("Gender is not female")
+            null -> EvaluationFactory.undetermined("Undetermined if gender is female")
         }
     }
 }

@@ -39,7 +39,7 @@ class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(rightCategoryNoDate)),
-            "Has received prior radiotherapy with unknown date - pay attention to washout period"
+            "Prior radiotherapy with unknown date - pay attention to washout period"
         )
     }
 
@@ -67,7 +67,7 @@ class HasRecentlyReceivedRadiotherapyTest {
     fun `Should pass with right category and recent year`() {
         val rightCategoryRecentYear = radiotherapy(YEAR)
         val evaluation = function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYear))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has recently received radiotherapy - pay attention to washout period")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Recent radiotherapy - pay attention to washout period")
     }
 
     @Test
@@ -76,7 +76,7 @@ class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYearAndMonth)),
-            "Has recently received radiotherapy - pay attention to washout period"
+            "Recent radiotherapy - pay attention to washout period"
         )
     }
 
@@ -86,7 +86,7 @@ class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationAndTimeframe)),
-            "Has recently received radiotherapy to body location Brain - pay attention to washout period"
+            "Recent radiotherapy to body location Brain - pay attention to washout period"
         )
     }
 
@@ -106,7 +106,7 @@ class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithLocation.evaluate(withTreatmentHistoryEntry(unknownLocationAndCorrectTimeframe)),
-            "Undetermined if received radiotherapy had target location Brain"
+            "Prior radiotherapy but undetermined if target location was Brain"
         )
     }
 
@@ -116,7 +116,7 @@ class HasRecentlyReceivedRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationButUnknownDate)),
-            "Has received prior radiotherapy to body location Brain with unknown date - pay attention to washout period"
+            "Prior radiotherapy to body location Brain with unknown date - pay attention to washout period"
         )
     }
 

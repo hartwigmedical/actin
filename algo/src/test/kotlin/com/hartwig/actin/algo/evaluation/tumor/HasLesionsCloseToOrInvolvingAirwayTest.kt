@@ -42,7 +42,7 @@ class HasLesionsCloseToOrInvolvingAirwayTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withDoids(DoidConstants.TRACHEAL_CANCER_DOID)),
-            "Has lesions close to or involving airway"
+            "Lesions close to or involving airway"
         )
     }
 

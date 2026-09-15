@@ -14,7 +14,7 @@ class CanAdhereToAttenuatedVaccineUseTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient can adhere to attenuated vaccine protocol"
+            "Assumed ability to adhere to the attenuated vaccine protocol"
         )
     }
 }

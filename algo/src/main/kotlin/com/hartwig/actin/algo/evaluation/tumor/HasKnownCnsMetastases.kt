@@ -12,24 +12,24 @@ class HasKnownCnsMetastases : EvaluationFunction {
 
             return when {
                 hasCnsLesions == true -> {
-                    EvaluationFactory.pass("Has CNS metastases")
+                    EvaluationFactory.pass("CNS metastases in provided lesions")
                 }
 
                 hasBrainLesions == true -> {
-                    EvaluationFactory.pass("Has brain metastases")
+                    EvaluationFactory.pass("Brain metastases in provided lesions")
                 }
 
                 hasSuspectedCnsLesions == true || hasSuspectedBrainLesions == true -> {
-                    val message = "CNS metastases present but suspected lesions only"
+                    val message = "CNS metastases in provided lesions but suspected lesions only"
                     EvaluationFactory.warn(message)
                 }
 
                 hasCnsLesions == null || hasBrainLesions == null -> {
-                    val message = "Undetermined if CNS metastases present (data missing)"
+                    val message = "Undetermined if CNS metastases based on provided lesions"
                     EvaluationFactory.undetermined(message)
                 }
 
-                else -> EvaluationFactory.fail("No known CNS metastases present")
+                else -> EvaluationFactory.fail("No known CNS metastases in provided lesions")
             }
         }
     }

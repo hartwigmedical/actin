@@ -15,13 +15,13 @@ class HasHadCompleteResection : EvaluationFunction {
             record.oncologicalHistory.flatMap { entry -> entry.treatments.flatMap { it.synonyms + it.name }.map(String::lowercase) }
 
         return when {
-            lowercaseTreatmentNames.contains(COMPLETE_RESECTION) -> EvaluationFactory.pass("Has had complete resection")
+            lowercaseTreatmentNames.contains(COMPLETE_RESECTION) -> EvaluationFactory.pass("Complete resection in provided treatments")
 
             lowercaseTreatmentNames.any { name -> name == SURGERY || RESECTION_KEYWORDS.any(name::contains) } -> {
-                EvaluationFactory.undetermined("Undetermined whether patient has had complete resection")
+                EvaluationFactory.undetermined("Undetermined if resection in provided treatments was a complete resection")
             }
 
-            else -> EvaluationFactory.fail("Has not had complete resection")
+            else -> EvaluationFactory.fail("No complete resection in provided treatments")
         }
     }
 }

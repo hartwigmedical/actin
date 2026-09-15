@@ -21,7 +21,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.SUBSTRATE
             ).evaluate(patientWithBCRPSubstrateMedication),
-            "Active BCRP substrate medication use (name)"
+            "Active BCRP substrate medication in provided medications (name)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -29,7 +29,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.INHIBITOR
             ).evaluate(patientWithBCRPInhibitorMedication),
-            "Active BCRP inhibitor medication use (name)"
+            "Active BCRP inhibitor medication in provided medications (name)"
         )
     }
 
@@ -40,7 +40,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.SUBSTRATE).evaluate(
                 patientWithBCRPSubstrateMedication
             ),
-            "Planned BCRP substrate medication use (name)"
+            "Planned BCRP substrate medication in provided medications (name)"
         )
 
         assertEvaluation(
@@ -48,7 +48,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.INHIBITOR).evaluate(
                 patientWithBCRPInhibitorMedication
             ),
-            "Planned BCRP inhibitor medication use (name)"
+            "Planned BCRP inhibitor medication in provided medications (name)"
         )
     }
 
@@ -60,7 +60,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.SUBSTRATE
             ).evaluate(patientWithBCRPInhibitorMedication),
-            "No current BCRP substrate medication use"
+            "No active BCRP substrate medication in provided medications"
         )
 
         assertEvaluation(
@@ -68,7 +68,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
             createFunction(MedicationTestFactory.alwaysPlanned(), DrugInteraction.Type.INHIBITOR).evaluate(
                 patientWithBCRPSubstrateMedication
             ),
-            "No current BCRP inhibitor medication use"
+            "No active BCRP inhibitor medication in provided medications"
         )
     }
 
@@ -80,7 +80,7 @@ class CurrentlyGetsTransporterInteractingMedicationTest {
                 MedicationTestFactory.alwaysActive(),
                 DrugInteraction.Type.SUBSTRATE
             ).evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No current BCRP substrate medication use"
+            "No active BCRP substrate medication in provided medications"
         )
     }
 

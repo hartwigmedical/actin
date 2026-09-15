@@ -82,7 +82,7 @@ class MeetsSpecificCriteriaRegardingBrainMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             evaluation,
-            "No brain metastases present hence won't meet study specific criteria regarding brain metastases"
+            "No brain metastases hence won't meet study specific criteria regarding brain metastases"
         )
     }
 

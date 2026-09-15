@@ -15,7 +15,7 @@ class HasHadChemoradiotherapyWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if received chemoradiotherapy with name and at least 2 cycles"
+            "Undetermined history of chemoradiotherapy with name and at least 2 cycles based on provided treatments"
         )
     }
 }

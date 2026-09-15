@@ -39,7 +39,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -95,7 +95,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has solid primary tumor"
+                "message": "Primary tumor is solid"
               },
               {
                 "message": "Stage IV is considered metastatic"
@@ -141,7 +141,7 @@
             "passMessages": [],
             "warnMessages": [
               {
-                "message": "Has not exhausted SOC (at least platinum doublet remaining)"
+                "message": "SOC is not exhausted (at least platinum doublet remaining)"
               }
             ],
             "undeterminedMessages": [],
@@ -174,7 +174,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has no other condition belonging to category autoimmune disease"
+                "message": "No comorbidity belonging to category autoimmune disease"
               }
             ],
             "warnMessages": [],
@@ -247,6 +247,40 @@
         ],
         [
           {
+            "references": [
+              "E-04"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "History of rheumatoid arthritis"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
             "references": [],
             "function": {
               "rule": "WARN_IF",
@@ -273,7 +307,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial IEMOEN"
+                "message": "No previous participation in trial IEMOEN"
               }
             ],
             "warnMessages": [],
@@ -353,7 +387,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -540,7 +574,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial KAYRAS"
+                "message": "No previous participation in trial KAYRAS"
               }
             ],
             "warnMessages": [],
@@ -640,6 +674,40 @@
                 ],
                 "isMissingMolecularResultForEvaluation": false
               }
+            ],
+            [
+              {
+                "references": [
+                  "E-01"
+                ],
+                "function": {
+                  "rule": "NOT",
+                  "parameters": [
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "HAS_LIVER_METASTASES",
+                        "parameters": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "result": "FAIL",
+                "recoverable": false,
+                "inclusionMolecularEvents": [],
+                "exclusionMolecularEvents": [],
+                "passMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [
+                  {
+                    "message": "Liver metastases in provided lesions"
+                  }
+                ],
+                "isMissingMolecularResultForEvaluation": false
+              }
             ]
           ]
         }
@@ -682,7 +750,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -835,7 +903,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial NO-SEE797ES"
+                "message": "No previous participation in trial NO-SEE797ES"
               }
             ],
             "warnMessages": [],
@@ -882,7 +950,7 @@
         [
           {
             "references": [
-              "I-1"
+              "I-01"
             ],
             "function": {
               "rule": "IS_AT_LEAST_X_YEARS_OLD",
@@ -901,7 +969,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -913,7 +981,7 @@
         [
           {
             "references": [
-              "I-2"
+              "I-02"
             ],
             "function": {
               "rule": "AND",
@@ -977,7 +1045,7 @@
         [
           {
             "references": [
-              "I-3"
+              "I-03"
             ],
             "function": {
               "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
@@ -1015,6 +1083,88 @@
         ],
         [
           {
+            "references": [
+              "I-04"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y",
+                    "parameters": [
+                      {
+                        "type": "TREATMENT_CATEGORY",
+                        "value": "TARGETED_THERAPY"
+                      },
+                      {
+                        "type": "MANY_TREATMENT_TYPES",
+                        "value": "EGFR_INHIBITOR"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "At least 1 line(s) of EGFR inhibitor targeted therapy in provided treatments"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-01"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X",
+                    "parameters": [
+                      {
+                        "type": "CYP",
+                        "value": "CYP3A4_5"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "Active CYP3A4/5 inducing medication in provided medications (St. John’s Wort)"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
             "references": [],
             "function": {
               "rule": "WARN_IF",
@@ -1041,7 +1191,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial TEDR1"
+                "message": "No previous participation in trial TEDR1"
               }
             ],
             "warnMessages": [],
@@ -1105,7 +1255,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -1246,7 +1396,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has no other condition belonging to category cardiac disease"
+                "message": "No comorbidity belonging to category cardiac disease"
               }
             ],
             "warnMessages": [],
@@ -1283,7 +1433,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial PICKME3CA"
+                "message": "No previous participation in trial PICKME3CA"
               }
             ],
             "warnMessages": [],

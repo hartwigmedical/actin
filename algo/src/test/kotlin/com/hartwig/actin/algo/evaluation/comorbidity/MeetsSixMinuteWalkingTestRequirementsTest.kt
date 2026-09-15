@@ -13,7 +13,7 @@ class MeetsSixMinuteWalkingTestRequirementsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if patient meets 6 min walking test requirements"
+            "Undetermined if 6 min walking test requirements can be met"
         )
     }
 }

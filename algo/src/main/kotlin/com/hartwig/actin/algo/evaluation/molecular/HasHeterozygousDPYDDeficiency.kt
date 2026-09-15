@@ -32,7 +32,7 @@ class HasHeterozygousDPYDDeficiency: MolecularEvaluationFunction(true) {
             }
 
             else -> {
-                EvaluationFactory.fail("Is not heterozygous DPYD deficient")
+                EvaluationFactory.fail("No heterozygous DPYD deficiency in provided molecular data")
             }
         }
     }

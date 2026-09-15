@@ -23,7 +23,7 @@ class HasSpleenMetastasesTest {
             EvaluationAssert.assertEvaluation(
                 EvaluationResult.FAIL,
                 function.evaluate(TumorTestFactory.withOtherLesions(listOf(it))),
-                "No spleen metastases"
+                "No spleen metastases in provided lesions"
             )
         }
     }
@@ -33,7 +33,7 @@ class HasSpleenMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withOtherLesions(emptyList())),
-            "No spleen metastases"
+            "No spleen metastases in provided lesions"
         )
     }
 
@@ -42,17 +42,17 @@ class HasSpleenMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("Splenic metastases"))),
-            "Has spleen metastases"
+            "Spleen metastases in provided lesions"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions in spleen"))),
-            "Has spleen metastases"
+            "Spleen metastases in provided lesions"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("intrasplenic"))),
-            "Has spleen metastases"
+            "Spleen metastases in provided lesions"
         )
     }
 
@@ -61,7 +61,7 @@ class HasSpleenMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("spleen"))),
-            "Has suspected spleen metastases"
+            "Suspected spleen metastases in provided lesions"
         )
     }
 }

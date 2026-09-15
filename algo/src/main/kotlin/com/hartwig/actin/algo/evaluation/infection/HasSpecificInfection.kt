@@ -24,14 +24,14 @@ class HasSpecificInfection(
 
         return when {
             matchingComorbidities.fullMatches.isNotEmpty() || hasMatchingInfection == true -> {
-                EvaluationFactory.pass("${term.replaceFirstChar(Char::uppercase)} infection in history")
+                EvaluationFactory.pass("${term.replaceFirstChar(Char::uppercase)} infection in provided history")
             }
 
             hasMatchingInfection == null || matchingComorbidities.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
-                EvaluationFactory.undetermined("Infection in history but undetermined if $term")
+                EvaluationFactory.undetermined("Infection in provided history but undetermined if $term")
             }
 
-            else -> EvaluationFactory.fail("No $term infection")
+            else -> EvaluationFactory.fail("No $term infection in provided history")
         }
     }
 }

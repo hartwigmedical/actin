@@ -23,7 +23,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No current L01A medication use"
+            "No active L01A medication in provided medications"
         )
     }
 
@@ -32,7 +32,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode("wrong category")),
-            "No current L01A medication use"
+            "No active L01A medication in provided medications"
         )
     }
 
@@ -40,7 +40,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
     fun `Should pass when medication has right category`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE, "name")),
-            "L01A medication use (name)"
+            "Active L01A medication in provided medications (name)"
         )
     }
 
@@ -48,7 +48,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
     fun `Should warn when patient plans to use medication of right category`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE, "name")),
-            "Planned L01A medication use (name)"
+            "Planned L01A medication in provided medications (name)"
         )
     }
 
@@ -57,7 +57,7 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode("wrong category")),
-            "No current L01A medication use"
+            "No active L01A medication in provided medications"
         )
     }
 

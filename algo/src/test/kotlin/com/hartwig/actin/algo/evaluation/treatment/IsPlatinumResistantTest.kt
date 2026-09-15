@@ -38,7 +38,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is not platinum resistant"
+            "Disease is not platinum resistant"
         )
     }
 
@@ -56,7 +56,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum resistant"
+            "Undetermined if disease is platinum resistant"
         )
     }
 
@@ -77,7 +77,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum resistant"
+            "Undetermined if disease is platinum resistant"
         )
     }
 
@@ -88,7 +88,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum resistant (no platinum treatment)"
+            "Undetermined if disease is platinum resistant (no platinum treatment)"
         )
     }
 
@@ -113,7 +113,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is platinum resistant"
+            "Undetermined if disease is platinum resistant"
         )
     }
 
@@ -129,7 +129,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is platinum resistant"
+            "Platinum resistant disease"
         )
     }
 
@@ -147,7 +147,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is platinum resistant"
+            "Platinum resistant disease"
         )
     }
 
@@ -172,7 +172,7 @@ class IsPlatinumResistantTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is platinum resistant"
+            "Platinum resistant disease"
         )
     }
 }

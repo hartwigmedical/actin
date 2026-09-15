@@ -22,7 +22,11 @@ class HasHadAnySurgeryAfterSpecificDateTest {
 
     @Test
     fun `Should fail with no surgeries`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withSurgeries(emptyList())), "Has not received surgery after 20-Feb-2020")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withSurgeries(emptyList())),
+            "No surgery after 20-Feb-2020 in provided treatments"
+        )
     }
 
     @Test
@@ -30,13 +34,17 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withSurgery(surgery(minDate.minusWeeks(4)))),
-            "Has not received surgery after 20-Feb-2020"
+            "No surgery after 20-Feb-2020 in provided treatments"
         )
     }
 
     @Test
     fun `Should return undetermined with surgery without end date`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withSurgery(surgery(null))), "Undetermined when surgery occurred")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withSurgery(surgery(null))),
+            "Date of surgery undetermined"
+        )
     }
 
     @Test
@@ -44,7 +52,7 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withSurgery(surgery(minDate.plusWeeks(2), SurgeryStatus.FINISHED))),
-            "Has had surgery after 20-Feb-2020"
+            "Surgery after 20-Feb-2020 in provided treatments"
         )
     }
 
@@ -53,7 +61,7 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(withSurgery(surgery(minDate.plusWeeks(2), SurgeryStatus.PLANNED))),
-            "Has potential recent surgery"
+            "Potential recent surgery"
         )
     }
 
@@ -69,13 +77,17 @@ class HasHadAnySurgeryAfterSpecificDateTest {
     @Test
     fun `Should warn with future finished surgery`() {
         val futureFinished: Surgery = surgery(evaluationDate.plusWeeks(2), SurgeryStatus.FINISHED)
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(withSurgery(futureFinished)), "Has potential recent surgery")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(withSurgery(futureFinished)),
+            "Potential recent surgery"
+        )
     }
 
     @Test
     fun `Should warn with future planned surgery`() {
         val futurePlanned: Surgery = surgery(evaluationDate.plusWeeks(2), SurgeryStatus.PLANNED)
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(withSurgery(futurePlanned)), "Has surgery planned")
+        assertEvaluation(EvaluationResult.WARN, function.evaluate(withSurgery(futurePlanned)), "Surgery is planned")
     }
 
     @Test
@@ -89,7 +101,7 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(SurgeryTestFactory.withOncologicalHistory(emptyList())),
-            "Has not received surgery after 20-Feb-2020"
+            "No surgery after 20-Feb-2020 in provided treatments"
         )
     }
 
@@ -99,7 +111,7 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)),
-            "Has not received surgery after 20-Feb-2020"
+            "No surgery after 20-Feb-2020 in provided treatments"
         )
     }
 
@@ -109,7 +121,7 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)),
-            "Has not received surgery after 20-Feb-2020"
+            "No surgery after 20-Feb-2020 in provided treatments"
         )
     }
 
@@ -139,7 +151,7 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)),
-            "Has not received surgery after 20-Feb-2020"
+            "No surgery after 20-Feb-2020 in provided treatments"
         )
     }
 
@@ -149,7 +161,7 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(SurgeryTestFactory.withOncologicalHistory(treatments)),
-            "Has had surgery after 20-Feb-2020"
+            "Surgery after 20-Feb-2020 in provided treatments"
         )
     }
 
@@ -158,7 +170,11 @@ class HasHadAnySurgeryAfterSpecificDateTest {
         val treatments = listOf(treatmentHistoryEntry(setOf(TreatmentCategory.SURGERY), minDate.year, minDate.monthValue + 1))
         val patient = withSurgery(surgery(evaluationDate.plusWeeks(2), SurgeryStatus.FINISHED))
             .copy(oncologicalHistory = treatments)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(patient), "Has had surgery after 20-Feb-2020")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(patient),
+            "Surgery after 20-Feb-2020 in provided treatments"
+        )
     }
 
     private fun treatmentHistoryEntry(

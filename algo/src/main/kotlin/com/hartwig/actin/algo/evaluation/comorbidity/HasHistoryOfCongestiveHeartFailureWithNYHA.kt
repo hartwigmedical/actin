@@ -26,12 +26,12 @@ class HasHistoryOfCongestiveHeartFailureWithNYHA(private val minimalClass: NyhaC
 
         return when {
             matches.fullMatches.isNotEmpty() -> {
-                EvaluationFactory.pass("Has history of congestive heart failure with at least NYHA class ${minimalClass.name}")
+                EvaluationFactory.pass("History of congestive heart failure with at least NYHA class ${minimalClass.name}")
             }
 
             matches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> {
                 EvaluationFactory.undetermined(
-                    "Has history of congestive heart failure but undetermined if at least NYHA class ${minimalClass.name} (NYHA unknown)"
+                    "History of congestive heart failure - undetermined if at least NYHA class ${minimalClass.name} (NYHA unknown)"
                 )
             }
 

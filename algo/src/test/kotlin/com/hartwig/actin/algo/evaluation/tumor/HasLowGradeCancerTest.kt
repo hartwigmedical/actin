@@ -11,13 +11,13 @@ class HasLowGradeCancerTest {
     @Test
     fun `Should fail when high grade cancer`() {
         val highGradeTumor = TumorTestFactory.withDoidAndName("", "high-grade tumor")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(highGradeTumor), "Has high grade cancer")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(highGradeTumor), "Cancer is high grade")
     }
 
     @Test
     fun `Should pass when low grade cancer`() {
         val lowGradeTumor = TumorTestFactory.withDoidAndName("", "low-grade tumor")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(lowGradeTumor), "Has low grade cancer")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(lowGradeTumor), "Cancer is low grade")
     }
 
     @Test

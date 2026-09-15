@@ -12,7 +12,7 @@ class HadToxicityWithGradeDuringPreviousTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             HadToxicityWithGradeDuringPreviousTreatment("hepatic", 2).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if patient had hepatic toxicity with at least grade 2 during previous treatment"
+            "Undetermined hepatic toxicity with at least grade 2 during previous treatment"
         )
     }
 }

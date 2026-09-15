@@ -23,13 +23,13 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP inducer or inhibitor medication use (name)"
+            "CYP inducer or inhibitor medication (name) in provided medications"
         )
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP inducer or inhibitor medication use (name)"
+            "CYP inducer or inhibitor medication (name) in provided medications"
         )
     }
 
@@ -39,7 +39,7 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP inducer or inhibitor medication use"
+            "No CYP inducer or inhibitor medication in provided medications"
         )
     }
 
@@ -48,7 +48,7 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No CYP inducer or inhibitor medication use"
+            "No CYP inducer or inhibitor medication in provided medications"
         )
     }
 
@@ -74,7 +74,7 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP inducer or inhibitor medication use"
+            "No CYP inducer or inhibitor medication in provided medications"
         )
     }
 

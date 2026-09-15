@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasMinimumModifiedOberlinPrognosticScore(private val score: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has modified oberlin prognostic score of at least $score")
+        return EvaluationFactory.undetermined("Undetermined if modified Oberlin prognostic score is at least $score")
     }
 }

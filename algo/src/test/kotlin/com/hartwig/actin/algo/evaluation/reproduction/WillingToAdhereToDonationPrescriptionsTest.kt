@@ -14,7 +14,7 @@ class WillingToAdhereToDonationPrescriptionsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient is willing to adhere to sperm/egg donation prescriptions"
+            "Assumed willingness to adhere to sperm/egg donation prescriptions"
         )
     }
 }

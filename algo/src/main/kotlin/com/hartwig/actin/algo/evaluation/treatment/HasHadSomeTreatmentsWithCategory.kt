@@ -17,17 +17,17 @@ class HasHadSomeTreatmentsWithCategory(private val category: TreatmentCategory, 
 
         return when {
             treatmentSummary.numSpecificMatches() >= minTreatmentLines -> {
-                EvaluationFactory.pass("Has received at least $minTreatmentLines line(s) of ${category.display()}")
+                EvaluationFactory.pass("At least $minTreatmentLines line(s) of ${category.display()} in provided treatments")
             }
 
             treatmentSummary.numSpecificMatches() + treatmentSummary.numPossibleTrialMatches >= minTreatmentLines -> {
                 EvaluationFactory.undetermined(
-                    "Inconclusive if received at least $minTreatmentLines line(s) of ${category.display()} due to trial participation"
+                    "Inconclusive if trial treatment included at least $minTreatmentLines line(s) of ${category.display()}"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received at least $minTreatmentLines line(s) of ${category.display()}")
+                EvaluationFactory.fail("Not at least $minTreatmentLines line(s) of ${category.display()} in provided treatments")
             }
         }
     }

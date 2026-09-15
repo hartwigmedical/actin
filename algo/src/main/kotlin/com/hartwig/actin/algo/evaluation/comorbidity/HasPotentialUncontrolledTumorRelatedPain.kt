@@ -35,11 +35,11 @@ class HasPotentialUncontrolledTumorRelatedPain(
 
         return when {
             hasCancerRelatedPainConditionOrHistory -> {
-                EvaluationFactory.undetermined("Has tumor related pain in history - undetermined if uncontrolled")
+                EvaluationFactory.undetermined("Tumor related pain in provided conditions - undetermined if uncontrolled")
             }
 
             hasAcutePainConditionOrHistory -> {
-                EvaluationFactory.undetermined("Has acute pain in history - undetermined if uncontrolled")
+                EvaluationFactory.undetermined("Acute pain in provided conditions - undetermined if uncontrolled")
             }
 
             activePainMedications.isNotEmpty() -> {

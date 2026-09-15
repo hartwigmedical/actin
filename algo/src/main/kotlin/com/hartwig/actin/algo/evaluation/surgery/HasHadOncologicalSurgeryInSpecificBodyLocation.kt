@@ -21,15 +21,19 @@ class HasHadOncologicalSurgeryInSpecificBodyLocation(private val bodyLocations: 
             surgeriesInTargetLocation.isNotEmpty() -> {
                 val locations =
                     surgeriesInTargetLocation.flatMap { it.treatmentHistoryDetails?.bodyLocationCategories ?: emptySet() }.toSet()
-                EvaluationFactory.pass("Has had oncological surgery in location(s) " + Format.concatItemsWithAnd(locations))
+                EvaluationFactory.pass(
+                    "Oncological surgery in location(s) " + Format.concatItemsWithAnd(locations) + " in provided treatments"
+                )
             }
 
             surgeries.any { it.treatmentHistoryDetails?.bodyLocationCategories == null } -> {
-                EvaluationFactory.undetermined("Has received oncological surgery but undetermined if in location(s) $locationString")
+                EvaluationFactory.undetermined(
+                    "Oncological surgery in provided treatments but undetermined if in location(s) $locationString"
+                )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received oncological surgery in location(s) $locationString")
+                EvaluationFactory.fail("No oncological surgery in location(s) $locationString in provided treatments")
             }
         }
     }

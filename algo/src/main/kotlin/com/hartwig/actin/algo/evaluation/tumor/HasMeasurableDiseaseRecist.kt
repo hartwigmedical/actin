@@ -19,11 +19,11 @@ class HasMeasurableDiseaseRecist(private val doidModel: DoidModel) : EvaluationF
                 NON_RECIST_TUMOR_DOIDS
             )
         ) {
-            EvaluationFactory.warn("Has measurable disease but with this tumor type unknown if by RECIST")
+            EvaluationFactory.warn("Disease is measurable but with this tumor type unknown if by RECIST")
         } else if (hasMeasurableDisease) {
-            EvaluationFactory.recoverablePass("Has measurable disease")
+            EvaluationFactory.recoverablePass("Disease is measurable")
         } else {
-            EvaluationFactory.recoverableFail("Has no measurable disease")
+            EvaluationFactory.recoverableFail("Disease is not measurable")
         }
     }
 

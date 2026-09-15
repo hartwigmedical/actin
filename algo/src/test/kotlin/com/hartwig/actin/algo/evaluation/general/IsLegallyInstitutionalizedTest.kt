@@ -14,7 +14,7 @@ class IsLegallyInstitutionalizedTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient is not legally institutionalized"
+            "Assumed not legally institutionalized"
         )
     }
 }

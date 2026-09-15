@@ -13,18 +13,18 @@ class IsPrimaryPlatinumRefractoryWithinMonths(private val minMonths: Int, privat
 
         return when {
             platinumProgression.hasProgressionDuringPlatinumOrWithinMonths(platinumProgression.firstPlatinumTreatment) == true -> {
-                EvaluationFactory.pass("Is primary platinum refractory")
+                EvaluationFactory.pass("Primary platinum refractory disease")
             }
 
             platinumProgression.hasProgressionOrUnknownProgressionOnPlatinum(platinumProgression.firstPlatinumTreatment) == true -> {
-                EvaluationFactory.undetermined("Undetermined if patient is primary platinum refractory")
+                EvaluationFactory.undetermined("Undetermined if primary platinum refractory disease")
             }
 
             platinumProgression.firstPlatinumTreatment == null -> {
-                EvaluationFactory.undetermined("Undetermined if patient is primary platinum refractory (no platinum treatment)")
+                EvaluationFactory.undetermined("Undetermined if primary platinum refractory disease (no platinum treatment)")
             }
 
-            else -> EvaluationFactory.fail("Not primary platinum refractory (no progression on platinum treatment)")
+            else -> EvaluationFactory.fail("No primary platinum refractory disease (no progression on platinum treatment)")
         }
     }
 }

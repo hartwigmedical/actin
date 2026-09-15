@@ -23,7 +23,7 @@ class HasRecentlyReceivedTrialMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionActive.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent trial medication"
+            "No recent trial medication in provided treatments"
         )
     }
 
@@ -33,7 +33,7 @@ class HasRecentlyReceivedTrialMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionActive.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent trial medication"
+            "No recent trial medication in provided treatments"
         )
     }
 
@@ -95,7 +95,7 @@ class HasRecentlyReceivedTrialMedicationTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionActive.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-            "Received trial treatment but unknown if recent (missing stop date)"
+            "Trial medication in provided treatments but unknown if recent (date unknown)"
         )
     }
 
@@ -145,7 +145,7 @@ class HasRecentlyReceivedTrialMedicationTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionActive.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Received trial treatment but unknown if recent (missing stop date)"
+            "Trial medication in provided treatments but unknown if recent (date unknown)"
         )
     }
 }

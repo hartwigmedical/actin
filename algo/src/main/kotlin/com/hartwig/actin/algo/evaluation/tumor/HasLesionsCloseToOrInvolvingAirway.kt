@@ -20,7 +20,7 @@ class HasLesionsCloseToOrInvolvingAirway(private val doidModel: DoidModel) : Eva
 
             return when {
                 isMajorAirwayCancer -> {
-                    EvaluationFactory.pass("Has lesions close to or involving airway")
+                    EvaluationFactory.pass("Lesions close to or involving airway")
                 }
 
                 isLungCancer || hasLungLesions == true || hasSuspectedLungLesions == true -> {

@@ -18,17 +18,17 @@ class HasKnownActiveBrainMetastases : EvaluationFunction {
                 unknownIfActive && hasSuspectedBrainLesions == true -> undeterminedActivityEvaluation("Suspected brain")
 
                 unknownIfActive && hasBrainLesions == null -> {
-                    EvaluationFactory.undetermined("Undetermined if active brain metastases present (data missing)")
+                    EvaluationFactory.undetermined("Undetermined if active brain metastases based on provided lesions")
                 }
 
-                hasActiveBrainLesions == true -> EvaluationFactory.pass("Has active brain metastases")
+                hasActiveBrainLesions == true -> EvaluationFactory.pass("Active brain metastases in provided lesions")
 
-                else -> EvaluationFactory.fail("No known active brain metastases present")
+                else -> EvaluationFactory.fail("No known active brain metastases in provided lesions")
             }
         }
     }
 
     private fun undeterminedActivityEvaluation(prefix: String): Evaluation {
-        return EvaluationFactory.undetermined("$prefix metastases present but unknown if active (data missing)")
+        return EvaluationFactory.undetermined("$prefix metastases in provided lesions but unknown if active (data missing)")
     }
 }

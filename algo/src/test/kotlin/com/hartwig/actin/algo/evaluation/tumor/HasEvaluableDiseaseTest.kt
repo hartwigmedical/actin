@@ -12,21 +12,21 @@ class HasEvaluableDiseaseTest {
     @Test
     fun `Should pass when has measurable disease is true`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(true))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has evaluable disease (because known measurable disease)")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Disease is evaluable (because known measurable disease)")
         assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
     fun `Should be undetermined when has measurable disease is false`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(false))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if patient may have evaluable disease")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if disease may be evaluable")
         assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
     fun `Should be undetermined when has measurable disease is unknown`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(null))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if patient may have evaluable disease")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if disease may be evaluable")
         assertThat(evaluation.recoverable).isTrue()
     }
 }

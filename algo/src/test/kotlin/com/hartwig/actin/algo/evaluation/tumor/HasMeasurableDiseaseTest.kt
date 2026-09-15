@@ -12,7 +12,7 @@ class HasMeasurableDiseaseTest {
     @Test
     fun `Should pass when has measurable disease is true`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(true))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has measurable disease")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Disease is measurable")
         assertThat(evaluation.recoverable).isTrue()
     }
 

@@ -9,7 +9,7 @@ class MeetsSpecificCriteriaForResection: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.recoverableUndetermined(
-            "Undetermined if patient meets specific criteria for resection"
+            "Undetermined if specific criteria for resection are met"
         )
     }
 }

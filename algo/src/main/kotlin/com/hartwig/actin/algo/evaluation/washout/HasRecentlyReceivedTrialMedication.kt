@@ -39,11 +39,11 @@ class HasRecentlyReceivedTrialMedication(
             }
 
             hadPotentiallyRecentTrialTreatment -> {
-                EvaluationFactory.undetermined("Received trial treatment but unknown if recent (missing stop date)")
+                EvaluationFactory.undetermined("Trial medication in provided treatments but unknown if recent (date unknown)")
             }
 
             else -> {
-                EvaluationFactory.fail("No recent trial medication")
+                EvaluationFactory.fail("No recent trial medication in provided treatments")
             }
         }
     }
