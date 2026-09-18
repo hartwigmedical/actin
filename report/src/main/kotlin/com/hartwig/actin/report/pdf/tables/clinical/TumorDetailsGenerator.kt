@@ -6,7 +6,6 @@ import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Table
 
@@ -18,7 +17,7 @@ class TumorDetailsGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return labels.clinicalDetails.tumorDetailsTitle(date(record.patient.questionnaireDate))
+        return labels.clinicalDetails.tumorDetailsTitle()
     }
 
     override fun forceKeepTogether(): Boolean {

@@ -13,6 +13,7 @@ object Styles {
 
     val PALETTE_WHITE = DeviceRgb(255, 255, 255)
     val PALETTE_BLACK = DeviceRgb(0, 0, 0)
+    val PALETTE_DARK_GREY = DeviceRgb(39, 47, 50)
     val PALETTE_MID_GREY = DeviceRgb(101, 106, 108)
     val PALETTE_BLUE = DeviceRgb(74, 134, 232)
     val PALETTE_EVALUATION_PASS = DeviceRgb(0, 150, 0)
@@ -20,13 +21,15 @@ object Styles {
     val PALETTE_EVALUATION_FAILED = DeviceRgb(231, 85, 85)
     val PALETTE_EVALUATION_UNCLEAR = DeviceRgb(85, 85, 85)
     val PALETTE_GREEN = DeviceRgb(0, 150, 0)
-    val PALETTE_RED = DeviceRgb(231, 85, 85)
+    val PALETTE_RED = DeviceRgb(232, 60, 55)
     val PALETTE_YES_OR_NO_UNCLEAR = DeviceRgb(85, 85, 85)
     val PALETTE_WARN = PALETTE_EVALUATION_WARN
 
     const val REGULAR_FONT_SIZE = 8f
+    const val SUB_FONT_SIZE = 7f
     const val SMALL_FONT_SIZE = 6f
     const val SMALLER_FONT_SIZE = 5f
+    const val TABLE_HEADER_FONT_SIZE = 7f
 
     private const val FONT_REGULAR_PATH = "fonts/nimbus-sans/NimbusSansL-Regular.ttf"
     private const val FONT_BOLD_PATH = "fonts/nimbus-sans/NimbusSansL-Bold.ttf"
@@ -46,31 +49,31 @@ object Styles {
     }
 
     fun reportTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(13f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontBold()).setFontSize(17f).setFontColor(PALETTE_BLUE)
     }
 
     fun chapterTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(11f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontBold()).setFontSize(16f).setFontColor(PALETTE_BLUE)
     }
 
     fun tableTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(9f).setFontColor(PALETTE_BLUE)
+        return Style().setFont(fontBold()).setFontSize(11f).setFontColor(PALETTE_BLUE)
     }
 
     fun tableSubTitleStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLUE)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLUE)
     }
 
     fun tableSubStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(7f).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(SUB_FONT_SIZE).setFontColor(PALETTE_BLACK)
     }
 
     fun tableHeaderStyle(): Style {
-        return Style().setFont(fontBold()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
+        return Style().setFont(fontRegular()).setFontSize(TABLE_HEADER_FONT_SIZE).setFontColor(PALETTE_MID_GREY)
     }
 
     fun tableContentStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_DARK_GREY)
     }
 
     fun tableNoticeStyle(): Style {
@@ -78,11 +81,11 @@ object Styles {
     }
 
     fun tableKeyStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_DARK_GREY)
     }
 
     fun tableUnknownStyle(): Style {
-        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_BLACK)
+        return Style().setFont(fontRegular()).setFontSize(REGULAR_FONT_SIZE).setFontColor(PALETTE_DARK_GREY)
     }
 
     fun tableHighlightStyle(): Style {
@@ -139,7 +142,6 @@ object Styles {
         return try {
             FontProgramFactory.createFont(resourcePath)
         } catch (exception: IOException) {
-            // Should never happen, fonts are loaded from code
             throw IllegalStateException(exception)
         }
     }
