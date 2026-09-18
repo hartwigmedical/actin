@@ -5,9 +5,14 @@
     "acronym": "KAYRAS",
     "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
     "nctId": "NCT00000002",
-    "phase": "1/2",
-    "locations": ["Erasmus MC"],
-    "url": "https://hartwigmedicalfoundation.nl"
+    "phase": "PHASE_1_2",
+    "locations": [
+      "Erasmus MC"
+    ],
+    "url": "https://hartwigmedicalfoundation.nl",
+    "sources": [
+      "EXAMPLE"
+    ]
   },
   "generalEligibility": [
     {
@@ -80,8 +85,10 @@
       "metadata": {
         "cohortId": "A",
         "evaluable": true,
-        "open": true,
-        "slotsAvailable": true,
+        "cohortAvailability": {
+          "open": true,
+          "slotsAvailable": true
+        },
         "ignore": false,
         "description": "Dose expansion - monotherapy - NSCLC"
       },
@@ -103,8 +110,10 @@
       "metadata": {
         "cohortId": "B",
         "evaluable": true,
-        "open": true,
-        "slotsAvailable": true,
+        "cohortAvailability": {
+          "open": true,
+          "slotsAvailable": true
+        },
         "ignore": false,
         "description": "Dose expansion - monotherapy - Colorectum"
       },

@@ -4,7 +4,9 @@
     "open": true,
     "acronym": "TEST-TRIAL",
     "title": "This is a trial to test ACTIN",
-    "sources": ["EMC"],
+    "sources": [
+      "EMC"
+    ],
     "locations": [
       "Amsterdam UMC",
       "Antoni van Leeuwenhoek"
@@ -31,12 +33,16 @@
         "open": true,
         "slotsAvailable": true,
         "ignore": false,
-        "description": "Cohort A"
+        "description": "Cohort A",
+        "cohortAvailability": {
+          "open": true,
+          "slotsAvailable": true
+        }
       },
       "eligibility": [
         {
           "references": [
-              "I-02"
+            "I-02"
           ],
           "function": {
             "rule": "NOT",
@@ -57,7 +63,11 @@
         "open": true,
         "slotsAvailable": true,
         "ignore": false,
-        "description": "Cohort B"
+        "description": "Cohort B",
+        "cohortAvailability": {
+          "open": true,
+          "slotsAvailable": true
+        }
       },
       "eligibility": []
     },
@@ -68,7 +78,11 @@
         "open": false,
         "slotsAvailable": false,
         "ignore": false,
-        "description": "Cohort C"
+        "description": "Cohort C",
+        "cohortAvailability": {
+          "open": false,
+          "slotsAvailable": false
+        }
       },
       "eligibility": [
         {
@@ -95,8 +109,7 @@
               },
               {
                 "rule": "IS_PREGNANT",
-                "parameters": [
-                ]
+                "parameters": []
               }
             ]
           }
