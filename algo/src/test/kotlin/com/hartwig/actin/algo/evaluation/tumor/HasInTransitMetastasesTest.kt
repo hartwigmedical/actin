@@ -11,6 +11,10 @@ class HasInTransitMetastasesTest {
 
     @Test
     fun `Should be undetermined always`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if patient has in-transit metastases"
+        )
     }
 }

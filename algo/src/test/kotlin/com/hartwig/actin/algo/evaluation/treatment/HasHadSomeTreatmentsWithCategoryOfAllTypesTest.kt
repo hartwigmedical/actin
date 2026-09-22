@@ -40,7 +40,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.PASS,
             function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
-            )
+            ),
+            "Has received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -57,7 +58,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
+            "Has received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -66,7 +68,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(emptyList()))
-            )
+            ),
+            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -86,7 +89,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
-            )
+            ),
+            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -106,7 +110,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
-            )
+            ),
+            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -126,7 +131,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
-            )
+            ),
+            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -140,7 +146,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MedicationTestFactory.withMedications(listOf(medication)))
+            function.evaluate(MedicationTestFactory.withMedications(listOf(medication))),
+            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -160,7 +167,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
                 TreatmentTestFactory.withTreatmentHistory(
                     listOf(treatmentHistoryEntry)
                 )
-            )
+            ),
+            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
         )
     }
 
@@ -171,7 +179,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             isTrial = true
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
+            EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Trial medication in history - undetermined if received at least 1 line(s) of targeted therapy"
         )
     }
 
@@ -184,7 +193,8 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
+            "Has not received at least 1 line(s) of allogenic combination transplantation"
         )
     }
 }

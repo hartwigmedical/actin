@@ -16,32 +16,46 @@ class ProteinIsWildTypeByIhcTest {
 
     @Test
     fun `Should be undetermined if there is an empty list`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(emptyList())))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withIhcTests(emptyList())),
+            "No protein 1 IHC test result"
+        )
     }
 
     @Test
     fun `Should be undetermined if there are no tests for protein`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(item = "Other protein", scoreText = "loss")))
+            function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(item = "Other protein", scoreText = "loss"))),
+            "No protein 1 IHC test result"
         )
     }
 
     @Test
     fun `Should pass if all tests would pass`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest))))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest))),
+            "protein 1 is wild type by IHC"
+        )
     }
 
     @Test
     fun `Should warn if there is at least one test with passing result`() {
-        assertMolecularEvaluation(EvaluationResult.WARN, function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest, inconclusiveTest))))
+        assertMolecularEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest, inconclusiveTest))),
+            "Undetermined if protein 1 IHC result indicates wild type status"
+        )
     }
 
     @Test
     fun `Should warn if there is at least one test with inconclusive result`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withIhcTests(listOf(inconclusiveTest, inconclusiveTest)))
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(inconclusiveTest, inconclusiveTest))),
+            "Undetermined if protein 1 IHC result indicates wild type status"
         )
     }
 }

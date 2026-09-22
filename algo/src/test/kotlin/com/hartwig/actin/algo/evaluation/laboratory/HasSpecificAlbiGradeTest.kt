@@ -20,7 +20,7 @@ class HasSpecificAlbiGradeTest {
     @Test
     fun `Should evaluate to undetermined when no albumin result present`() {
         val evaluation = function.evaluate(LabTestFactory.withLabValue(bilirubin))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No measurement found for albumin")
         assertThat(evaluation.recoverable).isTrue
     }
 
@@ -28,29 +28,28 @@ class HasSpecificAlbiGradeTest {
     fun `Should evaluate to undetermined when no bilirubin result present`() {
         val evaluation = function.evaluate(LabTestFactory.withLabValue(albumin))
         assertThat(evaluation.recoverable).isTrue
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No measurement found for total bilirubin")
     }
 
     @Test
     fun `Should evaluate to undetermined when lab value date is before min valid date`() {
         val evaluation = function.evaluate(LabTestFactory.withLabValues(listOf(bilirubin, albumin.copy(date = LocalDate.of(2024, 12, 31)))))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Most recent measurement too old for albumin")
         assertThat(evaluation.recoverable).isTrue
     }
 
     @Test
     fun `Should pass when ALBI grade matches`() {
         val evaluation = function.evaluate(LabTestFactory.withLabValues(listOf(albumin, bilirubin)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation, "ALBI grade sufficient")
         assertThat(evaluation.recoverable).isTrue
-        assertThat(evaluation.passMessagesStrings()).containsExactly("ALBI grade sufficient")
     }
 
     @Test
     fun `Should fail when ALBI grade does not match`() {
         val evaluation = function.evaluate(LabTestFactory.withLabValues(listOf(albumin.copy(value = 20.0), bilirubin)))
         assertThat(evaluation.recoverable).isTrue
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation, "ALBI grade (grade 3) insufficient - should be grade 2")
         assertThat(evaluation.failMessagesStrings()).containsExactly(
             "ALBI grade (grade 3) insufficient - should be ${targetGrade.display()}"
         )

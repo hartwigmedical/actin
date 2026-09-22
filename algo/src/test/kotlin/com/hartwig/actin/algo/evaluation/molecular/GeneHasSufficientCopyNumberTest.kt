@@ -56,20 +56,26 @@ class GeneHasSufficientCopyNumberTest {
     fun `Should be undetermined when molecular record is empty`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+            function.evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()),
+            "No molecular results of sufficient quality"
         )
     }
 
     @Test
     fun `Should fail with minimal WGS record`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "gene A does not have at least 5 copies"
+        )
     }
 
     @Test
     fun `Should fail when requested min copy number is not met`() {
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withCopyNumber(eligibleAmp.copy(canonicalImpact = impactAmpWithInsufficientCopyNr)))
+            function.evaluate(MolecularTestFactory.withCopyNumber(eligibleAmp.copy(canonicalImpact = impactAmpWithInsufficientCopyNr))),
+            "gene A does not have at least 5 copies"
         )
     }
 
@@ -79,7 +85,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(eligibleAmp)
-            )
+            ),
+            "gene A copy number is above 5"
         )
     }
 
@@ -95,7 +102,8 @@ class GeneHasSufficientCopyNumberTest {
                         )
                     )
                 )
-            )
+            ),
+            "gene A copy number is above 5"
         )
     }
 
@@ -105,7 +113,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(eligibleAmp.copy(geneRole = GeneRole.TSG))
-            )
+            ),
+            "gene A has at least 5 copies but gene known as TSG in evidence source"
         )
     }
 
@@ -115,7 +124,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION))
-            )
+            ),
+            "gene A has at least 5 copies but gene associated with loss-of-function protein impact in evidence source"
         )
     }
 
@@ -125,7 +135,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(eligibleAmp.copy(proteinEffect = ProteinEffect.LOSS_OF_FUNCTION_PREDICTED))
-            )
+            ),
+            "gene A has at least 5 copies but gene associated with loss-of-function protein impact in evidence source"
         )
     }
 
@@ -141,7 +152,8 @@ class GeneHasSufficientCopyNumberTest {
                         )
                     )
                 )
-            )
+            ),
+            "gene A has at least 5 copies but only partially"
         )
     }
 
@@ -151,7 +163,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(ampWithSufficientCopiesOnNonCanonicalTranscript)
-            )
+            ),
+            "gene A has at least 5 copies but on non-canonical transcript"
         )
     }
 
@@ -161,7 +174,8 @@ class GeneHasSufficientCopyNumberTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript)
-            )
+            ),
+            "gene A is amplified hence assumed gene has a copy number >= 5 copies"
         )
     }
 
@@ -172,7 +186,8 @@ class GeneHasSufficientCopyNumberTest {
             GeneHasSufficientCopyNumber(
                 GENE,
                 10
-            ).evaluate(MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript))
+            ).evaluate(MolecularTestFactory.withCopyNumber(ampWithUnknownCopiesOnCanonicalTranscript)),
+            "gene A is amplified but undetermined if gene has a copy number >= 10 copies"
         )
     }
 
@@ -186,7 +201,8 @@ class GeneHasSufficientCopyNumberTest {
                         canonicalImpact = impactAmpWithUnknownCopyNr.copy(type = CopyNumberType.NONE)
                     )
                 )
-            )
+            ),
+            "gene A does not have at least 5 copies"
         )
     }
 
@@ -200,7 +216,8 @@ class GeneHasSufficientCopyNumberTest {
                         canonicalImpact = impactAmpWithUnknownCopyNr.copy(type = CopyNumberType.PARTIAL_GAIN)
                     )
                 )
-            )
+            ),
+            "gene A is amplified but partially and undetermined if copy nr meets threshold of >= 5 copies"
         )
     }
 

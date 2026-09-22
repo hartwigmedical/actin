@@ -11,7 +11,8 @@ class MeetsSpecificCriteriaRegardingRecurrentCancerTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            MeetsSpecificCriteriaRegardingRecurrentCancer().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            MeetsSpecificCriteriaRegardingRecurrentCancer().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if patient meets specific criteria regarding recurrent cancer"
         )
     }
 }

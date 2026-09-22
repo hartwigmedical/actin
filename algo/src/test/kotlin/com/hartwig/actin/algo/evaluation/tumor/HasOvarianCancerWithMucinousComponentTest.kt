@@ -11,15 +11,19 @@ class HasOvarianCancerWithMucinousComponentTest {
     
     @Test
     fun canEvaluate() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withDoids(null)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withDoids(null)),
+            "Ovarian mucinous cancer undetermined (tumor type missing)"
+        )
 
         val matchSingle = TumorTestFactory.withDoids(HasOvarianCancerWithMucinousComponent.OVARIAN_MUCINOUS_DOIDS.iterator().next())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(matchSingle))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(matchSingle), "Has ovarian cancer with mucinous component")
 
         val matchCombination = TumorTestFactory.withDoids(HasOvarianCancerWithMucinousComponent.OVARIAN_MUCINOUS_DOID_SET)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(matchCombination))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(matchCombination), "Has ovarian cancer with mucinous component")
 
         val somethingElse = TumorTestFactory.withDoids("something else")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(somethingElse))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(somethingElse), "No ovarian cancer with mucinous component")
     }
 }

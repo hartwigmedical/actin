@@ -17,8 +17,9 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should pass when CYP inducing medication`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
-            )
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
+            ),
+            "CYP9A9 inducing medication use (name)"
         )
     }
 
@@ -27,7 +28,8 @@ class CurrentlyGetsCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP9A9 inducing medication use"
         )
     }
 
@@ -36,21 +38,27 @@ class CurrentlyGetsCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP9A9 inducing medication use"
         )
     }
 
     @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No CYP9A9 inducing medication use"
+        )
     }
 
     @Test
     fun `Should warn when patient plans to use CYP inducing medication`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
-            )
+                MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
+            ),
+            "Planned CYP9A9 inducing medication use (name)"
         )
     }
 
@@ -59,7 +67,8 @@ class CurrentlyGetsCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP9A9 inducing medication use"
         )
     }
 
@@ -67,10 +76,10 @@ class CurrentlyGetsCypXInducingMedicationTest {
     fun `Should be undetermined if medication is not provided`() {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult, "No medication data provided")
         assertThat(alwaysPlannedResult.recoverable).isTrue()
         val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult, "No medication data provided")
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

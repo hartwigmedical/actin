@@ -17,13 +17,21 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
 
     @Test
     fun `Should fail for empty treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received treatments that include drug"
+        )
     }
 
     @Test
     fun `Should fail for other treatment with PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received treatments that include drug"
+        )
     }
 
     @Test
@@ -33,58 +41,94 @@ class HasHadPDFollowingTreatmentWithAnyDrugTest {
             stopReason = StopReason.TOXICITY,
             bestResponse = TreatmentResponse.MIXED
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received drugs drug but no PD"
+        )
     }
 
     @Test
     fun `Should return undetermined for matching treatment missing stop reason`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS)
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received drugs drug but undetermined if PD"
+        )
     }
 
     @Test
     fun `Should pass for matching treatment with no stop reason but subsequent treatment line within 26 weeks`() {
         val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopYear = 2020, stopMonth = 6)
         val subsequentEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, startYear = 2020, startMonth = 9)
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
+            "Has had PD after receiving drugs drug"
+        )
     }
 
     @Test
     fun `Should return undetermined for matching treatment with no stop reason when gap to next line exceeds 26 weeks`() {
         val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopYear = 2020, stopMonth = 6)
         val subsequentEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, startYear = 2021, startMonth = 1)
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
+            "Has received drugs drug but undetermined if PD"
+        )
     }
 
     @Test
     fun `Should fail for matching treatment stopped due to toxicity even if subsequent line exists`() {
         val matchingEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.TOXICITY, stopYear = 2020, stopMonth = 6)
         val subsequentEntry = treatmentHistoryEntry(NON_MATCHING_TREATMENTS, startYear = 2020, startMonth = 9)
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
+            "Has received drugs drug but no PD"
+        )
     }
 
     @Test
     fun `Should pass for matching treatment and stop reason PD`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, stopReason = StopReason.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had PD after receiving drugs drug"
+        )
     }
 
     @Test
     fun `Should pass for matching treatment when PD is indicated in best response`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(MATCHING_TREATMENTS, bestResponse = TreatmentResponse.PROGRESSIVE_DISEASE)
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had PD after receiving drugs drug"
+        )
     }
 
     @Test
     fun `Should fail with trial treatment entry with different category in history`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.TARGETED_THERAPY)), isTrial = true)
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received treatments that include drug"
+        )
     }
 
     @Test
     fun `Should return undetermined with uncategorized trial treatment entry in history`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(DrugTreatment("test", emptySet())), isTrial = true)
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if treatment received in previous trial included drug"
+        )
     }
 
     companion object {

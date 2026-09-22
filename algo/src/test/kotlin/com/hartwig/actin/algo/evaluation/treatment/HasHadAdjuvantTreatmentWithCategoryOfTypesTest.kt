@@ -15,7 +15,7 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
 
     @Test
     fun shouldFailForEmptyTreatmentList() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(withTreatmentHistory(emptyList())), "Not received adjuvant HER2 antibody")
     }
 
     @Test
@@ -24,18 +24,31 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             EvaluationResult.FAIL,
             TreatmentCategory.IMMUNOTHERAPY,
             setOf(DrugType.ANTI_ANDROGEN),
-            setOf(Intent.ADJUVANT)
+            setOf(Intent.ADJUVANT),
+            "Not received adjuvant HER2 antibody"
         )
     }
 
     @Test
     fun shouldFailForNonAdjuvantTreatmentMatchingCategoryAndType() {
-        assertResultForCategoryAndTypeAndIntent(EvaluationResult.FAIL, WARN_CATEGORY, MATCHING_TYPE_SET, emptySet())
+        assertResultForCategoryAndTypeAndIntent(
+            EvaluationResult.FAIL,
+            WARN_CATEGORY,
+            MATCHING_TYPE_SET,
+            emptySet(),
+            "Not received adjuvant HER2 antibody"
+        )
     }
 
     @Test
     fun shouldFailForNeoadjuvantTreatmentMatchingCategoryAndType() {
-        assertResultForCategoryAndTypeAndIntent(EvaluationResult.FAIL, WARN_CATEGORY, MATCHING_TYPE_SET, setOf(Intent.NEOADJUVANT))
+        assertResultForCategoryAndTypeAndIntent(
+            EvaluationResult.FAIL,
+            WARN_CATEGORY,
+            MATCHING_TYPE_SET,
+            setOf(Intent.NEOADJUVANT),
+            "Not received adjuvant HER2 antibody"
+        )
     }
 
     @Test
@@ -44,18 +57,31 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             EvaluationResult.FAIL,
             WARN_CATEGORY,
             setOf(DrugType.ANTI_TISSUE_FACTOR),
-            setOf(Intent.ADJUVANT)
+            setOf(Intent.ADJUVANT),
+            "Not received adjuvant HER2 antibody"
         )
     }
 
     @Test
     fun shouldWarnForAdjuvantTreatmentMatchingCategoryWithUnspecifiedType() {
-        assertResultForCategoryAndTypeAndIntent(EvaluationResult.WARN, WARN_CATEGORY, emptySet(), setOf(Intent.ADJUVANT))
+        assertResultForCategoryAndTypeAndIntent(
+            EvaluationResult.WARN,
+            WARN_CATEGORY,
+            emptySet(),
+            setOf(Intent.ADJUVANT),
+            "Received adjuvant targeted therapy but not of specific type)"
+        )
     }
 
     @Test
     fun shouldPassForAdjuvantTreatmentMatchingCategoryAndType() {
-        assertResultForCategoryAndTypeAndIntent(EvaluationResult.PASS, WARN_CATEGORY, MATCHING_TYPE_SET, setOf(Intent.ADJUVANT))
+        assertResultForCategoryAndTypeAndIntent(
+            EvaluationResult.PASS,
+            WARN_CATEGORY,
+            MATCHING_TYPE_SET,
+            setOf(Intent.ADJUVANT),
+            "Received adjuvant drug therapy"
+        )
     }
 
     @Test
@@ -64,7 +90,8 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
             EvaluationResult.PASS,
             WARN_CATEGORY,
             MATCHING_TYPE_SET,
-            setOf(Intent.NEOADJUVANT, Intent.ADJUVANT)
+            setOf(Intent.NEOADJUVANT, Intent.ADJUVANT),
+            "Received adjuvant drug therapy"
         )
     }
 
@@ -72,11 +99,12 @@ class HasHadAdjuvantTreatmentWithCategoryOfTypesTest {
         expectedResult: EvaluationResult,
         category: TreatmentCategory,
         types: Set<DrugType>,
-        intents: Set<Intent>
+        intents: Set<Intent>,
+        expectedMessage: String
     ) {
         val treatment = drugTreatment("drug therapy", category, types)
         val record = withTreatmentHistoryEntry(treatmentHistoryEntry(setOf(treatment), intents = intents))
-        assertEvaluation(expectedResult, FUNCTION.evaluate(record))
+        assertEvaluation(expectedResult, FUNCTION.evaluate(record), expectedMessage)
     }
 
     companion object {

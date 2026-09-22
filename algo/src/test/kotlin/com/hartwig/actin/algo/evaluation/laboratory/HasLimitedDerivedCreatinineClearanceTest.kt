@@ -27,11 +27,11 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
         // MDRD between 103 and 125
         val male = create(Gender.MALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(male, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(male, LabMeasurement.CREATININE, creatinine), "MDRD exceeds max of 100.0")
 
         // MDRD between 73 and 95
         val female = create(Gender.FEMALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(female, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(female, LabMeasurement.CREATININE, creatinine), "MDRD below max of 100.0")
     }
 
     @Test
@@ -42,11 +42,19 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
         // CDK-EPI between 104 and 125
         val male = create(Gender.MALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(male, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(male, LabMeasurement.CREATININE, creatinine),
+            "CKDEPI exceeds max of 100.0"
+        )
 
         // CDK-EPI between 87 and 101
         val female = create(Gender.FEMALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(female, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(female, LabMeasurement.CREATININE, creatinine),
+            "CKDEPI evaluation undetermined"
+        )
     }
 
     @Test
@@ -61,11 +69,19 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
         // CG 95
         val maleLight = create(Gender.MALE, listOf(creatinine), weights)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(maleLight, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(maleLight, LabMeasurement.CREATININE, creatinine),
+            "Cockcroft-Gault below max of 100.0"
+        )
 
         // CG 80
         val femaleLight = create(Gender.FEMALE, listOf(creatinine), weights)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(femaleLight, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(femaleLight, LabMeasurement.CREATININE, creatinine),
+            "Cockcroft-Gault below max of 100.0"
+        )
     }
 
     @Test
@@ -76,11 +92,19 @@ class HasLimitedDerivedCreatinineClearanceTest {
         val heavyWeights = listOf(BodyWeight(date = referenceDate, value = 70.0, unit = EXPECTED_UNIT, valid = true))
         // CG 111
         val maleHeavy = create(Gender.MALE, listOf(creatinine), heavyWeights)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(maleHeavy, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(maleHeavy, LabMeasurement.CREATININE, creatinine),
+            "Cockcroft-Gault above max of 100.0"
+        )
 
         // CG 94
         val femaleHeavy = create(Gender.FEMALE, listOf(creatinine), heavyWeights)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(femaleHeavy, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(femaleHeavy, LabMeasurement.CREATININE, creatinine),
+            "Cockcroft-Gault below max of 100.0"
+        )
     }
 
     @Test
@@ -91,11 +115,19 @@ class HasLimitedDerivedCreatinineClearanceTest {
 
         // CG 103
         val fallBack1 = create(Gender.MALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(fallBack1, LabMeasurement.CREATININE, creatinine),
+            "Cockcroft-Gault may be above max but body weight unknown"
+        )
 
         // CG 67
         val fallBack2 = create(Gender.FEMALE, listOf(creatinine), emptyList())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(fallBack2, LabMeasurement.CREATININE, creatinine))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(fallBack2, LabMeasurement.CREATININE, creatinine),
+            "Cockcroft-Gault most likely below max of 80.0 but body weight unknown"
+        )
     }
 
     private fun create(gender: Gender, labValues: List<LabValue>, bodyWeights: List<BodyWeight>): PatientRecord {

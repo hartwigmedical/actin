@@ -35,38 +35,45 @@ class HasActiveInfectionTest {
 
     @Test
     fun `Should pass if patient has active infection`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(withInfectionStatus(true)), "Has active infection (unknown type)")
     }
 
     @Test
     fun `Should fail if patient has known infection status and does not have an active infection`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withInfectionStatus(false)), "No active infection present")
     }
 
     @Test
     fun `Should warn if infection status unknown but patient uses antimicrobials`() {
         assertEvaluation(
-            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(null, systemicAntimicrobialAtc, referenceDate.minusDays(1)))
+            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(null, systemicAntimicrobialAtc, referenceDate.minusDays(1))),
+            "Possible active infection (antimicrobials usage)"
         )
     }
 
     @Test
     fun `Should warn if infection status set to false but patient uses antimicrobials`() {
         assertEvaluation(
-            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(false, systemicAntimicrobialAtc, referenceDate.minusDays(1)))
+            EvaluationResult.WARN, function.evaluate(withInfectionStatusAndAtc(false, systemicAntimicrobialAtc, referenceDate.minusDays(1))),
+            "Possible active infection (antimicrobials usage)"
         )
     }
 
     @Test
     fun `Should warn if patient has recent comorbidity which is a child of of ICD chapter infectious diseases`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode)))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode)),
+            "Has infection(s) in history - unknown if active (some infection)"
+        )
     }
 
     @Test
     fun `Should warn if patient has comorbidity with unknown date which is a child of of ICD chapter infectious diseases`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = null)))
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = null))),
+            "Has infection(s) in history - unknown if active (some infection)"
         )
     }
 
@@ -77,13 +84,14 @@ class HasActiveInfectionTest {
             function.evaluate(
                 ComorbidityTestFactory.withOtherCondition(conditionWithTargetCode.copy(year = referenceDate.year - 1))
                     .copy(clinicalStatus = ClinicalStatus(infectionStatus = InfectionStatus(false, null)))
-            )
+            ),
+            "No active infection present"
         )
     }
 
     @Test
     fun `Should evaluate to undetermined if infection status is unknown and patient does not use any antimicrobials`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withInfectionStatus(null)), "Infection status data is missing")
     }
 
     companion object {

@@ -19,14 +19,20 @@ class IsHomologousRecombinationDeficientTest {
 
     @Test
     fun canEvaluate() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withVariant(hrdVariant())))
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withVariant(hrdVariant(isReportable = true, isBiallelic = true)))
+            function.evaluate(MolecularTestFactory.withVariant(hrdVariant())),
+            "Unknown HRD status"
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withVariant(hrdVariant(isReportable = true, isBiallelic = false)))
+            function.evaluate(MolecularTestFactory.withVariant(hrdVariant(isReportable = true, isBiallelic = true))),
+            "Unknown HRD status but biallelic driver event(s) in HR gene(s) (BRCA1) detected"
+        )
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withVariant(hrdVariant(isReportable = true, isBiallelic = false))),
+            "Unknown HRD status but non-biallelic driver event(s) in HR gene(s) (BRCA1) detected"
         )
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -34,19 +40,22 @@ class IsHomologousRecombinationDeficientTest {
                 MolecularTestFactory.withVariant(
                     TestVariantFactory.createMinimal().copy(isReportable = true, gene = hrGene)
                 )
-            )
+            ),
+            "Unknown HRD status but driver event(s) in HR gene(s) (BRCA1) detected"
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant(isReportable = true, isBiallelic = false))
-            )
+            ),
+            "Tumor is HRD but with only non-biallelic driver event(s) in HR gene(s) (BRCA1)"
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant(isReportable = true, isBiallelic = true))
-            )
+            ),
+            "Tumor is HRD with biallelic driver event(s) in HR gene(s) (BRCA1)"
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
@@ -58,7 +67,8 @@ class IsHomologousRecombinationDeficientTest {
                         gene = hrGene
                     )
                 )
-            )
+            ),
+            "Tumor is HRD with biallelic driver event(s) in HR gene(s) (BRCA1)"
         )
         assertMolecularEvaluation(
             EvaluationResult.PASS,
@@ -66,7 +76,8 @@ class IsHomologousRecombinationDeficientTest {
                 MolecularTestFactory.withHomologousRecombinationAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = hrGene)
                 )
-            )
+            ),
+            "Tumor is HRD with biallelic driver event(s) in HR gene(s) (BRCA1)"
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
@@ -74,11 +85,13 @@ class IsHomologousRecombinationDeficientTest {
                 MolecularTestFactory.withHomologousRecombinationAndDisruption(
                     true, TestDisruptionFactory.createMinimal().copy(gene = hrGene)
                 )
-            )
+            ),
+            "Tumor is HRD but without driver event(s) in HR gene(s)"
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant(isReportable = false)))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant(isReportable = false))),
+            "Tumor is HRD but without driver event(s) in HR gene(s)"
         )
         assertMolecularEvaluation(
             EvaluationResult.WARN,
@@ -91,11 +104,13 @@ class IsHomologousRecombinationDeficientTest {
                         isBiallelic = false
                     )
                 )
-            )
+            ),
+            "Tumor is HRD but without driver event(s) in HR gene(s)"
         )
         assertMolecularEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(false, hrdVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(false, hrdVariant(isReportable = true))),
+            "Tumor is not HRD"
         )
     }
 

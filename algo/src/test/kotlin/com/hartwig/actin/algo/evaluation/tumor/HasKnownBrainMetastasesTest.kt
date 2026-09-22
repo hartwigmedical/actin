@@ -12,7 +12,8 @@ class HasKnownBrainMetastasesTest {
     fun `Should return undetermined when brain lesion data is missing`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainLesions(null))
+            function.evaluate(TumorTestFactory.withBrainLesions(null)),
+            "Undetermined if brain metastases present (data missing)"
         )
     }
 
@@ -20,7 +21,8 @@ class HasKnownBrainMetastasesTest {
     fun `Should fail when no brain lesions present`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withBrainLesions(false))
+            function.evaluate(TumorTestFactory.withBrainLesions(false)),
+            "No known brain metastases present"
         )
     }
 
@@ -28,7 +30,8 @@ class HasKnownBrainMetastasesTest {
     fun `Should pass when brain lesions present`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withBrainLesions(true))
+            function.evaluate(TumorTestFactory.withBrainLesions(true)),
+            "Has brain metastases"
         )
     }
 
@@ -36,7 +39,8 @@ class HasKnownBrainMetastasesTest {
     fun `Should warn when only suspected brain lesions present`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withBrainLesions(hasBrainLesions = false, hasSuspectedBrainLesions = true))
+            function.evaluate(TumorTestFactory.withBrainLesions(hasBrainLesions = false, hasSuspectedBrainLesions = true)),
+            "Brain metastases present but suspected lesions only"
         )
     }
 }

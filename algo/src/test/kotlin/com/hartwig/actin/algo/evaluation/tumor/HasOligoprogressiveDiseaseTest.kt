@@ -11,7 +11,8 @@ class HasOligoprogressiveDiseaseTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HasOligoprogressiveDisease().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            HasOligoprogressiveDisease().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if patient has oligoprogressive disease"
         )
     }
 }

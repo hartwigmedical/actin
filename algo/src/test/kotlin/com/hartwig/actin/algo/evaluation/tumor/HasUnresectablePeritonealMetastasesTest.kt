@@ -12,7 +12,8 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should be undetermined if other lesions are unknown`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withOtherLesions(null))
+            function.evaluate(TumorTestFactory.withOtherLesions(null)),
+            "Unresectable peritoneal metastases undetermined (metastases data missing)"
         )
     }
 
@@ -20,15 +21,18 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should fail if patient has no peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("retroperitoneal lesions")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("retroperitoneal lesions"))),
+            "No unresectable peritoneal metastases"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("metastases in subperitoneal region")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("metastases in subperitoneal region"))),
+            "No unresectable peritoneal metastases"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Lymph node")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Lymph node"))),
+            "No unresectable peritoneal metastases"
         )
     }
 
@@ -36,7 +40,8 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should fail if patient has no other lesions`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withOtherLesions(emptyList()))
+            function.evaluate(TumorTestFactory.withOtherLesions(emptyList())),
+            "No unresectable peritoneal metastases"
         )
     }
 
@@ -44,15 +49,18 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should warn if patient has peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Abdominal lesion located in Peritoneum")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Abdominal lesion located in Peritoneum"))),
+            "Undetermined if peritoneal metastases are unresectable"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions abdominal and peritoneal")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("Multiple depositions abdominal and peritoneal"))),
+            "Undetermined if peritoneal metastases are unresectable"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intraperitoneal")))
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intraperitoneal"))),
+            "Undetermined if peritoneal metastases are unresectable"
         )
     }
 
@@ -60,7 +68,8 @@ class HasUnresectablePeritonealMetastasesTest {
     fun `Should warn if patient has suspected peritoneal metastases`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("peritoneal")))
+            function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("peritoneal"))),
+            "Undetermined if (suspected) peritoneal metastases are unresectable"
         )
     }
 }

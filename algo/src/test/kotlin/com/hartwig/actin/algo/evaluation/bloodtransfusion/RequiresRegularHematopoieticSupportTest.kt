@@ -16,14 +16,19 @@ import org.junit.jupiter.api.Test
 class RequiresRegularHematopoieticSupportTest {
     @Test
     fun shouldFailWhenNoBloodTransfusions() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())),
+            "Has not received recent hematopoietic support"
+        )
     }
 
     @Test
     fun shouldFailWhenBloodTransfusionDateIsTooOld() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.minusWeeks(1))))
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.minusWeeks(1)))),
+            "Has not received recent hematopoietic support"
         )
     }
 
@@ -31,7 +36,8 @@ class RequiresRegularHematopoieticSupportTest {
     fun shouldFailWhenBloodTransfusionDateIsTooRecent() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MAX_DATE.plusWeeks(1))))
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MAX_DATE.plusWeeks(1)))),
+            "Has not received recent hematopoietic support"
         )
     }
 
@@ -39,37 +45,58 @@ class RequiresRegularHematopoieticSupportTest {
     fun shouldPassWhenBloodTransfusionHasCorrectDate() {
         assertEvaluation(
             EvaluationResult.PASS,
-            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.plusMonths(1))))
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(create(MIN_DATE.plusMonths(1)))),
+            "Has received recent hematopoietic support (Erythrocyte)"
         )
     }
 
     @Test
     fun shouldFailWhenNoMedication() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withMedications(emptyList())),
+            "Has not received recent hematopoietic support"
+        )
     }
 
     @Test
     fun shouldFailWhenMedicationDateIsTooOld() {
         val tooOld = support(MIN_DATE.minusWeeks(2), MIN_DATE.minusWeeks(1))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooOld)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooOld)),
+            "Has not received recent hematopoietic support"
+        )
     }
 
     @Test
     fun shouldFailWhenMedicationDateIsTooRecent() {
         val tooRecent = support(MAX_DATE.plusWeeks(1), MAX_DATE.plusWeeks(2))
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooRecent)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(tooRecent)),
+            "Has not received recent hematopoietic support"
+        )
     }
 
     @Test
     fun shouldPassWhenMedicationHasCorrectDate() {
         val within = support(MIN_DATE.plusWeeks(1), MAX_DATE.minusWeeks(1))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(within)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(within)),
+            "Has received recent hematopoietic support (medication)"
+        )
     }
 
     @Test
     fun shouldPassWhenMedicationIsStillRunning() {
         val stillRunning = support(MIN_DATE.minusWeeks(1), null)
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(stillRunning)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(stillRunning)),
+            "Has received recent hematopoietic support (medication)"
+        )
     }
 
     @Test
@@ -78,7 +105,11 @@ class RequiresRegularHematopoieticSupportTest {
             chemicalSubGroup = AtcLevel(name = "", code = "wrong category")
         )
         val wrongCategory = support(MIN_DATE.minusWeeks(1), null, atc)
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION.evaluate(BloodTransfusionTestFactory.withMedication(wrongCategory)),
+            "Has not received recent hematopoietic support"
+        )
     }
 
     companion object {
@@ -88,6 +119,7 @@ class RequiresRegularHematopoieticSupportTest {
 
         private fun support(startDate: LocalDate, stopDate: LocalDate?, atc: AtcClassification? = null): Medication {
             return TestMedicationFactory.createMinimal().copy(
+                name = "medication",
                 startDate = startDate,
                 stopDate = stopDate,
                 atc = atc ?: AtcTestFactory.atcClassification().copy(

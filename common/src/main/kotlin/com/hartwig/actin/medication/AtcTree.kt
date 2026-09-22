@@ -5,7 +5,7 @@ import com.hartwig.actin.util.TabularFile
 import java.io.File
 import java.nio.file.Files
 
-class AtcTree(private val atcMap: Map<String, String>) {
+class AtcTree(val atcMap: Map<String, String>) {
 
     fun resolve(rawAtcCode: String): AtcLevel {
         val atcName = atcMap[rawAtcCode]

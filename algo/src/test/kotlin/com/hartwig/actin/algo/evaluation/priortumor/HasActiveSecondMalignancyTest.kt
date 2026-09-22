@@ -11,7 +11,11 @@ class HasActiveSecondMalignancyTest {
 
     @Test
     fun `Should fail on no second primaries`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())),
+            "No active second malignancy"
+        )
     }
 
     @Test
@@ -19,7 +23,8 @@ class HasActiveSecondMalignancyTest {
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(
                 PriorTumorTestFactory.withPriorPrimaries(listOf(PriorTumorTestFactory.priorPrimary()))
-            )
+            ),
+            "No active second malignancy"
         )
     }
 
@@ -30,7 +35,8 @@ class HasActiveSecondMalignancyTest {
                 PriorTumorTestFactory.withPriorPrimaries(
                     listOf(PriorTumorTestFactory.priorPrimary(status = TumorStatus.EXPECTATIVE))
                 )
-            )
+            ),
+            "Presence of second malignancy with expectative status"
         )
     }
 
@@ -41,7 +47,8 @@ class HasActiveSecondMalignancyTest {
                 PriorTumorTestFactory.withPriorPrimaries(
                     listOf(PriorTumorTestFactory.priorPrimary(status = TumorStatus.ACTIVE))
                 )
-            )
+            ),
+            "Presence of active second malignancy"
         )
     }
 }

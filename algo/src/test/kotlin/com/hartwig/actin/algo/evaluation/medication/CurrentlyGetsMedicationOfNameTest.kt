@@ -12,7 +12,11 @@ class CurrentlyGetsMedicationOfNameTest {
 
     @Test
     fun `Should fail when patient uses no medications`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No term 1 medication use"
+        )
     }
 
     @Test
@@ -20,7 +24,8 @@ class CurrentlyGetsMedicationOfNameTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
-            )
+            ),
+            "No term 1 medication use"
         )
     }
 
@@ -29,7 +34,8 @@ class CurrentlyGetsMedicationOfNameTest {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 1")))
-            )
+            ),
+            "term 1 medication use"
         )
     }
 
@@ -38,7 +44,8 @@ class CurrentlyGetsMedicationOfNameTest {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 1")))
-            )
+            ),
+            "Planned term 1 medication use"
         )
     }
 
@@ -47,7 +54,8 @@ class CurrentlyGetsMedicationOfNameTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
-            )
+            ),
+            "No term 1 medication use"
         )
     }
 
@@ -55,10 +63,10 @@ class CurrentlyGetsMedicationOfNameTest {
     fun `Should be undetermined if medication is not provided`() {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult, "No medication data provided")
         assertThat(alwaysPlannedResult.recoverable).isTrue()
         val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult, "No medication data provided")
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

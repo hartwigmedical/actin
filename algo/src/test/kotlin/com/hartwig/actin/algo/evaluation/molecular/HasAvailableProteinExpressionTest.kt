@@ -14,20 +14,26 @@ class HasAvailableProteinExpressionTest {
     fun `Should pass if record contains IHC test for protein`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(MolecularTestFactory.withIhcTests(listOf(MolecularTestFactory.ihcTest(item = PROTEIN))))
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(MolecularTestFactory.ihcTest(item = PROTEIN)))),
+            "protein 1 expression available by IHC"
         )
     }
 
     @Test
     fun `Should fail when record does not contain IHC test for protein`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withIhcTests(emptyList())),
+            "protein 1 expression not available by IHC"
+        )
     }
 
     @Test
     fun `Should fail when record does only contain IHC test for other protein`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withIhcTests(listOf(MolecularTestFactory.ihcTest(item = "other protein"))))
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(MolecularTestFactory.ihcTest(item = "other protein")))),
+            "protein 1 expression not available by IHC"
         )
     }
 }

@@ -11,6 +11,10 @@ class IsBreastfeedingTest {
 
     @Test
     fun `Should fail always`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient is not breastfeeding"
+        )
     }
 }

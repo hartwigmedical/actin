@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.icd.TestIcdFactory
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val OTHER_CONDITION_NAME: String = "other condition"
@@ -40,7 +39,11 @@ class HasHadComorbidityWithIcdCodeTest {
     fun `Should pass if comorbidity with correct ICD code in history`() {
         val comorbidities =
             ComorbidityTestFactory.otherCondition("pneumonitis", icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)),
+            "Has history of pneumonitis"
+        )
     }
 
     @Test
@@ -56,7 +59,11 @@ class HasHadComorbidityWithIcdCodeTest {
             icdMainCode = IcdConstants.PNEUMONITIS_DUE_TO_EXTERNAL_AGENTS_BLOCK,
             icdExtensionCode = null
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(comorbidities)),
+            "Has history of pneumonitis but undetermined if history of respiratory compromise"
+        )
     }
 
     @Test
@@ -73,7 +80,8 @@ class HasHadComorbidityWithIcdCodeTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has history of toxicity but grade unknown"
         )
     }
 
@@ -95,12 +103,20 @@ class HasHadComorbidityWithIcdCodeTest {
             date = referenceDate.minusYears(1)
         )
 
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withToxicities(listOf(toxicities))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(ComorbidityTestFactory.withToxicities(listOf(toxicities))),
+            "Has history of pneumonitis but undetermined if history of respiratory compromise and grade unknown"
+        )
     }
 
     @Test
     fun `Should fail when patient has no comorbidities`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withOtherConditions(emptyList())),
+            "Has no comorbidity belonging to category parent disease"
+        )
     }
 
     @Test
@@ -108,7 +124,8 @@ class HasHadComorbidityWithIcdCodeTest {
         val conditions = ComorbidityTestFactory.otherCondition("stroke", icdMainCode = IcdConstants.CEREBRAL_ISCHAEMIA_BLOCK)
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions))
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(conditions)),
+            "Has no comorbidity belonging to category parent disease"
         )
     }
 
@@ -128,8 +145,7 @@ class HasHadComorbidityWithIcdCodeTest {
         val intoleranceWithChildOfTargetCode = intoleranceWithTargetCode.copy(icdCodes = setOf(IcdCode(childCode)))
         listOf(intoleranceWithChildOfTargetCode, intoleranceWithTargetCode).forEach {
             val evaluation = function.evaluate(ComorbidityTestFactory.withIntolerances(listOf(it)))
-            assertEvaluation(EvaluationResult.PASS, evaluation)
-            assertThat(evaluation.passMessagesStrings()).containsOnly("Has intolerance to intolerance")
+            assertEvaluation(EvaluationResult.PASS, evaluation, "Has intolerance to intolerance")
         }
     }
 
@@ -139,8 +155,7 @@ class HasHadComorbidityWithIcdCodeTest {
         val otherConditionWithTargetCode = ComorbidityTestFactory.otherCondition(icdMainCode = parentCode, name = "other condition")
         val evaluation =
             function.evaluate(ComorbidityTestFactory.withComorbidities(listOf(intoleranceWithTargetCode, otherConditionWithTargetCode)))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsAll(setOf("Has intolerance to intolerance", "Has history of other condition"))
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has history of other condition", "Has intolerance to intolerance")
     }
 
     @Test
@@ -172,7 +187,8 @@ class HasHadComorbidityWithIcdCodeTest {
                     ComorbidityTestFactory.withToxicities(
                         listOf(toxicity(ToxicitySource.EHR, IcdCode(it), 1))
                     )
-                )
+                ),
+                "Has no comorbidity belonging to category parent disease"
             )
         }
     }
@@ -204,7 +220,6 @@ class HasHadComorbidityWithIcdCodeTest {
     }
 
     private fun assertPassEvaluationWithMessages(evaluation: Evaluation, matchedNames: String) {
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsOnly("Has history of $matchedNames")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has history of $matchedNames")
     }
 }

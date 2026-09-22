@@ -15,7 +15,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
 
     @Test
     fun `Should fail if treatment history empty`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received prior anti cancer drugs"
+        )
     }
 
     @Test
@@ -25,7 +29,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
                 setOf(drugTreatment("Prednisone", TreatmentCategory.SUPPORTIVE_TREATMENT, setOf(DrugType.CORTICOSTEROID))), 2023, 5
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not received prior anti cancer drugs"
+        )
     }
 
     @Test
@@ -35,7 +43,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
                 setOf(drugTreatment("Osimertinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR_GEN_3))), 2020, 5
             )
         )
-        assertEvaluation(EvaluationResult.PASS, functionWithoutType.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithoutType.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has received targeted therapy as most recent treatment line"
+        )
     }
 
     @Test
@@ -48,7 +60,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
                 setOf(drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))), 2019, 7
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(treatmentHistoryEntry)),
+            "Has received EGFR inhibitor (3rd gen) targeted therapy as most recent treatment line"
+        )
     }
 
     @Test
@@ -61,7 +77,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
                 setOf(drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))), 2021, 5
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has received EGFR inhibitor (3rd gen) targeted therapy but not as the most recent treatment line"
+        )
     }
 
     @Test
@@ -72,7 +92,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
             ),
             treatmentHistoryEntry(setOf(drugTreatment("Carboplatin", TreatmentCategory.CHEMOTHERAPY)), 2021, 5)
         )
-        assertEvaluation(EvaluationResult.FAIL, functionWithoutType.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutType.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has received targeted therapy but not as the most recent treatment line"
+        )
     }
 
     @Test
@@ -82,7 +106,11 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
                 setOf(drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))), 2021, 5
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not received EGFR inhibitor (3rd gen) targeted therapy as prior therapy"
+        )
     }
 
     @Test
@@ -95,6 +123,10 @@ class HasHadTreatmentWithCategoryOfTypesAsMostRecentTest {
                 setOf(drugTreatment("Osimertinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR_GEN_3)))
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(treatmentHistoryEntry)),
+            "Has received EGFR inhibitor (3rd gen) targeted therapy but undetermined if most recent (date unknown)"
+        )
     }
 }

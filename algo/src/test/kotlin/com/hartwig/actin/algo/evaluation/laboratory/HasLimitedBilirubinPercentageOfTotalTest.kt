@@ -20,10 +20,11 @@ class HasLimitedBilirubinPercentageOfTotalTest {
         val valid = LabTestFactory.withLabValue(validBilirubin)
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(valid, LabMeasurement.DIRECT_BILIRUBIN, LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, 3.0))
+            function.evaluate(valid, LabMeasurement.DIRECT_BILIRUBIN, LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, 3.0)),
+            "Direct bilirubin as percentage of total bilirubin below max of 50.0%"
         )
         val actual = function.evaluate(valid, LabMeasurement.DIRECT_BILIRUBIN, LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, 8.0))
-        assertEvaluation(EvaluationResult.FAIL, actual)
+        assertEvaluation(EvaluationResult.FAIL, actual, "Direct bilirubin as percentage of total bilirubin exceeds max of 50.0%")
         assertThat(actual.recoverable).isTrue
 
         // Cannot determine if no total bilirubin
@@ -33,7 +34,8 @@ class HasLimitedBilirubinPercentageOfTotalTest {
                 TestPatientFactory.createMinimalTestWGSPatientRecord(),
                 LabMeasurement.DIRECT_BILIRUBIN,
                 LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN)
-            )
+            ),
+            "Bilirubin percentage of total bilirubin undetermined (no recent total bilirubin measurement)"
         )
 
         // Cannot determine in case of old bilirubin.
@@ -41,7 +43,8 @@ class HasLimitedBilirubinPercentageOfTotalTest {
         val invalid = LabTestFactory.withLabValue(invalidBilirubin)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(invalid, LabMeasurement.DIRECT_BILIRUBIN, LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, 3.0))
+            function.evaluate(invalid, LabMeasurement.DIRECT_BILIRUBIN, LabTestFactory.create(LabMeasurement.DIRECT_BILIRUBIN, 3.0)),
+            "Bilirubin percentage of total bilirubin undetermined (no recent total bilirubin measurement)"
         )
     }
 

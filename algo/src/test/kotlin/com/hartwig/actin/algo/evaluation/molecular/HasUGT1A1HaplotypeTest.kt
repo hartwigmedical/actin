@@ -28,7 +28,8 @@ class HasUGT1A1HaplotypeTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has UGT1A1 type *1_HET"
         )
     }
 
@@ -46,7 +47,8 @@ class HasUGT1A1HaplotypeTest {
                         )
                     )
                 )
-            )
+            ),
+            "Does not have required UGT1A1 type *1_HET"
         )
     }
 
@@ -61,7 +63,8 @@ class HasUGT1A1HaplotypeTest {
                         haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION)),
                     )
                 )
-            )
+            ),
+            "UGT1A1 haplotype undetermined"
         )
     }
 

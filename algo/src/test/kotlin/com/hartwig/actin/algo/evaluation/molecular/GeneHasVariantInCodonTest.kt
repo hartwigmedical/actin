@@ -19,7 +19,11 @@ class GeneHasVariantInCodonTest {
 
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "No variants in codon(s) A100 or B200 in gene A"
+        )
     }
 
     @Test
@@ -31,7 +35,8 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal()
                         .copy(isReportable = true, gene = TARGET_GENE)
                 )
-            )
+            ),
+            "No variants in codon(s) A100 or B200 in gene A"
         )
     }
 
@@ -47,7 +52,8 @@ class GeneHasVariantInCodonTest {
                         canonicalImpact = impactWithCodon(OTHER_CODON)
                     )
                 )
-            )
+            ),
+            "No variants in codon(s) A100 or B200 in gene A"
         )
     }
 
@@ -61,9 +67,11 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        event = "event"
                     )
                 )
-            )
+            ),
+            "Variant(s) event in codon(s) A100 in gene A in canonical transcript"
         )
     }
 
@@ -77,7 +85,8 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE, isReportable = false, canonicalImpact = impactWithCodon(MATCHING_CODON)
                     )
                 )
-            )
+            ),
+            "Variant(s) in codon(s) A100 in gene A in canonical transcript but not considered reportable"
         )
     }
 
@@ -94,7 +103,8 @@ class GeneHasVariantInCodonTest {
                         clonalLikelihood = 0.3
                     )
                 )
-            )
+            ),
+            "Variant(s) in codon(s) A100 in gene A in canonical transcript but subclonal likelihood of > 50%"
         )
     }
 
@@ -111,7 +121,8 @@ class GeneHasVariantInCodonTest {
                         otherImpacts = setOf(impactWithCodon(OTHER_CODON), impactWithCodon(MATCHING_CODON)),
                     )
                 )
-            )
+            ),
+            "Variant(s) in codon(s) A100 in gene A but in non-canonical transcript"
         )
     }
 
@@ -124,16 +135,19 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        canonicalImpact = impactWithCodon(MATCHING_CODON)
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        event = "event 1"
                     ),
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(OTHER_CODON),
-                        otherImpacts = setOf(impactWithCodon(MATCHING_CODON))
+                        otherImpacts = setOf(impactWithCodon(MATCHING_CODON)),
+                        event = "event 2"
                     )
                 )
-            )
+            ),
+            "Variant(s) event 1 in codon(s) A100 in gene A in canonical transcript together with variant(s) event 2 in codon(s) A100 but in non-canonical transcript"
         )
     }
 
@@ -146,16 +160,19 @@ class GeneHasVariantInCodonTest {
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
-                        canonicalImpact = impactWithCodon(MATCHING_CODON)
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        event = "event 1"
                     ),
                     TestVariantFactory.createMinimal().copy(
                         gene = TARGET_GENE,
                         isReportable = true,
                         clonalLikelihood = 0.3,
-                        canonicalImpact = impactWithCodon(MATCHING_CODON)
+                        canonicalImpact = impactWithCodon(MATCHING_CODON),
+                        event = "event 2"
                     )
                 )
-            )
+            ),
+            "Variant(s) event 1 in codon(s) A100 in gene A in canonical transcript together with variant(s) event 2 in codon(s) A100 in canonical transcript but subclonal likelihood of > 50%"
         )
     }
 
@@ -169,10 +186,12 @@ class GeneHasVariantInCodonTest {
                         gene = TARGET_GENE,
                         isReportable = true,
                         canonicalImpact = impactWithCodon(MATCHING_CODON),
-                        otherImpacts = setOf(impactWithCodon(MATCHING_CODON))
+                        otherImpacts = setOf(impactWithCodon(MATCHING_CODON)),
+                        event = "event"
                     )
                 )
-            )
+            ),
+            "Variant(s) event in codon(s) A100 in gene A in canonical transcript"
         )
     }
 

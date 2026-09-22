@@ -19,16 +19,14 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
     fun `Should fail when treatment history empty`() {
         val treatments = TreatmentTestFactory.withTreatmentHistory(emptyList())
         val evaluation = function.evaluate(treatments)
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("No systemic treatments found in treatment history")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "No systemic treatments found in treatment history")
     }
 
     @Test
     fun `Should fail when no systemic treatments`() {
         val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", false))))
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("No systemic treatments found in treatment history")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "No systemic treatments found in treatment history")
     }
 
     @Test
@@ -49,7 +47,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
         assertThat(evaluation.passMessagesStrings()).containsExactly("Has had progressive disease following latest treatment line")
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has had progressive disease following latest treatment line")
     }
 
     @Test
@@ -73,8 +71,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD (assumed PD is radiological)")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Last systemic treatment resulted in PD (assumed PD is radiological)")
     }
 
     @Test
@@ -98,8 +95,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Last systemic treatment did not result in progressive disease")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "Last systemic treatment did not result in progressive disease")
     }
 
     @Test
@@ -121,8 +117,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD (assumed PD is radiological)")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Last systemic treatment resulted in PD (assumed PD is radiological)")
     }
 
     @Test
@@ -146,8 +141,7 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = functionPDMustBeRadiological.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Last systemic treatment resulted in PD")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Last systemic treatment resulted in PD")
     }
 
     @Test
@@ -167,8 +161,11 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Unable to determine radiological progression following latest treatment line due to treatments without start date")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Unable to determine radiological progression following latest treatment line due to treatments without start date"
+        )
     }
 
     @Test
@@ -188,8 +185,11 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Unable to determine radiological progression following latest treatment line due to treatments without start date")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Unable to determine radiological progression following latest treatment line due to treatments without start date"
+        )
     }
 
     @Test
@@ -203,7 +203,6 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Radiological progression following latest treatment line undetermined")
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Radiological progression following latest treatment line undetermined")
     }
 }

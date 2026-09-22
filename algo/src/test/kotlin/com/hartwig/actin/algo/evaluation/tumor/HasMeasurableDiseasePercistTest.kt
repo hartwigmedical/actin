@@ -15,28 +15,28 @@ class HasMeasurableDiseasePercistTest {
     @Test
     fun `Should pass when has measurable disease is true`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(true))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has measurable disease")
         assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
     fun `Should pass when has measurable disease is true and arbitrary doid`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true, "arbitrary"))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has measurable disease")
         assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
     fun `Should fail when measurable disease is false`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(false))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has no measurable disease")
         assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
     fun `Should be undetermined when has measurable disease is undetermined`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(null))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Measurable disease by PERCIST undetermined (data missing)")
         assertThat(evaluation.recoverable).isTrue()
     }
 
@@ -48,7 +48,7 @@ class HasMeasurableDiseasePercistTest {
                 HasMeasurableDiseasePercist.NON_PERCIST_TUMOR_DOIDS.iterator().next()
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation)
+        assertEvaluation(EvaluationResult.WARN, evaluation, "Has measurable disease but with this tumor type unknown if by PERCIST")
     }
 
     @Test
@@ -59,6 +59,6 @@ class HasMeasurableDiseasePercistTest {
                 DoidConstants.LYMPHOMA_DOID
             )
         )
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has measurable disease")
     }
 }

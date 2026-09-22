@@ -11,7 +11,8 @@ class HadToxicityWithGradeDuringPreviousTreatmentTest {
     fun `Should evaluate to undetermined`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            HadToxicityWithGradeDuringPreviousTreatment("hepatic", 2).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            HadToxicityWithGradeDuringPreviousTreatment("hepatic", 2).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if patient had hepatic toxicity with at least grade 2 during previous treatment"
         )
     }
 }

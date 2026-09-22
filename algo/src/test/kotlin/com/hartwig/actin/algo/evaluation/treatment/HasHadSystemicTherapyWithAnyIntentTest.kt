@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private val REQUESTED_INTENT = setOf(Intent.ADJUVANT)
@@ -30,12 +29,25 @@ class HasHadSystemicTherapyWithAnyIntentTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingWithinWeeks.evaluate(withTreatmentHistory(emptyList())))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingBeforeWeeks.evaluate(withTreatmentHistory(emptyList())))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(withTreatmentHistory(emptyList())))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            functionWithoutIntentsAndWithinWeeks.evaluate(withTreatmentHistory(emptyList()))
+            functionEvaluatingWithinWeeks.evaluate(withTreatmentHistory(emptyList())),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionEvaluatingBeforeWeeks.evaluate(withTreatmentHistory(emptyList())),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutDate.evaluate(withTreatmentHistory(emptyList())),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutIntentsAndWithinWeeks.evaluate(withTreatmentHistory(emptyList())),
+            "No systemic therapy in prior tumor history"
         )
     }
 
@@ -51,9 +63,21 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutDate.evaluate(patientRecord),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord),
+            "Received systemic therapy within the last 20 weeks"
+        )
     }
 
     @Test
@@ -68,7 +92,11 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
     }
 
     @Test
@@ -83,9 +111,21 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutDate.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutDate.evaluate(patientRecord),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord),
+            "No systemic therapy in prior tumor history"
+        )
     }
 
     @Test
@@ -100,7 +140,11 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "No adjuvant systemic therapy in prior tumor history"
+        )
     }
 
     @Test
@@ -115,8 +159,16 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "All adjuvant systemic therapy is administered more than 20 weeks ago"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy at least 20 weeks ago"
+        )
     }
 
     @Test
@@ -131,8 +183,16 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy within the last 20 weeks"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy but date unknown"
+        )
     }
 
     @Test
@@ -147,8 +207,16 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy within the last 20 weeks"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "All adjuvant systemic therapy is not administered at least 20 weeks ago"
+        )
     }
 
     @Test
@@ -163,8 +231,16 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy but date unknown"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy at least 20 weeks ago"
+        )
     }
 
     @Test
@@ -179,10 +255,26 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutDate.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy within the last 20 weeks"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy but date unknown"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithoutDate.evaluate(patientRecord),
+            "Received adjuvant systemic therapy"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord),
+            "Received systemic therapy within the last 20 weeks"
+        )
     }
 
     @Test
@@ -205,8 +297,13 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutDate.evaluate(patientRecordOldDate))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutDate.evaluate(patientRecordUnknownDate))
+        listOf(patientRecordOldDate, patientRecordUnknownDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.PASS,
+                functionWithoutDate.evaluate(it),
+                "Received adjuvant systemic therapy"
+            )
+        }
     }
 
     @Test
@@ -227,8 +324,16 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingWithinWeeks.evaluate(patientRecord))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy within the last 20 weeks"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy at least 20 weeks ago"
+        )
     }
 
     @Test
@@ -250,15 +355,27 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingWithinWeeks.evaluate(therapyWithoutDate))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingWithinWeeks.evaluate(therapyWithoutStopDate))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(therapyWithoutDate))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(therapyWithoutStopDate))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionWithoutIntentsAndWithinWeeks.evaluate(therapyWithoutDate))
-        EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED,
-            functionWithoutIntentsAndWithinWeeks.evaluate(therapyWithoutStopDate)
-        )
+        listOf(therapyWithoutDate, therapyWithoutStopDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                functionEvaluatingWithinWeeks.evaluate(it),
+                "Received adjuvant systemic therapy but date unknown"
+            )
+        }
+        listOf(therapyWithoutDate, therapyWithoutStopDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                functionEvaluatingBeforeWeeks.evaluate(it),
+                "Received adjuvant systemic therapy but date unknown"
+            )
+        }
+        listOf(therapyWithoutDate, therapyWithoutStopDate).forEach {
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                functionWithoutIntentsAndWithinWeeks.evaluate(it),
+                "Received systemic therapy but date unknown"
+            )
+        }
     }
 
     @Test
@@ -274,15 +391,9 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         val evaluationWithWeeksAgoDate = functionEvaluatingWithinWeeks.evaluate(patientRecord)
         val evaluationWithoutDate = functionWithoutDate.evaluate(patientRecord)
 
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithWeeksAgoDate)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithoutDate)
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord))
-
-        listOf(evaluationWithWeeksAgoDate, evaluationWithoutDate).forEach {
-            assertThat(it.undeterminedMessagesStrings()).containsExactly(
-                "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant"
-            )
-        }
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithWeeksAgoDate,  "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant")
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluationWithoutDate,  "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant")
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, functionWithoutIntentsAndWithinWeeks.evaluate(patientRecord), "Received systemic therapy within the last 20 weeks")
     }
 
     @Test
@@ -296,7 +407,11 @@ class HasHadSystemicTherapyWithAnyIntentTest {
         val treatmentY = treatmentX.copy(treatments = setOf(TreatmentTestFactory.treatment("Treatment y", true)))
         val patientRecord = withTreatmentHistory(listOf(treatmentX, treatmentY))
 
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "Has received systemic treatment (Treatment x and Treatment y) but undetermined if intent is adjuvant"
+        )
     }
 
     @Test
@@ -317,7 +432,11 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingWithinWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingWithinWeeks.evaluate(patientRecord),
+            "Has received systemic treatment (Systemic treatment) but undetermined if intent is adjuvant"
+        )
     }
 
     @Test
@@ -338,7 +457,11 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, functionEvaluatingBeforeWeeks.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            functionEvaluatingBeforeWeeks.evaluate(patientRecord),
+            "Received adjuvant systemic therapy but date unknown"
+        )
     }
 
     @Test
@@ -362,7 +485,8 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has received systemic treatment (Systemic treatment) but undetermined if intent is adjuvant"
         )
     }
 
@@ -387,7 +511,8 @@ class HasHadSystemicTherapyWithAnyIntentTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has received systemic treatment (Systemic treatment) but undetermined if intent is adjuvant"
         )
     }
 }

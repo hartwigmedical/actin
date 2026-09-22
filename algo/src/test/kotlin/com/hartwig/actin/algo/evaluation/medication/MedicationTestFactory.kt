@@ -33,12 +33,12 @@ internal object MedicationTestFactory {
         return TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = medications)
     }
 
-    fun withCypInteraction(cyp: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength): PatientRecord {
-        return withMedications(listOf(medicationWithCypInteraction(cyp, type, strength)))
+    fun withCypInteraction(cyp: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength, name: String = ""): PatientRecord {
+        return withMedications(listOf(medicationWithCypInteraction(cyp = cyp, type = type, strength = strength, name = name)))
     }
 
-    fun withTransporterInteraction(transporter: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength): PatientRecord {
-        return withMedications(listOf(medicationWithTransporterInteraction(transporter, type, strength)))
+    fun withTransporterInteraction(transporter: String, type: DrugInteraction.Type, strength: DrugInteraction.Strength, name: String = ""): PatientRecord {
+        return withMedications(listOf(medicationWithTransporterInteraction(transporter = transporter, type = type, strength = strength, name = name)))
     }
 
     fun medicationWithCypInteraction(

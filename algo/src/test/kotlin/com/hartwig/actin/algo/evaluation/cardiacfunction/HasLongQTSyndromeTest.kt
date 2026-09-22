@@ -12,7 +12,11 @@ class HasLongQTSyndromeTest {
 
     @Test
     fun `Should fail with no conditions`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withOtherConditions((emptyList()))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withOtherConditions((emptyList()))),
+            "No presence of long QT syndrome"
+        )
     }
 
     @Test
@@ -20,7 +24,8 @@ class HasLongQTSyndromeTest {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
+            "No presence of long QT syndrome"
         )
     }
 
@@ -29,7 +34,8 @@ class HasLongQTSyndromeTest {
         val condition = ComorbidityTestFactory.otherCondition(icdMainCode = IcdConstants.LONG_QT_SYNDROME_CODE)
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition))
+            function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
+            "Presence of long QT syndrome"
         )
     }
 }

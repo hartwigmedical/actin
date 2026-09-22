@@ -9,7 +9,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 
@@ -30,27 +29,40 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
 
     @Test
     fun `Should fail for empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Patient did not have radiological response to match treatment"
+        )
     }
 
     @Test
     fun `Should fail if no matching drugs found`() {
         val treatmentHistory = listOf(drugTreatmentHistoryEntry("other_drug", TreatmentResponse.COMPLETE_RESPONSE))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Patient did not have radiological response to match treatment"
+        )
     }
 
     @Test
     fun `Should fail if matching drugs found and response is progressive disease`() {
         val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.PROGRESSIVE_DISEASE))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Patient had a progressive disease response to match treatment - which is not considered a radiological response to match"
+        )
     }
 
     @Test
     fun `Should fail if matching drugs found and response is stable disease`() {
         val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.STABLE_DISEASE))
         val evaluation = function.evaluate(withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
             "Patient had a stable disease response to match treatment - which is not considered a radiological response to match"
         )
     }
@@ -62,8 +74,9 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
             drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.PROGRESSIVE_DISEASE)
         )
         val evaluation = function.evaluate(withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
             "Patient had a stable disease and a progressive disease response to match treatment - which is not considered a radiological response to match"
         )
     }
@@ -71,13 +84,21 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
     @Test
     fun `Should be undetermined if matching drugs found and response is mixed`() {
         val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.MIXED))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Patient had a mixed response to treatment with match - it is undetermined if this response is considered a radiological response"
+        )
     }
 
     @Test
     fun `Should be undetermined if matching drugs found and no response available`() {
         val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Undetermined if patient had radiological response to match treatment"
+        )
     }
 
     @Test
@@ -86,7 +107,11 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
             drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.COMPLETE_RESPONSE),
             drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, TreatmentResponse.PROGRESSIVE_DISEASE)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Patient had a response to treatment with match - it is assumed this response was radiological"
+        )
     }
 
     @Test
@@ -98,7 +123,11 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
             TreatmentResponse.REMISSION
         ).forEach {
             val treatmentHistory = listOf(drugTreatmentHistoryEntry(MATCHING_DRUG_NAME, it))
-            assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(withTreatmentHistory(treatmentHistory)),
+                "Patient had a response to treatment with match - it is assumed this response was radiological"
+            )
         }
     }
 }

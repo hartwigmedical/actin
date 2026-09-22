@@ -14,7 +14,11 @@ class HasOligometastaticCancerTest {
 
     @Test
     fun `Should return undetermined for stage III or IV`() {
-        listOf(TumorStage.III, TumorStage.IV).forEach { stage -> assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(stage)) }
+        listOf(TumorStage.III, TumorStage.IV).forEach { stage -> assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluateFunction(stage),
+            "Undetermined if oligometastatic cancer"
+        ) }
     }
 
     @Test
@@ -26,18 +30,25 @@ class HasOligometastaticCancerTest {
                     TumorStage.II,
                     MetastaticCancerEvaluator.STAGE_II_POTENTIALLY_METASTATIC_CANCER_DOIDS.first()
                 )
-            )
+            ),
+            "Undetermined if oligometastatic cancer"
         )
     }
 
     @Test
     fun `Should fail for tumor stage I or II`() {
-        listOf(TumorStage.I, TumorStage.II).forEach { stage -> assertEvaluation(EvaluationResult.FAIL, evaluateFunction(stage)) }
+        listOf(TumorStage.I, TumorStage.II).forEach { stage ->
+            assertEvaluation(EvaluationResult.FAIL, evaluateFunction(stage), "No oligometastatic cancer (stage $stage)")
+        }
     }
 
     @Test
     fun `Should return undetermined when no tumor stage provided`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluateFunction(null))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluateFunction(null),
+            "Undetermined if oligometastatic cancer (tumor stage missing)"
+        )
     }
 
     private fun evaluateFunction(stage: TumorStage?): Evaluation {

@@ -13,13 +13,21 @@ class HasPreviouslyParticipatedInTrialTest {
 
     @Test
     fun `Should fail with empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(emptyList())),
+            "Has not participated in trial ACR"
+        )
     }
 
     @Test
     fun `Should pass with trial treatment matching acronym`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(isTrial = true, trialAcronym = ACRONYM.lowercase()))
-        assertEvaluation(EvaluationResult.PASS, FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has previously participated in trial ACR"
+        )
     }
 
     @Test
@@ -28,7 +36,11 @@ class HasPreviouslyParticipatedInTrialTest {
             treatmentHistoryEntry(isTrial = true, trialAcronym = "OTHER"),
             treatmentHistoryEntry(isTrial = true)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Previous trial participation but unknown if trial ACR"
+        )
     }
 
     @Test
@@ -37,6 +49,10 @@ class HasPreviouslyParticipatedInTrialTest {
             treatmentHistoryEntry(isTrial = true, trialAcronym = "OTHER"),
             treatmentHistoryEntry(isTrial = true, trialAcronym = "ANOTHER")
         )
-        assertEvaluation(EvaluationResult.FAIL, FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            FUNCTION_WITH_ACRONYM.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not participated in trial ACR"
+        )
     }
 }

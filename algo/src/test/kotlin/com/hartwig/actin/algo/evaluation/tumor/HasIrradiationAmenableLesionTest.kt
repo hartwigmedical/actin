@@ -17,7 +17,11 @@ class HasIrradiationAmenableLesionTest {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
         val function = HasIrradiationAmenableLesion(alwaysFailsMetastaticCancerEvaluation)
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patientRecord),
+            "No metastatic cancer and hence no irradiation amenable lesion"
+        )
     }
 
     @Test
@@ -26,7 +30,11 @@ class HasIrradiationAmenableLesionTest {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
         val function = HasIrradiationAmenableLesion(alwaysUndeterminedMetastaticCancerEvaluation)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Metastatic cancer undetermined and therefore undetermined if irradiation amenable lesion"
+        )
     }
 
     @Test
@@ -35,6 +43,10 @@ class HasIrradiationAmenableLesionTest {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
         val function = HasIrradiationAmenableLesion(alwaysPassMetastaticCancerEvaluation)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Irradiation amenable lesion undetermined"
+        )
     }
 }

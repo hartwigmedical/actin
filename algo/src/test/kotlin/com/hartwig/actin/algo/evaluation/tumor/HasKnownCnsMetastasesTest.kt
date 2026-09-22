@@ -12,7 +12,8 @@ class HasKnownCnsMetastasesTest {
     fun `Should return undetermined when both CNS and brain lesion data are missing`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(null, null))
+            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(null, null)),
+            "Undetermined if CNS metastases present (data missing)"
         )
     }
 
@@ -20,7 +21,8 @@ class HasKnownCnsMetastasesTest {
     fun `Should return undetermined when no CNS lesions but brain lesion data is missing`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = null, hasCnsLesions = false))
+            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = null, hasCnsLesions = false)),
+            "Undetermined if CNS metastases present (data missing)"
         )
     }
 
@@ -28,7 +30,8 @@ class HasKnownCnsMetastasesTest {
     fun `Should return undetermined when no brain lesions but CNS lesion data is missing`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = false, hasCnsLesions = null))
+            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = false, hasCnsLesions = null)),
+            "Undetermined if CNS metastases present (data missing)"
         )
     }
 
@@ -36,7 +39,8 @@ class HasKnownCnsMetastasesTest {
     fun `Should fail when neither CNS nor brain lesions are present`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = false, hasCnsLesions = false))
+            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = false, hasCnsLesions = false)),
+            "No known CNS metastases present"
         )
     }
 
@@ -44,7 +48,8 @@ class HasKnownCnsMetastasesTest {
     fun `Should pass when CNS lesions present`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = false, hasCnsLesions = true))
+            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = false, hasCnsLesions = true)),
+            "Has CNS metastases"
         )
     }
 
@@ -52,7 +57,8 @@ class HasKnownCnsMetastasesTest {
     fun `Should pass when brain lesions present`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = true, hasCnsLesions = false))
+            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = true, hasCnsLesions = false)),
+            "Has brain metastases"
         )
     }
 
@@ -60,7 +66,8 @@ class HasKnownCnsMetastasesTest {
     fun `Should pass when both brain and CNS metastases are present`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = true, hasCnsLesions = true))
+            function.evaluate(TumorTestFactory.withBrainAndCnsLesions(hasBrainLesions = true, hasCnsLesions = true)),
+            "Has CNS metastases"
         )
     }
 
@@ -75,7 +82,8 @@ class HasKnownCnsMetastasesTest {
                     hasSuspectedBrainLesions = true,
                     hasSuspectedCnsLesions = false
                 )
-            )
+            ),
+            "CNS metastases present but suspected lesions only"
         )
     }
 
@@ -90,7 +98,8 @@ class HasKnownCnsMetastasesTest {
                     hasSuspectedBrainLesions = false,
                     hasSuspectedCnsLesions = true
                 )
-            )
+            ),
+            "CNS metastases present but suspected lesions only"
         )
     }
 }

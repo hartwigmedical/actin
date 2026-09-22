@@ -19,7 +19,11 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
         val function = IsEligibleForLocalTreatmentOfMetastases(alwaysFailsMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patientRecord),
+            "No metastatic cancer hence no eligibility for local treatment of metastases"
+        )
     }
 
     @Test
@@ -28,7 +32,11 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
         val function = IsEligibleForLocalTreatmentOfMetastases(alwaysUndeterminedMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Undetermined if metastatic cancer and therefore undetermined eligibility for local treatment of metastases"
+        )
     }
 
     @Test
@@ -37,6 +45,10 @@ class IsEligibleForLocalTreatmentOfMetastasesTest {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
         val function = IsEligibleForLocalTreatmentOfMetastases(alwaysPassMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Eligibility for local treatment of metastases undetermined"
+        )
     }
 }
