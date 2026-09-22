@@ -16,7 +16,6 @@ data class InterpretedCohort(
     val name: String?,
     val isOpen: Boolean,
     val hasSlotsAvailable: Boolean,
-    val ignore: Boolean,
     val isEvaluable: Boolean,
     val molecularInclusionEvents: Set<MolecularEvent>,
     val molecularExclusionEvents: Set<MolecularEvent>,

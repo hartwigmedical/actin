@@ -50,7 +50,6 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortA.isOpen).isTrue
         assertThat(trial1cohortA.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortA.ignore).isFalse
         assertThat(trial1cohortA.warnings).isEmpty()
         assertThat(trial1cohortA.fails).isNotEmpty()
         assertThat(trial1cohortA.sources).containsExactly(TrialSource.NKI)
@@ -62,7 +61,6 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortB.isOpen).isTrue
         assertThat(trial1cohortB.hasSlotsAvailable).isTrue
-        assertThat(trial1cohortB.ignore).isFalse
         assertThat(trial1cohortB.warnings).isEmpty()
         assertThat(trial1cohortB.fails).isNotEmpty()
         assertThat(trial1cohortA.sources).containsExactly(TrialSource.NKI)
@@ -74,7 +72,6 @@ class InterpretedCohortFactoryTest {
         assertThat(trial1cohortC.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial1cohortC.isOpen).isFalse
         assertThat(trial1cohortC.hasSlotsAvailable).isFalse
-        assertThat(trial1cohortC.ignore).isFalse
         assertThat(trial1cohortC.warnings).isEmpty()
         assertThat(trial1cohortC.fails).isNotEmpty
         assertThat(trial1cohortA.sources).containsExactly(TrialSource.NKI)
@@ -87,7 +84,6 @@ class InterpretedCohortFactoryTest {
         assertThat(trial2cohortA.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial2cohortA.isOpen).isTrue
         assertThat(trial2cohortA.hasSlotsAvailable).isFalse
-        assertThat(trial2cohortA.ignore).isFalse
         assertThat(trial2cohortA.warnings).isEmpty()
         assertThat(trial2cohortA.fails).isEmpty()
         assertThat(trial2cohortA.sources).containsExactly(TrialSource.NKI)
@@ -105,7 +101,6 @@ class InterpretedCohortFactoryTest {
         assertThat(trial2cohortB.isMissingMolecularResultForEvaluation).isFalse()
         assertThat(trial2cohortB.isOpen).isTrue
         assertThat(trial2cohortB.hasSlotsAvailable).isTrue
-        assertThat(trial2cohortB.ignore).isFalse
         assertThat(trial2cohortB.warnings).isEmpty()
         assertThat(trial2cohortB.fails).isEmpty()
     }
@@ -200,7 +195,7 @@ class InterpretedCohortFactoryTest {
 
     private fun createCohortMatch(name: String, evaluation: Map<Eligibility, Evaluation>): CohortMatch {
         return CohortMatch(
-            metadata = createTestCohortMetadata(name, open = true, evaluable = true, slotsAvailable = true, ignore = false),
+            metadata = createTestCohortMetadata(name, open = true, evaluable = true, slotsAvailable = true),
             isPotentiallyEligible = true,
             evaluations = evaluation
         )
