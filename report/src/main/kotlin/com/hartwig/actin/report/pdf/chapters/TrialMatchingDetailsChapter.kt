@@ -97,14 +97,12 @@ class TrialMatchingDetailsChapter(
         nonEvaluableCohorts: List<InterpretedCohort>,
         source: TrialSource?
     ): List<TrialTableGenerator> {
-        val (ignoredCohorts, nonIgnoredCohorts) = evaluableCohorts.partition { it.ignore }
+        val eligibleTrialsClosedCohortsGenerator =
+            EligibleTrialGenerator.closedCohorts(evaluableCohorts, source, labels)
+        val ineligibleTrialsGenerator = IneligibleTrialGenerator.evaluableCohorts(evaluableCohorts, source, labels)
+        val nonEvaluableCohortsGenerator =
+            IneligibleTrialGenerator.nonEvaluableCohorts(nonEvaluableCohorts, source, labels)
 
-        val eligibleTrialsClosedCohortsGenerator = EligibleTrialGenerator.closedCohorts(nonIgnoredCohorts, source, labels)
-        val ineligibleTrialsGenerator = IneligibleTrialGenerator.evaluableCohorts(nonIgnoredCohorts, source, labels)
-        val nonEvaluableOrIgnoredCohortsGenerator = IneligibleTrialGenerator.nonEvaluableOrIgnoredCohorts(
-            ignoredCohorts, nonEvaluableCohorts, source, labels
-        )
-
-        return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableOrIgnoredCohortsGenerator)
+        return listOf(eligibleTrialsClosedCohortsGenerator, ineligibleTrialsGenerator, nonEvaluableCohortsGenerator)
     }
 }

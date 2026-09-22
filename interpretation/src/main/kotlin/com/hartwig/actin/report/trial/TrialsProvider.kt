@@ -48,16 +48,12 @@ class TrialsProvider(
         return evaluableCohorts
     }
 
-    fun evaluableCohortsAndNotIgnore(): List<InterpretedCohort> {
-        return evaluableCohorts.filter { !it.ignore }
-    }
-
     fun nonEvaluableCohorts(): List<InterpretedCohort> {
         return nonEvaluableCohorts
     }
 
-    private fun eligibleCohortsWithSlotsAvailableAndNotIgnore(): List<InterpretedCohort> {
-        return filterCohortsOpenAndEligible(evaluableCohorts.filter { !it.ignore && it.hasSlotsAvailable })
+    private fun eligibleCohortsWithSlotsAvailable(): List<InterpretedCohort> {
+        return filterCohortsOpenAndEligible(evaluableCohorts.filter { it.hasSlotsAvailable })
     }
 
     fun externalTrialsUnfiltered(): ExternalTrials {
@@ -72,7 +68,7 @@ class TrialsProvider(
     fun externalTrials(): ExternalTrials {
         return externalTrials(
             internalTrialIds,
-            eligibleCohortsWithSlotsAvailableAndNotIgnore(),
+            eligibleCohortsWithSlotsAvailable(),
             patientIsYoungAdult,
             effectiveDutchExternalTrialExclusion
         )

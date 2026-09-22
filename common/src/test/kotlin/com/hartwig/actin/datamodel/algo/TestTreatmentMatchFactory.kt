@@ -160,14 +160,12 @@ object TestTreatmentMatchFactory {
         cohortId: String,
         evaluable: Boolean,
         open: Boolean,
-        slotsAvailable: Boolean,
-        ignore: Boolean
+        slotsAvailable: Boolean
     ): CohortMetadata {
         return CohortMetadata(
             cohortId = cohortId,
             evaluable = evaluable,
             cohortAvailability = CohortAvailability(open, slotsAvailable),
-            ignore = ignore,
             description = "Cohort $cohortId"
         )
     }
@@ -175,17 +173,17 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial1(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestCohortMetadata("A", true, true, false, false),
+                metadata = createTestCohortMetadata("A", true, true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial1CohortA()
             ),
             CohortMatch(
-                metadata = createTestCohortMetadata("B", true, true, true, false),
+                metadata = createTestCohortMetadata("B", true, true, true),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial1CohortB()
             ),
             CohortMatch(
-                metadata = createTestCohortMetadata("C", true, false, false, false),
+                metadata = createTestCohortMetadata("C", true, false, false),
                 isPotentiallyEligible = false,
                 evaluations = createTestCohortEvaluationsTrial1CohortC()
             )
@@ -243,7 +241,7 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial2(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestCohortMetadata("A", true, true, false, false),
+                metadata = createTestCohortMetadata("A", true, true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial2CohortA(),
             )
@@ -251,7 +249,7 @@ object TestTreatmentMatchFactory {
     }
 
     private fun createNonEvaluableTestCohortsTrial2(): List<CohortMetadata> {
-        return listOf(createTestCohortMetadata("B", false, true, true, false))
+        return listOf(createTestCohortMetadata("B", false, true, true))
     }
 
     private fun createTestCohortEvaluationsTrial2CohortA(): Map<Eligibility, Evaluation> {
@@ -266,7 +264,7 @@ object TestTreatmentMatchFactory {
     private fun createTestCohortsTrial3(): List<CohortMatch> {
         return listOf(
             CohortMatch(
-                metadata = createTestCohortMetadata("A", true, true, false, false),
+                metadata = createTestCohortMetadata("A", true, true, false),
                 isPotentiallyEligible = true,
                 evaluations = createTestCohortEvaluationsTrial3CohortA(),
             )
