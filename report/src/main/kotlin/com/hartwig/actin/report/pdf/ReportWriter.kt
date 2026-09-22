@@ -93,14 +93,9 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdf.documentInfo.author = Constants.METADATA_AUTHOR
 
         XMPMetaFactory.getSchemaRegistry().registerNamespace(Constants.XMP_NAMESPACE_URI, Constants.XMP_NAMESPACE_PREFIX)
-        val xmpMeta = XMPMetaFactory.create()
-        xmpMeta.setPropertyBoolean(
-            Constants.XMP_NAMESPACE_URI,
-            Constants.XMP_PROPERTY_MAY_BE_SHARED,
-            mayBeShared,
-            PropertyOptions()
-        )
-        pdf.xmpMetadata = xmpMeta
+        val xmpMetadata = XMPMetaFactory.create()
+        xmpMetadata.setPropertyBoolean( Constants.XMP_NAMESPACE_URI, Constants.XMP_PROPERTY_MAY_BE_SHARED, mayBeShared, PropertyOptions())
+        pdf.xmpMetadata = xmpMetadata
 
         val document = Document(pdf)
         document.setMargins(
