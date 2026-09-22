@@ -18,9 +18,9 @@ class TreatmentMatcher(
     private val trials: List<Trial>,
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
-    private val treatmentEfficacyPredictionPath: String? = null
+    private val treatmentEfficacyPredictionPath: String? = null,
+    private val mayBeShared: Boolean
 ) {
-
     fun run(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
 
@@ -42,7 +42,8 @@ class TreatmentMatcher(
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
-            personalizedTreatmentSummary = personalizedTreatmentSummary
+            personalizedTreatmentSummary = personalizedTreatmentSummary,
+            mayBeShared
         )
     }
 
@@ -51,7 +52,8 @@ class TreatmentMatcher(
             resources: RuleMappingResources,
             trials: List<Trial>,
             efficacyEvidence: List<EfficacyEntry>,
-            resistanceEvidenceMatcher: ResistanceEvidenceMatcher
+            resistanceEvidenceMatcher: ResistanceEvidenceMatcher,
+            mayBeShared: Boolean
         ): TreatmentMatcher {
             return TreatmentMatcher(
                 trialMatcher = TrialMatcher.create(resources),
@@ -59,7 +61,8 @@ class TreatmentMatcher(
                 trials = trials,
                 referenceDateProvider = resources.referenceDateProvider,
                 evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(efficacyEvidence, resistanceEvidenceMatcher),
-                treatmentEfficacyPredictionPath = resources.treatmentEfficacyPredictionJson
+                treatmentEfficacyPredictionPath = resources.treatmentEfficacyPredictionJson,
+                mayBeShared = mayBeShared
             )
         }
     }
