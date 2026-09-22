@@ -51,7 +51,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         chapters: List<ReportChapter>,
         reportDate: LocalDate,
         labels: ReportLabels,
-        trialDatabaseIsConsistent: Boolean
+        trialDatabaseIsConsistent: Boolean?
     ) {
         val doc = initializeReport(patientId, trialDatabaseIsConsistent)
         val pdfDocument = doc.pdfDocument
@@ -72,7 +72,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdfDocument.close()
     }
 
-    private fun initializeReport(patientId: String, trialDatabaseIsConsistent: Boolean): Document {
+    private fun initializeReport(patientId: String, trialDatabaseIsConsistent: Boolean?): Document {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf"
@@ -92,10 +92,17 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdf.documentInfo.title = Constants.METADATA_TITLE
         pdf.documentInfo.author = Constants.METADATA_AUTHOR
 
-        XMPMetaFactory.getSchemaRegistry().registerNamespace(Constants.XMP_NAMESPACE_URI, Constants.XMP_NAMESPACE_PREFIX)
-        val xmpMetadata = XMPMetaFactory.create()
-        xmpMetadata.setPropertyBoolean( Constants.XMP_NAMESPACE_URI, Constants.XMP_PROPERTY_MAY_BE_SHARED, trialDatabaseIsConsistent, PropertyOptions())
-        pdf.xmpMetadata = xmpMetadata
+        trialDatabaseIsConsistent?.let {
+            XMPMetaFactory.getSchemaRegistry().registerNamespace(Constants.XMP_NAMESPACE_URI, Constants.XMP_NAMESPACE_PREFIX)
+            val xmpMetadata = XMPMetaFactory.create()
+            xmpMetadata.setPropertyBoolean(
+                Constants.XMP_NAMESPACE_URI,
+                Constants.XMP_PROPERTY_MAY_BE_SHARED,
+                it,
+                PropertyOptions()
+            )
+            pdf.xmpMetadata = xmpMetadata
+        }
 
         val document = Document(pdf)
         document.setMargins(

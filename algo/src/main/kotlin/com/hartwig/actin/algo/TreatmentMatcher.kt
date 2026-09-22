@@ -19,7 +19,7 @@ class TreatmentMatcher(
     private val referenceDateProvider: ReferenceDateProvider,
     private val evaluatedTreatmentAnnotator: EvaluatedTreatmentAnnotator,
     private val treatmentEfficacyPredictionPath: String? = null,
-    private val trialDatabaseIsConsistent: Boolean
+    private val trialDatabaseIsConsistent: Boolean?
 ) {
     fun run(patient: PatientRecord): TreatmentMatch {
         val trialMatches = trialMatcher.determineEligibility(patient, trials)
@@ -53,7 +53,7 @@ class TreatmentMatcher(
             trials: List<Trial>,
             efficacyEvidence: List<EfficacyEntry>,
             resistanceEvidenceMatcher: ResistanceEvidenceMatcher,
-            trialDatabaseIsConsistent: Boolean
+            trialDatabaseIsConsistent: Boolean?
         ): TreatmentMatcher {
             return TreatmentMatcher(
                 trialMatcher = TrialMatcher.create(resources),

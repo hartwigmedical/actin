@@ -64,25 +64,24 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         val (trials, dbIsConsistent) = inputData.trials?.let {
             logger.warn { "Loading trials from input data. User is responsible for verifying whether results may be shared!" }
-            Pair(it, true)
+            it to null
         } ?: run {
             val trialConfigs: TrialConfigDatabase = Gson().fromJson(
                 Files.readString(config.trialConfigJson?.let { Path.of(it) }
                     ?: error("One of trial config or trial database must be specified.")),
                 object : TypeToken<TrialConfigDatabase>() {}.type
             )
-            Pair(
-                TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(trialConfigs.trials)
-                    .mapLeft { unmappableTrials ->
-                        throw IllegalArgumentException(
-                            "Failed to ingest trials. Unmappable trials found: \n" + "${
-                                unmappableTrials.map {
-                                    "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.inclusionRule}: ${e.error}\n" }} " +
-                                            "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.inclusionRule} ${e.error}\n" }}" }}"
-                                }
-                            }\n}")
-                    }.getOrNull()!!, trialConfigs.isConsistent
-            )
+            val ingestedTrials = TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(trialConfigs.trials)
+                .mapLeft { unmappableTrials ->
+                    throw IllegalArgumentException(
+                        "Failed to ingest trials. Unmappable trials found: \n" + "${
+                            unmappableTrials.map {
+                                "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.inclusionRule}: ${e.error}\n" }} " +
+                                        "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.inclusionRule} ${e.error}\n" }}" }}"
+                            }
+                        }\n}")
+                }.getOrNull()!!
+            ingestedTrials to trialConfigs.isConsistent
         }
 
         val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, dbIsConsistent)
