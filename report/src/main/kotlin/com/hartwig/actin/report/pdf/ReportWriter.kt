@@ -41,7 +41,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
             chapters,
             report.reportDate,
             labels,
-            report.treatmentMatch.mayBeShared
+            report.treatmentMatch.trialDatabaseIsConsistent
         )
     }
 
@@ -51,9 +51,9 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         chapters: List<ReportChapter>,
         reportDate: LocalDate,
         labels: ReportLabels,
-        mayBeShared: Boolean
+        trialDatabaseIsConsistent: Boolean
     ) {
-        val doc = initializeReport(patientId, mayBeShared)
+        val doc = initializeReport(patientId, trialDatabaseIsConsistent)
         val pdfDocument = doc.pdfDocument
         val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
@@ -72,7 +72,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdfDocument.close()
     }
 
-    private fun initializeReport(patientId: String, mayBeShared: Boolean): Document {
+    private fun initializeReport(patientId: String, trialDatabaseIsConsistent: Boolean): Document {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf"
@@ -94,7 +94,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
 
         XMPMetaFactory.getSchemaRegistry().registerNamespace(Constants.XMP_NAMESPACE_URI, Constants.XMP_NAMESPACE_PREFIX)
         val xmpMetadata = XMPMetaFactory.create()
-        xmpMetadata.setPropertyBoolean( Constants.XMP_NAMESPACE_URI, Constants.XMP_PROPERTY_MAY_BE_SHARED, mayBeShared, PropertyOptions())
+        xmpMetadata.setPropertyBoolean( Constants.XMP_NAMESPACE_URI, Constants.XMP_PROPERTY_MAY_BE_SHARED, trialDatabaseIsConsistent, PropertyOptions())
         pdf.xmpMetadata = xmpMetadata
 
         val document = Document(pdf)

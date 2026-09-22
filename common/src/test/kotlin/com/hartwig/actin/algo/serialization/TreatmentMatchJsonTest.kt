@@ -116,7 +116,7 @@ class TreatmentMatchJsonTest {
                         "isTested":null,"isFound":false,"evidenceUrls":["website"]}]}
                     ],
                 "personalizedTreatmentSummary":null,
-                "mayBeShared":true}
+                "trialDatabaseIsConsistent":true}
                 """).lineSequence().joinToString("") { it.trim() }
         //@formatter:on
 

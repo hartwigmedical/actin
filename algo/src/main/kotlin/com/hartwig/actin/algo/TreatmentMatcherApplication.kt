@@ -62,7 +62,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
         )
 
-        val (trials, mayBeShared) = inputData.trials?.let {
+        val (trials, dbIsConsistent) = inputData.trials?.let {
             logger.warn { "Loading trials from input data. User is responsible for verifying whether results may be shared!" }
             Pair(it, true)
         } ?: run {
@@ -81,11 +81,11 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
                                             "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.inclusionRule} ${e.error}\n" }}" }}"
                                 }
                             }\n}")
-                    }.getOrNull()!!, trialConfigs.suitableForSharing
+                    }.getOrNull()!!, trialConfigs.isConsistent
             )
         }
 
-        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, mayBeShared)
+        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, dbIsConsistent)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         logger.info { "Printing treatment match" }

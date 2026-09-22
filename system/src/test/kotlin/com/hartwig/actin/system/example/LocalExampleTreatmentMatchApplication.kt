@@ -49,7 +49,7 @@ class LocalExampleTreatmentMatchApplication {
                 trials = trials,
                 efficacyEvidence = emptyList(),
                 resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher(),
-                mayBeShared = true
+                trialDatabaseIsConsistent = true
             )
             .run(patient)
 
