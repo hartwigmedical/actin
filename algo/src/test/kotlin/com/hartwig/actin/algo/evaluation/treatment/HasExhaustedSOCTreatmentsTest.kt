@@ -60,7 +60,7 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should warn for patient with NSCLC and platinum doublet chemotherapy in treatment history but intent is curative, neoadjuvant or adjuvant`() {
+    fun `Should fail for patient with NSCLC and platinum doublet chemotherapy in treatment history but intent is curative, neoadjuvant or adjuvant`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         val platinumDoublet =
             DrugTreatment(
@@ -77,9 +77,9 @@ class HasExhaustedSOCTreatmentsTest {
                 intents = setOf(intent)
             )
             assertEvaluation(
-                EvaluationResult.WARN,
+                EvaluationResult.FAIL,
                 function.evaluate(record),
-                "SOC potentially not exhausted (no platinum doublet in metastatic setting)"
+                "SOC not exhausted (no platinum doublet in metastatic setting)"
             )
         }
     }
@@ -116,7 +116,7 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should warn for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
+    fun `Should fail for patient with NSCLC and history entry with chemo-immuno or chemoradiation with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
 
         Intent.curativeAdjuvantNeoadjuvantSet().forEach { intent ->
@@ -139,12 +139,12 @@ class HasExhaustedSOCTreatmentsTest {
 
             listOf(chemoradiation, chemoradiationWithOther).forEach {
                 assertEvaluation(
-                    EvaluationResult.WARN,
+                    EvaluationResult.FAIL,
                     function.evaluate(
                         TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
                             .copy(oncologicalHistory = listOf(it))
                     ),
-                    "SOC potentially not exhausted (no platinum doublet in metastatic setting)"
+                    "SOC not exhausted (no platinum doublet in metastatic setting)"
                 )
             }
         }
@@ -160,7 +160,7 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should warn for patient with NSCLC and history entry with chemo-immuno with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
+    fun `Should fail for patient with NSCLC and history entry with chemo-immuno with undefined chemotherapy but intent is curative, neoadjuvant or adjuvant`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
 
         Intent.curativeAdjuvantNeoadjuvantSet().forEach { intent ->
@@ -168,9 +168,9 @@ class HasExhaustedSOCTreatmentsTest {
                 TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY), setOf(intent)
             )
             assertEvaluation(
-                EvaluationResult.WARN,
+                EvaluationResult.FAIL,
                 function.evaluate(record),
-                "SOC potentially not exhausted (no platinum doublet in metastatic setting)"
+                "SOC not exhausted (no platinum doublet in metastatic setting)"
             )
         }
     }
@@ -189,21 +189,21 @@ class HasExhaustedSOCTreatmentsTest {
     }
 
     @Test
-    fun `Should warn for patient with NSCLC with other treatment in treatment history`() {
+    fun `Should fail for patient with NSCLC with other treatment in treatment history`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         val treatment =
             TreatmentTestFactory.drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(treatment)
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.WARN, evaluation, "SOC potentially not exhausted (no platinum doublet in metastatic setting)")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "SOC not exhausted (no platinum doublet in metastatic setting)")
     }
 
     @Test
-    fun `Should warn for patient with NSCLC with empty treatment history`() {
+    fun `Should fail for patient with NSCLC with empty treatment history`() {
         setStandardOfCareCanBeEvaluatedForPatient(false)
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(null)
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.WARN, evaluation, "SOC potentially not exhausted (no platinum doublet in metastatic setting)")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "SOC not exhausted (no platinum doublet in metastatic setting)")
     }
 
     @Test
