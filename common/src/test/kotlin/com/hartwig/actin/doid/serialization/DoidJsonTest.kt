@@ -1,7 +1,6 @@
 package com.hartwig.actin.doid.serialization
 
 import com.hartwig.actin.doid.datamodel.BasicPropertyValue
-import com.hartwig.actin.doid.datamodel.Definition
 import com.hartwig.actin.doid.datamodel.DoidEntry
 import com.hartwig.actin.doid.datamodel.Edge
 import com.hartwig.actin.doid.datamodel.Node
@@ -77,12 +76,13 @@ class DoidJsonTest {
         assertThat(node2.type).isEqualTo("CLASS")
 
         val metadata = node2.metadata!!
-        assertThat(metadata.definition).isEqualTo(
-            Definition(
-                "Decubitus ulcer is a chronic ulcer of skin where the ulcer is an ulceration of "
-                        + "tissue deprived of adequate blood supply by prolonged pressure.",
-                listOf("url:http://www2.merriam-webster.com/cgi-bin/mwmednlm?book=Medical&va=bedsore")
-            )
+        val definition = metadata.definition
+        assertThat(definition!!.`val`).isEqualTo("Decubitus ulcer is a chronic ulcer of skin where the ulcer is an ulceration of "
+                        + "tissue deprived of adequate blood supply by prolonged pressure.")
+        assertThat(definition.xrefs).isEqualTo(listOf("url:http://www2.merriam-webster.com/cgi-bin/mwmednlm?book=Medical&va=bedsore"))
+        assertThat(definition.meta!!.basicPropertyValues).containsExactly(
+            BasicPropertyValue("http://purl.org/dc/elements/1.1/type", "http://purl.obolibrary.org/obo/ECO_0007645"),
+            BasicPropertyValue("http://purl.org/dc/elements/1.1/type", "http://purl.obolibrary.org/obo/ECO_0007646")
         )
 
         assertThat(metadata.subsets).containsExactly("http://purl.obolibrary.org/obo/doid#NCIthesaurus")
