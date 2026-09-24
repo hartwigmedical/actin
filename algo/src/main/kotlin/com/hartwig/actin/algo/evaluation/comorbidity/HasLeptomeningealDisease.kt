@@ -21,7 +21,7 @@ class HasLeptomeningealDisease(private val icdModel: IcdModel) : EvaluationFunct
 
         return when {
             hasConfirmedLeptomeningealDisease -> {
-                EvaluationFactory.pass("There is leptomeningeal involvement")
+                EvaluationFactory.pass("Leptomeningeal disease in provided history")
             }
 
             filterPotentiallyMeningealLesions(tumorDetails.hasConfirmedCnsLesions(), otherLesions).isNotEmpty() -> {

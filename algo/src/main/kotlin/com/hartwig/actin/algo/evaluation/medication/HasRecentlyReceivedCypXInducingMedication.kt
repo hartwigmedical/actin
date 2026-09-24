@@ -24,9 +24,7 @@ class HasRecentlyReceivedCypXInducingMedication(
             cypInducersReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
                     "Recent CYP$termToFind inducing medication in provided medications (${
-                        Format.concatLowercaseWithCommaAndAnd(
-                            cypInducersReceived
-                        )
+                        Format.concatLowercaseWithCommaAndAnd(cypInducersReceived)
                     })"
                 )
             }
