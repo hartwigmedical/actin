@@ -228,7 +228,8 @@ object DoidJson {
                 pred = string(synonym, "pred"),
                 `val` = string(synonym, "val"),
                 xrefs = optionalStringList(synonym, "xrefs"),
-                synonymType = optionalString(synonym, "synonymType")
+                synonymType = optionalString(synonym, "synonymType"),
+                meta = extractMetadata(optionalObject(synonym, "meta"))
             )
         }
     }
