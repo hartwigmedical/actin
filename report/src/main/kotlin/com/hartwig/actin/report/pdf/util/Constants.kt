@@ -7,6 +7,10 @@ object Constants {
     val METADATA_TITLE = "Hartwig ACTIN Report v${ReporterApplication.VERSION}"
     const val METADATA_AUTHOR = "Hartwig ACTIN System"
 
+    const val XMP_NAMESPACE_URI = "http://actin.hartwig.com/xmp/1.0/"
+    const val XMP_NAMESPACE_PREFIX = "actin"
+    const val XMP_PROPERTY_MAY_BE_SHARED = "MayBeShared"
+
     const val PAGE_MARGIN_TOP = 100f // Top margin also excludes the chapter title, which is rendered in the header
     const val PAGE_MARGIN_LEFT = 30f
     const val PAGE_MARGIN_RIGHT = 30f
