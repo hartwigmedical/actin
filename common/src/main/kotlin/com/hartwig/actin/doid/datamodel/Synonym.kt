@@ -4,5 +4,6 @@ data class Synonym(
     val pred: String,
     val `val`: String,
     val xrefs: List<String>?,
-    val synonymType: String?
+    val synonymType: String?,
+    val meta: Metadata?
 )

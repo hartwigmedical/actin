@@ -40,7 +40,7 @@ object DatamodelCheckerFactory {
 
     fun synonymChecker(): JsonDatamodelChecker {
         return JsonDatamodelChecker(
-            "Synonym", mapOf("pred" to true, "val" to true, "xrefs" to false, "synonymType" to false)
+            "Synonym", mapOf("pred" to true, "val" to true, "xrefs" to false, "synonymType" to false, "meta" to false)
         )
     }
 
