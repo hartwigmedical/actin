@@ -243,12 +243,13 @@
           "metadata": {
             "cohortId": "A",
             "description": "Dose expansion - monotherapy - NSCLC",
-            "cohortAvailability": null,
+            "cohortAvailability": {
+              "open": true,
+              "slotsAvailable": true
+            },
             "availabilityByLocation": null,
             "evaluable": true,
-            "ignore": false,
-            "open": true,
-            "slotsAvailable": true
+            "ignore": false
           },
           "isPotentiallyEligible": false,
           "evaluations": [
@@ -289,12 +290,13 @@
           "metadata": {
             "cohortId": "B",
             "description": "Dose expansion - monotherapy - Colorectum",
-            "cohortAvailability": null,
+            "cohortAvailability": {
+              "open": true,
+              "slotsAvailable": true
+            },
             "availabilityByLocation": null,
             "evaluable": true,
-            "ignore": false,
-            "open": true,
-            "slotsAvailable": true
+            "ignore": false
           },
           "isPotentiallyEligible": false,
           "evaluations": [
@@ -619,12 +621,13 @@
           "metadata": {
             "cohortId": "A",
             "description": "Dose escalation - monotherapy",
-            "cohortAvailability": null,
+            "cohortAvailability": {
+              "open": false,
+              "slotsAvailable": false
+            },
             "availabilityByLocation": null,
             "evaluable": true,
-            "ignore": false,
-            "open": false,
-            "slotsAvailable": false
+            "ignore": false
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
@@ -633,12 +636,13 @@
           "metadata": {
             "cohortId": "B",
             "description": "Dose expansion - monotherapy",
-            "cohortAvailability": null,
+            "cohortAvailability": {
+              "open": false,
+              "slotsAvailable": false
+            },
             "availabilityByLocation": null,
             "evaluable": true,
-            "ignore": false,
-            "open": false,
-            "slotsAvailable": false
+            "ignore": false
           },
           "isPotentiallyEligible": true,
           "evaluations": {}

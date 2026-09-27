@@ -48,7 +48,7 @@ class TrialJsonTest {
         assertThat(testTrial2.identification.title).isEqualTo("This is a trial to test ACTIN")
         assertThat(testTrial2.identification.phase).isNull()
         assertThat(testTrial2.identification.sources).isEmpty()
-        assertThat(testTrial2.identification.locations).isNull()
+        assertThat(testTrial2.identification.locations).isEmpty()
     }
 
     @Test

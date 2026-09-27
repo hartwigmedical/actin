@@ -30,12 +30,13 @@ object PatientRecordJson {
         return fromJson(Files.readString(patientRecordJson))
     }
 
+    private val mapper by lazy { ClinicalRecordJsonMapper.create() }
+
     fun toJson(patientRecord: PatientRecord): String {
-        return ClinicalRecordJsonMapper.create().toJson(patientRecord)
+        return mapper.writeValueAsString(patientRecord)
     }
 
     fun fromJson(json: String): PatientRecord {
-        return ClinicalRecordJsonMapper.create().fromJson(json, PatientRecord::class.java)
+        return mapper.readValue(json, PatientRecord::class.java)
     }
-
 }
