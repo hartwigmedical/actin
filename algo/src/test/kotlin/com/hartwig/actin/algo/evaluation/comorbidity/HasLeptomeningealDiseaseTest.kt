@@ -22,7 +22,7 @@ class HasLeptomeningealDiseaseTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
-                "There is leptomeningeal involvement"
+                "Leptomeningeal disease in provided history"
             )
         }
     }
