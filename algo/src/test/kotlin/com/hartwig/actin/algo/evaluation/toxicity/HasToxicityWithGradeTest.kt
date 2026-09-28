@@ -116,6 +116,20 @@ class HasToxicityWithGradeTest {
     }
 
     @Test
+    fun `Should ignore toxicities that match ICD code of a parent of icd titles in ignore list`() {
+        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "ignoreParent"))
+        val function = function(icdModel, ignoreFilters = listOf("ignoreParentTitle"))
+        val toxicities = listOf(
+            toxicity(source = ToxicitySource.QUESTIONNAIRE, grade = 2, name = "ignore me", icdMainCode = "ignoreCode")
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
+            "No toxicities found with grade 2 or higher"
+        )
+    }
+
+    @Test
     fun `Should match selectively using ICD codes of icd titles in target list`() {
         val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("target", "nonTarget"))
         val function = function(icdModel, targetIcdTitles = listOf("targetTitle"))
