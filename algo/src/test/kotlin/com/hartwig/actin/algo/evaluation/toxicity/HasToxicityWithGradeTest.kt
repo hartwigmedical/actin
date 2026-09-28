@@ -125,7 +125,7 @@ class HasToxicityWithGradeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withToxicities(toxicities)),
-            "No toxicities found with grade 2 or higher"
+            "No toxicities with grade 2 or higher"
         )
     }
 
