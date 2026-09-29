@@ -4,7 +4,9 @@ import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
@@ -33,15 +35,19 @@ object TreatmentHistoryEntryFunctions {
     fun Collection<TreatmentHistoryEntry>.partitionTreatmentsByIntent(intents: Set<Intent>): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> =
         partition { it.intents?.any(intents::contains) == true }
 
+    fun Treatment.withoutDrugs(drugsToExclude: Set<Drug>): Treatment = when (treatmentClass) {
+        TreatmentClass.DRUG_TREATMENT -> (this as DrugTreatment).copy(drugs = drugs - drugsToExclude)
+        TreatmentClass.RADIOTHERAPY -> (this as Radiotherapy).copy(drugs = drugs - drugsToExclude)
+        TreatmentClass.OTHER_TREATMENT -> this
+    }
+
     fun evaluateIfDrugHadPDResponse(treatmentHistory: List<TreatmentHistoryEntry>, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {
         val allowTrialMatches = drugsToMatch.map(Drug::category).all(TrialFunctions::categoryAllowsTrialMatches)
 
         return treatmentHistory.map { entry ->
             val categoriesToMatch = drugsToMatch.map(Drug::category).toSet()
             val isPD = ProgressiveDiseaseFunctions.treatmentResultedInPD(entry, treatmentHistory)
-            val matchingDrugs = entry.allTreatments().flatMap {
-                (it as? DrugTreatment)?.drugs?.intersect(drugsToMatch) ?: emptyList()
-            }.toSet()
+            val matchingDrugs = entry.allTreatments().flatMap { it.drugs.intersect(drugsToMatch) }.toSet()
             val possibleTrialMatch =
                 entry.isTrial && (entry.categories().isEmpty() || entry.categories().intersect(categoriesToMatch).isNotEmpty())
                         && allowTrialMatches

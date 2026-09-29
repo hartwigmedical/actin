@@ -38,11 +38,8 @@ object MedicationToTreatmentConverter {
 
     private fun createTreatmentHistoryEntryPerDrugMap(treatmentHistory: List<TreatmentHistoryEntry>): Map<Drug, List<TreatmentHistoryEntry>> {
         return treatmentHistory.flatMap { entry ->
-            entry.allTreatments().flatMap { treatment ->
-                (treatment as? DrugTreatment)?.drugs?.map { it to entry } ?: emptyList()
-            }
-        }
-            .groupBy({ it.first }, { it.second })
+            entry.allTreatments().flatMap { treatment -> treatment.drugs.map { it to entry } }
+        }.groupBy({ it.first }, { it.second })
     }
 
     fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {

@@ -2,7 +2,6 @@ package com.hartwig.actin.algo.soc
 
 import com.hartwig.actin.algo.evaluation.tumor.DoidEvaluationFunctions
 import com.hartwig.actin.datamodel.algo.ResistanceEvidence
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.evidence.Actionable
@@ -94,8 +93,8 @@ class ResistanceEvidenceMatcher(
     }
 
     private fun drugsInOtherTreatment(treatment1: Treatment, treatment2: Treatment): Boolean {
-        val drugs1 = (treatment1 as DrugTreatment).drugs
-        val drugs2 = (treatment2 as DrugTreatment).drugs
+        val drugs1 = treatment1.drugs
+        val drugs2 = treatment2.drugs
         return drugs1.containsAll(drugs2)
     }
 

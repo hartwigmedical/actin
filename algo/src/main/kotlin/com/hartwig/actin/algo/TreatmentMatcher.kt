@@ -42,7 +42,8 @@ class TreatmentMatcher(
             referenceDateIsLive = referenceDateProvider.isLive,
             trialMatches = trialMatches,
             standardOfCareMatches = standardOfCareMatches,
-            personalizedTreatmentSummary = personalizedTreatmentSummary
+            personalizedTreatmentSummary = personalizedTreatmentSummary,
+            trialDatabaseIsConsistent = null
         )
     }
 

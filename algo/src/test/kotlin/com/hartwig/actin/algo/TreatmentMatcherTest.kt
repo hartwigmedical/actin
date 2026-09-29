@@ -73,7 +73,8 @@ class TreatmentMatcherTest {
         referenceDateIsLive = true,
         trialMatches = trialMatches,
         standardOfCareMatches = null,
-        personalizedTreatmentSummary = null
+        personalizedTreatmentSummary = null,
+        trialDatabaseIsConsistent = null
     )
 
     @Test
