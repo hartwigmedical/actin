@@ -10,6 +10,10 @@ class HasMinimumRiskForSentinelNodePositivityTest {
     @Test
     fun `Should evaluate to undetermined`() {
         val result = HasMinimumRiskForSentinelNodePositivity(40).evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined if patient has risk of sentinel node positivity above 40%")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if risk of sentinel node positivity is above 40%"
+        )
     }
 }

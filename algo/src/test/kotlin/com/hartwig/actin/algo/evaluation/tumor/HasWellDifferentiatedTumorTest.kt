@@ -15,7 +15,7 @@ class HasWellDifferentiatedTumorTest {
     @Test
     fun `Should pass if tumor is of well-differentiated type`() {
         val tumor = TumorTestFactory.withDoidAndName("doid", "name with $wellDifferentiatedType")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumor), "Has well-differentiated tumor")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumor), "Tumor is well-differentiated")
     }
 
     @Test
@@ -27,6 +27,6 @@ class HasWellDifferentiatedTumorTest {
     @Test
     fun `Should fail if tumor is of other differentiation type`() {
         val tumor = TumorTestFactory.withDoidAndName("doid", "name with $otherDifferentiationType")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumor), "Has no well-differentiated tumor")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumor), "Tumor is not well-differentiated")
     }
 }

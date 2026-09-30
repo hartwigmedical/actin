@@ -25,19 +25,27 @@ class CurrentlyGetsTransporterInteractingMedication(
         return when {
             transporterInteractingMedicationActive.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "Active $termToFind $typeText medication use (${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationActive)})"
+                    "Active $termToFind $typeText medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            transporterInteractingMedicationActive
+                        )
+                    })"
                 )
             }
 
             transporterInteractingMedicationPlanned.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Planned $termToFind $typeText medication use (${concatLowercaseWithCommaAndAnd(transporterInteractingMedicationPlanned)})"
+                    "Planned $termToFind $typeText medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            transporterInteractingMedicationPlanned
+                        )
+                    })"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "No current $termToFind $typeText medication use"
+                    "No active $termToFind $typeText medication in provided medications"
                 )
             }
         }

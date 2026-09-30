@@ -18,8 +18,8 @@ class HasNonMuscleInvasiveBladderCancer(private val doidModel: DoidModel) : Eval
         val isNonMuscleInvasive = NON_MUSCLE_INVASIVE_TERMS.any { record.tumor.name.lowercase().contains(it) }
 
         return when {
-            isBladderCancer && isNonMuscleInvasive -> EvaluationFactory.pass("Has non muscle invasive bladder cancer")
-            isBladderCancer -> EvaluationFactory.undetermined("Has bladder cancer but undetermined if non muscle invasive")
+            isBladderCancer && isNonMuscleInvasive -> EvaluationFactory.pass("Cancer is non muscle invasive bladder cancer")
+            isBladderCancer -> EvaluationFactory.undetermined("Cancer is bladder cancer but undetermined if muscle invasive")
             else -> EvaluationFactory.fail("No non muscle invasive bladder cancer")
         }
     }

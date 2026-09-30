@@ -13,7 +13,7 @@ class HasRapidProgressiveDiseaseTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if patient may have rapid progressive disease"
+            "Undetermined if there may be rapid progressive disease"
         )
     }
 }

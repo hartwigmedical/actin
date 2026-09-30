@@ -14,7 +14,7 @@ class IsInvolvedInStudyProceduresTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient is not involved with the trial of interest"
+            "Assumed that there is no involvement with the trial of interest"
         )
     }
 }

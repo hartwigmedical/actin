@@ -24,7 +24,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received at least 2 line(s) of targeted therapy"
+            "Not at least 2 line(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -33,7 +33,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of targeted therapy"
+            "Not at least 2 line(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -43,11 +43,11 @@ class HasHadSomeTreatmentsWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of targeted therapy"
+            "Not at least 2 line(s) of targeted therapy in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has received at least 2 line(s) of targeted therapy"
+            "At least 2 line(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -59,7 +59,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
-            "Has received at least 1 line(s) of targeted therapy"
+            "At least 1 line(s) of targeted therapy in provided treatments"
         )
     }
 
@@ -70,7 +70,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(MedicationTestFactory.withMedications(listOf(medication))),
-            "Inconclusive if received at least 1 line(s) of targeted therapy due to trial participation"
+            "Inconclusive if trial treatment included at least 1 line(s) of targeted therapy"
         )
     }
 
@@ -80,11 +80,11 @@ class HasHadSomeTreatmentsWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of targeted therapy"
+            "Not at least 2 line(s) of targeted therapy in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Inconclusive if received at least 2 line(s) of targeted therapy due to trial participation"
+            "Inconclusive if trial treatment included at least 2 line(s) of targeted therapy"
         )
     }
 
@@ -94,7 +94,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has not received at least 2 line(s) of transplantation"
+            "Not at least 2 line(s) of transplantation in provided treatments"
         )
     }
 }

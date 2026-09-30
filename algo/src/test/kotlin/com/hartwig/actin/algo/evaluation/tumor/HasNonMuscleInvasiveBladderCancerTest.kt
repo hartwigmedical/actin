@@ -26,7 +26,11 @@ class HasNonMuscleInvasiveBladderCancerTest {
     @Test
     fun `Should pass if tumor is bladder cancer of non muscle invasive type`() {
         val tumor = TumorTestFactory.withDoidAndName(DoidConstants.URINARY_BLADDER_CANCER_DOID, "name with $targetType")
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumor), "Has non muscle invasive bladder cancer")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(tumor),
+            "Cancer is non muscle invasive bladder cancer"
+        )
     }
 
     @Test
@@ -35,7 +39,7 @@ class HasNonMuscleInvasiveBladderCancerTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(tumor),
-            "Has bladder cancer but undetermined if non muscle invasive"
+            "Cancer is bladder cancer but undetermined if muscle invasive"
         )
     }
 

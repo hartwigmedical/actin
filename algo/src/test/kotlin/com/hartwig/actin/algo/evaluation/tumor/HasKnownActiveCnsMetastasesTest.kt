@@ -20,7 +20,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = null
                 )
             ),
-            "Undetermined if (active) CNS metastases present (data missing)"
+            "Undetermined if (active) CNS metastases based on provided lesions"
         )
     }
 
@@ -36,7 +36,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = null
                 )
             ),
-            "CNS metastases present but unknown if active (data missing)"
+            "CNS metastases in provided lesions but unknown if active (data missing)"
         )
     }
 
@@ -52,7 +52,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = null
                 )
             ),
-            "CNS metastases present but unknown if active (data missing)"
+            "CNS metastases in provided lesions but unknown if active (data missing)"
         )
     }
 
@@ -69,7 +69,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasSuspectedBrainLesions = true
                 )
             ),
-            "Suspected CNS metastases present but unknown if active (data missing)"
+            "Suspected CNS metastases in provided lesions but unknown if active (data missing)"
         )
     }
 
@@ -86,7 +86,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasSuspectedCnsLesions = true
                 )
             ),
-            "Suspected CNS metastases present but unknown if active (data missing)"
+            "Suspected CNS metastases in provided lesions but unknown if active (data missing)"
         )
     }
 
@@ -102,7 +102,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = null
                 )
             ),
-            "No known active CNS metastases present"
+            "No known active CNS metastases in provided lesions"
         )
     }
 
@@ -118,7 +118,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = false
                 )
             ),
-            "No known active CNS metastases present"
+            "No known active CNS metastases in provided lesions"
         )
     }
 
@@ -134,7 +134,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = true
                 )
             ),
-            "Has active CNS metastases"
+            "Active CNS metastases in provided lesions"
         )
     }
 
@@ -150,7 +150,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = false
                 )
             ),
-            "Has active CNS (Brain) metastases"
+            "Active CNS (Brain) metastases in provided lesions"
         )
     }
 
@@ -166,7 +166,7 @@ class HasKnownActiveCnsMetastasesTest {
                     hasActiveCnsLesions = false
                 )
             ),
-            "Has active CNS (Brain) metastases"
+            "Active CNS (Brain) metastases in provided lesions"
         )
     }
 }

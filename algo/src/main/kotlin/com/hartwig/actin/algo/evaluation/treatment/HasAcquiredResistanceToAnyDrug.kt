@@ -17,7 +17,7 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
 
         return when {
             treatmentEvaluation.matchingDrugsWithPD.isNotEmpty() -> {
-                EvaluationFactory.pass("Has potential acquired resistance to ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}")
+                EvaluationFactory.pass("Potential acquired resistance to ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugsWithPD)}")
             }
 
             treatmentEvaluation.possibleTrialMatch -> {
@@ -32,13 +32,13 @@ class HasAcquiredResistanceToAnyDrug(private val drugsToMatch: Set<Drug>) : Eval
 
             treatmentEvaluation.matchingDrugs.isNotEmpty() -> {
                 EvaluationFactory.fail(
-                    "Has received drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} but " +
+                    "Drugs ${Format.concatItemsWithAnd(treatmentEvaluation.matchingDrugs)} in provided treatments but " +
                             "no progressive disease"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("No acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since drug not in treatment history")
+                EvaluationFactory.fail("No acquired resistance to ${Format.concatItemsWithOr(drugsToMatch)} since drug not in provided treatments")
             }
         }
     }

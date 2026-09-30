@@ -19,7 +19,7 @@ class HasCancerOfUnknownPrimaryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withDoids(null)),
-            "Undetermined if patient has CUP"
+            "Undetermined if cancer is of unknown primary"
         )
     }
 
@@ -33,7 +33,7 @@ class HasCancerOfUnknownPrimaryTest {
                     "Some ${TumorTermConstants.CUP_TERM}"
                 )
             ),
-            "Has cancer of unknown primary"
+            "Cancer is of unknown primary"
         )
     }
 
@@ -42,7 +42,7 @@ class HasCancerOfUnknownPrimaryTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withDoidAndName(childDoid, "name")),
-            "Undetermined if tumor name may be cancer of unknown primary"
+            "Undetermined if name may be cancer of unknown primary"
         )
     }
 
@@ -51,7 +51,7 @@ class HasCancerOfUnknownPrimaryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withDoidAndName(DoidConstants.CANCER_DOID, "name")),
-            "Undetermined if tumor name may be cancer of unknown primary"
+            "Undetermined if name may be cancer of unknown primary"
         )
     }
 
@@ -65,7 +65,7 @@ class HasCancerOfUnknownPrimaryTest {
                     "Some ${TumorTermConstants.CUP_TERM}"
                 )
             ),
-            "Has cancer of unknown primary but undetermined if adenocarcinoma"
+            "Cancer is of unknown primary but undetermined if adenocarcinoma"
         )
     }
 
@@ -74,7 +74,7 @@ class HasCancerOfUnknownPrimaryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withDoids("random doid")),
-            "Does not have cancer of unknown primary"
+            "No cancer of unknown primary"
         )
     }
 }

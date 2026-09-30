@@ -57,7 +57,7 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
 
         val responseMessage =
             if (evaluateClinicalBenefit) " objective benefit from treatment" else " ${Format.concatWithCommaAndOr(treatmentResponses.map { it.display() })} from treatment"
-        val similarDrugMessage = "receive exact treatment but received similar drugs " +
+        val similarDrugMessage = "exact treatment not in provided treatments but similar drugs " +
                 "(${treatmentsSimilarToTargetTreatment?.joinToString(",") { it.treatmentDisplay() }})"
         val hadSimilarTreatmentsWithPD = treatmentsSimilarToTargetTreatment.takeIf { !it.isNullOrEmpty() }
             ?.any { ProgressiveDiseaseFunctions.treatmentResultedInPD(it) == true }
@@ -65,27 +65,35 @@ class HasHadTreatmentResponseFollowingSomeTreatmentOrCategoryOfTypes(
         return when {
             !evaluateClinicalBenefit && otherResponses.isNotEmpty() && treatmentsWithResponse.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Uncertain$responseMessage${treatmentDisplay()} - also had ${
+                    "Uncertain$responseMessage${treatmentDisplay()} - also ${
                         Format.concatLowercaseWithCommaAndAnd(
                             otherResponses.map { it.display() })
-                    }"
+                    } in provided treatments"
                 )
             }
 
             evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == false -> {
-                EvaluationFactory.undetermined("Clinical benefit from treatment${treatmentDisplay()} undetermined - did not $similarDrugMessage")
+                EvaluationFactory.undetermined("Clinical benefit from treatment${treatmentDisplay()} undetermined - $similarDrugMessage")
             }
 
             evaluateClinicalBenefit && targetTreatmentsToResponseMap.isEmpty() && hadSimilarTreatmentsWithPD == true -> {
-                EvaluationFactory.fail("Did not $similarDrugMessage with PD as best response")
+                EvaluationFactory.fail("$similarDrugMessage with PD as best response")
             }
 
             targetTreatmentsToResponseMap.isEmpty() -> {
-                EvaluationFactory.fail("Has not received treatment${treatmentDisplay()}")
+                EvaluationFactory.fail("No treatment${treatmentDisplay()} in provided treatments")
             }
 
             treatmentsWithResponse.isNotEmpty() -> {
-                EvaluationFactory.pass("Has had$responseMessage${treatmentDisplay(treatmentsInHistory(treatmentsWithResponse))}")
+                EvaluationFactory.pass(
+                    "${responseMessage.trimStart()}${
+                        treatmentDisplay(
+                            treatmentsInHistory(
+                                treatmentsWithResponse
+                            )
+                        )
+                    } in provided treatments"
+                )
             }
 
             evaluateClinicalBenefit && TreatmentResponse.STABLE_DISEASE in targetTreatmentsToResponseMap -> {

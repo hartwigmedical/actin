@@ -17,7 +17,7 @@ class HasLeftSidedColorectalTumorTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if left-sided colorectal cancer"
+            "Undetermined if cancer is left-sided colorectal cancer"
         )
     }
 
@@ -26,7 +26,7 @@ class HasLeftSidedColorectalTumorTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function().evaluate(withDoids(DoidConstants.PROSTATE_CANCER_DOID)),
-            "Has no left-sided colorectal cancer"
+            "Cancer is not left-sided colorectal cancer"
         )
     }
 
@@ -36,14 +36,18 @@ class HasLeftSidedColorectalTumorTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function().evaluate(patientWithTumorName("text $name other text")),
-                "Has left-sided CRC tumor (text $name other text)"
+                "Cancer is left-sided colorectal cancer (text $name other text)"
             )
         }
     }
 
     @Test
     fun `Should pass when name contains rectum`() {
-        assertEvaluation(EvaluationResult.PASS, function().evaluate(patientWithTumorName(("rectum"))), "Has left-sided CRC tumor (rectum)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function().evaluate(patientWithTumorName(("rectum"))),
+            "Cancer is left-sided colorectal cancer (rectum)"
+        )
     }
 
     @Test
@@ -52,7 +56,7 @@ class HasLeftSidedColorectalTumorTest {
             assertEvaluation(
                 EvaluationResult.FAIL,
                 function().evaluate(patientWithTumorName(("text $name other text"))),
-                "Has no left-sided CRC tumor but right-sided tumor (text $name other text)"
+                "Cancer is not left-sided colorectal cancer (but right-sided text $name other text)"
             )
         }
     }
@@ -62,7 +66,7 @@ class HasLeftSidedColorectalTumorTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function().evaluate(patientWithTumorName(("colorectum cecum"))),
-            "Has no left-sided CRC tumor but right-sided tumor (colorectum cecum)"
+            "Cancer is not left-sided colorectal cancer (but right-sided colorectum cecum)"
         )
     }
 
