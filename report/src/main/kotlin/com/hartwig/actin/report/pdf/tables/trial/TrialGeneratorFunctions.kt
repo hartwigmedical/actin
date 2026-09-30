@@ -36,7 +36,6 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<MessageWithIsMissingMolecularResultForEvaluation>,
         indicateNoSlotsOrClosed: Boolean,
         useSmallerSize: Boolean,
-        includeCohortConfig: Boolean,
         includeSites: Boolean,
     ) {
         sortedCohortsGroupedByTrial(cohorts, requestingSource).forEach { cohortList: List<InterpretedCohort> ->
@@ -48,7 +47,6 @@ object TrialGeneratorFunctions {
                 feedbackFunction,
                 indicateNoSlotsOrClosed,
                 useSmallerSize,
-                includeCohortConfig,
                 includeSites
             )
         }
@@ -92,7 +90,6 @@ object TrialGeneratorFunctions {
         feedbackFunction: (InterpretedCohort) -> Set<MessageWithIsMissingMolecularResultForEvaluation>,
         indicateNoSlotsOrClosed: Boolean,
         useSmallerSize: Boolean,
-        includeCohortConfig: Boolean,
         includeSites: Boolean
     ) {
         table.addCell(generateTrialTitleCell(cohortsForTrial, useSmallerSize).setKeepTogether(true))
@@ -102,7 +99,6 @@ object TrialGeneratorFunctions {
             includeFeedback = includeFeedback,
             feedbackFunction = feedbackFunction,
             requestingSource = requestingSource,
-            includeCohortConfig = includeCohortConfig,
             includeSites = includeSites,
             indicateNoSlotsOrClosed = indicateNoSlotsOrClosed
         ).forEachIndexed { index, content ->
@@ -178,7 +174,6 @@ object TrialGeneratorFunctions {
         cohortsForTrial: List<InterpretedCohort>,
         includeFeedback: Boolean,
         feedbackFunction: (InterpretedCohort) -> Set<MessageWithIsMissingMolecularResultForEvaluation>,
-        includeCohortConfig: Boolean,
         requestingSource: TrialSource? = null,
         includeSites: Boolean,
         indicateNoSlotsOrClosed: Boolean
@@ -228,12 +223,7 @@ object TrialGeneratorFunctions {
                 if (includeFeedback) concatFeedback(
                     feedbackFunction(cohort) - commonFeedback,
                     commonFeedback.isEmpty() && hidePrefix
-                ) else null,
-                if (includeCohortConfig) concat(
-                    setOfNotNull(
-                        "Ignored".takeIf { cohort.ignore },
-                        "Non-evaluable".takeIf { !cohort.isEvaluable }), separator = " and "
-                ) else null,
+                ) else null
             )
         }
     }

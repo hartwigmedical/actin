@@ -16,7 +16,7 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         return EvaluationFactory.undetermined(
-            "Undetermined if received ${category.display()} of only type(s)" +
+            "Undetermined if received ${category.display()} of only type(s) " +
                     "${Format.concatItemsWithOr(types)} for at least $months months as most recent line"
         )
     }

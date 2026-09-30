@@ -124,7 +124,7 @@ class GeneHasVariantInCodon(override val gene: String, private val codons: List<
             listOf(
                 EventsWithMessages(
                     canonicalReportableSubclonalVariantMatches,
-                    "Variant(s) in codon(s) ${concatVariants(canonicalReportableSubclonalVariantMatches, gene)} in $gene in " +
+                    "Variant(s) in codon(s) ${concat(canonicalCodonMatches)} in $gene in " +
                             "canonical transcript but subclonal likelihood of > ${percentage(1 - CLONAL_CUTOFF)}"
                 ),
                 EventsWithMessages(

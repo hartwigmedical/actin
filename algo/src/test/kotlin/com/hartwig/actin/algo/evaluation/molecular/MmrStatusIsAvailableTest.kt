@@ -10,21 +10,37 @@ class MmrStatusIsAvailableTest {
 
     @Test
     fun `Should pass with MSI sequencing result true`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteStability(true)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withMicrosatelliteStability(true)),
+            "MMR status is available"
+        )
     }
 
     @Test
     fun `Should pass with MSI sequencing result false`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withMicrosatelliteStability(false)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withMicrosatelliteStability(false)),
+            "MMR status is available"
+        )
     }
 
     @Test
     fun `Should pass with MSI IHC test result`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR"))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withIhcTests(MolecularTestFactory.ihcTest("MMR"))),
+            "MMR status is available"
+        )
     }
 
     @Test
     fun `Should fail when missing MMR information`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withMicrosatelliteStability(null)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withMicrosatelliteStability(null)),
+            "No MMR status available"
+        )
     }
 }

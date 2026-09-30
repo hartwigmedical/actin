@@ -10,6 +10,10 @@ class HasHifuAmenableLesionTest {
     @Test
     fun `Should evaluate to undetermined always`() {
         val function = HasHifuAmenableLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "HIFU amenability undetermined"
+        )
     }
 }

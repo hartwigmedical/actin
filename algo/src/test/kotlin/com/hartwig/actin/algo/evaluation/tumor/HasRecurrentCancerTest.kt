@@ -10,8 +10,20 @@ class HasRecurrentCancerTest {
     @Test
     fun canEvaluate() {
         val function = HasRecurrentCancer()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withTumorStage(null)),
+            "Undetermined if cancer is recurrent"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIB)),
+            "Undetermined if cancer is recurrent"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)),
+            "Undetermined if cancer is recurrent"
+        )
     }
 }

@@ -10,7 +10,8 @@ class MolecularResultsAreGenerallyAvailableTest {
     @Test
     fun `Should pass if molecular history is not empty`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, MolecularResultsAreGenerallyAvailable().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            EvaluationResult.PASS, MolecularResultsAreGenerallyAvailable().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "There are molecular results available"
         )
     }
 
@@ -18,7 +19,8 @@ class MolecularResultsAreGenerallyAvailableTest {
     fun `Should fail if molecular history is empty`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            MolecularResultsAreGenerallyAvailable().evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord())
+            MolecularResultsAreGenerallyAvailable().evaluate(TestPatientFactory.createEmptyMolecularTestPatientRecord()),
+            "No molecular results available"
         )
     }
 }

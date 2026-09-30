@@ -16,7 +16,8 @@ class HasLabValueWithinInstitutionalNormalLimitTest {
     fun `Should evaluate to undetermined if isOutsideRef is null`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = null))
+            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = null)),
+            "Undetermined if creatinine is within institutional normal limits"
         )
     }
 
@@ -24,7 +25,8 @@ class HasLabValueWithinInstitutionalNormalLimitTest {
     fun `Should pass if isOutsideRef is false`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = false))
+            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = false)),
+            "Creatinine within institutional normal limits"
         )
     }
 
@@ -32,7 +34,8 @@ class HasLabValueWithinInstitutionalNormalLimitTest {
     fun `Should fail if isOutsideRef is true`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = true))
+            function.evaluate(record, LabMeasurement.CREATININE, labValue.copy(isOutsideRef = true)),
+            "Creatinine exceeds institutional normal limits"
         )
     }
 }

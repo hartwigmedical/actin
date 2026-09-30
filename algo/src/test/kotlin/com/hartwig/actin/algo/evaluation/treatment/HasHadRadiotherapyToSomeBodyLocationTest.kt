@@ -24,7 +24,8 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has had prior radiotherapy to Spleen for at least 2 lines"
         )
     }
 
@@ -36,7 +37,8 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has had prior radiotherapy to Spleen for at least 2 lines"
         )
     }
 
@@ -48,7 +50,8 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has received radiotherapy but undetermined if target location was Spleen"
         )
     }
 
@@ -59,7 +62,8 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has not received prior radiation therapy to Spleen for at least 2 lines"
         )
     }
 
@@ -70,7 +74,8 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "Has not received prior radiation therapy to Spleen for at least 2 lines"
         )
     }
 
@@ -81,7 +86,8 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(history)),
+            "Has not received prior radiation therapy to Spleen for at least 2 lines"
         )
     }
 
@@ -89,7 +95,8 @@ class HasHadRadiotherapyToSomeBodyLocationTest {
     fun `Should fail if oncological history empty`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received prior radiation therapy to Spleen for at least 2 lines"
         )
     }
 }

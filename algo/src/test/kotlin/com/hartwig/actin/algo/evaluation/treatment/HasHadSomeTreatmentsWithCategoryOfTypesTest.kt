@@ -23,7 +23,11 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
 
     @Test
     fun `Should fail for no treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+        )
     }
 
     @Test
@@ -31,7 +35,8 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
+            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
         )
     }
 
@@ -41,16 +46,22 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
+            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
         )
     }
 
     @Test
     fun `Should pass when treatments with correct category and type meet threshold`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, MATCHING_TYPE_SET)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+        )
+        assertEvaluation(
+            EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
+            "Has received at least 2 line(s) of HER2 antibody targeted therapy"
         )
     }
 
@@ -65,25 +76,36 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
+            "Has received at least 1 line(s) of HER2 antibody targeted therapy"
         )
     }
 
     @Test
     fun `Should return undetermined when treatments with correct category and no type meet threshold`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
+            "Undetermined if received at least 2 line(s) of HER2 antibody targeted therapy"
         )
     }
 
     @Test
     fun `Should return undetermined when trial treatments meet threshold`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY)), isTrial = true)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received at least 2 line(s) of HER2 antibody targeted therapy"
+        )
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
+            "Undetermined if received at least 2 line(s) of HER2 antibody targeted therapy"
         )
     }
 
@@ -92,7 +114,8 @@ class HasHadSomeTreatmentsWithCategoryOfTypesTest {
         val function = HasHadSomeTreatmentsWithCategoryOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC), 2)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
         assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry)))
+            EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
+            "Has not received at least 2 line(s) of allogenic transplantation"
         )
     }
 }

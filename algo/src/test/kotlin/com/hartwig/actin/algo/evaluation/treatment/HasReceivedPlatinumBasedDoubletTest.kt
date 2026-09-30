@@ -84,7 +84,8 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has received platinum based doublet chemotherapy"
         )
     }
 
@@ -94,7 +95,8 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has received platinum based doublet chemotherapy"
         )
     }
 
@@ -109,7 +111,8 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has received platinum based doublet chemotherapy"
         )
     }
 
@@ -119,7 +122,8 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.PASS,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)).copy(oncologicalHistory = chemoradiationHistory)
-            )
+            ),
+            "Has received undefined chemoradiation for NSCLC - assumed platinum-based"
         )
     }
 
@@ -129,7 +133,8 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID)).copy(oncologicalHistory = chemoradiationHistory)
-            )
+            ),
+            "Has not received platinum based doublet chemotherapy"
         )
     }
 
@@ -139,7 +144,8 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.PASS,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_ADENOCARCINOMA_DOID)).copy(oncologicalHistory = chemoImmunoHistory)
-            )
+            ),
+            "Has received undefined chemo-immunotherapy for NSCLC - assumed platinum-based"
         )
     }
 
@@ -149,7 +155,8 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.BREAST_CANCER_DOID)).copy(oncologicalHistory = chemoImmunoHistory)
-            )
+            ),
+            "Has not received platinum based doublet chemotherapy"
         )
     }
 
@@ -159,7 +166,8 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.PASS,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.OVARIAN_CARCINOMA_DOID)).copy(oncologicalHistory = undefinedChemoHistory)
-            )
+            ),
+            "Has received undefined chemo-immunotherapy for gynaecological cancer - assumed platinum-based"
         )
     }
 
@@ -169,7 +177,8 @@ class HasReceivedPlatinumBasedDoubletTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.COLORECTAL_CANCER_DOID)).copy(oncologicalHistory = undefinedChemoHistory)
-            )
+            ),
+            "Has not received platinum based doublet chemotherapy"
         )
     }
 
@@ -179,7 +188,8 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)"
         )
     }
 
@@ -197,7 +207,8 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has received platinum chemotherapy combination but not in doublet (more than 2 drugs combined)"
         )
     }
 
@@ -209,7 +220,8 @@ class HasReceivedPlatinumBasedDoubletTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has not received platinum based doublet chemotherapy"
         )
     }
 
@@ -223,7 +235,8 @@ class HasReceivedPlatinumBasedDoubletTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has not received platinum based doublet chemotherapy"
         )
     }
 
@@ -233,7 +246,8 @@ class HasReceivedPlatinumBasedDoubletTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Has not received platinum based doublet chemotherapy"
         )
     }
 
@@ -241,7 +255,8 @@ class HasReceivedPlatinumBasedDoubletTest {
     fun `Should fail if treatment history is empty`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList()))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received platinum based doublet chemotherapy"
         )
     }
 }

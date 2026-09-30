@@ -23,7 +23,8 @@ class HasSufficientBloodPressureTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures))
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(bloodPressures)),
+            "Median systolic blood pressure (95 mmHg) below 140 mmHg"
         )
     }
 }

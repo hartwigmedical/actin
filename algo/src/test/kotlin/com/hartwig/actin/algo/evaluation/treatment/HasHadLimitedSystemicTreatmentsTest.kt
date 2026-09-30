@@ -13,19 +13,31 @@ class HasHadLimitedSystemicTreatmentsTest {
 
     @Test
     fun shouldPassWhenTreatmentHistoryEmpty() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has received at most 1 systemic treatments"
+        )
     }
 
     @Test
     fun shouldPassWhenOnlyNonSystemicTreatments() {
         val treatments = listOf(treatmentHistoryEntry(setOf(treatment("1", false))))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Has received at most 1 systemic treatments"
+        )
     }
 
     @Test
     fun shouldPassWhenSystemicTreatmentsBelowThreshold() {
         val treatments = listOf(treatmentHistoryEntry(setOf(treatment("1", true))))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Has received at most 1 systemic treatments"
+        )
     }
 
     @Test
@@ -34,13 +46,21 @@ class HasHadLimitedSystemicTreatmentsTest {
             treatmentHistoryEntry(setOf(treatment("1", true))),
             treatmentHistoryEntry(setOf(treatment("2", true)))
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Has received more than 1 systemic treatments"
+        )
     }
 
     @Test
     fun shouldBeUndeterminedInCaseOfAmbiguousTimeline() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("treatment", true)))
         val treatments = listOf(treatmentHistoryEntry, treatmentHistoryEntry)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
+            "Undetermined if received more than 1 systemic treatments"
+        )
     }
 }

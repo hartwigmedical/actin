@@ -11,6 +11,10 @@ class MeetsCovid19InfectionRequirementsTest {
 
     @Test
     fun `Should pass always`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that COVID-19 infection requirements are met"
+        )
     }
 }

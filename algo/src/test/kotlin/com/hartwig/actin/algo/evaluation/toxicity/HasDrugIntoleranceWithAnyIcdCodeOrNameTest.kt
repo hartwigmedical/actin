@@ -22,7 +22,8 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
     @Test
     fun `Should fail when no known intolerances are present`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList()))
+            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
+            "No known allergy to platinum compounds"
         )
     }
 
@@ -30,7 +31,8 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
     fun `Should fail when intolerances does not have name or ICD code match for taxane intolerance`() {
         val mismatch = ComorbidityTestFactory.intolerance(name = "mismatch", icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(mismatch))
+            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(mismatch)),
+            "No known allergy to platinum compounds"
         )
     }
 
@@ -38,17 +40,19 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
     fun `Should pass for intolerance matching on name only`() {
         val match = ComorbidityTestFactory.intolerance(name = PLATINUM_DRUG_SET.iterator().next())
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match))
+            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+            "Has allergy to platinum compounds (carboplatin)"
         )
     }
 
     @Test
     fun `Should pass for intolerance matching on ICD code only`() {
         val match = ComorbidityTestFactory.intolerance(
-            icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = IcdConstants.PLATINUM_COMPOUND_CODE
+            name = "platinum allergy", icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = IcdConstants.PLATINUM_COMPOUND_CODE
         )
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match))
+            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+            "Has allergy to platinum compounds (${match.name})"
         )
     }
 
@@ -60,7 +64,11 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode, icdExtensionCode),
             ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = icdExtensionCode)
         ).forEach { match ->
-            EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
+            EvaluationAssert.assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+                "Has allergy to platinum compounds (${match.name})"
+            )
         }
     }
 
@@ -69,7 +77,8 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         val match = ComorbidityTestFactory.intolerance(name = "${PLATINUM_DRUG_SET.iterator().next()} chemotherapy allergy")
 
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match))
+            EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+            "Has allergy to platinum compounds (carboplatin chemotherapy allergy)"
         )
     }
 
@@ -77,7 +86,8 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
     fun `Should evaluate to undetermined when intolerance matches on drug allergy ICD code but has no ICD code extension`() {
         val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = null)
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance))
+            EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
+            "Undetermined if drug allergy in history is platinum compounds allergy (drug type unknown)"
         )
     }
 }

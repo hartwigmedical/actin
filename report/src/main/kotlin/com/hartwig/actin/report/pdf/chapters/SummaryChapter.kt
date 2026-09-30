@@ -131,7 +131,7 @@ class SummaryChapter(
             ?.let {
                 MolecularSummaryGenerator(
                     patientRecord = report.patientRecord,
-                    cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
+                    cohorts = trialsProvider.evaluableCohorts(),
                     keyWidth = keyWidth,
                     valueWidth = valueWidth,
                     labels = labels
@@ -146,7 +146,7 @@ class SummaryChapter(
             .takeIf { it != ReportContentType.NONE }
             ?.let {
                 createTrialTableGenerators(
-                    cohorts = trialsProvider.evaluableCohortsAndNotIgnore(),
+                    cohorts = trialsProvider.evaluableCohorts(),
                     externalTrials = trialsProvider.externalTrials(),
                     requestingSource = TrialSource.fromDescription(configuration.hospitalOfReference)
                 )

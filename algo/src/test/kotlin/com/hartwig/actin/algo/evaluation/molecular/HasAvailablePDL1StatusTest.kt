@@ -11,14 +11,16 @@ class HasAvailablePDL1StatusTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, HasAvailablePDL1Status().evaluate(
                 MolecularTestFactory.withIhcTests(listOf(MolecularTestFactory.ihcTest(item = "PD-L1")))
-            )
+            ),
+            "PD-L1 status available"
         )
     }
 
     @Test
     fun `Should fail if record does not contain PD-L1 IHC test`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.FAIL, HasAvailablePDL1Status().evaluate(MolecularTestFactory.withIhcTests(emptyList()))
+            EvaluationResult.FAIL, HasAvailablePDL1Status().evaluate(MolecularTestFactory.withIhcTests(emptyList())),
+            "PD-L1 status not available"
         )
     }
 }

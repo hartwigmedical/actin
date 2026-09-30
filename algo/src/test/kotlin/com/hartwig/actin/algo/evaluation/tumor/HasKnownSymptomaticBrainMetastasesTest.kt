@@ -12,7 +12,8 @@ class HasKnownSymptomaticBrainMetastasesTest {
     fun `Should return undetermined when unknown if (symptomatic) brain metastases present`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = null, hasSymptomaticBrainLesions = null))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = null, hasSymptomaticBrainLesions = null)),
+            "Undetermined if symptomatic brain metastases present (data missing)"
         )
     }
 
@@ -20,7 +21,8 @@ class HasKnownSymptomaticBrainMetastasesTest {
     fun `Should return undetermined when brain metastases present but unknown if symptomatic`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = null))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = null)),
+            "Brain metastases present but unknown if symptomatic (data missing)"
         )
     }
 
@@ -28,7 +30,8 @@ class HasKnownSymptomaticBrainMetastasesTest {
     fun `Should fail when there are no brain metastases`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = false, hasSymptomaticBrainLesions = null))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = false, hasSymptomaticBrainLesions = null)),
+            "No known symptomatic brain metastases present"
         )
     }
 
@@ -36,7 +39,8 @@ class HasKnownSymptomaticBrainMetastasesTest {
     fun `Should fail when brain metastases are present but not symptomatic`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = false))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = false)),
+            "No known symptomatic brain metastases present"
         )
     }
 
@@ -44,7 +48,8 @@ class HasKnownSymptomaticBrainMetastasesTest {
     fun `Should pass when brain metastases are present and symptomatic`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = true))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasSymptomaticBrainLesions = true)),
+            "Has symptomatic brain metastases"
         )
     }
 }

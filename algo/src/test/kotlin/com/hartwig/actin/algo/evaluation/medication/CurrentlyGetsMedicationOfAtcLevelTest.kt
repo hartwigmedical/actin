@@ -20,45 +20,59 @@ class CurrentlyGetsMedicationOfAtcLevelTest {
 
     @Test
     fun `Should fail when no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No current L01A medication use"
+        )
     }
 
     @Test
     fun `Should fail when medication has wrong category`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode("wrong category")))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode("wrong category")),
+            "No current L01A medication use"
+        )
     }
 
     @Test
     fun `Should pass when medication has right category`() {
         assertEvaluation(
-            EvaluationResult.PASS, alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE))
+            EvaluationResult.PASS, alwaysActiveFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE, "name")),
+            "L01A medication use (name)"
         )
     }
 
     @Test
     fun `Should warn when patient plans to use medication of right category`() {
         assertEvaluation(
-            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE))
+            EvaluationResult.WARN, alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode(TARGET_ATC_CODE, "name")),
+            "Planned L01A medication use (name)"
         )
     }
 
     @Test
     fun `Should fail when patient plans to use medication with wrong category`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode("wrong category")))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysPlannedFunction.evaluate(patientWithMedicationHavingAnatomicalCode("wrong category")),
+            "No current L01A medication use"
+        )
     }
 
     @Test
     fun `Should be undetermined if medication is not provided`() {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult, "No medication data provided")
         assertThat(alwaysPlannedResult.recoverable).isTrue()
         val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult, "No medication data provided")
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 
-    private fun patientWithMedicationHavingAnatomicalCode(atcCode: String) = MedicationTestFactory.withMedications(
-        listOf(TestMedicationFactory.createMinimal().copy(atc = AtcTestFactory.atcClassification(atcCode)))
+    private fun patientWithMedicationHavingAnatomicalCode(atcCode: String, name: String = "") = MedicationTestFactory.withMedications(
+        listOf(TestMedicationFactory.createMinimal().copy(name = name, atc = AtcTestFactory.atcClassification(atcCode)))
     )
 }

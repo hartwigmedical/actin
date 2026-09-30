@@ -23,32 +23,52 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
 
     @Test
     fun `Should fail when no prior tumors present`() {
-        assertEvaluation(EvaluationResult.FAIL, functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(emptyList())),
+            "No history of other malignancy"
+        )
     }
 
     @Test
     fun `Should fail when prior tumors present in history but with doid to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid))
-        assertEvaluation(EvaluationResult.FAIL, functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No history of previous malignancy excluding ignore term"
+        )
     }
 
     @Test
     fun `Should fail when prior tumors present in history but doid is child of doid to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid))
         val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(parentDoid), minDate = null)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No history of previous malignancy excluding ignore term"
+        )
     }
 
     @Test
     fun `Should pass when prior tumors present in history with doid term not to ignore`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = "other", diagnosedYear = minDate.year))
-        assertEvaluation(EvaluationResult.PASS, functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "Has history of previous malignancy"
+        )
     }
 
     @Test
     fun `Should pass when prior tumors present in history with doid term not to ignore and within requested date range`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = "other", diagnosedYear = minDate.year))
-        assertEvaluation(EvaluationResult.PASS, functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "Has history of recent previous malignancy"
+        )
     }
 
     @Test
@@ -59,19 +79,28 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
             )
         )
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors))
+            EvaluationResult.UNDETERMINED, functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "Has history of previous malignancy but undetermined if recent (date unknown)"
         )
     }
 
     @Test
     fun `Should fail when prior tumors with doid term to ignore and unknown date in history`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid, diagnosedYear = null))
-        assertEvaluation(EvaluationResult.FAIL, functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No recent history of other malignancy"
+        )
     }
 
     @Test
     fun `Should fail when prior tumors present in history with doid term not to ignore but outside date range to evaluate`() {
         val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = "other", diagnosedYear = minDate.minusYears(3).year))
-        assertEvaluation(EvaluationResult.FAIL, functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No recent history of other malignancy"
+        )
     }
 }

@@ -11,22 +11,42 @@ class HasUnresectableCancerTest {
 
     @Test
     fun `Should be undetermined without stage information`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(null)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withTumorStage(null)),
+            "Undetermined if cancer is unresectable (tumor stage missing)"
+        )
     }
 
     @Test
     fun `Should pass with stage IV`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)),
+            "Has unresectable cancer (stage IV)"
+        )
     }
 
     @Test
     fun `Should be undetermined with stage III`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIA)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IIIA)),
+            "Undetermined if cancer is unresectable (stage IIIA)"
+        )
     }
 
     @Test
     fun `Should fail with stage I or II`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IB)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IB)),
+            "No unresectable cancer (stage IB)"
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TumorTestFactory.withTumorStage(TumorStage.II)),
+            "No unresectable cancer (stage II)"
+        )
     }
 }

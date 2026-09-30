@@ -60,7 +60,6 @@ class EligibleTrialGenerator(
             feedbackFunction = InterpretedCohort::warnings,
             indicateNoSlotsOrClosed = indicateNoSlotsOrClosed,
             useSmallerSize = useSmallerSize,
-            includeCohortConfig = false,
             includeSites = true
         )
         return table

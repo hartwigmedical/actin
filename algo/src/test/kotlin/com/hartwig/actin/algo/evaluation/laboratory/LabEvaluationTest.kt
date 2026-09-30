@@ -124,14 +124,14 @@ class LabEvaluationTest {
     @Test
     fun `Should evaluate to undetermined with specific message if lab value is null`() {
         val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, null, minValidDate)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "No measurement found for creatinine")
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("No measurement found for ${measurement.display}")
     }
 
     @Test
     fun `Should evaluate to undetermined with specific message if lab value unit is different from default`() {
         val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(unit = LabUnit.GRAMS), minValidDate)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Unexpected unit specified for creatinine: g")
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Unexpected unit specified for ${measurement.display}: ${LabUnit.GRAMS.display()}"
         )
@@ -140,7 +140,7 @@ class LabEvaluationTest {
     @Test
     fun `Should evaluate to undetermined with specific message if lab value is too old`() {
         val evaluation = LabEvaluation.evaluateInvalidLabValue(measurement, labValue.copy(date = minValidDate.minusDays(1)), minValidDate)
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Most recent measurement too old for creatinine")
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Most recent measurement too old for ${measurement.display}"
         )

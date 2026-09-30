@@ -12,6 +12,10 @@ class HasHadChemoradiotherapyWithDrugAndCyclesTest {
     @Test
     fun `Should evaluate to undetermined`() {
         val function = HasHadChemoradiotherapyWithDrugAndCycles(setOf(Drug("name", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)), 2)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if received chemoradiotherapy with name and at least 2 cycles"
+        )
     }
 }

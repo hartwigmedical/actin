@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
-import com.hartwig.actin.icd.TestIcdFactory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
@@ -24,16 +23,6 @@ class ToxicityFunctionsTest {
         source = ToxicitySource.EHR,
         grade = 2
     )
-
-    @Test
-    fun `Should not select toxicities with code matching the icd entries to ignore`() {
-        val icdModel = TestIcdFactory.createModelWithSpecificNodes(listOf("ignore", "keep"))
-        val codesToIgnore = listOf("ignoreTitle").mapNotNull(icdModel::resolveCodeForTitle).map { it.mainCode }.toSet()
-        val keepTox = ehrTox.copy(icdCodes = setOf(IcdCode("keepCode")))
-        val record = withComorbidities(listOf(keepTox, keepTox.copy(icdCodes = setOf(IcdCode("ignoreCode")))))
-
-        assertThat(ToxicityFunctions.selectRelevantToxicities(record, referenceDate, codesToIgnore)).containsOnly(keepTox)
-    }
 
     @Test
     fun `Should only select most recent EHR toxicities when multiple of same icd code are present with null evaluated date `() {

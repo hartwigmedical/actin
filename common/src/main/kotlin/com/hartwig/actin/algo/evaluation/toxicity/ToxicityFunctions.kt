@@ -9,15 +9,12 @@ import java.time.LocalDate
 
 object ToxicityFunctions {
 
-    fun selectRelevantToxicities(
-        record: PatientRecord, referenceDate: LocalDate, ignoredIcdMainCodes: Set<String> = emptySet()
-    ): List<Toxicity> {
+    fun selectRelevantToxicities(record: PatientRecord, referenceDate: LocalDate): List<Toxicity> {
         val icdCodesToExclude = record.otherConditions.map(Comorbidity::icdCodes).toSet()
 
         return dropOutdatedEHRToxicities(record.toxicities)
             .filter { DateComparison.isBeforeDate(referenceDate.minusYears(2), it.year, it.month) != true }
             .filter { it.source != ToxicitySource.EHR || it.icdCodes !in icdCodesToExclude }
-            .filterNot { it.icdCodes.any { code -> code.mainCode in ignoredIcdMainCodes } }
     }
 
     private fun dropOutdatedEHRToxicities(toxicities: List<Toxicity>): List<Toxicity> {

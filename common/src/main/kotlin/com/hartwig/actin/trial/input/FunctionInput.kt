@@ -12,6 +12,7 @@ object FunctionInput {
     val TWO_DOUBLES = listOf(Parameter.Type.DOUBLE, Parameter.Type.DOUBLE)
     val ONE_ALBI_GRADE = listOf(Parameter.Type.ALBI_GRADE)
     val ONE_SYSTEMIC_TREATMENT = listOf(Parameter.Type.SYSTEMIC_TREATMENT)
+    val ONE_TREATMENT_TYPE = listOf(Parameter.Type.TREATMENT_TYPE)
     val ONE_TREATMENT_CATEGORY_OR_TYPE = listOf(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE)
     val ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER = listOf(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE, Parameter.Type.INTEGER)
     val ONE_TREATMENT_CATEGORY_MANY_TYPES = listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)

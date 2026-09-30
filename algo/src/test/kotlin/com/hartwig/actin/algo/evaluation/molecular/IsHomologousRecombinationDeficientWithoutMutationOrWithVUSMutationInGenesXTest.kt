@@ -11,7 +11,6 @@ import com.hartwig.actin.datamodel.molecular.driver.TestHomozygousDisruptionFact
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptCopyNumberImpactFactory
 import com.hartwig.actin.datamodel.molecular.driver.TestVariantFactory
 import com.hartwig.actin.datamodel.molecular.driver.Variant
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesXTest {
@@ -34,7 +33,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                             driverLikelihood = DriverLikelihood.HIGH
                         )
                 )
-            )
+            ),
+            "Tumor is HRD with BRCA1 deletion or partial deletion"
         )
     }
 
@@ -46,7 +46,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true, hrdVariant(isReportable = true, isCancerAssociatedVariant = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
-            )
+            ),
+            "Tumor is HRD with BRCA1 cancer-associated variant"
         )
     }
 
@@ -54,20 +55,26 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     fun `Should fail when no HRD`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(false, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(false, hrdVariant())),
+            "Tumor is not HRD"
         )
     }
 
     @Test
     fun `Should be undetermined when HRD status unknown and no reportable drivers in HR genes`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withVariant(hrdVariant())))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withVariant(hrdVariant())),
+            "Unknown HRD status"
+        )
     }
 
     @Test
     fun `Should be undetermined when HRD status unknown but with drivers in HR genes`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withVariant(hrdVariant(isReportable = true)))
+            function.evaluate(MolecularTestFactory.withVariant(hrdVariant(isReportable = true))),
+            "Unknown HRD status but non-biallelic drivers in HR genes"
         )
     }
 
@@ -75,7 +82,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
     fun `Should warn when HRD and only a non reportable mutation in BRCA1`() {
         assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant()))
+            function.evaluate(MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant())),
+            "Tumor is HRD but without drivers in HR genes"
         )
     }
 
@@ -88,7 +96,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     true,
                     hrdVariant(isReportable = true, isBiallelic = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
-            )
+            ),
+            "Tumor is HRD with non-cancer-associated variant biallelic high driver(s) in BRCA1 which could be pathogenic"
         )
     }
 
@@ -101,7 +110,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     true,
                     hrdVariant(isReportable = true, isBiallelic = true)
                 )
-            )
+            ),
+            "Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 which could be pathogenic"
         )
     }
 
@@ -114,7 +124,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     true,
                     hrdVariant(isReportable = true, driverLikelihood = DriverLikelihood.HIGH)
                 )
-            )
+            ),
+            "Tumor is HRD with non-cancer-associated variant non-biallelic high driver(s) in BRCA1 which could be pathogenic"
         )
     }
 
@@ -127,7 +138,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     true,
                     hrdVariant(isReportable = true)
                 )
-            )
+            ),
+            "Tumor is HRD with non-cancer-associated variant non-biallelic non-high driver(s) in BRCA1 which could be pathogenic"
         )
     }
 
@@ -139,8 +151,7 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 TestVariantFactory.createMinimal().copy(gene = "BRCA1", isReportable = true, isCancerAssociatedVariant = true)
             )
         )
-        assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessagesStrings()).containsExactly("Tumor is HRD but without drivers in HR genes")
+        assertEvaluation(EvaluationResult.WARN, result, "Tumor is HRD but without drivers in HR genes")
     }
 
     @Test
@@ -153,7 +164,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
                 )
-            )
+            ),
+            "Tumor is HRD with non-homozygous disruption in BRCA1 which could be pathogenic"
         )
     }
 
@@ -165,7 +177,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true, hrdVariant(gene = "RAD51C", true)
                 )
-            )
+            ),
+            "Tumor is HRD but with only non-biallelic drivers in HR genes"
         )
     }
 
@@ -179,7 +192,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                     TestDisruptionFactory.createMinimal()
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true)
                 )
-            )
+            ),
+            "Tumor is HRD with non-homozygous disruption in BRCA1 which could be pathogenic"
         )
     }
 
@@ -189,7 +203,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withHomologousRecombinationAndVariant(true, hrdVariant())
-            )
+            ),
+            "Tumor is HRD but without drivers in HR genes"
         )
     }
 
@@ -204,7 +219,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                         .copy(gene = "BRCA1", driverLikelihood = DriverLikelihood.HIGH, isReportable = true),
                     hrdVariant("RAD51C", true, true, true)
                 )
-            )
+            ),
+            "Tumor is HRD with non-homozygous disruption in BRCA1 which could be pathogenic"
         )
     }
 
@@ -216,7 +232,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 MolecularTestFactory.withHomologousRecombinationAndHomozygousDisruption(
                     true, TestHomozygousDisruptionFactory.createMinimal().copy(gene = "BRCA1")
                 )
-            )
+            ),
+            "Tumor is HRD with homozygous disruption in BRCA1 which could be pathogenic"
         )
     }
 
@@ -228,7 +245,8 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 MolecularTestFactory.withHomologousRecombinationAndVariant(
                     true, hrdVariant("RAD51C", true, true, true, DriverLikelihood.HIGH)
                 )
-            )
+            ),
+            "Tumor is HRD without any variants in BRCA1 and BRCA2"
         )
     }
 
@@ -242,9 +260,11 @@ class IsHomologousRecombinationDeficientWithoutMutationOrWithVUSMutationInGenesX
                 hrdVariant("BRCA1", true, true, false)
             )
         )
-        assertEvaluation(EvaluationResult.WARN, result)
-        assertThat(result.warnMessagesStrings())
-            .containsExactly("Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 and non-homozygous disruption in BRCA1 which could be pathogenic")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            result,
+            "Tumor is HRD with non-cancer-associated variant biallelic non-high driver(s) in BRCA1 and non-homozygous disruption in BRCA1 which could be pathogenic"
+        )
     }
 
     private fun hrdVariant(

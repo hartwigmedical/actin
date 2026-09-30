@@ -25,7 +25,8 @@ class HasHadCytoreductiveSurgeryTest {
                 createPatientRecord(
                     treatmentName = "Hormone therapy",
                     categories = setOf(TreatmentCategory.HORMONE_THERAPY))
-            )
+            ),
+            "Has not received cytoreductive surgery"
         )
     }
 
@@ -36,7 +37,8 @@ class HasHadCytoreductiveSurgeryTest {
                 treatmentName = "Nephrectomy",
                 categories = setOf(TreatmentCategory.SURGERY)
             )
-        ))
+        ),
+            "Has not received cytoreductive surgery")
     }
 
     @Test
@@ -46,7 +48,8 @@ class HasHadCytoreductiveSurgeryTest {
                 treatmentName = "HIPEC",
                 categories = setOf(TreatmentCategory.CHEMOTHERAPY)
             )
-        ))
+        ),
+            "Has had cytoreductive surgery")
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(
@@ -55,7 +58,8 @@ class HasHadCytoreductiveSurgeryTest {
                     categories = setOf(TreatmentCategory.SURGERY),
                     types = setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
                 )
-            )
+            ),
+            "Has had cytoreductive surgery"
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -65,7 +69,8 @@ class HasHadCytoreductiveSurgeryTest {
                     categories = setOf(TreatmentCategory.SURGERY),
                     types = setOf(OtherTreatmentType.CYTOREDUCTIVE_SURGERY)
                 )
-            )
+            ),
+            "Has had cytoreductive surgery"
         )
 
     }
@@ -76,7 +81,7 @@ class HasHadCytoreductiveSurgeryTest {
             treatmentName = "Surgery",
             categories = setOf(TreatmentCategory.SURGERY),
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record), "Undetermined if performed surgery was cytoreductive")
     }
 
     @Test
@@ -89,7 +94,8 @@ class HasHadCytoreductiveSurgeryTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(record)
+            function.evaluate(record),
+            "Undetermined if performed debulking surgery meets the criteria of cytoreductive surgery"
         )
 
         assertEvaluation(
@@ -100,7 +106,8 @@ class HasHadCytoreductiveSurgeryTest {
                     setOf(TreatmentCategory.SURGERY),
                     setOf(OtherTreatmentType.DEBULKING_SURGERY)
                 )
-            )
+            ),
+            "Undetermined if performed debulking surgery meets the criteria of cytoreductive surgery"
         )
     }
 
@@ -113,7 +120,8 @@ class HasHadCytoreductiveSurgeryTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(record)
+            function.evaluate(record),
+            "Has not received cytoreductive surgery"
         )
     }
 
@@ -127,7 +135,8 @@ class HasHadCytoreductiveSurgeryTest {
         )
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(record)
+            function.evaluate(record),
+            "Has had cytoreductive surgery"
         )
     }
 
@@ -141,7 +150,8 @@ class HasHadCytoreductiveSurgeryTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(record)
+            function.evaluate(record),
+            "Undetermined if performed debulking surgery meets the criteria of cytoreductive surgery"
         )
     }
 
