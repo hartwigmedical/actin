@@ -31,7 +31,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(WashoutTestFactory.withMedications(emptyList())),
-            "Has not received recent treatments with name correct"
+            "No recent treatments with name correct in provided treatments"
         )
     }
 
@@ -49,7 +49,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Has not received recent treatments with name correct"
+            "No recent treatments with name correct in provided treatments"
         )
     }
 
@@ -67,7 +67,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Has not received recent treatments with name correct"
+            "No recent treatments with name correct in provided treatments"
         )
     }
 
@@ -85,7 +85,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Received recent correct - pay attention to washout period"
+            "Recent treatment with medication correct - pay attention to washout period"
         )
     }
 
@@ -110,7 +110,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Received recent correct - pay attention to washout period"
+            "Recent treatment with medication correct - pay attention to washout period"
         )
     }
 
@@ -129,7 +129,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Received correct but unknown if recent (missing stop date)"
+            "Treatment containing correct in provided treatments with unknown date"
         )
     }
 }

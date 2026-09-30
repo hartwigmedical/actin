@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.configuration.ReportIntendedUse
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.datamodel.molecular.MolecularTest
 import com.hartwig.actin.datamodel.molecular.TestMolecularFactory
 import com.hartwig.actin.datamodel.molecular.characteristics.MicrosatelliteStability
@@ -26,7 +26,7 @@ private const val VAF = "VAF 10.0%"
 private const val NOT_DETECTED = ""
 private const val DETECTED = "Detected"
 
-private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+private val labels = ReportLabels.load(ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
 
 class LongitudinalMolecularHistoryGeneratorTest {
 
@@ -34,7 +34,7 @@ class LongitudinalMolecularHistoryGeneratorTest {
     fun `Should create table with header with column for each test`() {
         val result = LongitudinalMolecularHistoryGenerator(listOf(FIRST_TEST, SECOND_TEST), emptyList(), labels)
         assertThat(result.title()).isEqualTo("Molecular history")
-        assertHeader(result, "Event", "Description", "2024-07-21\nHartwig WGS", "2024-07-22\nHartwig WGS")
+        assertHeader(result, "EVENT", "DESCRIPTION", "2024-07-21\nHARTWIG WGS", "2024-07-22\nHARTWIG WGS")
     }
 
     @Test

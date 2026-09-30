@@ -14,7 +14,7 @@ class HasInTransitMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if patient has in-transit metastases"
+            "Undetermined if there are in-transit metastases based on provided lesions"
         )
     }
 }

@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsEligibleForPalliativeRadiotherapy : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Potential eligibility for palliative radiotherapy undetermined")
+        return EvaluationFactory.undetermined("Undetermined whether requirements for palliative radiotherapy are met")
     }
 }

@@ -25,15 +25,15 @@ class HasWHOStatus(private val requiredWHO: Int) : EvaluationFunction {
             evaluation == EvaluationResult.PASS -> EvaluationFactory.pass("WHO $patientWho is exactly requested WHO $requiredWHO")
 
             evaluation == EvaluationResult.FAIL && who.precision == WhoStatusPrecision.EXACT && abs(who.status - requiredWHO) == 1 -> {
-                EvaluationFactory.recoverableFail("Patient WHO is $patientWho but should be exactly WHO $requiredWHO")
+                EvaluationFactory.recoverableFail("WHO is $patientWho but should be exactly WHO $requiredWHO")
             }
 
             evaluation == EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("Patient WHO is $patientWho but should be exactly WHO $requiredWHO")
+                EvaluationFactory.fail("WHO is $patientWho but should be exactly WHO $requiredWHO")
             }
 
             evaluation == EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.undetermined("Undetermined if patient WHO $patientWho is exactly WHO $requiredWHO")
+                EvaluationFactory.undetermined("Undetermined if WHO $patientWho is exactly requested WHO $requiredWHO")
             }
 
             else -> throw IllegalStateException("Illegal state exception: HasWhoStatus")

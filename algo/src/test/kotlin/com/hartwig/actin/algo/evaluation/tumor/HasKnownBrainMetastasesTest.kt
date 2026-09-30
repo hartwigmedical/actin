@@ -13,7 +13,7 @@ class HasKnownBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withBrainLesions(null)),
-            "Undetermined if brain metastases present (data missing)"
+            "Undetermined if brain metastases based on provided lesions"
         )
     }
 
@@ -22,7 +22,7 @@ class HasKnownBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TumorTestFactory.withBrainLesions(false)),
-            "No known brain metastases present"
+            "No known brain metastases in provided lesions"
         )
     }
 
@@ -31,7 +31,7 @@ class HasKnownBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withBrainLesions(true)),
-            "Has brain metastases"
+            "Brain metastases in provided lesions"
         )
     }
 
@@ -40,7 +40,7 @@ class HasKnownBrainMetastasesTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withBrainLesions(hasBrainLesions = false, hasSuspectedBrainLesions = true)),
-            "Brain metastases present but suspected lesions only"
+            "Brain metastases in provided lesions but suspected lesions only"
         )
     }
 }

@@ -24,23 +24,23 @@ class HasWHOStatusTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(GeneralTestFactory.withWHO(0)),
-            "Patient WHO is 0 but should be exactly WHO 2"
+            "WHO is 0 but should be exactly WHO 2"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(GeneralTestFactory.withWHO(4)),
-            "Patient WHO is 4 but should be exactly WHO 2"
+            "WHO is 4 but should be exactly WHO 2"
         )
     }
 
     @Test
     fun `Should be recoverable fail when WHO difference is exactly one`() {
         val evaluationFor1 = function.evaluate(GeneralTestFactory.withWHO(1))
-        assertEvaluation(EvaluationResult.FAIL, evaluationFor1, "Patient WHO is 1 but should be exactly WHO 2")
+        assertEvaluation(EvaluationResult.FAIL, evaluationFor1, "WHO is 1 but should be exactly WHO 2")
         assertThat(evaluationFor1.recoverable).isTrue()
 
         val evaluationFor3 = function.evaluate(GeneralTestFactory.withWHO(3))
-        assertEvaluation(EvaluationResult.FAIL, evaluationFor3, "Patient WHO is 3 but should be exactly WHO 2")
+        assertEvaluation(EvaluationResult.FAIL, evaluationFor3, "WHO is 3 but should be exactly WHO 2")
         assertThat(evaluationFor3.recoverable).isTrue()
     }
 
@@ -58,7 +58,7 @@ class HasWHOStatusTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(GeneralTestFactory.withWHO(1, WhoStatusPrecision.AT_LEAST)),
-            "Undetermined if patient WHO >=1 is exactly WHO 2"
+            "Undetermined if WHO >=1 is exactly requested WHO 2"
         )
     }
 
@@ -67,19 +67,23 @@ class HasWHOStatusTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_LEAST)),
-            "Patient WHO is >=3 but should be exactly WHO 2"
+            "WHO is >=3 but should be exactly WHO 2"
         )
     }
 
     @Test
     fun `Should be undetermined when WHO is at most range above requested WHO`() {
         val evaluation = function.evaluate(GeneralTestFactory.withWHO(3, WhoStatusPrecision.AT_MOST))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Undetermined if patient WHO <=3 is exactly WHO 2")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if WHO <=3 is exactly requested WHO 2"
+        )
     }
 
     @Test
     fun `Should fail when WHO is at most range below requested WHO`() {
         val evaluation = function.evaluate(GeneralTestFactory.withWHO(1, WhoStatusPrecision.AT_MOST))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Patient WHO is <=1 but should be exactly WHO 2")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "WHO is <=1 but should be exactly WHO 2")
     }
 }

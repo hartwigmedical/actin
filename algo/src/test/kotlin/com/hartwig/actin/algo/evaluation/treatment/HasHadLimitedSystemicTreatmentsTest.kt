@@ -16,7 +16,7 @@ class HasHadLimitedSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has received at most 1 systemic treatments"
+            "At most 1 systemic treatments in provided treatments"
         )
     }
 
@@ -26,7 +26,7 @@ class HasHadLimitedSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Has received at most 1 systemic treatments"
+            "At most 1 systemic treatments in provided treatments"
         )
     }
 
@@ -36,7 +36,7 @@ class HasHadLimitedSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Has received at most 1 systemic treatments"
+            "At most 1 systemic treatments in provided treatments"
         )
     }
 
@@ -49,7 +49,7 @@ class HasHadLimitedSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Has received more than 1 systemic treatments"
+            "More than 1 systemic treatments in provided treatments"
         )
     }
 
@@ -60,7 +60,7 @@ class HasHadLimitedSystemicTreatmentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Undetermined if received more than 1 systemic treatments"
+            "Undetermined if provided treatments include more than 1 systemic treatments"
         )
     }
 }

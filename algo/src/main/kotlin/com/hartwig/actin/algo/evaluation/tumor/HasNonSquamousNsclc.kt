@@ -34,21 +34,21 @@ class HasNonSquamousNsclc(private val doidModel: DoidModel) : EvaluationFunction
         val ihcTestEvaluation = IhcTestEvaluation.create(item = IhcTestItemConstants.SCC_TRANSFORMATION_TERM, ihcTests = record.ihcTests)
 
         return when {
-            isSquamousNsclc -> EvaluationFactory.fail("Has no non-squamous NSCLC")
+            isSquamousNsclc -> EvaluationFactory.fail("Cancer is not non-squamous NSCLC")
 
             isNonSquamousNsclc && ihcTestEvaluation.hasCertainBroadPositiveResultsForItem() -> {
-                EvaluationFactory.warn("Has non-squamous NSCLC but also positive SCC transformation results")
+                EvaluationFactory.warn("Cancer is non-squamous NSCLC but also positive SCC transformation results")
             }
 
             isNonSquamousNsclc && ihcTestEvaluation.hasPossiblePositiveResultsForItem() -> {
-                EvaluationFactory.warn("Has non-squamous NSCLC but also possibly positive SCC transformation results")
+                EvaluationFactory.warn("Cancer is non-squamous NSCLC but also possibly positive SCC transformation results")
             }
 
-            isNonSquamousNsclc -> EvaluationFactory.pass("Has non-squamous NSCLC")
+            isNonSquamousNsclc -> EvaluationFactory.pass("Cancer is non-squamous NSCLC")
 
             isNsclc || isExactLungCarcinoma || isExactLungCancer -> EvaluationFactory.undetermined("Undetermined if non-squamous NSCLC")
 
-            else -> EvaluationFactory.fail("Has no non-squamous NSCLC")
+            else -> EvaluationFactory.fail("Cancer is not non-squamous NSCLC")
         }
     }
 }

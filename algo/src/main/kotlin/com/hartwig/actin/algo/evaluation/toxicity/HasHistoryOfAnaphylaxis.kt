@@ -15,7 +15,7 @@ class HasHistoryOfAnaphylaxis(private val icdModel: IcdModel): EvaluationFunctio
         val anaphylaxisEntries = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, anaphylaxisCode).fullMatches
 
         return if (anaphylaxisEntries.isNotEmpty()) {
-            EvaluationFactory.pass("Has history of anaphylaxis")
+            EvaluationFactory.pass("History of anaphylaxis")
         } else {
             EvaluationFactory.fail("No known history of anaphylaxis")
         }

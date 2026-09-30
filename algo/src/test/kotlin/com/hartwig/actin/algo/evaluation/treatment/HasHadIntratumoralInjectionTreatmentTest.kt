@@ -13,7 +13,7 @@ class HasHadIntratumoralInjectionTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Prior intratumoral injection treatment undetermined"
+            "Prior intratumoral injection treatment undetermined based on provided treatments"
         )
     }
 }

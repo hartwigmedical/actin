@@ -17,14 +17,14 @@ class HasCancerWithSmallCellComponentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(tumorDetails),
-            "Undetermined if tumor may have small cell component"
+            "Undetermined if cancer may have small cell component"
         )
     }
 
     @Test
     fun `Should pass if tumor has small cell component`() {
         val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.SMALL_CELL_CANCER_DOIDS.first()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Has cancer with small cell component")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Cancer has small cell component")
     }
 
     @Test
@@ -36,7 +36,7 @@ class HasCancerWithSmallCellComponentTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(tumorDetails),
-            "Has potentially cancer with small cell component (positive SCLC transformation)"
+            "Cancer potentially has small cell component (positive SCLC transformation)"
         )
     }
 
@@ -46,13 +46,13 @@ class HasCancerWithSmallCellComponentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(tumorDetails),
-            "Potentially has cancer with small cell component (has neuroendocrine tumor type)"
+            "Cancer may have small cell component (has neuroendocrine component)"
         )
     }
 
     @Test
     fun `Should fail if tumor is of other type than small cell`() {
         val tumorDetails = TumorTestFactory.withDoidAndName("wrong doid", "wrong name")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "Has no cancer with small cell component")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "No cancer with small cell component")
     }
 }

@@ -20,7 +20,7 @@ class MeetsSpecificCriteriaRegardingMetastasesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(patientRecord),
-            "No metastatic cancer present hence won't meet study specific criteria regarding metastases"
+            "No metastatic cancer hence won't meet study specific criteria regarding metastases"
         )
     }
 

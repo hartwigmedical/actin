@@ -11,7 +11,7 @@ class MeetsSpecificCriteriaRegardingMetastases(private val hasMetastaticCancer: 
     override fun evaluate(record: PatientRecord): Evaluation {
         return when (hasMetastaticCancer.evaluate(record).result) {
             EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("No metastatic cancer present hence won't meet study specific criteria regarding metastases")
+                EvaluationFactory.fail("No metastatic cancer hence won't meet study specific criteria regarding metastases")
             }
 
             EvaluationResult.PASS -> {

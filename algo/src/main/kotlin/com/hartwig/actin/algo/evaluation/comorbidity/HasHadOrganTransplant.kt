@@ -24,14 +24,14 @@ class HasHadOrganTransplant(private val icdModel: IcdModel, private val minYear:
         return when {
             passesDateRequirement.isNotEmpty() -> {
                 val dateMessage = minYear?.let { " since $minYear" } ?: ""
-                EvaluationFactory.pass("Has had an organ transplant$dateMessage")
+                EvaluationFactory.pass("An organ transplant$dateMessage in provided history")
             }
 
             !withUnknownDate.isNullOrEmpty() -> {
-                EvaluationFactory.undetermined("Has had an organ transplant but unclear if after $minYear (date unknown)")
+                EvaluationFactory.undetermined("An organ transplant in provided history but unclear if after $minYear (date unknown)")
             }
 
-            else -> EvaluationFactory.fail("No history of organ transplant")
+            else -> EvaluationFactory.fail("No organ transplant in provided history")
         }
     }
 }

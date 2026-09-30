@@ -28,7 +28,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
-            "Has no intolerances to study medication"
+            "No intolerances to study medication"
         )
     }
 
@@ -38,7 +38,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "Has no intolerances to study medication"
+            "No intolerances to study medication"
         )
     }
 
@@ -52,7 +52,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
             assertEvaluation(
                 EvaluationResult.FAIL,
                 function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-                "Has no intolerances to study medication"
+                "No intolerances to study medication"
             )
         }
     }
@@ -66,7 +66,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "Has no intolerances to study medication"
+            "No intolerances to study medication"
         )
     }
 
@@ -80,7 +80,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "Has medication-related allergies (${intolerance.name}) - undetermined if allergy to study medication"
+            "Medication-related allergies (${intolerance.name}) - undetermined if allergy to study medication"
         )
     }
 
@@ -94,7 +94,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
             assertEvaluation(
                 EvaluationResult.UNDETERMINED,
                 function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-                "Has medication-related allergies (${match.name}) - undetermined if allergy to study medication"
+                "Medication-related allergies (${match.name}) - undetermined if allergy to study medication"
             )
         }
     }

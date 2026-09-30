@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class MeetsSpecificCriteriaRegardingRecurrentCancer : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient meets specific criteria regarding recurrent cancer")
+        return EvaluationFactory.undetermined("Undetermined if specific criteria regarding recurrent cancer are met")
     }
 }
