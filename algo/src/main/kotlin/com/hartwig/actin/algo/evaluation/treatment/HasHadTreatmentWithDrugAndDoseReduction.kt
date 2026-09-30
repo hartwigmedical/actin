@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.medication.MedicationToTreatmentConverter
 
 class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : EvaluationFunction {
@@ -14,9 +13,7 @@ class HasHadTreatmentWithDrugAndDoseReduction(private val drug: Drug) : Evaluati
 
         val effectiveTreatmentHistory = MedicationToTreatmentConverter.convertAndCombine(record.medications, record.oncologicalHistory)
         val hasHadDrug = effectiveTreatmentHistory.any { entry ->
-            entry.treatments.any { treatment ->
-                (treatment as? DrugTreatment)?.drugs?.any { it.name.equals(drug.name, ignoreCase = true) } == true
-            }
+            entry.treatments.any { treatment -> treatment.drugs.any { it.name.equals(drug.name, ignoreCase = true) } }
         }
 
         return when {

@@ -10,7 +10,6 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import java.time.LocalDate
 
 class HasRecentlyReceivedCancerTherapyWithDrug(
@@ -31,11 +30,11 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
         val matchingTreatments = record.oncologicalHistory
             .mapNotNull { entry ->
                 TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) {
-                    it is DrugTreatment && it.drugs.intersect(drugsToFind).isNotEmpty()
+                    it.drugs.intersect(drugsToFind).isNotEmpty()
                 }
             }
         val treatmentDrugsFound = matchingTreatments.flatMap { it.treatments }
-            .flatMap { (it as? DrugTreatment)?.drugs?.intersect(drugsToFind) ?: emptySet() }
+            .flatMap { it.drugs.intersect(drugsToFind) }
             .map { it.name }
 
         val namesFound = medicationsFound + treatmentDrugsFound

@@ -8,7 +8,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.medication.MedicationToTreatmentConverter
 
@@ -22,7 +21,7 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
         val drugsByEvaluationResult: Map<EvaluationResult, Set<Drug>> = effectiveTreatmentHistory
             .mapNotNull { entry ->
                 TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) { treatment ->
-                    (treatment as? DrugTreatment)?.drugs?.any { it.name.lowercase() in namesToMatch } == true
+                    treatment.drugs.any { it.name.lowercase() in namesToMatch }
                 }?.let { matchingEntry -> evaluateCyclesForMatchingDrugs(matchingEntry, namesToMatch) }
             }
             .groupBy({ it.first }, { it.second })
@@ -75,7 +74,7 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
         }
 
         val matchingDrugs = matchingEntry.allTreatments()
-            .mapNotNull { it as? DrugTreatment }
+            .map { it }
             .flatMap { it.drugs }
             .filter { it.name.lowercase() in namesToMatch }
 

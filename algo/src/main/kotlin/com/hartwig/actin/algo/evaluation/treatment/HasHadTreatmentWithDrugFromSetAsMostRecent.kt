@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Drug.Companion.UNKNOWN_PREFIX
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 
@@ -16,7 +15,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val relevantHistory = record.oncologicalHistory.filter { entry ->
-            entry.allTreatments().isEmpty() || entry.allTreatments().any { it is DrugTreatment }
+            entry.allTreatments().isEmpty() || entry.allTreatments().any { it.drugs.isNotEmpty() }
         }
         val drugsToMatchDisplay = "received ${Format.concatItemsWithOr(drugsToMatch)}"
         if (relevantHistory.isEmpty()) {
@@ -92,8 +91,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecent(private val drugsToMatch: Set<D
         } ?: false
     }
 
-    private fun drugsFromTreatments(treatments: Set<Treatment>) =
-        treatments.flatMap { treatment -> (treatment as? DrugTreatment)?.drugs ?: emptyList() }
+    private fun drugsFromTreatments(treatments: Set<Treatment>) = treatments.flatMap { treatment -> treatment.drugs }
 
     private fun selectMatchingDrugsFromEntry(treatmentHistoryEntry: TreatmentHistoryEntry, drugNamesToMatch: Set<String>): Set<Drug> {
         return drugsFromTreatments(treatmentHistoryEntry.allTreatments()).filter { it.name.lowercase() in drugNamesToMatch }.toSet()
