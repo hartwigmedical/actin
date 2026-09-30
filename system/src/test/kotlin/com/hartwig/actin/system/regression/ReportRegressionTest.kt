@@ -2,6 +2,7 @@ package com.hartwig.actin.system.regression
 
 import ch.qos.logback.classic.Level
 import com.hartwig.actin.configuration.ReportConfiguration
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.system.example.CRC_01_EXAMPLE
 import com.hartwig.actin.system.example.ExampleFunctions
 import com.hartwig.actin.system.example.LUNG_01_EXAMPLE
@@ -31,11 +32,18 @@ class ReportRegressionTest {
     }
 
     @Test
+    fun `Regress ruo trial matching report textually and visually`() {
+        regressReport(exampleName = LUNG_01_EXAMPLE, outputReportSufix = "ruo") {
+            ExampleFunctions.createTrialMatchingReportConfiguration().copy(reportType = ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
+        }
+    }
+
+    @Test
     fun `Regress personalization report textually and visually`() {
         regressReport(exampleName = CRC_01_EXAMPLE) { ExampleFunctions.createPersonalizationReportConfiguration() }
     }
 
-    private fun regressReport(exampleName: String, reportConfigProvider: () -> ReportConfiguration) {
+    private fun regressReport(exampleName: String, outputReportSufix: String? = null, reportConfigProvider: () -> ReportConfiguration) {
         val outputDirectory = System.getProperty("user.dir") + "/target/test-classes"
 
         ExampleFunctions.run(
@@ -50,8 +58,9 @@ class ReportRegressionTest {
             .withFailMessage("There are errors or warnings in the logs")
             .isFalse()
 
+        val suffixPart = if (!outputReportSufix.isNullOrEmpty()) ".$outputReportSufix" else ""
         val outputReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.pdf"
-        val originalReportPdf = ExampleFunctions.resolveExampleReportPdf(exampleName)
+        val originalReportPdf = ExampleFunctions.resolveExampleReportPdf("$exampleName$suffixPart")
         assertThatPdf(outputReportPdf).isEqualToTextually(originalReportPdf)
         assertThatPdf(outputReportPdf).isEqualToVisually(originalReportPdf)
     }
