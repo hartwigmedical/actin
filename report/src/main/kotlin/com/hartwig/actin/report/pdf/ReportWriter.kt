@@ -13,6 +13,8 @@ import com.itextpdf.kernel.pdf.PdfDocument
 import com.itextpdf.kernel.pdf.PdfWriter
 import com.itextpdf.kernel.pdf.WriterProperties
 import com.itextpdf.kernel.pdf.event.PdfDocumentEvent
+import com.itextpdf.kernel.xmp.XMPMetaFactory
+import com.itextpdf.kernel.xmp.options.PropertyOptions
 import com.itextpdf.layout.Document
 import com.itextpdf.layout.element.AreaBreak
 import com.itextpdf.layout.properties.AreaBreakType
@@ -33,7 +35,14 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
 
         val labels = ReportLabels.load(configuration.intendedUse)
         val chapters = ReportContentProvider(report, configuration, doidModel, labels).provideChapters()
-        writePdfChapters(report.patientId, report.patientRecord.patient.sourceId, chapters, report.reportDate, labels)
+        writePdfChapters(
+            report.patientId,
+            report.patientRecord.patient.sourceId,
+            chapters,
+            report.reportDate,
+            labels,
+            report.treatmentMatch.trialDatabaseIsConsistent
+        )
     }
 
     private fun writePdfChapters(
@@ -41,9 +50,10 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         sourcePatientId: String?,
         chapters: List<ReportChapter>,
         reportDate: LocalDate,
-        labels: ReportLabels
+        labels: ReportLabels,
+        trialDatabaseIsConsistent: Boolean?
     ) {
-        val doc = initializeReport(patientId)
+        val doc = initializeReport(patientId, trialDatabaseIsConsistent)
         val pdfDocument = doc.pdfDocument
         val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
@@ -62,7 +72,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdfDocument.close()
     }
 
-    private fun initializeReport(patientId: String): Document {
+    private fun initializeReport(patientId: String, trialDatabaseIsConsistent: Boolean?): Document {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf"
@@ -81,6 +91,19 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdf.defaultPageSize = PageSize.A4
         pdf.documentInfo.title = Constants.METADATA_TITLE
         pdf.documentInfo.author = Constants.METADATA_AUTHOR
+
+        trialDatabaseIsConsistent?.let {
+            XMPMetaFactory.getSchemaRegistry().registerNamespace(Constants.XMP_NAMESPACE_URI, Constants.XMP_NAMESPACE_PREFIX)
+            val xmpMetadata = XMPMetaFactory.create()
+            xmpMetadata.setPropertyBoolean(
+                Constants.XMP_NAMESPACE_URI,
+                Constants.XMP_PROPERTY_MAY_BE_SHARED,
+                it,
+                PropertyOptions()
+            )
+            pdf.xmpMetadata = xmpMetadata
+        }
+
         val document = Document(pdf)
         document.setMargins(
             Constants.PAGE_MARGIN_TOP,
