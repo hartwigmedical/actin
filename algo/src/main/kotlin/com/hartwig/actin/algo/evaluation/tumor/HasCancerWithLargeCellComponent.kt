@@ -16,15 +16,15 @@ class HasCancerWithLargeCellComponent(private val doidModel: DoidModel) : Evalua
 
         return when {
             TumorEvaluationFunctions.hasTumorWithLargeCellComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.pass("Has cancer with large cell component")
+                EvaluationFactory.pass("Is cancer with large cell component")
             }
 
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.undetermined("Potentially has cancer with large cell component (has neuroendocrine tumor type)")
+                EvaluationFactory.undetermined("Cancer may have large cell component (has neuroendocrine component)")
             }
 
             else -> {
-                EvaluationFactory.fail("Has no cancer with large cell component")
+                EvaluationFactory.fail("No cancer with large cell component")
             }
         }
     }

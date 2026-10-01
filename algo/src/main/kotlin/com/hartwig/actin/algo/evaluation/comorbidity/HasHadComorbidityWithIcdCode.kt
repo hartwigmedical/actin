@@ -39,9 +39,9 @@ class HasHadComorbidityWithIcdCode(
                 val (intolerances, other) = icdMatches.fullMatches.partition { it is Intolerance }
                 val passMessages = listOfNotNull(
                     intolerances.takeIf { it.isNotEmpty() }
-                        ?.let { icdMatch -> "Has intolerance to ${concat(icdMatch.map { it.display() })}" },
+                        ?.let { icdMatch -> "Intolerance to ${concat(icdMatch.map { it.display() })} in provided intolerances" },
                     other.takeIf { it.isNotEmpty() }
-                        ?.let { icdMatch -> "Has history of ${concat(icdMatch.map { it.display() })}" }
+                        ?.let { icdMatch -> "History of ${concat(icdMatch.map { it.display() })}" }
                 )
                 Evaluation(
                     result = EvaluationResult.PASS,
@@ -51,21 +51,26 @@ class HasHadComorbidityWithIcdCode(
             }
 
             icdMatches.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension, true)} " +
-                        "but undetermined if history of $diseaseDescription"
+                "History of ${concatItemsWithAnd(icdMatches.mainCodeMatchesWithUnknownExtension, true)} " +
+                        "- undetermined if history of $diseaseDescription"
             )
 
             icdMatchesToxicitiesWithUnknownGrade.fullMatches.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${concatItemsWithAnd(icdMatchesToxicitiesWithUnknownGrade.fullMatches, true)} " +
+                "History of ${concatItemsWithAnd(icdMatchesToxicitiesWithUnknownGrade.fullMatches, true)} " +
                         "but grade unknown"
             )
 
             icdMatchesToxicitiesWithUnknownGrade.mainCodeMatchesWithUnknownExtension.isNotEmpty() -> EvaluationFactory.undetermined(
-                "Has history of ${concatItemsWithAnd(icdMatchesToxicitiesWithUnknownGrade.mainCodeMatchesWithUnknownExtension, true)} " +
-                        "but undetermined if history of $diseaseDescription and grade unknown"
+                "History of ${
+                    concatItemsWithAnd(
+                        icdMatchesToxicitiesWithUnknownGrade.mainCodeMatchesWithUnknownExtension,
+                        true
+                    )
+                } " +
+                        "- undetermined if history of $diseaseDescription and grade unknown"
             )
 
-            else -> EvaluationFactory.fail("Has no comorbidity belonging to category $diseaseDescription")
+            else -> EvaluationFactory.fail("No comorbidity belonging to category $diseaseDescription")
         }
     }
 }

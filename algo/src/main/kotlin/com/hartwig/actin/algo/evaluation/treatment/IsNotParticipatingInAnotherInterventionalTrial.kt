@@ -21,16 +21,16 @@ class IsNotParticipatingInAnotherInterventionalTrial(
 
         return when {
             hadRecentTrialTreatment || hasActiveOrRecentlyStoppedTrialMedication -> {
-                EvaluationFactory.warn("Recent trial treatment - undetermined if patient is participating in another interventional trial")
+                EvaluationFactory.warn("Recent trial treatment - undetermined participation in another interventional trial")
             }
 
             record.oncologicalHistory.any {
                 it.isTrial && TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(it, minStopDate)
             } -> {
-                EvaluationFactory.undetermined("Undetermined if patient may be participating in another interventional trial (missing stop date)")
+                EvaluationFactory.undetermined("Undetermined participation in another interventional trial (missing stop date)")
             }
 
-            else -> EvaluationFactory.pass("Assumed that patient is not participating in another interventional trial")
+            else -> EvaluationFactory.pass("Assumed no participation in another interventional trial")
         }
     }
 }

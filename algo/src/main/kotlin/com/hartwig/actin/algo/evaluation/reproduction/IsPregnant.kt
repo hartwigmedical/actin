@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsPregnant: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.fail("Assumed that patient is not pregnant")
+        return EvaluationFactory.fail("Assumed no pregnancy")
     }
 }

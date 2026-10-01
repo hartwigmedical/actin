@@ -18,10 +18,18 @@ class HasOvarianCancerWithMucinousComponentTest {
         )
 
         val matchSingle = TumorTestFactory.withDoids(HasOvarianCancerWithMucinousComponent.OVARIAN_MUCINOUS_DOIDS.iterator().next())
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(matchSingle), "Has ovarian cancer with mucinous component")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(matchSingle),
+            "Cancer is ovarian cancer with mucinous component"
+        )
 
         val matchCombination = TumorTestFactory.withDoids(HasOvarianCancerWithMucinousComponent.OVARIAN_MUCINOUS_DOID_SET)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(matchCombination), "Has ovarian cancer with mucinous component")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(matchCombination),
+            "Cancer is ovarian cancer with mucinous component"
+        )
 
         val somethingElse = TumorTestFactory.withDoids("something else")
         assertEvaluation(EvaluationResult.FAIL, function.evaluate(somethingElse), "No ovarian cancer with mucinous component")

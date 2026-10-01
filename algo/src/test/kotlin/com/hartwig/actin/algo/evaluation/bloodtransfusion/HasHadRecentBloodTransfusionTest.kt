@@ -19,7 +19,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusions(emptyList())),
-            "Has not received recent $THROMBOCYTE_DISPLAY blood transfusion"
+            "No recent $THROMBOCYTE_DISPLAY blood transfusion in provided transfusions"
         )
     }
 
@@ -29,7 +29,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(tooOld)),
-            "Has not received recent $THROMBOCYTE_DISPLAY blood transfusion"
+            "No recent $THROMBOCYTE_DISPLAY blood transfusion in provided transfusions"
         )
     }
 
@@ -39,7 +39,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(wrongProduct)),
-            "Has not received recent $THROMBOCYTE_DISPLAY blood transfusion"
+            "No recent $THROMBOCYTE_DISPLAY blood transfusion in provided transfusions"
         )
     }
 
@@ -49,7 +49,7 @@ class HasHadRecentBloodTransfusionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(BloodTransfusionTestFactory.withBloodTransfusion(correct)),
-            "Has received recent $THROMBOCYTE_DISPLAY blood transfusion"
+            "Recent $THROMBOCYTE_DISPLAY blood transfusion in provided transfusions"
         )
     }
 

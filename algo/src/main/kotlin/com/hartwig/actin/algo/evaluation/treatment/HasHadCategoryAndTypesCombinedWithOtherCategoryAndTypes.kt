@@ -27,15 +27,15 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
 
         return when {
             hadCombination -> {
-                EvaluationFactory.pass("Has received $treatmentDesc")
+                EvaluationFactory.pass("${treatmentDesc.replaceFirstChar { it.uppercase() }} in provided treatments")
             }
 
             hadCombinationWithUnknownType || hadCombinationWithTrialWithUnknownType || hadTrialWithUnspecifiedTreatment -> {
-                EvaluationFactory.undetermined("Undetermined if received $treatmentDesc")
+                EvaluationFactory.undetermined("Undetermined history of $treatmentDesc based on provided treatments")
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received $treatmentDesc")
+                EvaluationFactory.fail("No $treatmentDesc in provided treatments")
             }
         }
     }

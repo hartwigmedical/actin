@@ -21,10 +21,10 @@ class HasHadSOCTargetedTherapyForNSCLC(private val genesToIgnore: Set<String>) :
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Has received SOC targeted therapy for NSCLC ($matches)")
+                EvaluationFactory.pass("SOC targeted therapy for NSCLC ($matches) in provided treatments")
             }
             else -> {
-                EvaluationFactory.fail("Has not received SOC targeted therapy for NSCLC")
+                EvaluationFactory.fail("No SOC targeted therapy for NSCLC in provided treatments")
             }
         }
     }

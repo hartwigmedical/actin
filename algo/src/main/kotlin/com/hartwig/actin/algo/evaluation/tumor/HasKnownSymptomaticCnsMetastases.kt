@@ -10,7 +10,7 @@ class HasKnownSymptomaticCnsMetastases : EvaluationFunction {
     override fun evaluate(record: PatientRecord): Evaluation {
         with(record.tumor) {
             val unknownIfSymptomatic = hasSymptomaticCnsLesions == null && hasSymptomaticBrainLesions == null
-            val undeterminedMessage = "CNS metastases present but unknown if symptomatic (data missing)"
+            val undeterminedMessage = "CNS metastases in provided lesions but unknown if symptomatic (data missing)"
 
             return when {
                 unknownIfSymptomatic && (hasCnsLesions == true || hasBrainLesions == true) -> {
@@ -22,14 +22,14 @@ class HasKnownSymptomaticCnsMetastases : EvaluationFunction {
                 }
 
                 unknownIfSymptomatic && (hasCnsLesions == null && hasBrainLesions == null) -> {
-                    EvaluationFactory.undetermined("Undetermined if symptomatic CNS metastases present (data missing)")
+                    EvaluationFactory.undetermined("Undetermined if symptomatic CNS metastases based on provided lesions")
                 }
 
-                hasSymptomaticCnsLesions == true -> EvaluationFactory.pass("Has symptomatic CNS metastases")
+                hasSymptomaticCnsLesions == true -> EvaluationFactory.pass("Symptomatic CNS metastases in provided lesions")
 
-                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass("Has symptomatic CNS (Brain) metastases")
+                hasSymptomaticBrainLesions == true -> EvaluationFactory.pass("Symptomatic CNS (Brain) metastases in provided lesions")
 
-                else -> EvaluationFactory.fail("No known symptomatic CNS metastases present")
+                else -> EvaluationFactory.fail("No known symptomatic CNS metastases in provided lesions")
             }
         }
     }

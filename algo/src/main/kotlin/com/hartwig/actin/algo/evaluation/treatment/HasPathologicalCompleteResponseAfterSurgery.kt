@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasPathologicalCompleteResponseAfterSurgery: EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient had pathological complete response after surgery")
+        return EvaluationFactory.undetermined("Undetermined if there was pathological complete response after surgery")
     }
 }

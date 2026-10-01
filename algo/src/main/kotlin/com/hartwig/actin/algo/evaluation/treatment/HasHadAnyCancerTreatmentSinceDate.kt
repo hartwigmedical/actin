@@ -42,27 +42,29 @@ class HasHadAnyCancerTreatmentSinceDate(
             }
 
         val systemicMessage = if (onlySystemicTreatments) " systemic" else ""
+        val systemicPrefix = if (onlySystemicTreatments) "systemic " else ""
+        val systemicPrefixStart = if (onlySystemicTreatments) "Systemic anti-cancer" else "Anti-cancer"
 
         val ignoringString = if (typesToIgnore.isNotEmpty()) " ignoring ${Format.concatItemsWithAnd(typesToIgnore)}" else ""
 
         return when {
             effectiveTreatmentHistory.any { certainTreatmentSinceMinDate(it, minDate) } -> {
-                EvaluationFactory.pass("Received$systemicMessage anti-cancer therapy within the last $monthsAgo months")
+                EvaluationFactory.pass("$systemicPrefixStart therapy within the last $monthsAgo months in provided treatments")
             }
 
             effectiveTreatmentHistory.any { it.isTrial } || record.medications?.any { it.isTrialMedication } == true -> {
-                EvaluationFactory.undetermined("Inconclusive if patient had any prior$systemicMessage cancer treatment because participated in trial")
+                EvaluationFactory.undetermined("Undetermined if trial treatment in provided treatments included ${systemicPrefix}cancer treatment")
             }
 
             effectiveTreatmentHistory.any { potentialTreatmentSinceMinDate(it, minDate) } -> {
-                EvaluationFactory.undetermined("Received$systemicMessage anti-cancer therapy but undetermined if in the last $monthsAgo months")
+                EvaluationFactory.undetermined("$systemicPrefixStart therapy in provided treatments but undetermined if in the last $monthsAgo months (date unknown)")
             }
 
             effectiveTreatmentHistory.isEmpty() -> {
-                EvaluationFactory.fail("Has not received$systemicMessage anti-cancer therapy within $monthsAgo months$ignoringString")
+                EvaluationFactory.fail("No ${systemicPrefix}anti-cancer therapy within $monthsAgo months$ignoringString in provided treatments")
             }
 
-            else -> EvaluationFactory.fail("Has not had any prior$systemicMessage cancer treatment$ignoringString")
+            else -> EvaluationFactory.fail("No prior$systemicMessage cancer treatment$ignoringString in provided treatments")
         }
     }
 }

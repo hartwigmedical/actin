@@ -13,17 +13,17 @@ class HasLeftSidedColorectalTumor(private val doidModel: DoidModel) : Evaluation
         val tumorDoids = record.tumor.doids
 
         return if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            EvaluationFactory.undetermined("Undetermined if left-sided colorectal cancer")
+            EvaluationFactory.undetermined("Undetermined if cancer is left-sided colorectal cancer")
         } else if (!DoidEvaluationFunctions.isOfDoidType(doidModel, tumorDoids, DoidConstants.COLORECTAL_CANCER_DOID)) {
-            EvaluationFactory.fail("Has no left-sided colorectal cancer")
+            EvaluationFactory.fail("Cancer is not left-sided colorectal cancer")
         } else {
             val name = record.tumor.name
             when {
                 LEFT_SUB_LOCATIONS.any { subLocation -> name.lowercase().split(Regex("\\W+")).contains(subLocation) } ->
-                    EvaluationFactory.pass("Has left-sided CRC tumor ($name)")
+                    EvaluationFactory.pass("Cancer is left-sided colorectal cancer ($name)")
 
                 RIGHT_SUB_LOCATIONS.any(name.lowercase()::contains) ->
-                    EvaluationFactory.fail("Has no left-sided CRC tumor but right-sided tumor ($name)")
+                    EvaluationFactory.fail("Cancer is not left-sided colorectal cancer (but right-sided $name)")
 
                 else -> EvaluationFactory.undetermined("Undetermined if tumor $name is left-sided")
             }

@@ -19,14 +19,14 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
     fun `Should fail when treatment history empty`() {
         val treatments = TreatmentTestFactory.withTreatmentHistory(emptyList())
         val evaluation = function.evaluate(treatments)
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "No systemic treatments found in treatment history")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "No systemic treatments in provided treatments")
     }
 
     @Test
     fun `Should fail when no systemic treatments`() {
         val treatments = listOf(TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("1", false))))
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "No systemic treatments found in treatment history")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "No systemic treatments in provided treatments")
     }
 
     @Test
@@ -46,8 +46,8 @@ class HasHadProgressionFollowingLatestTreatmentLineTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Has had progressive disease following latest treatment line")
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has had progressive disease following latest treatment line")
+        assertThat(evaluation.passMessagesStrings()).containsExactly("Progressive disease following latest treatment line")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Progressive disease following latest treatment line")
     }
 
     @Test

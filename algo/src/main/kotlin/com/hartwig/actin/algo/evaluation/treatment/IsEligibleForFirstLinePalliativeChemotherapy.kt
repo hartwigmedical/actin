@@ -19,23 +19,23 @@ class IsEligibleForFirstLinePalliativeChemotherapy(private val hasMetastaticCanc
 
         return when {
             hasMetastaticCancerResult == EvaluationResult.FAIL -> {
-                EvaluationFactory.fail("No metastatic cancer and hence no eligibility for first line palliative chemotherapy")
+                EvaluationFactory.fail("No metastatic cancer and hence requirements for first line palliative chemotherapy are not met")
             }
 
             palliativeTreatments.any { treatment -> treatment.categories().contains(TreatmentCategory.CHEMOTHERAPY) } -> {
-                EvaluationFactory.fail("Had palliative chemotherapy and is hence not eligible for first line palliative chemotherapy")
+                EvaluationFactory.fail("Palliative chemotherapy in provided treatments and hence requirements for first line palliative chemotherapy are not met")
             }
 
             palliativeTreatments.isNotEmpty() && hasMetastaticCancerResult == EvaluationResult.PASS -> {
-                EvaluationFactory.undetermined("Had palliative $categoriesList (hence may not be considered eligible for first line palliative chemotherapy)")
+                EvaluationFactory.undetermined("Palliative $categoriesList in provided treatments (hence requirements for first line palliative chemotherapy may not be met)")
             }
 
             hasMetastaticCancerResult == EvaluationResult.PASS -> {
-                EvaluationFactory.undetermined("Undetermined if patient with metastatic disease is considered eligible for first line palliative chemotherapy")
+                EvaluationFactory.undetermined("Undetermined whether requirements for first line palliative chemotherapy are met for metastatic disease")
             }
 
             else -> {
-                EvaluationFactory.undetermined("Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)")
+                EvaluationFactory.undetermined("Undetermined if metastatic cancer (hence requirements for first line palliative chemotherapy may not be met)")
             }
         }
     }
