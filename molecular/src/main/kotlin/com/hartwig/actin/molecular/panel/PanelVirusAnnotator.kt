@@ -9,7 +9,12 @@ import com.hartwig.actin.molecular.util.ExtractionUtil
 class PanelVirusAnnotator(private val molecularConfiguration: MolecularConfiguration) {
 
     fun annotate(viruses: Set<SequencedVirus>): List<Virus> {
-        return viruses.map { createVirus(it, molecularConfiguration.eventPathogenicityIsConfirmed) }
+        return viruses.map {
+            createVirus(
+                it,
+                molecularConfiguration.eventPathogenicityIsConfirmed && it.pathogenicityUncertain != true
+            )
+        }
     }
 
     private fun createVirus(sequencedVirus: SequencedVirus, eventPathogenicityIsConfirmed: Boolean = false): Virus {

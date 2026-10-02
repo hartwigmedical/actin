@@ -69,7 +69,7 @@ class PanelFusionAnnotator(
             driverLikelihood = if (isReportable) fusionDriverLikelihood(
                 isPromiscuousWithMatchingExons(driverType, sequencedFusion),
                 driverType,
-                molecularConfiguration.eventPathogenicityIsConfirmed,
+                molecularConfiguration.eventPathogenicityIsConfirmed && sequencedFusion.pathogenicityUncertain != true,
             ) else null,
             evidence = ExtractionUtil.noEvidence(),
             isAssociatedWithDrugResistance = null,
