@@ -12,7 +12,7 @@ class PanelVirusAnnotator(private val molecularConfiguration: MolecularConfigura
         return viruses.map {
             createVirus(
                 it,
-                it.pathogenicityIsConfirmed ?: molecularConfiguration.eventPathogenicityIsConfirmed
+                it.pathogenicityUnconfirmed?.not() ?: molecularConfiguration.eventPathogenicityIsConfirmed
             )
         }
     }
