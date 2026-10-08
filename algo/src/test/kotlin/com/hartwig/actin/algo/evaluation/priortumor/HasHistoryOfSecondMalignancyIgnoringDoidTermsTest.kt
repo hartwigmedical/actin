@@ -8,8 +8,10 @@ import org.junit.jupiter.api.Test
 
 private const val ignoreDoid = "ignore doid"
 private const val ignoreTerm = "ignore term"
+private const val ignoreName = "ignore name"
 private const val parentDoid = "parent doid"
 private const val parentTerm = "parent term"
+private const val otherName = "other name"
 
 class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
 
@@ -32,42 +34,44 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
 
     @Test
     fun `Should fail when prior tumors present in history but with doid to ignore`() {
-        val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid))
+        val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid, name = ignoreName))
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "No history of previous malignancy excluding ignore term"
+            "No history of previous malignancy excluding ignore name"
         )
     }
 
     @Test
     fun `Should fail when prior tumors present in history but doid is child of doid to ignore`() {
-        val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid))
+        val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = ignoreDoid, name = ignoreName))
         val function = HasHistoryOfSecondMalignancyIgnoringDoidTerms(doidModel, setOf(parentDoid), minDate = null)
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "No history of previous malignancy excluding ignore term"
+            "No history of previous malignancy excluding ignore name"
         )
     }
 
     @Test
     fun `Should pass when prior tumors present in history with doid term not to ignore`() {
-        val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = "other", diagnosedYear = minDate.year))
+        val priorTumors =
+            listOf(PriorTumorTestFactory.priorPrimary(doid = "other", name = otherName, diagnosedYear = minDate.year))
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Has history of previous malignancy"
+            "Has history of previous malignancy (other name)"
         )
     }
 
     @Test
     fun `Should pass when prior tumors present in history with doid term not to ignore and within requested date range`() {
-        val priorTumors = listOf(PriorTumorTestFactory.priorPrimary(doid = "other", diagnosedYear = minDate.year))
+        val priorTumors =
+            listOf(PriorTumorTestFactory.priorPrimary(doid = "other", name = otherName, diagnosedYear = minDate.year))
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Has history of recent previous malignancy"
+            "Has history of recent previous malignancy (other name)"
         )
     }
 
@@ -75,12 +79,17 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
     fun `Should evaluate to undetermined when prior tumors present in history with doid term not to ignore but date unknown`() {
         val priorTumors = listOf(
             PriorTumorTestFactory.priorPrimary(
-                doid = "other", diagnosedYear = null, diagnosedMonth = null, lastTreatmentMonth = null, lastTreatmentYear = null
+                doid = "other",
+                name = otherName,
+                diagnosedYear = null,
+                diagnosedMonth = null,
+                lastTreatmentMonth = null,
+                lastTreatmentYear = null
             )
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED, functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Has history of previous malignancy but undetermined if recent (date unknown)"
+            "Has history of previous malignancy (other name) but undetermined if recent (date unknown)"
         )
     }
 
