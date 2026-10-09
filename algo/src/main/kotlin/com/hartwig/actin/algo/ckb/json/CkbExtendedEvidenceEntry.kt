@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty
 data class CkbExtendedEvidenceEntry(
     val nctId: String,
     val title: String,
-    val phase: String,
+    val phase: String?,
     val recruitment: String,
     var therapies: List<CkbTherapy>,
     val ageGroups: List<String>,
-    val gender: String,
+    val gender: String?,
     val variantRequirements: String,
     val sponsors: String,
     val updateDate: String,
