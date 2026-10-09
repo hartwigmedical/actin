@@ -113,7 +113,7 @@ object TrialGeneratorFunctions {
         val anyCohort = cohortsForTrial.first()
         val trialId = anyCohort.trialId.trimIndent()
         val trialIdIsNotAcronym = trialId != anyCohort.acronym
-        val hasCtGovSource = anyCohort.sources.singleOrNull() == TrialSource.CTgov
+        val hasCtGovSource = anyCohort.sources.singleOrNull() == TrialSource.CTG
         val fontSize = if (useSmallerSize) Styles.SMALL_FONT_SIZE else Styles.REGULAR_FONT_SIZE
         val asterisk = Text("*").addStyle(Styles.tableHighlightStyle()).setFontSize(fontSize).setTextRise(fontSize * SUPERSCRIPT_RISE_RATIO)
         val trialLabelText = listOfNotNull(
