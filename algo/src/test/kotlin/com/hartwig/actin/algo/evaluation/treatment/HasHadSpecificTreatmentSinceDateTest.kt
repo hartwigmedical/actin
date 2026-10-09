@@ -35,14 +35,19 @@ class HasHadSpecificTreatmentSinceDateTest {
     fun `Should fail when treatment not found`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(NON_MATCHING_RECENT_TREATMENT)))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(NON_MATCHING_RECENT_TREATMENT))),
+            "No treatments matching 'Treatment' in history"
         )
     }
 
     @Test
     fun `Should fail when matching treatment is older by year`() {
         val treatmentHistory = listOf(matchingOlderTreatment())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "All treatments matching 'Treatment' administered before 01-Jun-2024"
+        )
     }
 
     @Test
@@ -52,13 +57,21 @@ class HasHadSpecificTreatmentSinceDateTest {
             NON_MATCHING_RECENT_TREATMENT,
             matchingTreatment(startYear = olderDate.year - 1, stopYear = olderDate.year, stopMonth = olderDate.monthValue)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "All treatments matching 'Treatment' administered before 01-Jun-2024"
+        )
     }
 
     @Test
     fun `Should fail when matching treatment has unknown start date and known stop date before min date`() {
         val treatmentHistory = listOf(matchingTreatment(stopYear = OLDER_DATE.year, stopMonth = OLDER_DATE.monthValue))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "All treatments matching 'Treatment' administered before 01-Jun-2024"
+        )
     }
 
     @Test
@@ -68,7 +81,11 @@ class HasHadSpecificTreatmentSinceDateTest {
                 stopYear = MIN_DATE.year, stopMonth = null, startYear = OLDER_DATE.year, startMonth = OLDER_DATE.monthValue
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 (missing stop date)"
+        )
     }
 
     @Test
@@ -79,26 +96,42 @@ class HasHadSpecificTreatmentSinceDateTest {
                 matchingOlderTreatment(),
                 matchingTreatment(stopYear = RECENT_DATE.year, stopMonth = RECENT_DATE.monthValue)
             )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Treatment matching 'Treatment' administered since 01-Jun-2024"
+        )
     }
 
     @Test
     fun `Should be undetermined when all dates are unknown`() {
         val treatmentHistory = listOf(NON_MATCHING_RECENT_TREATMENT, matchingTreatment(stopYear = null, stopMonth = null))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 (missing stop date)"
+        )
     }
 
     @Test
     fun `Should be undetermined when matching treatment has unknown start and stop year`() {
         val treatmentHistory =
             listOf(NON_MATCHING_RECENT_TREATMENT, matchingOlderTreatment(), matchingTreatment(stopYear = null, stopMonth = 10))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 (missing stop date)"
+        )
     }
 
     @Test
     fun `Should be undetermined when matching treatment matches year with unknown month`() {
         val treatmentHistory = listOf(NON_MATCHING_RECENT_TREATMENT, matchingTreatment(stopYear = MIN_DATE.year, stopMonth = null))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 (missing stop date)"
+        )
     }
 
     @Test
@@ -107,7 +140,11 @@ class HasHadSpecificTreatmentSinceDateTest {
             NON_MATCHING_RECENT_TREATMENT,
             matchingTreatment(startYear = RECENT_DATE.year, startMonth = RECENT_DATE.monthValue, stopYear = null, stopMonth = null)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Treatment matching 'Treatment' administered since 01-Jun-2024"
+        )
     }
 
     @Test
@@ -120,7 +157,11 @@ class HasHadSpecificTreatmentSinceDateTest {
                 stopMonth = OLDER_DATE.monthValue
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "All treatments matching 'Treatment' administered before 01-Jun-2024"
+        )
     }
 
     @Test
@@ -137,7 +178,11 @@ class HasHadSpecificTreatmentSinceDateTest {
             )
         )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 (missing stop date)"
+        )
         assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
             "Undetermined if treatment matching 'Treatment' may have been administered since 01-Jun-2024 (missing stop date)"
         )
@@ -156,7 +201,11 @@ class HasHadSpecificTreatmentSinceDateTest {
                 maxStopMonth = OLDER_DATE.monthValue
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "All treatments matching 'Treatment' administered before 01-Jun-2024"
+        )
     }
 
     private fun matchingOlderTreatment() = matchingTreatment(

@@ -20,7 +20,11 @@ class MeasuredCreatinineClearanceEvaluatorTest {
         val record = LabTestFactory.withLabValue(
             LabTestFactory.create(LabMeasurement.CREATININE_CLEARANCE_24H, value = 75.0, date = today)
         )
-        assertEvaluation(EvaluationResult.PASS, evaluator().evaluate(record))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluator().evaluate(record),
+            "Creatinine-clearance (24h urine) 75.0 mL/min exceeds min of 60.0 mL/min"
+        )
     }
 
     @Test
@@ -30,7 +34,11 @@ class MeasuredCreatinineClearanceEvaluatorTest {
             LabTestFactory.create(LabMeasurement.CREATININE_24U, value = 10.0, date = today),
             LabTestFactory.create(LabMeasurement.CREATININE, value = 70.0, date = today)
         ))
-        assertEvaluation(EvaluationResult.FAIL, evaluator().evaluate(record))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluator().evaluate(record),
+            "Creatinine-clearance (24h urine) 45.0 mL/min below min of 60.0 mL/min"
+        )
     }
 
     @Test
@@ -39,7 +47,7 @@ class MeasuredCreatinineClearanceEvaluatorTest {
             LabTestFactory.create(LabMeasurement.CREATININE_24U, value = 10.0, date = today),
             LabTestFactory.create(LabMeasurement.CREATININE, value = 70.0, date = today)
         ))
-        assertEvaluation(EvaluationResult.PASS, evaluator().evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, evaluator().evaluate(record), "Measured creatinine clearance exceeds min of 60.0 mL/min")
     }
 
     @Test
@@ -49,11 +57,15 @@ class MeasuredCreatinineClearanceEvaluatorTest {
             LabTestFactory.create(LabMeasurement.URINE_VOLUME_24H, value = 1500.0, date = today),
             LabTestFactory.create(LabMeasurement.CREATININE, value = 70.0, date = today)
         ))
-        assertEvaluation(EvaluationResult.PASS, evaluator().evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, evaluator().evaluate(record), "Measured creatinine clearance exceeds min of 60.0 mL/min")
     }
 
     @Test
     fun `Should be undetermined when all measurement paths are absent`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluator().evaluate(LabTestFactory.withLabValues(emptyList())))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluator().evaluate(LabTestFactory.withLabValues(emptyList())),
+            "No shared date found for all required lab values: creatinine in urine, 24-hour volume urine, creatinine"
+        )
     }
 }

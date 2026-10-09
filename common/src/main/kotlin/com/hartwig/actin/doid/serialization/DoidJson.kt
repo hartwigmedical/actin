@@ -68,6 +68,7 @@ object DoidJson {
                 url = id,
                 metadata = extractMetadata(optionalObject(node, "meta")),
                 type = optionalString(node, "type"),
+                propertyType = optionalString(node, "propertyType"),
                 term = optionalString(node, "lbl")
             )
         }
@@ -213,7 +214,8 @@ object DoidJson {
                 pred = string(synonym, "pred"),
                 `val` = string(synonym, "val"),
                 xrefs = optionalStringList(synonym, "xrefs"),
-                synonymType = optionalString(synonym, "synonymType")
+                synonymType = optionalString(synonym, "synonymType"),
+                meta = extractMetadata(optionalObject(synonym, "meta"))
             )
         }
     }
@@ -225,7 +227,8 @@ object DoidJson {
         DatamodelCheckerFactory.definitionChecker().check(definition)
         return Definition(
             `val` = string(definition, "val"),
-            xrefs = optionalStringList(definition, "xrefs")
+            xrefs = optionalStringList(definition, "xrefs"),
+            meta = extractMetadata(optionalObject(definition, "meta"))
         )
     }
 

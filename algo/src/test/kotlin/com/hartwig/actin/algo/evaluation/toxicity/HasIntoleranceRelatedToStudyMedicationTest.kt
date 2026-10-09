@@ -25,13 +25,21 @@ class HasIntoleranceRelatedToStudyMedicationTest {
 
     @Test
     fun `Should fail when no comorbidities in history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
+            "Has no intolerances to study medication"
+        )
     }
 
     @Test
     fun `Should fail when intolerance has wrong ICD code`() {
         val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = "wrong")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
+            "Has no intolerances to study medication"
+        )
     }
 
     @Test
@@ -41,7 +49,11 @@ class HasIntoleranceRelatedToStudyMedicationTest {
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 1, icdMainCode),
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, null, icdMainCode)
         ).forEach { match ->
-            assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
+            assertEvaluation(
+                EvaluationResult.FAIL,
+                function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+                "Has no intolerances to study medication"
+            )
         }
     }
 
@@ -51,16 +63,25 @@ class HasIntoleranceRelatedToStudyMedicationTest {
             icdMainCode = matchingIcdCodes.first(),
             icdExtensionCode = IcdConstants.CEFAMYCIN_ANTIBIOTIC
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
+            "Has no intolerances to study medication"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined when intolerance has matching ICD code`() {
         val intolerance = ComorbidityTestFactory.intolerance(
+            name = "intolerance",
             icdMainCode = matchingIcdCodes.first(),
             icdExtensionCode = IcdConstants.NIVOLUMAB_CODE
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
+            "Has medication-related allergies (${intolerance.name}) - undetermined if allergy to study medication"
+        )
     }
 
     @Test
@@ -70,7 +91,11 @@ class HasIntoleranceRelatedToStudyMedicationTest {
             ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode, IcdConstants.NIVOLUMAB_CODE),
             ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode, icdExtensionCode = IcdConstants.NIVOLUMAB_CODE)
         ).forEach { match ->
-            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(match)))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+                "Has medication-related allergies (${match.name}) - undetermined if allergy to study medication"
+            )
         }
     }
 }

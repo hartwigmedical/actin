@@ -17,13 +17,17 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
 
     @Test
     fun `Should fail for empty treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not received treatment 1")
     }
 
     @Test
     fun `Should fail for wrong treatment`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("wrong", true)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received treatment 1"
+        )
     }
 
     @Test
@@ -37,41 +41,62 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         )
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received treatment 1"
         )
     }
 
     @Test
     fun `Should evaluate to undetermined when trial entry without treatment and weeks are missing`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Undetermined if treatment received contained treatment 1 for at least 6 weeks"
+        )
     }
 
     @Test
     fun `Should fail when trial entries without treatment when trial duration less than min weeks`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(emptySet(), isTrial = true, startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 3)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received treatment 1"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined when trial entry without treatment with more than requested amount of weeks`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(emptySet(), isTrial = true, startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 8)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Undetermined if treatment received contained treatment 1 for at least 6 weeks"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined for correct treatment when weeks are missing`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2022, startMonth = 3)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has received treatment 1 but unknown nb of weeks"
+        )
     }
 
     @Test
     fun `Should pass for correct treatment within requested amount of weeks`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(MATCHING_TREATMENT), startYear = 2022, startMonth = 3, stopYear = 2022, stopMonth = 8)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has received treatment 1 for at least 6 weeks"
+        )
     }
 
     @Test
@@ -92,7 +117,8 @@ class HasHadSufficientWeeksOfSpecificTreatmentTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2)))
+            function.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2))),
+            "Undetermined if multiple received treatment 1 is counted as received for less than 6 weeks"
         )
     }
 }

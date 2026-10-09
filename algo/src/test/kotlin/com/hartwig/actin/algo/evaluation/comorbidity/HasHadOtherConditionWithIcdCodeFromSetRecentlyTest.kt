@@ -33,7 +33,11 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "History of stroke within last 6 months (cerebral bleeding (2021-9))"
+        )
         assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "History of stroke within last $maxMonthsAgo months (cerebral bleeding (${conditionDate.year}-${conditionDate.monthValue}))"
         )
@@ -49,8 +53,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         )
         val infarction = bleeding.copy(name = "cerebral infarction")
         val evaluation = function.evaluate(ComorbidityTestFactory.withOtherConditions(listOf(bleeding, infarction)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Recent stroke (cerebral bleeding, cerebral infarction)")
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation, "Recent stroke (cerebral bleeding, cerebral infarction)")
     }
 
     @Test
@@ -58,7 +61,10 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
         val conditions = ComorbidityTestFactory.withOtherConditions(
             listOf(
                 ComorbidityTestFactory.otherCondition(
-                    year = minDate.plusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
+                    name = "stroke name",
+                    year = minDate.plusYears(1).year,
+                    month = 1,
+                    icdMainCode = targetIcdCodes.first().mainCode
                 ),
                 ComorbidityTestFactory.otherCondition(
                     year = minDate.plusMonths(1).year,
@@ -67,7 +73,7 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(conditions))
+        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(conditions), "Recent stroke (stroke name)")
     }
 
     @Test
@@ -82,7 +88,11 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
                 )
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "History of stroke within last 6 months (cerebral bleeding (2021-8))"
+        )
         assertThat(evaluation.warnMessagesStrings()).containsExactly(
             "History of stroke within last $maxMonthsAgo months (cerebral bleeding (${minDate.year}-${minDate.monthValue}))"
         )
@@ -95,10 +105,11 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 ComorbidityTestFactory.withOtherCondition(
                     ComorbidityTestFactory.otherCondition(
-                        year = null, icdMainCode = targetIcdCodes.first().mainCode
+                        name = "cerebral bleeding", year = null, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
-            )
+            ),
+            "History of stroke (cerebral bleeding) but undetermined if less than 6 months ago"
         )
     }
 
@@ -112,10 +123,11 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             function.evaluate(
                 ComorbidityTestFactory.withOtherCondition(
                     ComorbidityTestFactory.otherCondition(
-                        icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
+                        name = "cerebral bleeding", icdMainCode = IcdConstants.STROKE_NOS_CODE, icdExtensionCode = null
                     )
                 )
-            )
+            ),
+            "Recent cerebral bleeding but undetermined if history of stroke"
         )
     }
 
@@ -129,7 +141,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
                         year = 2023, icdMainCode = IcdConstants.HYPOMAGNESEMIA_CODE
                     )
                 )
-            )
+            ),
+            "No recent stroke"
         )
     }
 
@@ -139,7 +152,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 ComorbidityTestFactory.withOtherConditions(emptyList())
-            )
+            ),
+            "No recent stroke"
         )
     }
 
@@ -153,7 +167,8 @@ class HasHadOtherConditionWithIcdCodeFromSetRecentlyTest {
                         year = minDate.minusYears(1).year, month = 1, icdMainCode = targetIcdCodes.first().mainCode
                     )
                 )
-            )
+            ),
+            "No recent stroke"
         )
     }
 

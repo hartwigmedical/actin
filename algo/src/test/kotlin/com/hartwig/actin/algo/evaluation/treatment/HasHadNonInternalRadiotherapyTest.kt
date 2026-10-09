@@ -14,31 +14,51 @@ class HasHadNonInternalRadiotherapyTest {
 
     @Test
     fun `Should fail for empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received any non-internal radiotherapy"
+        )
     }
 
     @Test
     fun `Should fail for non-radiotherapy treatment`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(treatment("other treatment", false))))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not received any non-internal radiotherapy"
+        )
     }
 
     @Test
     fun `Should fail for internal radiotherapy`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(radiotherapy(true))))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not received any non-internal radiotherapy"
+        )
     }
 
     @Test
     fun `Should pass for radiotherapy with internal status not specified`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(radiotherapy(null))))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has received non-internal radiotherapy (radiotherapy)"
+        )
     }
 
     @Test
     fun `Should pass for external radiotherapy`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(radiotherapy(false))))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has received non-internal radiotherapy (radiotherapy)"
+        )
     }
 
     private fun radiotherapy(isInternal: Boolean?): Radiotherapy {

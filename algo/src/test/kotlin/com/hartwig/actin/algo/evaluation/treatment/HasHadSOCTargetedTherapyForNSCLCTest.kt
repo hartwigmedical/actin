@@ -22,7 +22,11 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
 
     @Test
     fun `Should fail for empty treatment history`(){
-        assertEvaluationForAllFunctions(withTreatmentHistory(emptyList()), EvaluationResult.FAIL)
+        assertEvaluationForAllFunctions(
+            withTreatmentHistory(emptyList()),
+            EvaluationResult.FAIL,
+            "Has not received SOC targeted therapy for NSCLC"
+        )
     }
 
     @Test
@@ -32,7 +36,11 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
                 setOf(drugTreatment("Wrong category treatment", TreatmentCategory.IMMUNOTHERAPY, setOf(correctDrugType)))
             )
         )
-        assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.FAIL)
+        assertEvaluationForAllFunctions(
+            withTreatmentHistory(treatmentHistory),
+            EvaluationResult.FAIL,
+            "Has not received SOC targeted therapy for NSCLC"
+        )
     }
 
     @Test
@@ -40,7 +48,11 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(wrongTreatment))
         )
-        assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.FAIL)
+        assertEvaluationForAllFunctions(
+            withTreatmentHistory(treatmentHistory),
+            EvaluationResult.FAIL,
+            "Has not received SOC targeted therapy for NSCLC"
+        )
     }
 
     @Test
@@ -56,7 +68,11 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, functionIgnoringGenes.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionIgnoringGenes.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not received SOC targeted therapy for NSCLC"
+        )
     }
 
     @Test
@@ -64,11 +80,15 @@ class HasHadSOCTargetedTherapyForNSCLCTest {
         val treatmentHistory = listOf(
             TreatmentTestFactory.treatmentHistoryEntry(setOf(correctTreatment))
         )
-        assertEvaluationForAllFunctions(withTreatmentHistory(treatmentHistory), EvaluationResult.PASS)
+        assertEvaluationForAllFunctions(
+            withTreatmentHistory(treatmentHistory),
+            EvaluationResult.PASS,
+            "Has received SOC targeted therapy for NSCLC (Correct)"
+        )
     }
 
-    private fun assertEvaluationForAllFunctions(record: PatientRecord, expected: EvaluationResult) {
-        assertEvaluation(expected, functionNotIgnoringGenes.evaluate(record))
-        assertEvaluation(expected, functionIgnoringGenes.evaluate(record))
+    private fun assertEvaluationForAllFunctions(record: PatientRecord, expected: EvaluationResult, expectedMessage: String) {
+        assertEvaluation(expected, functionNotIgnoringGenes.evaluate(record), expectedMessage)
+        assertEvaluation(expected, functionIgnoringGenes.evaluate(record), expectedMessage)
     }
 }

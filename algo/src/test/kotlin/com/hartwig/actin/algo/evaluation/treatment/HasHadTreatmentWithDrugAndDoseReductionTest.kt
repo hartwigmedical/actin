@@ -22,7 +22,11 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
 
     @Test
     fun `Should fail for empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Patient did not dose reduction receive match during treatment"
+        )
     }
 
     @Test
@@ -37,7 +41,11 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Patient did not dose reduction receive match during treatment"
+        )
     }
 
     @Test
@@ -46,7 +54,8 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         val medication = WashoutTestFactory.medication().copy(drug = drugWithName("other_drug"))
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication)))
+            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication))),
+            "Patient did not dose reduction receive match during treatment"
         )
     }
 
@@ -66,7 +75,11 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Undetermined if patient may have had a dose reduction during match treatment"
+        )
     }
 
     @Test
@@ -75,7 +88,8 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         val medication = WashoutTestFactory.medication().copy(drug = drugWithName(MATCHING_DRUG_NAME))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication)))
+            function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication))),
+            "Undetermined if patient may have had a dose reduction during match treatment"
         )
     }
 }

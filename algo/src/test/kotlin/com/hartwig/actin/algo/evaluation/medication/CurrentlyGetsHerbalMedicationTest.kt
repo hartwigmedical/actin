@@ -15,7 +15,8 @@ class CurrentlyGetsHerbalMedicationTest {
     fun `Should fail when patient uses no medications`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList()))
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No use of herbal medications"
         )
     }
 
@@ -26,7 +27,8 @@ class CurrentlyGetsHerbalMedicationTest {
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
-            )
+            ),
+            "No use of herbal medications"
         )
     }
 
@@ -37,13 +39,15 @@ class CurrentlyGetsHerbalMedicationTest {
             EvaluationResult.UNDETERMINED,
             alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
-            )
+            ),
+            "Undetermined if patient may use herbal medications (self care medication use)"
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
-            )
+            ),
+            "Undetermined if patient may plan to use herbal medications (planned self care medication use)"
         )
     }
 
@@ -54,7 +58,8 @@ class CurrentlyGetsHerbalMedicationTest {
             EvaluationResult.FAIL,
             alwaysInactiveFunction.evaluate(
                 MedicationTestFactory.withMedications(medications)
-            )
+            ),
+            "No use of herbal medications"
         )
     }
 
@@ -62,10 +67,10 @@ class CurrentlyGetsHerbalMedicationTest {
     fun `Should be undetermined if medication is not provided`() {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = alwaysPlannedFunction.evaluate(medicationNotProvided)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult, "No medication data provided")
         assertThat(alwaysPlannedResult.recoverable).isTrue()
         val alwaysActiveResult = alwaysActiveFunction.evaluate(medicationNotProvided)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult, "No medication data provided")
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

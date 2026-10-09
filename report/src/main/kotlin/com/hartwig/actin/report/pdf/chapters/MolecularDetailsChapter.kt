@@ -166,7 +166,7 @@ class MolecularDetailsChapter(
 
     private fun addLongitudinalMolecularHistoryTable(document: Document) {
         val table = Tables.createSingleColWithWidth(contentWidth())
-        val cohorts = trialsProvider.evaluableCohortsAndNotIgnore()
+        val cohorts = trialsProvider.evaluableCohorts()
         val generator = LongitudinalMolecularHistoryGenerator(report.patientRecord.molecularTests, cohorts, labels)
         TableGeneratorFunctions.addGenerators(listOf(generator), table, overrideTitleFormatToSubtitle = true)
         document.add(table)

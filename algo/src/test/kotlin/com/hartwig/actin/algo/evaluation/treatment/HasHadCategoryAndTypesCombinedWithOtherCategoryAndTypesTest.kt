@@ -25,7 +25,11 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
 
     @Test
     fun `Should fail if treatment history contains no treatments`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+        )
     }
 
     @Test
@@ -37,20 +41,32 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
                     treatmentHistoryEntry(setOf(PLATINUM))
                 )
             )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(treatmentHistory))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(treatmentHistory),
+            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+        )
     }
 
     @Test
     fun `Should fail if treatment history contains second category and types but not combined with treatment with first category and types`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("wrong name", DIFFERENT_CATEGORY_1)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+        )
     }
 
     @Test
     fun `Should fail if treatment history entry contains second category and types but combined with treatment with first category and different types than required`() {
         val treatmentHistoryEntry =
             treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("combined", CATEGORY_1, DIFFERENT_TYPES_1)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+        )
     }
 
     @Test
@@ -59,7 +75,11 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
             treatmentHistoryEntry(setOf(PLATINUM)),
             treatmentHistoryEntry(setOf(drugTreatment("combined", CATEGORY_1, DIFFERENT_TYPES_1))),
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(treatmentHistory)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(treatmentHistory)),
+            "Has not received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
+        )
     }
 
     @Test
@@ -78,7 +98,11 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
             CATEGORY_1,
             setOf(TYPES_1.first())
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received platinum compound chemotherapy combined with HER2 antibody targeted therapy"
+        )
     }
 
     @Test
@@ -89,7 +113,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
         )
     }
 
@@ -98,7 +123,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(emptySet(), isTrial = true)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
         )
     }
 
@@ -107,7 +133,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(PLATINUM, drugTreatment("combined", CATEGORY_1, emptySet())))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
         )
     }
 
@@ -121,7 +148,8 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if received HER2 antibody and HER3 antibody targeted therapy combined with platinum compound chemotherapy"
         )
     }
 }

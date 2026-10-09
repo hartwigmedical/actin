@@ -47,8 +47,7 @@ class TrialIngestion(private val eligibilityFactory: EligibilityFactory) {
                             )
                         },
                         description = cohortConfig.description,
-                        evaluable = cohortConfig.evaluable,
-                        ignore = cohortConfig.ignore
+                        evaluable = cohortConfig.evaluable
                     ),
                     eligibility = cohortCriteria
                 ).right() else UnmappableCohort(cohortId = cohortConfig.cohortId, cohortMappingErrors).left()

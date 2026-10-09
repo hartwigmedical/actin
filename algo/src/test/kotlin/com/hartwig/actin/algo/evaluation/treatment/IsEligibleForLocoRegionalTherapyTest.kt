@@ -11,7 +11,8 @@ class IsEligibleForLocoRegionalTherapyTest {
     fun shouldEvaluateToUndetermined() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            IsEligibleForLocoRegionalTherapy().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            IsEligibleForLocoRegionalTherapy().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Potential eligibility for loco-regional therapy undetermined"
         )
     }
 }

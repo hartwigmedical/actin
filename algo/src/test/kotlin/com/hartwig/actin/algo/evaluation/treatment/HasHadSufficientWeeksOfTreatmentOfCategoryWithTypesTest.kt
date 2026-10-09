@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
@@ -27,7 +26,11 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
             stopMonth = 8
         )
 
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received HER2 antibody targeted therapy treatment for at least 6 weeks"
+        )
     }
 
     @Test
@@ -35,8 +38,11 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, emptySet())))
         val result = function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received contained HER2 antibody targeted therapy treatment for at least 6 weeks")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if treatment received contained HER2 antibody targeted therapy treatment for at least 6 weeks"
+        )
     }
 
     @Test
@@ -44,8 +50,11 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("test", isSystemic = true)), isTrial = true)
         val result = function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if treatment received in previous trial contained HER2 antibody targeted therapy treatment for at least 6 weeks")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if treatment received in previous trial contained HER2 antibody targeted therapy treatment for at least 6 weeks"
+        )
     }
 
     @Test
@@ -60,7 +69,11 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
                     )
                 ), isTrial = true
             )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received HER2 antibody targeted therapy treatment"
+        )
     }
 
     @Test
@@ -68,20 +81,29 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
         val treatmentHistoryEntry = TreatmentTestFactory.treatmentHistoryEntry(MATCHING_TREATMENT_SET, startYear = null)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received HER2 antibody targeted therapy treatment but unknown nb of weeks"
         )
     }
 
     @Test
     fun `Should fail for empty treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received HER2 antibody targeted therapy treatment"
+        )
     }
 
     @Test
     fun `Should fail for wrong category`() {
         val treatmentHistoryEntry =
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.RADIOTHERAPY)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received HER2 antibody targeted therapy treatment"
+        )
     }
 
     @Test
@@ -94,7 +116,8 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("test", true)), isTrial = true)
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "No allogenic transplantation treatment with PD"
         )
     }
 
@@ -107,7 +130,11 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
             stopYear = 2022,
             stopMonth = 3
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received HER2 antibody targeted therapy treatment"
+        )
     }
 
     @Test
@@ -128,7 +155,8 @@ class HasHadSufficientWeeksOfTreatmentOfCategoryWithTypesTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2)))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2))),
+            "Undetermined if multiple received HER2 antibody targeted therapy treatment is counted as received for less than 6 weeks"
         )
     }
 }

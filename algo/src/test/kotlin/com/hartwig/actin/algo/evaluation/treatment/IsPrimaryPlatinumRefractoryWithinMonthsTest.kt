@@ -37,7 +37,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Not primary platinum refractory (no progression on platinum treatment)"
         )
     }
 
@@ -54,7 +55,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Undetermined if patient is primary platinum refractory"
         )
     }
 
@@ -75,7 +77,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Undetermined if patient is primary platinum refractory"
         )
     }
 
@@ -85,7 +88,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Undetermined if patient is primary platinum refractory (no platinum treatment)"
         )
     }
 
@@ -109,7 +113,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Undetermined if patient is primary platinum refractory"
         )
     }
 
@@ -124,7 +129,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Is primary platinum refractory"
         )
     }
 
@@ -141,7 +147,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Is primary platinum refractory"
         )
     }
 
@@ -165,7 +172,8 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Is primary platinum refractory"
         )
     }
 }

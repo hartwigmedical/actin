@@ -9,18 +9,30 @@ class HasNormalCardiacFunctionByMugaOrTteTest {
 
     @Test
     fun `Should be undetermined for unknown LVEF`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(CardiacFunctionTestFactory.withLvef(null)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(CardiacFunctionTestFactory.withLvef(null)),
+            "Normal cardiac function by MUGA or TTE undetermined"
+        )
     }
 
     @Test
     fun `Should be undetermined for LVEF greater than or equal to 50 percent`() {
         listOf(0.5, 0.8).forEach { lvef ->
-            assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(CardiacFunctionTestFactory.withLvef(lvef)))
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function.evaluate(CardiacFunctionTestFactory.withLvef(lvef)),
+                "Normal cardiac function by MUGA or TTE undetermined"
+            )
         }
     }
 
     @Test
     fun `Should warn for LVEF under 50 percent`() {
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(CardiacFunctionTestFactory.withLvef(0.3)))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(CardiacFunctionTestFactory.withLvef(0.3)),
+            "Uncertain if cardiac function by MUGA or TTE is considered normal (LVEF < 50%)"
+        )
     }
 }

@@ -30,12 +30,20 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
 
     @Test
     fun `Should fail for empty treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received Matching as first-line treatment without PD and with at least 3 cycles"
+        )
     }
 
     @Test
     fun `Should fail when patient has not received correct treatment`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(listOf(NON_MATCHING_HISTORY_ENTRY))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(listOf(NON_MATCHING_HISTORY_ENTRY))),
+            "Has not received Matching as first-line treatment without PD and with at least 3 cycles"
+        )
     }
 
     @Test
@@ -44,7 +52,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
             EvaluationResult.FAIL,
             function.evaluate(
                 withTreatmentHistory(listOf(NON_MATCHING_HISTORY_ENTRY.copy(startYear = RECENT_YEAR.minus(1)), MATCHING_HISTORY_ENTRY))
-            )
+            ),
+            "Has not received Matching as first-line treatment without PD and with at least 3 cycles"
         )
     }
 
@@ -62,7 +71,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has not received Matching as first-line treatment without PD and with at least 3 cycles"
         )
     }
 
@@ -74,13 +84,18 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                 withTreatmentHistory(
                     listOf(MATCHING_HISTORY_ENTRY.copy(treatmentHistoryDetails = MATCHING_HISTORY_DETAILS.copy(cycles = MIN_CYCLES - 1)))
                 )
-            )
+            ),
+            "Has received Matching as first-line treatment without PD but less than 3 cycles"
         )
     }
 
     @Test
     fun `Should pass when correct treatment is first line without PD and with sufficient cycles`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistory(listOf(MATCHING_HISTORY_ENTRY))))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistory(listOf(MATCHING_HISTORY_ENTRY))),
+            "Has received Matching as first-line treatment without PD and with at least 3 cycles"
+        )
     }
 
     @Test
@@ -93,7 +108,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                         MATCHING_HISTORY_ENTRY.copy(startYear = null, treatmentHistoryDetails = MATCHING_HISTORY_DETAILS)
                     )
                 )
-            )
+            ),
+            "Has received Matching as first-line treatment without PD and with at least 3 cycles"
         )
     }
 
@@ -111,7 +127,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                         )
                     )
                 )
-            )
+            ),
+            "Undetermined if has received first line Matching treatment (first line is unknown trial treatment)"
         )
     }
 
@@ -126,7 +143,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                         MATCHING_HISTORY_ENTRY.copy(startYear = null, treatmentHistoryDetails = MATCHING_HISTORY_DETAILS)
                     )
                 )
-            )
+            ),
+            "Has received Matching but undetermined if first line (dates missing)"
         )
     }
 
@@ -142,7 +160,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has received Matching as first-line treatment but undetermined if without PD"
         )
     }
 
@@ -158,7 +177,8 @@ class HasHadSystemicFirstLineTreatmentWithoutPdAndWithCyclesTest {
                         )
                     )
                 )
-            )
+            ),
+            "Has received Matching as first-line treatment but undetermined if with at least 3 cycles"
         )
     }
 }

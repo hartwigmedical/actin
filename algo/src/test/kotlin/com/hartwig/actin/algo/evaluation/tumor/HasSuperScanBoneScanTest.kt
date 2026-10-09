@@ -10,6 +10,10 @@ class HasSuperScanBoneScanTest {
     @Test
     fun canEvaluate() {
         val function = HasSuperScanBoneScan()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Presence of superscan bone scan undetermined"
+        )
     }
 }

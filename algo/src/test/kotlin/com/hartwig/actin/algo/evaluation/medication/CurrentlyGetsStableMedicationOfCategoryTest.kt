@@ -38,13 +38,21 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
 
     @Test
     fun `Should fail when no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No stable dosing of category 1"
+        )
     }
 
     @Test
     fun `Should pass when single medication with dosing`() {
         val medications = listOf(MedicationTestFactory.medication(dosage = fixedDosing, atc = atcCategory1))
-        assertEvaluation(EvaluationResult.PASS, oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Gets stable dosing of category 1"
+        )
     }
 
     @Test
@@ -53,7 +61,11 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             MedicationTestFactory.medication(dosage = fixedDosing, atc = atcCategory1),
             MedicationTestFactory.medication(dosage = fixedDosing)
         )
-        assertEvaluation(EvaluationResult.PASS, oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Gets stable dosing of category 1"
+        )
     }
 
     @Test
@@ -63,13 +75,21 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             MedicationTestFactory.medication(dosage = fixedDosing),
             MedicationTestFactory.medication(dosage = fixedDosing.copy(frequencyUnit = "other"), atc = atcCategory1)
         )
-        assertEvaluation(EvaluationResult.FAIL, oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No stable dosing of category 1"
+        )
     }
 
     @Test
     fun `Should fail when dosing is combined with medication without dosing`() {
         val medications = listOf(MedicationTestFactory.medication(dosage = fixedDosing), MedicationTestFactory.medication())
-        assertEvaluation(EvaluationResult.FAIL, oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            oneCategoryFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No stable dosing of category 1"
+        )
     }
 
     @Test
@@ -78,7 +98,11 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             MedicationTestFactory.medication(dosage = fixedDosing, atc = atcCategory1),
             MedicationTestFactory.medication(dosage = fixedDosing, atc = atcCategory2)
         )
-        assertEvaluation(EvaluationResult.PASS, multipleCategoriesFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            multipleCategoriesFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Gets stable dosing of category 1 and category 2"
+        )
     }
 
     @Test
@@ -88,7 +112,11 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             MedicationTestFactory.medication(dosage = fixedDosing, atc = atcCategory2),
             MedicationTestFactory.medication(dosage = fixedDosing.copy(frequencyUnit = "other"), atc = atcCategory1)
         )
-        assertEvaluation(EvaluationResult.PASS, multipleCategoriesFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            multipleCategoriesFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "Gets stable dosing of category 1 and category 2"
+        )
     }
 
     @Test
@@ -99,18 +127,22 @@ class CurrentlyGetsStableMedicationOfCategoryTest {
             MedicationTestFactory.medication(dosage = fixedDosing.copy(frequencyUnit = "other"), atc = atcCategory1),
             MedicationTestFactory.medication(dosage = fixedDosing.copy(frequencyUnit = "other"), atc = atcCategory2)
         )
-        assertEvaluation(EvaluationResult.FAIL, multipleCategoriesFunction.evaluate(MedicationTestFactory.withMedications(medications)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            multipleCategoriesFunction.evaluate(MedicationTestFactory.withMedications(medications)),
+            "No stable dosing of category 1 and category 2"
+        )
     }
 
     @Test
     fun `Should be undetermined if medication is not provided`() {
         val medicationNotProvided = TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         val alwaysPlannedResult = oneCategoryFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysPlannedResult, "No medication data provided")
         assertThat(alwaysPlannedResult.recoverable).isTrue()
 
         val alwaysActiveResult = multipleCategoriesFunction.evaluate(medicationNotProvided)
-        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult)
+        assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveResult, "No medication data provided")
         assertThat(alwaysActiveResult.recoverable).isTrue()
     }
 }

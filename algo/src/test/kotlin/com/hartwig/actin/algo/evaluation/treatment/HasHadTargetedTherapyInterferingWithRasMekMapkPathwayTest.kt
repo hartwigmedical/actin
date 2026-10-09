@@ -7,7 +7,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.RAS_MEK_MAPK_DIRECTLY_TARGETING_DRUG_SET
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType.Companion.RAS_MEK_MAPK_INDIRECTLY_TARGETING_DRUG_SET
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
@@ -16,7 +15,11 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
 
     @Test
     fun `Should fail for no treatments`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
+        )
     }
 
     @Test
@@ -25,7 +28,8 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
         )
     }
 
@@ -38,8 +42,9 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
                 )
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly(
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            evaluation,
             "Has had targeted therapy interfering with RAS/MEK/MAPK pathway (Test)"
         )
     }
@@ -57,8 +62,9 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
                 )
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).containsExactly(
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
             "Has had targeted therapy (Test) indirectly interfering with RAS/MEK/MAPK pathway"
         )
     }
@@ -70,8 +76,9 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
                 setOf(TreatmentTestFactory.treatment("trial", true)), isTrial = true
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly(
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
             "Has had trial drug - undetermined interference with RAS/MEK/MAPK pathway"
         )
     }
@@ -85,8 +92,9 @@ class HasHadTargetedTherapyInterferingWithRasMekMapkPathwayTest {
                 )
             )
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly(
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            evaluation,
             "Has not received targeted therapy interfering with RAS/MEK/MAPK pathway"
         )
     }

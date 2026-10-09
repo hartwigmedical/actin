@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import io.mockk.every
 import io.mockk.mockk
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class IsEligibleForFirstLinePalliativeChemotherapyTest {
@@ -36,40 +35,60 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
         val function = IsEligibleForFirstLinePalliativeChemotherapy(alwaysFailsMetastaticCancerEvaluation)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(palliativeChemotherapy))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(palliativeChemotherapy),
+            "No metastatic cancer and hence no eligibility for first line palliative chemotherapy"
+        )
     }
 
     @Test
     fun `Should fail when metastatic cancer and previous palliative chemotherapy`() {
-        assertEvaluation(EvaluationResult.FAIL, functionMetastaticCancer.evaluate(palliativeChemotherapy))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionMetastaticCancer.evaluate(palliativeChemotherapy),
+            "Had palliative chemotherapy and is hence not eligible for first line palliative chemotherapy"
+        )
     }
 
     @Test
     fun `Should be undetermined when patient has metastatic cancer and previous palliative targeted therapy`() {
         val result = functionMetastaticCancer.evaluate(palliativeTargetedTherapy)
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Had palliative targeted therapy (hence may not be considered eligible for first line palliative chemotherapy)")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Had palliative targeted therapy (hence may not be considered eligible for first line palliative chemotherapy)"
+        )
     }
 
     @Test
     fun `Should be undetermined when patient has metastatic cancer and no previous palliative therapy`() {
         val result = functionMetastaticCancer.evaluate(consolidationChemotherapy)
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if patient with metastatic disease is considered eligible for first line palliative chemotherapy")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if patient with metastatic disease is considered eligible for first line palliative chemotherapy"
+        )
     }
 
     @Test
     fun `Should be undetermined when undetermined if patient has metastatic cancer and no previous palliative therapy`() {
         val result = functionUndeterminedMetastaticCancer.evaluate(consolidationChemotherapy)
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)"
+        )
     }
 
     @Test
     fun `Should be undetermined when undetermined if patient has metastatic cancer and previous palliative targeted therapy`() {
         val result = functionUndeterminedMetastaticCancer.evaluate(palliativeTargetedTherapy)
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
-        assertThat(result.undeterminedMessagesStrings()).containsExactly("Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            result,
+            "Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)"
+        )
     }
 
     private fun patientRecordWithTreatmentWithCategoryAndIntent(category: TreatmentCategory, intent: Intent): PatientRecord {
