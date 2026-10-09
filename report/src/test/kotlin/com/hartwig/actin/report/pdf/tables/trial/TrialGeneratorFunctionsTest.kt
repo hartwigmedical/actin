@@ -347,8 +347,8 @@ class TrialGeneratorFunctionsTest {
 
     @Test
     fun `Should mark trial id with asterisk when CTgov is the only source`() {
-        assertThat(trialIdCellTextFor(setOf(TrialSource.CTgov))).isEqualTo("trial1*\nT1")
-        assertThat(trialIdCellTextFor(setOf(TrialSource.CTgov, TrialSource.LKO))).isEqualTo("trial1\nT1")
+        assertThat(trialIdCellTextFor(setOf(TrialSource.CTG))).isEqualTo("trial1*\nT1")
+        assertThat(trialIdCellTextFor(setOf(TrialSource.CTG, TrialSource.LKO))).isEqualTo("trial1\nT1")
         assertThat(trialIdCellTextFor(emptySet())).isEqualTo("trial1\nT1")
     }
 
