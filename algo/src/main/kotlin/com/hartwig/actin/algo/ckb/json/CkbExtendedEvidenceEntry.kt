@@ -23,6 +23,6 @@ data class CkbExtendedEvidenceEntry(
     val allocation: String,
     @JsonProperty("cancer_stage") val cancerStage: String,
     @JsonProperty("disease_assessment") val diseaseAssessment: String,
-    @JsonProperty("disease_assessment_criteria") val diseaseAssessmentCriteria: String,
+    @JsonProperty("disease_assessment_criteria") val diseaseAssessmentCriteria: String?,
     @JsonProperty("therapeutic_setting") val therapeuticSetting: String?
 )
