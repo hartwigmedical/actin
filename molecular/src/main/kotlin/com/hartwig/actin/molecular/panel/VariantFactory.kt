@@ -53,6 +53,7 @@ object VariantFactory {
         clonalLikelihood = null,
         phaseGroups = null,
         exonSkippingIsConfirmed = variant.exonSkippingIsConfirmed,
+        pathogenicityIsConfirmed = variant.pathogenicityIsConfirmed,
         isCancerAssociatedVariant = false,
         sourceEvent = sourceEvent(variant, paveResponse),
         isReportable = true,
