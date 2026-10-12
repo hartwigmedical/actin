@@ -17,27 +17,37 @@ class ProteinIsLostByIhcTest {
 
     @Test
     fun `Should be undetermined if there is an empty list`() {
-        assertMolecularEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(MolecularTestFactory.withIhcTests(emptyList())))
+        assertMolecularEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(MolecularTestFactory.withIhcTests(emptyList())),
+            "No protein 1 IHC test result"
+        )
     }
 
     @Test
     fun `Should be undetermined if there are no tests for protein`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(item = "Other protein", scoreText = "loss")))
+            function.evaluate(MolecularTestFactory.withIhcTests(ihcTest(item = "Other protein", scoreText = "loss"))),
+            "No protein 1 IHC test result"
         )
     }
 
     @Test
     fun `Should pass if all tests would pass`() {
-        assertMolecularEvaluation(EvaluationResult.PASS, function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest))))
+        assertMolecularEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest))),
+            "protein 1 is lost by IHC"
+        )
     }
 
     @Test
     fun `Should warn if there is at least one test with passing result`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest, inconclusiveTest)))
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(passingTest, inconclusiveTest))),
+            "Undetermined if protein 1 IHC result indicates protein 1 loss by IHC"
         )
     }
 
@@ -45,12 +55,17 @@ class ProteinIsLostByIhcTest {
     fun `Should warn if there is at least one test with inconclusive result`() {
         assertMolecularEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(MolecularTestFactory.withIhcTests(listOf(wrongTest, inconclusiveTest)))
+            function.evaluate(MolecularTestFactory.withIhcTests(listOf(wrongTest, inconclusiveTest))),
+            "Undetermined if protein 1 IHC result indicates protein 1 loss by IHC"
         )
     }
 
     @Test
     fun `Should fail if there are only tests with failing result`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(MolecularTestFactory.withIhcTests(wrongTest, wrongTest)))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(MolecularTestFactory.withIhcTests(wrongTest, wrongTest)),
+            "protein 1 is not lost by IHC"
+        )
     }
 }

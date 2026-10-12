@@ -15,7 +15,11 @@ class HasRestingHeartRateWithinBoundsTest {
 
     @Test
     fun `Should evaluate to undetermined when no heart rate measurements present`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(emptyList())))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(emptyList())),
+            "No (recent) heart rate data found"
+        )
     }
 
     @Test
@@ -23,7 +27,11 @@ class HasRestingHeartRateWithinBoundsTest {
         val heartRates = listOf(
             heartRate(referenceDateTime, 70.0, false).copy(unit = "test")
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)),
+            "No (recent) heart rate data found"
+        )
     }
 
     @Test
@@ -32,7 +40,11 @@ class HasRestingHeartRateWithinBoundsTest {
             heartRate(referenceDateTime, 80.0),
             heartRate(referenceDateTime.plusDays(1), 85.0)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)),
+            "Median heart rate (82.5 bpm) outside range (60.0 - 80.0) but within margin of error"
+        )
     }
 
     @Test
@@ -42,7 +54,11 @@ class HasRestingHeartRateWithinBoundsTest {
             heartRate(referenceDateTime.plusDays(1), 70.0),
             heartRate(referenceDateTime.plusDays(2), 90.0)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)),
+            "Median heart rate (70.0 bpm) within range (60.0 - 80.0)"
+        )
     }
 
     @Test
@@ -52,7 +68,11 @@ class HasRestingHeartRateWithinBoundsTest {
             heartRate(referenceDateTime.plusDays(1), 95.0),
             heartRate(referenceDateTime.plusDays(2), 90.0)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)),
+            "Median heart rate (90.0 bpm) outside range (60.0 - 80.0)"
+        )
     }
 
     @Test
@@ -62,7 +82,11 @@ class HasRestingHeartRateWithinBoundsTest {
             heartRate(referenceDateTime.minusMonths(1), 70.0),
             heartRate(referenceDateTime, 95.0)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)),
+            "Median heart rate (95.0 bpm) outside range (60.0 - 80.0)"
+        )
     }
 
     @Test
@@ -79,7 +103,11 @@ class HasRestingHeartRateWithinBoundsTest {
             heartRate(referenceDateTime.plusDays(6), 70.0),
             heartRate(referenceDateTime.plusDays(7), 90.0)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(heartRates)),
+            "Median heart rate (70.0 bpm) within range (60.0 - 80.0)"
+        )
     }
 
     private fun heartRate(date: LocalDateTime, value: Double, valid: Boolean = true): VitalFunction {

@@ -20,13 +20,17 @@ class HasHadRecentResectionTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not had recent resection")
     }
 
     @Test
     fun `Should pass with recent resection`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(matchingTreatment, startYear = 2022, startMonth = 11)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had recent resection"
+        )
     }
 
     @Test
@@ -40,19 +44,28 @@ class HasHadRecentResectionTest {
                 )
             ), startYear = 2022, startMonth = 11
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had recent resection"
+        )
     }
 
     @Test
     fun `Should warn for resection close to minDate`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(matchingTreatment, startYear = 2022, startMonth = 10)
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has had reasonably recent resection"
+        )
     }
 
     @Test
     fun `Should be undetermined for resection with missing date`() {
         assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(matchingTreatment)))
+            EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(matchingTreatment))),
+            "May have had a recent resection"
         )
     }
 
@@ -62,7 +75,8 @@ class HasHadRecentResectionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(
                 withTreatmentHistoryEntry(treatmentHistoryEntry(treatments, startYear = 2022, startMonth = 11))
-            )
+            ),
+            "May have had a recent resection"
         )
     }
 }

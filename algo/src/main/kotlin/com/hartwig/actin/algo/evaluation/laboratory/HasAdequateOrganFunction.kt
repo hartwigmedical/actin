@@ -68,7 +68,7 @@ class HasAdequateOrganFunction(private val minValidDate: LocalDate) : Evaluation
             undeterminedLabValues.isNotEmpty() -> {
                 EvaluationFactory.recoverableUndetermined(
                     "Undetermined if adequate organ function " +
-                            "(lab value(s) (${Format.concat(undeterminedLabValues.map { it.display })}) undetermined)"
+                            "(${Format.concat(undeterminedLabValues.map { it.display })} undetermined)"
                 )
             }
 

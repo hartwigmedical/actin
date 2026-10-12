@@ -25,7 +25,8 @@ class HasHeterozygousDPYDDeficiencyTest {
                         haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION))
                     )
                 )
-            )
+            ),
+            "DPYD haplotype undetermined"
         )
     }
 
@@ -50,7 +51,8 @@ class HasHeterozygousDPYDDeficiencyTest {
                         )
                     )
                 )
-            )
+            ),
+            "Heterozygous DPYD deficiency detected"
         )
     }
 
@@ -68,7 +70,8 @@ class HasHeterozygousDPYDDeficiencyTest {
                         )
                     )
                 )
-            )
+            ),
+            "Heterozygous DPYD deficiency detected"
         )
     }
 
@@ -85,7 +88,8 @@ class HasHeterozygousDPYDDeficiencyTest {
                         )
                     )
                 )
-            )
+            ),
+            "Is not heterozygous DPYD deficient"
         )
     }
 
@@ -100,7 +104,8 @@ class HasHeterozygousDPYDDeficiencyTest {
                         haplotypes = setOf(Haplotype(allele = "*1", alleleCount = 2, function = HaplotypeFunction.NORMAL_FUNCTION))
                     )
                 )
-            )
+            ),
+            "Is not heterozygous DPYD deficient"
         )
     }
 
@@ -118,7 +123,8 @@ class HasHeterozygousDPYDDeficiencyTest {
                         )
                     )
                 )
-            )
+            ),
+            "Is not heterozygous DPYD deficient"
         )
     }
 
@@ -136,7 +142,8 @@ class HasHeterozygousDPYDDeficiencyTest {
                         )
                     )
                 )
-            )
+            ),
+            "Is not heterozygous DPYD deficient"
         )
     }
 }

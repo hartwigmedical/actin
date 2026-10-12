@@ -20,22 +20,43 @@ class HasAbnormalElectrolyteLevelsTest {
         LabMeasurement.POTASSIUM
     )
     private val labValuesWithinRef = labMeasurements.map { createLabValueWithinRef(it) }
+    private val allMeasurementsDisplay = labMeasurements.joinToString(",") { it.display() }
 
     @Test
     fun `Should pass if one or multiple electrolyte lab values are above ULN`() {
-        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = setOf(it)) }
-        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsAboveRef = labMeasurements.toSet())
+        labMeasurements.forEach {
+            evaluateLabValues(
+                EvaluationResult.PASS,
+                "Abnormalities detected in electrolyte levels (${it.display()} outside reference range)",
+                codesOfMeasurementsAboveRef = setOf(it)
+            )
+        }
+        evaluateLabValues(
+            EvaluationResult.PASS,
+            "Abnormalities detected in electrolyte levels ($allMeasurementsDisplay outside reference range)",
+            codesOfMeasurementsAboveRef = labMeasurements.toSet()
+        )
     }
 
     @Test
     fun `Should pass if one or multiple electrolyte lab values are under LLN`() {
-        labMeasurements.forEach { evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = setOf(it)) }
-        evaluateLabValues(EvaluationResult.PASS, codesOfMeasurementsBelowRef = labMeasurements.toSet())
+        labMeasurements.forEach {
+            evaluateLabValues(
+                EvaluationResult.PASS,
+                "Abnormalities detected in electrolyte levels (${it.display()} outside reference range)",
+                codesOfMeasurementsBelowRef = setOf(it)
+            )
+        }
+        evaluateLabValues(
+            EvaluationResult.PASS,
+            "Abnormalities detected in electrolyte levels ($allMeasurementsDisplay outside reference range)",
+            codesOfMeasurementsBelowRef = labMeasurements.toSet()
+        )
     }
 
     @Test
     fun `Should fail if all electrolyte lab values are within reference range`() {
-        evaluateLabValues(EvaluationResult.FAIL, emptySet(), emptySet())
+        evaluateLabValues(EvaluationResult.FAIL, "Electrolyte levels within reference range", emptySet(), emptySet())
     }
 
     private fun createLabValueWithinRef(measurement: LabMeasurement): LabValue {
@@ -44,6 +65,7 @@ class HasAbnormalElectrolyteLevelsTest {
 
     private fun evaluateLabValues(
         expected: EvaluationResult,
+        expectedMessage: String,
         codesOfMeasurementsAboveRef: Set<LabMeasurement> = emptySet(),
         codesOfMeasurementsBelowRef: Set<LabMeasurement> = emptySet()
     ) {
@@ -54,6 +76,6 @@ class HasAbnormalElectrolyteLevelsTest {
                 else -> labValue
             }
         }
-        EvaluationAssert.assertEvaluation(expected, function.evaluate(LabTestFactory.withLabValues(labValues)))
+        EvaluationAssert.assertEvaluation(expected, function.evaluate(LabTestFactory.withLabValues(labValues)), expectedMessage)
     }
 }

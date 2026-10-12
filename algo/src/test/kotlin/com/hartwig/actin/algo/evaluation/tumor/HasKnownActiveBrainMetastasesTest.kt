@@ -12,7 +12,8 @@ class HasKnownActiveBrainMetastasesTest {
     fun `Should return undetermined when unknown if (active) brain metastases present`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = null, hasActiveBrainLesions = null))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = null, hasActiveBrainLesions = null)),
+            "Undetermined if active brain metastases present (data missing)"
         )
     }
 
@@ -20,7 +21,8 @@ class HasKnownActiveBrainMetastasesTest {
     fun `Should return undetermined when brain metastases present but unknown if active`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasActiveBrainLesions = null))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasActiveBrainLesions = null)),
+            "Brain metastases present but unknown if active (data missing)"
         )
     }
 
@@ -34,7 +36,8 @@ class HasKnownActiveBrainMetastasesTest {
                     hasActiveBrainLesions = null,
                     hasSuspectedBrainLesions = true
                 )
-            )
+            ),
+            "Suspected brain metastases present but unknown if active (data missing)"
         )
     }
 
@@ -42,7 +45,8 @@ class HasKnownActiveBrainMetastasesTest {
     fun `Should fail when there are no brain metastases`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = false, hasActiveBrainLesions = null))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = false, hasActiveBrainLesions = null)),
+            "No known active brain metastases present"
         )
     }
 
@@ -50,7 +54,8 @@ class HasKnownActiveBrainMetastasesTest {
     fun `Should fail when brain metastases are present but not active`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasActiveBrainLesions = false))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasActiveBrainLesions = false)),
+            "No known active brain metastases present"
         )
     }
 
@@ -58,7 +63,8 @@ class HasKnownActiveBrainMetastasesTest {
     fun `Should pass when brain metastases are present and active`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasActiveBrainLesions = true))
+            function.evaluate(TumorTestFactory.withBrainLesionStatus(hasBrainLesions = true, hasActiveBrainLesions = true)),
+            "Has active brain metastases"
         )
     }
 }

@@ -35,7 +35,8 @@ class HasAdequateOrganFunctionTest {
             EvaluationResult.UNDETERMINED,
             function.evaluate(
                 TestPatientFactory.createMinimalTestWGSPatientRecord().copy(labValues = emptyList(), comorbidities = emptyList())
-            )
+            ),
+            "Undetermined if adequate organ function (absolute neutrophil count, absolute thrombocyte count, ALAT, ASAT, estimated GFR (CKD-EPI), estimated GFR (MDRD), hemoglobin, LDH and total bilirubin undetermined)"
         )
     }
 
@@ -47,7 +48,11 @@ class HasAdequateOrganFunctionTest {
                         .drop(1)
                         .map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Undetermined if adequate organ function (hemoglobin undetermined)"
+        )
     }
 
     @Test
@@ -57,14 +62,18 @@ class HasAdequateOrganFunctionTest {
             upperLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = false) } +
                     lowerLimitLabMeasurementList.map { createLabValue(it, withinLimits = true, evaluateAgainstLLN = true) }
         ).copy(comorbidities = listOf(condition))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "No indication of inadequate organ function")
     }
 
     @Test
     fun `Should warn when hemoglobin, thrombocytes, neutrophils or eGFR below LLN`() {
         lowerLimitLabMeasurementList.forEach {
             val record = LabTestFactory.withLabValues(listOf(createLabValue(it, withinLimits = false, evaluateAgainstLLN = true)))
-            assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+            assertEvaluation(
+                EvaluationResult.WARN,
+                function.evaluate(record),
+                "Possible inadequate organ function (${it.display()} below LLN)"
+            )
         }
     }
 
@@ -74,7 +83,11 @@ class HasAdequateOrganFunctionTest {
             val record = LabTestFactory.withLabValues(
                 listOf(createLabValue(it, withinLimits = false, evaluateAgainstLLN = false))
             )
-            assertEvaluation(EvaluationResult.WARN, function.evaluate(record))
+            assertEvaluation(
+                EvaluationResult.WARN,
+                function.evaluate(record),
+                "Possible inadequate organ function (${it.display()} above ULN)"
+            )
         }
     }
 }

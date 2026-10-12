@@ -15,7 +15,7 @@ object DatamodelCheckerFactory {
     }
 
     fun nodeChecker(): JsonDatamodelChecker {
-        return JsonDatamodelChecker("Node", mapOf("type" to false, "lbl" to false, "id" to true, "meta" to false))
+        return JsonDatamodelChecker("Node", mapOf("type" to false, "lbl" to false, "id" to true, "meta" to false, "propertyType" to false))
     }
 
     fun edgeChecker(): JsonDatamodelChecker {
@@ -40,13 +40,13 @@ object DatamodelCheckerFactory {
 
     fun synonymChecker(): JsonDatamodelChecker {
         return JsonDatamodelChecker(
-            "Synonym", mapOf("pred" to true, "val" to true, "xrefs" to false, "synonymType" to false)
+            "Synonym", mapOf("pred" to true, "val" to true, "xrefs" to false, "synonymType" to false, "meta" to false)
         )
     }
 
     fun definitionChecker(): JsonDatamodelChecker {
         return JsonDatamodelChecker(
-            "Definition", mapOf("xrefs" to false, "val" to true)
+            "Definition", mapOf("xrefs" to false, "val" to true, "meta" to false)
         )
     }
 

@@ -16,13 +16,21 @@ class HasSufficientPulseOximetryTest {
 
     @Test
     fun `Should evaluate to undetermined when no measurements are present`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(emptyList())))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(emptyList())),
+            "No (recent) pulse oximetry data found"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined if all measurements in wrong unit`() {
         val pulseOximetries = listOf(pulseOximetry(referenceDateTime, 92.0, false, "test"))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)),
+            "No (recent) pulse oximetry data found"
+        )
     }
 
     @Test
@@ -32,7 +40,11 @@ class HasSufficientPulseOximetryTest {
             pulseOximetry(referenceDateTime.minusMonths(2), 92.0),
             pulseOximetry(referenceDateTime, 84.0)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)),
+            "Median pulse oximetry (84.0%) below 90.0"
+        )
     }
 
     @Test
@@ -41,7 +53,11 @@ class HasSufficientPulseOximetryTest {
             pulseOximetry(referenceDateTime, 8.0, valid = false),
             pulseOximetry(referenceDateTime, 99.0, valid = true),
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)),
+            "Median pulse oximetry (99.0%) above 90.0"
+        )
     }
 
     @Test
@@ -51,7 +67,11 @@ class HasSufficientPulseOximetryTest {
             pulseOximetry(referenceDateTime, 89.0),
             pulseOximetry(referenceDateTime, 91.0)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)),
+            "Median pulse oximetry (90.0%) above 90.0"
+        )
     }
 
     @Test
@@ -60,7 +80,11 @@ class HasSufficientPulseOximetryTest {
             pulseOximetry(referenceDateTime, 88.0),
             pulseOximetry(referenceDateTime.plusDays(1), 89.0),
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)),
+            "Median pulse oximetry (88.5%) below 90.0 but within margin of error"
+        )
     }
 
     @Test
@@ -69,7 +93,11 @@ class HasSufficientPulseOximetryTest {
             pulseOximetry(referenceDateTime, 84.0),
             pulseOximetry(referenceDateTime.plusDays(1), 84.0)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(VitalFunctionTestFactory.withVitalFunctions(pulseOximetries)),
+            "Median pulse oximetry (84.0%) below 90.0"
+        )
     }
 
     private fun pulseOximetry(date: LocalDateTime, value: Double, valid: Boolean = true, unit: String = "percent"): VitalFunction {

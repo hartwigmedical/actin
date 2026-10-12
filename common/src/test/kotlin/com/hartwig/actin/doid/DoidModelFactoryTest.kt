@@ -42,7 +42,7 @@ class DoidModelFactoryTest {
     }
 
     private fun createNode(doid: String, term: String?): Node {
-        return Node(doid = doid, url = "", term = term, metadata = null, type = null)
+        return Node(doid = doid, url = "", term = term, metadata = null, type = null, propertyType = null)
     }
 
     private fun createParentChildEdge(child: String, parent: String): Edge {

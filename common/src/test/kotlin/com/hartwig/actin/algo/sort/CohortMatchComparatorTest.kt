@@ -26,7 +26,6 @@ class CohortMatchComparatorTest {
                     open = true,
                     slotsAvailable = true
                 ),
-                ignore = false,
                 description = "",
             ),
             isPotentiallyEligible = true,

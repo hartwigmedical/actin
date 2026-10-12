@@ -115,7 +115,8 @@ class TreatmentMatchJsonTest {
                         {"event":"BRAF amp","treatmentName":"Pembrolizumab","resistanceLevel":"A",
                         "isTested":null,"isFound":false,"evidenceUrls":["website"]}]}
                     ],
-                "personalizedTreatmentSummary":null}
+                "personalizedTreatmentSummary":null,
+                "trialDatabaseIsConsistent":true}
                 """).lineSequence().joinToString("") { it.trim() }
         //@formatter:on
 

@@ -7,14 +7,18 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
 
     @Test
     fun `Should fail for empty treatment history`() {
-        evaluateFunctions(EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(emptyList()))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            TreatmentTestFactory.withTreatmentHistory(emptyList()),
+            "Has not received match",
+            "Has not received match"
+        )
     }
 
     @Test
@@ -23,7 +27,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.treatment("other treatment", false)))
         )
         evaluateFunctions(
-            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
+            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
+            "Has not received match", "Has not received match"
         )
     }
 
@@ -33,7 +38,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
             TreatmentTestFactory.treatmentHistoryEntry(setOf(TreatmentTestFactory.drugTreatment("other treatment", TREATMENT_CATEGORY)))
         )
         evaluateFunctions(
-            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
+            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
+            "Has not received match", "Has not received match"
         )
     }
 
@@ -48,7 +54,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
             )
         )
         evaluateFunctions(
-            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
+            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
+            "Has received match but not as most recent line", "Has received match but not as most recent line and hence not currently administered"
         )
     }
 
@@ -63,7 +70,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
             )
         )
         evaluateFunctions(
-            EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
+            EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
+            "Has received match but undetermined if most recent (date unknown)", "Has received match but undetermined if most recent (date unknown) and unknown if currently still administered"
         )
     }
 
@@ -81,7 +89,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
             )
         )
         evaluateFunctions(
-            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
+            EvaluationResult.FAIL, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
+            "Has received match but not as most recent line", "Has received match but not as most recent line and hence not currently administered"
         )
     }
 
@@ -89,7 +98,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
     fun `Should be undetermined if most recent line is trial without a treatment specified`() {
         val treatmentHistory = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = emptySet(), isTrial = true))
         evaluateFunctions(
-            EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
+            EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
+            "Undetermined if treatment received in previous trial included match", "Undetermined if treatment received in previous trial included match and unknown if currently still administered"
         )
     }
 
@@ -101,7 +111,8 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
             )
         )
         evaluateFunctions(
-            EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistory(treatmentHistory)
+            EvaluationResult.UNDETERMINED, TreatmentTestFactory.withTreatmentHistory(treatmentHistory),
+            "Undetermined if treatment received in previous trial included match", "Undetermined if treatment received in previous trial included match and unknown if currently still administered"
         )
     }
 
@@ -112,7 +123,11 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
                 setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY))
             )
         )
-        assertEvaluation(EvaluationResult.PASS, FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Has received match as most recent treatment"
+        )
     }
 
     @Test
@@ -122,7 +137,11 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
                 setOf(TreatmentTestFactory.drugTreatment(MATCHING_DRUG_NAME, TREATMENT_CATEGORY))
             )
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
+            "Has received match as most recent treatment but unknown if currently still administered"
+        )
     }
 
     @Test
@@ -134,8 +153,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         )
 
         val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Has received match as most recent treatment")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has received match as most recent treatment")
     }
 
     @Test
@@ -150,8 +168,7 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         )
 
         val evaluation = FUNCTION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings()).containsExactly("Has received match as most recent treatment")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has received match as most recent treatment")
     }
 
 
@@ -164,8 +181,11 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         )
 
         val evaluation = FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
-        assertThat(evaluation.undeterminedMessagesStrings()).containsExactly("Has received match as most recent treatment but unknown if currently still administered")
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Has received match as most recent treatment but unknown if currently still administered"
+        )
     }
 
     @Test
@@ -177,13 +197,14 @@ class HasHadTreatmentWithDrugFromSetAsMostRecentTest {
         )
 
         val evaluation = FUNCTION_CURRENT_ADMINISTRATION.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory))
-        assertEvaluation(EvaluationResult.FAIL, evaluation)
-        assertThat(evaluation.failMessagesStrings()).containsExactly("Does not currently receive match (treatment has stopped)")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "Does not currently receive match (treatment has stopped)")
     }
 
-    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
-        assertEvaluation(expected, FUNCTION.evaluate(record))
-        assertEvaluation(expected, FUNCTION_CURRENT_ADMINISTRATION.evaluate(record))
+    private fun evaluateFunctions(
+        expected: EvaluationResult, record: PatientRecord, expectedMessage: String, expectedMessageForCurrentAdministration: String
+    ) {
+        assertEvaluation(expected, FUNCTION.evaluate(record), expectedMessage)
+        assertEvaluation(expected, FUNCTION_CURRENT_ADMINISTRATION.evaluate(record), expectedMessageForCurrentAdministration)
     }
 
     companion object {

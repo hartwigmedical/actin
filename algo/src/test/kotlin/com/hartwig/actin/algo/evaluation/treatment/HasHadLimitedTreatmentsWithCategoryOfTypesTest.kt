@@ -38,41 +38,82 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
 
     @Test
     fun `Should pass in case patient had no treatments and treatment is optional`() {
-        evaluateOptionalFunctions(EvaluationResult.PASS, emptyList())
+        evaluateOptionalFunctions(
+            EvaluationResult.PASS,
+            emptyList(),
+            "Has received at most 1 lines of targeted therapy",
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
     }
 
     @Test
     fun `Should fail in case patient had no treatments and treatment is required`() {
-        evaluateRequiredFunctions(EvaluationResult.FAIL, emptyList())
+        evaluateRequiredFunctions(
+            EvaluationResult.FAIL,
+            emptyList(),
+            "Has not received targeted therapy treatment",
+            "Has not received HER2 antibody or HER3 antibody targeted therapy treatment"
+        )
     }
 
     @Test
     fun `Should pass when treatments with correct category within limit whether treatment is optional or required`() {
-        evaluateOptionalFunctions(EvaluationResult.PASS, listOf(MATCHING_TREATMENT_WITH_TYPES))
-        evaluateRequiredFunctions(EvaluationResult.PASS, listOf(MATCHING_TREATMENT_WITH_TYPES))
+        evaluateOptionalFunctions(
+            EvaluationResult.PASS,
+            listOf(MATCHING_TREATMENT_WITH_TYPES),
+            "Has received at most 1 lines of targeted therapy",
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
+        evaluateRequiredFunctions(
+            EvaluationResult.PASS,
+            listOf(MATCHING_TREATMENT_WITH_TYPES),
+            "Has received at most 1 lines of targeted therapy",
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
     }
 
     @Test
     fun `Should pass when treatments with correct category and one of the types within limit whether treatment is optional or required`() {
-        evaluateOptionalFunctions(EvaluationResult.PASS, listOf(MATCHING_TREATMENT_WITH_ONE_TYPE))
-        evaluateRequiredFunctions(EvaluationResult.PASS, listOf(MATCHING_TREATMENT_WITH_ONE_TYPE))
+        evaluateOptionalFunctions(
+            EvaluationResult.PASS,
+            listOf(MATCHING_TREATMENT_WITH_ONE_TYPE),
+            "Has received at most 1 lines of targeted therapy",
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
+        evaluateRequiredFunctions(
+            EvaluationResult.PASS,
+            listOf(MATCHING_TREATMENT_WITH_ONE_TYPE),
+            "Has received at most 1 lines of targeted therapy",
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
     }
 
     @Test
     fun `Should pass if patient has had only treatment of wrong category and treatment is optional`() {
-        evaluateOptionalFunctions(EvaluationResult.PASS, listOf(NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES))
+        evaluateOptionalFunctions(
+            EvaluationResult.PASS,
+            listOf(NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES),
+            "Has received at most 1 lines of targeted therapy",
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
     }
 
     @Test
     fun `Should fail if patient has had only treatment of wrong category and treatment is required`() {
-        evaluateRequiredFunctions(EvaluationResult.FAIL, listOf(NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES))
+        evaluateRequiredFunctions(
+            EvaluationResult.FAIL,
+            listOf(NON_MATCHING_TREATMENT_CATEGORY_AND_TYPES),
+            "Has not received targeted therapy treatment",
+            "Has not received HER2 antibody or HER3 antibody targeted therapy treatment"
+        )
     }
 
     @Test
     fun `Should pass when treatments with correct category with wrong type within limit and treatment is optional and types required`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE)))
+            functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE))),
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -80,7 +121,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should fail when treatments with correct category with wrong type within limit and treatment is required and types required`() {
         assertEvaluation(
             EvaluationResult.FAIL,
-            functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE)))
+            functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_WRONG_TYPE))),
+            "Has not received HER2 antibody or HER3 antibody targeted therapy treatment"
         )
     }
 
@@ -88,7 +130,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should pass when treatments with correct category but missing type possibly within limit and treatment is optional and types required`() {
         assertEvaluation(
             EvaluationResult.PASS,
-            functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)))
+            functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE))),
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -96,7 +139,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
     fun `Should be undetermined when treatments with correct category but missing type possibly within limit and treatment is required and types required`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)))
+            functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE))),
+            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -108,7 +152,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                 withTreatmentHistory(
                     listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE, NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)
                 )
-            )
+            ),
+            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -116,35 +161,58 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                 withTreatmentHistory(
                     listOf(NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE, NON_MATCHING_TREATMENT_ONLY_UNKNOWN_TYPE)
                 )
-            )
+            ),
+            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
     @Test
     fun `Should fail when treatments with correct category exceed limit whether treatment is optional or required`() {
-        evaluateOptionalFunctions(EvaluationResult.FAIL, listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES))
-        evaluateRequiredFunctions(EvaluationResult.FAIL, listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES))
+        evaluateOptionalFunctions(
+            EvaluationResult.FAIL,
+            listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES),
+            "Has not received at most 1 lines of targeted therapy",
+            "Has not received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
+        evaluateRequiredFunctions(
+            EvaluationResult.FAIL,
+            listOf(MATCHING_TREATMENT_WITH_TYPES, MATCHING_TREATMENT_WITH_TYPES),
+            "Has not received at most 1 lines of targeted therapy",
+            "Has not received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
     }
 
     @Test
     fun `Should pass if there is a potentially matching trial option within the limit and treatment is optional`() {
-        evaluateOptionalFunctions(EvaluationResult.PASS, listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES))
+        evaluateOptionalFunctions(
+            EvaluationResult.PASS,
+            listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
+            "Has received at most 1 lines of targeted therapy",
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
     }
 
     @Test
     fun `Should be undetermined if there is a potentially matching trial option within the limit and treatment is required`() {
-        evaluateRequiredFunctions(EvaluationResult.UNDETERMINED, listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES))
+        evaluateRequiredFunctions(
+            EvaluationResult.UNDETERMINED,
+            listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
+            "Undetermined if received at most 1 lines of targeted therapy",
+            "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
+        )
     }
 
     @Test
     fun `Should be undetermined when possibly matching trial options could exceed limit whether treatment is optional or required`() {
         evaluateOptionalFunctions(
             EvaluationResult.UNDETERMINED,
-            listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
+            listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
+            "Undetermined if received at most 1 lines of targeted therapy", "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
         )
         evaluateRequiredFunctions(
             EvaluationResult.UNDETERMINED,
-            listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
+            listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES),
+            "Undetermined if received at most 1 lines of targeted therapy", "Undetermined if received at most 1 lines of HER2 antibody or HER3 antibody targeted therapy"
         )
     }
 
@@ -156,7 +224,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
-            )
+            ),
+            "Has received at most 1 lines of transplantation"
         )
         assertEvaluation(
             EvaluationResult.PASS,
@@ -164,7 +233,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
-            )
+            ),
+            "Has received at most 1 lines of HER2 antibody or HER3 antibody transplantation"
         )
     }
 
@@ -176,7 +246,8 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
-            )
+            ),
+            "Has not received transplantation treatment"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -184,17 +255,28 @@ class HasHadLimitedTreatmentsWithCategoryOfTypesTest {
                 withTreatmentHistory(
                     listOf(TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES, TRIAL_TREATMENT_WITH_UNKNOWN_CATEGORY_AND_TYPES)
                 )
-            )
+            ),
+            "Has not received HER2 antibody or HER3 antibody transplantation treatment"
         )
     }
 
-    private fun evaluateOptionalFunctions(result: EvaluationResult, treatmentList: List<TreatmentHistoryEntry>) {
-        assertEvaluation(result, functionTreatmentOptional.evaluate(withTreatmentHistory(treatmentList)))
-        assertEvaluation(result, functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(treatmentList)))
+    private fun evaluateOptionalFunctions(
+        result: EvaluationResult,
+        treatmentList: List<TreatmentHistoryEntry>,
+        expectedMessage: String,
+        expectedMessageWithTypes: String
+    ) {
+        assertEvaluation(result, functionTreatmentOptional.evaluate(withTreatmentHistory(treatmentList)), expectedMessage)
+        assertEvaluation(result, functionTreatmentOptionalWithTypes.evaluate(withTreatmentHistory(treatmentList)), expectedMessageWithTypes)
     }
 
-    private fun evaluateRequiredFunctions(result: EvaluationResult, treatmentList: List<TreatmentHistoryEntry>) {
-        assertEvaluation(result, functionTreatmentRequired.evaluate(withTreatmentHistory(treatmentList)))
-        assertEvaluation(result, functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(treatmentList)))
+    private fun evaluateRequiredFunctions(
+        result: EvaluationResult,
+        treatmentList: List<TreatmentHistoryEntry>,
+        expectedMessage: String,
+        expectedMessageWithTypes: String
+    ) {
+        assertEvaluation(result, functionTreatmentRequired.evaluate(withTreatmentHistory(treatmentList)), expectedMessage)
+        assertEvaluation(result, functionTreatmentRequiredWithTypes.evaluate(withTreatmentHistory(treatmentList)), expectedMessageWithTypes)
     }
 }

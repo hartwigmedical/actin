@@ -16,7 +16,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDe
 import com.hartwig.actin.icd.IcdModel
 import com.hartwig.actin.icd.datamodel.IcdNode
 import java.time.LocalDate
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private val IMMUNO_ICD_EXTENSION = IcdConstants.IMMUNOTHERAPY_DRUG_SET.first()
@@ -51,7 +50,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
 
     @Test
     fun `Should fail with no treatmentHistory`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "No experience of immunotherapy related adverse events"
+        )
     }
 
     @Test
@@ -60,7 +63,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = listOf(IMMUNOTHERAPY_ALLERGY_OTHER_CONDITION),
             oncologicalHistory = emptyList()
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
     }
 
     @Test
@@ -69,7 +72,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = emptyList(),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
     }
 
     @Test
@@ -82,15 +85,16 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             ),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
     }
 
     @Test
     fun `Should warn with prior immunotherapy treatment and stop reason toxicity`() {
         val treatments = listOf(IMMUNOTHERAPY_TOX_ENTRY)
         val evaluation = function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments))
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
             "Possible immunotherapy related adverse events in history (prior immunotherapy with stop reason toxicity)"
         )
     }
@@ -102,8 +106,9 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
             "Possible immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
         )
     }
@@ -115,8 +120,9 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
             "Possible immunotherapy related adverse events in history (Nivolumab intolerance)"
         )
     }
@@ -138,8 +144,9 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
         val evaluation = function.evaluate(record)
-        assertEvaluation(EvaluationResult.WARN, evaluation)
-        assertThat(evaluation.warnMessagesStrings()).containsExactly(
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
             "Possible immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
         )
     }
@@ -150,7 +157,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = listOf(OtherCondition("Drug allergy", icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, null)))),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Drug allergy (Drug allergy) in history but undetermined if immunotherapy-related AE (drug type unknown)"
+        )
     }
 
     @Test
@@ -159,12 +170,20 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = listOf(Intolerance("Drug allergy", icdCodes = setOf(IcdCode(IcdConstants.DRUG_ALLERGY_CODE, null)))),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Drug allergy (Drug allergy) in history but undetermined if immunotherapy-related AE (drug type unknown)"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined with prior immunotherapy treatment with unknown stop reason`() {
         val treatment = IMMUNOTHERAPY_TOX_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = null))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatment))))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatment))),
+            "Prior immunotherapy related adverse events undetermined"
+        )
     }
 }

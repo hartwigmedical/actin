@@ -61,7 +61,6 @@ class ReportLabels(private val properties: Properties) {
         fun colSites() = get("trial.col.sites")
         fun colWarnings() = get("trial.col.warnings")
         fun colIneligibilityReasons() = get("trial.col.ineligibility.reasons")
-        fun colConfiguration() = get("trial.col.configuration")
         fun footnoteFilteredSuffix() = get("trial.footnote.filtered.suffix")
         fun footnoteChildrensHospital(count: String) = format("trial.footnote.childrens.hospital", count)
         fun footnoteDutchLung(count: String, suffix: String) = format("trial.footnote.dutch.lung", count, suffix)

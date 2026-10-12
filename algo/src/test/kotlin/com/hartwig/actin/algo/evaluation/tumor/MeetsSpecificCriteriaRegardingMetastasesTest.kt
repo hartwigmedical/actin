@@ -17,7 +17,11 @@ class MeetsSpecificCriteriaRegardingMetastasesTest {
             every { evaluate(any()) } returns EvaluationFactory.fail("no metastatic cancer")
         }
         val function = MeetsSpecificCriteriaRegardingMetastases(alwaysFailsMetastaticCancerEvaluation)
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(patientRecord),
+            "No metastatic cancer present hence won't meet study specific criteria regarding metastases"
+        )
     }
 
     @Test
@@ -26,7 +30,11 @@ class MeetsSpecificCriteriaRegardingMetastasesTest {
             every { evaluate(any()) } returns EvaluationFactory.undetermined("tumor stage unknown")
         }
         val function = MeetsSpecificCriteriaRegardingMetastases(alwaysUndeterminedMetastaticCancerEvaluation)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Undetermined if metastatic cancer and therefore undetermined if study specific criteria regarding metastases are met"
+        )
     }
 
     @Test
@@ -35,6 +43,10 @@ class MeetsSpecificCriteriaRegardingMetastasesTest {
             every { evaluate(any()) } returns EvaluationFactory.pass("metastatic cancer")
         }
         val function = MeetsSpecificCriteriaRegardingMetastases(alwaysPassMetastaticCancerEvaluation)
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(patientRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(patientRecord),
+            "Undetermined if study specific criteria regarding metastases are met"
+        )
     }
 }

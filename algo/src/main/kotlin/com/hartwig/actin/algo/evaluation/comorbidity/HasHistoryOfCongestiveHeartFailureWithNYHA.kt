@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.IcdCode
+import com.hartwig.actin.datamodel.trial.NyhaClass
 import com.hartwig.actin.icd.IcdModel
-import com.hartwig.actin.trial.input.datamodel.NyhaClass
 
 class HasHistoryOfCongestiveHeartFailureWithNYHA(private val minimalClass: NyhaClass, private val icdModel: IcdModel) : EvaluationFunction {
 

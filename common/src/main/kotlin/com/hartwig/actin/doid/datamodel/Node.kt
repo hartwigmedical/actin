@@ -5,5 +5,6 @@ data class Node(
     val url: String,
     val term: String?,
     val type: String?,
+    val propertyType: String?,
     val metadata: Metadata?
 )

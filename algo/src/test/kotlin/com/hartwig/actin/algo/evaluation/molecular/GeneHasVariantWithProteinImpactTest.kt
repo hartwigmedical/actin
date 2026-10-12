@@ -20,7 +20,11 @@ class GeneHasVariantWithProteinImpactTest {
 
     @Test
     fun `Should fail when gene not present`() {
-        assertMolecularEvaluation(EvaluationResult.FAIL, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertMolecularEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "V600E and V600K not detected in gene A"
+        )
     }
 
     @Test
@@ -35,7 +39,8 @@ class GeneHasVariantWithProteinImpactTest {
                             isReportable = true
                         )
                 )
-            )
+            ),
+            "V600E and V600K not detected in gene A"
         )
     }
 
@@ -52,7 +57,8 @@ class GeneHasVariantWithProteinImpactTest {
                         otherImpacts = setOf(proteinImpact("V600P"))
                     )
                 )
-            )
+            ),
+            "V600E and V600K not detected in gene A"
         )
     }
 
@@ -69,7 +75,8 @@ class GeneHasVariantWithProteinImpactTest {
                     )
 
                 )
-            )
+            ),
+            "V600E and V600K not detected in gene A"
         )
     }
 
@@ -85,7 +92,8 @@ class GeneHasVariantWithProteinImpactTest {
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
-            )
+            ),
+            "V600E in gene A in canonical transcript"
         )
     }
 
@@ -101,7 +109,8 @@ class GeneHasVariantWithProteinImpactTest {
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
-            )
+            ),
+            "V600E detected in gene A but not reportable"
         )
     }
 
@@ -118,7 +127,8 @@ class GeneHasVariantWithProteinImpactTest {
                         canonicalImpact = proteinImpact(MATCHING_PROTEIN_IMPACT)
                     )
                 )
-            )
+            ),
+            "Variant(s) V600E in gene A but subclonal likelihood of > 50%"
         )
     }
 
@@ -135,7 +145,8 @@ class GeneHasVariantWithProteinImpactTest {
                         otherImpacts = setOf(proteinImpact("V600P"), proteinImpact(MATCHING_PROTEIN_IMPACT))
                     )
                 )
-            )
+            ),
+            "V600E detected in non-canonical transcript of gene A"
         )
     }
 

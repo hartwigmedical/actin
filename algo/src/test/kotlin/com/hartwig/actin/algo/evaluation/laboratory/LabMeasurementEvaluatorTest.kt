@@ -22,24 +22,28 @@ class LabMeasurementEvaluatorTest {
 
     @Test
     fun `Should propagate NotFound from selector as undetermined`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluator(notFoundSelector).evaluate(record))
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluator(notFoundSelector).evaluate(record), "not found")
     }
 
     @Test
     fun `Should propagate pass from function when selector returns Found`() {
-        assertEvaluation(EvaluationResult.PASS, evaluator(foundSelector()).evaluate(record))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            evaluator(foundSelector()).evaluate(record),
+            "pass but measurement occurred before 10-May-2020"
+        )
     }
 
     @Test
     fun `Should propagate fail from function when selector returns Found`() {
-        assertEvaluation(EvaluationResult.FAIL, evaluator(foundSelector(), failingLabEvaluationFunction).evaluate(record))
+        assertEvaluation(EvaluationResult.FAIL, evaluator(foundSelector(), failingLabEvaluationFunction).evaluate(record), "fail")
     }
 
     @Test
     fun `Should evaluate to recoverable pass in case measurement is older than pass date`() {
         val oldDate = TEST_DATE.minusDays(5)
         val evaluation = evaluator(foundSelector(oldDate), minPassDate = oldDate.plusDays(1)).evaluate(record)
-        assertEvaluation(EvaluationResult.PASS, evaluation)
+        assertEvaluation(EvaluationResult.PASS, evaluation, "pass but measurement occurred before 16-Apr-2020")
         assertThat(evaluation.recoverable).isTrue()
     }
 

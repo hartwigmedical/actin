@@ -24,32 +24,52 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
 
     @Test
     fun `Should fail for no treatments`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "Has not received targeted therapy ignoring HER2 antibody"
+        )
     }
 
     @Test
     fun `Should fail for wrong treatment category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received targeted therapy ignoring HER2 antibody"
+        )
     }
 
     @Test
     fun `Should fail for treatment with correct category and ignore type`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, IGNORE_TYPE_SET)))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received targeted therapy ignoring HER2 antibody"
+        )
     }
 
     @Test
     fun `Should return undetermined for trial treatment`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Undetermined if treatment received in previous trial included targeted therapy ignoring HER2 antibody"
+        )
     }
 
     @Test
     fun `Should ignore trial matches and fail when looking for unlikely trial categories`() {
         val function = HasHadTreatmentWithCategoryButNotOfTypes(TreatmentCategory.TRANSPLANTATION, setOf(OtherTreatmentType.ALLOGENIC))
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received transplantation ignoring allogenic"
+        )
     }
 
     @Test
@@ -57,7 +77,11 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has received targeted therapy ignoring HER2 antibody"
+        )
     }
 
     @Test
@@ -67,7 +91,8 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
             .copy(drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
         assertEvaluation(
             EvaluationResult.PASS,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
+            "Has received targeted therapy ignoring HER2 antibody"
         )
     }
 
@@ -78,7 +103,8 @@ class HasHadTreatmentWithCategoryButNotOfTypesTest {
             .copy(drug = Drug(name = "", category = TreatmentCategory.TRANSPLANTATION, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
         assertEvaluation(
             EvaluationResult.FAIL,
-            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)))
+            function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
+            "Has not received targeted therapy ignoring HER2 antibody"
         )
     }
 }

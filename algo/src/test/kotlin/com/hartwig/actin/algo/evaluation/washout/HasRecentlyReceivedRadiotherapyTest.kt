@@ -10,7 +10,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val YEAR = 2020
@@ -25,58 +24,80 @@ class HasRecentlyReceivedRadiotherapyTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "No recent radiotherapy")
     }
 
     @Test
     fun `Should fail with recent treatment with wrong category`() {
         val wrongCategory = treatmentHistoryEntry(treatment("", false, setOf(TreatmentCategory.TRANSPLANTATION)), YEAR, MONTH)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(wrongCategory)))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(wrongCategory)), "No recent radiotherapy")
     }
 
     @Test
     fun `Should evaluate to undetermined with right category but no date or location`() {
         val rightCategoryNoDate = radiotherapy(null, null, null)
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(rightCategoryNoDate)))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(withTreatmentHistoryEntry(rightCategoryNoDate)),
+            "Has received prior radiotherapy with unknown date - pay attention to washout period"
+        )
     }
 
     @Test
     fun `Should fail with right category but old date`() {
         val rightCategoryOldDate = radiotherapy(YEAR - 1)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(rightCategoryOldDate)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(rightCategoryOldDate)),
+            "No recent radiotherapy"
+        )
     }
 
     @Test
     fun `Should fail with right category but old month`() {
         val rightCategoryOldMonth = radiotherapy(YEAR, MONTH - 1)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistoryEntry(rightCategoryOldMonth)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistoryEntry(rightCategoryOldMonth)),
+            "No recent radiotherapy"
+        )
     }
 
     @Test
     fun `Should pass with right category and recent year`() {
         val rightCategoryRecentYear = radiotherapy(YEAR)
         val evaluation = function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYear))
-        assertEvaluation(EvaluationResult.PASS, evaluation)
-        assertThat(evaluation.passMessagesStrings())
-            .containsExactly("Has recently received radiotherapy - pay attention to washout period")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Has recently received radiotherapy - pay attention to washout period")
     }
 
     @Test
     fun `Should pass with right category and recent year and month`() {
         val rightCategoryRecentYearAndMonth = radiotherapy(YEAR, MONTH)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYearAndMonth)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(rightCategoryRecentYearAndMonth)),
+            "Has recently received radiotherapy - pay attention to washout period"
+        )
     }
 
     @Test
     fun `Should pass with correct body location and within requested weeks`() {
         val correctLocationAndTimeframe = radiotherapy(YEAR, MONTH, setOf(CORRECT_LOCATION))
-        assertEvaluation(EvaluationResult.PASS, functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationAndTimeframe)))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationAndTimeframe)),
+            "Has recently received radiotherapy to body location Brain - pay attention to washout period"
+        )
     }
 
     @Test
     fun `Should fail with wrong body location and within requested weeks`() {
         val wrongLocationAndCorrectTimeframe = radiotherapy(YEAR, MONTH, setOf("Wrong location"))
-        assertEvaluation(EvaluationResult.FAIL, functionWithLocation.evaluate(withTreatmentHistoryEntry(wrongLocationAndCorrectTimeframe)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithLocation.evaluate(withTreatmentHistoryEntry(wrongLocationAndCorrectTimeframe)),
+            "No recent radiotherapy to body location Brain"
+        )
     }
 
     @Test
@@ -84,7 +105,8 @@ class HasRecentlyReceivedRadiotherapyTest {
         val unknownLocationAndCorrectTimeframe = radiotherapy(YEAR, MONTH, null)
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithLocation.evaluate(withTreatmentHistoryEntry(unknownLocationAndCorrectTimeframe))
+            functionWithLocation.evaluate(withTreatmentHistoryEntry(unknownLocationAndCorrectTimeframe)),
+            "Undetermined if received radiotherapy had target location Brain"
         )
     }
 
@@ -93,7 +115,8 @@ class HasRecentlyReceivedRadiotherapyTest {
         val correctLocationButUnknownDate = radiotherapy(null, null, setOf(CORRECT_LOCATION))
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationButUnknownDate))
+            functionWithLocation.evaluate(withTreatmentHistoryEntry(correctLocationButUnknownDate)),
+            "Has received prior radiotherapy to body location Brain with unknown date - pay attention to washout period"
         )
     }
 

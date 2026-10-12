@@ -29,19 +29,31 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
 
     @Test
     fun `Should fail for no treatments`() {
-        evaluateFunctions(EvaluationResult.FAIL, withTreatmentHistory(emptyList()))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            withTreatmentHistory(emptyList()),
+            "Has not received targeted therapy ignoring match"
+        )
     }
 
     @Test
     fun `Should fail for wrong treatment category`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
-        evaluateFunctions(EvaluationResult.FAIL, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has not received targeted therapy ignoring match"
+        )
     }
 
     @Test
     fun `Should fail for treatment with correct category but incorrect type - if type requested`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.FGFR_INHIBITOR))))
-        assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "Has not received targeted therapy ignoring match"
+        )
     }
 
     @Test
@@ -49,13 +61,21 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(drugTreatment(IGNORE_DRUG_NAME, MATCHING_CATEGORY, setOf(MATCHING_TYPES.iterator().next())))
         )
-        evaluateFunctions(EvaluationResult.FAIL, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.FAIL,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has not received targeted therapy ignoring match"
+        )
     }
 
     @Test
     fun `Should return undetermined for trial treatment`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", true)), isTrial = true)
-        evaluateFunctions(EvaluationResult.UNDETERMINED, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.UNDETERMINED,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Undetermined if treatment received in previous trial included targeted therapy ignoring match"
+        )
     }
 
     @Test
@@ -65,8 +85,16 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         val functionWithTypes =
             HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(TreatmentCategory.TRANSPLANTATION, MATCHING_TYPES, IGNORE_DRUG_SET)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(treatment("test", false)), isTrial = true)
-        assertEvaluation(EvaluationResult.FAIL, functionWithoutTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
-        assertEvaluation(EvaluationResult.FAIL, functionWithTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithoutTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received transplantation ignoring match"
+        )
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            functionWithTypes.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
+            "Has not received transplantation ignoring match"
+        )
     }
 
     @Test
@@ -81,18 +109,26 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
         )
         evaluateFunctions(
             EvaluationResult.PASS,
-            TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))
+            TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)),
+            "Has received targeted therapy of types ALK inhibitor (1st gen) and ALK inhibitor (2nd gen) ignoring match", "Has received targeted therapy ignoring match"
         )
     }
 
     @Test
     fun `Should pass for correct treatment category and type with other drug`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("other drug", MATCHING_CATEGORY, MATCHING_TYPES)))
-        evaluateFunctions(EvaluationResult.PASS, withTreatmentHistoryEntry(treatmentHistoryEntry))
+        evaluateFunctions(
+            EvaluationResult.PASS,
+            withTreatmentHistoryEntry(treatmentHistoryEntry),
+            "Has received targeted therapy of types ALK inhibitor (1st gen) and ALK inhibitor (2nd gen) ignoring match",
+            "Has received targeted therapy ignoring match"
+        )
     }
 
-    private fun evaluateFunctions(expected: EvaluationResult, record: PatientRecord) {
-        assertEvaluation(expected, functionWithTypes.evaluate(record))
-        assertEvaluation(expected, functionWithoutTypes.evaluate(record))
+    private fun evaluateFunctions(
+        expected: EvaluationResult, record: PatientRecord, expectedMessageWithTypes: String, expectedMessageWithoutTypes: String? = null
+    ) {
+        assertEvaluation(expected, functionWithTypes.evaluate(record), expectedMessageWithTypes)
+        assertEvaluation(expected, functionWithoutTypes.evaluate(record), expectedMessageWithoutTypes ?: expectedMessageWithTypes)
     }
 }

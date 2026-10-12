@@ -35,7 +35,11 @@ class SameDateLabValueSelectorTest {
         ))
         val result = selector().select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "No shared date found for all required lab values: APTT ratio, APTT"
+        )
     }
 
     @Test
@@ -46,7 +50,11 @@ class SameDateLabValueSelectorTest {
         ))
         val result = selector().select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "No shared date found for all required lab values: APTT ratio, APTT"
+        )
     }
 
     @Test
@@ -57,7 +65,11 @@ class SameDateLabValueSelectorTest {
         ))
         val result = selector().select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "Unexpected unit specified for APTT ratio: sec"
+        )
     }
 
     @Test
@@ -68,7 +80,11 @@ class SameDateLabValueSelectorTest {
         ))
         val result = selector().select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "Unexpected unit specified for APTT ratio: sec"
+        )
     }
 
     @Test
@@ -96,7 +112,11 @@ class SameDateLabValueSelectorTest {
         ))
         val result = selector().select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "Unexpected unit specified for APTT ratio: sec"
+        )
     }
 
     @Test
@@ -128,6 +148,10 @@ class SameDateLabValueSelectorTest {
         )
         val result = SameDateLabValueSelector(setOf(albumin, creatinine)).select(LabInterpretation.interpret(record.labValues), minValidDate)
         assertThat(result).isInstanceOf(LabValueSelectionResult.NotFound::class.java)
-        assertEvaluation(EvaluationResult.UNDETERMINED, (result as LabValueSelectionResult.NotFound).evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            (result as LabValueSelectionResult.NotFound).evaluation,
+            "Unexpected unit specified for albumin: sec"
+        )
     }
 }

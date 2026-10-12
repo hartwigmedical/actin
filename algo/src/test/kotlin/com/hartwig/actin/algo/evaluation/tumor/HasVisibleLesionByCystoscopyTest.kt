@@ -10,6 +10,6 @@ class HasVisibleLesionByCystoscopyTest {
     @Test
     fun `Should evaluate to undetermined`() {
         val evaluation = HasVisibleLesionByCystoscopy().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation, "Visible lesion by cystoscopy undetermined")
     }
 }

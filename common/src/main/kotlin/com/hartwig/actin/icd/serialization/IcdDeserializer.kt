@@ -36,7 +36,8 @@ object IcdDeserializer {
             val icdNode = IcdNode(
                 code = code,
                 parentTreeCodes = updatedParents,
-                title = trimTitle(node)
+                title = trimTitle(node),
+                isExtension = true
             )
 
             Pair(result + icdNode, currentParents)

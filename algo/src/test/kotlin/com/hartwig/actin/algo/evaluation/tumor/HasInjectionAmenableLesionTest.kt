@@ -10,6 +10,10 @@ class HasInjectionAmenableLesionTest {
     @Test
     fun canEvaluate() {
         val function = HasInjectionAmenableLesion()
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Injection amenability of lesions undetermined"
+        )
     }
 }

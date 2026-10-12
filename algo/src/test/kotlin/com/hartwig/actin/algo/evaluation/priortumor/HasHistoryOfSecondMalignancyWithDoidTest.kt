@@ -10,19 +10,31 @@ class HasHistoryOfSecondMalignancyWithDoidTest {
 
     @Test
     fun canEvaluate() {
-        val doidModel = TestDoidModelFactory.createWithOneParentChild("100", "200")
-        val function = HasHistoryOfSecondMalignancyWithDoid(doidModel, "100")
+        val doidModel = TestDoidModelFactory.createWithOneParentChild("1", "2").copy(termForDoidMap = mapOf("1" to "breast cancer"))
+        val function = HasHistoryOfSecondMalignancyWithDoid(doidModel, "1")
 
         // No prior tumors.
         val priorTumors: MutableList<PriorPrimary> = mutableListOf()
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No history of previous malignancy belonging to breast cancer"
+        )
 
         // Wrong doid
-        priorTumors.add(PriorTumorTestFactory.priorPrimary(doid = "300"))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        priorTumors.add(PriorTumorTestFactory.priorPrimary(doid = "3"))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "No history of previous malignancy belonging to breast cancer"
+        )
 
         // Right doid
-        priorTumors.add(PriorTumorTestFactory.priorPrimary(doid = "200"))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)))
+        priorTumors.add(PriorTumorTestFactory.priorPrimary(doid = "2"))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
+            "Has history of previous malignancy belonging to breast cancer"
+        )
     }
 }

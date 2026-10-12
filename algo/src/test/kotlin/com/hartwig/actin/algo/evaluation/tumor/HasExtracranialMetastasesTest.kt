@@ -12,28 +12,50 @@ class HasExtracranialMetastasesTest {
 
     @Test
     fun `Should pass when non-cns categorized metastases present`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withBoneLesions(true)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLiverLesions(true)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLungLesions(true)))
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withLymphNodeLesions(true)))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withBoneLesions(true)),
+            "Has extracranial metastases"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withLiverLesions(true)),
+            "Has extracranial metastases"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withLungLesions(true)),
+            "Has extracranial metastases"
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withLymphNodeLesions(true)),
+            "Has extracranial metastases"
+        )
     }
 
     @Test
     fun `Should pass when uncategorized lesion with certain extracranial location present`() {
-        EvaluationAssert.assertEvaluation(EvaluationResult.PASS, function.evaluate(TumorTestFactory.withOtherLesions(listOf("intestine"))))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TumorTestFactory.withOtherLesions(listOf("intestine"))),
+            "Has extracranial metastases"
+        )
     }
 
     @Test
     fun `Should evaluate to undetermined when only uncategorized lesions with uncertain extracranial location present`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("gland")))
+            EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("gland"))),
+            "Undetermined if extracranial metastases present"
         )
     }
 
     @Test
     fun `Should evaluate to undetermined when only uncategorized metastases present`() {
         EvaluationAssert.assertEvaluation(
-            EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("unknown site")))
+            EvaluationResult.UNDETERMINED, function.evaluate(TumorTestFactory.withOtherLesions(listOf("unknown site"))),
+            "Undetermined if extracranial metastases present"
         )
     }
 
@@ -50,14 +72,19 @@ class HasExtracranialMetastasesTest {
                 otherLesions = emptyList(),
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Undetermined if extracranial metastases present"
+        )
     }
 
     @Test
     fun `Should warn when only suspected extracranial metastases present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.WARN,
-            function.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, listOf("unknown site")))
+            function.evaluate(TumorTestFactory.withSuspectedBoneAndOtherLesions(true, listOf("unknown site"))),
+            "Has extracranial metastases but only suspected lesions"
         )
     }
 
@@ -74,7 +101,7 @@ class HasExtracranialMetastasesTest {
                 otherLesions = emptyList(),
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No extracranial metastases present")
     }
 
     @Test
@@ -90,6 +117,6 @@ class HasExtracranialMetastasesTest {
                 otherLesions = emptyList(),
             )
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No extracranial metastases present")
     }
 }

@@ -11,7 +11,8 @@ class ProteinHasPolymorphismTest {
     fun `Should evaluate to undetermined`() {
         assertMolecularEvaluation(
             EvaluationResult.UNDETERMINED,
-            ProteinHasPolymorphism("protein", "V1/V2").evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord())
+            ProteinHasPolymorphism("protein", "V1/V2").evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if protein protein has polymorphism V1/V2"
         )
     }
 }

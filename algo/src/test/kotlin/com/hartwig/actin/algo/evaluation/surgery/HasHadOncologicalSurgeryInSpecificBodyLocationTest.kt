@@ -20,7 +20,7 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
     @Test
     fun `Should pass for surgery with target body location category in oncological history`() {
         val record = TreatmentTestFactory.withTreatmentHistoryEntry(correctHistoryEntry)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "Has had oncological surgery in location(s) lung")
     }
 
     @Test
@@ -35,13 +35,17 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
                 )
             )
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "Has had oncological surgery in location(s) liver and lung")
     }
 
     @Test
     fun `Should evaluate to undetermined for surgery in oncological history without body location category specified`() {
         val record = TreatmentTestFactory.withTreatmentHistoryEntry(correctHistoryEntry.copy(treatmentHistoryDetails = null))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(record),
+            "Has received oncological surgery but undetermined if in location(s) kidney or lung"
+        )
     }
 
     @Test
@@ -51,7 +55,11 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
                 treatmentHistoryDetails = TreatmentHistoryDetails(bodyLocationCategories = setOf(BodyLocationCategory.LIVER))
             )
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "Has not received oncological surgery in location(s) kidney or lung"
+        )
     }
 
     @Test
@@ -60,11 +68,19 @@ class HasHadOncologicalSurgeryInSpecificBodyLocationTest {
             treatments = setOf(TreatmentTestFactory.treatment("radiotherapy", false, setOf(TreatmentCategory.RADIOTHERAPY), emptySet())),
             bodyLocationCategory = setOf(matchingCategory)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatment)))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatment)),
+            "Has not received oncological surgery in location(s) kidney or lung"
+        )
     }
 
     @Test
     fun `Should fail for empty treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
+            "Has not received oncological surgery in location(s) kidney or lung"
+        )
     }
 }

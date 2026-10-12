@@ -11,6 +11,10 @@ class CanUseAdequateAnticonceptionTest {
 
     @Test
     fun `Should pass always`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient will adhere to anticonception prescriptions"
+        )
     }
 }

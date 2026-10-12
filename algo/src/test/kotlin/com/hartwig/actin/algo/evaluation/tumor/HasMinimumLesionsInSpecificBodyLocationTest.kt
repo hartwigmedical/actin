@@ -21,7 +21,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                 TumorTestFactory.withLungLesions(
                     hasLungLesions = true
                 )
-            )
+            ),
+            "Patient has at least 1 lesions in lung"
         )
     }
 
@@ -33,7 +34,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                 TumorTestFactory.withLungLesions(
                     hasLungLesions = true
                 )
-            )
+            ),
+            "Undetermined if patient has at least 2 lesions in lung"
         )
     }
 
@@ -46,7 +48,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = false,
                     hasSuspectedLungLesions = true
                 )
-            )
+            ),
+            "Undetermined if patient has at least 1 lesions in lung"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -55,7 +58,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = false,
                     hasSuspectedLungLesions = true
                 )
-            )
+            ),
+            "Undetermined if patient has at least 2 lesions in lung"
         )
     }
 
@@ -67,7 +71,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                 TumorTestFactory.withLungLesions(
                     hasLungLesions = null
                 )
-            )
+            ),
+            "Undetermined if patient has at least 1 lesions in lung"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -75,7 +80,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                 TumorTestFactory.withLungLesions(
                     hasLungLesions = null
                 )
-            )
+            ),
+            "Undetermined if patient has at least 2 lesions in lung"
         )
     }
 
@@ -88,7 +94,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = false,
                     hasSuspectedLungLesions = false
                 )
-            )
+            ),
+            "Does not have at least 1 lesions in lung"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -97,7 +104,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = false,
                     hasSuspectedLungLesions = false
                 )
-            )
+            ),
+            "Does not have at least 2 lesions in lung"
         )
     }
 
@@ -107,13 +115,15 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
             EvaluationResult.FAIL,
             functionRequiringOneLesionInEvaluableCategory.evaluate(
                 TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = null)
-            )
+            ),
+            "Does not have at least 1 lesions in lung"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionRequiringTwoLesionsInEvaluableCategory.evaluate(
                 TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = null)
-            )
+            ),
+            "Does not have at least 2 lesions in lung"
         )
     }
 
@@ -121,7 +131,8 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     fun `Should evaluate to undetermined if requested body location is of other type than bone, brain, cns, liver, lung or lymph node`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
-            functionRequiringOneLesionInNonEvaluableCategory.evaluate(TumorTestFactory.withOtherLesions(listOf("one", "two")))
+            functionRequiringOneLesionInNonEvaluableCategory.evaluate(TumorTestFactory.withOtherLesions(listOf("one", "two"))),
+            "Undetermined if patient has at least 1 lesions in bladder"
         )
     }
 }

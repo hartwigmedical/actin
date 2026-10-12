@@ -29,7 +29,8 @@ import com.hartwig.actin.datamodel.molecular.pharmaco.PharmacoEntry
 internal object MolecularTestFactory {
 
     private val basePatient = TestPatientFactory.createMinimalTestWGSPatientRecord()
-    private val baseMolecular = TestMolecularFactory.createMinimalWholeGenomeTest()
+    private val baseMolecular =
+        TestMolecularFactory.createMinimalWholeGenomeTest().copy(evidenceSource = "evidence source")
 
     fun ihcTest(
         item: String = "",

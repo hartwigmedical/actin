@@ -23,7 +23,12 @@ class HasToxicityWithGrade(
 
     override fun evaluate(record: PatientRecord): Evaluation {
         val ignoredIcdMainCodes = icdTitlesToIgnore.mapNotNull(icdModel::resolveCodeForTitle).map { it.mainCode }.toSet()
-        val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, referenceDate, ignoredIcdMainCodes)
+        val relevantToxicities = ToxicityFunctions.selectRelevantToxicities(record, referenceDate)
+            .filterNot { toxicity ->
+                toxicity.icdCodes.any { code ->
+                    icdModel.codeWithAllParents(code.mainCode).any(ignoredIcdMainCodes::contains)
+                }
+            }
         val icdMatches = targetIcdTitles?.mapNotNull(icdModel::resolveCodeForTitle)?.toSet()?.let { targetCodes ->
             icdModel.findInstancesMatchingAnyIcdCode(relevantToxicities, targetCodes).fullMatches.toSet()
         }
@@ -43,7 +48,7 @@ class HasToxicityWithGrade(
             ) != false
         }
 
-        val icdTitleText = targetIcdTitles?.let { "in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
+        val icdTitleText = targetIcdTitles?.let { " in ${Format.concatLowercaseWithCommaAndOr(it)}" } ?: ""
         return when {
             matchingToxicities.isNotEmpty() &&
                     (matchingToxicities.any { it.source == ToxicitySource.QUESTIONNAIRE } || !warnIfToxicitiesNotFromQuestionnaire) -> {
@@ -61,7 +66,7 @@ class HasToxicityWithGrade(
                 EvaluationFactory.undetermined("Has toxicities$toxicityString but unknown if grade >= $minGrade")
             }
 
-            else -> EvaluationFactory.fail("No toxicities $icdTitleText found with grade $minGrade or higher")
+            else -> EvaluationFactory.fail("No toxicities$icdTitleText found with grade $minGrade or higher")
         }
     }
 

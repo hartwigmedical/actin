@@ -11,6 +11,10 @@ class WillingToAdhereToDonationPrescriptionsTest {
 
     @Test
     fun `Should pass always`() {
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Assumed that patient is willing to adhere to sperm/egg donation prescriptions"
+        )
     }
 }

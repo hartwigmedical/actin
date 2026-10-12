@@ -18,7 +18,11 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
     @Test
     fun `Should warn if brain metastases present and received any systemic anti-cancer therapy`() {
         val clinicalRecord = withCnsOrBrainLesionsAndOncologicalHistory(hasCnsLesions = false, hasBrainLesions = true, systemicTreatment)
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(clinicalRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(clinicalRecord),
+            "Has possibly received systemic therapy for brain metastases"
+        )
     }
 
     @Test
@@ -28,13 +32,21 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
             hasSuspectedBrainLesions = true,
             systemicTreatment
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(clinicalRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(clinicalRecord),
+            "Has possibly received systemic therapy for (suspected) brain metastases"
+        )
     }
 
     @Test
     fun `Should warn if CNS metastases present and received any systemic anti-cancer therapy`() {
         val clinicalRecord = withCnsOrBrainLesionsAndOncologicalHistory(hasCnsLesions = true, hasBrainLesions = false, systemicTreatment)
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(clinicalRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(clinicalRecord),
+            "Has possibly received systemic therapy for brain metastases"
+        )
     }
 
     @Test
@@ -44,19 +56,31 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
             hasSuspectedBrainLesions = false,
             systemicTreatment
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.WARN, function.evaluate(clinicalRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(clinicalRecord),
+            "Has possibly received systemic therapy for (suspected) brain metastases"
+        )
     }
 
     @Test
     fun `Should fail if brain metastases present but did not receive any systemic anti-cancer therapy`() {
         val clinicalRecord = withCnsOrBrainLesionsAndOncologicalHistory(hasCnsLesions = true, hasBrainLesions = true, nonSystemicTreatment)
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(clinicalRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(clinicalRecord),
+            "Has not received systemic therapy for brain metastases"
+        )
     }
 
     @Test
     fun `Should fail if no brain or CNS metastases present`() {
         val clinicalRecord = withCnsOrBrainLesionsAndOncologicalHistory(hasCnsLesions = false, hasBrainLesions = false, systemicTreatment)
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(clinicalRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(clinicalRecord),
+            "Has not received systemic therapy for brain metastases"
+        )
     }
 
     @Test
@@ -65,6 +89,10 @@ class HasReceivedSystemicTherapyForBrainMetastasesTest {
             hasCnsLesions = true, hasBrainLesions = true,
             TreatmentTestFactory.treatmentHistoryEntry(emptyList())
         )
-        EvaluationAssert.assertEvaluation(EvaluationResult.FAIL, function.evaluate(clinicalRecord))
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(clinicalRecord),
+            "Has not received systemic therapy for brain metastases"
+        )
     }
 }

@@ -21,13 +21,15 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
     fun `Should pass when any CYP inhibiting or inducing medication`() {
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
-            )
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
+            ),
+            "CYP inducer or inhibitor medication use (name)"
         )
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
-            )
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
+            ),
+            "CYP inducer or inhibitor medication use (name)"
         )
     }
 
@@ -36,26 +38,33 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP inducer or inhibitor medication use"
         )
     }
 
     @Test
     fun `Should fail when patient uses no medication`() {
-        assertEvaluation(EvaluationResult.FAIL, alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())))
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
+            "No CYP inducer or inhibitor medication use"
+        )
     }
 
     @Test
     fun `Should warn when patient plans to use CYP inhibiting or inducing medication`() {
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG)
-            )
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
+            ),
+            "Planned CYP inducer or inhibitor medication (name)"
         )
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
-                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
-            )
+                MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
+            ),
+            "Planned CYP inducer or inhibitor medication (name)"
         )
     }
 
@@ -64,7 +73,8 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("9A9", DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
-            )
+            ),
+            "No CYP inducer or inhibitor medication use"
         )
     }
 
@@ -73,7 +83,7 @@ class CurrentlyGetsAnyCypMedicationOfTypesTest {
         val result = alwaysPlannedFunction.evaluate(
             TestPatientFactory.createMinimalTestWGSPatientRecord().copy(medications = null)
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, result)
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "No medication data provided")
         assertThat(result.recoverable).isTrue()
     }
 }

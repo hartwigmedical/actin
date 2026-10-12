@@ -10,6 +10,10 @@ class HasPositivePETScanForTracerTest {
     @Test
     fun `Should evaluate to undetermined always`() {
         val function = HasPositivePETScanForTracer("PSMA")
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if patient has positive PSMA PET scan"
+        )
     }
 }

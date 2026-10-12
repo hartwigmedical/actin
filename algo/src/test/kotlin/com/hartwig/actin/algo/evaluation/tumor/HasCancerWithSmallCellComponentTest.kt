@@ -14,13 +14,17 @@ class HasCancerWithSmallCellComponentTest {
     @Test
     fun `Should evaluate to undetermined if no tumor doids configured`() {
         val tumorDetails = TumorTestFactory.withDoids(emptySet())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumorDetails))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumorDetails),
+            "Undetermined if tumor may have small cell component"
+        )
     }
 
     @Test
     fun `Should pass if tumor has small cell component`() {
         val tumorDetails = TumorTestFactory.withDoids(setOf(DoidConstants.SMALL_CELL_CANCER_DOIDS.first()))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(tumorDetails), "Has cancer with small cell component")
     }
 
     @Test
@@ -29,18 +33,26 @@ class HasCancerWithSmallCellComponentTest {
             listOf(IhcTest(item = "SCLC transformation", scoreText = "Positive")),
             setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
         )
-        assertEvaluation(EvaluationResult.WARN, function.evaluate(tumorDetails))
+        assertEvaluation(
+            EvaluationResult.WARN,
+            function.evaluate(tumorDetails),
+            "Has potentially cancer with small cell component (positive SCLC transformation)"
+        )
     }
 
     @Test
     fun `Should be undetermined if tumor has neuroendocrine component`() {
         val tumorDetails = TumorTestFactory.withDoids(DoidConstants.NEUROENDOCRINE_DOIDS.first())
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(tumorDetails))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(tumorDetails),
+            "Potentially has cancer with small cell component (has neuroendocrine tumor type)"
+        )
     }
 
     @Test
     fun `Should fail if tumor is of other type than small cell`() {
         val tumorDetails = TumorTestFactory.withDoidAndName("wrong doid", "wrong name")
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(tumorDetails), "Has no cancer with small cell component")
     }
 }

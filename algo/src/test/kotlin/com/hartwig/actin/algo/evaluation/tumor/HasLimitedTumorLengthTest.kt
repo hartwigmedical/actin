@@ -11,6 +11,10 @@ class HasLimitedTumorLengthTest {
 
     @Test
     fun `Should resolve to undetermined always`() {
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()))
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
+            "Undetermined if tumor length is at most 5 cm"
+        )
     }
 }

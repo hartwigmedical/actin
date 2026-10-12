@@ -36,7 +36,8 @@ class MolecularResultsAreKnownForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_WHOLE_GENOME, true
                 )
-            )
+            ),
+            "WGS results available for gene 1"
         )
     }
 
@@ -48,7 +49,8 @@ class MolecularResultsAreKnownForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_WHOLE_GENOME, false
                 )
-            )
+            ),
+            "WGS performed containing gene 1 but biopsy contained insufficient tumor cells for analysis"
         )
     }
 
@@ -60,7 +62,8 @@ class MolecularResultsAreKnownForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_TARGETED, true
                 )
-            )
+            ),
+            "Unsure if gene gene 1 results are available within performed OncoAct tumor NGS panel"
         )
     }
 
@@ -72,7 +75,8 @@ class MolecularResultsAreKnownForGeneTest {
                 MolecularTestFactory.withExperimentTypeAndHasSufficientQuality(
                     ExperimentType.HARTWIG_TARGETED, false
                 )
-            )
+            ),
+            "OncoAct tumor NGS panel performed containing gene 1 but biopsy contained insufficient tumor cells for analysis"
         )
     }
 
@@ -82,7 +86,8 @@ class MolecularResultsAreKnownForGeneTest {
             EvaluationResult.PASS,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.HARTWIG_TARGETED, geneCopyNumber1)
-            )
+            ),
+            "OncoAct tumor NGS panel results available for gene 1"
         )
     }
 
@@ -92,7 +97,8 @@ class MolecularResultsAreKnownForGeneTest {
             EvaluationResult.WARN,
             function.evaluate(
                 MolecularTestFactory.withExperimentTypeAndCopyNumber(ExperimentType.HARTWIG_TARGETED, geneCopyNumber2)
-            )
+            ),
+            "Unsure if gene gene 1 results are available within performed OncoAct tumor NGS panel"
         )
     }
 
@@ -106,7 +112,8 @@ class MolecularResultsAreKnownForGeneTest {
                     false,
                     MolecularTestFactory.ihcTest(item = "gene 1", impliesIndeterminate = true)
                 )
-            )
+            ),
+            "WGS performed containing gene 1 but biopsy contained insufficient tumor cells for analysis"
         )
     }
 
@@ -127,7 +134,8 @@ class MolecularResultsAreKnownForGeneTest {
                         )
                     )
                 )
-            )
+            ),
+            "gene 1 tested before in IHC test"
         )
     }
 
@@ -145,7 +153,8 @@ class MolecularResultsAreKnownForGeneTest {
                             )
                         )
                 )
-            )
+            ),
+            "WGS results available for gene 1"
         )
     }
 
@@ -159,7 +168,8 @@ class MolecularResultsAreKnownForGeneTest {
                     false,
                     MolecularTestFactory.ihcTest(item = "gene 2", impliesIndeterminate = false)
                 )
-            )
+            ),
+            "WGS performed containing gene 1 but biopsy contained insufficient tumor cells for analysis"
         )
     }
 
@@ -175,7 +185,8 @@ class MolecularResultsAreKnownForGeneTest {
                                 .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("ALK")))
                         )
                     )
-                )
+                ),
+            "Panel results available for ALK"
         )
     }
 
@@ -192,7 +203,8 @@ class MolecularResultsAreKnownForGeneTest {
                                 .copy(targetSpecification = TestMolecularFactory.panelSpecifications(setOf("EGFR")))
                         )
                     )
-                )
+                ),
+            "ALK not tested"
         )
     }
 
@@ -205,7 +217,8 @@ class MolecularResultsAreKnownForGeneTest {
                 MolecularTestFactory.withMolecularTestsAndNoOrangeMolecular(
                     listOf(TestMolecularFactory.createMinimalPanelTest())
                 )
-            )
+            ),
+            "gene 1 not tested"
         )
     }
 }

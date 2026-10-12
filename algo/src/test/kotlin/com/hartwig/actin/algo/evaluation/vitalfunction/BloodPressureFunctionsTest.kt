@@ -27,7 +27,8 @@ class BloodPressureFunctionsTest {
                 DIASTOLIC,
                 60,
                 minimumValidDate
-            )
+            ),
+            "No (recent) data found for diastolic blood pressure"
         )
         assertEvaluation(EvaluationResult.UNDETERMINED,
             evaluatePatientMaximumBloodPressure(
@@ -35,7 +36,8 @@ class BloodPressureFunctionsTest {
                 SYSTOLIC,
                 100,
                 minimumValidDate
-            )
+            ),
+            "No (recent) data found for systolic blood pressure"
         )
     }
 
@@ -52,7 +54,8 @@ class BloodPressureFunctionsTest {
                 SYSTOLIC,
                 100,
                 minimumValidDate
-            )
+            ),
+            "Median systolic blood pressure (75 mmHg) below 100 mmHg"
         )
     }
 
@@ -70,7 +73,8 @@ class BloodPressureFunctionsTest {
                 DIASTOLIC,
                 80,
                 minimumValidDate
-            )
+            ),
+            "Median diastolic blood pressure (68 mmHg) below 80 mmHg"
         )
     }
 
@@ -83,7 +87,11 @@ class BloodPressureFunctionsTest {
         val evaluation = evaluatePatientMinimumBloodPressure(
             VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 100, minimumValidDate
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Median systolic blood pressure (95 mmHg) below 100 mmHg but within margin of error"
+        )
         assertThat(evaluation.recoverable).isTrue()
     }
 
@@ -96,7 +104,11 @@ class BloodPressureFunctionsTest {
         val evaluation = evaluatePatientMaximumBloodPressure(
             VitalFunctionTestFactory.withVitalFunctions(bloodPressures), SYSTOLIC, 120, minimumValidDate
         )
-        assertEvaluation(EvaluationResult.UNDETERMINED, evaluation)
+        assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            evaluation,
+            "Median systolic blood pressure (125 mmHg) above 120 mmHg but within margin of error"
+        )
         assertThat(evaluation.recoverable).isTrue()
     }
 
@@ -114,7 +126,8 @@ class BloodPressureFunctionsTest {
                 SYSTOLIC,
                 100,
                 minimumValidDate
-            )
+            ),
+            "Median systolic blood pressure (103 mmHg) above 100 mmHg"
         )
     }
 
@@ -132,7 +145,8 @@ class BloodPressureFunctionsTest {
                 DIASTOLIC,
                 75,
                 minimumValidDate
-            )
+            ),
+            "Median diastolic blood pressure (78 mmHg) above 75 mmHg"
         )
     }
 
@@ -150,7 +164,8 @@ class BloodPressureFunctionsTest {
                 DIASTOLIC,
                 100,
                 minimumValidDate
-            )
+            ),
+            "Median diastolic blood pressure (113 mmHg) above 100 mmHg"
         )
     }
 
@@ -168,7 +183,8 @@ class BloodPressureFunctionsTest {
                 SYSTOLIC,
                 130,
                 minimumValidDate
-            )
+            ),
+            "Median systolic blood pressure (125 mmHg) below 130 mmHg"
         )
     }
 
@@ -189,7 +205,8 @@ class BloodPressureFunctionsTest {
                 SYSTOLIC,
                 100,
                 minimumValidDate
-            )
+            ),
+            "Median systolic blood pressure (105 mmHg) above 100 mmHg"
         )
     }
 
@@ -198,7 +215,8 @@ class BloodPressureFunctionsTest {
         assertEvaluation(EvaluationResult.UNDETERMINED, evaluatePatientMaximumBloodPressure(
             VitalFunctionTestFactory.withVitalFunctions(listOf(diastolic(referenceDateTime, 110.0))),
             SYSTOLIC, 100, minimumValidDate
-        )
+        ),
+            "No (recent) data found for systolic blood pressure"
         )
     }
 

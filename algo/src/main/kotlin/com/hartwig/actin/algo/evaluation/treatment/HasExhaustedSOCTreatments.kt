@@ -69,7 +69,7 @@ class HasExhaustedSOCTreatments(
                         EvaluationFactory.undetermined("Undetermined if SOC exhausted (undefined chemotherapy in history)")
                     }
 
-                    else -> EvaluationFactory.warn("SOC potentially not exhausted (no platinum doublet in metastatic setting)")
+                    else -> EvaluationFactory.fail("SOC not exhausted (no platinum doublet in metastatic setting)")
                 }
             }
 
