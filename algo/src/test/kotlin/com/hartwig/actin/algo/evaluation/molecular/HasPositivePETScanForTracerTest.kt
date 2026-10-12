@@ -13,7 +13,7 @@ class HasPositivePETScanForTracerTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Undetermined if patient has positive PSMA PET scan"
+            "Undetermined if PSMA PET scan is positive"
         )
     }
 }

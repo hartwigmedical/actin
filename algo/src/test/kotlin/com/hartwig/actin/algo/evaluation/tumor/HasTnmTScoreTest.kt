@@ -21,7 +21,7 @@ class HasTnmTScoreTest {
     fun `Should pass if the score matches the tumor stage`(){
         assertEvaluation(
             EvaluationResult.PASS, function(setOf(TnmT.T2A, TnmT.T2), TumorTestFactory.withTumorStage(TumorStage.IB)),
-            "Tumor has TNT T-classification T2 or T2A"
+            "Tumor has TNM T-classification T2 or T2A"
         )
     }
 
@@ -37,7 +37,7 @@ class HasTnmTScoreTest {
     fun `Should pass if the targets contains all possible TnmTs of the patient`() {
         assertEvaluation(
             EvaluationResult.PASS, function(setOf(TnmT.T2, TnmT.T4, TnmT.T2A) , TumorTestFactory.withTumorStage(TumorStage.IB)),
-            "Tumor has TNT T-classification T2 or T2A"
+            "Tumor has TNM T-classification T2 or T2A"
         )
     }
 
@@ -63,7 +63,7 @@ class HasTnmTScoreTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function(setOf(TnmT.T1, TnmT.T1A, TnmT.T1B, TnmT.T1C, TnmT.T4, TnmT.T2B), TumorTestFactory.withTumorStageAndDerivedStages(null, null)),
-            "No tumor stage or derived tumor stage found - Tnm T scores not determined."
+            "No tumor stage or derived tumor stage found - TNM T scores not determined"
         )
     }
 }

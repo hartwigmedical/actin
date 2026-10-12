@@ -94,7 +94,7 @@ class DerivedTumorStageEvaluationFunctionTest {
         } returns EvaluationTestFactory.withResult(EvaluationResult.FAIL)
 
         val result = derivedFunction.evaluate(withStageAndDerivedStages())
-        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined if patient has something")
+        assertEvaluation(EvaluationResult.UNDETERMINED, result, "Undetermined if cancer is something")
     }
 
     private fun assertSingleStageWithResult(expectedResult: EvaluationResult) {

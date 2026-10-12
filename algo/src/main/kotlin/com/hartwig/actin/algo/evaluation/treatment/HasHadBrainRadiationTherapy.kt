@@ -20,17 +20,18 @@ class HasHadBrainRadiationTherapy : EvaluationFunction {
         val brainRadiotherapy = hasHadBrainRadiotherapy(priorRadiotherapies)
 
         return when {
-            brainRadiotherapy == true -> EvaluationFactory.pass("Has had brain radiation therapy")
+            brainRadiotherapy == true -> EvaluationFactory.pass("Brain radiation therapy in provided treatments")
 
-            brainRadiotherapy == false && anyRadiotherapy -> EvaluationFactory.fail("Has received radiotherapy but not to the brain")
+            brainRadiotherapy == false && anyRadiotherapy -> EvaluationFactory.fail("Radiotherapy in provided treatments but not to the brain")
 
             (hasConfirmedBrainOrCNSMetastases || hasSuspectedBrainOrCNSMetastases) && anyRadiotherapy -> {
-                val suspectedMessage = if (!hasConfirmedBrainOrCNSMetastases) " suspected" else ""
-                EvaluationFactory.undetermined("Has$suspectedMessage brain and/or CNS metastases and received radiotherapy " +
+                val suspectedMessage = if (!hasConfirmedBrainOrCNSMetastases) "Suspected " else ""
+                EvaluationFactory.undetermined(
+                    "${suspectedMessage}brain and/or CNS metastases and radiotherapy in provided treatments " +
                         "- undetermined if brain radiation therapy")
             }
 
-            else -> EvaluationFactory.fail("Has not received prior brain radiation therapy")
+            else -> EvaluationFactory.fail("No prior brain radiation therapy in provided treatments")
         }
     }
 

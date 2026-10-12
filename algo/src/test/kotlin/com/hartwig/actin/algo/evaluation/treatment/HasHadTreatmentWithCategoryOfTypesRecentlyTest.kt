@@ -34,8 +34,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertBothFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistory(emptyList()),
-            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
-            "Has not had targeted therapy treatment within requested time frame"
+            "No HER2 antibody targeted therapy treatment in provided treatments within requested time frame",
+            "No targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -47,8 +47,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertBothFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistory(listOf(treatmentHistoryEntry)),
-            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
-            "Has not had targeted therapy treatment within requested time frame"
+            "No HER2 antibody targeted therapy treatment in provided treatments within requested time frame",
+            "No targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -60,7 +60,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had HER2 antibody targeted therapy treatment within requested time frame"
+            "No HER2 antibody targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -72,7 +72,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has potentially received HER2 antibody targeted therapy treatment within requested time frame - exact drug type of patient's treatment unknown"
+            "Potentially HER2 antibody targeted therapy treatment within requested time frame - exact drug type of treatment unknown based on provided treatments"
         )
     }
 
@@ -84,7 +84,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received targeted therapy treatment within requested time frame"
+            "Targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -94,7 +94,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had HER2 antibody targeted therapy treatment within requested time frame"
+            "No HER2 antibody targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -104,7 +104,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received targeted therapy treatment but inconclusive if within requested time frame"
+            "Targeted therapy treatment in provided treatments but inconclusive if within requested time frame"
         )
     }
 
@@ -116,8 +116,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertBothFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
-            "Has not had targeted therapy treatment within requested time frame"
+            "No HER2 antibody targeted therapy treatment in provided treatments within requested time frame",
+            "No targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -129,7 +129,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has potentially received HER2 antibody targeted therapy treatment within requested time frame - exact drug type of patient's treatment unknown"
+            "Potentially HER2 antibody targeted therapy treatment within requested time frame - exact drug type of treatment unknown based on provided treatments"
         )
     }
 
@@ -141,7 +141,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received targeted therapy treatment within requested time frame"
+            "Targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -156,8 +156,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertBothFunctions(
             EvaluationResult.UNDETERMINED,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Undetermined if treatment received in previous trial may have included targeted therapy",
-            "Undetermined if treatment received in previous trial may have included targeted therapy"
+            "Undetermined if treatment from previous trial may have included targeted therapy",
+            "Undetermined if treatment from previous trial may have included targeted therapy"
         )
     }
 
@@ -183,12 +183,12 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had allogenic transplantation treatment within requested time frame"
+            "No allogenic transplantation treatment in provided treatments within requested time frame"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had transplantation treatment within requested time frame"
+            "No transplantation treatment in provided treatments within requested time frame"
         )
     }
 
@@ -208,7 +208,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has potentially received allogenic transplantation treatment within requested time frame - exact drug type of patient's treatment unknown"
+            "Potentially allogenic transplantation treatment within requested time frame - exact drug type of treatment unknown based on provided treatments"
         )
     }
 
@@ -220,8 +220,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertBothFunctions(
             EvaluationResult.FAIL,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has not had HER2 antibody targeted therapy treatment within requested time frame",
-            "Has not had targeted therapy treatment within requested time frame"
+            "No HER2 antibody targeted therapy treatment in provided treatments within requested time frame",
+            "No targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -231,8 +231,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertBothFunctions(
             EvaluationResult.UNDETERMINED,
             withTreatmentHistoryEntry(treatmentHistoryEntry),
-            "Has received HER2 antibody targeted therapy treatment but inconclusive if within requested time frame",
-            "Has received targeted therapy treatment but inconclusive if within requested time frame"
+            "HER2 antibody targeted therapy treatment in provided treatments but inconclusive if within requested time frame",
+            "Targeted therapy treatment in provided treatments but inconclusive if within requested time frame"
         )
     }
 
@@ -244,7 +244,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithTypes.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received HER2 antibody targeted therapy treatment within requested time frame"
+            "HER2 antibody targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
@@ -261,7 +261,8 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
         assertBothFunctions(
             EvaluationResult.PASS,
             withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication)),
-            "Has received HER2 antibody targeted therapy treatment within requested time frame", "Has received targeted therapy treatment within requested time frame"
+            "HER2 antibody targeted therapy treatment in provided treatments within requested time frame",
+            "Targeted therapy treatment in provided treatments within requested time frame"
         )
     }
 
