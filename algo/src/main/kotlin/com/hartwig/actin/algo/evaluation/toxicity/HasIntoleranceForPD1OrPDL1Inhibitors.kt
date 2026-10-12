@@ -13,11 +13,7 @@ import com.hartwig.actin.icd.IcdModel
 class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetCodes = IcdConstants.DRUG_ALLERGY_SET.flatMap { mainCode ->
-            IcdConstants.PD_L1_PD_1_DRUG_SET.map { extension -> IcdCode(mainCode, extension) }
-        }.toSet()
-
-        val icdMatches = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetCodes)
+        val icdMatches = DrugAllergyFunctions.findDrugAllergies(icdModel, record.comorbidities, IcdConstants.PD_L1_PD_1_DRUG_SET)
 
         val matchingIntolerancesByName = record.intolerances.filter { intolerance ->
             intolerance.name?.let { stringCaseInsensitivelyMatchesQueryCollection(it, INTOLERANCE_TERMS) } == true
@@ -25,9 +21,8 @@ class HasIntoleranceForPD1OrPDL1Inhibitors(private val icdModel: IcdModel) : Eva
 
         val matchingIntolerances = (icdMatches.fullMatches + matchingIntolerancesByName).toSet()
 
-        val monoClonalAntibodyIntolerances = icdModel.findInstancesMatchingAnyIcdCode(
-            record.comorbidities,
-            IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK) }
+        val monoClonalAntibodyIntolerances = DrugAllergyFunctions.findDrugAllergies(
+            icdModel, record.comorbidities, setOf(IcdConstants.MONOCLONAL_ANTIBODY_BLOCK)
         ).fullMatches
 
         val autoImmuneHistory = icdModel.findInstancesMatchingAnyIcdCode(
