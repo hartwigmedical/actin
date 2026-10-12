@@ -44,17 +44,28 @@ class HasIntoleranceRelatedToStudyMedicationTest {
 
     @Test
     fun `Should fail when toxicity with matching ICD code has grade below 2 or null`() {
-        val icdMainCode = matchingIcdCodes.first()
-        listOf(
-            ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 1, icdMainCode),
-            ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, null, icdMainCode)
-        ).forEach { match ->
+        listOf(1, null).flatMap { grade ->
+            listOf(
+                ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, grade, matchingIcdCodes.first(), IcdConstants.NIVOLUMAB_CODE),
+                ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, grade, IcdConstants.DRUG_ALLERGY_CODE)
+            )
+        }.forEach { match ->
             assertEvaluation(
                 EvaluationResult.FAIL,
                 function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
                 "Has no intolerances to study medication"
             )
         }
+    }
+
+    @Test
+    fun `Should fail when intolerance has generic hypersensitivity ICD code without extension`() {
+        val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK)
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
+            "Has no intolerances to study medication"
+        )
     }
 
     @Test
@@ -95,6 +106,22 @@ class HasIntoleranceRelatedToStudyMedicationTest {
                 EvaluationResult.UNDETERMINED,
                 function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
                 "Has medication-related allergies (${match.name}) - undetermined if allergy to study medication"
+            )
+        }
+    }
+
+    @Test
+    fun `Should evaluate to undetermined when any comorbidity has a drug specific ICD code without extension`() {
+        val icdMainCode = IcdConstants.DRUG_ALLERGY_CODE
+        listOf(
+            ComorbidityTestFactory.intolerance("drug allergy", icdMainCode = icdMainCode),
+            ComorbidityTestFactory.toxicity("tox", ToxicitySource.EHR, 2, icdMainCode),
+            ComorbidityTestFactory.otherCondition("condition", icdMainCode = icdMainCode)
+        ).forEach { match ->
+            assertEvaluation(
+                EvaluationResult.UNDETERMINED,
+                function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
+                "Has drug allergies (${match.name}) - undetermined if allergy to study medication (drug type unknown)"
             )
         }
     }
