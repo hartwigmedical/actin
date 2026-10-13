@@ -13,7 +13,7 @@ class HasPreviouslyParticipatedInTrial(private val acronym: String) : Evaluation
 
         return when {
             matchingTrial.isNotEmpty() -> {
-                EvaluationFactory.pass("Has previously participated in trial $acronym")
+                EvaluationFactory.pass("Previous participation in trial $acronym")
             }
 
             trialEntries.any { it.trialAcronym == null } -> {
@@ -21,7 +21,7 @@ class HasPreviouslyParticipatedInTrial(private val acronym: String) : Evaluation
             }
 
             else -> {
-                EvaluationFactory.fail("Has not participated in trial $acronym")
+                EvaluationFactory.fail("No previous participation in trial $acronym")
             }
         }
     }

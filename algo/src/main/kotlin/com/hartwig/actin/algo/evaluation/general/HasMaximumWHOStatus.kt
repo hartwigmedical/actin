@@ -30,7 +30,7 @@ class HasMaximumWHOStatus(private val maximumWHO: Int) : EvaluationFunction {
             evaluation == EvaluationResult.FAIL -> EvaluationFactory.fail("WHO $patientWho is not below requested max WHO $maximumWHO")
 
             evaluation == EvaluationResult.UNDETERMINED -> {
-                EvaluationFactory.undetermined("Undetermined if patient WHO $patientWho is below requested max WHO $maximumWHO")
+                EvaluationFactory.undetermined("Undetermined if WHO $patientWho is below requested max WHO $maximumWHO")
             }
 
             else -> throw IllegalStateException("Illegal state exception: HasMaximumWhoStatus")

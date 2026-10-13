@@ -2,23 +2,30 @@ package com.hartwig.actin.report.pdf.tables.clinical
 
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
+import com.hartwig.actin.datamodel.clinical.Surgery
+import com.hartwig.actin.datamodel.clinical.SurgeryStatus
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.CellTestUtil.extractTextFromCell
+import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.layout.element.Table
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 private const val KEY_WIDTH = 100f
 private const val VALUE_WIDTH = 200f
+
+private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy", ApplicationConfig.LOCALE)
 
 class PatientClinicalHistoryGeneratorTest {
 
@@ -30,6 +37,46 @@ class PatientClinicalHistoryGeneratorTest {
         val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, labels)
         assertThat(clinicalSummaryGenerator.title()).isEqualTo("Clinical summary")
     }
+
+    @Test
+    fun `Should return content table with surgeries including surgery name`() {
+        val endDate = LocalDate.of(2024, 9, 19)
+        val endDateMinus6 = endDate.minusDays(6)
+        val endDateMinus4 = endDate.minusDays(4)
+
+        val reportWithSurgeries = report.copy(
+            patientRecord = report.patientRecord.copy(
+                surgeries = listOf(
+                    Surgery(
+                        name = "Surgery 2",
+                        endDateMinus6,
+                        status = SurgeryStatus.FINISHED,
+                        treatmentType = OtherTreatmentType.DEBULKING_SURGERY
+                    ),
+                    Surgery(
+                        name = "Surgery 1",
+                        endDate,
+                        status = SurgeryStatus.FINISHED,
+                        treatmentType = OtherTreatmentType.CYTOREDUCTIVE_SURGERY
+                    ),
+                    Surgery(name = null, endDateMinus4, status = SurgeryStatus.FINISHED, treatmentType = OtherTreatmentType.OTHER_SURGERY)
+                )
+            )
+        )
+
+
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(reportWithSurgeries, true, KEY_WIDTH, VALUE_WIDTH, labels)
+        val cells = clinicalSummaryGenerator.contentsAsList()
+        val surgeriesCell = cells.dropWhile { extractTextFromCell(it) != "Recent surgeries" }.drop(1).first()
+        assertThat(surgeriesCell).isNotNull
+        assertThat(extractTextFromCell(surgeriesCell)).isEqualTo(
+            "%s Surgery 1, %s, %s Surgery 2",
+            DATE_FORMAT.format(endDate),
+            DATE_FORMAT.format(endDateMinus4),
+            DATE_FORMAT.format(endDateMinus6)
+        )
+    }
+
 
     @Test
     fun `Should return content as list with sorted other prior conditions`() {

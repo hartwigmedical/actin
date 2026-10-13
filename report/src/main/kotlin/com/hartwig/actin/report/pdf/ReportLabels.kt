@@ -1,5 +1,6 @@
 package com.hartwig.actin.report.pdf
 
+import com.hartwig.actin.report.ReporterApplication
 import java.io.BufferedReader
 import java.io.File
 import java.text.MessageFormat
@@ -19,6 +20,7 @@ class ReportLabels(private val properties: Properties) {
 
     inner class Report {
         fun title() = get("report.title")
+        fun metadataTitle() = "${title()} v${ReporterApplication.VERSION}"
     }
 
     inner class SidePanel {
@@ -63,10 +65,10 @@ class ReportLabels(private val properties: Properties) {
         fun colIneligibilityReasons() = get("trial.col.ineligibility.reasons")
         fun footnoteFilteredSuffix() = get("trial.footnote.filtered.suffix")
         fun footnoteChildrensHospital(count: String) = format("trial.footnote.childrens.hospital", count)
-        fun footnoteDutchLung(count: String, suffix: String) = format("trial.footnote.dutch.lung", count, suffix)
+        fun footnoteDutchLung(count: Int) = format("trial.footnote.dutch.lung", count)
         fun footnoteExternalMatched() = get("trial.footnote.external.matched")
         fun footnoteExternalExcluded() = get("trial.footnote.external.excluded")
-        fun footnoteNationalMolecular(count: String, suffix: String) = format("trial.footnote.national.molecular", count, suffix)
+        fun footnoteNationalMolecular(count: String) = format("trial.footnote.national.molecular", count)
     }
 
     inner class EfficacyEvidence {
@@ -122,9 +124,9 @@ class ReportLabels(private val properties: Properties) {
     inner class ClinicalDetails {
         fun title() = get("clinical.title")
         fun summaryTitle() = get("clinical.summary.title")
-        fun patientDetailsTitle(date: String) = format("clinical.patient.details.title", date)
+        fun patientDetailsTitle() = get("clinical.patient.details.title")
         fun medicationTitle() = get("clinical.medication.title")
-        fun tumorDetailsTitle(date: String) = format("clinical.tumor.details.title", date)
+        fun tumorDetailsTitle() = get("clinical.tumor.details.title")
         fun sectionSystemicHistory() = get("clinical.section.systemic.history")
         fun sectionOtherOncological() = get("clinical.section.other.oncological")
         fun sectionPreviousPrimary() = get("clinical.section.previous.primary")

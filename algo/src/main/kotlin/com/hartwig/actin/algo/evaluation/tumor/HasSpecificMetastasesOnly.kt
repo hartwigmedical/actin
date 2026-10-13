@@ -34,19 +34,19 @@ class HasSpecificMetastasesOnly(
 
             return when {
                 hasTargetMetastases && hasNoMetastasesOutsideTargetMetastases -> {
-                    EvaluationFactory.pass("Has only $typeOfMetastases metastases")
+                    EvaluationFactory.pass("Only $typeOfMetastases metastases in provided lesions")
                 }
 
                 hasNoTargetMetastases || hasMetastasesOutsideTargetMetastases -> {
-                    EvaluationFactory.fail("Does not have only $typeOfMetastases metastases")
+                    EvaluationFactory.fail("Metastases in provided lesions are not limited to $typeOfMetastases")
                 }
 
                 hasSuspectedTargetMetastases || hasSuspectedMetastasesOutsideTargetMetastases -> {
-                    EvaluationFactory.undetermined("Undetermined if patient has only $typeOfMetastases metastases (suspected lesions presence and/or missing lesion data)")
+                    EvaluationFactory.undetermined("Undetermined if only $typeOfMetastases metastases based on provided lesions (suspected lesions provided and/or missing lesion data)")
                 }
 
                 else -> {
-                    EvaluationFactory.undetermined("Undetermined if patient has only $typeOfMetastases metastases (missing lesion data)")
+                    EvaluationFactory.undetermined("Undetermined if only $typeOfMetastases metastases based on provided lesions")
                 }
             }
         }

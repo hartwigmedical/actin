@@ -50,7 +50,7 @@ class MolecularDetailsChapterTest {
         val generator = ImmunologyGenerator(
             testWithReliableImmunology(), ImmunologyDisplayMode.DETAILED_TABLE, "Immunology", KEY_WIDTH, VALUE_WIDTH, labels
         )
-        assertHeader(generator, "HLA gene", "Type", "Tumor copy number", "Mutated in tumor")
+        assertHeader(generator, "HLA GENE", "TYPE", "TUMOR COPY NUMBER", "MUTATED IN TUMOR")
     }
 
     @Test

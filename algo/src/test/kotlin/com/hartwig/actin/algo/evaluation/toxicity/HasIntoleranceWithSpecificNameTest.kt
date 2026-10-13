@@ -14,7 +14,7 @@ class HasIntoleranceWithSpecificNameTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
-            "Has no allergies with name allergy"
+            "No allergies with name allergy"
         )
     }
 
@@ -24,7 +24,7 @@ class HasIntoleranceWithSpecificNameTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withComorbidity(mismatch)),
-            "Has no allergies with name allergy"
+            "No allergies with name allergy"
         )
     }
 
@@ -34,7 +34,7 @@ class HasIntoleranceWithSpecificNameTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy matching allergy"
+            "Allergy matching allergy"
         )
     }
 }

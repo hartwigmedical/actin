@@ -19,7 +19,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistory(emptyList())),
-            "Has not had targeted therapy treatment with PD"
+            "No targeted therapy treatment with PD in provided treatments"
         )
     }
 
@@ -31,7 +31,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had targeted therapy treatment with PD"
+            "No targeted therapy treatment with PD in provided treatments"
         )
     }
 
@@ -45,7 +45,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had targeted therapy treatment with PD"
+            "No targeted therapy treatment with PD in provided treatments"
         )
     }
 
@@ -55,7 +55,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had targeted therapy treatment but undetermined PD status"
+            "targeted therapy treatment in provided treatments but PD status is undetermined"
         )
     }
 
@@ -66,7 +66,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "Has had targeted therapy treatment with PD"
+            "targeted therapy treatment in provided treatments with PD"
         )
     }
 
@@ -76,7 +76,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had targeted therapy treatment with PD"
+            "targeted therapy treatment in provided treatments with PD"
         )
     }
 
@@ -86,7 +86,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had targeted therapy treatment with PD"
+            "targeted therapy treatment in provided treatments with PD"
         )
     }
 
@@ -99,7 +99,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             FUNCTION.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had targeted therapy treatment but undetermined PD status"
+            "targeted therapy treatment in provided treatments but PD status is undetermined"
         )
     }
 
@@ -110,7 +110,7 @@ class HasHadPDFollowingTreatmentWithCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had transplantation treatment with PD"
+            "No transplantation treatment with PD in provided treatments"
         )
     }
 

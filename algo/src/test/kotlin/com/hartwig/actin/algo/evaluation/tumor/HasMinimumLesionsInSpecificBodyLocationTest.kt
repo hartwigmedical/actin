@@ -14,7 +14,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
     private val functionRequiringOneLesionInNonEvaluableCategory = HasMinimumLesionsInSpecificBodyLocation(1, nonEvaluableCategory)
 
     @Test
-    fun `Should be pass in case of known lesions in requested body location and requiring at most one lesion`() {
+    fun `Should pass in case of known lesions in requested body location and requiring at most one lesion`() {
         assertEvaluation(
             EvaluationResult.PASS,
             functionRequiringOneLesionInEvaluableCategory.evaluate(
@@ -22,7 +22,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = true
                 )
             ),
-            "Patient has at least 1 lesions in lung"
+            "At least 1 lesions in lung"
         )
     }
 
@@ -35,7 +35,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = true
                 )
             ),
-            "Undetermined if patient has at least 2 lesions in lung"
+            "Undetermined if at least 2 lesions in lung based on provided lesions"
         )
     }
 
@@ -49,7 +49,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasSuspectedLungLesions = true
                 )
             ),
-            "Undetermined if patient has at least 1 lesions in lung"
+            "Undetermined if at least 1 lesions in lung based on provided lesions"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -59,7 +59,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasSuspectedLungLesions = true
                 )
             ),
-            "Undetermined if patient has at least 2 lesions in lung"
+            "Undetermined if at least 2 lesions in lung based on provided lesions"
         )
     }
 
@@ -72,7 +72,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = null
                 )
             ),
-            "Undetermined if patient has at least 1 lesions in lung"
+            "Undetermined if at least 1 lesions in lung based on provided lesions"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
@@ -81,7 +81,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasLungLesions = null
                 )
             ),
-            "Undetermined if patient has at least 2 lesions in lung"
+            "Undetermined if at least 2 lesions in lung based on provided lesions"
         )
     }
 
@@ -95,7 +95,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasSuspectedLungLesions = false
                 )
             ),
-            "Does not have at least 1 lesions in lung"
+            "Fewer than 1 lesions in lung in provided lesions"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
@@ -105,7 +105,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
                     hasSuspectedLungLesions = false
                 )
             ),
-            "Does not have at least 2 lesions in lung"
+            "Fewer than 2 lesions in lung in provided lesions"
         )
     }
 
@@ -116,14 +116,14 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
             functionRequiringOneLesionInEvaluableCategory.evaluate(
                 TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = null)
             ),
-            "Does not have at least 1 lesions in lung"
+            "Fewer than 1 lesions in lung in provided lesions"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionRequiringTwoLesionsInEvaluableCategory.evaluate(
                 TumorTestFactory.withLungLesions(hasLungLesions = false, hasSuspectedLungLesions = null)
             ),
-            "Does not have at least 2 lesions in lung"
+            "Fewer than 2 lesions in lung in provided lesions"
         )
     }
 
@@ -132,7 +132,7 @@ class HasMinimumLesionsInSpecificBodyLocationTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionRequiringOneLesionInNonEvaluableCategory.evaluate(TumorTestFactory.withOtherLesions(listOf("one", "two"))),
-            "Undetermined if patient has at least 1 lesions in bladder"
+            "Undetermined if at least 1 lesions in bladder based on provided lesions"
         )
     }
 }

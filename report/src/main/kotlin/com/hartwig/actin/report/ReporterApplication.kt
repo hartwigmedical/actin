@@ -39,7 +39,7 @@ class ReporterApplication(private val config: ReporterConfig, private val doidMo
         val configuration = ReportConfiguration.create(config.overrideYaml)
         val labels = ReportLabels.load(config.labelsPaths)
         val report = ReportFactory.create(config.reportDate ?: LocalDate.now(), patient, treatmentMatch)
-        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory, labels)
+        val writer = ReportWriterFactory.createProductionReportWriter(config.outputDirectory, labels, config.logoPath)
         writer.write(report, configuration, doidModel)
         logger.info { "Done!" }
     }

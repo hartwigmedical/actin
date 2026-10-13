@@ -33,7 +33,7 @@ class HasHistoryOfSecondMalignancyWithinYearsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(PriorTumorTestFactory.withPriorPrimary(aroundCutoff)),
-            "Has history of previous malignancy but undetermined whether it is considered recent"
+            "History of previous malignancy - undetermined whether it is considered recent"
         )
 
         // One second primary but less than 3 years ago.
@@ -41,7 +41,7 @@ class HasHistoryOfSecondMalignancyWithinYearsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(PriorTumorTestFactory.withPriorPrimary(notTooLongAgo)),
-            "Has other malignancy in recent history"
+            "Recent history of other malignancy"
         )
 
         // One second primary but less than 4 years ago diagnosed
@@ -49,7 +49,7 @@ class HasHistoryOfSecondMalignancyWithinYearsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(PriorTumorTestFactory.withPriorPrimary(diagnosedNotTooLongAgo)),
-            "Has other malignancy in recent history"
+            "Recent history of other malignancy"
         )
 
         // One second primary no dates available

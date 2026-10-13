@@ -40,7 +40,7 @@ class HasExhaustedSOCTreatmentsTest {
                 optional = false,
                 potentialIntolerance = false,
                 eligibilityFunctions = setOf(EligibilityFunction(EligibilityRule.MMR_DEFICIENT.name, emptyList()))
-            ), listOf(EvaluationFactory.pass("Has MSI"))
+            ), listOf(EvaluationFactory.pass("MSI in provided treatments"))
         )
     )
 
@@ -56,7 +56,11 @@ class HasExhaustedSOCTreatmentsTest {
                 )
             )
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(platinumDoublet)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "SOC considered exhausted (platinum doublet in history)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "SOC considered exhausted (platinum doublet in provided history)"
+        )
     }
 
     @Test
@@ -110,7 +114,7 @@ class HasExhaustedSOCTreatmentsTest {
                     TumorTestFactory.withDoids(setOf(DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID))
                         .copy(oncologicalHistory = listOf(it))
                 ),
-                "SOC considered exhausted (chemoradiation in history)"
+                "SOC considered exhausted (chemoradiation in provided history)"
             )
         }
     }
@@ -156,7 +160,11 @@ class HasExhaustedSOCTreatmentsTest {
         val record = createHistoryWithNSCLCAndTreatmentWithIntents(
             TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
         )
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record), "SOC considered exhausted (chemo-immunotherapy in history)")
+        assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(record),
+            "SOC considered exhausted (chemo-immunotherapy in provided history)"
+        )
     }
 
     @Test
@@ -184,7 +192,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Undetermined if SOC exhausted (undefined chemotherapy in history)"
+            "Undetermined if SOC exhausted (undefined chemotherapy in provided history)"
         )
     }
 
@@ -225,7 +233,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatments)),
-            "Assumed that SOC is exhausted (had prior cancer treatment)"
+            "Assumed that SOC is exhausted (prior cancer treatment)"
         )
     }
 
@@ -236,7 +244,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has exhausted SOC"
+            "SOC is exhausted"
         )
     }
 
@@ -247,7 +255,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not exhausted SOC (remaining options: Pembrolizumab)"
+            "SOC is not exhausted (remaining options: Pembrolizumab)"
         )
     }
 
@@ -271,7 +279,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has potentially not exhausted SOC (Pembrolizumab) but some corresponding molecular results are missing"
+            "SOC potentially not exhausted (Pembrolizumab) but some corresponding molecular results are missing"
         )
         assertThat(evaluation.isMissingMolecularResultForEvaluation).isTrue
     }
@@ -295,7 +303,7 @@ class HasExhaustedSOCTreatmentsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has potentially exhausted SOC - remaining options (Capecitabine+Oxaliplatin) may not have been given due to drug intolerance"
+            "SOC is potentially exhausted - remaining options (Capecitabine+Oxaliplatin) possibly due to drug intolerance"
         )
     }
 

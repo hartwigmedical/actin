@@ -24,25 +24,33 @@ class CurrentlyGetsCypXInhibitingOrInducingMedication(
         return when {
             activeCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "CYP$termToFind inhibiting or inducing medication use (${concatLowercaseWithCommaAndAnd(activeCypMedications)})"
+                    "Active CYP$termToFind inhibiting or inducing medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            activeCypMedications
+                        )
+                    })"
                 )
             }
 
             plannedCypMedications.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Planned CYP$termToFind inhibiting or inducing medication use (${concatLowercaseWithCommaAndAnd(plannedCypMedications)})"
+                    "Planned CYP$termToFind inhibiting or inducing medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            plannedCypMedications
+                        )
+                    })"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
                 EvaluationFactory.undetermined(
-                    "CYP$termToFind inhibiting or inducing medication use undetermined"
+                    "CYP$termToFind inhibiting or inducing medication undetermined"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "No CYP$termToFind inhibiting or inducing medication use"
+                    "No active CYP$termToFind inhibiting or inducing medication in provided medications"
                 )
             }
         }

@@ -5,7 +5,6 @@ import com.hartwig.actin.report.datamodel.TestReportFactory
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.clinical.ClinicalSummaryGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.MedicationGenerator
-import com.hartwig.actin.report.pdf.tables.clinical.PatientCurrentDetailsGenerator
 import com.hartwig.actin.report.pdf.tables.clinical.TumorDetailsGenerator
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -22,7 +21,6 @@ class ClinicalDetailsChapterTest {
 
         assertThat(tables.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
-            PatientCurrentDetailsGenerator::class,
             TumorDetailsGenerator::class,
             MedicationGenerator::class,
         )
@@ -40,7 +38,6 @@ class ClinicalDetailsChapterTest {
 
         assertThat(tables.map { it::class }).containsExactly(
             ClinicalSummaryGenerator::class,
-            PatientCurrentDetailsGenerator::class,
             TumorDetailsGenerator::class
         )
     }

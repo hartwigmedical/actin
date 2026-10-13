@@ -47,7 +47,7 @@ data class ReporterConfig(
             options.addOption(REPORT_DATE, true, "If set, sets fixed report date")
             options.addOption(ITEXT_LICENSE_KEY, true, "File containing the iText license key")
             options.addOption(LABELS_PATH, true, "Comma-separated list of label override files, applied in order (later files override earlier keys)")
-            options.addOption(LOGO_PATH, true, "If set, overrides the bundled report logo file")
+            options.addOption(LOGO_PATH, true, "If set, logo file rendered in the report header")
             options.addOption(COLORS_PATH, true, "If set, overrides the bundled report colors file")
             return options
         }

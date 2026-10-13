@@ -17,7 +17,9 @@ class RequiresRegularHematopoieticSupport(
     override fun evaluate(record: PatientRecord): Evaluation {
         for (transfusion in record.bloodTransfusions) {
             if (transfusion.date.isAfter(minDate) && transfusion.date.isBefore(maxDate)) {
-                return EvaluationFactory.pass("Has received recent hematopoietic support (${transfusion.product.display()})")
+                return EvaluationFactory.pass(
+                    "Recent hematopoietic support (${transfusion.product.display()}) in provided transfusions"
+                )
             }
         }
         val resolvedCategories = hematopoieticMedicationCategories(atcTree)
@@ -27,9 +29,11 @@ class RequiresRegularHematopoieticSupport(
             .filter { it.atc?.chemicalSubGroup in resolvedCategories }
             .map { it.name }
         return if (filteredMedications.isNotEmpty()) {
-            EvaluationFactory.pass("Has received recent hematopoietic support (${concatLowercaseWithCommaAndAnd(filteredMedications)})")
+            EvaluationFactory.pass(
+                "Recent hematopoietic support (${concatLowercaseWithCommaAndAnd(filteredMedications)}) in provided transfusions"
+            )
         } else
-            EvaluationFactory.fail("Has not received recent hematopoietic support")
+            EvaluationFactory.fail("No recent hematopoietic support in provided transfusions")
     }
 
     private fun activeBetweenDates(medication: Medication): Boolean {

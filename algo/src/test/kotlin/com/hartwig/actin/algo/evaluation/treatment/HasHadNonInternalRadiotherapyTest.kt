@@ -17,7 +17,7 @@ class HasHadNonInternalRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received any non-internal radiotherapy"
+            "No non-internal radiotherapy in provided treatments"
         )
     }
 
@@ -27,7 +27,7 @@ class HasHadNonInternalRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received any non-internal radiotherapy"
+            "No non-internal radiotherapy in provided treatments"
         )
     }
 
@@ -37,7 +37,7 @@ class HasHadNonInternalRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received any non-internal radiotherapy"
+            "No non-internal radiotherapy in provided treatments"
         )
     }
 
@@ -47,7 +47,7 @@ class HasHadNonInternalRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received non-internal radiotherapy (radiotherapy)"
+            "Non-internal radiotherapy (radiotherapy) in provided treatments"
         )
     }
 
@@ -57,7 +57,7 @@ class HasHadNonInternalRadiotherapyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received non-internal radiotherapy (radiotherapy)"
+            "Non-internal radiotherapy (radiotherapy) in provided treatments"
         )
     }
 

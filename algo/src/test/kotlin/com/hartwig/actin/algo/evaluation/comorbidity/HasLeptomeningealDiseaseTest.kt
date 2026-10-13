@@ -22,7 +22,7 @@ class HasLeptomeningealDiseaseTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
-                "Has leptomeningeal disease"
+                "Leptomeningeal disease in provided history"
             )
         }
     }
@@ -60,7 +60,7 @@ class HasLeptomeningealDiseaseTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(ComorbidityTestFactory.withCnsLesion("carcinomatous meningitis")),
-            "Has lesions 'carcinomatous meningitis' potentially indicating leptomeningeal disease"
+            "Lesions 'carcinomatous meningitis' potentially indicating leptomeningeal disease"
         )
     }
 
@@ -70,7 +70,7 @@ class HasLeptomeningealDiseaseTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has suspected lesions 'carcinomatous meningitis' potentially indicating leptomeningeal disease"
+            "Suspected lesions 'carcinomatous meningitis' potentially indicating leptomeningeal disease"
         )
     }
 

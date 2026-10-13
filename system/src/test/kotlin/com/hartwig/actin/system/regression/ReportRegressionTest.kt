@@ -47,7 +47,8 @@ class ReportRegressionTest {
         )
 
         assertThat(logLevelRecorder.levelRecorded(Level.WARN) || logLevelRecorder.levelRecorded(Level.ERROR))
-            .withFailMessage("There are errors or warnings in the logs").isFalse()
+            .withFailMessage("There are errors or warnings in the logs")
+            .isFalse()
 
         val outputReportPdf = "$outputDirectory/EXAMPLE-$exampleName.actin.pdf"
         val originalReportPdf = ExampleFunctions.resolveExampleReportPdf(exampleName)

@@ -27,11 +27,11 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTerms(
 
         return if (priorPrimariesOfInterest.isNotEmpty()) {
             val priorPrimaryMessage = buildNameList(priorPrimariesOfInterest)
-            EvaluationFactory.pass("Has history of$recentMessage previous malignancy$priorPrimaryMessage")
+            EvaluationFactory.pass("History of$recentMessage previous malignancy$priorPrimaryMessage")
         } else if (priorPrimariesOfInterestWithUnknownDate.isNotEmpty()) {
             val priorPrimaryMessage = buildNameList(priorPrimariesOfInterestWithUnknownDate)
-            val dateMessage = "but undetermined if recent (date unknown)"
-            EvaluationFactory.undetermined("Has history of previous malignancy$priorPrimaryMessage $dateMessage")
+            val dateMessage = "- undetermined if recent (date unknown)"
+            EvaluationFactory.undetermined("History of previous malignancy$priorPrimaryMessage $dateMessage")
         } else if (otherSecondPrimaries.isNotEmpty()) {
             val message = otherSecondPrimaries.joinToString(", ", transform = PriorPrimary::name)
             EvaluationFactory.fail("No$recentMessage history of previous malignancy excluding $message")

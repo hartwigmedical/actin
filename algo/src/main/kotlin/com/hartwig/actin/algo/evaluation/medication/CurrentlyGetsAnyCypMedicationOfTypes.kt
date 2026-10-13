@@ -24,7 +24,7 @@ class CurrentlyGetsAnyCypMedicationOfTypes(private val selector: MedicationSelec
         return when {
             activeCypMedications.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "CYP $type medication use (${concatLowercaseWithCommaAndAnd(activeCypMedications)})"
+                    "CYP $type medication (${concatLowercaseWithCommaAndAnd(activeCypMedications)}) in provided medications"
                 )
             }
 
@@ -35,7 +35,7 @@ class CurrentlyGetsAnyCypMedicationOfTypes(private val selector: MedicationSelec
             }
 
             else -> {
-                EvaluationFactory.recoverableFail("No CYP $type medication use")
+                EvaluationFactory.recoverableFail("No CYP $type medication in provided medications")
             }
         }
     }

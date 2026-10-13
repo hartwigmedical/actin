@@ -22,7 +22,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
-class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?, private val labels: ReportLabels) {
+class ReportWriter(
+    private val writeToDisk: Boolean,
+    private val outputDirectory: String?,
+    private val labels: ReportLabels,
+    private val logoPath: String? = null
+) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -52,9 +57,9 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         labels: ReportLabels,
         trialDatabaseIsConsistent: Boolean?
     ) {
-        val doc = initializeReport(patientId, trialDatabaseIsConsistent)
+        val doc = initializeReport(patientId, labels, trialDatabaseIsConsistent)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels)
+        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels, logoPath)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]
@@ -71,7 +76,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         pdfDocument.close()
     }
 
-    private fun initializeReport(patientId: String, trialDatabaseIsConsistent: Boolean?): Document {
+    private fun initializeReport(patientId: String, labels: ReportLabels, trialDatabaseIsConsistent: Boolean?): Document {
         val writer: PdfWriter
         if (writeToDisk && outputDirectory != null) {
             val outputFilePath = Paths.forceTrailingFileSeparator(outputDirectory) + patientId + ".actin.pdf"
@@ -88,7 +93,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
 
         val pdf = PdfDocument(writer)
         pdf.defaultPageSize = PageSize.A4
-        pdf.documentInfo.title = Constants.METADATA_TITLE
+        pdf.documentInfo.title = labels.report.metadataTitle()
         pdf.documentInfo.author = Constants.METADATA_AUTHOR
 
         trialDatabaseIsConsistent?.let {

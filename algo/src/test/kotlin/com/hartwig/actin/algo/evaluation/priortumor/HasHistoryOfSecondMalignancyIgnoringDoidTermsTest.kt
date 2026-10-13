@@ -60,7 +60,7 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Has history of previous malignancy (other name)"
+            "History of previous malignancy (other name)"
         )
     }
 
@@ -71,7 +71,7 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Has history of recent previous malignancy (other name)"
+            "History of recent previous malignancy (other name)"
         )
     }
 
@@ -89,7 +89,7 @@ class HasHistoryOfSecondMalignancyIgnoringDoidTermsTest {
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED, functionWithMinDate.evaluate(PriorTumorTestFactory.withPriorPrimaries(priorTumors)),
-            "Has history of previous malignancy (other name) but undetermined if recent (date unknown)"
+            "History of previous malignancy (other name) - undetermined if recent (date unknown)"
         )
     }
 

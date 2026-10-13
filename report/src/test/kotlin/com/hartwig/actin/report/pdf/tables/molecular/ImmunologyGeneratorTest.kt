@@ -40,7 +40,7 @@ class ImmunologyGeneratorTest {
             displayMode = ImmunologyDisplayMode.DETAILED_TABLE,
             hlaAlleles = listOf(createHlaAllele("HLA-A", "01", "01"))
         )
-        assertHeader(generator, "HLA gene", "Type", "Tumor copy number", "Mutated in tumor")
+        assertHeader(generator, "HLA GENE", "TYPE", "TUMOR COPY NUMBER", "MUTATED IN TUMOR")
     }
 
     @Test
