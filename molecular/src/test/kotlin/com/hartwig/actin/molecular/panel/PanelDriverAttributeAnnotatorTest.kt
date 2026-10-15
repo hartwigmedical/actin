@@ -46,6 +46,11 @@ class PanelDriverAttributeAnnotatorTest {
         DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV),
         configuration
     )
+    private val annotatorWithConfirmedEventPathogenicity = PanelDriverAttributeAnnotator(
+        knownEventResolver,
+        DndsDatabase.create(TEST_ONCO_DNDS_TSV, TEST_TSG_DNDS_TSV),
+        MolecularConfiguration(eventPathogenicityIsConfirmed = true)
+    )
 
     @Test
     fun `Should annotate variant that is a cancer-associated variant`() {
@@ -79,6 +84,53 @@ class PanelDriverAttributeAnnotatorTest {
         assertThat(annotatedVariant.proteinEffect).isEqualTo(actinProteinEffect.NO_EFFECT)
         assertThat(annotatedVariant.isAssociatedWithDrugResistance).isFalse
         assertThat(annotatedVariant.driverLikelihood).isNull()
+    }
+
+    @Test
+    fun `Should assume high driver likelihood for variant with confirmed pathogenicity when configuration is unconfirmed`() {
+        every { knownEventResolver.resolveForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
+
+        val panelRecord = panelRecordWith(VARIANT.copy(pathogenicityIsConfirmed = true))
+        val annotatedPanelRecord = panelDriverAttributeAnnotator.annotate(panelRecord)
+
+        assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
+        assertThat(annotatedPanelRecord.drivers.variants.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+    }
+
+    @Test
+    fun `Should not assume high driver likelihood for variant with unconfirmed pathogenicity when configuration is confirmed`() {
+        every { knownEventResolver.resolveForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
+
+        val panelRecord = panelRecordWith(VARIANT.copy(pathogenicityIsConfirmed = false))
+        val annotatedPanelRecord = annotatorWithConfirmedEventPathogenicity.annotate(panelRecord)
+
+        assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
+        assertThat(annotatedPanelRecord.drivers.variants.first().driverLikelihood).isNull()
+    }
+
+    @Test
+    fun `Should fall back to configuration for driver likelihood when variant has no pathogenicity determination`() {
+        every { knownEventResolver.resolveForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
+
+        val panelRecord = panelRecordWith(VARIANT.copy(pathogenicityIsConfirmed = null))
+        val annotatedPanelRecord = annotatorWithConfirmedEventPathogenicity.annotate(panelRecord)
+
+        assertThat(annotatedPanelRecord.drivers.variants).hasSize(1)
+        assertThat(annotatedPanelRecord.drivers.variants.first().driverLikelihood).isEqualTo(DriverLikelihood.HIGH)
+    }
+
+    @Test
+    fun `Should not assume high driver likelihood for gene when any of its variants has unconfirmed pathogenicity`() {
+        every { knownEventResolver.resolveForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
+
+        val panelRecord = panelRecordWith(
+            VARIANT.copy(gene = GENE, position = 1, pathogenicityIsConfirmed = true),
+            VARIANT.copy(gene = GENE, position = 2, pathogenicityIsConfirmed = false)
+        )
+        val annotatedPanelRecord = annotatorWithConfirmedEventPathogenicity.annotate(panelRecord)
+
+        assertThat(annotatedPanelRecord.drivers.variants).hasSize(2)
+        assertThat(annotatedPanelRecord.drivers.variants).allSatisfy { assertThat(it.driverLikelihood).isNull() }
     }
 
     @Test
@@ -122,10 +174,10 @@ class PanelDriverAttributeAnnotatorTest {
         assertThat(annotatedCopyNumber.isAssociatedWithDrugResistance).isTrue
     }
 
-    private fun panelRecordWith(variant: Variant): MolecularTest {
+    private fun panelRecordWith(vararg variants: Variant): MolecularTest {
         return TestMolecularFactory.createMinimalPanelTest().copy(
             drivers = TestMolecularFactory.createMinimalTestDrivers().copy(
-                variants = listOf(variant)
+                variants = variants.toList()
             )
         )
     }
