@@ -14,7 +14,11 @@ class HasHadOrganTransplantTest {
 
     @Test
     fun `Should fail with no prior conditions`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withOtherConditions(emptyList())), "No history of organ transplant")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withOtherConditions(emptyList())),
+            "No organ transplant in provided history"
+        )
     }
 
     @Test
@@ -22,7 +26,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withOtherConditions(listOf(otherCondition(icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)))),
-            "No history of organ transplant"
+            "No organ transplant in provided history"
         )
     }
 
@@ -34,7 +38,7 @@ class HasHadOrganTransplantTest {
                     listOf(otherCondition(icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             ),
-            "Has had an organ transplant"
+            "An organ transplant in provided history"
         )
     }
 
@@ -43,7 +47,7 @@ class HasHadOrganTransplantTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithMinYear.evaluate(withOtherConditions(emptyList())),
-            "No history of organ transplant"
+            "No organ transplant in provided history"
         )
     }
 
@@ -55,7 +59,7 @@ class HasHadOrganTransplantTest {
                     listOf(otherCondition(year = 2020, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             ),
-            "No history of organ transplant"
+            "No organ transplant in provided history"
         )
     }
 
@@ -67,7 +71,7 @@ class HasHadOrganTransplantTest {
                     listOf(otherCondition(year = null, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             ),
-            "Has had an organ transplant but unclear if after 2021 (date unknown)"
+            "An organ transplant in provided history but unclear if after 2021 (date unknown)"
         )
     }
 
@@ -79,7 +83,7 @@ class HasHadOrganTransplantTest {
                     listOf(otherCondition(year = 2021, icdMainCode = IcdConstants.TRANSPLANTATION_SET.first()))
                 )
             ),
-            "Has had an organ transplant since 2021"
+            "An organ transplant since 2021 in provided history"
         )
     }
 }

@@ -15,7 +15,7 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
         assertEvaluation(
             EvaluationResult.FAIL,
             createFunction(MedicationTestFactory.alwaysActive()).evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No current TYPE-A, type-B or TYPE-C substrate or inhibiting medication use (no medication use)"
+            "No active TYPE-A, type-B or TYPE-C substrate or inhibiting medication in provided medications (no medication)"
         )
     }
 
@@ -24,7 +24,7 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
         assertEvaluation(
             EvaluationResult.FAIL,
             createFunction(MedicationTestFactory.alwaysInactive()).evaluate(patientWithMedication),
-            "No current TYPE-A, type-B or TYPE-C substrate or inhibiting medication use (no planned or active medication)"
+            "No active TYPE-A, type-B or TYPE-C substrate or inhibiting medication in provided medications (no planned or active medication)"
         )
     }
 
@@ -36,12 +36,12 @@ class CurrentlyGetsAnyNonEvaluableTransporterSubstrateOrInhibitingMedicationTest
         assertEvaluation(
             EvaluationResult.WARN,
             resultPlanned,
-            "Undetermined if patient uses TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
+            "Undetermined if active TYPE-A, type-B or TYPE-C substrate or inhibiting medication in provided medications"
         )
         assertEvaluation(
             EvaluationResult.WARN,
             resultActive,
-            "Undetermined if patient uses TYPE-A, type-B or TYPE-C substrate or inhibiting medication"
+            "Undetermined if active TYPE-A, type-B or TYPE-C substrate or inhibiting medication in provided medications"
         )
     }
 

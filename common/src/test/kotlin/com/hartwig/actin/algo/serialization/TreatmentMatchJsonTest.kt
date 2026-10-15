@@ -78,7 +78,7 @@ class TreatmentMatchJsonTest {
                         {"rule":"HAS_ACTIVE_CNS_METASTASES","parameters":[]}],"additionalCriteriaForRequirement":[]},
                     "evaluations":[
                         {"result":"PASS","recoverable":false,"inclusionMolecularEvents":[],
-                        "exclusionMolecularEvents":[],"passMessages":[{"message":"Has active CNS metastases"}],"warnMessages":[],
+                        "exclusionMolecularEvents":[],"passMessages":[{"message":"Active CNS metastases in provided lesions"}],"warnMessages":[],
                         "undeterminedMessages":[],"failMessages":[],"isMissingMolecularResultForEvaluation":false,"childEvaluations":[]}],
                     "annotations":[
                         {"acronym":"Study of Pembrolizumab","phase":"Phase III",
@@ -115,7 +115,8 @@ class TreatmentMatchJsonTest {
                         {"event":"BRAF amp","treatmentName":"Pembrolizumab","resistanceLevel":"A",
                         "isTested":null,"isFound":false,"evidenceUrls":["website"]}]}
                     ],
-                "personalizedTreatmentSummary":null,"trialDatabaseIsConsistent":null}
+                "personalizedTreatmentSummary":null,
+                "trialDatabaseIsConsistent":true}
                 """).lineSequence().joinToString("") { it.trim() }
         //@formatter:on
 

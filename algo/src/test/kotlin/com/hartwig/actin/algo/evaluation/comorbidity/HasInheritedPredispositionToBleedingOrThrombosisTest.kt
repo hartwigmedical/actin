@@ -38,7 +38,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
                     ComorbidityTestFactory.otherCondition(name = "hereditary thrombophilia", icdMainCode = IcdConstants.HEREDITARY_THROMBOPHILIA_CODE)
                 )
             ),
-            "Has history of (typically) inherited predisposition to bleeding or thrombosis: hereditary thrombophilia"
+            "History of (typically) inherited predisposition to bleeding or thrombosis: hereditary thrombophilia"
         )
     }
 
@@ -51,7 +51,7 @@ class HasInheritedPredispositionToBleedingOrThrombosisTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withOtherConditions(conditions)),
-            "Has history of (typically) inherited predisposition to bleeding or thrombosis: Factor V Leiden"
+            "History of (typically) inherited predisposition to bleeding or thrombosis: Factor V Leiden"
         )
     }
 }

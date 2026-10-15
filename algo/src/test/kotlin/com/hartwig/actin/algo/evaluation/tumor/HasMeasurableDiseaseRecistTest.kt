@@ -14,21 +14,21 @@ class HasMeasurableDiseaseRecistTest {
     @Test
     fun `Should pass when has measurable disease is true`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(true))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has measurable disease")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Disease is measurable")
         assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
     fun `Should pass when has measurable disease is true and arbitrary doid`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDiseaseAndDoid(true, "arbitrary"))
-        assertEvaluation(EvaluationResult.PASS, evaluation, "Has measurable disease")
+        assertEvaluation(EvaluationResult.PASS, evaluation, "Disease is measurable")
         assertThat(evaluation.recoverable).isTrue()
     }
 
     @Test
     fun `Should fail when measurable disease is false`() {
         val evaluation = function.evaluate(TumorTestFactory.withMeasurableDisease(false))
-        assertEvaluation(EvaluationResult.FAIL, evaluation, "Has no measurable disease")
+        assertEvaluation(EvaluationResult.FAIL, evaluation, "Disease is not measurable")
         assertThat(evaluation.recoverable).isTrue()
     }
 
@@ -47,6 +47,10 @@ class HasMeasurableDiseaseRecistTest {
                 HasMeasurableDiseaseRecist.NON_RECIST_TUMOR_DOIDS.iterator().next()
             )
         )
-        assertEvaluation(EvaluationResult.WARN, evaluation, "Has measurable disease but with this tumor type unknown if by RECIST")
+        assertEvaluation(
+            EvaluationResult.WARN,
+            evaluation,
+            "Disease is measurable but with this tumor type unknown if by RECIST"
+        )
     }
 }

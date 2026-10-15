@@ -64,7 +64,8 @@ class TreatmentMatcherTest {
         trials = trials,
         referenceDateProvider = CurrentDateProvider(),
         evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-        treatmentEfficacyPredictionPath = null
+        treatmentEfficacyPredictionPath = null,
+        trialDatabaseIsConsistent = true
     )
 
     private val expectedTreatmentMatch = TreatmentMatch(
@@ -74,7 +75,7 @@ class TreatmentMatcherTest {
         trialMatches = trialMatches,
         standardOfCareMatches = null,
         personalizedTreatmentSummary = null,
-        trialDatabaseIsConsistent = null
+        trialDatabaseIsConsistent = true
     )
 
     @Test
@@ -118,7 +119,8 @@ class TreatmentMatcherTest {
             trials = trials,
             referenceDateProvider = CurrentDateProvider(),
             evaluatedTreatmentAnnotator = EvaluatedTreatmentAnnotator.create(evidenceEntries, resistanceEvidenceMatcher),
-            treatmentEfficacyPredictionPath = null
+            treatmentEfficacyPredictionPath = null,
+            trialDatabaseIsConsistent = true
         )
         every { standardOfCareEvaluator.standardOfCareCanBeEvaluatedForPatient(patientWithoutMolecular) } returns false
 

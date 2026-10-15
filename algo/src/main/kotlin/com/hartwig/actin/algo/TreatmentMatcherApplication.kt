@@ -9,7 +9,7 @@ import com.hartwig.actin.algo.serialization.TreatmentMatchJson
 import com.hartwig.actin.algo.soc.ResistanceEvidenceMatcher
 import com.hartwig.actin.algo.util.TreatmentMatchPrinter
 import com.hartwig.actin.configuration.AlgoConfiguration
-import com.hartwig.actin.datamodel.trial.TrialConfig
+import com.hartwig.actin.datamodel.trial.TrialConfigDatabase
 import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFactory
 import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.EligibilityFactory
@@ -37,7 +37,6 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
         val referenceDateProvider = ReferenceDateProviderFactory.create(inputData.patient, config.runHistorically)
         logger.info { "Matching patient to available trials" }
 
-
         val treatmentDatabase = TreatmentDatabaseFactory.createFromPath(config.treatmentDirectory)
         val configuration = AlgoConfiguration.create(config.overridesYaml)
         logger.info { "Loaded algo config: $configuration" }
@@ -63,22 +62,29 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             actionabilityMatcher = ActionabilityMatcherFactory.create(inputData.serveRecord)
         )
 
-        val trials = inputData.trials ?: TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(
-            Gson().fromJson(
+        val (trials, dbIsConsistent) = inputData.trials?.let {
+            logger.warn { "Loading trials from input data. User is responsible for verifying whether results may be shared!" }
+            it to null
+        } ?: run {
+            val trialConfigs: TrialConfigDatabase = Gson().fromJson(
                 Files.readString(config.trialConfigJson?.let { Path.of(it) }
-                    ?: error("One of trial config or trial database must be specified.")), object : TypeToken<List<TrialConfig>>() {}.type
+                    ?: error("One of trial config or trial database must be specified.")),
+                object : TypeToken<TrialConfigDatabase>() {}.type
             )
-        ).mapLeft { unmappableTrials ->
-            throw IllegalArgumentException(
-                "Failed to ingest trials. Unmappable trials found: \n" + "${
-                    unmappableTrials.map {
-                        "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.inclusionRule}: ${e.error}\n" }} " +
-                                "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.inclusionRule} ${e.error}\n" }}" }}"
-                    }
-                }\n}")
-        }.getOrNull()!!
+            val ingestedTrials = TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(trialConfigs.trials)
+                .mapLeft { unmappableTrials ->
+                    throw IllegalArgumentException(
+                        "Failed to ingest trials. Unmappable trials found: \n" + "${
+                            unmappableTrials.map {
+                                "Trial: ${it.trialId} Errors: ${it.mappingErrors.map { e -> "${e.inclusionRule}: ${e.error}\n" }} " +
+                                        "Cohorts: ${it.unmappableCohorts.map { c -> "Cohort: ${c.cohortId} Errors: ${c.mappingErrors.map { e -> "${e.inclusionRule} ${e.error}\n" }}" }}"
+                            }
+                        }\n}")
+                }.getOrNull()!!
+            ingestedTrials to trialConfigs.isConsistent
+        }
 
-        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher)
+        val treatmentMatcher = TreatmentMatcher.create(resources, trials, evidenceEntries, resistanceEvidenceMatcher, dbIsConsistent)
         val treatmentMatch = treatmentMatcher.run(inputData.patient)
 
         logger.info { "Printing treatment match" }

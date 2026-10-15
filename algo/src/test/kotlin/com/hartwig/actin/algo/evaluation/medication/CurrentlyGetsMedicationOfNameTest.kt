@@ -15,7 +15,7 @@ class CurrentlyGetsMedicationOfNameTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No term 1 medication use"
+            "No active term 1 medication in provided medications"
         )
     }
 
@@ -25,7 +25,7 @@ class CurrentlyGetsMedicationOfNameTest {
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
             ),
-            "No term 1 medication use"
+            "No active term 1 medication in provided medications"
         )
     }
 
@@ -35,7 +35,7 @@ class CurrentlyGetsMedicationOfNameTest {
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 1")))
             ),
-            "term 1 medication use"
+            "Active term 1 medication in provided medications"
         )
     }
 
@@ -45,7 +45,7 @@ class CurrentlyGetsMedicationOfNameTest {
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 1")))
             ),
-            "Planned term 1 medication use"
+            "Planned term 1 medication in provided medications"
         )
     }
 
@@ -55,7 +55,7 @@ class CurrentlyGetsMedicationOfNameTest {
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withMedications(listOf(MedicationTestFactory.medication("This is Term 2")))
             ),
-            "No term 1 medication use"
+            "No active term 1 medication in provided medications"
         )
     }
 

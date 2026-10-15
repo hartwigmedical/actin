@@ -19,13 +19,13 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 inhibiting or inducing medication use (name)"
+            "Active CYP9A9 inhibiting or inducing medication in provided medications (name)"
         )
         assertEvaluation(
             EvaluationResult.PASS, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
             ),
-            "CYP9A9 inhibiting or inducing medication use (name)"
+            "Active CYP9A9 inhibiting or inducing medication in provided medications (name)"
         )
     }
 
@@ -37,13 +37,13 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
                     "3A4", DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG
                 )
             ),
-            "No CYP9A9 inhibiting or inducing medication use"
+            "No active CYP9A9 inhibiting or inducing medication in provided medications"
         )
         assertEvaluation(
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction("3A4", DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 inhibiting or inducing medication use"
+            "No active CYP9A9 inhibiting or inducing medication in provided medications"
         )
     }
 
@@ -53,7 +53,7 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
             EvaluationResult.FAIL, alwaysActiveFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 inhibiting or inducing medication use"
+            "No active CYP9A9 inhibiting or inducing medication in provided medications"
         )
     }
 
@@ -62,7 +62,7 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No CYP9A9 inhibiting or inducing medication use"
+            "No active CYP9A9 inhibiting or inducing medication in provided medications"
         )
     }
 
@@ -72,13 +72,13 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INDUCER, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 inhibiting or inducing medication use (name)"
+            "Planned CYP9A9 inhibiting or inducing medication in provided medications (name)"
         )
         assertEvaluation(
             EvaluationResult.WARN, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.INHIBITOR, DrugInteraction.Strength.STRONG, "name")
             ),
-            "Planned CYP9A9 inhibiting or inducing medication use (name)"
+            "Planned CYP9A9 inhibiting or inducing medication in provided medications (name)"
         )
     }
 
@@ -88,7 +88,7 @@ class CurrentlyGetsCypXInhibitingOrInducingMedicationTest {
             EvaluationResult.FAIL, alwaysPlannedFunction.evaluate(
                 MedicationTestFactory.withCypInteraction(TARGET_CYP, DrugInteraction.Type.SUBSTRATE, DrugInteraction.Strength.STRONG)
             ),
-            "No CYP9A9 inhibiting or inducing medication use"
+            "No active CYP9A9 inhibiting or inducing medication in provided medications"
         )
     }
 

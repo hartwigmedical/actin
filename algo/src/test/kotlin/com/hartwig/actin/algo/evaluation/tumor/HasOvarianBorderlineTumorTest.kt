@@ -20,16 +20,16 @@ class HasOvarianBorderlineTumorTest {
         )
 
         val wrongCancerType = TumorTestFactory.withDoidAndName("wrong", targetedType)
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(wrongCancerType), "Has no ovarian borderline tumor")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(wrongCancerType), "No ovarian borderline tumor")
 
         val genericType = TumorTestFactory.withDoidAndName(DoidConstants.OVARIAN_CANCER_DOID, "wrong")
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(genericType),
-            "Has ovarian cancer - undetermined if may be a borderline tumor"
+            "Cancer is ovarian cancer - undetermined if may be a borderline tumor"
         )
 
         val correct = TumorTestFactory.withDoidAndName(DoidConstants.OVARIAN_CANCER_DOID, targetedType)
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(correct), "Has ovarian borderline tumor")
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(correct), "Tumor is ovarian borderline")
     }
 }

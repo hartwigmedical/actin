@@ -83,7 +83,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if patient received HER2 antibody targeted therapy treatment"
+            "Undetermined history of HER2 antibody targeted therapy treatment based on provided treatments"
         )
     }
 
@@ -93,7 +93,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received HER2 antibody targeted therapy treatment but uncertain if there has been PD"
+            "HER2 antibody targeted therapy treatment in provided treatments but uncertain if there has been PD"
         )
     }
 
@@ -104,7 +104,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function().evaluate(withTreatmentHistory(listOf(matchingEntry, subsequentEntry))),
-            "Has had HER2 antibody targeted therapy treatment with PD"
+            "HER2 antibody targeted therapy treatment with PD in provided treatments"
         )
     }
 
@@ -114,7 +114,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD"
+            "HER2 antibody targeted therapy treatment with PD in provided treatments"
         )
     }
 
@@ -124,7 +124,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD"
+            "HER2 antibody targeted therapy treatment with PD in provided treatments"
         )
     }
 
@@ -134,7 +134,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function().evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if patient received HER2 antibody targeted therapy treatment"
+            "Undetermined history of HER2 antibody targeted therapy treatment based on provided treatments"
         )
     }
 
@@ -158,7 +158,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD but unknown nr of cycles"
+            "HER2 antibody targeted therapy treatment with PD but unknown nr of cycles in provided treatments"
         )
     }
 
@@ -170,7 +170,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD but less than 5 cycles"
+            "HER2 antibody targeted therapy treatment with PD but less than 5 cycles in provided treatments"
         )
     }
 
@@ -182,7 +182,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function(minCycles = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD and at least 5 cycles"
+            "HER2 antibody targeted therapy treatment with PD and at least 5 cycles in provided treatments"
         )
     }
 
@@ -192,7 +192,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD but unknown nr of weeks"
+            "HER2 antibody targeted therapy treatment with PD but unknown nr of weeks in provided treatments"
         )
     }
 
@@ -209,7 +209,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD but less than 5 weeks"
+            "HER2 antibody targeted therapy treatment with PD but less than 5 weeks in provided treatments"
         )
     }
 
@@ -226,7 +226,7 @@ class HasHadPDFollowingTreatmentWithCategoryOfTypesAndCyclesOrWeeksTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function(minWeeks = 5).evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment with PD for at least 5 weeks"
+            "HER2 antibody targeted therapy treatment with PD for at least 5 weeks in provided treatments"
         )
     }
 

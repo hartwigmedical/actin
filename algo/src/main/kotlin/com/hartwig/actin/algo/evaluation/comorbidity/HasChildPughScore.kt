@@ -19,7 +19,7 @@ class HasChildPughScore(private val icdModel: IcdModel, private val requestedSco
         val formattedRequestedScores = Format.concatWithCommaAndOr(requestedScores)
 
         return if (hasLiverCirrhosis) {
-            EvaluationFactory.warn("Patient has liver cirrhosis - undetermined if Child-Pugh score $formattedRequestedScores")
+            EvaluationFactory.warn("Liver cirrhosis in provided conditions - undetermined if Child-Pugh score $formattedRequestedScores")
         } else {
             EvaluationFactory.undetermined("Undetermined if Child-Pugh score $formattedRequestedScores")
         }

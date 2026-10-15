@@ -48,7 +48,8 @@ class LocalExampleTreatmentMatchApplication {
                 resources = resources,
                 trials = trials,
                 efficacyEvidence = emptyList(),
-                resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher()
+                resistanceEvidenceMatcher = createEmptyResistanceEvidenceMatcher(),
+                trialDatabaseIsConsistent = true
             )
             .run(patient)
 
