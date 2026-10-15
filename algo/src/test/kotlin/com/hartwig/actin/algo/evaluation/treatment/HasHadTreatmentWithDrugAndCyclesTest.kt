@@ -9,8 +9,8 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatmentNo
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -21,11 +21,11 @@ private val MATCHING_DRUG_TREATMENT = drugTreatment(MATCHING_DRUG_NAME, TREATMEN
 class HasHadTreatmentWithDrugAndCyclesTest {
 
     private val functionWithoutCycles = HasHadTreatmentWithDrugAndCycles(
-        setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
+        setOf(StandardDrug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
         null
     )
     private val functionWithCycles =
-        HasHadTreatmentWithDrugAndCycles(setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 3)
+        HasHadTreatmentWithDrugAndCycles(setOf(StandardDrug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 3)
 
     @Test
     fun `Should fail for empty treatment history`() {
@@ -176,7 +176,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
     fun `Should evaluate to undetermined for therapy containing other drug but medication containing drug`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment("other treatment", TREATMENT_CATEGORY))))
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "match", category = TREATMENT_CATEGORY, drugTypes = setOf(DrugType.HER2_ANTIBODY)
             )
         )
@@ -255,7 +255,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
     fun `Should pass for therapy containing other drug but medication containing drug`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment("other treatment", TREATMENT_CATEGORY))))
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "match", category = TREATMENT_CATEGORY, drugTypes = setOf(DrugType.HER2_ANTIBODY)
             )
         )

@@ -9,8 +9,8 @@ import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
@@ -492,13 +492,13 @@ class StandardOfCareEvaluatorTest {
         }
     }
 
-    private fun drug(name: String): Drug {
+    private fun drug(name: String): StandardDrug {
         val category = if (name == "TARGETED_THERAPY" || name.endsWith("B")) {
             TreatmentCategory.TARGETED_THERAPY
         } else {
             TreatmentCategory.CHEMOTHERAPY
         }
-        return Drug(name, emptySet(), emptySet(), category)
+        return StandardDrug(name, emptySet(), emptySet(), category)
     }
 
     private fun resultsForPatient(patientRecord: PatientRecord): List<TreatmentCandidate> {

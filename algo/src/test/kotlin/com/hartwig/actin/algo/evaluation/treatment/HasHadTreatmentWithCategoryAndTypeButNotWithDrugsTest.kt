@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -19,7 +19,7 @@ private val MATCHING_CATEGORY = TreatmentCategory.TARGETED_THERAPY
 private const val IGNORE_DRUG_NAME = "match"
 private val MATCHING_TYPES = setOf(DrugType.ALK_INHIBITOR_GEN_1, DrugType.ALK_INHIBITOR_GEN_2)
 private val IGNORE_DRUG_SET = setOf(
-    Drug(name = IGNORE_DRUG_NAME, category = MATCHING_CATEGORY, drugTypes = setOf(MATCHING_TYPES.iterator().next()))
+    StandardDrug(name = IGNORE_DRUG_NAME, category = MATCHING_CATEGORY, drugTypes = setOf(MATCHING_TYPES.iterator().next()))
 )
 
 class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
@@ -103,7 +103,7 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugsTest {
             setOf(drugTreatment(IGNORE_DRUG_NAME, MATCHING_CATEGORY, setOf(MATCHING_TYPES.iterator().next())))
         )
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "test", category = MATCHING_CATEGORY, drugTypes = MATCHING_TYPES
             )
         )

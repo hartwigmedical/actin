@@ -10,9 +10,9 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentsAndMedications
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
@@ -255,7 +255,7 @@ class HasHadTreatmentWithCategoryOfTypesRecentlyTest {
             isTrial = true, startYear = MIN_DATE.year + 1
         )
         val medication = WashoutTestFactory.medication(null, MIN_DATE.plusMonths(2)).copy(
-            drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = MATCHING_TYPE_SET),
+            drug = StandardDrug(name = "", category = MATCHING_CATEGORY, drugTypes = MATCHING_TYPE_SET),
             startDate = MIN_DATE.plusMonths(1)
         )
         assertBothFunctions(

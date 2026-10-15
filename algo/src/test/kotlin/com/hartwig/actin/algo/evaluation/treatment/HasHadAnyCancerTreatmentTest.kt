@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -72,7 +72,7 @@ class HasHadAnyCancerTreatmentTest {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(
             WashoutTestFactory.medication(atc, null)
-                .copy(drug = Drug(name = "", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
+                .copy(drug = StandardDrug(name = "", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
         listOf(functionWithCategoriesToIgnore, functionWithoutCategoriesToIgnore).forEach { function ->
             assertEvaluation(

@@ -6,8 +6,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentsAndMedications
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -18,7 +18,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
 
     private val function = HasHadTreatmentWithDrugAndDoseReduction(drugWithName(MATCHING_DRUG_NAME))
 
-    fun drugWithName(drugName: String): Drug = Drug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
+    fun drugWithName(drugName: String): StandardDrug = StandardDrug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
 
     @Test
     fun `Should fail for empty treatment history`() {

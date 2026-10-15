@@ -4,8 +4,8 @@ import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
@@ -19,7 +19,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatmentTest {
 
     private val function = HasHadRadiologicalResponseFollowingDrugTreatment(drug(MATCHING_DRUG_NAME))
 
-    private fun drug(name: String): Drug = Drug(name, emptySet(), emptySet(), TREATMENT_CATEGORY)
+    private fun drug(name: String): StandardDrug = StandardDrug(name, emptySet(), emptySet(), TREATMENT_CATEGORY)
 
     private fun drugTreatmentHistoryEntry(drugName: String, bestResponse: TreatmentResponse? = null): TreatmentHistoryEntry =
         treatmentHistoryEntry(

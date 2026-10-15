@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
     private val function = HasRecentlyReceivedCancerTherapyWithDrug(
         setOf(
-            Drug(
+            StandardDrug(
                 name = "correct",
                 category = TreatmentCategory.CHEMOTHERAPY,
                 drugTypes = setOf(DrugType.ALKYLATING_AGENT)

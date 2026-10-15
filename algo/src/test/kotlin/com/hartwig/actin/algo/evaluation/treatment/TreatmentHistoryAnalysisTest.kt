@@ -1,9 +1,9 @@
 package com.hartwig.actin.algo.evaluation.treatment
 
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentStage
@@ -13,14 +13,14 @@ import org.junit.jupiter.api.Test
 class TreatmentHistoryAnalysisTest {
 
     private val platinumDrug =
-        Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND))
+        StandardDrug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND))
 
     private val platinumDoublet =
         DrugTreatment(
             name = "Carboplatin+Pemetrexed",
             drugs = setOf(
                 platinumDrug,
-                Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
+                StandardDrug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
             )
         )
 
@@ -28,7 +28,7 @@ class TreatmentHistoryAnalysisTest {
         platinumDoublet.copy(
             name = platinumDoublet.name.plus("+Paclitaxel"),
             drugs = platinumDoublet.drugs
-                .plus(Drug(name = "Paclitaxel", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.TAXANE)))
+                .plus(StandardDrug(name = "Paclitaxel", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.TAXANE)))
         )
 
     private val platinumSinglet =
@@ -38,8 +38,8 @@ class TreatmentHistoryAnalysisTest {
         DrugTreatment(
             name = "Doxorubicin+Pemetrexed",
             drugs = setOf(
-                Drug(name = "Doxorubicin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTHRACYCLINE)),
-                Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
+                StandardDrug(name = "Doxorubicin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTHRACYCLINE)),
+                StandardDrug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
             )
         )
 
@@ -109,7 +109,7 @@ class TreatmentHistoryAnalysisTest {
         val drugs =
             platinumTriplet.copy(
                 drugs = platinumTriplet.drugs
-                    .plus(Drug(name = "Doxorubicin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTHRACYCLINE)))
+                    .plus(StandardDrug(name = "Doxorubicin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTHRACYCLINE)))
             )
 
         val record = TreatmentTestFactory.withTreatmentHistory(

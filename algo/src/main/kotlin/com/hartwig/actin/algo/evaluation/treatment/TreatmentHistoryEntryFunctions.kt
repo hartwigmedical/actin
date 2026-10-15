@@ -36,8 +36,8 @@ object TreatmentHistoryEntryFunctions {
         partition { it.intents?.any(intents::contains) == true }
 
     fun Treatment.withoutDrugs(drugsToExclude: Set<Drug>): Treatment = when (treatmentClass) {
-        TreatmentClass.DRUG_TREATMENT -> (this as DrugTreatment).copy(drugs = drugs - drugsToExclude)
-        TreatmentClass.RADIOTHERAPY -> (this as Radiotherapy).copy(drugs = drugs - drugsToExclude)
+        TreatmentClass.DRUG_TREATMENT -> (this as DrugTreatment).copy(drugs = drugs.filterNot(drugsToExclude::contains).toSet())
+        TreatmentClass.RADIOTHERAPY -> (this as Radiotherapy).copy(drugs = drugs.filterNot(drugsToExclude::contains).toSet())
         TreatmentClass.OTHER_TREATMENT -> this
     }
 

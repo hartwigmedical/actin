@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.certainTreatmentSinceMinDate
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentVersusDateFunctions.partitionTreatmentsByCertainOccurrenceSinceMinDate
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.assertj.core.api.Assertions.assertThat
@@ -16,7 +16,7 @@ private val RECENT_DATE = TARGET_DATE.plusYears(1)
 private val OLDER_DATE = TARGET_DATE.minusYears(1)
 private val TREATMENT = DrugTreatment(
     name = "treatment",
-    drugs = setOf(Drug(name = "drug", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
+    drugs = setOf(StandardDrug(name = "drug", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
 )
 
 class TreatmentVersusDateFunctionsTest {

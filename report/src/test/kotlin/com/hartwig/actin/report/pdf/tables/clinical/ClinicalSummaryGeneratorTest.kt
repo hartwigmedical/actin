@@ -6,8 +6,8 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import com.hartwig.actin.datamodel.clinical.TestOtherConditionFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.report.datamodel.Report
 import com.hartwig.actin.report.datamodel.TestReportFactory
@@ -73,7 +73,7 @@ class PatientClinicalHistoryGeneratorTest {
                     )
                 ), medications = listOf(
                     TestMedicationFactory.createMinimal().copy(
-                        drug = Drug(
+                        drug = StandardDrug(
                             name = "Pembrolizumab",
                             category = TreatmentCategory.IMMUNOTHERAPY,
                             drugTypes = setOf(DrugType.PD_1_PD_L1_ANTIBODY)

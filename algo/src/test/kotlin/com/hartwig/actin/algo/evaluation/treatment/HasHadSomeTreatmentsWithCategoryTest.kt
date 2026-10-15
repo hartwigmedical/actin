@@ -9,7 +9,7 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -55,7 +55,7 @@ class HasHadSomeTreatmentsWithCategoryTest {
     fun `Should pass for treatment history entry with incorrect treatment category but correct category type in medication entry`() {
         val function = HasHadSomeTreatmentsWithCategory(MATCHING_CATEGORY, 1)
         val treatmentHistoryEntry = treatmentHistoryEntry(setOf(drugTreatment("test", TreatmentCategory.IMMUNOTHERAPY)))
-        val medication = WashoutTestFactory.medication().copy(drug = Drug(name = "", category = MATCHING_CATEGORY, drugTypes = emptySet()))
+        val medication = WashoutTestFactory.medication().copy(drug = StandardDrug(name = "", category = MATCHING_CATEGORY, drugTypes = emptySet()))
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
