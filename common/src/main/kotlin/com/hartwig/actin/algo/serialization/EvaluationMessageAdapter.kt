@@ -20,7 +20,7 @@ object EvaluationMessageSerializer : JsonSerializer<EvaluationMessage>() {
 
     override fun serialize(value: EvaluationMessage, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeStartObject()
-        gen.writeStringField("message", value.combineBy())
+        gen.writeStringField("message", value.toString())
         gen.writeEndObject()
     }
 }

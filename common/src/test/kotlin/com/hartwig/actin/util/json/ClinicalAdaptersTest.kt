@@ -9,6 +9,7 @@ import com.hartwig.actin.clinical.serialization.TreatmentDeserializer
 import com.hartwig.actin.datamodel.algo.EvaluationMessage
 import com.hartwig.actin.datamodel.algo.StaticMessage
 import com.hartwig.actin.datamodel.clinical.Comorbidity
+import com.hartwig.actin.datamodel.clinical.ComorbidityClass
 import com.hartwig.actin.datamodel.clinical.OtherCondition
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.datamodel.clinical.ToxicitySource
@@ -67,6 +68,14 @@ class ClinicalAdaptersTest {
     }
 
     @Test
+    fun `Should deserialize legacy COMPLICATION comorbidity as OtherCondition`() {
+        val json = """{"name":"Ascites","icdCodes":[],"year":2024,"month":null,"day":null,"comorbidityClass":"COMPLICATION"}"""
+        val comorbidity = mapper.readValue(json, Comorbidity::class.java)
+        assertThat(comorbidity).isEqualTo(OtherCondition(name = "Ascites", icdCodes = emptySet(), year = 2024))
+        assertThat(comorbidity.comorbidityClass).isEqualTo(ComorbidityClass.OTHER_CONDITION)
+    }
+
+    @Test
     fun `Should round-trip Toxicity via Comorbidity polymorphic deserializer`() {
         val toxicity: Comorbidity = Toxicity(
             name = "Nausea",
@@ -102,5 +111,16 @@ class ClinicalAdaptersTest {
         val json = mapper.writeValueAsString(message)
         val roundtripped = mapper.readValue(json, EvaluationMessage::class.java)
         assertThat(roundtripped).isEqualTo(message)
+    }
+
+    @Test
+    fun `Should serialize EvaluationMessage using its display string rather than its combine key`() {
+        val message = object : EvaluationMessage {
+            override fun combineBy() = "combine-key"
+            override fun combine(other: EvaluationMessage) = this
+            override fun toString() = "display message"
+        }
+        val roundtripped = mapper.readValue(mapper.writeValueAsString(message), EvaluationMessage::class.java)
+        assertThat(roundtripped).isEqualTo(StaticMessage("display message"))
     }
 }

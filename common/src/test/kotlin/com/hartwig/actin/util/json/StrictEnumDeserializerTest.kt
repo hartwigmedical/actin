@@ -28,6 +28,13 @@ class StrictEnumDeserializerTest {
     }
 
     @Test
+    fun `Should throw exception for enum value with surrounding whitespace`() {
+        assertThatThrownBy { mapper.readValue("\" BRACHYTHERAPY \"", RadiotherapyType::class.java) }
+            .isInstanceOf(JsonMappingException::class.java)
+            .hasMessageContaining("Unknown enum value for type RadiotherapyType: \" BRACHYTHERAPY \"")
+    }
+
+    @Test
     fun `Should deserialize JSON null to null for nullable enum field`() {
         val kotlinMapper = ActinObjectMapper.create().registerModule(
             SimpleModule().addDeserializer(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))

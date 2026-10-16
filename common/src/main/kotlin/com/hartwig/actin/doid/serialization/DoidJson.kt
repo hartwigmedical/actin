@@ -22,7 +22,7 @@ import java.io.File
 object DoidJson {
 
     private val logger = KotlinLogging.logger {}
-    private val mapper = ObjectMapper()
+    private val mapper by lazy { ObjectMapper() }
 
     const val ID_TO_READ = "http://purl.obolibrary.org/obo/doid.owl"
 
@@ -246,7 +246,9 @@ object DoidJson {
 
     private fun stringList(node: ObjectNode, field: String): List<String> {
         val element = node.get(field)
-        return if (element.isValueNode) listOf(element.asText())
+        return if (element.isValueNode) {
+            listOf(element.asText())
+        }
         else {
             require(element.isArray) { "Expected array or primitive for field '$field' but got $element" }
             element.map(JsonNode::asText)

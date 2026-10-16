@@ -10,6 +10,8 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 class ActinObjectMapperTest {
 
@@ -49,6 +51,26 @@ class ActinObjectMapperTest {
     fun `Should serialize nulls`() {
         val map = mapOf("a" to 1, "b" to null)
         assertThat(mapper.writeValueAsString(map)).contains("\"b\":null")
+    }
+
+    @Test
+    fun `Should serialize and deserialize LocalDate as ISO date`() {
+        val date = LocalDate.of(2022, 10, 20)
+        val serialized = mapper.writeValueAsString(date)
+
+        assertThat(serialized).isEqualTo("\"2022-10-20\"")
+        assertThat(mapper.readValue(serialized, LocalDate::class.java)).isEqualTo(date)
+        assertThat(mapper.readValue(mapper.writeValueAsString(null as LocalDate?), LocalDate::class.java)).isNull()
+    }
+
+    @Test
+    fun `Should serialize and deserialize LocalDateTime as ISO date time`() {
+        val dateTime = LocalDateTime.of(2022, 10, 20, 11, 12, 13)
+        val serialized = mapper.writeValueAsString(dateTime)
+
+        assertThat(serialized).isEqualTo("\"2022-10-20T11:12:13\"")
+        assertThat(mapper.readValue(serialized, LocalDateTime::class.java)).isEqualTo(dateTime)
+        assertThat(mapper.readValue(mapper.writeValueAsString(null as LocalDateTime?), LocalDateTime::class.java)).isNull()
     }
 
     private fun variant(driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String): Variant {
