@@ -64,7 +64,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "Has no intolerances to study medication"
+            "No intolerances to study medication"
         )
     }
 
@@ -121,7 +121,7 @@ class HasIntoleranceRelatedToStudyMedicationTest {
             assertEvaluation(
                 EvaluationResult.UNDETERMINED,
                 function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-                "Has drug allergies (${match.name}) - undetermined if allergy to study medication (drug type unknown)"
+                "Drug allergies (${match.name}) - undetermined if allergy to study medication (drug type unknown)"
             )
         }
     }

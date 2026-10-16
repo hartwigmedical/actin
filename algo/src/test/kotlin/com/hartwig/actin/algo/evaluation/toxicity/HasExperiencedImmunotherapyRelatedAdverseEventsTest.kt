@@ -197,7 +197,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             ),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No immunotherapy related adverse events in provided history")
     }
 
     @Test

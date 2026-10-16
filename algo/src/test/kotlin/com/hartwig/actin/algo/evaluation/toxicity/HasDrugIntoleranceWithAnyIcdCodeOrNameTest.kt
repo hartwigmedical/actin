@@ -98,7 +98,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "No known allergy to platinum compounds"
+            "No known allergy to platinum compounds in provided allergies"
         )
     }
 }
