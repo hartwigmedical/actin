@@ -84,10 +84,21 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
 
     @Test
     fun `Should evaluate to undetermined when intolerance matches on drug allergy ICD code but has no ICD code extension`() {
-        val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = null)
+        val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_CODE, icdExtensionCode = null)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
             "Undetermined if drug allergy in provided allergies is platinum compounds allergy (drug type unknown)"
+        )
+    }
+
+    @Test
+    fun `Should fail when intolerance has generic hypersensitivity ICD code without extension`() {
+        val intolerance = ComorbidityTestFactory.intolerance(
+            icdMainCode = IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK, icdExtensionCode = null
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
+            "No known allergy to platinum compounds in provided allergies"
         )
     }
 }

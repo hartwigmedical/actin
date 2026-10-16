@@ -39,9 +39,16 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if any comorbidity matches on ICD main code but extension code unknown`() {
-        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, MATCHING_ICD_MAIN_CODE, null) {
+    fun `Should evaluate to undetermined if any comorbidity matches on drug specific ICD main code but extension code unknown`() {
+        assertResultForIcdCodes(EvaluationResult.UNDETERMINED, IcdConstants.DRUG_ALLERGY_CODE, null) {
             "Drug intolerance in provided history - undetermined if PD-1/PD-L1 intolerance (drug type unknown)"
+        }
+    }
+
+    @Test
+    fun `Should fail if any comorbidity has generic hypersensitivity ICD main code and extension code unknown`() {
+        assertResultForIcdCodes(EvaluationResult.FAIL, IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK, null) {
+            "No PD-1/PD-L1 intolerance"
         }
     }
 
