@@ -5,8 +5,8 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TestMedicationFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -76,7 +76,7 @@ class MedicationToTreatmentConverterTest {
 
     private fun createMedication(name: String, category: TreatmentCategory, drugType: DrugType, date: LocalDate): Medication {
         return TestMedicationFactory.createMinimal().copy(
-            drug = Drug(name = name, category = category, drugTypes = setOf(drugType)),
+            drug = StandardDrug(name = name, category = category, drugTypes = setOf(drugType)),
             name = name,
             atc = AtcClassification(
                 anatomicalMainGroup = AtcLevel(name = "", code = ""),

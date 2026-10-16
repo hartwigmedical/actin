@@ -2,6 +2,7 @@ package com.hartwig.actin.util.json
 
 import com.google.gson.GsonBuilder
 import com.hartwig.actin.clinical.serialization.TreatmentAdapter
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.DrugParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -50,6 +51,7 @@ class EligibilityFunctionDeserializerTest {
 
         val gson = GsonBuilder()
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
+            .registerTypeHierarchyAdapter(Drug::class.java, DrugDeserializer())
             .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
             .create()
 

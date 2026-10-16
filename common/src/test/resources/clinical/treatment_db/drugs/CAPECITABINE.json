@@ -1,5 +1,6 @@
 {
   "name": "CAPECITABINE",
+  "drugClass": "STANDARD_DRUG",
   "drugTypes": [
     "ANTIMETABOLITE"
   ],

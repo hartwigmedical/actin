@@ -14,6 +14,7 @@ import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.RadiopharmaceuticalType
 import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
@@ -30,7 +31,7 @@ object ClinicalRecordJsonMapper {
     }
 
     fun createWithDrugMap(drugsByName: Map<String, Drug>): Gson {
-        return gsonBuilder().registerTypeAdapter(Drug::class.java, DrugNameAdapter(drugsByName)).create()
+        return gsonBuilder().registerTypeHierarchyAdapter(Drug::class.java, DrugNameAdapter(drugsByName)).create()
     }
 
     private fun gsonBuilder(): GsonBuilder {
@@ -38,8 +39,9 @@ object ClinicalRecordJsonMapper {
             .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
             .registerTypeAdapter(Comorbidity::class.java, ComorbidityAdapter())
             .registerTypeAdapter(WhoStatus::class.java, WhoStatusAdapter())
-            .registerTypeAdapter(Drug::class.java, DrugDeserializer())
+            .registerTypeHierarchyAdapter(Drug::class.java, DrugDeserializer())
             .registerTypeAdapter(DrugType::class.java, StrictEnumDeserializer(DrugType::class.java))
+            .registerTypeAdapter(RadiopharmaceuticalType::class.java, StrictEnumDeserializer(RadiopharmaceuticalType::class.java))
             .registerTypeAdapter(OtherTreatmentType::class.java, StrictEnumDeserializer(OtherTreatmentType::class.java))
             .registerTypeAdapter(RadiotherapyType::class.java, StrictEnumDeserializer(RadiotherapyType::class.java))
             .registerTypeAdapter(TreatmentCategory::class.java, StrictEnumDeserializer(TreatmentCategory::class.java))

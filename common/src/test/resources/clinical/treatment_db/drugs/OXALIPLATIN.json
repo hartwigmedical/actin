@@ -1,5 +1,6 @@
 {
   "name": "OXALIPLATIN",
+  "drugClass": "STANDARD_DRUG",
   "drugTypes": [
     "PLATINUM_COMPOUND"
   ],
