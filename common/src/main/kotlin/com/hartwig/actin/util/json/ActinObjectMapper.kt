@@ -1,9 +1,13 @@
 package com.hartwig.actin.util.json
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.annotation.JsonInclude.Include
+import com.fasterxml.jackson.annotation.JsonInclude.Value
 import com.fasterxml.jackson.annotation.PropertyAccessor
 import com.fasterxml.jackson.core.json.JsonReadFeature
+import com.fasterxml.jackson.core.json.JsonWriteFeature
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -22,15 +26,15 @@ object ActinObjectMapper {
         )
         .registerModule(JavaTimeModule())
         .registerModule(actinDefaultsModule())
-        .setSerializationInclusion(JsonInclude.Include.ALWAYS)
-        .setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY)
-        .setVisibility(PropertyAccessor.GETTER, JsonAutoDetect.Visibility.NONE)
-        .setVisibility(PropertyAccessor.IS_GETTER, JsonAutoDetect.Visibility.NONE)
-        .enable(SerializationFeature.WRITE_NULL_MAP_VALUES)
+        .setDefaultPropertyInclusion(Value.construct(Include.ALWAYS, Include.ALWAYS))
+        .setVisibility(PropertyAccessor.FIELD, Visibility.ANY)
+        .setVisibility(PropertyAccessor.GETTER, Visibility.NONE)
+        .setVisibility(PropertyAccessor.IS_GETTER, Visibility.NONE)
         .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
         .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
         .disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
         .configure(JsonReadFeature.ALLOW_NON_NUMERIC_NUMBERS.mappedFeature(), true)
+        .configure(JsonWriteFeature.WRITE_NAN_AS_STRINGS.mappedFeature(), false)
 
     private fun actinDefaultsModule(): SimpleModule {
         return SimpleModule("ActinDefaultsModule").apply {

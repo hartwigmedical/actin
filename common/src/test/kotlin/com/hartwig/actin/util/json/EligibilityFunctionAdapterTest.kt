@@ -55,6 +55,17 @@ class EligibilityFunctionAdapterTest {
         assertThat(mapper.readValue(serialized, EligibilityFunction::class.java)).isEqualTo(function)
     }
 
+    @Test
+    fun `Should skip null entries in many treatments parameter`() {
+        val treatmentDb = TestTreatmentDatabaseFactory.createProper()
+        val treatment = requireNotNull(treatmentDb.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
+        val mapper = mapper()
+        val json = """{"rule":"CUSTOM_RULE","parameters":[{"type":"MANY_TREATMENTS","value":[${mapper.writeValueAsString(treatment)},null]}]}"""
+
+        val function = mapper.readValue(json, EligibilityFunction::class.java)
+        assertThat(function.parameters).containsExactly(ManyTreatmentsParameter(listOf(treatment)))
+    }
+
     private fun mapper() = ActinObjectMapper.create().registerModule(
         SimpleModule().apply {
             addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)

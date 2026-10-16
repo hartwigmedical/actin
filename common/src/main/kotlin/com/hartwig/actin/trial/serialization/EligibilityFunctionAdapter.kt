@@ -98,7 +98,7 @@ object EligibilityFunctionDeserializer : JsonDeserializer<EligibilityFunction>()
 
     private fun <T : Any> parseList(value: JsonNode, target: Class<T>, parser: JsonParser): List<T> {
         return if (value.isArray) {
-            value.map { parser.codec.treeToValue(it, target) }
+            value.mapNotNull { parser.codec.treeToValue(it, target) }
         } else {
             listOf(parser.codec.treeToValue(value, target))
         }

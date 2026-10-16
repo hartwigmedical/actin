@@ -107,19 +107,31 @@
       "name": "Rheumatoid arthritis",
       "year": 2022,
       "month": null,
-      "icdCodes": [],
+      "icdCodes": [
+        {
+          "mainCode": "FA20"
+        }
+      ],
       "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Bacterial pneumonia",
       "year": 2024,
       "month": 9,
-      "icdCodes": [],
+      "icdCodes": [
+        {
+          "mainCode": "CA40.0"
+        }
+      ],
       "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Nausea",
-      "icdCodes": [],
+      "icdCodes": [
+        {
+          "mainCode": "MD90.0"
+        }
+      ],
       "year": 2024,
       "month": 9,
       "day": 9,

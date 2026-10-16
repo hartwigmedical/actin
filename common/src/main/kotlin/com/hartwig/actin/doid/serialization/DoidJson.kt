@@ -242,14 +242,18 @@ object DoidJson {
         }
     }
 
-    private fun string(node: ObjectNode, field: String): String = node.get(field).asText()
+    private fun string(node: ObjectNode, field: String): String {
+        val value = node.get(field)
+        require(value != null && !value.isNull) { "Expected non-null value for field '$field' in $node" }
+        return value.asText()
+    }
 
     private fun stringList(node: ObjectNode, field: String): List<String> {
         val element = node.get(field)
+        require(element != null && !element.isNull) { "Expected non-null value for field '$field' in $node" }
         return if (element.isValueNode) {
             listOf(element.asText())
-        }
-        else {
+        } else {
             require(element.isArray) { "Expected array or primitive for field '$field' but got $element" }
             element.map(JsonNode::asText)
         }

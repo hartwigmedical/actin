@@ -73,6 +73,15 @@ class ActinObjectMapperTest {
         assertThat(mapper.readValue(mapper.writeValueAsString(null as LocalDateTime?), LocalDateTime::class.java)).isNull()
     }
 
+    @Test
+    fun `Should write non-numeric doubles as bare tokens and read them back`() {
+        val serialized = mapper.writeValueAsString(listOf(Double.NaN, Double.POSITIVE_INFINITY))
+
+        assertThat(serialized).isEqualTo("[NaN,Infinity]")
+        assertThat(mapper.readValue(serialized, object : TypeReference<List<Double>>() {}))
+            .containsExactly(Double.NaN, Double.POSITIVE_INFINITY)
+    }
+
     private fun variant(driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String): Variant {
         val canonicalImpact: TranscriptVariantImpact = TestTranscriptVariantImpactFactory.createMinimal().copy(
             hgvsProteinImpact = hgvsProteinImpact,

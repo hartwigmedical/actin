@@ -183,14 +183,22 @@
       "name": "Acute myocardial infarction",
       "year": 2020,
       "month": 1,
-      "icdCodes": [],
+      "icdCodes": [
+        {
+          "mainCode": "BA41"
+        }
+      ],
       "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Bipolar disorder",
       "year": 2000,
       "month": 1,
-      "icdCodes": [],
+      "icdCodes": [
+        {
+          "mainCode": "6A6Z"
+        }
+      ],
       "comorbidityClass": "OTHER_CONDITION"
     }
   ],

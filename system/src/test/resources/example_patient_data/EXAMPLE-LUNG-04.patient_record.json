@@ -118,12 +118,20 @@
       "name": "Cerebrovascular accident",
       "year": 2019,
       "month": 1,
-      "icdCodes": [],
+      "icdCodes": [
+        {
+          "mainCode": "8B20"
+        }
+      ],
       "comorbidityClass": "OTHER_CONDITION"
     },
     {
       "name": "Pleural effusion",
-      "icdCodes": [],
+      "icdCodes": [
+        {
+          "mainCode": "CB27"
+        }
+      ],
       "year": 2023,
       "month": 1,
       "comorbidityClass": "OTHER_CONDITION"
