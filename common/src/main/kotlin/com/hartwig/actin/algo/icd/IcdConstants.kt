@@ -117,7 +117,7 @@ object IcdConstants {
     const val HARMFUL_EFFECTS_OF_DRUGS_CODE = "NE60"
     const val INJURY_OR_HARM_DUE_TO_CORRECTLY_USED_DRUG_CODE = "PL13.2"
     const val SUBSTANCES_EXTENSION_BLOCK = "http://id.who.int/icd/release/11/mms/1321407960"
-    const val MEDICAMENTS_EXTENSION_BLOCK = "http://id.who.int/icd/release/11/mms/1170065830"
+    const val MEDICATION_EXTENSION_BLOCK = "http://id.who.int/icd/release/11/mms/1170065830"
     const val ANTI_NEOPLASTIC_AGENTS = "http://id.who.int/icd/release/11/mms/2064976967"
     const val PLATINUM_COMPOUND_CODE = "XM40B7"
     const val TAXANE_CODE = "XM05L1"
