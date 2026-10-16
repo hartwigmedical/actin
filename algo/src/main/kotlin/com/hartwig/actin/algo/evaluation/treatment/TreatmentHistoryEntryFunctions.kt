@@ -6,7 +6,6 @@ import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
-import com.hartwig.actin.datamodel.clinical.treatment.TreatmentClass
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
@@ -35,10 +34,10 @@ object TreatmentHistoryEntryFunctions {
     fun Collection<TreatmentHistoryEntry>.partitionTreatmentsByIntent(intents: Set<Intent>): Pair<List<TreatmentHistoryEntry>, List<TreatmentHistoryEntry>> =
         partition { it.intents?.any(intents::contains) == true }
 
-    fun Treatment.withoutDrugs(drugsToExclude: Set<Drug>): Treatment = when (treatmentClass) {
-        TreatmentClass.DRUG_TREATMENT -> (this as DrugTreatment).copy(drugs = drugs.filterNot(drugsToExclude::contains).toSet())
-        TreatmentClass.RADIOTHERAPY -> (this as Radiotherapy).copy(drugs = drugs.filterNot(drugsToExclude::contains).toSet())
-        TreatmentClass.OTHER_TREATMENT -> this
+    fun Treatment.withoutDrugs(drugsToExclude: Set<Drug>): Treatment = when (this) {
+        is DrugTreatment -> copy(drugs = drugs.filterNot(drugsToExclude::contains).toSet())
+        is Radiotherapy -> copy(drugs = drugs.filterNot(drugsToExclude::contains).toSet())
+        else -> this
     }
 
     fun evaluateIfDrugHadPDResponse(treatmentHistory: List<TreatmentHistoryEntry>, drugsToMatch: Set<Drug>): TreatmentHistoryEvaluation {

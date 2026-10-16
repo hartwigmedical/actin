@@ -74,7 +74,6 @@ class HasHadTreatmentWithDrugAndCycles(private val drugsToFind: Set<Drug>, priva
         }
 
         val matchingDrugs = matchingEntry.allTreatments()
-            .map { it }
             .flatMap { it.drugs }
             .filter { it.name.lowercase() in namesToMatch }
 
