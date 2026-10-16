@@ -1,8 +1,6 @@
 package com.hartwig.actin.util.json
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonInclude.Include
 import com.fasterxml.jackson.annotation.JsonInclude.Value
 import com.fasterxml.jackson.annotation.PropertyAccessor

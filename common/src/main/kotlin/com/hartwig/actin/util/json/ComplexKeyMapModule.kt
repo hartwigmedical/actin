@@ -49,6 +49,11 @@ class ComplexKeyMapModule : Module() {
     private object ComplexKeyMapSerializer : JsonSerializer<Map<Any?, Any?>>() {
 
         override fun serialize(value: Map<Any?, Any?>, gen: JsonGenerator, provider: SerializerProvider) {
+            if (value.isEmpty()) {
+                gen.writeStartObject()
+                gen.writeEndObject()
+                return
+            }
             gen.writeStartArray()
             value.forEach { (k, v) ->
                 gen.writeStartArray()
