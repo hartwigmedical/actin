@@ -1,6 +1,6 @@
 package com.hartwig.actin.util.json
 
-import com.google.gson.reflect.TypeToken
+import com.fasterxml.jackson.core.type.TypeReference
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.molecular.driver.DriverLikelihood
 import com.hartwig.actin.datamodel.molecular.driver.TestTranscriptVariantImpactFactory
@@ -10,10 +10,12 @@ import com.hartwig.actin.datamodel.molecular.driver.Variant
 import com.hartwig.actin.datamodel.molecular.evidence.Country
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
+import java.time.LocalDateTime
 
-class GsonSerializerTest {
+class ActinObjectMapperTest {
 
-    private val gson = GsonSerializer.createBuilder().create()
+    private val mapper = ActinObjectMapper.create()
 
     @Test
     fun `Should sort comparable sets`() {
@@ -24,22 +26,51 @@ class GsonSerializerTest {
         val variant5 = variant(DriverLikelihood.MEDIUM, "BRAF", "V600E", "1800")
         val variants = setOf(variant3, variant5, variant1, variant4, variant2)
 
-        val deserialized = gson.fromJson<List<Variant>>(gson.toJson(variants), object : TypeToken<List<Variant>>() {}.type)
+        val serialized = mapper.writeValueAsString(variants)
+        val deserialized = mapper.readValue(serialized, object : TypeReference<List<Variant>>() {})
         assertThat(deserialized).isEqualTo(variants.sorted())
     }
 
     @Test
     fun `Should sort non-comparable sets by converting elements to string`() {
         val set = setOf(3, "2", Country.NETHERLANDS, null)
-        val deserialized = gson.fromJson<List<String>>(gson.toJson(set), object : TypeToken<List<String>>() {}.type)
+        val serialized = mapper.writeValueAsString(set)
+        val deserialized = mapper.readValue(serialized, object : TypeReference<List<String?>>() {})
         assertThat(deserialized).isEqualTo(listOf("2", "3", Country.NETHERLANDS.toString(), null))
     }
 
     @Test
     fun `Should sort nulls last`() {
         val set = setOf(Intent.PALLIATIVE, null, Intent.ADJUVANT)
-        val deserialized = gson.fromJson<List<Intent?>>(gson.toJson(set), object : TypeToken<List<Intent?>>() {}.type)
+        val serialized = mapper.writeValueAsString(set)
+        val deserialized = mapper.readValue(serialized, object : TypeReference<List<Intent?>>() {})
         assertThat(deserialized).isEqualTo(listOf(Intent.ADJUVANT, Intent.PALLIATIVE, null))
+    }
+
+    @Test
+    fun `Should serialize nulls`() {
+        val map = mapOf("a" to 1, "b" to null)
+        assertThat(mapper.writeValueAsString(map)).contains("\"b\":null")
+    }
+
+    @Test
+    fun `Should serialize and deserialize LocalDate as ISO date`() {
+        val date = LocalDate.of(2022, 10, 20)
+        val serialized = mapper.writeValueAsString(date)
+
+        assertThat(serialized).isEqualTo("\"2022-10-20\"")
+        assertThat(mapper.readValue(serialized, LocalDate::class.java)).isEqualTo(date)
+        assertThat(mapper.readValue(mapper.writeValueAsString(null as LocalDate?), LocalDate::class.java)).isNull()
+    }
+
+    @Test
+    fun `Should serialize and deserialize LocalDateTime as ISO date time`() {
+        val dateTime = LocalDateTime.of(2022, 10, 20, 11, 12, 13)
+        val serialized = mapper.writeValueAsString(dateTime)
+
+        assertThat(serialized).isEqualTo("\"2022-10-20T11:12:13\"")
+        assertThat(mapper.readValue(serialized, LocalDateTime::class.java)).isEqualTo(dateTime)
+        assertThat(mapper.readValue(mapper.writeValueAsString(null as LocalDateTime?), LocalDateTime::class.java)).isNull()
     }
 
     private fun variant(driverLikelihood: DriverLikelihood, gene: String, hgvsProteinImpact: String, hgvsCodingImpact: String): Variant {
