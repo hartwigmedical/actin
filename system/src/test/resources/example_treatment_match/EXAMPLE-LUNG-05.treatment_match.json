@@ -1,0 +1,1568 @@
+{
+  "patientId": "EXAMPLE-LUNG-05",
+  "referenceDate": "2025-08-06",
+  "referenceDateIsLive": true,
+  "trialMatches": [
+    {
+      "identification": {
+        "trialId": "METC 01",
+        "open": true,
+        "acronym": "IEMOEN",
+        "title": "Phase I first-in-human study to evaluate safety of IEMOEN, a new PD-L1 inhibitor in advanced solid tumors",
+        "nctId": "NCT00000001",
+        "phase": "PHASE_1",
+        "sources": [],
+        "locations": [],
+        "url": null
+      },
+      "isPotentiallyEligible": true,
+      "evaluations": [
+        [
+          {
+            "references": [
+              "I-01"
+            ],
+            "function": {
+              "rule": "IS_AT_LEAST_X_YEARS_OLD",
+              "parameters": [
+                {
+                  "type": "INTEGER",
+                  "value": "18"
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Age above 18 years"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-02"
+            ],
+            "function": {
+              "rule": "AND",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "OR",
+                    "parameters": [
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                          "parameters": []
+                        }
+                      },
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_METASTATIC_CANCER",
+                          "parameters": []
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_SOLID_PRIMARY_TUMOR",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Primary tumor is solid"
+              },
+              {
+                "message": "Stage IV is considered metastatic"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-03"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "NOT",
+                    "parameters": [
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_EXHAUSTED_SOC_TREATMENTS",
+                          "parameters": []
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "SOC is not exhausted (at least platinum doublet remaining)"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-01"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "No comorbidity belonging to category autoimmune disease"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-02"
+            ],
+            "function": {
+              "rule": "HAS_HEMOGLOBIN_MMOL_PER_L_OF_AT_LEAST_X",
+              "parameters": [
+                {
+                  "type": "DOUBLE",
+                  "value": "6"
+                }
+              ]
+            }
+          },
+          {
+            "result": "UNDETERMINED",
+            "recoverable": true,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [
+              {
+                "message": "No measurement found for hemoglobin"
+              }
+            ],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-03"
+            ],
+            "function": {
+              "rule": "HAS_NEUTROPHILS_ABS_OF_AT_LEAST_X",
+              "parameters": [
+                {
+                  "type": "DOUBLE",
+                  "value": "1.5"
+                }
+              ]
+            }
+          },
+          {
+            "result": "UNDETERMINED",
+            "recoverable": true,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [
+              {
+                "message": "No measurement found for absolute neutrophil count"
+              }
+            ],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-04"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_HISTORY_OF_AUTOIMMUNE_DISEASE",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "History of rheumatoid arthritis"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
+                    "parameters": [
+                      {
+                        "type": "STRING",
+                        "value": "IEMOEN"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "No previous participation in trial IEMOEN"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ]
+      ],
+      "cohorts": [
+        {
+          "metadata": {
+            "cohortId": "A",
+            "description": "Dose escalation - monotherapy",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": true,
+            "slotsAvailable": false
+          },
+          "isPotentiallyEligible": true,
+          "evaluations": {}
+        },
+        {
+          "metadata": {
+            "cohortId": "B",
+            "description": "Dose expansion - monotherapy",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": false,
+            "slotsAvailable": false
+          },
+          "isPotentiallyEligible": true,
+          "evaluations": {}
+        }
+      ],
+      "nonEvaluableCohorts": []
+    },
+    {
+      "identification": {
+        "trialId": "METC 02",
+        "open": true,
+        "acronym": "KAYRAS",
+        "title": "A phase 1/2 trial for first in-human usage of KAYRAS, a new specific KRAS G12D inhibitor in NSCLC and colorectal cancer",
+        "nctId": "NCT00000002",
+        "phase": "PHASE_1_2",
+        "sources": [],
+        "locations": [
+          "Erasmus MC"
+        ],
+        "url": "https://hartwigmedicalfoundation.nl"
+      },
+      "isPotentiallyEligible": true,
+      "evaluations": [
+        [
+          {
+            "references": [
+              "I-01"
+            ],
+            "function": {
+              "rule": "IS_AT_LEAST_X_YEARS_OLD",
+              "parameters": [
+                {
+                  "type": "INTEGER",
+                  "value": "18"
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Age above 18 years"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-02"
+            ],
+            "function": {
+              "rule": "OR",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                    "parameters": []
+                  }
+                },
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_METASTATIC_CANCER",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Stage IV is considered metastatic"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-03"
+            ],
+            "function": {
+              "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
+              "parameters": [
+                {
+                  "type": "DOUBLE",
+                  "value": "3"
+                },
+                {
+                  "type": "DOUBLE",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          {
+            "result": "UNDETERMINED",
+            "recoverable": true,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [
+              {
+                "message": "ASAT and ALAT are not present or cannot be evaluated"
+              }
+            ],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-04"
+            ],
+            "function": {
+              "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
+              "parameters": [
+                {
+                  "type": "GENE",
+                  "value": "KRAS"
+                },
+                {
+                  "type": "MANY_PROTEIN_IMPACTS",
+                  "value": "G12D"
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [
+              {
+                "event": "KRAS G12D"
+              }
+            ],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "Variant(s) G12D in KRAS but subclonal likelihood of > 50%"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-05"
+            ],
+            "function": {
+              "rule": "PD_L1_SCORE_TPS_OF_AT_LEAST_X",
+              "parameters": [
+                {
+                  "type": "DOUBLE",
+                  "value": "50"
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [
+              {
+                "event": "PD-L1 >= 50.0"
+              }
+            ],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "PD-L1 expression above minimum of 50.0"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
+                    "parameters": [
+                      {
+                        "type": "STRING",
+                        "value": "KAYRAS"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "No previous participation in trial KAYRAS"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ]
+      ],
+      "cohorts": [
+        {
+          "metadata": {
+            "cohortId": "A",
+            "description": "Dose expansion - monotherapy - NSCLC",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": true,
+            "slotsAvailable": true
+          },
+          "isPotentiallyEligible": true,
+          "evaluations": [
+            [
+              {
+                "references": [
+                  "I-02"
+                ],
+                "function": {
+                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
+                  "parameters": [
+                    {
+                      "type": "MANY_DOID_TERMS",
+                      "value": "Lung non-small cell carcinoma"
+                    }
+                  ]
+                }
+              },
+              {
+                "result": "PASS",
+                "recoverable": false,
+                "inclusionMolecularEvents": [],
+                "exclusionMolecularEvents": [],
+                "passMessages": [
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
+                ],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [],
+                "isMissingMolecularResultForEvaluation": false
+              }
+            ]
+          ]
+        },
+        {
+          "metadata": {
+            "cohortId": "B",
+            "description": "Dose expansion - monotherapy - Colorectum",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": true,
+            "slotsAvailable": true
+          },
+          "isPotentiallyEligible": false,
+          "evaluations": [
+            [
+              {
+                "references": [
+                  "I-02"
+                ],
+                "function": {
+                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
+                  "parameters": [
+                    {
+                      "type": "MANY_DOID_TERMS",
+                      "value": "Colorectal cancer"
+                    }
+                  ]
+                }
+              },
+              {
+                "result": "FAIL",
+                "recoverable": false,
+                "inclusionMolecularEvents": [],
+                "exclusionMolecularEvents": [],
+                "passMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [
+                  {
+                    "message": "No colorectal cancer"
+                  }
+                ],
+                "isMissingMolecularResultForEvaluation": false
+              }
+            ],
+            [
+              {
+                "references": [
+                  "E-01"
+                ],
+                "function": {
+                  "rule": "NOT",
+                  "parameters": [
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "HAS_LIVER_METASTASES",
+                        "parameters": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "result": "FAIL",
+                "recoverable": false,
+                "inclusionMolecularEvents": [],
+                "exclusionMolecularEvents": [],
+                "passMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [
+                  {
+                    "message": "Liver metastases in provided lesions"
+                  }
+                ],
+                "isMissingMolecularResultForEvaluation": false
+              }
+            ]
+          ]
+        }
+      ],
+      "nonEvaluableCohorts": []
+    },
+    {
+      "identification": {
+        "trialId": "METC 03",
+        "open": true,
+        "acronym": "NO-SEE797ES",
+        "title": "Phase I trial for development of NO-SEE797ES, a specific inhibitor for EGFR with C797 mutations but not C797S in solid tumors",
+        "nctId": "NCT00000003",
+        "phase": null,
+        "sources": [],
+        "locations": [],
+        "url": null
+      },
+      "isPotentiallyEligible": false,
+      "evaluations": [
+        [
+          {
+            "references": [
+              "I-01"
+            ],
+            "function": {
+              "rule": "IS_AT_LEAST_X_YEARS_OLD",
+              "parameters": [
+                {
+                  "type": "INTEGER",
+                  "value": "18"
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Age above 18 years"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-02"
+            ],
+            "function": {
+              "rule": "OR",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                    "parameters": []
+                  }
+                },
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_METASTATIC_CANCER",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Stage IV is considered metastatic"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-03"
+            ],
+            "function": {
+              "rule": "AND",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "MUTATION_IN_GENE_X_IN_ANY_CODONS_Y",
+                    "parameters": [
+                      {
+                        "type": "GENE",
+                        "value": "EGFR"
+                      },
+                      {
+                        "type": "MANY_CODONS",
+                        "value": "C797"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "NOT",
+                    "parameters": [
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
+                          "parameters": [
+                            {
+                              "type": "GENE",
+                              "value": "EGFR"
+                            },
+                            {
+                              "type": "MANY_PROTEIN_IMPACTS",
+                              "value": "C797S"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "FAIL",
+            "recoverable": false,
+            "inclusionMolecularEvents": [
+              {
+                "event": "EGFR C797S"
+              }
+            ],
+            "exclusionMolecularEvents": [
+              {
+                "event": "EGFR C797S"
+              }
+            ],
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [
+              {
+                "message": "C797S in EGFR in canonical transcript"
+              }
+            ],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
+                    "parameters": [
+                      {
+                        "type": "STRING",
+                        "value": "NO-SEE797ES"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "No previous participation in trial NO-SEE797ES"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ]
+      ],
+      "cohorts": [
+        {
+          "metadata": {
+            "cohortId": "A",
+            "description": "Dose escalation - monotherapy",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": true,
+            "slotsAvailable": true
+          },
+          "isPotentiallyEligible": false,
+          "evaluations": {}
+        }
+      ],
+      "nonEvaluableCohorts": []
+    },
+    {
+      "identification": {
+        "trialId": "METC 04",
+        "open": true,
+        "acronym": "TEDR1",
+        "title": "TEDR1 Trial: A phase II trial to evaluate efficacy of specific EGFR inhibitors in lung cancer",
+        "nctId": "NCT00000004",
+        "phase": "PHASE_2",
+        "sources": [],
+        "locations": [
+          "NKI-AvL"
+        ],
+        "url": "https://hartwigmedicalfoundation.nl"
+      },
+      "isPotentiallyEligible": true,
+      "evaluations": [
+        [
+          {
+            "references": [
+              "I-01"
+            ],
+            "function": {
+              "rule": "IS_AT_LEAST_X_YEARS_OLD",
+              "parameters": [
+                {
+                  "type": "INTEGER",
+                  "value": "18"
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Age above 18 years"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-02"
+            ],
+            "function": {
+              "rule": "AND",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "OR",
+                    "parameters": [
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                          "parameters": []
+                        }
+                      },
+                      {
+                        "type": "FUNCTION",
+                        "value": {
+                          "rule": "HAS_METASTATIC_CANCER",
+                          "parameters": []
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
+                    "parameters": [
+                      {
+                        "type": "MANY_DOID_TERMS",
+                        "value": "Lung cancer"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Stage IV is considered metastatic"
+              },
+              {
+                "message": "Tumor belongs to DOID term(s) lung cancer"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-03"
+            ],
+            "function": {
+              "rule": "MUTATION_IN_GENE_X_OF_ANY_PROTEIN_IMPACTS_Y",
+              "parameters": [
+                {
+                  "type": "GENE",
+                  "value": "EGFR"
+                },
+                {
+                  "type": "MANY_PROTEIN_IMPACTS",
+                  "value": "C797S"
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [
+              {
+                "event": "EGFR C797S"
+              }
+            ],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "C797S in EGFR in canonical transcript"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-04"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y",
+                    "parameters": [
+                      {
+                        "type": "TREATMENT_CATEGORY",
+                        "value": "TARGETED_THERAPY"
+                      },
+                      {
+                        "type": "MANY_TREATMENT_TYPES",
+                        "value": "EGFR_INHIBITOR"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "At least 1 line(s) of EGFR inhibitor targeted therapy in provided treatments"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "E-01"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "CURRENTLY_GETS_MEDICATION_INDUCING_CYP_X",
+                    "parameters": [
+                      {
+                        "type": "CYP",
+                        "value": "CYP3A4_5"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "WARN",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [
+              {
+                "message": "Active CYP3A4/5 inducing medication in provided medications (St. John’s Wort)"
+              }
+            ],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
+                    "parameters": [
+                      {
+                        "type": "STRING",
+                        "value": "TEDR1"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "No previous participation in trial TEDR1"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ]
+      ],
+      "cohorts": [
+        {
+          "metadata": {
+            "cohortId": "A",
+            "description": "Lung cancer C797S cohort",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": true,
+            "slotsAvailable": true
+          },
+          "isPotentiallyEligible": true,
+          "evaluations": {}
+        }
+      ],
+      "nonEvaluableCohorts": []
+    },
+    {
+      "identification": {
+        "trialId": "METC 05",
+        "open": false,
+        "acronym": "PICKME3CA",
+        "title": "A phase 1/2 trial of ABC123 +/- platinum doublet in PIK3CA-mutated solid cancer",
+        "nctId": "NCT00000020",
+        "phase": null,
+        "sources": [],
+        "locations": [],
+        "url": null
+      },
+      "isPotentiallyEligible": false,
+      "evaluations": [
+        [
+          {
+            "references": [
+              "I-01"
+            ],
+            "function": {
+              "rule": "IS_AT_LEAST_X_YEARS_OLD",
+              "parameters": [
+                {
+                  "type": "INTEGER",
+                  "value": "18"
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Age above 18 years"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-02"
+            ],
+            "function": {
+              "rule": "OR",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_LOCALLY_ADVANCED_CANCER",
+                    "parameters": []
+                  }
+                },
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_METASTATIC_CANCER",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "Stage IV is considered metastatic"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-03"
+            ],
+            "function": {
+              "rule": "HAS_ASAT_AND_ALAT_ULN_OF_AT_MOST_X_OR_AT_MOST_Y_WHEN_LIVER_METASTASES_PRESENT",
+              "parameters": [
+                {
+                  "type": "DOUBLE",
+                  "value": "3"
+                },
+                {
+                  "type": "DOUBLE",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          {
+            "result": "UNDETERMINED",
+            "recoverable": true,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [
+              {
+                "message": "ASAT and ALAT are not present or cannot be evaluated"
+              }
+            ],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-04"
+            ],
+            "function": {
+              "rule": "ACTIVATING_MUTATION_IN_ANY_GENES_X",
+              "parameters": [
+                {
+                  "type": "MANY_GENES",
+                  "value": "PIK3CA"
+                }
+              ]
+            }
+          },
+          {
+            "result": "FAIL",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [
+              {
+                "message": "No PIK3CA activating mutation(s)"
+              }
+            ],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [
+              "I-05"
+            ],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_HISTORY_OF_CARDIAC_DISEASE",
+                    "parameters": []
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "No comorbidity belonging to category cardiac disease"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ],
+        [
+          {
+            "references": [],
+            "function": {
+              "rule": "WARN_IF",
+              "parameters": [
+                {
+                  "type": "FUNCTION",
+                  "value": {
+                    "rule": "HAS_PREVIOUSLY_PARTICIPATED_IN_TRIAL_WITH_ACRONYM_X",
+                    "parameters": [
+                      {
+                        "type": "STRING",
+                        "value": "PICKME3CA"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "result": "PASS",
+            "recoverable": false,
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
+            "passMessages": [
+              {
+                "message": "No previous participation in trial PICKME3CA"
+              }
+            ],
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": [],
+            "isMissingMolecularResultForEvaluation": false
+          }
+        ]
+      ],
+      "cohorts": [
+        {
+          "metadata": {
+            "cohortId": "A",
+            "description": "Dose expansion - monotherapy - NSCLC",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": false,
+            "slotsAvailable": true
+          },
+          "isPotentiallyEligible": false,
+          "evaluations": [
+            [
+              {
+                "references": [
+                  "I-03"
+                ],
+                "function": {
+                  "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
+                  "parameters": [
+                    {
+                      "type": "MANY_DOID_TERMS",
+                      "value": "Lung non-small cell carcinoma"
+                    }
+                  ]
+                }
+              },
+              {
+                "result": "PASS",
+                "recoverable": false,
+                "inclusionMolecularEvents": [],
+                "exclusionMolecularEvents": [],
+                "passMessages": [
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
+                ],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [],
+                "isMissingMolecularResultForEvaluation": false
+              }
+            ]
+          ]
+        },
+        {
+          "metadata": {
+            "cohortId": "B",
+            "description": "Dose expansion - monotherapy - Other cancer types",
+            "cohortAvailability": null,
+            "availabilityByLocation": null,
+            "evaluable": true,
+            "ignore": false,
+            "open": false,
+            "slotsAvailable": true
+          },
+          "isPotentiallyEligible": false,
+          "evaluations": [
+            [
+              {
+                "references": [
+                  "I-03"
+                ],
+                "function": {
+                  "rule": "AND",
+                  "parameters": [
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "NOT",
+                        "parameters": [
+                          {
+                            "type": "FUNCTION",
+                            "value": {
+                              "rule": "HAS_PRIMARY_TUMOR_LOCATION_BELONGING_TO_ANY_DOID_TERM_X",
+                              "parameters": [
+                                {
+                                  "type": "MANY_DOID_TERMS",
+                                  "value": "Lung non-small cell carcinoma"
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "type": "FUNCTION",
+                      "value": {
+                        "rule": "HAS_SOLID_PRIMARY_TUMOR",
+                        "parameters": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "result": "FAIL",
+                "recoverable": false,
+                "inclusionMolecularEvents": [],
+                "exclusionMolecularEvents": [],
+                "passMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
+                "failMessages": [
+                  {
+                    "message": "Tumor belongs to DOID term(s) lung non-small cell carcinoma"
+                  }
+                ],
+                "isMissingMolecularResultForEvaluation": false
+              }
+            ]
+          ]
+        }
+      ],
+      "nonEvaluableCohorts": []
+    }
+  ],
+  "standardOfCareMatches": null,
+  "personalizedTreatmentSummary": null
+}

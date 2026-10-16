@@ -225,7 +225,10 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     private fun hasAnyTumorStageCreator(): FunctionCreator {
         return { function: EligibilityFunction ->
             val stagesToMatch = function.param<ManyTumorStagesParameter>(0).value
-            DerivedTumorStageEvaluationFunction(HasTumorStage(stagesToMatch), "tumor stage(s) ${Format.concatItemsWithOr(stagesToMatch)}")
+            DerivedTumorStageEvaluationFunction(
+                HasTumorStage(stagesToMatch),
+                "of tumor stage(s) ${Format.concatItemsWithOr(stagesToMatch)}"
+            )
         }
     }
 
@@ -237,19 +240,19 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasLocallyAdvancedCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer(), "locally advanced cancer") }
+        return { DerivedTumorStageEvaluationFunction(HasLocallyAdvancedCancer(), "locally advanced") }
     }
 
     private fun hasMetastaticCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()), "metastatic cancer") }
+        return { DerivedTumorStageEvaluationFunction(HasMetastaticCancer(doidModel()), "metastatic") }
     }
 
     private fun hasOligometastaticCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasOligometastaticCancer(doidModel()), "oligometastatic cancer") }
+        return { DerivedTumorStageEvaluationFunction(HasOligometastaticCancer(doidModel()), "oligometastatic") }
     }
 
     private fun hasUnresectableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer(), "unresectable cancer") }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableCancer(), "unresectable") }
     }
 
     private fun hasUnresectablePeritonealMetastasesCreator(): FunctionCreator {
@@ -270,11 +273,11 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasUnresectableStageIIICancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer(), "unresectable stage III cancer") }
+        return { DerivedTumorStageEvaluationFunction(HasUnresectableStageIIICancer(), "unresectable stage III") }
     }
 
     private fun hasRecurrentCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer(), "recurrent cancer") }
+        return { DerivedTumorStageEvaluationFunction(HasRecurrentCancer(), "recurrent") }
     }
 
     private fun meetsSpecificCriteriaRegardingRecurrentCancerCreator(): FunctionCreator {
@@ -282,7 +285,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
     }
 
     private fun hasIncurableCancerCreator(): FunctionCreator {
-        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer(), "incurable cancer") }
+        return { DerivedTumorStageEvaluationFunction(HasIncurableCancer(), "incurable") }
     }
 
     private fun hasPrimaryTumorAtUnfavourableSiteCreator(): FunctionCreator {

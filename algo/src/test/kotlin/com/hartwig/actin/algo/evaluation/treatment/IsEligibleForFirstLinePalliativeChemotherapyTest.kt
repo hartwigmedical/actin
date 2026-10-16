@@ -38,7 +38,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(palliativeChemotherapy),
-            "No metastatic cancer and hence no eligibility for first line palliative chemotherapy"
+            "No metastatic cancer and hence requirements for first line palliative chemotherapy are not met"
         )
     }
 
@@ -47,7 +47,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionMetastaticCancer.evaluate(palliativeChemotherapy),
-            "Had palliative chemotherapy and is hence not eligible for first line palliative chemotherapy"
+            "Palliative chemotherapy in provided treatments and hence requirements for first line palliative chemotherapy are not met"
         )
     }
 
@@ -57,7 +57,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Had palliative targeted therapy (hence may not be considered eligible for first line palliative chemotherapy)"
+            "Palliative targeted therapy in provided treatments (hence requirements for first line palliative chemotherapy may not be met)"
         )
     }
 
@@ -67,7 +67,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Undetermined if patient with metastatic disease is considered eligible for first line palliative chemotherapy"
+            "Undetermined whether requirements for first line palliative chemotherapy are met for metastatic disease"
         )
     }
 
@@ -77,7 +77,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)"
+            "Undetermined if metastatic cancer (hence requirements for first line palliative chemotherapy may not be met)"
         )
     }
 
@@ -87,7 +87,7 @@ class IsEligibleForFirstLinePalliativeChemotherapyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             result,
-            "Undetermined if metastatic cancer (hence may not be eligible for first line palliative chemotherapy)"
+            "Undetermined if metastatic cancer (hence requirements for first line palliative chemotherapy may not be met)"
         )
     }
 

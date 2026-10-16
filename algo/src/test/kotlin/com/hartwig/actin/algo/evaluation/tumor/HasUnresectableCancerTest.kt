@@ -23,7 +23,7 @@ class HasUnresectableCancerTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withTumorStage(TumorStage.IV)),
-            "Has unresectable cancer (stage IV)"
+            "Cancer is unresectable (stage IV)"
         )
     }
 

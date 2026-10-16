@@ -26,7 +26,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(record),
-                "Has PD-1/PD-L1 intolerance(s): intolerance to ${term.uppercase()}"
+                "PD-1/PD-L1 intolerance(s): intolerance to ${term.uppercase()}"
             )
         }
     }
@@ -34,14 +34,14 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     @Test
     fun `Should pass when patient has any comorbidity matching main and extension code`() {
         assertResultForIcdCodes(EvaluationResult.PASS, MATCHING_ICD_MAIN_CODE, IcdConstants.PD_L1_PD_1_DRUG_SET.first()) { name ->
-            "Has PD-1/PD-L1 intolerance(s): $name"
+            "PD-1/PD-L1 intolerance(s): $name"
         }
     }
 
     @Test
     fun `Should evaluate to undetermined if any comorbidity matches on drug specific ICD main code but extension code unknown`() {
         assertResultForIcdCodes(EvaluationResult.UNDETERMINED, IcdConstants.DRUG_ALLERGY_CODE, null) {
-            "Drug intolerance in history - undetermined if PD-1/PD-L1 intolerance (drug type unknown)"
+            "Drug intolerance in provided history - undetermined if PD-1/PD-L1 intolerance (drug type unknown)"
         }
     }
 
@@ -55,7 +55,7 @@ class HasIntoleranceForPD1OrPDL1InhibitorsTest {
     @Test
     fun `Should evaluate to undetermined if any comorbidity matches on ICD main code and extension code monoclonal antibodies`() {
         assertResultForIcdCodes(EvaluationResult.UNDETERMINED, OTHER_MATCHING_ICD_MAIN_CODE, IcdConstants.MONOCLONAL_ANTIBODY_BLOCK) { name ->
-            "Monoclonal antibody intolerance in history - undetermined if PD-1/PD-L1 intolerance: $name"
+            "Monoclonal antibody intolerance in provided history - undetermined if PD-1/PD-L1 intolerance: $name"
         }
     }
 

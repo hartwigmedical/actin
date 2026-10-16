@@ -29,7 +29,7 @@ class HasUGT1A1HaplotypeTest {
                     )
                 )
             ),
-            "Has UGT1A1 type *1_HET"
+            "UGT1A1 type *1_HET in provided molecular data"
         )
     }
 
@@ -48,7 +48,7 @@ class HasUGT1A1HaplotypeTest {
                     )
                 )
             ),
-            "Does not have required UGT1A1 type *1_HET"
+            "Required UGT1A1 type *1_HET not in provided molecular data"
         )
     }
 

@@ -53,7 +53,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "No experience of immunotherapy related adverse events"
+            "No immunotherapy related adverse events in provided history"
         )
     }
 
@@ -63,7 +63,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = listOf(IMMUNOTHERAPY_ALLERGY_OTHER_CONDITION),
             oncologicalHistory = emptyList()
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No immunotherapy related adverse events in provided history"
+        )
     }
 
     @Test
@@ -72,7 +76,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             comorbidities = emptyList(),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No immunotherapy related adverse events in provided history"
+        )
     }
 
     @Test
@@ -85,7 +93,11 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
             ),
             oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
         )
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No experience of immunotherapy related adverse events")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No immunotherapy related adverse events in provided history"
+        )
     }
 
     @Test
@@ -95,7 +107,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Possible immunotherapy related adverse events in history (prior immunotherapy with stop reason toxicity)"
+            "Possible immunotherapy related adverse events in provided history (prior immunotherapy with stop reason toxicity)"
         )
     }
 
@@ -109,7 +121,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Possible immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
+            "Possible immunotherapy related adverse events in provided history (Nivolumab induced pneumonitis)"
         )
     }
 
@@ -123,7 +135,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Possible immunotherapy related adverse events in history (Nivolumab intolerance)"
+            "Possible immunotherapy related adverse events in provided history (Nivolumab intolerance)"
         )
     }
 
@@ -147,7 +159,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Possible immunotherapy related adverse events in history (Nivolumab induced pneumonitis)"
+            "Possible immunotherapy related adverse events in provided history (Nivolumab induced pneumonitis)"
         )
     }
 
@@ -160,7 +172,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Drug allergy (Drug allergy) in history but undetermined if immunotherapy-related AE (drug type unknown)"
+            "Drug allergy (Drug allergy) in provided history but undetermined if immunotherapy-related AE (drug type unknown)"
         )
     }
 
@@ -173,7 +185,7 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(record),
-            "Drug allergy (Drug allergy) in history but undetermined if immunotherapy-related AE (drug type unknown)"
+            "Drug allergy (Drug allergy) in provided history but undetermined if immunotherapy-related AE (drug type unknown)"
         )
     }
 

@@ -14,7 +14,7 @@ class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : Evalua
     override fun evaluate(record: PatientRecord): Evaluation {
         val tumorDoids = record.tumor.doids
         if (!DoidEvaluationFunctions.hasConfiguredDoids(tumorDoids)) {
-            return EvaluationFactory.undetermined("Undetermined if tumor may have small cell component")
+            return EvaluationFactory.undetermined("Undetermined if cancer may have small cell component")
         }
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
         val ihcTestEvaluations =
@@ -22,22 +22,22 @@ class HasCancerWithSmallCellComponent(private val doidModel: DoidModel) : Evalua
 
         return when {
             TumorEvaluationFunctions.hasTumorWithSmallCellComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.pass("Has cancer with small cell component")
+                EvaluationFactory.pass("Cancer has small cell component")
             }
 
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasCertainBroadPositiveResultsForItem) -> {
-                EvaluationFactory.warn("Has potentially cancer with small cell component (positive SCLC transformation)")
+                EvaluationFactory.warn("Cancer potentially has small cell component (positive SCLC transformation)")
             }
 
             isNsclc && ihcTestEvaluations.any(IhcTestEvaluation::hasPossiblePositiveResultsForItem) -> {
-                EvaluationFactory.warn("Has potentially cancer with small cell component (possible SCLC transformation)")
+                EvaluationFactory.warn("Cancer potentially has small cell component (possible SCLC transformation)")
             }
 
             TumorEvaluationFunctions.hasTumorWithNeuroendocrineComponent(doidModel, tumorDoids, record.tumor.name) -> {
-                EvaluationFactory.undetermined("Potentially has cancer with small cell component (has neuroendocrine tumor type)")
+                EvaluationFactory.undetermined("Cancer may have small cell component (has neuroendocrine component)")
             }
 
-            else -> EvaluationFactory.fail("Has no cancer with small cell component")
+            else -> EvaluationFactory.fail("No cancer with small cell component")
         }
     }
 }

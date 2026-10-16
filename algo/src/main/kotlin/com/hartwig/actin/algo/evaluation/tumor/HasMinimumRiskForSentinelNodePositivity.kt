@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasMinimumRiskForSentinelNodePositivity(private val minimumRisk: Int) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Undetermined if patient has risk of sentinel node positivity above $minimumRisk%")
+        return EvaluationFactory.undetermined("Undetermined if risk of sentinel node positivity is above $minimumRisk%")
     }
 }

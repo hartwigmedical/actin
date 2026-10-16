@@ -19,7 +19,7 @@ class CurrentlyGetsQTProlongatingMedicationTest {
         assertEvaluation(
             EvaluationResult.PASS,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "QT prolongating medication use (risk type): name (known)"
+            "Active QT prolongating medication in provided medications (risk type): name (known)"
         )
     }
 
@@ -29,7 +29,7 @@ class CurrentlyGetsQTProlongatingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No QT prolongating medication use"
+            "No active QT prolongating medication in provided medications"
         )
     }
 
@@ -38,7 +38,7 @@ class CurrentlyGetsQTProlongatingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysActiveFunction.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No QT prolongating medication use"
+            "No active QT prolongating medication in provided medications"
         )
     }
 
@@ -48,7 +48,7 @@ class CurrentlyGetsQTProlongatingMedicationTest {
         assertEvaluation(
             EvaluationResult.WARN,
             alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Planned QT prolongating medication use (risk type): name (known)"
+            "Planned QT prolongating medication in provided medications (risk type): name (known)"
         )
     }
 
@@ -58,7 +58,7 @@ class CurrentlyGetsQTProlongatingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             alwaysPlannedFunction.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No QT prolongating medication use"
+            "No active QT prolongating medication in provided medications"
         )
     }
 

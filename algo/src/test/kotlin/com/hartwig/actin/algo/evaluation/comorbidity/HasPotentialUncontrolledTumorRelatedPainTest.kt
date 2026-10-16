@@ -48,9 +48,9 @@ class HasPotentialUncontrolledTumorRelatedPainTest {
     @Test
     fun `Should evaluate to undetermined on other condition with direct or parent match on target icd code`() {
         listOf(
-            targetNode.code to "Has tumor related pain in history - undetermined if uncontrolled",
-            childOfTargetNode.code to "Has tumor related pain in history - undetermined if uncontrolled",
-            otherTargetCode to "Has acute pain in history - undetermined if uncontrolled"
+            targetNode.code to "Tumor related pain in provided conditions - undetermined if uncontrolled",
+            childOfTargetNode.code to "Tumor related pain in provided conditions - undetermined if uncontrolled",
+            otherTargetCode to "Acute pain in provided conditions - undetermined if uncontrolled"
         ).forEach { (code, expectedMessage) ->
             val record = ComorbidityTestFactory.withOtherCondition(ComorbidityTestFactory.otherCondition(icdMainCode = code))
             assertEvaluation(EvaluationResult.UNDETERMINED, alwaysActiveFunction.evaluate(record), expectedMessage)

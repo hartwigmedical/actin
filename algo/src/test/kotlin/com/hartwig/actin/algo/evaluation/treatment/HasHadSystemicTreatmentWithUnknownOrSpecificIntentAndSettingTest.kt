@@ -33,7 +33,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.CURATIVE, isSystemic = true, "Treatment a")))),
-            "Has only had prior systemic treatment with Curative intent - thus presumably not in metastatic setting (Treatment a)"
+            "Only prior systemic treatment with Curative intent in provided treatments - thus presumably not in metastatic setting (Treatment a)"
         )
     }
 
@@ -42,7 +42,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(listOf(createTreatment(Intent.PALLIATIVE, isSystemic = false)))),
-            "No prior systemic treatment in metastatic setting"
+            "No prior systemic treatment in metastatic setting in provided treatments"
         )
     }
 
@@ -51,7 +51,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "No prior systemic treatment in metastatic setting"
+            "No prior systemic treatment in metastatic setting in provided treatments"
         )
     }
 
@@ -62,7 +62,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
             function.evaluate(
                 withTreatmentHistory(listOf(Intent.PALLIATIVE, Intent.CURATIVE).map { createTreatment(it, isSystemic = true) })
             ),
-            "Has had prior systemic treatment in metastatic setting ignoring targeted therapy (Treatment name)"
+            "Prior systemic treatment in metastatic setting ignoring targeted therapy in provided treatments (Treatment name)"
         )
     }
 
@@ -77,7 +77,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
                     categories = setOf(CATEGORY_TO_IGNORE)
                 )
             })),
-            "No prior systemic treatment in metastatic setting"
+            "No prior systemic treatment in metastatic setting in provided treatments"
         )
     }
 
@@ -89,7 +89,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had recent systemic treatment ignoring targeted therapy - presumably in metastatic setting (Treatment)"
+            "Recent systemic treatment ignoring targeted therapy in provided treatments - presumably in metastatic setting (Treatment)"
         )
     }
 
@@ -102,7 +102,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had recent systemic treatment ignoring targeted therapy - presumably in metastatic setting (Treatment)"
+            "Recent systemic treatment ignoring targeted therapy in provided treatments - presumably in metastatic setting (Treatment)"
         )
     }
 
@@ -115,7 +115,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had more than one systemic treatment line of uncertain setting ignoring targeted therapy- presumably at least one in metastatic setting (Treatment a)"
+            "More than one systemic treatment line of uncertain setting ignoring targeted therapy in provided treatments - presumably at least one in metastatic setting (Treatment a)"
         )
     }
 
@@ -125,7 +125,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(record),
-            "Has had a systemic treatment line ignoring targeted therapy not followed by radiotherapy or surgery - presumably in metastatic setting (Treatment name)"
+            "A systemic treatment line ignoring targeted therapy was not followed by radiotherapy or surgery - presumably in metastatic setting (Treatment name)"
         )
     }
 
@@ -147,7 +147,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has had prior systemic treatment ignoring targeted therapy >6 months ago but undetermined if in metastatic setting (Treatment name)"
+            "Prior systemic treatment ignoring targeted therapy >6 months ago in provided treatments but undetermined if in metastatic setting (Treatment name)"
         )
     }
 
@@ -174,7 +174,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has had prior systemic treatment ignoring targeted therapy >6 months ago but undetermined if in metastatic setting (Treatment name)"
+            "Prior systemic treatment ignoring targeted therapy >6 months ago in provided treatments but undetermined if in metastatic setting (Treatment name)"
         )
     }
 
@@ -196,7 +196,7 @@ class HasHadSystemicTreatmentWithUnknownOrSpecificIntentAndSettingTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             evaluation,
-            "Has had prior systemic treatment ignoring targeted therapy but undetermined if in metastatic setting (Treatment name)"
+            "Prior systemic treatment ignoring targeted therapy in provided treatments but undetermined if in metastatic setting (Treatment name)"
         )
     }
 
