@@ -4,6 +4,9 @@ import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationStatus
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.Radiopharmaceutical
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryDetails
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -26,10 +29,15 @@ object MedicationToTreatmentConverter {
                 val (start, stop) = extractStartAndStopRange(medications)
                 val name = drug?.name?.lowercase()?.replaceFirstChar { char -> char.uppercase() } ?: "Unknown"
                 val isTrialMedication = medications.all { it.isTrialMedication }
+                val drugTreatment = when (drug) {
+                    is Radiopharmaceutical -> Radiotherapy(name = name, drugs = setOf(drug))
+                    is StandardDrug -> DrugTreatment(name = name, drugs = setOf(drug))
+                    null -> DrugTreatment(name = name, drugs = emptySet())
+                }
                 TreatmentHistoryEntry(
                     startYear = start?.year,
                     startMonth = start?.monthValue,
-                    treatments = setOf(DrugTreatment(name = name, drugs = setOfNotNull(drug))),
+                    treatments = setOf(drugTreatment),
                     isTrial = isTrialMedication,
                     treatmentHistoryDetails = TreatmentHistoryDetails(stopYear = stop?.year, stopMonth = stop?.monthValue)
                 )
@@ -38,11 +46,8 @@ object MedicationToTreatmentConverter {
 
     private fun createTreatmentHistoryEntryPerDrugMap(treatmentHistory: List<TreatmentHistoryEntry>): Map<Drug, List<TreatmentHistoryEntry>> {
         return treatmentHistory.flatMap { entry ->
-            entry.allTreatments().flatMap { treatment ->
-                (treatment as? DrugTreatment)?.drugs?.map { it to entry } ?: emptyList()
-            }
-        }
-            .groupBy({ it.first }, { it.second })
+            entry.allTreatments().flatMap { treatment -> treatment.drugs.map { it to entry } }
+        }.groupBy({ it.first }, { it.second })
     }
 
     fun matchesDate(medication: Medication, treatmentHistory: TreatmentHistoryEntry): Boolean {

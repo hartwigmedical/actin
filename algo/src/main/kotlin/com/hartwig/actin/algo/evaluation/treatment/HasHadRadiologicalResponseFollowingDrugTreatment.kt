@@ -5,7 +5,6 @@ import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
 
 class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) : EvaluationFunction {
@@ -13,9 +12,7 @@ class HasHadRadiologicalResponseFollowingDrugTreatment(private val drug: Drug) :
     override fun evaluate(record: PatientRecord): Evaluation {
 
         val matchingDrugTreatments = record.oncologicalHistory.filter { entry ->
-            entry.treatments.any { treatment ->
-                (treatment as? DrugTreatment)?.drugs?.any { it.name.equals(drug.name, ignoreCase = true) } == true
-            }
+            entry.treatments.any { treatment -> treatment.drugs.any { it.name.equals(drug.name, ignoreCase = true) } }
         }
         val (positiveResponses, otherResponses) = matchingDrugTreatments
             .partition { it.treatmentHistoryDetails?.bestResponse in TreatmentResponse.BENEFIT_RESPONSES }

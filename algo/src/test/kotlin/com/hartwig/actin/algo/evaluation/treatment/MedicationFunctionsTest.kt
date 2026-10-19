@@ -3,21 +3,21 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasCategory
 import com.hartwig.actin.algo.evaluation.treatment.MedicationFunctions.hasDrugType
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class MedicationFunctionsTest {
 
-    private val chemotherapyDrug = Drug(
+    private val chemotherapyDrug = StandardDrug(
         name = "Chemotherapy drug",
         category = TreatmentCategory.CHEMOTHERAPY,
         drugTypes = setOf(DrugType.ALKYLATING_AGENT)
     )
 
-    private val immunotherapyDrug = Drug(
+    private val immunotherapyDrug = StandardDrug(
         name = "Immunotherapy drug",
         category = TreatmentCategory.IMMUNOTHERAPY,
         drugTypes = setOf(DrugType.ABL_TYROSINE_KINASE_INHIBITOR)

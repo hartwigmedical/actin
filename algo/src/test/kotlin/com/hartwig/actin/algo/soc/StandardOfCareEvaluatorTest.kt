@@ -9,8 +9,9 @@ import com.hartwig.actin.datamodel.algo.EvaluatedTreatment
 import com.hartwig.actin.datamodel.algo.TreatmentCandidate
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TumorDetails
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
@@ -278,7 +279,7 @@ class StandardOfCareEvaluatorTest {
         val antiEgfrTreatments = setOf(CETUXIMAB, PANITUMUMAB)
         assertThat(
             resultsForPatientWithHistoryAndMolecular(listOf(CAPOX), minimalMolecularTest, "Ascending colon")
-                .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
+                .filter { it.treatment.drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
     }
 
     @Test
@@ -288,7 +289,7 @@ class StandardOfCareEvaluatorTest {
         antiEgfrTreatments.forEach { antiEgfrTreatment ->
             assertThat(
                 resultsForPatientWithHistory(firstLineChemotherapies + antiEgfrTreatment)
-                    .filter { (it.treatment as DrugTreatment).drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
+                    .filter { it.treatment.drugs.any { drug -> drug.name.uppercase() in antiEgfrTreatments } }).isEmpty()
         }
     }
 
@@ -308,9 +309,9 @@ class StandardOfCareEvaluatorTest {
         }
     }
 
-    private fun antiEGFRTherapies(): List<DrugTreatment> {
+    private fun antiEGFRTherapies(): List<Treatment> {
         return resultsForPatientWithHistory(listOf(CAPOX))
-            .mapNotNull { it.treatment as? DrugTreatment }
+            .map { it.treatment }
             .filter {
                 it.drugs.any { drug ->
                     drug.name.uppercase() == CETUXIMAB ||
@@ -491,13 +492,13 @@ class StandardOfCareEvaluatorTest {
         }
     }
 
-    private fun drug(name: String): Drug {
+    private fun drug(name: String): StandardDrug {
         val category = if (name == "TARGETED_THERAPY" || name.endsWith("B")) {
             TreatmentCategory.TARGETED_THERAPY
         } else {
             TreatmentCategory.CHEMOTHERAPY
         }
-        return Drug(name, emptySet(), emptySet(), category)
+        return StandardDrug(name, emptySet(), emptySet(), category)
     }
 
     private fun resultsForPatient(patientRecord: PatientRecord): List<TreatmentCandidate> {

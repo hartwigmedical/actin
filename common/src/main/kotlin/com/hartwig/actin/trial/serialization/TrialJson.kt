@@ -55,7 +55,7 @@ object TrialJson {
 
     private fun gson() = GsonSerializer.createBuilder()
         .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
-        .registerTypeAdapter(Drug::class.java, DrugDeserializer())
+        .registerTypeHierarchyAdapter(Drug::class.java, DrugDeserializer())
         .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
         .create()
 

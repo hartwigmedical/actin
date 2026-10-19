@@ -7,8 +7,8 @@ import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
@@ -279,7 +279,7 @@ class HasHadAnyCancerTreatmentSinceDateTest {
             ),
             listOf(
                 WashoutTestFactory.medication(atc, MIN_DATE.plusMonths(1))
-                    .copy(drug = Drug(name = "", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
+                    .copy(drug = StandardDrug(name = "", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = emptySet()))
             )
         )
         evaluateFunctions(

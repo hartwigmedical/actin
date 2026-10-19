@@ -7,9 +7,9 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test
 
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
-private val DRUG_TO_IGNORE = Drug("drug to ignore", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
-private val OTHER_MATCHING_DRUG = Drug("other drug", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
-private val OTHER_NON_MATCHING_DRUG = Drug("other drug", emptySet(), emptySet(), TreatmentCategory.IMMUNOTHERAPY)
+private val DRUG_TO_IGNORE = StandardDrug("drug to ignore", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_MATCHING_DRUG = StandardDrug("other drug", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_NON_MATCHING_DRUG = StandardDrug("other drug", emptySet(), emptySet(), TreatmentCategory.IMMUNOTHERAPY)
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 

@@ -3,6 +3,7 @@ package com.hartwig.actin.trial.input.datamodel
 import com.hartwig.actin.datamodel.Displayable
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.RadiopharmaceuticalType
 import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
@@ -31,7 +32,12 @@ class TreatmentCategoryInput(val mappedCategory: TreatmentCategory, val mappedTy
 
         private fun resolveTreatmentType(query: String): TreatmentType {
             val type =
-                listOf(DrugType::valueOf, RadiotherapyType::valueOf, OtherTreatmentType::valueOf).firstNotNullOfOrNull { createType ->
+                listOf(
+                    DrugType::valueOf,
+                    RadiopharmaceuticalType::valueOf,
+                    RadiotherapyType::valueOf,
+                    OtherTreatmentType::valueOf
+                ).firstNotNullOfOrNull { createType ->
                     try {
                         createType(query)
                     } catch (e: IllegalArgumentException) {

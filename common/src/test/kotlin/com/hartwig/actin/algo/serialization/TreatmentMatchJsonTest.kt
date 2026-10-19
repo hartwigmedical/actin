@@ -85,7 +85,7 @@ class TreatmentMatchJsonTest {
                         "treatments":[
                             {"name":"PEMBROLIZUMAB",
                             "drugs":[{"name":"PEMBROLIZUMAB","synonyms":[],"drugTypes":["TOPO1_INHIBITOR"],"category":"CHEMOTHERAPY",
-                            "displayOverride":null}],"synonyms":[],"displayOverride":null,"isSystemic":true,"maxCycles":null,
+                            "displayOverride":null,"drugClass":"STANDARD_DRUG"}],"synonyms":[],"displayOverride":null,"isSystemic":true,"maxCycles":null,
                             "treatmentClass":"DRUG_TREATMENT"}],
                         "therapeuticSetting":"ADJUVANT",
                         "variantRequirements":[{"name":"MSI high","requirementType":"required"}],
@@ -100,7 +100,7 @@ class TreatmentMatchJsonTest {
                             "patientsWithPrimaryTumorRemoved":25,"patientsPerMetastaticSites":
                             {"Lung":{"value":100,"percentage":100.0}},"timeOfMetastases":"BOTH","treatment":
                             {"name":"PEMBROLIZUMAB","drugs":[{"name":"PEMBROLIZUMAB","synonyms":[],"drugTypes":["TOPO1_INHIBITOR"],
-                            "category":"CHEMOTHERAPY","displayOverride":null}],"synonyms":[],"displayOverride":null,
+                            "category":"CHEMOTHERAPY","displayOverride":null,"drugClass":"STANDARD_DRUG"}],"synonyms":[],"displayOverride":null,
                             "isSystemic":true,"maxCycles":null,"treatmentClass":"DRUG_TREATMENT"},
                             "priorSystemicTherapy":"Chemo","patientsWithMSI":33,
                             "medianFollowUpForSurvival":"30","medianFollowUpPFS":"30",

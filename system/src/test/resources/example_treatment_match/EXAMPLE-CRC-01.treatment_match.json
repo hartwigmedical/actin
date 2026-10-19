@@ -655,6 +655,7 @@
           "drugs": [
             {
               "name": "FLUOROURACIL",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "ANTIMETABOLITE",
                 "FLUOROPYRIMIDINE",
@@ -665,12 +666,14 @@
             },
             {
               "name": "FOLINIC_ACID",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [],
               "category": "SUPPORTIVE_TREATMENT",
               "displayOverride": null
             },
             {
               "name": "IRINOTECAN",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "TOPO1_INHIBITOR"
               ],
@@ -881,6 +884,7 @@
               "drugs": [
                 {
                   "name": "CETUXIMAB",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "EGFR_ANTIBODY",
                     "MONOCLONAL_ANTIBODY_TARGETED_THERAPY"
@@ -890,6 +894,7 @@
                 },
                 {
                   "name": "FLUOROURACIL",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "ANTIMETABOLITE",
                     "FLUOROPYRIMIDINE",
@@ -900,12 +905,14 @@
                 },
                 {
                   "name": "FOLINIC_ACID",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [],
                   "category": "SUPPORTIVE_TREATMENT",
                   "displayOverride": null
                 },
                 {
                   "name": "IRINOTECAN",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "TOPO1_INHIBITOR"
                   ],
@@ -927,6 +934,7 @@
               "drugs": [
                 {
                   "name": "FLUOROURACIL",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "ANTIMETABOLITE",
                     "FLUOROPYRIMIDINE",
@@ -937,12 +945,14 @@
                 },
                 {
                   "name": "FOLINIC_ACID",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [],
                   "category": "SUPPORTIVE_TREATMENT",
                   "displayOverride": null
                 },
                 {
                   "name": "IRINOTECAN",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "TOPO1_INHIBITOR"
                   ],
@@ -1006,6 +1016,7 @@
                     "drugs": [
                       {
                         "name": "CETUXIMAB",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "EGFR_ANTIBODY",
                           "MONOCLONAL_ANTIBODY_TARGETED_THERAPY"
@@ -1015,6 +1026,7 @@
                       },
                       {
                         "name": "FLUOROURACIL",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "ANTIMETABOLITE",
                           "FLUOROPYRIMIDINE",
@@ -1025,12 +1037,14 @@
                       },
                       {
                         "name": "FOLINIC_ACID",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [],
                         "category": "SUPPORTIVE_TREATMENT",
                         "displayOverride": null
                       },
                       {
                         "name": "IRINOTECAN",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "TOPO1_INHIBITOR"
                         ],
@@ -1153,6 +1167,7 @@
                     "drugs": [
                       {
                         "name": "FLUOROURACIL",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "ANTIMETABOLITE",
                           "FLUOROPYRIMIDINE",
@@ -1163,12 +1178,14 @@
                       },
                       {
                         "name": "FOLINIC_ACID",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [],
                         "category": "SUPPORTIVE_TREATMENT",
                         "displayOverride": null
                       },
                       {
                         "name": "IRINOTECAN",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "TOPO1_INHIBITOR"
                         ],

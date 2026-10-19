@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.ckb.json.CkbExtendedEvidenceTestFactory
 import com.hartwig.actin.algo.ckb.json.CkbMolecularProfile
 import com.hartwig.actin.algo.ckb.json.CkbTherapy
 import com.hartwig.actin.algo.ckb.json.CkbVariantRequirementDetail
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
 import com.hartwig.actin.datamodel.efficacy.ConfidenceInterval
@@ -55,12 +55,12 @@ class EfficacyEntryFactoryTest {
             DrugTreatment(
                 name = "CAPECITABINE+OXALIPLATIN",
                 drugs = setOf(
-                    Drug(
+                    StandardDrug(
                         name = "CAPECITABINE",
                         drugTypes = setOf(DrugType.ANTIMETABOLITE),
                         category = TreatmentCategory.CHEMOTHERAPY,
                         displayOverride = null
-                    ), Drug(name = "OXALIPLATIN", drugTypes = setOf(DrugType.PLATINUM_COMPOUND), category = TreatmentCategory.CHEMOTHERAPY)
+                    ), StandardDrug(name = "OXALIPLATIN", drugTypes = setOf(DrugType.PLATINUM_COMPOUND), category = TreatmentCategory.CHEMOTHERAPY)
                 )
             )
         )

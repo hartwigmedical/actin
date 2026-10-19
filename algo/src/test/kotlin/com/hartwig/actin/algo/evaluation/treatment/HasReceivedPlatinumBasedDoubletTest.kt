@@ -6,10 +6,10 @@ import com.hartwig.actin.algo.evaluation.tumor.TumorTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.doid.TestDoidModelFactory
 import org.junit.jupiter.api.Test
@@ -29,21 +29,21 @@ class HasReceivedPlatinumBasedDoubletTest {
         DrugTreatment(
             name = "Carboplatin+Pemetrexed",
             drugs = setOf(
-                Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)),
-                Drug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
+                StandardDrug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)),
+                StandardDrug(name = "Pemetrexed", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTIMETABOLITE))
             )
         )
     private val platinumDoubletWithImmuno =
         platinumDoublet.copy(
             name = platinumDoublet.name.plus("+Pembrolizumab"),
             drugs = platinumDoublet.drugs
-                .plus(Drug(name = "Pembrolizumab", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_PD_1)))
+                .plus(StandardDrug(name = "Pembrolizumab", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_PD_1)))
         )
     private val platinumTriplet =
         platinumDoublet.copy(
             name = platinumDoublet.name.plus("+Paclitaxel"),
             drugs = platinumDoublet.drugs
-                .plus(Drug(name = "Paclitaxel", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.TAXANE)))
+                .plus(StandardDrug(name = "Paclitaxel", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.TAXANE)))
         )
 
     private val platinumChemoDrug =
