@@ -6,7 +6,6 @@ import com.hartwig.actin.algo.evaluation.util.Format.concatItemsWithAnd
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
@@ -27,11 +26,11 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
             { historyEntry ->
                 historyEntry.allTreatments().any { treatment ->
                     val typesMatch = types?.let { treatment.types().intersect(types).isNotEmpty() } ?: true
-                    val drugsNotIgnored = (treatment as? DrugTreatment)?.drugs?.intersect(ignoreDrugs)?.isEmpty() == true
+                    val drugsNotIgnored = treatment.drugs.intersect(ignoreDrugs).isEmpty()
                     typesMatch && drugsNotIgnored
                 }
             },
-            { treatment -> (treatment as? DrugTreatment)?.drugs.isNullOrEmpty() || treatment.types().isEmpty() }
+            { treatment -> treatment.drugs.isEmpty() || treatment.types().isEmpty() }
         )
 
         val matchingTreatmentTypes = treatmentSummary.specificMatches.flatMap { it.treatments.flatMap(Treatment::types) }
@@ -39,18 +38,18 @@ class HasHadTreatmentWithCategoryAndTypeButNotWithDrugs(
 
         val ignoreDrugsList = concatItemsWithAnd(ignoreDrugs)
         val typeMessage = if (types != null && concatenatedMatchingTypes.isNotEmpty()) " of types $concatenatedMatchingTypes" else ""
-        val messageEnding = "received ${category.display()}$typeMessage ignoring $ignoreDrugsList"
+        val messageEnding = "${category.display()}$typeMessage in provided treatments ignoring $ignoreDrugsList"
 
         return when {
             treatmentSummary.hasSpecificMatch() -> {
-                EvaluationFactory.pass("Has $messageEnding")
+                EvaluationFactory.pass(messageEnding)
             }
 
             treatmentSummary.hasPossibleTrialMatch() -> {
-                EvaluationFactory.undetermined("Undetermined if treatment received in previous trial included ${category.display()}$typeMessage ignoring $ignoreDrugsList")
+                EvaluationFactory.undetermined("Undetermined if treatment from in previous trial included ${category.display()}$typeMessage ignoring $ignoreDrugsList")
             }
 
-            else -> EvaluationFactory.fail("Has not $messageEnding")
+            else -> EvaluationFactory.fail("No $messageEnding")
         }
     }
 }

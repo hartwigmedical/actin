@@ -11,7 +11,8 @@ class HasMinimumLesionsInSpecificBodyLocation(
 ) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val messageEnding = "at least $minLesions lesions in ${bodyLocation.display()}"
+        val message = "At least $minLesions lesions in ${bodyLocation.display()}"
+        val undeterminedMessage = "Undetermined if ${message.lowercase()} based on provided lesions"
 
         val (hasLesions, hasSuspectedLesions) = with(record.tumor) {
             when (bodyLocation) {
@@ -21,20 +22,20 @@ class HasMinimumLesionsInSpecificBodyLocation(
                 BodyLocationCategory.LIVER -> Pair(hasLiverLesions, hasSuspectedLiverLesions)
                 BodyLocationCategory.LUNG -> Pair(hasLungLesions, hasSuspectedLungLesions)
                 BodyLocationCategory.LYMPH_NODE -> Pair(hasLymphNodeLesions, hasSuspectedLymphNodeLesions)
-                else -> return EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
+                else -> return EvaluationFactory.undetermined(undeterminedMessage)
             }
         }
 
         return when {
             minLesions <= 1 && hasLesions == true -> {
-                EvaluationFactory.pass("Patient has $messageEnding")
+                EvaluationFactory.pass(message)
             }
 
             hasLesions != false || hasSuspectedLesions == true -> {
-                EvaluationFactory.undetermined("Undetermined if patient has $messageEnding")
+                EvaluationFactory.undetermined(undeterminedMessage)
             }
 
-            else -> EvaluationFactory.fail("Does not have $messageEnding")
+            else -> EvaluationFactory.fail("Fewer than $minLesions lesions in ${bodyLocation.display()} in provided lesions")
         }
     }
 }

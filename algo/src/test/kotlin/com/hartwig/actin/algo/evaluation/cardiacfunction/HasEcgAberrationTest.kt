@@ -20,12 +20,12 @@ class HasEcgAberrationTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(CardiacFunctionTestFactory.withEcgDescription("with description")),
-            "ECG abnormalities present (with description)"
+            "ECG abnormalities provided (with description)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(CardiacFunctionTestFactory.withEcgDescription(null)),
-            "ECG abnormalities present (details unknown)"
+            "ECG abnormalities provided (details unknown)"
         )
     }
 
@@ -41,12 +41,12 @@ class HasEcgAberrationTest {
                     )
                 )
             ),
-            "Cardiac arrhythmia in history ($CARDIAC_ARRHYTHMIA)"
+            "Cardiac arrhythmia in provided history ($CARDIAC_ARRHYTHMIA)"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(CardiacFunctionTestFactory.withEcgDescription(null)),
-            "ECG abnormalities present (details unknown)"
+            "ECG abnormalities provided (details unknown)"
         )
     }
 
@@ -64,13 +64,17 @@ class HasEcgAberrationTest {
         assertEvaluation(
             EvaluationResult.PASS,
             evaluation,
-            "ECG abnormalities (ecg abnormality) and cardiac arrhythmia ($CARDIAC_ARRHYTHMIA) in history"
+            "ECG abnormalities (ecg abnormality) and cardiac arrhythmia ($CARDIAC_ARRHYTHMIA) in provided history"
         )
     }
 
     @Test
     fun `Should fail with no ECG aberration no cardiac arrhythmia comorbidities`() {
         val record = CardiacFunctionTestFactory.withEcg(null).copy(comorbidities = emptyList())
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No known ECG abnormalities")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(record),
+            "No known ECG abnormalities in provided history"
+        )
     }
 }

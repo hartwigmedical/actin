@@ -1,5 +1,6 @@
 package com.hartwig.actin.util.json
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.hartwig.actin.algo.serialization.EvaluationMessageDeserializer
 import com.hartwig.actin.algo.serialization.EvaluationMessageSerializer
@@ -16,11 +17,15 @@ import com.hartwig.actin.datamodel.clinical.ToxicitySource
 import com.hartwig.actin.datamodel.clinical.WhoStatus
 import com.hartwig.actin.datamodel.clinical.WhoStatusPrecision
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.DrugClass
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.Radiopharmaceutical
+import com.hartwig.actin.datamodel.clinical.treatment.RadiopharmaceuticalType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
 
@@ -38,13 +43,30 @@ class ClinicalAdaptersTest {
 
     @Test
     fun `Should round-trip Drug, defaulting missing synonyms to empty set`() {
-        val json = """{"name":"Cisplatin","drugTypes":["PLATINUM_COMPOUND"],"category":"CHEMOTHERAPY","displayOverride":null}"""
+        val json =
+            """{"name":"Cisplatin","drugClass":"STANDARD_DRUG","drugTypes":["PLATINUM_COMPOUND"],"category":"CHEMOTHERAPY","displayOverride":null}"""
         val drug = mapper.readValue(json, Drug::class.java)
+        assertThat(drug.drugClass).isEqualTo(DrugClass.STANDARD_DRUG)
         assertThat(drug.name).isEqualTo("Cisplatin")
         assertThat(drug.synonyms).isEmpty()
         assertThat(drug.drugTypes).containsExactly(DrugType.PLATINUM_COMPOUND)
         assertThat(drug.category).isEqualTo(TreatmentCategory.CHEMOTHERAPY)
         assertThat(drug.displayOverride).isNull()
+    }
+
+    @Test
+    fun `Should round-trip Radiopharmaceutical via Drug polymorphic deserializer`() {
+        val drug: Drug = Radiopharmaceutical(name = "LUTETIUM_LU_177_DOTATATE", drugTypes = setOf(RadiopharmaceuticalType.RADIOLIGAND_THERAPY))
+        val roundtripped = mapper.readValue(mapper.writeValueAsString(drug), Drug::class.java)
+        assertThat(roundtripped).isEqualTo(drug)
+    }
+
+    @Test
+    fun `Should fail to deserialize Drug without drug class`() {
+        val json = """{"name":"Cisplatin","drugTypes":["PLATINUM_COMPOUND"],"category":"CHEMOTHERAPY"}"""
+        assertThatThrownBy { mapper.readValue(json, Drug::class.java) }
+            .isInstanceOf(JsonMappingException::class.java)
+            .hasMessageContaining("Missing required field 'drugClass'")
     }
 
     @Test

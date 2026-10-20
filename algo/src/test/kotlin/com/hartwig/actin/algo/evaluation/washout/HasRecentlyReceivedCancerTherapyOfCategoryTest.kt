@@ -7,9 +7,9 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 import org.assertj.core.api.Assertions.assertThat
@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test
 
 private val REFERENCE_DATE = LocalDate.of(2020, 6, 6)
 private val INTERPRETER = WashoutTestFactory.activeFromDate(REFERENCE_DATE)
-private val DRUG_TO_IGNORE = Drug("drug to ignore", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
-private val OTHER_MATCHING_DRUG = Drug("other drug", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
-private val OTHER_NON_MATCHING_DRUG = Drug("other drug", emptySet(), emptySet(), TreatmentCategory.IMMUNOTHERAPY)
+private val DRUG_TO_IGNORE = StandardDrug("drug to ignore", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_MATCHING_DRUG = StandardDrug("other drug", emptySet(), emptySet(), TreatmentCategory.CHEMOTHERAPY)
+private val OTHER_NON_MATCHING_DRUG = StandardDrug("other drug", emptySet(), emptySet(), TreatmentCategory.IMMUNOTHERAPY)
 
 class HasRecentlyReceivedCancerTherapyOfCategoryTest {
 
@@ -40,7 +40,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug in provided medications"
         )
     }
 
@@ -51,7 +51,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug in provided medications"
         )
     }
 
@@ -62,7 +62,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug in provided medications"
         )
     }
 
@@ -73,7 +73,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Recent 'chemotherapy' drug use (drug) - pay attention to washout period"
+            "Recent 'chemotherapy' drug in provided medications (drug) - pay attention to washout period"
         )
     }
 
@@ -94,7 +94,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-            "Recent 'chemotherapy' drug use - pay attention to washout period"
+            "Recent 'chemotherapy' drug in provided medications - pay attention to washout period"
         )
     }
 
@@ -119,7 +119,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-            "Recent 'monoclonal antibodies and antibody drug conjugates' drug use (parp inhibitor) - pay attention to washout period"
+            "Recent 'monoclonal antibodies and antibody drug conjugates' drug in provided medications (parp inhibitor) - pay attention to washout period"
         )
     }
 
@@ -130,7 +130,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug in provided medications"
         )
     }
 
@@ -142,7 +142,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Recent 'chemotherapy' drug use (other drug) - pay attention to washout period"
+            "Recent 'chemotherapy' drug in provided medications (other drug) - pay attention to washout period"
         )
     }
 
@@ -156,7 +156,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug in provided medications"
         )
     }
 
@@ -173,7 +173,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-            "Has received 'chemotherapy and monoclonal antibodies and antibody drug conjugates' treatment but inconclusive date"
+            "'chemotherapy and monoclonal antibodies and antibody drug conjugates' treatment in provided treatments but date is inconclusive"
         )
     }
 
@@ -193,7 +193,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Undetermined if treatment received in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
+            "Undetermined if treatment in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
         )
     }
 
@@ -203,7 +203,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Undetermined if treatment received in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
+            "Undetermined if treatment in previous trial included chemotherapy and monoclonal antibodies and antibody drug conjugates"
         )
     }
 
@@ -235,7 +235,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, null)),
-            "Recent 'monoclonal antibodies and antibody drug conjugates' drug use (parp inhibitor) - pay attention to washout period"
+            "Recent 'monoclonal antibodies and antibody drug conjugates' drug in provided medications (parp inhibitor) - pay attention to washout period"
         )
     }
 
@@ -246,7 +246,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList())),
-            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug in provided medications"
         )
     }
 
@@ -265,7 +265,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList())),
-            "Recent 'chemotherapy' drug use (other drug) - pay attention to washout period"
+            "Recent 'chemotherapy' drug in provided medications (other drug) - pay attention to washout period"
         )
     }
 
@@ -284,7 +284,7 @@ class HasRecentlyReceivedCancerTherapyOfCategoryTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, emptyList())),
-            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug use"
+            "No recent 'chemotherapy and monoclonal antibodies and antibody drug conjugates' drug in provided medications"
         )
     }
 }

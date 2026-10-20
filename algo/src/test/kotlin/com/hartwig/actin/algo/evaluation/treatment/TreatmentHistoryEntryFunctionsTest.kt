@@ -5,8 +5,8 @@ import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunction
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentStage
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -16,7 +16,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEn
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-private val TARGET_DRUG_SET = setOf(Drug("Osimertinib", emptySet(), setOf(DrugType.EGFR_INHIBITOR), TreatmentCategory.TARGETED_THERAPY))
+private val TARGET_DRUG_SET = setOf(StandardDrug("Osimertinib", emptySet(), setOf(DrugType.EGFR_INHIBITOR), TreatmentCategory.TARGETED_THERAPY))
 private val TARGET_DRUG_TREATMENT = drugTreatment("Osimertinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.EGFR_INHIBITOR))
 private val WRONG_DRUG_TREATMENT = drugTreatment("Alectinib", TreatmentCategory.TARGETED_THERAPY, setOf(DrugType.ALK_INHIBITOR))
 private val DRUG_TREATMENT_WITH_TARGET_CATEGORY = drugTreatment("Target therapy trial drug", TreatmentCategory.TARGETED_THERAPY, emptySet())

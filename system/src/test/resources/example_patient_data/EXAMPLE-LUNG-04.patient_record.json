@@ -49,6 +49,7 @@
           "drugs": [
             {
               "name": "CISPLATIN",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "PLATINUM_COMPOUND"
               ],
@@ -57,6 +58,7 @@
             },
             {
               "name": "ETOPOSIDE",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "TOPO2_INHIBITOR"
               ],

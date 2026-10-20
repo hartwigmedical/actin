@@ -17,7 +17,13 @@ class HasAnyLesionTest {
             TumorTestFactory.withBrainLesions(true),
             TumorTestFactory.withLungLesions(true),
             TumorTestFactory.withLymphNodeLesions(true),
-        ).forEach { assertEvaluation(EvaluationResult.PASS, function.evaluate(it), "Has at least one lesion") }
+        ).forEach {
+            assertEvaluation(
+                EvaluationResult.PASS,
+                function.evaluate(it),
+                "At least one lesion in provided lesions"
+            )
+        }
     }
 
     @Test
@@ -25,7 +31,7 @@ class HasAnyLesionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TumorTestFactory.withOtherLesions(listOf("other"))),
-            "Has at least one lesion"
+            "At least one lesion in provided lesions"
         )
     }
 
@@ -34,7 +40,7 @@ class HasAnyLesionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(TumorTestFactory.withOtherSuspectedLesions(listOf("lesion"))),
-            "Has only suspected lesions - undetermined if has lesions"
+            "Undetermined if lesions are present based on provided lesions (only suspected lesions)"
         )
     }
 
@@ -43,7 +49,7 @@ class HasAnyLesionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withConfirmedLesions()),
-            "Undetermined if lesions are present (some lesion data missing)"
+            "Undetermined presence of lesions based on provided lesions"
         )
     }
 
@@ -52,7 +58,7 @@ class HasAnyLesionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TumorTestFactory.withConfirmedLesions(false, false)),
-            "Undetermined if lesions are present (some lesion data missing)"
+            "Undetermined presence of lesions based on provided lesions"
         )
     }
 
@@ -65,7 +71,7 @@ class HasAnyLesionTest {
                     emptyList()
                 )
             ),
-            "Has no lesions"
+            "No lesions provided"
         )
     }
 }

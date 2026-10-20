@@ -29,7 +29,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received HER2 antibody targeted therapy treatment for less than 6 weeks"
+            "HER2 antibody targeted therapy treatment for less than 6 weeks in provided treatments"
         )
     }
 
@@ -40,7 +40,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if treatment received contained HER2 antibody targeted therapy treatment for less than 6 weeks"
+            "Undetermined if treatment included HER2 antibody targeted therapy treatment for less than 6 weeks based on provided treatments"
         )
     }
 
@@ -51,7 +51,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if treatment received in previous trial contained HER2 antibody targeted therapy treatment for less than 6 weeks"
+            "Undetermined if treatment from previous trial included HER2 antibody targeted therapy treatment for less than 6 weeks"
         )
     }
 
@@ -61,7 +61,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received HER2 antibody targeted therapy treatment but unknown nb of weeks"
+            "HER2 antibody targeted therapy treatment in provided treatments but unknown nb of weeks"
         )
     }
 
@@ -70,7 +70,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not received HER2 antibody targeted therapy treatment"
+            "No HER2 antibody targeted therapy treatment in provided treatments"
         )
     }
 
@@ -81,7 +81,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not received HER2 antibody targeted therapy treatment"
+            "No HER2 antibody targeted therapy treatment in provided treatments"
         )
     }
 
@@ -112,7 +112,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had HER2 antibody targeted therapy treatment treatment but for more than 6 weeks"
+            "HER2 antibody targeted therapy treatment treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -144,7 +144,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
                     )
                 )
             ),
-            "Has had HER2 antibody targeted therapy treatment treatment but for more than 6 weeks"
+            "HER2 antibody targeted therapy treatment treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -176,7 +176,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
                     )
                 )
             ),
-            "Has had HER2 antibody targeted therapy treatment treatment but for more than 6 weeks"
+            "HER2 antibody targeted therapy treatment treatment in provided treatments but for more than 6 weeks"
         )
     }
 
@@ -199,7 +199,7 @@ class HasHadLimitedWeeksOfTreatmentOfCategoryWithTypesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry1, treatmentHistoryEntry2))),
-            "Undetermined if multiple received HER2 antibody targeted therapy treatment is counted as received for more than 6 weeks"
+            "Undetermined if multiple HER2 antibody targeted therapy treatment in provided treatments is counted for more than 6 weeks"
         )
     }
 }

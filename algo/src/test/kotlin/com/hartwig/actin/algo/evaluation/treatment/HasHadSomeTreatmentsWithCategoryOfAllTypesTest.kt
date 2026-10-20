@@ -5,9 +5,9 @@ import com.hartwig.actin.algo.evaluation.medication.MedicationTestFactory
 import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -41,7 +41,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "At least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -52,14 +52,14 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             setOf(TreatmentTestFactory.drugTreatment("test", MATCHING_CATEGORY, setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "", category = MATCHING_CATEGORY, drugTypes = MATCHING_TYPES
             )
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
-            "Has received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "At least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -69,7 +69,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(emptyList()))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Fewer than 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -90,7 +90,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Fewer than 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -111,7 +111,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Fewer than 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -132,7 +132,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
             EvaluationResult.FAIL, function.evaluate(
                 (TreatmentTestFactory.withTreatmentHistory(treatmentHistoryEntry))
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Fewer than 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -140,14 +140,14 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
     fun `Should fail when medication entry has drug with correct category but not of all requested types`() {
         val function = HasHadSomeTreatmentsWithCategoryOfAllTypes(MATCHING_CATEGORY, MATCHING_TYPES, 1)
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "", category = MATCHING_CATEGORY, drugTypes = setOf(DrugType.HER2_ANTIBODY)
             )
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(listOf(medication))),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Fewer than 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -168,7 +168,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
                     listOf(treatmentHistoryEntry)
                 )
             ),
-            "Has not received at least 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy"
+            "Fewer than 1 line(s) of antibody-drug conjugate targeted therapy and HER2 antibody combination targeted therapy in provided treatments"
         )
     }
 
@@ -180,7 +180,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Trial medication in history - undetermined if received at least 1 line(s) of targeted therapy"
+            "Trial medication - undetermined if at least 1 line(s) of targeted therapy based on provided treatments"
         )
     }
 
@@ -194,7 +194,7 @@ class HasHadSomeTreatmentsWithCategoryOfAllTypesTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(listOf(treatmentHistoryEntry, treatmentHistoryEntry))),
-            "Has not received at least 1 line(s) of allogenic combination transplantation"
+            "Fewer than 1 line(s) of allogenic combination transplantation in provided treatments"
         )
     }
 }

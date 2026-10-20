@@ -10,7 +10,6 @@ import com.hartwig.actin.clinical.interpretation.MedicationStatusInterpreter
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import java.time.LocalDate
 
 class HasRecentlyReceivedCancerTherapyWithDrug(
@@ -31,11 +30,11 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
         val matchingTreatments = record.oncologicalHistory
             .mapNotNull { entry ->
                 TreatmentHistoryEntryFunctions.portionOfTreatmentHistoryEntryMatchingPredicate(entry) {
-                    it is DrugTreatment && it.drugs.intersect(drugsToFind).isNotEmpty()
+                    it.drugs.intersect(drugsToFind).isNotEmpty()
                 }
             }
         val treatmentDrugsFound = matchingTreatments.flatMap { it.treatments }
-            .flatMap { (it as? DrugTreatment)?.drugs?.intersect(drugsToFind) ?: emptySet() }
+            .flatMap { it.drugs.intersect(drugsToFind) }
             .map { it.name }
 
         val namesFound = medicationsFound + treatmentDrugsFound
@@ -44,19 +43,22 @@ class HasRecentlyReceivedCancerTherapyWithDrug(
             medicationsFound.isNotEmpty() || matchingTreatments.any {
                 TreatmentVersusDateFunctions.certainTreatmentSinceMinDate(it, minDate)
             } -> {
-                EvaluationFactory.pass("Received recent ${Format.concat(namesFound)} " +
+                EvaluationFactory.pass(
+                    "Recent treatment with medication ${Format.concat(namesFound)} " +
                         "- pay attention to washout period"
                 )
             }
 
             matchingTreatments.any { TreatmentVersusDateFunctions.potentialTreatmentSinceMinDate(it, minDate) } -> {
                 EvaluationFactory.undetermined(
-                    "Received ${Format.concatItemsWithOr(drugsToFind)} but unknown if recent (missing stop date)"
+                    "Treatment containing ${Format.concatItemsWithOr(drugsToFind)} in provided treatments with unknown date"
                 )
             }
 
             else -> {
-                EvaluationFactory.fail("Has not received recent treatments with name " + Format.concatItemsWithOr(drugsToFind))
+                EvaluationFactory.fail(
+                    "No recent treatments with name " + Format.concatItemsWithOr(drugsToFind) + " in provided treatments"
+                )
             }
         }
     }

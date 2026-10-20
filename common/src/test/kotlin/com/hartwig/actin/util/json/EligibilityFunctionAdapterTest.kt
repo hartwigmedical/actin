@@ -1,7 +1,9 @@
 package com.hartwig.actin.util.json
 
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.hartwig.actin.clinical.serialization.DrugDeserializer
 import com.hartwig.actin.clinical.serialization.TreatmentDeserializer
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.DrugParameter
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
@@ -71,6 +73,7 @@ class EligibilityFunctionAdapterTest {
             addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
             addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
             addDeserializer(Treatment::class.java, TreatmentDeserializer)
+            addDeserializer(Drug::class.java, DrugDeserializer)
         }
     )
 }

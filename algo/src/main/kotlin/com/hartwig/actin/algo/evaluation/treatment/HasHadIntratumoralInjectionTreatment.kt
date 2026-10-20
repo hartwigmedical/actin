@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class HasHadIntratumoralInjectionTreatment : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Prior intratumoral injection treatment undetermined")
+        return EvaluationFactory.undetermined("Prior intratumoral injection treatment undetermined based on provided treatments")
     }
 }

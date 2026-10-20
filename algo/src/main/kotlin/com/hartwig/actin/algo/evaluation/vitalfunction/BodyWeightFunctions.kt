@@ -44,7 +44,10 @@ object BodyWeightFunctions {
         return when {
             (!referenceIsMinimum && comparisonWithoutMargin > 0 && comparisonWithMargin <= 0)
                     || (referenceIsMinimum && comparisonWithoutMargin < 0 && comparisonWithMargin >= 0) -> {
-                EvaluationFactory.recoverableUndetermined("Median body weight ($median kg) below $referenceBodyWeight kg")
+                val comparisonDisplay = if (referenceIsMinimum) "below" else "above"
+                EvaluationFactory.recoverableUndetermined(
+                    "Median body weight ($median kg) $comparisonDisplay $referenceBodyWeight kg but within margin of error"
+                )
             }
 
             comparisonWithoutMargin < 0 -> {

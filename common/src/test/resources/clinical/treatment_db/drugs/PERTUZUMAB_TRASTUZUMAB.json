@@ -1,5 +1,6 @@
 {
   "name": "PERTUZUMAB_TRASTUZUMAB",
+  "drugClass": "STANDARD_DRUG",
   "drugTypes": [
     "HER2_ANTIBODY",
     "MONOCLONAL_ANTIBODY_TARGETED_THERAPY"

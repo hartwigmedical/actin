@@ -9,8 +9,8 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatmentNo
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -21,23 +21,23 @@ private val MATCHING_DRUG_TREATMENT = drugTreatment(MATCHING_DRUG_NAME, TREATMEN
 class HasHadTreatmentWithDrugAndCyclesTest {
 
     private val functionWithoutCycles = HasHadTreatmentWithDrugAndCycles(
-        setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
+        setOf(StandardDrug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())),
         null
     )
     private val functionWithCycles =
-        HasHadTreatmentWithDrugAndCycles(setOf(Drug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 3)
+        HasHadTreatmentWithDrugAndCycles(setOf(StandardDrug(name = MATCHING_DRUG_NAME, category = TREATMENT_CATEGORY, drugTypes = emptySet())), 3)
 
     @Test
     fun `Should fail for empty treatment history`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCycles.evaluate(withTreatmentHistory(emptyList())),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
     }
 
@@ -47,12 +47,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
     }
 
@@ -62,12 +62,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
     }
 
@@ -77,7 +77,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.WARN,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match but not at least 3 cycles"
+            "Treatments with match in provided treatments but not at least 3 cycles"
         )
     }
 
@@ -88,7 +88,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.WARN,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match but not at least 3 cycles"
+            "Treatments with match in provided treatments but not at least 3 cycles"
         )
     }
 
@@ -98,12 +98,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
     }
 
@@ -113,12 +113,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has not received any treatments containing match"
+            "No treatments containing match in provided treatments"
         )
     }
 
@@ -128,7 +128,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match but undetermined if at least 3 cycles"
+            "Treatments with match in provided treatments but undetermined if at least 3 cycles"
         )
     }
 
@@ -138,12 +138,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithoutCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if received any treatments containing match"
+            "Undetermined if trial treatment included match"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if received any treatments containing match"
+            "Undetermined if trial treatment included match"
         )
     }
 
@@ -153,12 +153,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithoutCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if received any treatments containing match"
+            "Undetermined if trial treatment included match"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if received any treatments containing match"
+            "Undetermined if trial treatment included match"
         )
     }
 
@@ -168,7 +168,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has received treatments with match but undetermined if at least 3 cycles"
+            "Treatments with match in provided treatments but undetermined if at least 3 cycles"
         )
     }
 
@@ -176,14 +176,14 @@ class HasHadTreatmentWithDrugAndCyclesTest {
     fun `Should evaluate to undetermined for therapy containing other drug but medication containing drug`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment("other treatment", TREATMENT_CATEGORY))))
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "match", category = TREATMENT_CATEGORY, drugTypes = setOf(DrugType.HER2_ANTIBODY)
             )
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCycles.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, listOf(medication))),
-            "Has received treatments with match but undetermined if at least 3 cycles"
+            "Treatments with match in provided treatments but undetermined if at least 3 cycles"
         )
     }
 
@@ -195,12 +195,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithoutCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if received any treatments containing match"
+            "Undetermined if trial treatment included match"
         )
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Undetermined if received any treatments containing match"
+            "Undetermined if trial treatment included match"
         )
     }
 
@@ -217,7 +217,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match but undetermined if at least 3 cycles"
+            "Treatments with match in provided treatments but undetermined if at least 3 cycles"
         )
     }
 
@@ -227,7 +227,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match"
+            "Treatments with match in provided treatments"
         )
     }
 
@@ -237,7 +237,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match for at least 3 cycles"
+            "Treatments with match for at least 3 cycles in provided treatments"
         )
     }
 
@@ -247,7 +247,7 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCycles.evaluate(withTreatmentHistory(listOf(treatmentHistoryEntry))),
-            "Has received treatments with match"
+            "Treatments with match in provided treatments"
         )
     }
 
@@ -255,14 +255,14 @@ class HasHadTreatmentWithDrugAndCyclesTest {
     fun `Should pass for therapy containing other drug but medication containing drug`() {
         val treatmentHistory = listOf(treatmentHistoryEntry(setOf(drugTreatment("other treatment", TREATMENT_CATEGORY))))
         val medication = WashoutTestFactory.medication().copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "match", category = TREATMENT_CATEGORY, drugTypes = setOf(DrugType.HER2_ANTIBODY)
             )
         )
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCycles.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, listOf(medication))),
-            "Has received treatments with match"
+            "Treatments with match in provided treatments"
         )
     }
 
@@ -273,12 +273,12 @@ class HasHadTreatmentWithDrugAndCyclesTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match for at least 3 cycles"
+            "Treatments with match for at least 3 cycles in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCycles.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Has received treatments with match"
+            "Treatments with match in provided treatments"
         )
     }
 }

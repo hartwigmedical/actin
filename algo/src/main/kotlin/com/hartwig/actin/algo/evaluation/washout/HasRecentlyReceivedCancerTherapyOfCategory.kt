@@ -3,6 +3,7 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
 import com.hartwig.actin.algo.evaluation.medication.MEDICATION_NOT_PROVIDED
+import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryFunctions.withoutDrugs
 import com.hartwig.actin.algo.evaluation.treatment.TrialFunctions
 import com.hartwig.actin.calendar.DateComparison
 import com.hartwig.actin.algo.evaluation.util.Format.concatLowercaseUnlessNumericWithAnd
@@ -15,7 +16,6 @@ import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Medication
 import com.hartwig.actin.datamodel.clinical.MedicationCategoryMappings
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
-import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import java.time.LocalDate
@@ -69,18 +69,20 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return when {
             foundCategories.isNotEmpty() || treatmentAssessment.hasHadValidTreatment -> {
                 EvaluationFactory.pass(
-                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug use$foundMedicationString" +
+                    "Recent '${concatLowercaseWithAnd(foundCategories)}' drug in provided medications$foundMedicationString" +
                             " - pay attention to washout period"
                 )
             }
 
             treatmentAssessment.hasInconclusiveDate -> {
-                EvaluationFactory.undetermined("Has received '${concatLowercaseWithAnd(categoryNames)}' treatment but inconclusive date")
+                EvaluationFactory.undetermined(
+                    "'${concatLowercaseWithAnd(categoryNames)}' treatment in provided treatments but date is inconclusive"
+                )
             }
 
             treatmentAssessment.hasHadTrialAfterMinDate || foundTrialMedication -> {
                 EvaluationFactory.undetermined(
-                    "Undetermined if treatment received in previous trial included ${
+                    "Undetermined if treatment in previous trial included ${
                         concatLowercaseWithAnd(
                             categoryNames
                         )
@@ -89,7 +91,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
             }
 
             else -> {
-                EvaluationFactory.fail("No recent '${concatLowercaseWithAnd(categoryNames)}' drug use")
+                EvaluationFactory.fail("No recent '${concatLowercaseWithAnd(categoryNames)}' drug in provided medications")
             }
         }
     }
@@ -123,9 +125,7 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
         return record.oncologicalHistory.map { treatmentHistoryEntry ->
             val startedPastMinDate = DateComparison.isAfterDate(minDate, treatmentHistoryEntry.startYear, treatmentHistoryEntry.startMonth)
 
-            val filteredTreatments = treatmentHistoryEntry.allTreatments().map { treatment ->
-                (treatment as? DrugTreatment)?.copy(drugs = treatment.drugs.filterNot { it in drugsToIgnore }.toSet()) ?: treatment
-            }
+            val filteredTreatments = treatmentHistoryEntry.allTreatments().map { it.withoutDrugs(drugsToIgnore) }
 
             val matchingCategories = filteredTreatments
                 .flatMap(Treatment::categories).toSet().intersect(treatmentCategoriesToFind)
@@ -149,15 +149,8 @@ class HasRecentlyReceivedCancerTherapyOfCategory(
                     matchingBasedOnDrugType + matchingBasedOnTreatmentCategory
                 },
                 matchingDrugs = if (!isMatch || startedPastMinDate != true) emptySet() else {
-                    treatmentHistoryEntry.allTreatments().filterIsInstance<DrugTreatment>()
-                        .flatMap { treatment ->
-                            treatment.drugs.filter {
-                                it.category in treatmentCategoriesToFind || it.drugTypes.any(
-                                    drugTypesToFind::contains
-                                )
-                            }
-                        }
-                        .filterNot { it in drugsToIgnore }
+                    filteredTreatments.flatMap(Treatment::drugs)
+                        .filter { it.category in treatmentCategoriesToFind || it.drugTypes.any(drugTypesToFind::contains) }
                         .map(Drug::display)
                         .toSet()
                 }

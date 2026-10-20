@@ -25,7 +25,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "Recent CYP9A9 inducing medication use (name)"
+            "Recent CYP9A9 inducing medication in provided medications (name)"
         )
     }
 
@@ -39,7 +39,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent CYP9A9 inducing medication use"
+            "No recent CYP9A9 inducing medication in provided medications"
         )
     }
 
@@ -53,7 +53,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent CYP9A9 inducing medication use"
+            "No recent CYP9A9 inducing medication in provided medications"
         )
     }
 
@@ -67,7 +67,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(medications)),
-            "No recent CYP9A9 inducing medication use"
+            "No recent CYP9A9 inducing medication in provided medications"
         )
     }
 
@@ -76,7 +76,7 @@ class HasRecentlyReceivedCypXInducingMedicationTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(MedicationTestFactory.withMedications(emptyList())),
-            "No recent CYP9A9 inducing medication use"
+            "No recent CYP9A9 inducing medication in provided medications"
         )
     }
 

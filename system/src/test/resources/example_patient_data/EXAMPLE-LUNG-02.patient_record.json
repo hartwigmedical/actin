@@ -50,6 +50,7 @@
           "drugs": [
             {
               "name": "CARBOPLATIN",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "PLATINUM_COMPOUND"
               ],
@@ -58,6 +59,7 @@
             },
             {
               "name": "PEMETREXED",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "ANTIMETABOLITE"
               ],
@@ -95,6 +97,7 @@
             "drugs": [
               {
                 "name": "PEMETREXED",
+                "drugClass": "STANDARD_DRUG",
                 "drugTypes": [
                   "ANTIMETABOLITE"
                 ],
@@ -124,6 +127,7 @@
           "drugs": [
             {
               "name": "DOCETAXEL",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "ANTIMICROTUBULE_AGENT",
                 "TAXANE"

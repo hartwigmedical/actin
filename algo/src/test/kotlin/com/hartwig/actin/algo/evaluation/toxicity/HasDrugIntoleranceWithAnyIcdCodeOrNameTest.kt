@@ -23,7 +23,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
     fun `Should fail when no known intolerances are present`() {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withIntolerances(emptyList())),
-            "No known allergy to platinum compounds"
+            "No known allergy to platinum compounds in provided allergies"
         )
     }
 
@@ -32,7 +32,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         val mismatch = ComorbidityTestFactory.intolerance(name = "mismatch", icdMainCode = IcdConstants.PNEUMOTHORAX_CODE)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(mismatch)),
-            "No known allergy to platinum compounds"
+            "No known allergy to platinum compounds in provided allergies"
         )
     }
 
@@ -41,7 +41,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         val match = ComorbidityTestFactory.intolerance(name = PLATINUM_DRUG_SET.iterator().next())
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy to platinum compounds (carboplatin)"
+            "Allergy to platinum compounds (carboplatin)"
         )
     }
 
@@ -52,7 +52,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
         )
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy to platinum compounds (${match.name})"
+            "Allergy to platinum compounds (${match.name})"
         )
     }
 
@@ -67,7 +67,7 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
             EvaluationAssert.assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-                "Has allergy to platinum compounds (${match.name})"
+                "Allergy to platinum compounds (${match.name})"
             )
         }
     }
@@ -78,16 +78,27 @@ class HasDrugIntoleranceWithAnyIcdCodeOrNameTest {
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS, function.evaluate(ComorbidityTestFactory.withComorbidity(match)),
-            "Has allergy to platinum compounds (carboplatin chemotherapy allergy)"
+            "Allergy to platinum compounds (carboplatin chemotherapy allergy)"
         )
     }
 
     @Test
     fun `Should evaluate to undetermined when intolerance matches on drug allergy ICD code but has no ICD code extension`() {
-        val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_SET.first(), icdExtensionCode = null)
+        val intolerance = ComorbidityTestFactory.intolerance(icdMainCode = IcdConstants.DRUG_ALLERGY_CODE, icdExtensionCode = null)
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
-            "Undetermined if drug allergy in history is platinum compounds allergy (drug type unknown)"
+            "Undetermined if drug allergy in provided allergies is platinum compounds allergy (drug type unknown)"
+        )
+    }
+
+    @Test
+    fun `Should fail when intolerance has generic hypersensitivity ICD code without extension`() {
+        val intolerance = ComorbidityTestFactory.intolerance(
+            icdMainCode = IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK, icdExtensionCode = null
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL, function.evaluate(ComorbidityTestFactory.withComorbidity(intolerance)),
+            "No known allergy to platinum compounds in provided allergies"
         )
     }
 }

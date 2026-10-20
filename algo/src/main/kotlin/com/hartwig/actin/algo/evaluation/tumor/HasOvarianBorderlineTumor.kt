@@ -23,9 +23,9 @@ class HasOvarianBorderlineTumor(private val doidModel: DoidModel) : EvaluationFu
             )
 
         return when {
-            isOvarianCancer && hasBorderlineType -> EvaluationFactory.pass("Has ovarian borderline tumor")
-            hasGeneralOvarianCancer -> EvaluationFactory.warn("Has ovarian cancer - undetermined if may be a borderline tumor")
-            else -> EvaluationFactory.fail("Has no ovarian borderline tumor")
+            isOvarianCancer && hasBorderlineType -> EvaluationFactory.pass("Tumor is ovarian borderline")
+            hasGeneralOvarianCancer -> EvaluationFactory.warn("Cancer is ovarian cancer - undetermined if may be a borderline tumor")
+            else -> EvaluationFactory.fail("No ovarian borderline tumor")
         }
     }
 

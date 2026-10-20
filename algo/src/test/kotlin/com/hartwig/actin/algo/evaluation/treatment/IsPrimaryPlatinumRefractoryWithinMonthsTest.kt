@@ -3,9 +3,9 @@ package com.hartwig.actin.algo.evaluation.treatment
 import com.hartwig.actin.algo.evaluation.EvaluationAssert
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.StopReason
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentResponse
@@ -20,7 +20,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
 
     private val platinum = DrugTreatment(
         name = "Carboplatin",
-        drugs = setOf(Drug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)))
+        drugs = setOf(StandardDrug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)))
     )
 
     private val otherTreatment = DrugTreatment(name = "other treatment", drugs = setOf())
@@ -38,7 +38,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Not primary platinum refractory (no progression on platinum treatment)"
+            "No primary platinum refractory disease (no progression on platinum treatment)"
         )
     }
 
@@ -56,7 +56,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is primary platinum refractory"
+            "Undetermined if primary platinum refractory disease"
         )
     }
 
@@ -78,7 +78,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is primary platinum refractory"
+            "Undetermined if primary platinum refractory disease"
         )
     }
 
@@ -89,7 +89,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is primary platinum refractory (no platinum treatment)"
+            "Undetermined if primary platinum refractory disease (no platinum treatment)"
         )
     }
 
@@ -114,7 +114,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if patient is primary platinum refractory"
+            "Undetermined if primary platinum refractory disease"
         )
     }
 
@@ -130,7 +130,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is primary platinum refractory"
+            "Primary platinum refractory disease"
         )
     }
 
@@ -148,7 +148,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is primary platinum refractory"
+            "Primary platinum refractory disease"
         )
     }
 
@@ -173,7 +173,7 @@ class IsPrimaryPlatinumRefractoryWithinMonthsTest {
         EvaluationAssert.assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Is primary platinum refractory"
+            "Primary platinum refractory disease"
         )
     }
 }
