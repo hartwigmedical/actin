@@ -120,6 +120,7 @@ class SummaryChapter(
                 ClinicalSummaryGenerator(
                     report = report,
                     includeAdditionalFields = it == ReportContentType.COMPREHENSIVE,
+                    includeDetails = false,
                     keyWidth = keyWidth,
                     valueWidth = valueWidth,
                     labels = labels

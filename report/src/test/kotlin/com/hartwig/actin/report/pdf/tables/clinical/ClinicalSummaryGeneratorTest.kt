@@ -35,14 +35,15 @@ class PatientClinicalHistoryGeneratorTest {
 
     @Test
     fun `Should return title search summary for research use only labels`() {
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, labels)
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, true, KEY_WIDTH, VALUE_WIDTH, labels)
         assertThat(clinicalSummaryGenerator.title()).isEqualTo("Search summary")
     }
 
     @Test
     fun `Should return title search summary`() {
         val nonMedicalLabels = ReportLabels.load(ReportType.TRIAL_MATCHING_NON_MEDICAL)
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, nonMedicalLabels)
+        val clinicalSummaryGenerator =
+            ClinicalSummaryGenerator(report, true, true, KEY_WIDTH, VALUE_WIDTH, nonMedicalLabels)
         assertThat(clinicalSummaryGenerator.title()).isEqualTo("Search summary")
     }
 
@@ -73,7 +74,8 @@ class PatientClinicalHistoryGeneratorTest {
         )
 
 
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(reportWithSurgeries, true, KEY_WIDTH, VALUE_WIDTH, labels)
+        val clinicalSummaryGenerator =
+            ClinicalSummaryGenerator(reportWithSurgeries, true, true, KEY_WIDTH, VALUE_WIDTH, labels)
         val cells = clinicalSummaryGenerator.contentsAsList()
         val surgeriesCell = cells.dropWhile { extractTextFromCell(it) != "Recent surgeries" }.drop(1).first()
         assertThat(surgeriesCell).isNotNull
@@ -190,7 +192,7 @@ class PatientClinicalHistoryGeneratorTest {
     }
 
     private fun generateHistoryAndReturnTableWithText(report: Report, cellToFind: String): Table {
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, labels)
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, true, KEY_WIDTH, VALUE_WIDTH, labels)
         val cells = clinicalSummaryGenerator.contentsAsList()
         val otherHistoryCell = cells.dropWhile { extractTextFromCell(it) != cellToFind }.drop(1).first()
         return otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")
