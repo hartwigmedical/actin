@@ -58,7 +58,7 @@ class PanelDriverAttributeAnnotator(
         return variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()
             val likelihood = geneDriverLikelihoodModel.evaluate(
-                it.key, geneRole, it.value, it.value.all(::eventPathogenicityIsConfirmed)
+                it.key, geneRole, it.value, it.value.any(::eventPathogenicityIsConfirmed)
             )
             likelihood to it.value
         }.flatMap {
