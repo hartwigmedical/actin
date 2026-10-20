@@ -190,6 +190,17 @@ class HasExperiencedImmunotherapyRelatedAdverseEventsTest {
     }
 
     @Test
+    fun `Should fail for prior immunotherapy treatment and intolerance with generic hypersensitivity ICD code without extension`() {
+        val record = createMinimalTestWGSPatientRecord().copy(
+            comorbidities = listOf(
+                Intolerance("Hay fever", icdCodes = setOf(IcdCode(IcdConstants.ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK, null)))
+            ),
+            oncologicalHistory = listOf(IMMUNOTHERAPY_PD_ENTRY)
+        )
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record), "No immunotherapy related adverse events in provided history")
+    }
+
+    @Test
     fun `Should evaluate to undetermined with prior immunotherapy treatment with unknown stop reason`() {
         val treatment = IMMUNOTHERAPY_TOX_ENTRY.copy(treatmentHistoryDetails = TreatmentHistoryDetails(stopReason = null))
         assertEvaluation(
