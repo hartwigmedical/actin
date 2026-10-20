@@ -34,7 +34,7 @@ class PatientClinicalHistoryGeneratorTest {
 
     @Test
     fun `Should return title clinical summary`() {
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, labels)
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, true, KEY_WIDTH, VALUE_WIDTH, labels)
         assertThat(clinicalSummaryGenerator.title()).isEqualTo("Clinical summary")
     }
 
@@ -65,7 +65,8 @@ class PatientClinicalHistoryGeneratorTest {
         )
 
 
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(reportWithSurgeries, true, KEY_WIDTH, VALUE_WIDTH, labels)
+        val clinicalSummaryGenerator =
+            ClinicalSummaryGenerator(reportWithSurgeries, true, true, KEY_WIDTH, VALUE_WIDTH, labels)
         val cells = clinicalSummaryGenerator.contentsAsList()
         val surgeriesCell = cells.dropWhile { extractTextFromCell(it) != "Recent surgeries" }.drop(1).first()
         assertThat(surgeriesCell).isNotNull
@@ -182,7 +183,7 @@ class PatientClinicalHistoryGeneratorTest {
     }
 
     private fun generateHistoryAndReturnTableWithText(report: Report, cellToFind: String): Table {
-        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, KEY_WIDTH, VALUE_WIDTH, labels)
+        val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, true, KEY_WIDTH, VALUE_WIDTH, labels)
         val cells = clinicalSummaryGenerator.contentsAsList()
         val otherHistoryCell = cells.dropWhile { extractTextFromCell(it) != cellToFind }.drop(1).first()
         return otherHistoryCell.children.first() as? Table ?: throw IllegalStateException("Expected Table as first child")

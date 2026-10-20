@@ -52,6 +52,7 @@ class ClinicalDetailsChapter(
             ClinicalSummaryGenerator(
                 report = report,
                 includeAdditionalFields = true,
+                includeDetails = true,
                 keyWidth = keyWidth,
                 valueWidth = valueWidth,
                 labels = labels

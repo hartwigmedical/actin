@@ -30,6 +30,7 @@ private const val STOP_REASON_PROGRESSIVE_DISEASE = "PD"
 class ClinicalSummaryGenerator(
     private val report: Report,
     private val includeAdditionalFields: Boolean,
+    private val includeDetails: Boolean,
     private val keyWidth: Float,
     private val valueWidth: Float,
     private val labels: ReportLabels
@@ -64,7 +65,7 @@ class ClinicalSummaryGenerator(
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
 
-        val patientCurrentDetails = if (includeAdditionalFields) {
+        val patientCurrentDetails = if (includeDetails) {
             PatientCurrentDetailsGenerator(
                 record = record,
                 keyWidth = keyWidth,
