@@ -65,7 +65,7 @@ class ClinicalSummaryGenerator(
             } else null
         ).flatMap { (key, table) -> sequenceOf(createKey(key), create(tableOrNone(table))) }
 
-        val patientCurrentDetails = if (includeAdditionalFields && includeDetails) {
+        val patientCurrentDetails = if (includeDetails) {
             PatientCurrentDetailsGenerator(
                 record = record,
                 keyWidth = keyWidth,
