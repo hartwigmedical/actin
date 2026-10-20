@@ -52,7 +52,7 @@ object TreatmentMatchJson {
     private fun gson(): Gson {
         val gsonBuilder = GsonSerializer.createBuilder()
         return gsonBuilder.registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
-            .registerTypeAdapter(Drug::class.java, DrugDeserializer())
+            .registerTypeHierarchyAdapter(Drug::class.java, DrugDeserializer())
             .registerTypeAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
             .registerTypeHierarchyAdapter(EvaluationMessage::class.java, EvaluationMessageAdapter(gsonBuilder.create()))
             .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())

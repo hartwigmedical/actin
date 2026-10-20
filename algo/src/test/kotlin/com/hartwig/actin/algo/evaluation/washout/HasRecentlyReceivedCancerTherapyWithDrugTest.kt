@@ -3,8 +3,8 @@ package com.hartwig.actin.algo.evaluation.washout
 import com.hartwig.actin.algo.evaluation.EvaluationAssert.assertEvaluation
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
@@ -18,7 +18,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
     private val interpreter = WashoutTestFactory.activeFromDate(MIN_DATE)
     private val function = HasRecentlyReceivedCancerTherapyWithDrug(
         setOf(
-            Drug(
+            StandardDrug(
                 name = "correct",
                 category = TreatmentCategory.CHEMOTHERAPY,
                 drugTypes = setOf(DrugType.ALKYLATING_AGENT)
@@ -31,7 +31,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(WashoutTestFactory.withMedications(emptyList())),
-            "Has not received recent treatments with name correct"
+            "No recent treatments with name correct in provided treatments"
         )
     }
 
@@ -49,7 +49,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Has not received recent treatments with name correct"
+            "No recent treatments with name correct in provided treatments"
         )
     }
 
@@ -67,7 +67,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Has not received recent treatments with name correct"
+            "No recent treatments with name correct in provided treatments"
         )
     }
 
@@ -85,7 +85,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Received recent correct - pay attention to washout period"
+            "Recent treatment with medication correct - pay attention to washout period"
         )
     }
 
@@ -110,7 +110,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Received recent correct - pay attention to washout period"
+            "Recent treatment with medication correct - pay attention to washout period"
         )
     }
 
@@ -129,7 +129,7 @@ class HasRecentlyReceivedCancerTherapyWithDrugTest {
                     )
                 )
             ),
-            "Received correct but unknown if recent (missing stop date)"
+            "Treatment containing correct in provided treatments with unknown date"
         )
     }
 }

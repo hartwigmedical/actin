@@ -114,7 +114,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     setOf(DoidConstants.BREAST_CANCER_DOID, DoidConstants.PROGESTERONE_POSITIVE_BREAST_CANCER_DOID)
                 )
             ),
-            "Has PR-positive breast cancer"
+            "Cancer is PR-positive breast cancer"
         )
     }
 
@@ -127,7 +127,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             ),
-            "Has PR-positive breast cancer"
+            "Cancer is PR-positive breast cancer"
         )
     }
 
@@ -140,7 +140,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             ),
-            "Has PR-positive breast cancer"
+            "Cancer is PR-positive breast cancer"
         )
         assertEvaluation(
             EvaluationResult.PASS, HasBreastCancerWithPositiveReceptorOfType(doidModel, HER2).evaluate(
@@ -149,7 +149,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
                     setOf(DoidConstants.BREAST_CANCER_DOID)
                 )
             ),
-            "Has HER2-positive breast cancer"
+            "Cancer is HER2-positive breast cancer"
         )
     }
 
@@ -245,7 +245,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
+            "Cancer is $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
         )
     }
 
@@ -335,7 +335,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
+            "Cancer is $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
         )
     }
 
@@ -350,7 +350,7 @@ class HasBreastCancerWithPositiveReceptorOfTypeTest {
         assertEvaluation(
             EvaluationResult.WARN,
             evaluation,
-            "Has $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
+            "Cancer is $TARGET_RECEPTOR-positive breast cancer but clinical relevance unknown ($TARGET_RECEPTOR-score under 10%)"
         )
     }
 

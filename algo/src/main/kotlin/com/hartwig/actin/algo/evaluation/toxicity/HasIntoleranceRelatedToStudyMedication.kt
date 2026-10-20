@@ -6,23 +6,31 @@ import com.hartwig.actin.algo.evaluation.util.Format
 import com.hartwig.actin.algo.icd.IcdConstants
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.IcdCode
 import com.hartwig.actin.datamodel.clinical.Toxicity
 import com.hartwig.actin.icd.IcdModel
 
 class HasIntoleranceRelatedToStudyMedication(private val icdModel: IcdModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val targetIcdCodes = IcdConstants.DRUG_ALLERGY_SET.map { IcdCode(it, IcdConstants.ANTI_NEOPLASTIC_AGENTS) }
-        val allergies = icdModel.findInstancesMatchingAnyIcdCode(record.comorbidities, targetIcdCodes).fullMatches
-            .filterNot { it is Toxicity && it.grade?.let { grade -> grade < 2 } ?: true }
-            .toSet()
+        val drugAllergies = DrugAllergyFunctions.findDrugAllergies(
+            icdModel,
+            record.comorbidities.filterNot { it is Toxicity && it.grade?.let { grade -> grade < 2 } ?: true },
+            setOf(IcdConstants.ANTI_NEOPLASTIC_AGENTS)
+        )
+        val specificDrugAllergies = drugAllergies.fullMatches.toSet()
+        val unknownDrugAllergies = drugAllergies.mainCodeMatchesWithUnknownExtension.toSet()
+        val undeterminedMessage = "undetermined if allergy to study medication"
 
-        return if (allergies.isNotEmpty()) {
-            EvaluationFactory.undetermined(
-                "Has medication-related allergies (${Format.concatItemsWithAnd(allergies)}) - undetermined if allergy to study medication"
+        return when {
+            specificDrugAllergies.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Medication-related allergies (${Format.concatItemsWithAnd(specificDrugAllergies)}) - $undeterminedMessage"
             )
-        } else EvaluationFactory.fail("Has no intolerances to study medication")
-    }
 
+            unknownDrugAllergies.isNotEmpty() -> EvaluationFactory.undetermined(
+                "Drug allergies (${Format.concatItemsWithAnd(unknownDrugAllergies)}) - $undeterminedMessage (drug type unknown)"
+            )
+
+            else -> EvaluationFactory.fail("No intolerances to study medication")
+        }
+    }
 }

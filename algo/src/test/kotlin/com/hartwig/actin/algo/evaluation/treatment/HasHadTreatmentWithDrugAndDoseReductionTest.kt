@@ -6,8 +6,8 @@ import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentsAndMedications
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -18,14 +18,14 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
 
     private val function = HasHadTreatmentWithDrugAndDoseReduction(drugWithName(MATCHING_DRUG_NAME))
 
-    fun drugWithName(drugName: String): Drug = Drug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
+    fun drugWithName(drugName: String): StandardDrug = StandardDrug(name = drugName, category = TREATMENT_CATEGORY, drugTypes = emptySet())
 
     @Test
     fun `Should fail for empty treatment history`() {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Patient did not dose reduction receive match during treatment"
+            "No dose reduction during match treatment"
         )
     }
 
@@ -44,7 +44,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Patient did not dose reduction receive match during treatment"
+            "No dose reduction during match treatment"
         )
     }
 
@@ -55,7 +55,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication))),
-            "Patient did not dose reduction receive match during treatment"
+            "No dose reduction during match treatment"
         )
     }
 
@@ -78,7 +78,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistory(treatmentHistory)),
-            "Undetermined if patient may have had a dose reduction during match treatment"
+            "Undetermined if there may have been a dose reduction during match treatment"
         )
     }
 
@@ -89,7 +89,7 @@ class HasHadTreatmentWithDrugAndDoseReductionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistory), listOf(medication))),
-            "Undetermined if patient may have had a dose reduction during match treatment"
+            "Undetermined if there may have been a dose reduction during match treatment"
         )
     }
 }

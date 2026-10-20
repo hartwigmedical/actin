@@ -1,6 +1,6 @@
 package com.hartwig.actin.report.pdf.tables.molecular
 
-import com.hartwig.actin.configuration.ReportIntendedUse
+import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.datamodel.clinical.IhcTest
 import com.hartwig.actin.report.interpretation.IhcTestInterpreter
 import com.hartwig.actin.report.pdf.ReportLabels
@@ -18,7 +18,7 @@ class IhcResultGeneratorTest {
     private val ihcTest4 = IhcTest(item = "NTRK2", measureDate = testDate, scoreText = "Negative")
     private val ihcTest5 = IhcTest(item = "NTRK3", measureDate = testDate, scoreText = "Negative")
 
-    private val labels = ReportLabels.load(ReportIntendedUse.RESEARCH_USE_ONLY)
+    private val labels = ReportLabels.load(ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
     private val ihcResultGenerator = IhcResultGenerator(emptyList(), 10.0f, 10.0f, IhcTestInterpreter(), labels)
 
     @Test

@@ -2,6 +2,7 @@ package com.hartwig.actin.trial.input.datamodel
 
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.RadiopharmaceuticalType
 import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentType
@@ -21,6 +22,11 @@ class TreatmentCategoryInputTest {
     @Test
     fun `Should create for all drug types`() {
         assertCreationFromEnumStrings(DrugType.entries)
+    }
+
+    @Test
+    fun `Should create for all radiopharmaceutical types`() {
+        assertCreationFromEnumStrings(RadiopharmaceuticalType.entries)
     }
 
     @Test

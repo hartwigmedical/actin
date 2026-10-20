@@ -22,23 +22,31 @@ class CurrentlyGetsCypXSubstrateMedication(private val selector: MedicationSelec
         return when {
             cypSubstratesReceived.isNotEmpty() -> {
                 EvaluationFactory.recoverablePass(
-                    "CYP$termToFind substrate medication use (${concatLowercaseWithCommaAndAnd(cypSubstratesReceived)})"
+                    "Active CYP$termToFind substrate medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            cypSubstratesReceived
+                        )
+                    })"
                 )
             }
 
             termToFind in MedicationConstants.UNDETERMINED_CYP_STRING -> {
-                EvaluationFactory.undetermined("CYP$termToFind substrate medication use undetermined")
+                EvaluationFactory.undetermined("CYP$termToFind substrate medication undetermined")
             }
 
             cypSubstratesPlanned.isNotEmpty() -> {
                 EvaluationFactory.warn(
-                    "Planned CYP$termToFind substrate medication use (${concatLowercaseWithCommaAndAnd(cypSubstratesPlanned)})"
+                    "Planned CYP$termToFind substrate medication in provided medications (${
+                        concatLowercaseWithCommaAndAnd(
+                            cypSubstratesPlanned
+                        )
+                    })"
                 )
             }
 
             else -> {
                 EvaluationFactory.recoverableFail(
-                    "No CYP$termToFind substrate medication use"
+                    "No active CYP$termToFind substrate medication in provided medications"
                 )
             }
         }

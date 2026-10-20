@@ -20,7 +20,11 @@ class HasHadRecentResectionTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not had recent resection")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "No recent resection in provided treatments"
+        )
     }
 
     @Test
@@ -29,7 +33,7 @@ class HasHadRecentResectionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had recent resection"
+            "Recent resection in provided treatments"
         )
     }
 
@@ -47,7 +51,7 @@ class HasHadRecentResectionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had recent resection"
+            "Recent resection in provided treatments"
         )
     }
 
@@ -57,7 +61,7 @@ class HasHadRecentResectionTest {
         assertEvaluation(
             EvaluationResult.WARN,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had reasonably recent resection"
+            "Reasonably recent resection in provided treatments"
         )
     }
 
@@ -65,7 +69,7 @@ class HasHadRecentResectionTest {
     fun `Should be undetermined for resection with missing date`() {
         assertEvaluation(
             EvaluationResult.UNDETERMINED, function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(matchingTreatment))),
-            "May have had a recent resection"
+            "Undetermined if resection in provided treatments was a recent resection"
         )
     }
 
@@ -76,7 +80,7 @@ class HasHadRecentResectionTest {
             EvaluationResult.UNDETERMINED, function.evaluate(
                 withTreatmentHistoryEntry(treatmentHistoryEntry(treatments, startYear = 2022, startMonth = 11))
             ),
-            "May have had a recent resection"
+            "Undetermined if resection in provided treatments was a recent resection"
         )
     }
 }

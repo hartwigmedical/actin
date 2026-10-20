@@ -23,11 +23,11 @@ class HasMeasurableDiseasePercist(private val doidModel: DoidModel) : Evaluation
                 setOf(DoidConstants.LYMPHOMA_DOID)
             )
         ) {
-            EvaluationFactory.warn("Has measurable disease but with this tumor type unknown if by PERCIST")
+            EvaluationFactory.warn("Disease is measurable but with this tumor type unknown if by PERCIST")
         } else if (hasMeasurableDisease) {
-            EvaluationFactory.recoverablePass("Has measurable disease")
+            EvaluationFactory.recoverablePass("Disease is measurable")
         } else {
-            EvaluationFactory.recoverableFail("Has no measurable disease")
+            EvaluationFactory.recoverableFail("Disease is not measurable")
         }
     }
 

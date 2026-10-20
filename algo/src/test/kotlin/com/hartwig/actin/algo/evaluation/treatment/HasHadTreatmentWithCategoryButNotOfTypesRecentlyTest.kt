@@ -9,9 +9,9 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistor
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentsAndMedications
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
 import com.hartwig.actin.datamodel.clinical.treatment.OtherTreatmentType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import java.time.LocalDate
 import org.junit.jupiter.api.Test
@@ -32,7 +32,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistory(emptyList())),
-            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+            "No recent targeted therapy treatment ignoring HER2 antibody in provided treatments"
         )
     }
 
@@ -42,7 +42,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+            "No recent targeted therapy treatment ignoring HER2 antibody in provided treatments"
         )
     }
 
@@ -54,7 +54,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+            "No recent targeted therapy treatment ignoring HER2 antibody in provided treatments"
         )
     }
 
@@ -66,7 +66,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+            "No recent targeted therapy treatment ignoring HER2 antibody in provided treatments"
         )
     }
 
@@ -78,7 +78,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+            "No recent targeted therapy treatment ignoring HER2 antibody in provided treatments"
         )
     }
 
@@ -90,7 +90,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+            "No recent targeted therapy treatment ignoring HER2 antibody in provided treatments"
         )
     }
 
@@ -107,7 +107,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had recent transplantation treatment ignoring allogenic"
+            "No recent transplantation treatment ignoring allogenic in provided treatments"
         )
     }
 
@@ -125,7 +125,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received targeted therapy treatment ignoring HER2 antibody"
+            "Targeted therapy treatment in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -139,7 +139,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has not had recent targeted therapy treatment ignoring HER2 antibody"
+            "No recent targeted therapy treatment ignoring HER2 antibody in provided treatments"
         )
     }
 
@@ -155,7 +155,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received targeted therapy treatment ignoring HER2 antibody"
+            "Targeted therapy treatment in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -165,14 +165,14 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
             setOf(drugTreatment("test", MATCHING_CATEGORY, DRUG_TYPE_TO_IGNORE_SET)), startYear = MIN_DATE.year + 1
         )
         val medication = WashoutTestFactory.medication(null, MIN_DATE.plusDays(1)).copy(
-            drug = Drug(
+            drug = StandardDrug(
                 name = "", category = MATCHING_CATEGORY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)
             )
         )
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentsAndMedications(listOf(treatmentHistoryEntry), listOf(medication))),
-            "Has received targeted therapy treatment ignoring HER2 antibody"
+            "Targeted therapy treatment in provided treatments ignoring HER2 antibody"
         )
     }
 
@@ -190,7 +190,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has potentially received targeted therapy treatment ignoring HER2 antibody - exact drug type of patient's treatment unknown"
+            "Potentially targeted therapy treatment ignoring HER2 antibody - exact drug type of treatment unknown"
         )
     }
 
@@ -202,7 +202,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Undetermined if treatment received in previous trial included targeted therapy"
+            "Undetermined if treatment from in previous trial included targeted therapy"
         )
     }
 
@@ -214,7 +214,7 @@ class HasHadTreatmentWithCategoryButNotOfTypesRecentlyTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has received targeted therapy treatment ignoring HER2 antibody but inconclusive date"
+            "Targeted therapy treatment in provided treatments ignoring HER2 antibody but inconclusive date"
         )
     }
 }

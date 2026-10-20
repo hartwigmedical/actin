@@ -113,8 +113,11 @@ object IcdConstants {
     const val ADVERSE_CUTANEOUS_REACTION_TO_MEDICATION_BLOCK = "BlockL1-EH6"
     const val ANAPHYLAXIS_CODE = "4A84"
     const val DRUG_INDUCED_ANAPHYLAXIS_CODE = "4A84.1"
+    const val DRUG_INDUCED_BRONCHOSPASM_CODE = "4A80.0"
     const val HARMFUL_EFFECTS_OF_DRUGS_CODE = "NE60"
     const val INJURY_OR_HARM_DUE_TO_CORRECTLY_USED_DRUG_CODE = "PL13.2"
+    const val SUBSTANCES_EXTENSION_BLOCK = "http://id.who.int/icd/release/11/mms/1321407960"
+    const val MEDICATION_EXTENSION_BLOCK = "http://id.who.int/icd/release/11/mms/1170065830"
     const val ANTI_NEOPLASTIC_AGENTS = "http://id.who.int/icd/release/11/mms/2064976967"
     const val PLATINUM_COMPOUND_CODE = "XM40B7"
     const val TAXANE_CODE = "XM05L1"
@@ -255,13 +258,19 @@ object IcdConstants {
     const val DISORDERS_OF_LYMPHATIC_VESSELS_OR_LYMPH_NODES = "BlockL1-BD9"
     const val LYMPHATIC_MALFORMATIONS = "LA90.1"
 
-    val DRUG_ALLERGY_SET = setOf(
-        ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK,
+    // Main codes that imply a drug as causative agent, also when the drug itself (extension code) is unknown
+    val DRUG_SPECIFIC_ALLERGY_SET = setOf(
+        DRUG_ALLERGY_CODE,
+        DRUG_INDUCED_ANAPHYLAXIS_CODE,
+        DRUG_INDUCED_BRONCHOSPASM_CODE,
         HISTORY_OF_DRUG_OR_BIOLOGICAL_SUBSTANCE_ALLERGY_CODE,
         ADVERSE_CUTANEOUS_REACTION_TO_MEDICATION_BLOCK,
         HARMFUL_EFFECTS_OF_DRUGS_CODE,
         INJURY_OR_HARM_DUE_TO_CORRECTLY_USED_DRUG_CODE
     )
+
+    // Main codes that represent a drug allergy when combined with a drug extension code
+    val DRUG_ALLERGY_SET = setOf(ALLERGIC_OR_HYPERSENSITIVITY_CONDITIONS_BLOCK) + DRUG_SPECIFIC_ALLERGY_SET
 
     val IMMUNOTHERAPY_DRUG_SET = setOf(
         MONOCLONAL_ANTIBODY_BLOCK,

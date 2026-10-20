@@ -15,7 +15,7 @@ class HasLongQTSyndromeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherConditions((emptyList()))),
-            "No presence of long QT syndrome"
+            "No long QT syndrome in provided conditions"
         )
     }
 
@@ -25,7 +25,7 @@ class HasLongQTSyndromeTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
-            "No presence of long QT syndrome"
+            "No long QT syndrome in provided conditions"
         )
     }
 
@@ -35,7 +35,7 @@ class HasLongQTSyndromeTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(ComorbidityTestFactory.withOtherCondition(condition)),
-            "Presence of long QT syndrome"
+            "Long QT syndrome in provided conditions"
         )
     }
 }

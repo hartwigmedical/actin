@@ -29,7 +29,7 @@ internal class DerivedTumorStageEvaluationFunction(private val originalFunction:
         return if (uniqueResults.size == 1) {
             createEvaluationForDerivedResult(derivedResults, uniqueResults.first())
         } else {
-            EvaluationFactory.undetermined("Undetermined if patient has $messageEnd")
+            EvaluationFactory.undetermined("Undetermined if cancer is $messageEnd")
         }
     }
 

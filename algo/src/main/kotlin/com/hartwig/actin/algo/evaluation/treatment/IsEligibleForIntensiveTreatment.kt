@@ -8,6 +8,6 @@ import com.hartwig.actin.datamodel.algo.Evaluation
 class IsEligibleForIntensiveTreatment : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        return EvaluationFactory.undetermined("Eligibility for intensive treatment undetermined")
+        return EvaluationFactory.undetermined("Undetermined whether requirements for intensive treatment are met")
     }
 }

@@ -41,7 +41,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -228,7 +228,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in trial KAYRAS"
+                "message": "No previous participation in trial KAYRAS"
               }
             ],
             "warnMessages": [],
@@ -370,7 +370,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Patient is at least 18 years old"
+                "message": "Age above 18 years"
               }
             ],
             "warnMessages": [],
@@ -426,7 +426,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has solid primary tumor"
+                "message": "Primary tumor is solid"
               },
               {
                 "message": "Stage IV is considered metastatic"
@@ -472,7 +472,7 @@
             "passMessages": [],
             "warnMessages": [
               {
-                "message": "Has not exhausted SOC"
+                "message": "SOC is not exhausted"
               }
             ],
             "undeterminedMessages": [],
@@ -505,7 +505,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has no other condition belonging to category autoimmune disease"
+                "message": "No comorbidity belonging to category autoimmune disease"
               }
             ],
             "warnMessages": [],
@@ -604,7 +604,7 @@
             "exclusionMolecularEvents": [],
             "passMessages": [
               {
-                "message": "Has not participated in this trial"
+                "message": "No previous participation in this trial"
               }
             ],
             "warnMessages": [],
@@ -655,6 +655,7 @@
           "drugs": [
             {
               "name": "FLUOROURACIL",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "ANTIMETABOLITE",
                 "FLUOROPYRIMIDINE",
@@ -665,12 +666,14 @@
             },
             {
               "name": "FOLINIC_ACID",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [],
               "category": "SUPPORTIVE_TREATMENT",
               "displayOverride": null
             },
             {
               "name": "IRINOTECAN",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "TOPO1_INHIBITOR"
               ],
@@ -826,7 +829,7 @@
           "exclusionMolecularEvents": [],
           "passMessages": [
             {
-              "message": "Patient determined to be eligible for line 1"
+              "message": "Requirements for treatment line 1 are met"
             }
           ],
           "warnMessages": [],
@@ -841,10 +844,10 @@
           "exclusionMolecularEvents": [],
           "passMessages": [
             {
-              "message": "Has not received recent treatments with name irinotecan"
+              "message": "No recent treatments with name irinotecan in provided treatments"
             },
             {
-              "message": "Has not received treatments that include irinotecan"
+              "message": "No treatments that include irinotecan in provided treatments"
             }
           ],
           "warnMessages": [],
@@ -862,7 +865,7 @@
               "message": "Has not received FOLFIRI treatment"
             },
             {
-              "message": "No treatments matching FOLFIRI in prior history"
+              "message": "No treatments matching FOLFIRI in provided treatments"
             }
           ],
           "warnMessages": [],
@@ -881,6 +884,7 @@
               "drugs": [
                 {
                   "name": "CETUXIMAB",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "EGFR_ANTIBODY",
                     "MONOCLONAL_ANTIBODY_TARGETED_THERAPY"
@@ -890,6 +894,7 @@
                 },
                 {
                   "name": "FLUOROURACIL",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "ANTIMETABOLITE",
                     "FLUOROPYRIMIDINE",
@@ -900,12 +905,14 @@
                 },
                 {
                   "name": "FOLINIC_ACID",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [],
                   "category": "SUPPORTIVE_TREATMENT",
                   "displayOverride": null
                 },
                 {
                   "name": "IRINOTECAN",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "TOPO1_INHIBITOR"
                   ],
@@ -927,6 +934,7 @@
               "drugs": [
                 {
                   "name": "FLUOROURACIL",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "ANTIMETABOLITE",
                     "FLUOROPYRIMIDINE",
@@ -937,12 +945,14 @@
                 },
                 {
                   "name": "FOLINIC_ACID",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [],
                   "category": "SUPPORTIVE_TREATMENT",
                   "displayOverride": null
                 },
                 {
                   "name": "IRINOTECAN",
+                  "drugClass": "STANDARD_DRUG",
                   "drugTypes": [
                     "TOPO1_INHIBITOR"
                   ],
@@ -1006,6 +1016,7 @@
                     "drugs": [
                       {
                         "name": "CETUXIMAB",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "EGFR_ANTIBODY",
                           "MONOCLONAL_ANTIBODY_TARGETED_THERAPY"
@@ -1015,6 +1026,7 @@
                       },
                       {
                         "name": "FLUOROURACIL",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "ANTIMETABOLITE",
                           "FLUOROPYRIMIDINE",
@@ -1025,12 +1037,14 @@
                       },
                       {
                         "name": "FOLINIC_ACID",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [],
                         "category": "SUPPORTIVE_TREATMENT",
                         "displayOverride": null
                       },
                       {
                         "name": "IRINOTECAN",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "TOPO1_INHIBITOR"
                         ],
@@ -1153,6 +1167,7 @@
                     "drugs": [
                       {
                         "name": "FLUOROURACIL",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "ANTIMETABOLITE",
                           "FLUOROPYRIMIDINE",
@@ -1163,12 +1178,14 @@
                       },
                       {
                         "name": "FOLINIC_ACID",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [],
                         "category": "SUPPORTIVE_TREATMENT",
                         "displayOverride": null
                       },
                       {
                         "name": "IRINOTECAN",
+                        "drugClass": "STANDARD_DRUG",
                         "drugTypes": [
                           "TOPO1_INHIBITOR"
                         ],

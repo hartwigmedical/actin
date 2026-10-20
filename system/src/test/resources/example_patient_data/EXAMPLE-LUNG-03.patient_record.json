@@ -49,6 +49,7 @@
           "drugs": [
             {
               "name": "OSIMERTINIB",
+              "drugClass": "STANDARD_DRUG",
               "drugTypes": [
                 "EGFR_INHIBITOR",
                 "EGFR_INHIBITOR_GEN_3",

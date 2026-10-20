@@ -10,8 +10,8 @@ import com.hartwig.actin.datamodel.clinical.TnmT
 import com.hartwig.actin.datamodel.clinical.Transporter
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
 import com.hartwig.actin.datamodel.clinical.TumorStage
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.Intent
@@ -43,7 +43,7 @@ class FunctionCreatorFactoryTest {
         val map = create(RuleMappingResourcesTestFactory.create(doidModel = doidModel, icdModel = icdModel))
         val treatment = TreatmentTestFactory.treatment("Treatment", true, setOf(TreatmentCategory.CHEMOTHERAPY))
         val systemicTreatment = TreatmentTestFactory.treatment("Systemic treatment", true, setOf(TreatmentCategory.CHEMOTHERAPY))
-        val drug = Drug("Drug", emptySet(), setOf(DrugType.ANTI_PD_1), TreatmentCategory.IMMUNOTHERAPY, "")
+        val drug = StandardDrug("Drug", emptySet(), setOf(DrugType.ANTI_PD_1), TreatmentCategory.IMMUNOTHERAPY, "")
         EligibilityRule.entries.forEach { rule ->
             if (!CompositeRules.isComposite(rule)) {
                 val function = EligibilityFunction(
@@ -62,7 +62,7 @@ class FunctionCreatorFactoryTest {
         icdTitle: String,
         treatment: Treatment,
         systemicTreatment: Treatment,
-        drug: Drug
+        drug: StandardDrug
     ): Parameter<*> {
         return when (type) {
             Parameter.Type.TREATMENT -> TreatmentParameter(treatment)

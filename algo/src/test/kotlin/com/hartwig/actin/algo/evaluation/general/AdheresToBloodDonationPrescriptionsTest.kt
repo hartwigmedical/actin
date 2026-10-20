@@ -12,7 +12,7 @@ class AdheresToBloodDonationPrescriptionsTest {
         assertEvaluation(
             EvaluationResult.PASS,
             AdheresToBloodDonationPrescriptions().evaluate(TestPatientFactory.createMinimalTestWGSPatientRecord()),
-            "Assumed that patient adheres to blood donation prescriptions"
+            "Assumed adherence to blood donation prescriptions"
         )
     }
 }

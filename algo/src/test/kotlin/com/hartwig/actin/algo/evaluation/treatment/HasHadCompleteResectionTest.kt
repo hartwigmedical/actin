@@ -15,7 +15,11 @@ class HasHadCompleteResectionTest {
 
     @Test
     fun `Should fail with no treatment history`() {
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(withTreatmentHistory(emptyList())), "Has not had complete resection")
+        assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(withTreatmentHistory(emptyList())),
+            "No complete resection in provided treatments"
+        )
     }
 
     @Test
@@ -24,7 +28,7 @@ class HasHadCompleteResectionTest {
         assertEvaluation(
             EvaluationResult.PASS,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
-            "Has had complete resection"
+            "Complete resection in provided treatments"
         )
     }
 
@@ -34,7 +38,7 @@ class HasHadCompleteResectionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))),
-            "Undetermined whether patient has had complete resection"
+            "Undetermined if resection in provided treatments was a complete resection"
         )
     }
 
@@ -44,7 +48,7 @@ class HasHadCompleteResectionTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry(treatments))),
-            "Undetermined whether patient has had complete resection"
+            "Undetermined if resection in provided treatments was a complete resection"
         )
     }
 }

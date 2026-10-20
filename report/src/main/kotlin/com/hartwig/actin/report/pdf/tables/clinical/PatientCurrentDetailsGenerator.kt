@@ -16,6 +16,7 @@ import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Tables
+import com.itextpdf.layout.element.Cell
 import com.itextpdf.layout.element.Table
 import java.time.LocalDate
 
@@ -28,7 +29,7 @@ class PatientCurrentDetailsGenerator(
 ) : TableGenerator {
 
     override fun title(): String {
-        return labels.clinicalDetails.patientDetailsTitle(date(record.patient.questionnaireDate))
+        return labels.clinicalDetails.patientDetailsTitle()
     }
 
     override fun forceKeepTogether(): Boolean {
@@ -37,44 +38,52 @@ class PatientCurrentDetailsGenerator(
 
     override fun contents(): Table {
         val table = Tables.createFixedWidthCols(keyWidth, valueWidth)
-        table.addCell(Cells.createKey(labels.clinicalDetails.keyToxicities()))
-        table.addCell(Cells.createValue(toxicities(record)))
-        val infectionStatus = record.clinicalStatus.infectionStatus
-        if (infectionStatus != null && infectionStatus.hasActiveInfection) {
-            table.addCell(Cells.createKey(labels.clinicalDetails.keyInfection()))
-            val description = infectionStatus.description
-            table.addCell(Cells.createValue(description ?: labels.clinicalDetails.valueInfectionUnknown()))
-        }
-        record.ecgs.firstOrNull()?.let { ecg ->
-            table.addCell(Cells.createKey(labels.clinicalDetails.keyEcg()))
-            val aberration = ecg.name
-            val description = aberration ?: labels.clinicalDetails.valueEcgUnknown()
-            table.addCell(Cells.createValue(description))
-
-            if (ecg.measurementType == HeartMeasurementType.QTCF) {
-                createMeasureCells(table, labels.clinicalDetails.keyQtcf(), ecg)
-            }
-
-            if (ecg.measurementType == HeartMeasurementType.JTC) {
-                createMeasureCells(table, labels.clinicalDetails.keyJtc(), ecg)
-            }
-        }
-        if (record.clinicalStatus.lvef != null) {
-            table.addCell(Cells.createKey(labels.clinicalDetails.keyLvef()))
-            table.addCell(Cells.createValue(Formats.percentage(record.clinicalStatus.lvef!!)))
-        }
-        table.addCell(Cells.createKey(labels.clinicalDetails.keyAllergies()))
-        table.addCell(Cells.createValue(allergies(record.intolerances)))
-        if (record.surgeries.isNotEmpty()) {
-            table.addCell(Cells.createKey(labels.clinicalDetails.keySurgeries()))
-            table.addCell(Cells.createValue(surgeries(record.surgeries)))
-        }
+        contentsAsList().forEach(table::addCell)
         return table
     }
 
-    private fun createMeasureCells(table: Table, key: String, measure: HeartMeasurement) {
-        table.addCell(Cells.createKey(key))
-        table.addCell(Cells.createValue(Formats.twoDigitNumber(measure.value!!)).toString() + " " + measure.unit)
+    fun contentsAsList(): List<Cell> {
+        return buildList {
+            add(Cells.createKey(labels.clinicalDetails.keyToxicities()))
+            add(Cells.createValue(toxicities(record)))
+            val infectionStatus = record.clinicalStatus.infectionStatus
+            if (infectionStatus != null && infectionStatus.hasActiveInfection) {
+                add(Cells.createKey(labels.clinicalDetails.keyInfection()))
+                val description = infectionStatus.description
+                add(Cells.createValue(description ?: labels.clinicalDetails.valueInfectionUnknown()))
+            }
+            record.ecgs.firstOrNull()?.let { ecg ->
+                add(Cells.createKey(labels.clinicalDetails.keyEcg()))
+                val aberration = ecg.name
+                val description = aberration ?: labels.clinicalDetails.valueEcgUnknown()
+                add(Cells.createValue(description))
+
+                if (ecg.measurementType == HeartMeasurementType.QTCF) {
+                    addAll(createMeasureCells(labels.clinicalDetails.keyQtcf(), ecg))
+                }
+
+                if (ecg.measurementType == HeartMeasurementType.JTC) {
+                    addAll(createMeasureCells(labels.clinicalDetails.keyJtc(), ecg))
+                }
+            }
+            if (record.clinicalStatus.lvef != null) {
+                add(Cells.createKey(labels.clinicalDetails.keyLvef()))
+                add(Cells.createValue(Formats.percentage(record.clinicalStatus.lvef!!)))
+            }
+            add(Cells.createKey(labels.clinicalDetails.keyAllergies()))
+            add(Cells.createValue(allergies(record.intolerances)))
+            if (record.surgeries.isNotEmpty()) {
+                add(Cells.createKey(labels.clinicalDetails.keySurgeries()))
+                add(Cells.createValue(surgeries(record.surgeries)))
+            }
+        }
+    }
+
+    private fun createMeasureCells(key: String, measure: HeartMeasurement): List<Cell> {
+        return listOf(
+            Cells.createKey(key),
+            Cells.createCellWithoutStyle(Cells.createValue(Formats.twoDigitNumber(measure.value!!)).toString() + " " + measure.unit)
+        )
     }
 
     private fun toxicities(record: PatientRecord): String {

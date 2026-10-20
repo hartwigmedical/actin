@@ -6,8 +6,8 @@ import com.hartwig.actin.algo.evaluation.washout.WashoutTestFactory
 import com.hartwig.actin.datamodel.algo.EvaluationResult
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory
-import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.junit.jupiter.api.Test
 
@@ -23,12 +23,12 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not had any prior cancer treatment"
+            "No prior cancer treatment in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(emptyList())),
-            "Has not had any prior cancer treatment"
+            "No prior cancer treatment in provided treatments"
         )
     }
 
@@ -39,12 +39,12 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
     }
 
@@ -56,12 +56,12 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithoutCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
         assertEvaluation(
             EvaluationResult.PASS,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has received prior cancer treatment(s)"
+            "Prior cancer treatment(s) in provided treatments"
         )
     }
 
@@ -72,13 +72,13 @@ class HasHadAnyCancerTreatmentTest {
         val atc = AtcTestFactory.atcClassification("category to find")
         val medications = listOf(
             WashoutTestFactory.medication(atc, null)
-                .copy(drug = Drug(name = "", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
+                .copy(drug = StandardDrug(name = "", category = TreatmentCategory.IMMUNOTHERAPY, drugTypes = setOf(DrugType.ANTI_TISSUE_FACTOR)))
         )
         listOf(functionWithCategoriesToIgnore, functionWithoutCategoriesToIgnore).forEach { function ->
             assertEvaluation(
                 EvaluationResult.PASS,
                 function.evaluate(TreatmentTestFactory.withTreatmentsAndMedications(treatmentHistory, medications)),
-                "Has received prior cancer treatment(s)"
+                "Prior cancer treatment(s) in provided treatments"
             )
         }
     }
@@ -91,7 +91,7 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.FAIL,
             functionWithCategoriesToIgnore.evaluate(TreatmentTestFactory.withTreatmentHistory(treatmentHistory)),
-            "Has not had any prior cancer treatment"
+            "No prior cancer treatment in provided treatments"
         )
     }
 
@@ -101,7 +101,7 @@ class HasHadAnyCancerTreatmentTest {
         assertEvaluation(
             EvaluationResult.UNDETERMINED,
             functionWithCategoriesToIgnore.evaluate(WashoutTestFactory.withMedications(medications)),
-            "Inconclusive if patient had any prior cancer treatment because participated in trial"
+            "Undetermined if trial treatment in provided treatments included cancer treatment"
         )
     }
 }

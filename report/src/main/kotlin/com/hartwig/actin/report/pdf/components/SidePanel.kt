@@ -1,6 +1,7 @@
 package com.hartwig.actin.report.pdf.components
 
 import com.hartwig.actin.report.pdf.ReportLabels
+import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Formats.date
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.ApplicationConfig
@@ -17,7 +18,6 @@ import java.time.LocalDate
 private const val ROW_SPACING = 35f
 private const val VALUE_TEXT_Y_OFFSET = 18f
 private const val MAX_WIDTH = 120f
-private const val RECTANGLE_WIDTH = 170f
 private const val RECTANGLE_HEIGHT = 84f
 private const val INITIAL_FONT_SIZE = 10f
 private const val MIN_FONT_SIZE = 6f
@@ -28,7 +28,7 @@ class SidePanel(private val patientId: String, private val sourcePatientId: Stri
     fun render(page: PdfPage) {
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageSize = page.pageSize
-        canvas.rectangle(pageSize.width.toDouble(), pageSize.height.toDouble(), -RECTANGLE_WIDTH.toDouble(), -RECTANGLE_HEIGHT.toDouble())
+        canvas.rectangle(pageSize.width.toDouble(), pageSize.height.toDouble(), -Constants.SIDE_PANEL_WIDTH.toDouble(), -RECTANGLE_HEIGHT.toDouble())
         canvas.setFillColor(Styles.PALETTE_BLUE)
         canvas.fill()
         var sideTextIndex = 0
@@ -43,7 +43,7 @@ class SidePanel(private val patientId: String, private val sourcePatientId: Stri
         val div = Div()
         div.isKeepTogether = true
         var yPos = pageSize.height + FONT_HEIGHT - index * ROW_SPACING
-        val xPos = pageSize.width - RECTANGLE_WIDTH + FONT_HEIGHT
+        val xPos = pageSize.width - Constants.SIDE_PANEL_WIDTH + FONT_HEIGHT
         div.add(
             Paragraph(label.uppercase(ApplicationConfig.LOCALE)).addStyle(Styles.sidePanelLabelStyle())
                 .setFixedPosition(xPos, yPos, MAX_WIDTH)
