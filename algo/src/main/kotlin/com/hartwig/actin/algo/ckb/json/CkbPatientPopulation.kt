@@ -33,7 +33,7 @@ data class CkbPatientPopulation(
     @JsonProperty("n_prior_systemic_therapy") val nPriorSystemicTherapy: String?,
     @JsonProperty("n_stage_description") val nStageDescription: String?,
     @JsonProperty("n_mutation_status") val nMutationStatus: String?,
-    @JsonProperty("n_high_microsatellite_instability") val nHighMicrosatelliteStability: String?,
+    @JsonProperty("n_high_microsatellite_instability") val nHighMicrosatelliteInStability: String?,
     @JsonProperty("median_follow_up_for_survival") val medianFollowUpForSurvival: String?,
     @JsonProperty("median_follow_up_for_progression_free_survival") val medianFollowUpForProgressionFreeSurvival: String?,
     @JsonProperty("median_follow_up_randomization_to_data_cut_off") val medianFollowUpForRandomizationToDataCutOff: String?,

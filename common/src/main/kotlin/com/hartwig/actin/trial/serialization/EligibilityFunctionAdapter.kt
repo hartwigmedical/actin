@@ -125,10 +125,10 @@ object EligibilityFunctionSerializer : JsonSerializer<EligibilityFunction>() {
             gen.writeStartObject()
             gen.writeStringField("type", param.type.name)
             gen.writeFieldName("value")
-            when {
-                param is FunctionParameter -> serializers.defaultSerializeValue(param.value, gen)
-                param.type.isStructured() -> serializers.defaultSerializeValue(param.value, gen)
-                else -> gen.writeString(parameterValueToString(param))
+            if (param is FunctionParameter || param.type.isStructured()) {
+                serializers.defaultSerializeValue(param.value, gen)
+            } else {
+                gen.writeString(parameterValueToString(param))
             }
             gen.writeEndObject()
         }

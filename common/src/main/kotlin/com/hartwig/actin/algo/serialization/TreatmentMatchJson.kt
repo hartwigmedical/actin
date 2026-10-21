@@ -23,6 +23,21 @@ object TreatmentMatchJson {
     private val logger = KotlinLogging.logger {}
     private const val TREATMENT_MATCH_EXTENSION = ".treatment_match.json"
 
+    private val mapper: ObjectMapper by lazy {
+        ActinObjectMapper.create()
+            .registerModule(ComplexKeyMapModule())
+            .registerModule(
+                SimpleModule().apply {
+                    addDeserializer(Treatment::class.java, TreatmentDeserializer)
+                    addDeserializer(Drug::class.java, DrugDeserializer)
+                    addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
+                    addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
+                    addSerializer(EvaluationMessage::class.java, EvaluationMessageSerializer)
+                    addDeserializer(EvaluationMessage::class.java, EvaluationMessageDeserializer)
+                }
+            )
+    }
+
     fun write(match: TreatmentMatch, directory: String) {
         write(match, Path.of(directory))
     }
@@ -49,20 +64,5 @@ object TreatmentMatchJson {
 
     fun fromJson(json: String): TreatmentMatch {
         return mapper.readValue(json, TreatmentMatch::class.java)
-    }
-
-    private val mapper: ObjectMapper by lazy {
-        ActinObjectMapper.create()
-            .registerModule(ComplexKeyMapModule())
-            .registerModule(
-                SimpleModule().apply {
-                    addDeserializer(Treatment::class.java, TreatmentDeserializer)
-                    addDeserializer(Drug::class.java, DrugDeserializer)
-                    addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
-                    addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
-                    addSerializer(EvaluationMessage::class.java, EvaluationMessageSerializer)
-                    addDeserializer(EvaluationMessage::class.java, EvaluationMessageDeserializer)
-                }
-            )
     }
 }

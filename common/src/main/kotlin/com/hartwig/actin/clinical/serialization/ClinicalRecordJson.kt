@@ -8,6 +8,7 @@ import java.nio.file.Path
 object ClinicalRecordJson {
 
     private const val CLINICAL_JSON_EXTENSION = ".clinical.json"
+    private val mapper by lazy { ClinicalRecordJsonMapper.create() }
 
     fun write(records: List<ClinicalRecord>, directory: Path) {
         for (record in records) {
@@ -37,8 +38,6 @@ object ClinicalRecordJson {
     fun read(clinicalJson: Path): ClinicalRecord {
         return fromJson(Files.readString(clinicalJson))
     }
-
-    private val mapper by lazy { ClinicalRecordJsonMapper.create() }
 
     fun toJson(record: ClinicalRecord): String {
         return mapper.writeValueAsString(record)

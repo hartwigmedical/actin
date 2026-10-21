@@ -19,6 +19,17 @@ object TrialJson {
     private val logger = KotlinLogging.logger {}
     private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
 
+    private val mapper: ObjectMapper by lazy {
+        ActinObjectMapper.create().registerModule(
+            SimpleModule().apply {
+                addDeserializer(Treatment::class.java, TreatmentDeserializer)
+                addDeserializer(Drug::class.java, DrugDeserializer)
+                addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
+                addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
+            }
+        )
+    }
+
     fun write(trials: List<Trial>, directory: String) {
         write(trials, Path.of(directory))
     }
@@ -52,17 +63,6 @@ object TrialJson {
 
     fun fromJson(json: String): Trial {
         return mapper.readValue(json, Trial::class.java)
-    }
-
-    private val mapper: ObjectMapper by lazy {
-        ActinObjectMapper.create().registerModule(
-            SimpleModule().apply {
-                addDeserializer(Treatment::class.java, TreatmentDeserializer)
-                addDeserializer(Drug::class.java, DrugDeserializer)
-                addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
-                addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
-            }
-        )
     }
 
     private fun fromJsonFile(file: Path): Trial {

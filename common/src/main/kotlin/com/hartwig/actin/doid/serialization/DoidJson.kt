@@ -29,7 +29,7 @@ object DoidJson {
     const val DOID_URL_PREFIX = "http://purl.obolibrary.org/obo/DOID_"
 
     fun readDoidOwlEntry(doidJson: String): DoidEntry {
-        val rootObject = readSingleObjectFromFile(doidJson, mapper)
+        val rootObject = readSingleObjectFromFile(doidJson)
         DatamodelCheckerFactory.rootObjectChecker().check(rootObject)
 
         var entry: DoidEntry? = null
@@ -232,7 +232,7 @@ object DoidJson {
         )
     }
 
-    private fun readSingleObjectFromFile(path: String, mapper: ObjectMapper): ObjectNode {
+    private fun readSingleObjectFromFile(path: String): ObjectNode {
         return mapper.createParser(File(path)).use { parser ->
             (parser.readValueAsTree<JsonNode>() as? ObjectNode)?.also {
                 if (parser.nextToken() != null) {

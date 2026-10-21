@@ -9,6 +9,7 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 object PatientRecordJson {
     private val logger = KotlinLogging.logger {}
     private const val PATIENT_RECORD_JSON_EXTENSION = ".patient_record.json"
+    private val mapper by lazy { ClinicalRecordJsonMapper.create() }
 
     fun write(patientRecord: PatientRecord, directory: String) {
         write(patientRecord, Path.of(directory))
@@ -29,8 +30,6 @@ object PatientRecordJson {
     fun read(patientRecordJson: Path): PatientRecord {
         return fromJson(Files.readString(patientRecordJson))
     }
-
-    private val mapper by lazy { ClinicalRecordJsonMapper.create() }
 
     fun toJson(patientRecord: PatientRecord): String {
         return mapper.writeValueAsString(patientRecord)

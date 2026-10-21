@@ -108,7 +108,7 @@ class EfficacyEntryFactory(private val treatmentDatabase: TreatmentDatabase) {
                 timeOfMetastases = patientPopulation.timeOfMetastases?.let { convertTimeOfMetastases(it) },
                 treatment = patientPopulation.therapy?.let { findTreatmentInDatabase(it.therapyName, it.synonyms) },
                 priorSystemicTherapy = patientPopulation.nPriorSystemicTherapy, //TODO: convert to number or percentage
-                patientsWithMSI = patientPopulation.nHighMicrosatelliteStability?.toInt(),
+                patientsWithMSI = patientPopulation.nHighMicrosatelliteInStability?.toInt(),
                 medianFollowUpForSurvival = patientPopulation.medianFollowUpForSurvival,
                 medianFollowUpPFS = patientPopulation.medianFollowUpForProgressionFreeSurvival,
                 analysisGroups = convertAnalysisGroup(patientPopulation.analysisGroups),
