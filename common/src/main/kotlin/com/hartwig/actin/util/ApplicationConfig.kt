@@ -43,12 +43,10 @@ object ApplicationConfig {
     }
 
     fun optionalFiles(cmd: CommandLine, param: String): List<String> {
-        val value: String? = cmd.getOptionValue(param)
-        return value?.split(",")?.map(String::trim)?.map { path ->
+        return cmd.getOptionValue(param)?.split(",")?.map(String::trim)?.onEach { path ->
             if (!pathExists(path)) {
                 throw ParseException("Parameter '$param' must be an existing file: $path")
             }
-            path
         } ?: emptyList()
     }
 
