@@ -94,7 +94,6 @@
       "year": 2023,
       "month": null,
       "icdCodes": [],
-      "category": "Autoimmune disease",
       "comorbidityClass": "OTHER_CONDITION"
     }
   ],
@@ -113,8 +112,7 @@
   "labValues": [
     {
       "date": "2025-01-15",
-      "code": "ALAT",
-      "name": "Alanine aminotransferase",
+      "measurement": "ALANINE_AMINOTRANSFERASE",
       "comparator": "",
       "value": 40.0,
       "unit": "UNITS_PER_LITER",
@@ -124,8 +122,7 @@
     },
     {
       "date": "2025-01-15",
-      "code": "ASAT",
-      "name": "Aspartate aminotransferase",
+      "measurement": "ASPARTATE_AMINOTRANSFERASE",
       "comparator": "",
       "value": 30.0,
       "unit": "UNITS_PER_LITER",
@@ -135,8 +132,7 @@
     },
     {
       "date": "2025-01-15",
-      "code": "TOTAL_BILIRUBIN",
-      "name": "total bilirubin",
+      "measurement": "TOTAL_BILIRUBIN",
       "comparator": "",
       "value": 8.0,
       "unit": "MICROMOLES_PER_LITER",
@@ -146,8 +142,7 @@
     },
     {
       "date": "2025-01-15",
-      "code": "Hb",
-      "name": "hemoglobin",
+      "measurement": "HEMOGLOBIN",
       "comparator": "",
       "value": 8.2,
       "unit": "MILLIMOLES_PER_LITER",
@@ -157,8 +152,7 @@
     },
     {
       "date": "2025-01-15",
-      "code": "THROMBOCYTES_ABS",
-      "name": "absolute thrombocyte count",
+      "measurement": "THROMBOCYTES_ABS",
       "comparator": "",
       "value": 125.0,
       "unit": "BILLIONS_PER_LITER",
@@ -168,8 +162,7 @@
     },
     {
       "date": "2025-01-15",
-      "code": "LYMPHOCYTES_ABS_EDA",
-      "name": "absolute lymphocyte count eDA",
+      "measurement": "LYMPHOCYTES_ABS",
       "comparator": "",
       "value": 3.0,
       "unit": "BILLIONS_PER_LITER",
@@ -182,7 +175,8 @@
     {
       "name": "Cholecystectomy",
       "endDate": "2024-08-01",
-      "status": "FINISHED"
+      "status": "FINISHED",
+      "treatmentType": "OTHER_SURGERY"
     }
   ],
   "bodyWeights": [
@@ -211,7 +205,7 @@
     {
       "date": "2024-09-09T08:00:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subCategory": "SYSTOLIC_BLOOD_PRESSURE",
+      "subcategory": "SYSTOLIC_BLOOD_PRESSURE",
       "value": 170.0,
       "unit": "MILLIMETERS_OF_MERCURY",
       "valid": true
@@ -219,7 +213,7 @@
     {
       "date": "2024-09-09T08:00:00",
       "category": "NON_INVASIVE_BLOOD_PRESSURE",
-      "subCategory": "DIASTOLIC_BLOOD_PRESSURE",
+      "subcategory": "DIASTOLIC_BLOOD_PRESSURE",
       "value": 110.0,
       "unit": "MILLIMETERS_OF_MERCURY",
       "valid": true

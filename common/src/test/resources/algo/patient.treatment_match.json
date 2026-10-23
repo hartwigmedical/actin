@@ -8,7 +8,9 @@
         "trialId": "test trial",
         "open": true,
         "acronym": "TEST-TRIAL",
-        "title": "This is an ACTIN test trial"
+        "title": "This is an ACTIN test trial",
+        "sources": [],
+        "locations": []
       },
       "isPotentiallyEligible": true,
       "evaluations": [
@@ -27,21 +29,16 @@
           {
             "result": "PASS",
             "recoverable": false,
-            "inclusionMolecularEvents": [
-            ],
-            "exclusionMolecularEvents": [
-            ],
+            "inclusionMolecularEvents": [],
+            "exclusionMolecularEvents": [],
             "passMessages": [
               {
                 "message": "Age above 18 years"
               }
             ],
-            "warnMessages": [
-            ],
-            "undeterminedMessages": [
-            ],
-            "failMessages": [
-            ]
+            "warnMessages": [],
+            "undeterminedMessages": [],
+            "failMessages": []
           }
         ]
       ],
@@ -53,7 +50,11 @@
             "open": true,
             "slotsAvailable": true,
             "ignore": false,
-            "description": "Cohort A"
+            "description": "Cohort A",
+            "cohortAvailability": {
+              "open": true,
+              "slotsAvailable": true
+            }
           },
           "isPotentiallyEligible": true,
           "evaluations": [
@@ -75,16 +76,11 @@
               {
                 "result": "FAIL",
                 "recoverable": false,
-                "inclusionMolecularEvents": [
-                ],
-                "exclusionMolecularEvents": [
-                ],
-                "passMessages": [
-                ],
-                "warnMessages": [
-                ],
-                "undeterminedMessages": [
-                ],
+                "inclusionMolecularEvents": [],
+                "exclusionMolecularEvents": [],
+                "passMessages": [],
+                "warnMessages": [],
+                "undeterminedMessages": [],
                 "failMessages": [
                   {
                     "message": "No known active CNS metastases in provided lesions"
@@ -101,7 +97,11 @@
             "open": true,
             "slotsAvailable": true,
             "ignore": false,
-            "description": "Cohort B"
+            "description": "Cohort B",
+            "cohortAvailability": {
+              "open": true,
+              "slotsAvailable": true
+            }
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
@@ -113,12 +113,17 @@
             "open": true,
             "slotsAvailable": true,
             "ignore": false,
-            "description": "Cohort C"
+            "description": "Cohort C",
+            "cohortAvailability": {
+              "open": true,
+              "slotsAvailable": true
+            }
           },
           "isPotentiallyEligible": true,
           "evaluations": {}
         }
-      ]
+      ],
+      "nonEvaluableCohorts": []
     }
   ],
   "standardOfCareMatches": [
@@ -176,7 +181,9 @@
             }
           ]
         }
-      ]
+      ],
+      "annotations": [],
+      "resistanceEvidence": []
     }
   ],
   "survivalPredictionsPerTreatment": null

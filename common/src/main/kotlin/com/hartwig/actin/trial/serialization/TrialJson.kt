@@ -1,13 +1,14 @@
 package com.hartwig.actin.trial.serialization
 
-import com.hartwig.actin.clinical.serialization.TreatmentAdapter
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.hartwig.actin.clinical.serialization.DrugDeserializer
+import com.hartwig.actin.clinical.serialization.TreatmentDeserializer
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.Treatment
 import com.hartwig.actin.datamodel.trial.EligibilityFunction
 import com.hartwig.actin.datamodel.trial.Trial
-import com.hartwig.actin.util.json.DrugDeserializer
-import com.hartwig.actin.util.json.EligibilityFunctionDeserializer
-import com.hartwig.actin.util.json.GsonSerializer
+import com.hartwig.actin.util.json.ActinObjectMapper
 import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.IOException
 import java.nio.file.Files
@@ -17,6 +18,17 @@ object TrialJson {
 
     private val logger = KotlinLogging.logger {}
     private const val TRIAL_JSON_EXTENSION: String = ".trial.json"
+
+    private val mapper: ObjectMapper by lazy {
+        ActinObjectMapper.create().registerModule(
+            SimpleModule().apply {
+                addDeserializer(Treatment::class.java, TreatmentDeserializer)
+                addDeserializer(Drug::class.java, DrugDeserializer)
+                addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
+                addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
+            }
+        )
+    }
 
     fun write(trials: List<Trial>, directory: String) {
         write(trials, Path.of(directory))
@@ -46,18 +58,12 @@ object TrialJson {
     }
 
     fun toJson(trial: Trial): String {
-        return gson().toJson(trial)
+        return mapper.writeValueAsString(trial)
     }
 
     fun fromJson(json: String): Trial {
-        return gson().fromJson(json, Trial::class.java)
+        return mapper.readValue(json, Trial::class.java)
     }
-
-    private fun gson() = GsonSerializer.createBuilder()
-        .registerTypeAdapter(Treatment::class.java, TreatmentAdapter())
-        .registerTypeHierarchyAdapter(Drug::class.java, DrugDeserializer())
-        .registerTypeAdapter(EligibilityFunction::class.java, EligibilityFunctionDeserializer())
-        .create()
 
     private fun fromJsonFile(file: Path): Trial {
         try {

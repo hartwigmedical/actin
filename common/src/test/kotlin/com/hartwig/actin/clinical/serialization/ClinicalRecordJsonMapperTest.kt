@@ -1,5 +1,6 @@
 package com.hartwig.actin.clinical.serialization
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.hartwig.actin.datamodel.clinical.treatment.Drug
 import com.hartwig.actin.datamodel.clinical.treatment.DrugTreatment
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
@@ -9,6 +10,7 @@ import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
 import com.hartwig.actin.datamodel.clinical.treatment.StandardDrug
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 
 class ClinicalRecordJsonMapperTest {
@@ -22,36 +24,46 @@ class ClinicalRecordJsonMapperTest {
 
     @Test
     fun `Should convert drugs of a drug treatment back and forth by name`() {
-        val gson = ClinicalRecordJsonMapper.createWithDrugMap(drugMap(capecitabine))
+        val mapper = ClinicalRecordJsonMapper.createWithDrugMap(drugMap(capecitabine))
         val treatment = DrugTreatment(name = "CAPECITABINE", drugs = setOf(capecitabine))
 
-        val json = gson.toJson(treatment)
+        val json = mapper.writeValueAsString(treatment)
 
         assertThat(json).contains("\"drugs\":[\"CAPECITABINE\"]")
-        assertThat(gson.fromJson(json, DrugTreatment::class.java)).isEqualTo(treatment)
+        assertThat(mapper.readValue(json, DrugTreatment::class.java)).isEqualTo(treatment)
     }
 
     @Test
     fun `Should convert drugs of a radiotherapy back and forth by name`() {
-        val gson = ClinicalRecordJsonMapper.createWithDrugMap(drugMap(lutetiumDotatate))
+        val mapper = ClinicalRecordJsonMapper.createWithDrugMap(drugMap(lutetiumDotatate))
         val treatment = Radiotherapy(name = "LUTETIUM_LU_177_DOTATATE", drugs = setOf(lutetiumDotatate))
 
-        val json = gson.toJson(treatment)
+        val json = mapper.writeValueAsString(treatment)
 
         assertThat(json).contains("\"drugs\":[\"LUTETIUM_LU_177_DOTATATE\"]")
-        assertThat(gson.fromJson(json, Radiotherapy::class.java)).isEqualTo(treatment)
+        assertThat(mapper.readValue(json, Radiotherapy::class.java)).isEqualTo(treatment)
+    }
+
+    @Test
+    fun `Should fail when drug name resolves to a drug of another drug class`() {
+        val mapper = ClinicalRecordJsonMapper.createWithDrugMap(drugMap(lutetiumDotatate))
+        val json = """{"name":"LUTETIUM_LU_177_DOTATATE","drugs":["LUTETIUM_LU_177_DOTATATE"],"treatmentClass":"DRUG_TREATMENT"}"""
+
+        assertThatThrownBy { mapper.readValue(json, DrugTreatment::class.java) }
+            .isInstanceOf(JsonMappingException::class.java)
+            .hasMessageContaining("is not a StandardDrug")
     }
 
     @Test
     fun `Should convert drugs of every drug class back and forth as full objects`() {
-        val gson = ClinicalRecordJsonMapper.create()
+        val mapper = ClinicalRecordJsonMapper.create()
         val treatments = listOf(
             DrugTreatment(name = "CAPECITABINE", drugs = setOf(capecitabine)),
             Radiotherapy(name = "LUTETIUM_LU_177_DOTATATE", drugs = setOf(lutetiumDotatate))
         )
 
         treatments.forEach { treatment ->
-            assertThat(gson.fromJson(gson.toJson(treatment), treatment::class.java)).isEqualTo(treatment)
+            assertThat(mapper.readValue(mapper.writeValueAsString(treatment), treatment::class.java)).isEqualTo(treatment)
         }
     }
 
