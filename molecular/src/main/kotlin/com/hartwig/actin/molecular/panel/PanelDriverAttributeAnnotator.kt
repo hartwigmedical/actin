@@ -64,7 +64,7 @@ class PanelDriverAttributeAnnotator(
         }.flatMap {
             it.second.map { variant ->
                 variant.copy(
-                    driverLikelihood = DriverLikelihood.from(it.first)
+                    driverLikelihood = if (variant.pathogenicityIsConfirmed == false) null else DriverLikelihood.from(it.first)
                 )
             }
         }

@@ -120,7 +120,7 @@ class PanelDriverAttributeAnnotatorTest {
     }
 
     @Test
-    fun `Should assume high driver likelihood for gene when any of its variants has confirmed pathogenicity`() {
+    fun `Should assume high driver likelihood for confirmed variant and null for unconfirmed variant in same gene`() {
         every { knownEventResolver.resolveForVariant(any()) } returns NON_CANCER_ASSOCIATED_VARIANT
 
         val panelRecord = panelRecordWith(
@@ -130,11 +130,10 @@ class PanelDriverAttributeAnnotatorTest {
         val annotatedPanelRecord = annotatorWithConfirmedEventPathogenicity.annotate(panelRecord)
 
         assertThat(annotatedPanelRecord.drivers.variants).hasSize(2)
-        assertThat(annotatedPanelRecord.drivers.variants).allSatisfy {
-            assertThat(it.driverLikelihood).isEqualTo(
-                DriverLikelihood.HIGH
-            )
-        }
+        assertThat(annotatedPanelRecord.drivers.variants.single { it.position == 1 }.driverLikelihood).isEqualTo(
+            DriverLikelihood.HIGH
+        )
+        assertThat(annotatedPanelRecord.drivers.variants.single { it.position == 2 }.driverLikelihood).isNull()
     }
 
     @Test
