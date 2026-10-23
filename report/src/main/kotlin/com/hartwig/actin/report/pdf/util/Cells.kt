@@ -56,7 +56,7 @@ object Cells {
     }
 
     fun createHeaderWithBorder(text: String): Cell {
-        return createHeader(text).setBorderBottom(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
+        return createHeader(text).setBorderBottom(SolidBorder(Styles.color(PaletteColor.MID_GREY), 0.25f))
     }
 
     fun createSpanningSubNote(text: String, table: Table): Cell {
@@ -74,7 +74,7 @@ object Cells {
     fun createContent(element: IBlockElement, style: Style = Styles.tableContentStyle()): Cell {
         val cell = create(element)
         cell.addStyle(style)
-        cell.setBorderTop(SolidBorder(Styles.PALETTE_MID_GREY, 0.25f))
+        cell.setBorderTop(SolidBorder(Styles.color(PaletteColor.MID_GREY), 0.25f))
         return cell
     }
 
@@ -106,7 +106,7 @@ object Cells {
 
     fun createContentWarn(text: String): Cell {
         val cell = createContent(text)
-        cell.setFontColor(Styles.PALETTE_WARN)
+        cell.setFontColor(Styles.color(PaletteColor.EVALUATION_WARN))
         return cell
     }
 

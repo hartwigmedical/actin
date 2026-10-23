@@ -4,7 +4,8 @@ import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
 import com.hartwig.actin.report.pdf.util.Formats
-import com.hartwig.actin.report.pdf.util.Styles.PALETTE_MID_GREY
+import com.hartwig.actin.report.pdf.util.PaletteColor
+import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.hartwig.actin.treatment.TreatmentEvidenceRanking
 import com.itextpdf.layout.borders.SolidBorder
@@ -33,8 +34,8 @@ class TreatmentRankingGenerator(
 
             val eventRow = listOf(
                 Cells.createContent(events.joinToString("\n")),
-                Cells.createEmpty().apply { setBorderTop(SolidBorder(PALETTE_MID_GREY, 0.25f)) },
-                Cells.createEmpty().apply { setBorderTop(SolidBorder(PALETTE_MID_GREY, 0.25f)) }
+                Cells.createEmpty().apply { setBorderTop(SolidBorder(Styles.color(PaletteColor.MID_GREY), 0.25f)) },
+                Cells.createEmpty().apply { setBorderTop(SolidBorder(Styles.color(PaletteColor.MID_GREY), 0.25f)) }
             )
             val treatmentRows = treatments.sortedByDescending { it.score }.flatMap { treatment ->
                 listOf(
