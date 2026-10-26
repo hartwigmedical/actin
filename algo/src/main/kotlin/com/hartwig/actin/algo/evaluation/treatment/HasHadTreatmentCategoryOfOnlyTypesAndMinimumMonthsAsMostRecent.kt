@@ -31,8 +31,6 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
         return when {
             mostRecent == null || !matchesCategoryAndTypes(mostRecent) -> EvaluationFactory.fail("No $description")
 
-            mostRecent.startYear == null -> EvaluationFactory.undetermined("Undetermined if $description (start date unknown)")
-
             minDuration != null && minDuration >= months -> EvaluationFactory.pass("Has had $description")
 
             maxDuration != null && maxDuration < months -> EvaluationFactory.fail("No $description (duration too short)")

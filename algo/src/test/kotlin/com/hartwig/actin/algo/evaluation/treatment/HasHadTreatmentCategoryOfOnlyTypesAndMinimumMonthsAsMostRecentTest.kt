@@ -57,12 +57,6 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
     }
 
     @Test
-    fun `Should be undetermined if start date unknown`() {
-        val record = recordWith(entry(DrugType.ALKYLATING_AGENT, null, null, 2023, 12))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
-    }
-
-    @Test
     fun `Should pass if stop date unknown but reference date more than required duration after start`() {
         val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2024, 1, null, null))
         assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
