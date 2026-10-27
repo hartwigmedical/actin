@@ -91,7 +91,7 @@ class TumorRuleMapper(resources: RuleMappingResources) : RuleMapper(resources) {
             EligibilityRule.HAS_HIFU_AMENABLE_LESION to hasHifuAmenableLesionCreator(),
             EligibilityRule.HAS_PRESENCE_OF_LESIONS_IN_AT_LEAST_X_SITES to hasMinimumSitesWithLesionsCreator(),
             EligibilityRule.HAS_RISK_OF_AT_LEAST_X_PERCENTAGE_FOR_SENTINEL_NODE_POSITIVITY to hasMinimumRiskForSentinelNodePositivityCreator(),
-            EligibilityRule.HAS_OLIGOPROGRESSIVE_DISEASE to { HasOligoprogressiveDisease() },
+            EligibilityRule.HAS_OLIGOPROGRESSIVE_DISEASE to { HasOligoprogressiveDisease(doidModel()) },
             EligibilityRule.CAN_PROVIDE_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideFreshSampleForFurtherAnalysisCreator(),
             EligibilityRule.CAN_PROVIDE_ARCHIVAL_OR_FRESH_TISSUE_SAMPLE_FOR_FURTHER_ANALYSIS to canProvideSampleForFurtherAnalysisCreator(),
             EligibilityRule.MEETS_SPECIFIC_REQUIREMENTS_REGARDING_BIOPSY to meetsSpecificBiopsyRequirementsCreator(),
