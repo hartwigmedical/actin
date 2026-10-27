@@ -16,7 +16,7 @@ class HasOligoprogressiveDisease(private val doidModel: DoidModel) : EvaluationF
         val systemicHistory = record.oncologicalHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
         val (historyWithoutDates, historyWithDates) = systemicHistory.partition { it.startYear == null }
         val mostRecentWithDate = historyWithDates.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
-        val candidatesPossiblyProgressive = (listOfNotNull(mostRecentWithDate) + historyWithoutDates)
+        val possiblyProgressiveMostRecentCandidates = (listOfNotNull(mostRecentWithDate) + historyWithoutDates)
             .filter { ProgressiveDiseaseFunctions.treatmentResultedInPD(it, systemicHistory) != false }
 
         return when {
@@ -28,7 +28,7 @@ class HasOligoprogressiveDisease(private val doidModel: DoidModel) : EvaluationF
                 EvaluationFactory.fail("No oligoprogressive disease (no prior systemic treatment)")
             }
 
-            candidatesPossiblyProgressive.isEmpty() -> {
+            possiblyProgressiveMostRecentCandidates.isEmpty() -> {
                 EvaluationFactory.fail("No oligoprogressive disease (most recent systemic treatment line did not result in PD)")
             }
 
