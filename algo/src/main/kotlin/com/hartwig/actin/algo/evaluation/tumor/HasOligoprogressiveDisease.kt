@@ -2,27 +2,41 @@ package com.hartwig.actin.algo.evaluation.tumor
 
 import com.hartwig.actin.algo.evaluation.EvaluationFactory
 import com.hartwig.actin.algo.evaluation.EvaluationFunction
-import com.hartwig.actin.algo.evaluation.tumor.TumorEvaluationFunctions.isStageMatch
+import com.hartwig.actin.algo.evaluation.treatment.SystemicTreatmentAnalyser
 import com.hartwig.actin.algo.evaluation.treatment.TreatmentHistoryEntryStartDateComparator
 import com.hartwig.actin.clinical.interpretation.ProgressiveDiseaseFunctions
 import com.hartwig.actin.datamodel.PatientRecord
 import com.hartwig.actin.datamodel.algo.Evaluation
-import com.hartwig.actin.datamodel.clinical.TumorStage
-import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
+import com.hartwig.actin.doid.DoidModel
 
-class HasOligoprogressiveDisease : EvaluationFunction {
+class HasOligoprogressiveDisease(private val doidModel: DoidModel) : EvaluationFunction {
 
     override fun evaluate(record: PatientRecord): Evaluation {
-        val history = record.oncologicalHistory
+        val metastaticCancerEvaluation = MetastaticCancerEvaluator.isMetastatic(record, doidModel)
+        val systemicHistory = record.oncologicalHistory.filter(SystemicTreatmentAnalyser::treatmentHistoryEntryIsSystemic)
+        val (historyWithoutDates, historyWithDates) = systemicHistory.partition { it.startYear == null }
+        val mostRecentWithDate = historyWithDates.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
+        val candidatesPossiblyProgressive = (listOfNotNull(mostRecentWithDate) + historyWithoutDates)
+            .filter { ProgressiveDiseaseFunctions.treatmentResultedInPD(it, systemicHistory) != false }
 
         return when {
-            history.isEmpty() -> evaluateWithoutPriorTreatment(record.tumor.stage)
-
-            possiblyProgressiveLatestLineCandidates(history).isEmpty() -> {
-                EvaluationFactory.fail("No oligoprogressive disease")
+            metastaticCancerEvaluation == MetastaticCancerEvaluation.NON_METASTATIC -> {
+                EvaluationFactory.fail("No oligoprogressive disease (stage ${record.tumor.stage?.display()})")
             }
 
-            history.none { it.startYear == null } -> {
+            systemicHistory.isEmpty() -> {
+                EvaluationFactory.fail("No oligoprogressive disease (no prior systemic treatment)")
+            }
+
+            candidatesPossiblyProgressive.isEmpty() -> {
+                EvaluationFactory.fail("No oligoprogressive disease (most recent systemic treatment line did not result in PD)")
+            }
+
+            metastaticCancerEvaluation == MetastaticCancerEvaluation.DATA_MISSING -> {
+                EvaluationFactory.undetermined("Undetermined if oligoprogressive disease (tumor stage missing)")
+            }
+
+            historyWithoutDates.isEmpty() -> {
                 EvaluationFactory.undetermined("Undetermined if oligoprogressive disease")
             }
 
@@ -32,25 +46,5 @@ class HasOligoprogressiveDisease : EvaluationFunction {
                 )
             }
         }
-    }
-
-    private fun evaluateWithoutPriorTreatment(stage: TumorStage?): Evaluation {
-        return if (stage == null || isStageMatch(stage, STAGES_AT_LEAST_III)) {
-            EvaluationFactory.undetermined("Undetermined if oligoprogressive disease")
-        } else {
-            EvaluationFactory.fail("No oligoprogressive disease")
-        }
-    }
-
-    private fun possiblyProgressiveLatestLineCandidates(history: List<TreatmentHistoryEntry>): List<TreatmentHistoryEntry> {
-        val (historyWithoutDates, historyWithDates) = history.partition { it.startYear == null }
-        val mostRecentWithDate = historyWithDates.maxWithOrNull(TreatmentHistoryEntryStartDateComparator())
-
-        return (listOfNotNull(mostRecentWithDate) + historyWithoutDates)
-            .filter { ProgressiveDiseaseFunctions.treatmentResultedInPD(it, history) != false }
-    }
-
-    companion object {
-        private val STAGES_AT_LEAST_III = setOf(TumorStage.III, TumorStage.IV)
     }
 }
