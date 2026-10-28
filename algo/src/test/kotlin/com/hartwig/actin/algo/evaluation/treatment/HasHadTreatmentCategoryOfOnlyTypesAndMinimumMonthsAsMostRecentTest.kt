@@ -12,13 +12,15 @@ import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.jupiter.api.Test
+import java.time.LocalDate
 
 class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
 
     private val function = HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
         TreatmentCategory.CHEMOTHERAPY,
         setOf(DrugType.ALKYLATING_AGENT),
-        6
+        6,
+        LocalDate.of(2024, 12, 1)
     )
 
     @Test
@@ -57,9 +59,15 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
     }
 
     @Test
-    fun `Should be undetermined if stop date unknown`() {
+    fun `Should pass if stop date unknown and reference date is long enough after start`() {
         val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2024, 1, null, null))
-        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
+        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+    }
+
+    @Test
+    fun `Should fail if stop date unknown and reference date is too close to start`() {
+        val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2024, 10, null, null))
+        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
     }
 
     @Test
@@ -67,7 +75,8 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
         val radiotherapyFunction = HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
             TreatmentCategory.RADIOTHERAPY,
             setOf(RadiotherapyType.BRACHYTHERAPY),
-            6
+            6,
+            LocalDate.of(2024, 12, 1)
         )
         val record = recordWith(
             treatmentHistoryEntry(
