@@ -39,9 +39,11 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
         category in treatment.categories() && treatment.types().isNotEmpty() && treatment.types().all { it in types }
 
     private fun assumeOngoingIfNoStopDate(entry: TreatmentHistoryEntry): TreatmentHistoryEntry {
-        return entry.stopYear()?.let {
+        return if (entry.stopYear() != null) {
+            entry
+        } else {
             val details = entry.treatmentHistoryDetails ?: TreatmentHistoryDetails()
             entry.copy(treatmentHistoryDetails = details.copy(stopYear = referenceDate.year, stopMonth = referenceDate.monthValue))
-        } ?: entry
+        }
     }
 }
