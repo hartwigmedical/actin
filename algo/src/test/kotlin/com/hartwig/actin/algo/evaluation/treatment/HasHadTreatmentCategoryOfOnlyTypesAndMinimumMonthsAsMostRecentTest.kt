@@ -7,18 +7,18 @@ import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.drugTreatment
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.treatmentHistoryEntry
 import com.hartwig.actin.datamodel.clinical.TreatmentTestFactory.withTreatmentHistory
 import com.hartwig.actin.datamodel.clinical.treatment.DrugType
+import com.hartwig.actin.datamodel.clinical.treatment.Radiotherapy
+import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
 
     private val function = HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
         TreatmentCategory.CHEMOTHERAPY,
         setOf(DrugType.ALKYLATING_AGENT),
-        6,
-        LocalDate.of(2024, 12, 1)
+        6
     )
 
     @Test
@@ -51,21 +51,34 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
     }
 
     @Test
-    fun `Should be undetermined if duration is ambiguous due to missing months`() {
-        val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2023, null, 2023, null))
+    fun `Should be undetermined if start date unknown`() {
+        val record = recordWith(entry(DrugType.ALKYLATING_AGENT, null, null, 2023, 12))
         assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
-    fun `Should pass if stop date unknown but reference date more than required duration after start`() {
+    fun `Should be undetermined if stop date unknown`() {
         val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2024, 1, null, null))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
-    fun `Should fail if stop date unknown and reference date is too close to start`() {
-        val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2024, 10, null, null))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+    fun `Should pass for non-systemic treatment of matching category and type`() {
+        val radiotherapyFunction = HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
+            TreatmentCategory.RADIOTHERAPY,
+            setOf(RadiotherapyType.BRACHYTHERAPY),
+            6
+        )
+        val record = recordWith(
+            treatmentHistoryEntry(
+                setOf(Radiotherapy(name = "brachytherapy", radioType = RadiotherapyType.BRACHYTHERAPY)),
+                startYear = 2023,
+                startMonth = 1,
+                stopYear = 2023,
+                stopMonth = 12
+            )
+        )
+        assertEvaluation(EvaluationResult.PASS, radiotherapyFunction.evaluate(record))
     }
 
     private fun recordWith(vararg entries: TreatmentHistoryEntry): PatientRecord = withTreatmentHistory(entries.toList())
