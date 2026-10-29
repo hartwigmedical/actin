@@ -15,7 +15,7 @@ class InterpretedCohortsSummarizer(
     }
 
     fun driverIsActionable(driver: Driver): Boolean {
-        return (driver.evidence.eligibleTrials.isNotEmpty() || inclusionEventsOfOpenTrials.any(driver.event::contains)
+        return (driver.evidence.eligibleTrials.isNotEmpty() || inclusionEventsOfOpenTrials.any(driver.event::equals)
                 || approved(driver.evidence.treatmentEvidence).isNotEmpty())
     }
 
