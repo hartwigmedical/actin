@@ -981,7 +981,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val category = function.param<TreatmentCategoryParameter>(0).value
             val types = function.param<ManyTreatmentTypesParameter>(1).value
             val weeks = function.param<IntegerParameter>(2).value
-            HasHadTreatmentCategoryOfOnlyTypesAndMinimumWeeksAsMostRecent(category, types, weeks)
+            HasHadTreatmentCategoryOfOnlyTypesAndMinimumWeeksAsMostRecent(category, types, weeks, referenceDate)
         }
     }
 
