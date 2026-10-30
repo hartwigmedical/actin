@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.trial
 
-import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.report.pdf.ReportLabels
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -8,7 +7,7 @@ import org.junit.jupiter.api.Test
 
 class TrialFormatFunctionsTest {
 
-    private val labels = ReportLabels.load(ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
+    private val labels = ReportLabels.load()
 
     @Test
     fun `Should format cohorts from trials string correctly if cohort count more than 0 and different total trial count`() {

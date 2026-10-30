@@ -4,6 +4,7 @@ import com.hartwig.actin.datamodel.algo.AnnotatedTreatmentMatch
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.PaletteColor
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.kernel.pdf.action.PdfAction
@@ -58,7 +59,7 @@ class ResistanceEvidenceGenerator(
                         }
 
                         repeat(4 - resistanceEvidence.evidenceUrls.size) {
-                            subTable.addCell(Cells.createContentNoBorder("[0]").setFontColor(Styles.PALETTE_WHITE))
+                            subTable.addCell(Cells.createContentNoBorder("[0]").setFontColor(Styles.color(PaletteColor.WHITE)))
                         }
 
                         subTable.addCell(Cells.createContentNoBorder(resistanceEvidence.resistanceLevel))
