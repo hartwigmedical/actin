@@ -12,15 +12,13 @@ import com.hartwig.actin.datamodel.clinical.treatment.RadiotherapyType
 import com.hartwig.actin.datamodel.clinical.treatment.TreatmentCategory
 import com.hartwig.actin.datamodel.clinical.treatment.history.TreatmentHistoryEntry
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
-class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
+class HasHadTreatmentCategoryOfOnlyTypesAndMinimumWeeksAsMostRecentTest {
 
-    private val function = HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
+    private val function = HasHadTreatmentCategoryOfOnlyTypesAndMinimumWeeksAsMostRecent(
         TreatmentCategory.CHEMOTHERAPY,
         setOf(DrugType.ALKYLATING_AGENT),
-        6,
-        LocalDate.of(2024, 12, 1)
+        26
     )
 
     @Test
@@ -59,24 +57,31 @@ class HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecentTest {
     }
 
     @Test
-    fun `Should pass if stop date unknown and reference date is long enough after start`() {
+    fun `Should be undetermined if stop date unknown`() {
         val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2024, 1, null, null))
-        assertEvaluation(EvaluationResult.PASS, function.evaluate(record))
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
-    fun `Should fail if stop date unknown and reference date is too close to start`() {
-        val record = recordWith(entry(DrugType.ALKYLATING_AGENT, 2024, 10, null, null))
-        assertEvaluation(EvaluationResult.FAIL, function.evaluate(record))
+    fun `Should be undetermined if most recent treatment of category has no types configured`() {
+        val record = recordWith(
+            treatmentHistoryEntry(
+                setOf(drugTreatment("drug", TreatmentCategory.CHEMOTHERAPY)),
+                startYear = 2023,
+                startMonth = 1,
+                stopYear = 2023,
+                stopMonth = 12
+            )
+        )
+        assertEvaluation(EvaluationResult.UNDETERMINED, function.evaluate(record))
     }
 
     @Test
     fun `Should pass for non-systemic treatment of matching category and type`() {
-        val radiotherapyFunction = HasHadTreatmentCategoryOfOnlyTypesAndMinimumMonthsAsMostRecent(
+        val radiotherapyFunction = HasHadTreatmentCategoryOfOnlyTypesAndMinimumWeeksAsMostRecent(
             TreatmentCategory.RADIOTHERAPY,
             setOf(RadiotherapyType.BRACHYTHERAPY),
-            6,
-            LocalDate.of(2024, 12, 1)
+            26
         )
         val record = recordWith(
             treatmentHistoryEntry(
