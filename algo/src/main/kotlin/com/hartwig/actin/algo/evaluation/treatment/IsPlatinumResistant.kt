@@ -20,8 +20,12 @@ class IsPlatinumResistant(private val referenceDate: LocalDate) : EvaluationFunc
                 EvaluationFactory.undetermined("Undetermined if disease is platinum resistant")
             }
 
+            TreatmentHistoryAnalysis.create(record).receivedUndefinedChemotherapy() -> {
+                EvaluationFactory.undetermined("Undetermined if disease is platinum resistant (unknown if platinum treatment in provided treatments)")
+            }
+
             platinumProgression.lastPlatinumTreatment == null -> {
-                EvaluationFactory.undetermined("Undetermined if disease is platinum resistant (no platinum treatment)")
+                EvaluationFactory.undetermined("Undetermined if disease is platinum resistant (no platinum treatment in provided treatments)")
             }
 
             else -> EvaluationFactory.fail("Disease is not platinum resistant")
