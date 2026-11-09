@@ -12,13 +12,16 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
 
     fun receivedPlatinumTripletOrAbove() = platinumCombinations.any { it >= 3 }
 
-    fun receivedUndefinedChemoradiation(): Boolean = hasTreatments(setOf("CHEMOTHERAPY", "RADIOTHERAPY"))
+    fun receivedUndefinedChemoradiation(): Boolean = hasAllTreatments(setOf("CHEMOTHERAPY", "RADIOTHERAPY"))
 
-    fun receivedUndefinedChemoImmunotherapy(): Boolean = hasTreatments(setOf("CHEMOTHERAPY+IMMUNOTHERAPY"))
+    fun receivedUndefinedChemoImmunotherapy(): Boolean = hasAllTreatments(setOf("CHEMOTHERAPY+IMMUNOTHERAPY"))
 
-    fun receivedUndefinedChemotherapy(): Boolean = hasTreatments(setOf("CHEMOTHERAPY"))
+    fun receivedUndefinedChemotherapy(): Boolean = hasAllTreatments(setOf("CHEMOTHERAPY"))
 
-    private fun hasTreatments(treatmentNames: Set<String>): Boolean =
+    fun receivedAnyUndefinedChemotherapy(): Boolean =
+        receivedUndefinedChemoradiation() || receivedUndefinedChemoImmunotherapy() || receivedUndefinedChemotherapy()
+
+    private fun hasAllTreatments(treatmentNames: Set<String>): Boolean =
         record.oncologicalHistory.any { it.treatments.map(Treatment::name).containsAll(treatmentNames) }
 
     companion object {
