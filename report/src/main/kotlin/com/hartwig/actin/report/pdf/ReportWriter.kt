@@ -22,7 +22,12 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import java.io.ByteArrayOutputStream
 import java.time.LocalDate
 
-class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory: String?) {
+class ReportWriter(
+    private val writeToDisk: Boolean,
+    private val outputDirectory: String?,
+    private val labels: ReportLabels,
+    private val logoPath: String? = null
+) {
 
     private val logger = KotlinLogging.logger {}
 
@@ -33,7 +38,6 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
         logger.debug { "Initializing output styles" }
         Styles.initialize()
 
-        val labels = ReportLabels.load(configuration.reportType)
         val chapters = ReportContentProvider(report, configuration, doidModel, labels).provideChapters()
         writePdfChapters(
             report.patientId,
@@ -55,7 +59,7 @@ class ReportWriter(private val writeToDisk: Boolean, private val outputDirectory
     ) {
         val doc = initializeReport(patientId, labels, trialDatabaseIsConsistent)
         val pdfDocument = doc.pdfDocument
-        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels)
+        val pageEventHandler = PageEventHandler.create(patientId, sourcePatientId, reportDate, labels, logoPath)
         pdfDocument.addEventHandler(PdfDocumentEvent.START_PAGE, pageEventHandler)
         for (i in chapters.indices) {
             val chapter = chapters[i]

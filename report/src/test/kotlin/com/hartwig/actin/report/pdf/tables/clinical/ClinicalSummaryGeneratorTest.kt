@@ -1,6 +1,5 @@
 package com.hartwig.actin.report.pdf.tables.clinical
 
-import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.datamodel.clinical.AtcClassification
 import com.hartwig.actin.datamodel.clinical.AtcLevel
 import com.hartwig.actin.datamodel.clinical.Surgery
@@ -31,20 +30,12 @@ private val DATE_FORMAT = DateTimeFormatter.ofPattern("dd-MMM-yyyy", Application
 class PatientClinicalHistoryGeneratorTest {
 
     private val report = TestReportFactory.createMinimalTestReport()
-    private val labels = ReportLabels.load(ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY)
+    private val labels = ReportLabels.load()
 
     @Test
-    fun `Should return title search summary for research use only labels`() {
+    fun `Should return title clinical summary`() {
         val clinicalSummaryGenerator = ClinicalSummaryGenerator(report, true, true, KEY_WIDTH, VALUE_WIDTH, labels)
-        assertThat(clinicalSummaryGenerator.title()).isEqualTo("Search summary")
-    }
-
-    @Test
-    fun `Should return title search summary`() {
-        val nonMedicalLabels = ReportLabels.load(ReportType.TRIAL_MATCHING_NON_MEDICAL)
-        val clinicalSummaryGenerator =
-            ClinicalSummaryGenerator(report, true, true, KEY_WIDTH, VALUE_WIDTH, nonMedicalLabels)
-        assertThat(clinicalSummaryGenerator.title()).isEqualTo("Search summary")
+        assertThat(clinicalSummaryGenerator.title()).isEqualTo("Clinical summary")
     }
 
     @Test
@@ -103,7 +94,7 @@ class PatientClinicalHistoryGeneratorTest {
             )
         )
 
-        val otherHistoryTable = generateHistoryAndReturnTableWithText(reportWithOtherConditions, "Non-oncological history")
+        val otherHistoryTable = generateHistoryAndReturnTableWithText(reportWithOtherConditions, "Relevant non-oncological history")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(6)
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("2024-08")
@@ -146,7 +137,7 @@ class PatientClinicalHistoryGeneratorTest {
         )
 
         val otherHistoryTable =
-            generateHistoryAndReturnTableWithText(reportWithOncologicalHistoryAndMedications, "Systemic treatment history")
+            generateHistoryAndReturnTableWithText(reportWithOncologicalHistoryAndMedications, "Relevant systemic treatment history")
 
         assertThat(otherHistoryTable.numberOfRows).isEqualTo(2)
         assertThat(extractTextFromCell(otherHistoryTable.getCell(0, 0))).isEqualTo("2022")
@@ -185,7 +176,7 @@ class PatientClinicalHistoryGeneratorTest {
         )
 
         val systemicHistoryTable =
-            generateHistoryAndReturnTableWithText(reportWithStopReason, "Systemic treatment history")
+            generateHistoryAndReturnTableWithText(reportWithStopReason, "Relevant systemic treatment history")
 
         assertThat(systemicHistoryTable.numberOfRows).isEqualTo(1)
         assertThat(extractTextFromCell(systemicHistoryTable.getCell(0, 1))).isEqualTo("Chemotherapy (4 cycles)")

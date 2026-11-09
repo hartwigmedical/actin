@@ -13,7 +13,7 @@ class ClinicalDetailsChapterTest {
 
     private val proper = TestReportFactory.createProperTestReport()
     private val configuration = ReportConfiguration()
-    private val labels = ReportLabels.load(configuration.reportType)
+    private val labels = ReportLabels.load()
 
     @Test
     fun `Should provide all clinical details tables when details are provided`() {

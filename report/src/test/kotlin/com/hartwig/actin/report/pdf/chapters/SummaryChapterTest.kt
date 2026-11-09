@@ -73,7 +73,7 @@ class SummaryChapterTest {
 
     private fun createTestSummaryChapter(report: Report): SummaryChapter {
         val configuration = ReportConfiguration()
-        val labels = ReportLabels.load(configuration.reportType)
+        val labels = ReportLabels.load()
         return SummaryChapter(report, configuration, createTrialsProvider(report, configuration), labels)
     }
 

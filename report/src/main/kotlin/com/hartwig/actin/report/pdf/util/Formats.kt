@@ -73,18 +73,18 @@ object Formats {
 
     fun fontColorForEvaluation(evaluation: EvaluationResult): DeviceRgb {
         return when (evaluation) {
-            EvaluationResult.PASS -> Styles.PALETTE_EVALUATION_PASS
-            EvaluationResult.WARN -> Styles.PALETTE_EVALUATION_WARN
-            EvaluationResult.FAIL -> Styles.PALETTE_EVALUATION_FAILED
-            else -> Styles.PALETTE_EVALUATION_UNCLEAR
+            EvaluationResult.PASS -> Styles.color(PaletteColor.EVALUATION_PASS)
+            EvaluationResult.WARN -> Styles.color(PaletteColor.EVALUATION_WARN)
+            EvaluationResult.FAIL -> Styles.color(PaletteColor.EVALUATION_FAILED)
+            else -> Styles.color(PaletteColor.EVALUATION_UNCLEAR)
         }
     }
 
     fun fontColorForYesNo(yesNo: String): DeviceRgb {
         return when (yesNo) {
-            "Yes" -> Styles.PALETTE_GREEN
-            "No" -> Styles.PALETTE_RED
-            else -> Styles.PALETTE_YES_OR_NO_UNCLEAR
+            "Yes" -> Styles.color(PaletteColor.GREEN)
+            "No" -> Styles.color(PaletteColor.RED)
+            else -> Styles.color(PaletteColor.YES_OR_NO_UNCLEAR)
         }
     }
 }

@@ -11,21 +11,22 @@ import com.itextpdf.layout.element.Image
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Text
 import com.itextpdf.layout.properties.TextAlignment
+import java.io.File
 
-class Header(private val labels: ReportLabels) {
+class Header(private val labels: ReportLabels, logoPath: String?) {
 
-    private val logoImageData = ImageDataFactory.create(
-        Header::class.java.getResourceAsStream(LOGO_RESOURCE_PATH)!!.readBytes()
-    )
-    private val logoWidth = LOGO_HEIGHT * logoImageData.width / logoImageData.height
+    private val logoImageData = logoPath?.let { ImageDataFactory.create(File(it).readBytes()) }
+    private val logoWidth = logoImageData?.let { LOGO_HEIGHT * it.width / it.height } ?: 0f
 
     fun render(page: PdfPage) {
         val pdfCanvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val canvas = Canvas(pdfCanvas, page.pageSize)
-        canvas.add(
-            Image(logoImageData).setHeight(LOGO_HEIGHT)
-                .setFixedPosition(Constants.PAGE_MARGIN_LEFT, page.pageSize.height - LOGO_TOP_OFFSET)
-        )
+        logoImageData?.let {
+            canvas.add(
+                Image(it).setHeight(LOGO_HEIGHT)
+                    .setFixedPosition(Constants.PAGE_MARGIN_LEFT, page.pageSize.height - LOGO_TOP_OFFSET)
+            )
+        }
 
         val titleAreaStart = Constants.PAGE_MARGIN_LEFT + logoWidth
         val titleAreaEnd = page.pageSize.width - Constants.SIDE_PANEL_WIDTH
@@ -39,7 +40,6 @@ class Header(private val labels: ReportLabels) {
     }
 
     companion object {
-        private const val LOGO_RESOURCE_PATH = "/logos/hartwig_logo.jpg"
         private const val LOGO_HEIGHT = 44f
         private const val LOGO_TOP_OFFSET = 54f
     }

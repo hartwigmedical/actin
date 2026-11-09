@@ -37,14 +37,7 @@ enum class ExternalTrialTumorType(val tumorDoids: Set<String>?) {
     NONE(null);
 }
 
-enum class ReportType {
-    PERSONALISATION,
-    TRIAL_MATCHING_NON_MEDICAL,
-    TRIAL_MATCHING_RESEARCH_USE_ONLY
-}
-
 data class ReportConfiguration(
-    val reportType: ReportType = ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY,
     val patientDetailsType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val clinicalSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,
     val molecularSummaryType: ReportContentType = ReportContentType.COMPREHENSIVE,

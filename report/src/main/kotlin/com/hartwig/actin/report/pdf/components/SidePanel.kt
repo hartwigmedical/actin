@@ -3,6 +3,7 @@ package com.hartwig.actin.report.pdf.components
 import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.pdf.util.Constants
 import com.hartwig.actin.report.pdf.util.Formats.date
+import com.hartwig.actin.report.pdf.util.PaletteColor
 import com.hartwig.actin.report.pdf.util.Styles
 import com.hartwig.actin.util.ApplicationConfig
 import com.itextpdf.kernel.font.PdfFont
@@ -29,7 +30,7 @@ class SidePanel(private val patientId: String, private val sourcePatientId: Stri
         val canvas = PdfCanvas(page.lastContentStream, page.resources, page.document)
         val pageSize = page.pageSize
         canvas.rectangle(pageSize.width.toDouble(), pageSize.height.toDouble(), -Constants.SIDE_PANEL_WIDTH.toDouble(), -RECTANGLE_HEIGHT.toDouble())
-        canvas.setFillColor(Styles.PALETTE_BLUE)
+        canvas.setFillColor(Styles.color(PaletteColor.BLUE))
         canvas.fill()
         var sideTextIndex = 0
         val cv = Canvas(canvas, page.pageSize)

@@ -1,7 +1,8 @@
 package com.hartwig.actin.report.pdf
 
-import com.hartwig.actin.configuration.ReportType
 import com.hartwig.actin.report.ReporterApplication
+import java.io.BufferedReader
+import java.io.File
 import java.text.MessageFormat
 import java.util.Properties
 
@@ -236,23 +237,18 @@ class ReportLabels(private val properties: Properties) {
     private fun format(key: String, vararg args: Any): String = MessageFormat.format(get(key), *args)
 
     companion object {
-        fun load(type: ReportType): ReportLabels {
-            val props = Properties()
-            when (type) {
-                ReportType.PERSONALISATION -> loadPropertiesFile(props, "personalisation")
-                ReportType.TRIAL_MATCHING_NON_MEDICAL -> loadPropertiesFile(props, "trial_matching")
-                ReportType.TRIAL_MATCHING_RESEARCH_USE_ONLY -> {
-                    loadPropertiesFile(props, "trial_matching")
-                    loadPropertiesFile(props, "trial_matching_ruo_overrides")
-                }
+        private const val DEFAULT_LABELS_RESOURCE = "/labels/research_use_only.properties"
+
+        fun load(labelsPaths: List<String> = emptyList()): ReportLabels {
+            val props = Properties().apply {
+                loadDefaultResource().use(::load)
+                labelsPaths.forEach { path -> File(path).bufferedReader(Charsets.UTF_8).use(::load) }
             }
             return ReportLabels(props)
         }
 
-        private fun loadPropertiesFile(properties: Properties, fileName: String) {
-            val name = "/labels/$fileName.properties"
-            ReportLabels::class.java.getResourceAsStream(name)?.bufferedReader(Charsets.UTF_8)?.use(properties::load)
-                ?: error("Labels not found: $name")
-        }
+        private fun loadDefaultResource(): BufferedReader =
+            ReportLabels::class.java.getResourceAsStream(DEFAULT_LABELS_RESOURCE)?.bufferedReader(Charsets.UTF_8)
+                ?: error("Labels not found: $DEFAULT_LABELS_RESOURCE")
     }
 }

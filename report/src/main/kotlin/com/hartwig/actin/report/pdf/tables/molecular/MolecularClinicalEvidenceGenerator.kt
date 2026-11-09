@@ -6,8 +6,8 @@ import com.hartwig.actin.report.pdf.ReportLabels
 import com.hartwig.actin.report.interpretation.TreatmentEvidenceFunctions.filterTreatmentEvidence
 import com.hartwig.actin.report.pdf.tables.TableGenerator
 import com.hartwig.actin.report.pdf.util.Cells
+import com.hartwig.actin.report.pdf.util.PaletteColor
 import com.hartwig.actin.report.pdf.util.Styles
-import com.hartwig.actin.report.pdf.util.Styles.PALETTE_RED
 import com.hartwig.actin.report.pdf.util.Tables
 import com.itextpdf.layout.element.Paragraph
 import com.itextpdf.layout.element.Table
@@ -63,8 +63,8 @@ class MolecularClinicalEvidenceGenerator(
                                 val treatmentContent = Paragraph(treatment)
 
                                 if (resistance) {
-                                    treatmentContent.setFontColor(PALETTE_RED)
-                                    cancerTypeContent.setFontColor(PALETTE_RED)
+                                    treatmentContent.setFontColor(Styles.color(PaletteColor.RED))
+                                    cancerTypeContent.setFontColor(Styles.color(PaletteColor.RED))
                                 }
 
                                 val evidenceSubTable = Tables.createSingleCol().useAllAvailableWidth()
