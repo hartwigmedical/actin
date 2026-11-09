@@ -1,0 +1,79 @@
+package com.hartwig.actin.util.json
+
+import com.fasterxml.jackson.databind.module.SimpleModule
+import com.hartwig.actin.clinical.serialization.DrugDeserializer
+import com.hartwig.actin.clinical.serialization.TreatmentDeserializer
+import com.hartwig.actin.datamodel.clinical.treatment.Drug
+import com.hartwig.actin.datamodel.clinical.treatment.Treatment
+import com.hartwig.actin.datamodel.trial.DrugParameter
+import com.hartwig.actin.datamodel.trial.EligibilityFunction
+import com.hartwig.actin.datamodel.trial.FunctionParameter
+import com.hartwig.actin.datamodel.trial.ManyDrugsParameter
+import com.hartwig.actin.datamodel.trial.ManyTreatmentsParameter
+import com.hartwig.actin.datamodel.trial.SystemicTreatmentParameter
+import com.hartwig.actin.datamodel.trial.TreatmentParameter
+import com.hartwig.actin.treatment.database.TestTreatmentDatabaseFactory
+import com.hartwig.actin.trial.input.EligibilityRule
+import com.hartwig.actin.trial.serialization.EligibilityFunctionDeserializer
+import com.hartwig.actin.trial.serialization.EligibilityFunctionSerializer
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+
+class EligibilityFunctionAdapterTest {
+
+    @Test
+    fun `Should serialize and deserialize eligibility function`() {
+        val function = EligibilityFunction(
+            rule = EligibilityRule.NOT.name, parameters = listOf(
+                FunctionParameter(
+                    EligibilityFunction(rule = EligibilityRule.HAS_ACTIVE_BRAIN_METASTASES.name, parameters = emptyList())
+                )
+            )
+        )
+        val mapper = mapper()
+        val serialized = mapper.writeValueAsString(function)
+        assertThat(mapper.readValue(serialized, EligibilityFunction::class.java)).isEqualTo(function)
+    }
+
+    @Test
+    fun `Should serialize and deserialize treatment and drug parameters with full objects`() {
+        val treatmentDb = TestTreatmentDatabaseFactory.createProper()
+        val treatment = requireNotNull(treatmentDb.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
+        val drug = requireNotNull(treatmentDb.findDrugByName(TestTreatmentDatabaseFactory.CISPLATIN))
+
+        val function = EligibilityFunction(
+            rule = "CUSTOM_RULE",
+            parameters = listOf(
+                TreatmentParameter(treatment),
+                SystemicTreatmentParameter(treatment),
+                DrugParameter(drug),
+                ManyTreatmentsParameter(listOf(treatment)),
+                ManyDrugsParameter(setOf(drug))
+            )
+        )
+
+        val mapper = mapper()
+        val serialized = mapper.writeValueAsString(function)
+        assertThat(mapper.readValue(serialized, EligibilityFunction::class.java)).isEqualTo(function)
+    }
+
+    @Test
+    fun `Should skip null entries in many treatments parameter`() {
+        val treatmentDb = TestTreatmentDatabaseFactory.createProper()
+        val treatment = requireNotNull(treatmentDb.findTreatmentByName(TestTreatmentDatabaseFactory.CISPLATIN))
+        val mapper = mapper()
+        val json = """{"rule":"CUSTOM_RULE","parameters":[{"type":"MANY_TREATMENTS","value":[${mapper.writeValueAsString(treatment)},null]}]}"""
+
+        val function = mapper.readValue(json, EligibilityFunction::class.java)
+        assertThat(function.parameters).containsExactly(ManyTreatmentsParameter(listOf(treatment)))
+    }
+
+    private fun mapper() = ActinObjectMapper.create().registerModule(
+        SimpleModule().apply {
+            addSerializer(EligibilityFunction::class.java, EligibilityFunctionSerializer)
+            addDeserializer(EligibilityFunction::class.java, EligibilityFunctionDeserializer)
+            addDeserializer(Treatment::class.java, TreatmentDeserializer)
+            addDeserializer(Drug::class.java, DrugDeserializer)
+        }
+    )
+}

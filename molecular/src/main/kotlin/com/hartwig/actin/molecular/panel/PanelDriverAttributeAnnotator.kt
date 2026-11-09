@@ -57,16 +57,21 @@ class PanelDriverAttributeAnnotator(
         val variantsByGene = variants.groupBy { it.gene }
         return variantsByGene.map {
             val geneRole = it.value.map { variant -> variant.geneRole }.first()
-            val likelihood = geneDriverLikelihoodModel.evaluate(it.key, geneRole, it.value, configuration.eventPathogenicityIsConfirmed)
+            val likelihood = geneDriverLikelihoodModel.evaluate(
+                it.key, geneRole, it.value, it.value.any(::eventPathogenicityIsConfirmed)
+            )
             likelihood to it.value
         }.flatMap {
             it.second.map { variant ->
                 variant.copy(
-                    driverLikelihood = DriverLikelihood.from(it.first)
+                    driverLikelihood = if (variant.pathogenicityIsConfirmed == false) null else DriverLikelihood.from(it.first)
                 )
             }
         }
     }
+
+    private fun eventPathogenicityIsConfirmed(variant: Variant) =
+        variant.pathogenicityIsConfirmed ?: configuration.eventPathogenicityIsConfirmed
 
     private fun annotatedCopyNumberWithDriverAttributes(copyNumber: CopyNumber): CopyNumber {
         val alteration = knownEventResolver.resolveForCopyNumber(copyNumber)

@@ -1,7 +1,6 @@
 package com.hartwig.actin.algo
 
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.fasterxml.jackson.core.type.TypeReference
 import com.hartwig.actin.algo.calendar.ReferenceDateProviderFactory
 import com.hartwig.actin.algo.ckb.EfficacyEntryFactory
 import com.hartwig.actin.algo.evaluation.RuleMappingResources
@@ -14,6 +13,7 @@ import com.hartwig.actin.molecular.evidence.actionability.ActionabilityMatcherFa
 import com.hartwig.actin.treatment.database.TreatmentDatabaseFactory
 import com.hartwig.actin.trial.EligibilityFactory
 import com.hartwig.actin.trial.TrialIngestion
+import com.hartwig.actin.util.json.ActinObjectMapper
 import com.hartwig.actin.utils.monad.getOrNull
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.cli.DefaultParser
@@ -66,11 +66,9 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
             logger.warn { "Loading trials from input data. User is responsible for verifying whether results may be shared!" }
             it to null
         } ?: run {
-            val trialConfigs: TrialConfigDatabase = Gson().fromJson(
-                Files.readString(config.trialConfigJson?.let { Path.of(it) }
-                    ?: error("One of trial config or trial database must be specified.")),
-                object : TypeToken<TrialConfigDatabase>() {}.type
-            )
+            val trialConfigPath = config.trialConfigJson?.let { Path.of(it) }
+                ?: error("One of trial config or trial database must be specified.")
+            val trialConfigs = objectMapper.readValue(Files.readString(trialConfigPath), object : TypeReference<TrialConfigDatabase>() {})
             val ingestedTrials = TrialIngestion(EligibilityFactory(treatmentDatabase)).ingest(trialConfigs.trials)
                 .mapLeft { unmappableTrials ->
                     throw IllegalArgumentException(
@@ -98,6 +96,7 @@ class TreatmentMatcherApplication(private val config: TreatmentMatcherConfig) {
 
         val logger = KotlinLogging.logger {}
         private val VERSION = TreatmentMatcherApplication::class.java.getPackage().implementationVersion ?: "UNKNOWN VERSION"
+        private val objectMapper by lazy { ActinObjectMapper.create() }
     }
 }
 

@@ -20,8 +20,12 @@ class IsPrimaryPlatinumRefractoryWithinMonths(private val minMonths: Int, privat
                 EvaluationFactory.undetermined("Undetermined if primary platinum refractory disease")
             }
 
+            TreatmentHistoryAnalysis.create(record).receivedUndefinedChemotherapy() -> {
+                EvaluationFactory.undetermined("Undetermined if primary platinum refractory disease (unknown if platinum treatment in provided treatments)")
+            }
+
             platinumProgression.firstPlatinumTreatment == null -> {
-                EvaluationFactory.undetermined("Undetermined if primary platinum refractory disease (no platinum treatment)")
+                EvaluationFactory.undetermined("Undetermined if primary platinum refractory disease (no platinum treatment in provided treatments)")
             }
 
             else -> EvaluationFactory.fail("No primary platinum refractory disease (no progression on platinum treatment)")

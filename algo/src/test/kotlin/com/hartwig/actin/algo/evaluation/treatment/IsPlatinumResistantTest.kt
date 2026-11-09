@@ -20,9 +20,18 @@ class IsPlatinumResistantTest {
 
     private val platinum = DrugTreatment(
         name = "Carboplatin",
-        drugs = setOf(StandardDrug(name = "Carboplatin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.PLATINUM_COMPOUND)))
+        drugs = setOf(
+            StandardDrug(
+                name = "Carboplatin",
+                category = TreatmentCategory.CHEMOTHERAPY,
+                drugTypes = setOf(DrugType.PLATINUM_COMPOUND)
+            )
+        )
     )
-
+    private val unknownTreatment = DrugTreatment(
+        name = "CHEMOTHERAPY",
+        drugs = setOf(StandardDrug(name = "UNKNOWN_CHEMOTHERAPY_DRUG", drugTypes = emptySet(), category = TreatmentCategory.CHEMOTHERAPY))
+    )
     private val otherTreatment = DrugTreatment(name = "other treatment", drugs = setOf())
 
     @Test
@@ -82,13 +91,24 @@ class IsPlatinumResistantTest {
     }
 
     @Test
+    fun `Should evaluate to undetermined if it is undetermined if treatment history contains platinum drug`() {
+        val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(unknownTreatment)))
+
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.UNDETERMINED,
+            function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
+            "Undetermined if disease is platinum resistant (unknown if platinum treatment in provided treatments)"
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined if treatment history does not contain platinum`() {
         val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(otherTreatment)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if disease is platinum resistant (no platinum treatment)"
+            "Undetermined if disease is platinum resistant (no platinum treatment in provided treatments)"
         )
     }
 

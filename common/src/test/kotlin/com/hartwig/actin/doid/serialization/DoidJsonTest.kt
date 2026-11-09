@@ -8,7 +8,10 @@ import com.hartwig.actin.doid.datamodel.Synonym
 import com.hartwig.actin.doid.datamodel.Xref
 import com.hartwig.actin.testutil.ResourceLocator.resourceOnClasspath
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 
 class DoidJsonTest {
 
@@ -34,6 +37,16 @@ class DoidJsonTest {
         assertEdges(entry.edges)
         assertThat(entry.metadata.basicPropertyValues).isEmpty()
         assertThat(entry.logicalDefinitionAxioms).isEmpty()
+    }
+
+    @Test
+    fun `Should fail on null value for required field`(@TempDir dir: Path) {
+        val json = dir.resolve("doid.json").toFile()
+        json.writeText("""{"graphs":[{"id":null,"nodes":[],"edges":[],"meta":{"version":"1"}}]}""")
+
+        assertThatThrownBy { DoidJson.readDoidOwlEntry(json.path) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageContaining("Expected non-null value for field 'id'")
     }
 
     private fun assertNodes(nodes: List<Node>) {

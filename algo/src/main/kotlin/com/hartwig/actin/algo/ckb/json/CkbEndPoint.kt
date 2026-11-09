@@ -1,10 +1,10 @@
 package com.hartwig.actin.algo.ckb.json
 
-import com.google.gson.annotations.SerializedName
+import com.fasterxml.jackson.annotation.JsonProperty
 
 data class CkbEndPoint(
     val id: Int,
     val name: String,
     val definition: String,
-    @SerializedName("unit_of_measure") val unitOfMeasure: String
+    @JsonProperty("unit_of_measure") val unitOfMeasure: String
 )
