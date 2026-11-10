@@ -18,6 +18,7 @@ private val MAIN_CANCER_DOIDS = setOf(
     "1725", // peritoneum cancer
     "1781", // thyroid gland cancer
     "1793", // pancreatic cancer
+    "1790", // malignant mesothelioma
     "1964", // fallopian tube cancer
     "1993", // rectum cancer
     "2394", // ovarian cancer
