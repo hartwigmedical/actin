@@ -46,6 +46,8 @@ class TreatmentHistoryAnalysisTest {
     private val radiotherapy = TreatmentTestFactory.treatment("RADIOTHERAPY", false)
     private val immunotherapy = TreatmentTestFactory.treatment("IMMUNOTHERAPY", true)
     private val undefinedChemo = TreatmentTestFactory.drugTreatment("CHEMOTHERAPY", TreatmentCategory.CHEMOTHERAPY)
+    private val undefinedChemoImmuno =
+        TreatmentTestFactory.drugTreatment("CHEMOTHERAPY+IMMUNOTHERAPY", TreatmentCategory.CHEMOTHERAPY, emptySet())
 
     @Test
     fun `Should return false if treatment history only contains curative, neoadjuvant and adjuvant entries and flag to ignore is set to true`() {
@@ -109,7 +111,13 @@ class TreatmentHistoryAnalysisTest {
         val drugs =
             platinumTriplet.copy(
                 drugs = platinumTriplet.drugs
-                    .plus(StandardDrug(name = "Doxorubicin", category = TreatmentCategory.CHEMOTHERAPY, drugTypes = setOf(DrugType.ANTHRACYCLINE)))
+                    .plus(
+                        StandardDrug(
+                            name = "Doxorubicin",
+                            category = TreatmentCategory.CHEMOTHERAPY,
+                            drugTypes = setOf(DrugType.ANTHRACYCLINE)
+                        )
+                    )
             )
 
         val record = TreatmentTestFactory.withTreatmentHistory(
@@ -150,13 +158,7 @@ class TreatmentHistoryAnalysisTest {
         val record = TreatmentTestFactory.withTreatmentHistory(
             listOf(
                 TreatmentTestFactory.treatmentHistoryEntry(
-                    treatments = setOf(
-                        TreatmentTestFactory.drugTreatment(
-                            "CHEMOTHERAPY+IMMUNOTHERAPY",
-                            TreatmentCategory.CHEMOTHERAPY,
-                            emptySet()
-                        )
-                    )
+                    treatments = setOf(undefinedChemoImmuno)
                 )
             )
         )
@@ -185,5 +187,29 @@ class TreatmentHistoryAnalysisTest {
             listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet)))
         )
         assertThat(TreatmentHistoryAnalysis.create(record).receivedUndefinedChemotherapy()).isFalse()
+    }
+
+    @Test
+    fun `Should return true if treatment history contains any undefined chemotherapy`() {
+        val record = TreatmentTestFactory.withTreatmentHistory(
+            listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(undefinedChemo, platinumDoublet)))
+        )
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedAnyUndefinedChemotherapy()).isTrue()
+    }
+
+    @Test
+    fun `Should return true if treatment history contains any undefined chemo-immunotherapy`() {
+        val record = TreatmentTestFactory.withTreatmentHistory(
+            listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(undefinedChemoImmuno, platinumDoublet)))
+        )
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedAnyUndefinedChemotherapy()).isTrue()
+    }
+
+    @Test
+    fun `Should return false if treatment history contains only defined chemotherapy`() {
+        val record = TreatmentTestFactory.withTreatmentHistory(
+            listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(platinumDoublet)))
+        )
+        assertThat(TreatmentHistoryAnalysis.create(record).receivedAnyUndefinedChemotherapy()).isFalse()
     }
 }

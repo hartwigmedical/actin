@@ -18,8 +18,7 @@ class TreatmentHistoryAnalysis(private val record: PatientRecord, private val pl
 
     fun receivedUndefinedChemotherapy(): Boolean = hasAllTreatments(setOf("CHEMOTHERAPY"))
 
-    fun receivedAnyUndefinedChemotherapy(): Boolean =
-        receivedUndefinedChemoradiation() || receivedUndefinedChemoImmunotherapy() || receivedUndefinedChemotherapy()
+    fun receivedAnyUndefinedChemotherapy(): Boolean = receivedUndefinedChemoImmunotherapy() || receivedUndefinedChemotherapy()
 
     private fun hasAllTreatments(treatmentNames: Set<String>): Boolean =
         record.oncologicalHistory.any { it.treatments.map(Treatment::name).containsAll(treatmentNames) }
