@@ -91,13 +91,13 @@ class IsPlatinumResistantTest {
     }
 
     @Test
-    fun `Should evaluate to undetermined if it is undetermined if treatment history contains platinum drug`() {
+    fun `Should evaluate to undetermined if treatment history contains unspecified chemotherapy treatment`() {
         val history = listOf(TreatmentTestFactory.treatmentHistoryEntry(treatments = setOf(unknownTreatment)))
 
         EvaluationAssert.assertEvaluation(
             EvaluationResult.UNDETERMINED,
             function.evaluate(TreatmentTestFactory.withTreatmentHistory(history)),
-            "Undetermined if disease is platinum resistant (unknown if platinum treatment in provided treatments)"
+            "Undetermined if disease is platinum resistant (unspecified chemotherapy in provided treatments - unknown if platinum)"
         )
     }
 

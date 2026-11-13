@@ -16,7 +16,7 @@ class HasReceivedPlatinumBasedDoublet(private val doidModel: DoidModel) : Evalua
         val isNsclc = DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.LUNG_NON_SMALL_CELL_CARCINOMA_DOID)
         val isGynaecologicalCancer =
             DoidEvaluationFunctions.isOfDoidType(doidModel, record.tumor.doids, DoidConstants.FEMALE_REPRODUCTIVE_ORGAN_CANCER_DOID)
-        val undefinedPlatinumInNsclcMessage: (String, String) -> String =
+        val undefinedPlatinumInCancerMessage: (String, String) -> String =
             { treatmentType, cancerType -> "Undefined $treatmentType for $cancerType based on provided treatments - assumed platinum-based" }
 
         return when {
@@ -25,15 +25,15 @@ class HasReceivedPlatinumBasedDoublet(private val doidModel: DoidModel) : Evalua
             }
 
             isNsclc && treatmentHistoryAnalysis.receivedUndefinedChemoradiation() -> {
-                EvaluationFactory.pass(undefinedPlatinumInNsclcMessage("chemoradiation", "NSCLC"))
+                EvaluationFactory.pass(undefinedPlatinumInCancerMessage("chemoradiation", "NSCLC"))
             }
 
             isNsclc && treatmentHistoryAnalysis.receivedUndefinedChemoImmunotherapy() -> {
-                EvaluationFactory.pass(undefinedPlatinumInNsclcMessage("chemo-immunotherapy", "NSCLC"))
+                EvaluationFactory.pass(undefinedPlatinumInCancerMessage("chemo-immunotherapy", "NSCLC"))
             }
 
             isGynaecologicalCancer && treatmentHistoryAnalysis.receivedUndefinedChemotherapy() -> {
-                EvaluationFactory.pass(undefinedPlatinumInNsclcMessage("chemo-immunotherapy", "gynaecological cancer"))
+                EvaluationFactory.pass(undefinedPlatinumInCancerMessage("chemotherapy", "gynaecological cancer"))
             }
 
             treatmentHistoryAnalysis.receivedPlatinumTripletOrAbove() -> {

@@ -167,7 +167,7 @@ class HasReceivedPlatinumBasedDoubletTest {
             function.evaluate(
                 TumorTestFactory.withDoids(setOf(DoidConstants.OVARIAN_CARCINOMA_DOID)).copy(oncologicalHistory = undefinedChemoHistory)
             ),
-            "Undefined chemo-immunotherapy for gynaecological cancer based on provided treatments - assumed platinum-based"
+            "Undefined chemotherapy for gynaecological cancer based on provided treatments - assumed platinum-based"
         )
     }
 
