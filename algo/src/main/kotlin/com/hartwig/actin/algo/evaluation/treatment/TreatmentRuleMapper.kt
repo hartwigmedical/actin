@@ -83,6 +83,7 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadSpecificDrugCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_AS_A_LINE to hasHadSpecificDrugCombinedWithCategoryAndTypesAsLineCreator(),
             EligibilityRule.HAS_HAD_DRUG_X_COMBINED_WITH_CATEGORY_Y_TREATMENT_OF_TYPES_Z_AND_AT_LEAST_A_CYCLES to hasHadSpecificDrugCombinedWithCategoryAndTypesWithCyclesCreator(),
+            EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT to hasHadCategoryAndTypesCombinedWithCategoryCreator(),
             EligibilityRule.HAS_HAD_CATEGORY_X_TREATMENT_OF_TYPES_Y_COMBINED_WITH_CATEGORY_Z_TREATMENT_OF_TYPES_A to hasHadCategoryAndTypesCombinedWithCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X to hasHadTreatmentWithAnyDrugCreator(),
             EligibilityRule.HAS_HAD_TREATMENT_WITH_ANY_DRUG_X_AS_MOST_RECENT_LINE to hasHadTreatmentWithAnyDrugAsMostRecentCreator(requireCurrentAdministration = false),
@@ -448,6 +449,20 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
             val types = function.param<ManyTreatmentTypesParameter>(2).value
             val cycles = function.param<IntegerParameter>(3).value
             HasHadSpecificDrugCombinedWithCategoryAndOptionallyTypesAsLineWithCycles(drug, category, types, null, cycles)
+        }
+    }
+
+    private fun hasHadCategoryAndTypesCombinedWithCategoryCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES,
+                Parameter.Type.TREATMENT_CATEGORY
+            )
+            val category1 = function.param<TreatmentCategoryParameter>(0).value
+            val types1 = function.param<ManyTreatmentTypesParameter>(1).value
+            val category2 = function.param<TreatmentCategoryParameter>(2).value
+            HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(category1, types1, category2, emptySet())
         }
     }
 
