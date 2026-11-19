@@ -6,6 +6,11 @@ import com.hartwig.actin.datamodel.trial.Parameter
 object FunctionInput {
     val NONE = emptyList<Parameter.Type>()
     val ONE_INTEGER = listOf(Parameter.Type.INTEGER)
+    val ONE_INTEGER_ONE_TREATMENT_CATEGORY = listOf(Parameter.Type.INTEGER, Parameter.Type.TREATMENT_CATEGORY)
+    val ONE_INTEGER_ONE_TREATMENT_CATEGORY_MANY_TYPES = listOf(
+        Parameter.Type.INTEGER, Parameter.Type.TREATMENT_CATEGORY,
+        Parameter.Type.MANY_TREATMENT_TYPES
+    )
     val TWO_INTEGERS = listOf(Parameter.Type.INTEGER, Parameter.Type.INTEGER)
     val MANY_INTEGERS = listOf(Parameter.Type.MANY_INTEGERS)
     val ONE_DOUBLE = listOf(Parameter.Type.DOUBLE)

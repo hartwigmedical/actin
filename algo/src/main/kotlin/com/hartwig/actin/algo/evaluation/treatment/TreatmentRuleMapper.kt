@@ -145,6 +145,8 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 )
             },
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheMetastaticSettingCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_OF_CATEGORY_Y_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsOfCategoryInTheMetastaticSettingCreator(),
+            EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_OF_CATEGORY_Y_AND_TYPES_Z_IN_THE_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsOfCategoryAndTypesInTheMetastaticSettingCreator(),
             EligibilityRule.HAS_HAD_AT_MOST_X_SYSTEMIC_TREATMENT_LINES_IN_THE_ADVANCED_OR_METASTATIC_SETTING to hasHadLimitedSystemicTreatmentsInTheAdvancedOrMetastaticSettingCreator(),
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_CATEGORY_Y_TREATMENT_OF_TYPES_Z to hasHadResponseFollowingTreatmentOfCategoryAndTypesCreator(),
             EligibilityRule.HAS_HAD_RESPONSE_X_FOLLOWING_ANY_TREATMENT_NAME_X to hasHadResponseFollowingSomeSpecificTreatmentCreator(),
@@ -851,7 +853,46 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 referenceDate = referenceDate,
                 intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
                 settingDescription = "metastatic",
-                maximumLines = function.param<IntegerParameter>(0).value
+                maximumLines = function.param<IntegerParameter>(0).value,
+                category = null,
+                types = emptySet()
+            )
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsOfCategoryInTheMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(Parameter.Type.INTEGER, Parameter.Type.TREATMENT_CATEGORY)
+            val lines = function.param<IntegerParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                settingDescription = "metastatic",
+                maximumLines = lines,
+                category = category,
+                types = emptySet()
+            )
+        }
+    }
+
+    private fun hasHadLimitedSystemicTreatmentsOfCategoryAndTypesInTheMetastaticSettingCreator(): FunctionCreator {
+        return { function: EligibilityFunction ->
+            function.expectTypes(
+                Parameter.Type.INTEGER,
+                Parameter.Type.TREATMENT_CATEGORY,
+                Parameter.Type.MANY_TREATMENT_TYPES
+            )
+            val lines = function.param<IntegerParameter>(0).value
+            val category = function.param<TreatmentCategoryParameter>(1).value
+            val types = function.param<ManyTreatmentTypesParameter>(2).value
+            HasHadAtMostSystemicTreatmentLinesInSpecificSetting(
+                referenceDate = referenceDate,
+                intentsToIgnore = Intent.curativeAdjuvantNeoadjuvantSet(),
+                settingDescription = "metastatic",
+                maximumLines = lines,
+                category = category,
+                types = types
             )
         }
     }
@@ -862,7 +903,9 @@ class TreatmentRuleMapper(resources: RuleMappingResources) : RuleMapper(resource
                 referenceDate = referenceDate,
                 intentsToIgnore = setOf(Intent.CURATIVE),
                 settingDescription = "advanced or metastatic",
-                maximumLines = function.param<IntegerParameter>(0).value
+                maximumLines = function.param<IntegerParameter>(0).value,
+                category = null,
+                types = emptySet()
             )
         }
     }
