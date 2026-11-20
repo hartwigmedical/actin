@@ -6,6 +6,11 @@ import com.hartwig.actin.datamodel.trial.Parameter
 object FunctionInput {
     val NONE = emptyList<Parameter.Type>()
     val ONE_INTEGER = listOf(Parameter.Type.INTEGER)
+    val ONE_INTEGER_ONE_TREATMENT_CATEGORY = listOf(Parameter.Type.INTEGER, Parameter.Type.TREATMENT_CATEGORY)
+    val ONE_INTEGER_ONE_TREATMENT_CATEGORY_MANY_TYPES = listOf(
+        Parameter.Type.INTEGER, Parameter.Type.TREATMENT_CATEGORY,
+        Parameter.Type.MANY_TREATMENT_TYPES
+    )
     val TWO_INTEGERS = listOf(Parameter.Type.INTEGER, Parameter.Type.INTEGER)
     val MANY_INTEGERS = listOf(Parameter.Type.MANY_INTEGERS)
     val ONE_DOUBLE = listOf(Parameter.Type.DOUBLE)
@@ -16,6 +21,11 @@ object FunctionInput {
     val ONE_TREATMENT_CATEGORY_OR_TYPE = listOf(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE)
     val ONE_TREATMENT_CATEGORY_OR_TYPE_ONE_INTEGER = listOf(Parameter.Type.TREATMENT_CATEGORY_OR_TYPE, Parameter.Type.INTEGER)
     val ONE_TREATMENT_CATEGORY_MANY_TYPES = listOf(Parameter.Type.TREATMENT_CATEGORY, Parameter.Type.MANY_TREATMENT_TYPES)
+    val ONE_TREATMENT_CATEGORY_MANY_TYPES_ONE_TREATMENT_CATEGORY = listOf(
+        Parameter.Type.TREATMENT_CATEGORY,
+        Parameter.Type.MANY_TREATMENT_TYPES,
+        Parameter.Type.TREATMENT_CATEGORY
+    )
     val TWO_TREATMENT_CATEGORIES_MANY_TYPES = listOf(
         Parameter.Type.TREATMENT_CATEGORY,
         Parameter.Type.MANY_TREATMENT_TYPES,

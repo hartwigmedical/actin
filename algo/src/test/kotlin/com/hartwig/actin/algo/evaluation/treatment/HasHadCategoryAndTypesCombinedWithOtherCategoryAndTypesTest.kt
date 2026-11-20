@@ -106,6 +106,54 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypesTest {
     }
 
     @Test
+    fun `Should pass for first category and types combined with any treatment of second category when second types are empty`() {
+        val function =
+            HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, emptySet())
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(
+                drugTreatment("combined", CATEGORY_1, TYPES_1),
+                drugTreatment("chemo", CATEGORY_2, setOf(DrugType.ANTIMETABOLITE))
+            )
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "HER2 antibody and HER3 antibody targeted therapy combined with chemotherapy in provided treatments"
+        )
+    }
+
+    @Test
+    fun `Should pass for first category and types combined with second category with unknown types when second types are empty`() {
+        val function =
+            HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, emptySet())
+        val treatmentHistoryEntry = treatmentHistoryEntry(
+            setOf(drugTreatment("combined", CATEGORY_1, TYPES_1), drugTreatment("chemo", CATEGORY_2, emptySet()))
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.PASS,
+            function.evaluate(withTreatmentHistoryEntry(treatmentHistoryEntry)),
+            "HER2 antibody and HER3 antibody targeted therapy combined with chemotherapy in provided treatments"
+        )
+    }
+
+    @Test
+    fun `Should fail if first category and types not combined with second category when second types are empty`() {
+        val function =
+            HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(CATEGORY_1, TYPES_1, CATEGORY_2, emptySet())
+        val treatmentHistory = withTreatmentHistory(
+            listOf(
+                treatmentHistoryEntry(setOf(drugTreatment("combined", CATEGORY_1, TYPES_1))),
+                treatmentHistoryEntry(setOf(PLATINUM))
+            )
+        )
+        EvaluationAssert.assertEvaluation(
+            EvaluationResult.FAIL,
+            function.evaluate(treatmentHistory),
+            "No HER2 antibody and HER3 antibody targeted therapy combined with chemotherapy in provided treatments"
+        )
+    }
+
+    @Test
     fun `Should evaluate to undetermined if treatment with second category and types in history combined with trial without treatments configured`() {
         val treatmentHistoryEntry = treatmentHistoryEntry(
             setOf(PLATINUM, TreatmentTestFactory.treatment("empty trial treatment", isSystemic = true)),

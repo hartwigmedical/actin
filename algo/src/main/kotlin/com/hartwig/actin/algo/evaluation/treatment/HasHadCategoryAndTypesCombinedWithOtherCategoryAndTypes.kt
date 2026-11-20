@@ -22,8 +22,7 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
         val hadCombinationWithTrialWithUnknownType = hadCombinationWithTrialWithUnknownType(record)
         val hadTrialWithUnspecifiedTreatment = record.oncologicalHistory.any { it.isTrial && it.allTreatments().isEmpty() }
 
-        val treatmentDesc =
-            "${concatItemsWithAnd(types1)} ${category1.display()} combined with ${concatItemsWithAnd(types2)} ${category2.display()}"
+        val treatmentDesc = "${description(category1, types1)} combined with ${description(category2, types2)}"
 
         return when {
             hadCombination -> {
@@ -38,6 +37,10 @@ class HasHadCategoryAndTypesCombinedWithOtherCategoryAndTypes(
                 EvaluationFactory.fail("No $treatmentDesc in provided treatments")
             }
         }
+    }
+
+    private fun description(category: TreatmentCategory, types: Set<TreatmentType>): String {
+        return if (types.isEmpty()) category.display() else "${concatItemsWithAnd(types)} ${category.display()}"
     }
 
     private fun containsCategoryOfTypes(
